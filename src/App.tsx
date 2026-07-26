@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   Activity,
   Bell,
@@ -12,13 +12,23 @@ import {
   FileText,
   Filter,
   KeyRound,
+  LogIn,
   LockKeyhole,
   ShieldAlert,
   Search,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  UserPlus
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
+import {
+  authModeLabel,
+  readStoredSession,
+  signInWithPassword,
+  signOut,
+  signUpWithPassword,
+  type AuthSession
+} from "./auth";
 import {
   canAccessWorkspace,
   getActiveMembership,
@@ -176,9 +186,13 @@ function RecordDetail({ record }: { record: RecordItem }) {
 
 function AccountPanel({
   activeMembership,
+  authSession,
+  authStatus,
   onSwitch
 }: {
   activeMembership: Membership;
+  authSession: AuthSession | null;
+  authStatus: string;
   onSwitch: (membershipId: string) => void;
 }) {
   const activeRole = getRole(activeMembership.role);
@@ -191,8 +205,8 @@ function AccountPanel({
         <strong>Corporate account and RBAC</strong>
       </div>
       <div className="account-user">
-        <span>{sessionUser.name}</span>
-        <small>{sessionUser.email}</small>
+        <span>{authSession?.user.email ?? sessionUser.name}</span>
+        <small>{authSession ? `Live profile ${authSession.user.id.slice(0, 8)}` : sessionUser.email}</small>
       </div>
       <div className="membership-list">
         {sessionUser.memberships.map((membership) => {
@@ -213,7 +227,94 @@ function AccountPanel({
       <div className="rbac-summary">
         <span className={`status-chip ${toneClass(activeRole.risk)}`}>{activeRole.label}</span>
         <small>{activeOrg.status.replace("_", " ")} organization context</small>
+        <small>{authStatus}</small>
       </div>
+    </section>
+  );
+}
+
+function AuthPanel({
+  session,
+  onSession
+}: {
+  session: AuthSession | null;
+  onSession: (session: AuthSession | null) => void;
+}) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState(authModeLabel());
+  const [busy, setBusy] = useState(false);
+
+  async function handleAuth(event: FormEvent<HTMLFormElement>, mode: "signin" | "signup") {
+    event.preventDefault();
+    await submitAuth(mode);
+  }
+
+  async function submitAuth(mode: "signin" | "signup") {
+    setBusy(true);
+    setMessage(mode === "signin" ? "Signing in..." : "Creating account...");
+
+    try {
+      const nextSession =
+        mode === "signin" ? await signInWithPassword(email, password) : await signUpWithPassword(email, password);
+      onSession(nextSession);
+      setMessage(nextSession ? "Live Supabase session connected" : "Check your email to confirm the account");
+      setPassword("");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Authentication failed.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="auth-panel">
+      <div className="mini-heading">
+        <KeyRound size={16} />
+        <strong>Live auth</strong>
+      </div>
+      {session ? (
+        <div className="auth-session">
+          <span>{session.user.email}</span>
+          <small>Supabase session stored in this browser</small>
+          <button
+            className="secondary-action"
+            onClick={() => {
+              signOut();
+              onSession(null);
+              setMessage(authModeLabel());
+            }}
+          >
+            Sign out
+          </button>
+        </div>
+      ) : (
+        <form className="auth-form" onSubmit={(event) => handleAuth(event, "signin")}>
+          <input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" type="email" />
+          <input
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Password"
+            type="password"
+          />
+          <div className="auth-actions">
+            <button className="primary-action" disabled={busy || !email || !password} type="submit">
+              <LogIn size={16} />
+              Sign in
+            </button>
+            <button
+              className="secondary-action"
+              disabled={busy || !email || !password}
+              onClick={() => void submitAuth("signup")}
+              type="button"
+            >
+              <UserPlus size={16} />
+              Sign up
+            </button>
+          </div>
+        </form>
+      )}
+      <small>{message}</small>
     </section>
   );
 }
@@ -239,12 +340,18 @@ function App() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("identity");
   const [activeMembershipId, setActiveMembershipId] = useState(sessionUser.activeMembershipId);
+  const [authSession, setAuthSession] = useState<AuthSession | null>(null);
   const activeMembership =
     sessionUser.memberships.find((membership) => membership.id === activeMembershipId) ?? getActiveMembership(sessionUser);
   const activeRole = getRole(activeMembership.role);
   const activeOrganization = getOrganization(activeMembership.organizationId);
   const workspace = workspaces.find((item) => item.id === workspaceId) ?? workspaces[0];
   const workspaceAllowed = canAccessWorkspace(activeMembership.role, workspace.id);
+  const authStatus = authSession ? "Live Supabase session active" : authModeLabel();
+
+  useEffect(() => {
+    setAuthSession(readStoredSession());
+  }, []);
 
   const records = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -298,7 +405,14 @@ function App() {
           ))}
         </div>
 
-        <AccountPanel activeMembership={activeMembership} onSwitch={switchMembership} />
+        <AccountPanel
+          activeMembership={activeMembership}
+          authSession={authSession}
+          authStatus={authStatus}
+          onSwitch={switchMembership}
+        />
+
+        <AuthPanel session={authSession} onSession={setAuthSession} />
 
         <nav className="module-nav" aria-label="Workspace modules">
           {workspace.nav.map((item) => {
@@ -331,6 +445,7 @@ function App() {
               <span className={`status-chip ${toneClass(activeRole.risk)}`}>{activeRole.label}</span>
               <span className="status-chip neutral">{activeOrganization.name}</span>
               <span className="status-chip neutral">{activeOrganization.type.replace("_", " ")}</span>
+              <span className="status-chip neutral">{authSession ? "live auth" : "demo session"}</span>
             </div>
           </div>
           <div className="topbar-actions">

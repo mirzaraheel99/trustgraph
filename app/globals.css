@@ -113,7 +113,8 @@ p,
 .topbar-actions button,
 .primary-action,
 .secondary-action,
-.filter-bar button {
+.filter-bar button,
+.auth-form input {
   border-radius: var(--radius);
   border: 1px solid var(--line);
   color: var(--text);
@@ -189,16 +190,59 @@ p,
     rgba(255, 255, 255, 0.035);
 }
 
+.auth-panel {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 58%),
+    rgba(255, 255, 255, 0.028);
+}
+
 .account-user span,
 .account-user small,
 .membership-button span,
 .membership-button small,
-.rbac-summary small {
+.rbac-summary small,
+.auth-session span,
+.auth-session small,
+.auth-panel > small {
   display: block;
 }
 
 .account-user span {
   font-weight: 900;
+}
+
+.auth-form,
+.auth-session {
+  display: grid;
+  gap: 8px;
+}
+
+.auth-form input {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 10px;
+  outline: 0;
+}
+
+.auth-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.primary-action:disabled,
+.secondary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.auth-session span {
+  font-weight: 850;
 }
 
 .membership-list {

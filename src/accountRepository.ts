@@ -10,9 +10,10 @@ export interface AccountContext {
   >;
 }
 
-export async function loadAccountContext(profileId: string): Promise<AccountContext> {
+export async function loadAccountContext(profileId: string, accessToken?: string): Promise<AccountContext> {
   const [profile] = await supabaseRest<DbProfile[]>(
-    `profiles?id=eq.${encodeURIComponent(profileId)}&select=*`
+    `profiles?id=eq.${encodeURIComponent(profileId)}&select=*`,
+    { accessToken }
   );
 
   if (!profile) {
@@ -24,7 +25,8 @@ export async function loadAccountContext(profileId: string): Promise<AccountCont
       `organization_memberships?profile_id=eq.${encodeURIComponent(profileId)}`,
       "status=eq.active",
       "select=*,organization:organizations(*)"
-    ].join("&")
+    ].join("&"),
+    { accessToken }
   );
 
   return {

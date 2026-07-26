@@ -38,6 +38,18 @@ GitHub Pages URL:
 https://mirzaraheel99.github.io/trustgraph/
 ```
 
+## Supabase Auth
+
+Add these repository or deployment environment variables when the Supabase project is ready:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+In Supabase Auth URL settings, allow the GitHub Pages URL above as a site/redirect URL.
+Until those variables are present, the app stays in demo mode and keeps the mock RBAC account context available.
+
 ## Build
 
 ```bash

@@ -21,21 +21,22 @@ export function isSupabaseConfigured() {
   return getSupabaseConfig() !== null;
 }
 
-export async function supabaseRest<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function supabaseRest<T>(path: string, init: RequestInit & { accessToken?: string } = {}): Promise<T> {
   const config = getSupabaseConfig();
+  const { accessToken, ...requestInit } = init;
 
   if (!config) {
     throw new Error("Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
   }
 
   const response = await fetch(`${config.url}/rest/v1/${path.replace(/^\//, "")}`, {
-    ...init,
+    ...requestInit,
     headers: {
       apikey: config.anonKey,
-      Authorization: `Bearer ${config.anonKey}`,
+      Authorization: `Bearer ${accessToken ?? config.anonKey}`,
       "Content-Type": "application/json",
       Prefer: "return=representation",
-      ...init.headers
+      ...requestInit.headers
     }
   });
 
