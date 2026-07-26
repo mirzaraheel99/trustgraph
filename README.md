@@ -14,9 +14,9 @@ This repository contains the first React + TypeScript application foundation for
 
 ## Tech Stack
 
+- Next.js
 - React
 - TypeScript
-- Vite
 - Lucide React icons
 - PNPM
 

@@ -3,5 +3,6 @@ packages:
 
 allowBuilds:
   esbuild: true
+  sharp: true
 
 confirmModulesPurge: false
