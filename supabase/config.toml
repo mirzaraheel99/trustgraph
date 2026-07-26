@@ -1,0 +1,12 @@
+project_id = "trustgraph"
+
+[api]
+enabled = true
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[auth]
+enabled = true
+site_url = "https://mirzaraheel99.github.io/trustgraph/"
+additional_redirect_urls = ["https://mirzaraheel99.github.io/trustgraph/"]
