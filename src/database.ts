@@ -1,0 +1,97 @@
+import type { PermissionKey, RoleKey } from "./rbac";
+
+export type OrganizationType = "professional" | "employer" | "staffing_agency" | "trustgraph";
+export type OrganizationStatus = "active" | "pending_approval" | "restricted";
+export type MembershipStatus = "active" | "invited" | "suspended";
+export type RecordStatus = "draft" | "pending_verification" | "verified" | "expired" | "disputed" | "revoked" | "restricted";
+export type RecordType =
+  | "identity"
+  | "employment"
+  | "education"
+  | "license"
+  | "certification"
+  | "reference"
+  | "background_check"
+  | "health_clearance"
+  | "custom";
+export type AccessGrantStatus = "requested" | "approved" | "declined" | "expired" | "revoked";
+
+export interface DbOrganization {
+  id: string;
+  name: string;
+  type: OrganizationType;
+  status: OrganizationStatus;
+  domain: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbProfile {
+  id: string;
+  full_name: string;
+  email: string;
+  primary_organization_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbOrganizationMembership {
+  id: string;
+  organization_id: string;
+  profile_id: string;
+  role: RoleKey;
+  status: MembershipStatus;
+  invited_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbTrustRecord {
+  id: string;
+  owner_profile_id: string;
+  issuer_organization_id: string | null;
+  type: RecordType;
+  title: string;
+  status: RecordStatus;
+  source_name: string;
+  evidence_summary: string | null;
+  issued_at: string | null;
+  expires_at: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbAccessGrant {
+  id: string;
+  subject_profile_id: string;
+  requester_organization_id: string;
+  requested_by_profile_id: string | null;
+  status: AccessGrantStatus;
+  purpose: string;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbAccessGrantRecord {
+  access_grant_id: string;
+  trust_record_id: string;
+}
+
+export interface DbAuditEvent {
+  id: string;
+  actor_profile_id: string | null;
+  organization_id: string | null;
+  action: string;
+  target_table: string;
+  target_id: string | null;
+  reason: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface RoleCapability {
+  role: RoleKey;
+  permissions: PermissionKey[];
+}

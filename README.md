@@ -22,7 +22,8 @@ This repository contains the first React + TypeScript application foundation for
 
 ## Local Development
 
-You do not need local setup to view the hosted app once GitHub Pages is enabled.
+The app is built and deployed from GitHub Actions, so local setup is optional.
+Use the hosted URL below as the main review link.
 
 ```bash
 pnpm install
@@ -42,6 +43,15 @@ https://mirzaraheel99.github.io/trustgraph/
 ```bash
 pnpm build
 ```
+
+## Database Foundation
+
+Supabase-ready migrations live in `supabase/migrations/`:
+
+- `001_trustgraph_core.sql`: organizations, profiles, memberships, trust records, access grants, and audit events.
+- `002_trustgraph_rls.sql`: first-pass row level security for RBAC, professional-owned records, scoped sharing, and audit access.
+
+TypeScript mirrors for the core database rows live in `src/database.ts`.
 
 ## Product Planning
 
