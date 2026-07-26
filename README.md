@@ -22,9 +22,19 @@ This repository contains the first React + TypeScript application foundation for
 
 ## Local Development
 
+You do not need local setup to view the hosted app once GitHub Pages is enabled.
+
 ```bash
 pnpm install
 pnpm dev
+```
+
+## Hosted App
+
+GitHub Pages URL:
+
+```text
+https://mirzaraheel99.github.io/trustgraph/
 ```
 
 ## Build
