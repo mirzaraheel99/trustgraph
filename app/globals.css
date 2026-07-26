@@ -141,6 +141,13 @@ p,
   box-shadow: 0 12px 30px rgba(82, 214, 196, 0.08);
 }
 
+.workspace-button:disabled {
+  cursor: not-allowed;
+  color: var(--faint);
+  border-color: rgba(201, 214, 207, 0.08);
+  background: rgba(255, 255, 255, 0.015);
+}
+
 .module-nav {
   padding-top: 8px;
   border-top: 1px solid var(--line);
@@ -169,6 +176,60 @@ p,
   border: 1px solid rgba(82, 214, 196, 0.24);
   border-radius: var(--radius);
   background: rgba(82, 214, 196, 0.07);
+}
+
+.account-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.09), transparent 55%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.account-user span,
+.account-user small,
+.membership-button span,
+.membership-button small,
+.rbac-summary small {
+  display: block;
+}
+
+.account-user span {
+  font-weight: 900;
+}
+
+.membership-list {
+  display: grid;
+  gap: 8px;
+}
+
+.membership-button {
+  min-height: 54px;
+  padding: 10px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.membership-button.active,
+.membership-button:hover {
+  border-color: rgba(134, 174, 246, 0.44);
+  background: rgba(134, 174, 246, 0.08);
+}
+
+.membership-button span {
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.rbac-summary {
+  display: grid;
+  gap: 8px;
 }
 
 .workspace {
@@ -219,6 +280,13 @@ p {
   max-width: 860px;
   margin-bottom: 0;
   font-size: 16px;
+}
+
+.session-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .topbar-actions {
@@ -356,6 +424,32 @@ p {
 
 .neutral {
   color: var(--muted);
+}
+
+.permission-panel {
+  min-height: 520px;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 720px);
+  align-content: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 34px;
+  border: 1px solid rgba(255, 129, 119, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 129, 119, 0.1), transparent 48%),
+    var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.permission-panel svg {
+  color: var(--red);
+  margin-top: 6px;
+}
+
+.permission-panel h2 {
+  font-size: 34px;
+  line-height: 1.05;
 }
 
 .context-actions {
@@ -647,7 +741,8 @@ p {
   }
 
   .workspace-stack,
-  .module-nav {
+  .module-nav,
+  .membership-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
@@ -678,7 +773,9 @@ p {
 
   .workspace-stack,
   .module-nav,
-  .detail-grid {
+  .detail-grid,
+  .membership-list,
+  .permission-panel {
     grid-template-columns: 1fr;
   }
 

@@ -13,11 +13,21 @@ import {
   Filter,
   KeyRound,
   LockKeyhole,
+  ShieldAlert,
   Search,
   ShieldCheck,
   Sparkles
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
+import {
+  canAccessWorkspace,
+  getActiveMembership,
+  getOrganization,
+  getRole,
+  hasPermission,
+  sessionUser,
+  type Membership
+} from "./rbac";
 
 const toneLabels: Record<Tone, string> = {
   success: "success",
@@ -34,16 +44,18 @@ function toneClass(tone: Tone) {
 function WorkspaceButton({
   workspace,
   active,
+  allowed,
   onClick
 }: {
   workspace: Workspace;
   active: boolean;
+  allowed: boolean;
   onClick: () => void;
 }) {
   return (
-    <button className={`workspace-button ${active ? "active" : ""}`} onClick={onClick}>
+    <button className={`workspace-button ${active ? "active" : ""}`} disabled={!allowed} onClick={onClick}>
       <span>{workspace.label}</span>
-      <small>{workspace.role}</small>
+      <small>{allowed ? workspace.role : "Role required"}</small>
     </button>
   );
 }
@@ -162,11 +174,77 @@ function RecordDetail({ record }: { record: RecordItem }) {
   );
 }
 
+function AccountPanel({
+  activeMembership,
+  onSwitch
+}: {
+  activeMembership: Membership;
+  onSwitch: (membershipId: string) => void;
+}) {
+  const activeRole = getRole(activeMembership.role);
+  const activeOrg = getOrganization(activeMembership.organizationId);
+
+  return (
+    <section className="account-panel">
+      <div className="mini-heading">
+        <LockKeyhole size={16} />
+        <strong>Corporate account and RBAC</strong>
+      </div>
+      <div className="account-user">
+        <span>{sessionUser.name}</span>
+        <small>{sessionUser.email}</small>
+      </div>
+      <div className="membership-list">
+        {sessionUser.memberships.map((membership) => {
+          const role = getRole(membership.role);
+          const org = getOrganization(membership.organizationId);
+          return (
+            <button
+              className={`membership-button ${membership.id === activeMembership.id ? "active" : ""}`}
+              key={membership.id}
+              onClick={() => onSwitch(membership.id)}
+            >
+              <span>{org.name}</span>
+              <small>{role.label}</small>
+            </button>
+          );
+        })}
+      </div>
+      <div className="rbac-summary">
+        <span className={`status-chip ${toneClass(activeRole.risk)}`}>{activeRole.label}</span>
+        <small>{activeOrg.status.replace("_", " ")} organization context</small>
+      </div>
+    </section>
+  );
+}
+
+function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; workspaceLabel: string }) {
+  return (
+    <section className="permission-panel">
+      <ShieldAlert size={34} />
+      <div>
+        <span className="eyebrow">Permission denied state</span>
+        <h2>{roleLabel} cannot open {workspaceLabel}</h2>
+        <p>
+          TrustGraph blocks portal access unless the active Organization Membership grants the matching role. Switch
+          account context to continue.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const [workspaceId, setWorkspaceId] = useState<WorkspaceId>("passport");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("identity");
+  const [activeMembershipId, setActiveMembershipId] = useState(sessionUser.activeMembershipId);
+  const activeMembership =
+    sessionUser.memberships.find((membership) => membership.id === activeMembershipId) ?? getActiveMembership(sessionUser);
+  const activeRole = getRole(activeMembership.role);
+  const activeOrganization = getOrganization(activeMembership.organizationId);
   const workspace = workspaces.find((item) => item.id === workspaceId) ?? workspaces[0];
+  const workspaceAllowed = canAccessWorkspace(activeMembership.role, workspace.id);
 
   const records = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -187,6 +265,16 @@ function App() {
     setSelectedId(next?.records[0]?.id ?? "");
   }
 
+  function switchMembership(membershipId: string) {
+    const membership = sessionUser.memberships.find((item) => item.id === membershipId);
+    if (!membership) return;
+    const role = getRole(membership.role);
+    setActiveMembershipId(membershipId);
+    setWorkspaceId(role.portal);
+    setQuery("");
+    setSelectedId(workspaces.find((item) => item.id === role.portal)?.records[0]?.id ?? "");
+  }
+
   return (
     <div className="app">
       <aside className="sidebar">
@@ -204,10 +292,13 @@ function App() {
               key={item.id}
               workspace={item}
               active={item.id === workspace.id}
+              allowed={canAccessWorkspace(activeMembership.role, item.id)}
               onClick={() => changeWorkspace(item.id)}
             />
           ))}
         </div>
+
+        <AccountPanel activeMembership={activeMembership} onSwitch={switchMembership} />
 
         <nav className="module-nav" aria-label="Workspace modules">
           {workspace.nav.map((item) => {
@@ -236,6 +327,11 @@ function App() {
             <span className="eyebrow">{workspace.eyebrow}</span>
             <h1>{workspace.title}</h1>
             <p>{workspace.subtitle}</p>
+            <div className="session-strip">
+              <span className={`status-chip ${toneClass(activeRole.risk)}`}>{activeRole.label}</span>
+              <span className="status-chip neutral">{activeOrganization.name}</span>
+              <span className="status-chip neutral">{activeOrganization.type.replace("_", " ")}</span>
+            </div>
           </div>
           <div className="topbar-actions">
             <button aria-label="View notifications">
@@ -247,6 +343,10 @@ function App() {
           </div>
         </header>
 
+        {!workspaceAllowed ? (
+          <PermissionGate roleLabel={activeRole.label} workspaceLabel={workspace.label} />
+        ) : (
+          <>
         <section className="hero">
           <div className="hero-card primary">
             <div className="hero-card-top">
@@ -266,14 +366,14 @@ function App() {
           <div className="hero-card">
             <div className="hero-card-top">
               <span className="eyebrow">Active context</span>
-              <span className="status-chip neutral">{workspace.role}</span>
+              <span className="status-chip neutral">{activeRole.label}</span>
             </div>
-            <h2>{workspace.organization}</h2>
+            <h2>{activeOrganization.name}</h2>
             <p>All views, exports, and evidence access are filtered through role, organization, consent, and Access Grant scope.</p>
             <div className="context-actions">
               <button className="primary-action">
                 <Eye size={16} />
-                Preview access
+                {hasPermission(activeMembership.role, "passport:view_shared") ? "Preview shared access" : "Preview Passport"}
               </button>
               <button className="secondary-action">
                 <KeyRound size={16} />
@@ -369,6 +469,8 @@ function App() {
             Audit Events generated for material actions
           </span>
         </footer>
+          </>
+        )}
       </main>
     </div>
   );
