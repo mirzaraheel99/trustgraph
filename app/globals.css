@@ -642,6 +642,50 @@ p {
     rgba(255, 255, 255, 0.025);
 }
 
+.grants-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(225, 184, 102, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.07), transparent 60%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.grant-list {
+  display: grid;
+  gap: 8px;
+}
+
+.grant-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.grant-card p {
+  margin: 6px 0;
+  font-size: 13px;
+}
+
+.grant-card.empty {
+  border-style: dashed;
+}
+
+.grant-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .record-form-grid {
   display: grid;
   grid-template-columns: minmax(140px, 0.8fr) minmax(180px, 1.2fr) minmax(180px, 1fr);
@@ -883,6 +927,7 @@ p {
   .topbar,
   .panel-heading,
   .record-row-main,
+  .grant-card,
   .topbar-actions,
   .record-form-footer {
     flex-direction: column;

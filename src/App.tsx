@@ -36,6 +36,7 @@ import {
   signUpWithPassword,
   type AuthSession
 } from "./auth";
+import { decideAccessGrant, loadAccessGrants, type AccessGrantView } from "./grantRepository";
 import { createPassportRecord, loadPassportRecords, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
@@ -385,6 +386,87 @@ function PassportRecordForm({
   );
 }
 
+function AccessGrantsPanel({
+  disabled,
+  grants,
+  message,
+  onDecision
+}: {
+  disabled: boolean;
+  grants: AccessGrantView[];
+  message: string;
+  onDecision: (grantId: string, status: "approved" | "declined" | "revoked") => Promise<void>;
+}) {
+  const [busyGrantId, setBusyGrantId] = useState<string | null>(null);
+
+  async function decide(grantId: string, status: "approved" | "declined" | "revoked") {
+    setBusyGrantId(grantId);
+    try {
+      await onDecision(grantId, status);
+    } finally {
+      setBusyGrantId(null);
+    }
+  }
+
+  return (
+    <section className="grants-panel">
+      <div className="mini-heading">
+        <KeyRound size={16} />
+        <strong>Access Grants</strong>
+      </div>
+      <small>{message}</small>
+      <div className="grant-list">
+        {grants.length ? (
+          grants.map((grant) => (
+            <article className="grant-card" key={grant.id}>
+              <div>
+                <strong>{grant.requester_organization.name}</strong>
+                <p>{grant.purpose}</p>
+                <small>{grant.status.replace("_", " ")} request</small>
+              </div>
+              <div className="grant-actions">
+                {grant.status === "requested" ? (
+                  <>
+                    <button
+                      className="primary-action"
+                      disabled={disabled || busyGrantId === grant.id}
+                      onClick={() => void decide(grant.id, "approved")}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="secondary-action"
+                      disabled={disabled || busyGrantId === grant.id}
+                      onClick={() => void decide(grant.id, "declined")}
+                    >
+                      Decline
+                    </button>
+                  </>
+                ) : grant.status === "approved" ? (
+                  <button
+                    className="secondary-action"
+                    disabled={disabled || busyGrantId === grant.id}
+                    onClick={() => void decide(grant.id, "revoked")}
+                  >
+                    Revoke
+                  </button>
+                ) : null}
+              </div>
+            </article>
+          ))
+        ) : (
+          <article className="grant-card empty">
+            <div>
+              <strong>No live Access Grants yet</strong>
+              <p>Employer and staffing requests will appear here once Verify workspace is connected.</p>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function AccountPanel({
   accountUser,
   activeMembership,
@@ -552,6 +634,8 @@ function App() {
   const [accountStatus, setAccountStatus] = useState("Demo account context");
   const [livePassportRecords, setLivePassportRecords] = useState<RecordItem[]>([]);
   const [recordStatus, setRecordStatus] = useState("Sign in to add live Passport records");
+  const [accessGrants, setAccessGrants] = useState<AccessGrantView[]>([]);
+  const [grantStatus, setGrantStatus] = useState("Sign in to review Access Grants");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -623,6 +707,33 @@ function App() {
         if (cancelled) return;
         setLivePassportRecords([]);
         setRecordStatus(error instanceof Error ? error.message : "Could not load live Passport records");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authSession, accountContext]);
+
+  useEffect(() => {
+    if (!authSession || !accountContext) {
+      setAccessGrants([]);
+      setGrantStatus("Sign in to review Access Grants");
+      return;
+    }
+
+    let cancelled = false;
+    setGrantStatus("Loading live Access Grants...");
+
+    loadAccessGrants(accountContext.profile.id, authSession.accessToken)
+      .then((items) => {
+        if (cancelled) return;
+        setAccessGrants(items);
+        setGrantStatus(items.length ? "Live Supabase Access Grants" : "No live Access Grants yet");
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setAccessGrants([]);
+        setGrantStatus(error instanceof Error ? error.message : "Could not load Access Grants");
       });
 
     return () => {
@@ -708,6 +819,24 @@ function App() {
 
     setLivePassportRecords((current) => current.map((record) => (record.id === updated.id ? updated : record)));
     setRecordStatus("Live Supabase Passport records");
+  }
+
+  async function handleGrantDecision(grantId: string, status: "approved" | "declined" | "revoked") {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before deciding Access Grants.");
+    }
+
+    const updated = await decideAccessGrant({
+      grantId,
+      status,
+      reason: "professional decision from Passport workspace",
+      accessToken: authSession.accessToken
+    });
+
+    setAccessGrants((current) =>
+      current.map((grant) => (grant.id === updated.id ? { ...grant, status: updated.status } : grant))
+    );
+    setGrantStatus("Live Supabase Access Grants");
   }
 
   return (
@@ -886,11 +1015,19 @@ function App() {
             </div>
 
             {workspace.id === "passport" ? (
-              <PassportRecordForm
-                disabled={!authSession || !accountContext}
-                message={recordStatus}
-                onCreate={createLivePassportRecord}
-              />
+              <>
+                <PassportRecordForm
+                  disabled={!authSession || !accountContext}
+                  message={recordStatus}
+                  onCreate={createLivePassportRecord}
+                />
+                <AccessGrantsPanel
+                  disabled={!authSession || !accountContext}
+                  grants={accessGrants}
+                  message={grantStatus}
+                  onDecision={handleGrantDecision}
+                />
+              </>
             ) : null}
           </div>
 
