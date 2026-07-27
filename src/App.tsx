@@ -26,6 +26,7 @@ import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceI
 import type {
   DbAuditEvent,
   DbEvidenceDocument,
+  DbIssuerCredential,
   DbNotificationEvent,
   DbReferenceRequest,
   DbVerificationCase,
@@ -53,6 +54,11 @@ import {
   signUpWithPassword,
   type AuthSession
 } from "./auth";
+import {
+  createSampleCredentialIssuerMembership,
+  issueCredentialRecord,
+  loadIssuerCredentials
+} from "./credentialRepository";
 import {
   createSampleAccessGrant,
   decideAccessGrant,
@@ -721,15 +727,33 @@ function ReferenceRequestsPanel({
 
 function VerifyRequestsPanel({
   disabled,
+  issuerCredentials,
+  issuerDisabled,
+  issuerMessage,
   message,
   requests,
   sharedRecords,
+  onCreateIssuerRole,
+  onIssueCredential,
   onCreateReviewerRole
 }: {
   disabled: boolean;
+  issuerCredentials: DbIssuerCredential[];
+  issuerDisabled: boolean;
+  issuerMessage: string;
   message: string;
   requests: VerifyAccessGrantView[];
   sharedRecords: RecordItem[];
+  onCreateIssuerRole: () => Promise<void>;
+  onIssueCredential: (input: {
+    subjectEmail: string;
+    subjectFullName: string;
+    credentialType: Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">;
+    title: string;
+    evidenceSummary: string;
+    issuedAt: string;
+    expiresAt: string;
+  }) => Promise<void>;
   onCreateReviewerRole: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
@@ -809,6 +833,150 @@ function VerifyRequestsPanel({
         )}
       </div>
       {disabled ? <small>Switch to an employer or staffing reviewer role to use live Verify data.</small> : null}
+      <IssuerCredentialsPanel
+        credentials={issuerCredentials}
+        disabled={issuerDisabled}
+        message={issuerMessage}
+        onCreateIssuerRole={onCreateIssuerRole}
+        onIssueCredential={onIssueCredential}
+      />
+    </section>
+  );
+}
+
+function IssuerCredentialsPanel({
+  credentials,
+  disabled,
+  message,
+  onCreateIssuerRole,
+  onIssueCredential
+}: {
+  credentials: DbIssuerCredential[];
+  disabled: boolean;
+  message: string;
+  onCreateIssuerRole: () => Promise<void>;
+  onIssueCredential: (input: {
+    subjectEmail: string;
+    subjectFullName: string;
+    credentialType: Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">;
+    title: string;
+    evidenceSummary: string;
+    issuedAt: string;
+    expiresAt: string;
+  }) => Promise<void>;
+}) {
+  const [subjectEmail, setSubjectEmail] = useState("");
+  const [subjectFullName, setSubjectFullName] = useState("");
+  const [credentialType, setCredentialType] =
+    useState<Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">>("certification");
+  const [title, setTitle] = useState("");
+  const [evidenceSummary, setEvidenceSummary] = useState("");
+  const [issuedAt, setIssuedAt] = useState("");
+  const [expiresAt, setExpiresAt] = useState("");
+  const [busyRole, setBusyRole] = useState(false);
+  const [busyIssue, setBusyIssue] = useState(false);
+  const [status, setStatus] = useState(message);
+
+  useEffect(() => {
+    setStatus(message);
+  }, [message]);
+
+  async function submitCredential(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusyIssue(true);
+    setStatus("Issuing verified credential...");
+
+    try {
+      await onIssueCredential({
+        subjectEmail,
+        subjectFullName,
+        credentialType,
+        title,
+        evidenceSummary,
+        issuedAt,
+        expiresAt
+      });
+      setSubjectEmail("");
+      setSubjectFullName("");
+      setTitle("");
+      setEvidenceSummary("");
+      setIssuedAt("");
+      setExpiresAt("");
+      setStatus("Credential issued");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not issue credential");
+    } finally {
+      setBusyIssue(false);
+    }
+  }
+
+  return (
+    <section className="issuer-panel">
+      <div className="mini-heading">
+        <ClipboardCheck size={16} />
+        <strong>Credential issuer workflow</strong>
+      </div>
+      <div className="grant-panel-top">
+        <small>{status}</small>
+        <button
+          className="secondary-action"
+          disabled={busyRole}
+          onClick={async () => {
+            setBusyRole(true);
+            try {
+              await onCreateIssuerRole();
+            } finally {
+              setBusyRole(false);
+            }
+          }}
+        >
+          Sample issuer role
+        </button>
+      </div>
+      <form className="issuer-form" onSubmit={submitCredential}>
+        <div className="record-form-grid">
+          <input disabled={disabled || busyIssue} onChange={(event) => setSubjectEmail(event.target.value)} placeholder="Professional email" type="email" value={subjectEmail} />
+          <input disabled={disabled || busyIssue} onChange={(event) => setSubjectFullName(event.target.value)} placeholder="Professional name" value={subjectFullName} />
+          <select disabled={disabled || busyIssue} onChange={(event) => setCredentialType(event.target.value as typeof credentialType)} value={credentialType}>
+            <option value="certification">Certification</option>
+            <option value="license">License</option>
+            <option value="education">Education</option>
+            <option value="health_clearance">Health clearance</option>
+            <option value="custom">Custom</option>
+          </select>
+          <input disabled={disabled || busyIssue} onChange={(event) => setTitle(event.target.value)} placeholder="Credential title" value={title} />
+          <input disabled={disabled || busyIssue} onChange={(event) => setIssuedAt(event.target.value)} type="date" value={issuedAt} />
+          <input disabled={disabled || busyIssue} onChange={(event) => setExpiresAt(event.target.value)} type="date" value={expiresAt} />
+          <input disabled={disabled || busyIssue} onChange={(event) => setEvidenceSummary(event.target.value)} placeholder="Evidence summary" value={evidenceSummary} />
+        </div>
+        <div className="record-form-footer">
+          <small>Issued credentials become verified Passport records with issuer organization context.</small>
+          <button className="primary-action" disabled={disabled || busyIssue || !subjectEmail || !title} type="submit">
+            Issue credential
+          </button>
+        </div>
+      </form>
+      <div className="issuer-list">
+        {credentials.length ? (
+          credentials.slice(0, 5).map((credential) => (
+            <article className="issuer-card" key={credential.id}>
+              <div>
+                <strong>{credential.title}</strong>
+                <p>{credential.owner_profile?.full_name ?? credential.owner_profile?.email ?? "Professional profile"}</p>
+                <small>{credential.evidence_summary ?? credential.source_name}</small>
+              </div>
+              <span className="status-chip success">{credential.status.replace(/_/g, " ")}</span>
+            </article>
+          ))
+        ) : (
+          <article className="issuer-card empty">
+            <div>
+              <strong>No issued credentials yet</strong>
+              <p>Create a sample issuer role, switch to it, then issue a verified license or certification.</p>
+            </div>
+          </article>
+        )}
+      </div>
     </section>
   );
 }
@@ -1333,6 +1501,8 @@ function App() {
   const [notificationStatus, setNotificationStatus] = useState("Sign in for live workflow notifications");
   const [referenceRequests, setReferenceRequests] = useState<DbReferenceRequest[]>([]);
   const [referenceStatus, setReferenceStatus] = useState("Sign in to manage live references");
+  const [issuerCredentials, setIssuerCredentials] = useState<DbIssuerCredential[]>([]);
+  const [issuerStatus, setIssuerStatus] = useState("Switch to a credential issuer role");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -1439,39 +1609,57 @@ function App() {
     if (!authSession || !accountContext || workspaceId !== "verify") {
       setVerifyRequests([]);
       setSharedVerifyRecords([]);
+      setIssuerCredentials([]);
       setVerifyStatus("Switch to Verify role for live requests");
+      setIssuerStatus("Switch to a credential issuer role");
       return;
     }
 
     if (!canAccessWorkspace(activeMembership.role, "verify")) {
       setVerifyRequests([]);
       setSharedVerifyRecords([]);
+      setIssuerCredentials([]);
       setVerifyStatus("Active role cannot access Verify workspace");
+      setIssuerStatus("Active role cannot access issuer workflow");
       return;
     }
 
     let cancelled = false;
     setVerifyStatus("Loading live Verify requests...");
+    setIssuerStatus("Loading issued credentials...");
 
     Promise.all([
       loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken),
-      loadSharedVerifyRecords(authSession.accessToken)
+      loadSharedVerifyRecords(authSession.accessToken),
+      hasPermission(activeMembership.role, "record:issue_credential")
+        ? loadIssuerCredentials(activeMembership.organizationId, authSession.accessToken)
+        : Promise.resolve([])
     ])
-      .then(([items, sharedRecords]) => {
+      .then(([items, sharedRecords, credentials]) => {
         if (cancelled) return;
         setVerifyRequests(items);
         setSharedVerifyRecords(sharedRecords);
+        setIssuerCredentials(credentials);
         setVerifyStatus(
           items.length || sharedRecords.length
             ? `Live Supabase Verify data: ${items.length} requests, ${sharedRecords.length} shared records`
             : "No live Verify requests yet"
+        );
+        setIssuerStatus(
+          hasPermission(activeMembership.role, "record:issue_credential")
+            ? credentials.length
+              ? `Issued credentials: ${credentials.length}`
+              : "No issued credentials yet"
+            : "Credential issuer role required"
         );
       })
       .catch((error) => {
         if (cancelled) return;
         setVerifyRequests([]);
         setSharedVerifyRecords([]);
+        setIssuerCredentials([]);
         setVerifyStatus(error instanceof Error ? error.message : "Could not load Verify requests");
+        setIssuerStatus(error instanceof Error ? error.message : "Could not load issued credentials");
       });
 
     return () => {
@@ -1784,6 +1972,48 @@ function App() {
     setVerifyStatus("Sample employer reviewer role created");
   }
 
+  async function createLiveCredentialIssuerRole() {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating a credential issuer role.");
+    }
+
+    const membership = await createSampleCredentialIssuerMembership(authSession.accessToken);
+    const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
+    setAccountContext(context);
+    setActiveMembershipId(membership.id);
+    setWorkspaceId("verify");
+    setIssuerStatus("Sample credential issuer role created");
+  }
+
+  async function issueLiveCredential(input: {
+    subjectEmail: string;
+    subjectFullName: string;
+    credentialType: Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">;
+    title: string;
+    evidenceSummary: string;
+    issuedAt: string;
+    expiresAt: string;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before issuing credentials.");
+    }
+
+    const credential = await issueCredentialRecord({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const [credentials, notifications, events] = await Promise.all([
+      loadIssuerCredentials(activeMembership.organizationId, authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setIssuerCredentials(credentials);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setIssuerStatus(`Credential issued: ${credential.title}`);
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+  }
+
   async function createLiveCorporateAccount(input: {
     organizationName: string;
     organizationType: "employer" | "staffing_agency";
@@ -2074,8 +2304,18 @@ function App() {
             {workspace.id === "verify" ? (
               <VerifyRequestsPanel
                 disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "verify")}
+                issuerCredentials={issuerCredentials}
+                issuerDisabled={
+                  !authSession ||
+                  !accountContext ||
+                  !canAccessWorkspace(activeMembership.role, "verify") ||
+                  !hasPermission(activeMembership.role, "record:issue_credential")
+                }
+                issuerMessage={issuerStatus}
                 message={verifyStatus}
+                onCreateIssuerRole={createLiveCredentialIssuerRole}
                 onCreateReviewerRole={createSampleReviewerRole}
+                onIssueCredential={issueLiveCredential}
                 requests={verifyRequests}
                 sharedRecords={sharedVerifyRecords}
               />

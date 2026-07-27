@@ -180,6 +180,24 @@ export interface DbReferenceRequest {
   updated_at: string;
 }
 
+export interface DbIssuerCredential {
+  id: string;
+  owner_profile_id: string;
+  issuer_organization_id: string | null;
+  type: RecordType;
+  title: string;
+  status: RecordStatus;
+  source_name: string;
+  evidence_summary: string | null;
+  issued_at: string | null;
+  expires_at: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  owner_profile: Pick<DbProfile, "id" | "full_name" | "email"> | null;
+  issuer_organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
+}
+
 export interface RoleCapability {
   role: RoleKey;
   permissions: PermissionKey[];

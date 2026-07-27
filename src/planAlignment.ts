@@ -95,7 +95,7 @@ export const foundationTracks: FoundationTrack[] = [
     label: "Credentials",
     planStep: "Phase 2",
     status: "foundation",
-    detail: "License/certification records exist; issuer workflows are next.",
+    detail: "Credential issuer role, verified issue workflow, audit, and notifications are live.",
     tone: "info"
   },
   {
