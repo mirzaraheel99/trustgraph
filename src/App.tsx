@@ -1908,10 +1908,14 @@ function PublicSite({
     try {
       const session =
         mode === "signin"
-          ? await signInWithPassword({ email, password })
-          : await signUpWithPassword({ email, password });
-      onSession(session);
-      setMessage(portal === "corporate" ? "Corporate portal ready" : "Professional Passport ready");
+          ? await signInWithPassword(email, password)
+          : await signUpWithPassword(email, password);
+      if (session) {
+        onSession(session);
+        setMessage(portal === "corporate" ? "Corporate portal ready" : "Professional Passport ready");
+      } else {
+        setMessage("Check your email to confirm the account, then login.");
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Authentication failed");
     } finally {
