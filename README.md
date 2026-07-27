@@ -114,12 +114,9 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 12. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
 13. Admin audit trail shows recent material workflow events.
 
-## Pending Live Database Approvals
+## Live Database Status
 
-The frontend for these workflows is deployed, but these live Supabase migrations require explicit approval before applying because they change database functions and/or access-control behavior:
-
-- `022_member_management.sql`
-- `023_corporate_access_grant_requests.sql`
+Live Supabase migrations are applied through `023_corporate_access_grant_requests.sql`, including corporate member-management controls and corporate Access Grant requests by professional email.
 
 ## Public Website and Pricing
 

@@ -1976,10 +1976,10 @@ function PlanAlignmentPanel() {
       </div>
       <article className="plan-migration-card">
         <div>
-          <strong>Pending live database approval</strong>
-          <small>Apply migrations 022 and 023 to activate member status controls and real corporate Access Grant requests.</small>
+          <strong>Live database migrations applied</strong>
+          <small>Migrations 022 and 023 are active for member status controls and real corporate Access Grant requests.</small>
         </div>
-        <span className="status-chip warning">approval needed</span>
+        <span className="status-chip success">database live</span>
       </article>
       <div className="plan-track-grid">
         {foundationTracks.map((track) => (
@@ -2760,13 +2760,13 @@ function ProductionReadinessPanel({
     {
       label: "Corporate database",
       ok: teamManagementReady,
-      detail: teamManagementReady ? activeOrganizationName : "Awaiting live member-management migration"
+      detail: teamManagementReady ? activeOrganizationName : "Sign in with a corporate role to load live members"
     }
   ];
   const readyCount = checks.filter((check) => check.ok).length;
   const readinessScore = Math.round((readyCount / checks.length) * 100);
   const nextActions = [
-    teamManagementReady ? "Corporate member database active" : "Approve migrations 022 and 023",
+    teamManagementReady ? "Corporate member database active" : "Load a corporate account context",
     authSession ? "Live portal session connected" : "Sign in to connect live data",
     accountContext ? "RBAC context loaded" : "Create or load account context"
   ];
@@ -2784,7 +2784,7 @@ function ProductionReadinessPanel({
           <small>{readyCount} of {checks.length} live checks passing</small>
         </div>
         <span className={`status-chip ${teamManagementReady ? "success" : "warning"}`}>
-          {teamManagementReady ? "database live" : "migration approval needed"}
+          {teamManagementReady ? "database live" : "login needed"}
         </span>
       </div>
       <div className="readiness-list">
