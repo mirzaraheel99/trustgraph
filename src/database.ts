@@ -24,6 +24,9 @@ export type VerificationCaseType =
   | "dispute";
 export type VerificationCaseStatus = "open" | "in_review" | "resolved" | "restricted" | "dismissed";
 export type VerificationCasePriority = "low" | "medium" | "high" | "critical";
+export type EvidenceDocumentStatus = "uploaded" | "classified" | "linked" | "restricted" | "rejected" | "archived";
+export type NotificationEventStatus = "queued" | "sent" | "delivered" | "failed" | "suppressed";
+export type NotificationChannel = "in_app" | "email" | "sms";
 
 export interface DbOrganization {
   id: string;
@@ -115,6 +118,40 @@ export interface DbVerificationCase {
   resolution_note: string | null;
   metadata: Record<string, unknown>;
   due_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbEvidenceDocument {
+  id: string;
+  owner_profile_id: string;
+  trust_record_id: string | null;
+  uploaded_by_profile_id: string | null;
+  status: EvidenceDocumentStatus;
+  title: string;
+  document_type: string;
+  storage_path: string | null;
+  source_name: string;
+  classification: string;
+  evidence_summary: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbNotificationEvent {
+  id: string;
+  recipient_profile_id: string | null;
+  organization_id: string | null;
+  channel: NotificationChannel;
+  status: NotificationEventStatus;
+  priority: string;
+  event_type: string;
+  title: string;
+  body: string;
+  target_table: string | null;
+  target_id: string | null;
+  metadata: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 }

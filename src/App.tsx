@@ -23,7 +23,15 @@ import {
   UserPlus
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
-import type { DbAuditEvent, DbVerificationCase, RecordStatus, RecordType, VerificationCaseStatus } from "./database";
+import type {
+  DbAuditEvent,
+  DbEvidenceDocument,
+  DbNotificationEvent,
+  DbVerificationCase,
+  RecordStatus,
+  RecordType,
+  VerificationCaseStatus
+} from "./database";
 import {
   accountContextOrganizations,
   accountContextToSessionUser,
@@ -52,6 +60,8 @@ import {
   type VerifyAccessGrantView,
   type AccessGrantView
 } from "./grantRepository";
+import { createEvidenceDocument, loadEvidenceDocuments } from "./evidenceRepository";
+import { loadNotificationEvents } from "./notificationRepository";
 import {
   createSampleTrustGraphVerifierMembership,
   createSampleVerificationCases,
@@ -164,10 +174,20 @@ function RecordRow({
 function RecordDetail({
   record,
   canEdit,
+  evidenceDocuments,
+  onCreateEvidence,
   onUpdate
 }: {
   record: RecordItem;
   canEdit: boolean;
+  evidenceDocuments: DbEvidenceDocument[];
+  onCreateEvidence: (input: {
+    recordId: string;
+    title: string;
+    documentType: string;
+    sourceName: string;
+    evidenceSummary: string;
+  }) => Promise<void>;
   onUpdate: (input: {
     recordId: string;
     title: string;
@@ -183,7 +203,13 @@ function RecordDetail({
   const [expiresAt, setExpiresAt] = useState("");
   const [status, setStatus] = useState<RecordStatus>("draft");
   const [message, setMessage] = useState("Update selected live record");
+  const [evidenceTitle, setEvidenceTitle] = useState("");
+  const [documentType, setDocumentType] = useState("credential");
+  const [evidenceSource, setEvidenceSource] = useState("");
+  const [evidenceNote, setEvidenceNote] = useState("");
+  const [evidenceMessage, setEvidenceMessage] = useState("Attach evidence metadata to selected record");
   const [busy, setBusy] = useState(false);
+  const [evidenceBusy, setEvidenceBusy] = useState(false);
 
   useEffect(() => {
     setTitle(record.title);
@@ -192,6 +218,10 @@ function RecordDetail({
     setExpiresAt("");
     setStatus(record.status === "pending verification" ? "pending_verification" : "draft");
     setMessage("Update selected live record");
+    setEvidenceTitle("");
+    setEvidenceSource(record.source);
+    setEvidenceNote("");
+    setEvidenceMessage("Attach evidence metadata to selected record");
   }, [record]);
 
   async function submitUpdate(event: FormEvent<HTMLFormElement>) {
@@ -213,6 +243,29 @@ function RecordDetail({
       setMessage(error instanceof Error ? error.message : "Could not update record");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function submitEvidence(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setEvidenceBusy(true);
+    setEvidenceMessage("Linking evidence metadata...");
+
+    try {
+      await onCreateEvidence({
+        recordId: record.id,
+        title: evidenceTitle,
+        documentType,
+        sourceName: evidenceSource,
+        evidenceSummary: evidenceNote
+      });
+      setEvidenceTitle("");
+      setEvidenceNote("");
+      setEvidenceMessage("Evidence metadata linked");
+    } catch (error) {
+      setEvidenceMessage(error instanceof Error ? error.message : "Could not link evidence");
+    } finally {
+      setEvidenceBusy(false);
     }
   }
 
@@ -251,35 +304,75 @@ function RecordDetail({
         </div>
         <p>{record.evidence}</p>
         <small>{record.access}</small>
+        {evidenceDocuments.length ? (
+          <div className="evidence-document-list">
+            {evidenceDocuments.map((document) => (
+              <article className="evidence-document-card" key={document.id}>
+                <div>
+                  <strong>{document.title}</strong>
+                  <small>{document.document_type} · {document.source_name}</small>
+                </div>
+                <span className="status-chip neutral">{document.status}</span>
+              </article>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       {canEdit ? (
-        <form className="record-edit-form" onSubmit={submitUpdate}>
-          <div className="mini-heading">
-            <KeyRound size={16} />
-            <strong>Edit live record</strong>
-          </div>
-          <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Title" />
-          <input value={sourceName} onChange={(event) => setSourceName(event.target.value)} placeholder="Source" />
-          <input
-            value={evidenceSummary}
-            onChange={(event) => setEvidenceSummary(event.target.value)}
-            placeholder="Evidence summary"
-          />
-          <div className="record-edit-grid">
-            <input value={expiresAt} onChange={(event) => setExpiresAt(event.target.value)} type="date" />
-            <select value={status} onChange={(event) => setStatus(event.target.value as RecordStatus)}>
-              <option value="draft">Draft</option>
-              <option value="pending_verification">Pending verification</option>
-            </select>
-          </div>
-          <div className="record-form-footer">
-            <small>{message}</small>
-            <button className="secondary-action" disabled={busy || !title || !sourceName} type="submit">
-              Save changes
-            </button>
-          </div>
-        </form>
+        <>
+          <form className="record-edit-form" onSubmit={submitUpdate}>
+            <div className="mini-heading">
+              <KeyRound size={16} />
+              <strong>Edit live record</strong>
+            </div>
+            <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Title" />
+            <input value={sourceName} onChange={(event) => setSourceName(event.target.value)} placeholder="Source" />
+            <input
+              value={evidenceSummary}
+              onChange={(event) => setEvidenceSummary(event.target.value)}
+              placeholder="Evidence summary"
+            />
+            <div className="record-edit-grid">
+              <input value={expiresAt} onChange={(event) => setExpiresAt(event.target.value)} type="date" />
+              <select value={status} onChange={(event) => setStatus(event.target.value as RecordStatus)}>
+                <option value="draft">Draft</option>
+                <option value="pending_verification">Pending verification</option>
+              </select>
+            </div>
+            <div className="record-form-footer">
+              <small>{message}</small>
+              <button className="secondary-action" disabled={busy || !title || !sourceName} type="submit">
+                Save changes
+              </button>
+            </div>
+          </form>
+          <form className="record-edit-form" onSubmit={submitEvidence}>
+            <div className="mini-heading">
+              <FileCheck2 size={16} />
+              <strong>Evidence metadata</strong>
+            </div>
+            <input value={evidenceTitle} onChange={(event) => setEvidenceTitle(event.target.value)} placeholder="Document title" />
+            <div className="record-edit-grid">
+              <select value={documentType} onChange={(event) => setDocumentType(event.target.value)}>
+                <option value="identity">Identity</option>
+                <option value="credential">Credential</option>
+                <option value="employment">Employment</option>
+                <option value="compliance">Compliance</option>
+                <option value="training">Training</option>
+                <option value="reference">Reference</option>
+              </select>
+              <input value={evidenceSource} onChange={(event) => setEvidenceSource(event.target.value)} placeholder="Evidence source" />
+            </div>
+            <input value={evidenceNote} onChange={(event) => setEvidenceNote(event.target.value)} placeholder="Evidence note" />
+            <div className="record-form-footer">
+              <small>{evidenceMessage}</small>
+              <button className="secondary-action" disabled={evidenceBusy || !evidenceTitle || !evidenceSource} type="submit">
+                Link evidence
+              </button>
+            </div>
+          </form>
+        </>
       ) : null}
 
       <section>
@@ -1046,6 +1139,44 @@ function AuthPanel({
   );
 }
 
+function NotificationPanel({
+  events,
+  message
+}: {
+  events: DbNotificationEvent[];
+  message: string;
+}) {
+  return (
+    <section className="notification-panel">
+      <div className="mini-heading">
+        <Bell size={16} />
+        <strong>Notifications</strong>
+      </div>
+      <small>{message}</small>
+      <div className="notification-list">
+        {events.length ? (
+          events.slice(0, 4).map((event) => (
+            <article className="notification-card" key={event.id}>
+              <div>
+                <strong>{event.title}</strong>
+                <small>{event.body}</small>
+              </div>
+              <span className="status-chip neutral">{event.status}</span>
+            </article>
+          ))
+        ) : (
+          <article className="notification-card empty">
+            <div>
+              <strong>No live notifications</strong>
+              <small>Workflow alerts will appear here.</small>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; workspaceLabel: string }) {
   return (
     <section className="permission-panel">
@@ -1081,6 +1212,9 @@ function App() {
   const [operationsStatus, setOperationsStatus] = useState("Switch to Admin role for live operations");
   const [auditEvents, setAuditEvents] = useState<DbAuditEvent[]>([]);
   const [auditStatus, setAuditStatus] = useState("Switch to Admin role for audit events");
+  const [evidenceDocuments, setEvidenceDocuments] = useState<DbEvidenceDocument[]>([]);
+  const [notificationEvents, setNotificationEvents] = useState<DbNotificationEvent[]>([]);
+  const [notificationStatus, setNotificationStatus] = useState("Sign in for live workflow notifications");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -1133,17 +1267,30 @@ function App() {
     if (!authSession || !accountContext) {
       setLivePassportRecords([]);
       setRecordStatus("Sign in to add live Passport records");
+      setEvidenceDocuments([]);
+      setNotificationEvents([]);
+      setNotificationStatus("Sign in for live workflow notifications");
       return;
     }
 
     let cancelled = false;
     setRecordStatus("Loading live Passport records...");
+    setNotificationStatus("Loading notifications...");
 
-    loadPassportRecords(accountContext.profile.id, authSession.accessToken)
-      .then((items) => {
+    Promise.all([
+      loadPassportRecords(accountContext.profile.id, authSession.accessToken),
+      loadEvidenceDocuments(authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken)
+    ])
+      .then(([items, documents, notifications]) => {
         if (cancelled) return;
         setLivePassportRecords(items);
+        setEvidenceDocuments(documents);
+        setNotificationEvents(notifications);
         setRecordStatus(items.length ? "Live Supabase Passport records" : "No live records yet");
+        setNotificationStatus(
+          notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet"
+        );
         if (items[0]) {
           setSelectedId(items[0].id);
         }
@@ -1151,7 +1298,10 @@ function App() {
       .catch((error) => {
         if (cancelled) return;
         setLivePassportRecords([]);
+        setEvidenceDocuments([]);
+        setNotificationEvents([]);
         setRecordStatus(error instanceof Error ? error.message : "Could not load live Passport records");
+        setNotificationStatus(error instanceof Error ? error.message : "Could not load notifications");
       });
 
     return () => {
@@ -1319,6 +1469,7 @@ function App() {
 
   const selectedRecord = records.find((record) => record.id === selectedId) ?? records[0] ?? workspace.records[0];
   const selectedRecordIsLive = livePassportRecords.some((record) => record.id === selectedRecord.id);
+  const selectedEvidenceDocuments = evidenceDocuments.filter((document) => document.trust_record_id === selectedRecord.id);
 
   function changeWorkspace(id: WorkspaceId) {
     const next = workspaces.find((item) => item.id === id);
@@ -1384,6 +1535,33 @@ function App() {
 
     setLivePassportRecords((current) => current.map((record) => (record.id === updated.id ? updated : record)));
     setRecordStatus("Live Supabase Passport records");
+  }
+
+  async function createLiveEvidenceDocument(input: {
+    recordId: string;
+    title: string;
+    documentType: string;
+    sourceName: string;
+    evidenceSummary: string;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before linking evidence metadata.");
+    }
+
+    const document = await createEvidenceDocument({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const [documents, notifications, events] = await Promise.all([
+      loadEvidenceDocuments(authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setEvidenceDocuments(documents);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setRecordStatus(`Evidence linked: ${document.title}`);
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
   }
 
   async function handleGrantDecision(grantId: string, status: "approved" | "declined" | "revoked") {
@@ -1552,6 +1730,7 @@ function App() {
         />
 
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
+        <NotificationPanel events={notificationEvents} message={notificationStatus} />
 
         <nav className="module-nav" aria-label="Workspace modules">
           {workspace.nav.map((item) => {
@@ -1748,6 +1927,8 @@ function App() {
             </section>
             <RecordDetail
               canEdit={workspace.id === "passport" && selectedRecordIsLive}
+              evidenceDocuments={selectedEvidenceDocuments}
+              onCreateEvidence={createLiveEvidenceDocument}
               onUpdate={updateLivePassportRecord}
               record={selectedRecord}
             />

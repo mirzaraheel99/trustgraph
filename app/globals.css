@@ -206,6 +206,40 @@ p,
     rgba(255, 255, 255, 0.028);
 }
 
+.notification-panel {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(225, 184, 102, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.07), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.notification-list {
+  display: grid;
+  gap: 8px;
+}
+
+.notification-card {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.notification-card strong,
+.notification-card small {
+  display: block;
+}
+
+.notification-card.empty {
+  border-style: dashed;
+}
+
 .account-user span,
 .account-user small,
 .membership-button span,
@@ -1030,6 +1064,27 @@ p {
 
 .evidence-box p {
   margin: 10px 0;
+}
+
+.evidence-document-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.evidence-document-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.evidence-document-card strong,
+.evidence-document-card small {
+  display: block;
 }
 
 .timeline {
