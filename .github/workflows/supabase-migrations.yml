@@ -32,5 +32,5 @@ jobs:
         run: |
           for file in $MIGRATION_PATH; do
             echo "Applying $file"
-            psql "$DIRECT_URL" --set ON_ERROR_STOP=1 --file "$file"
+            PGOPTIONS="-c statement_timeout=30000" psql "$DIRECT_URL" --set ON_ERROR_STOP=1 --echo-errors --file "$file"
           done
