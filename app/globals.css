@@ -797,9 +797,25 @@ p,
     rgba(255, 255, 255, 0.025);
 }
 
+.onboarding-panel {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.07), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
 .readiness-list {
   display: grid;
   gap: 8px;
+}
+
+.onboarding-list {
+  display: grid;
+  gap: 7px;
 }
 
 .readiness-score-card {
@@ -815,10 +831,37 @@ p,
     rgba(255, 255, 255, 0.03);
 }
 
+.onboarding-score {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.03);
+}
+
 .readiness-score-card span,
 .readiness-score-card strong,
-.readiness-score-card small {
+.readiness-score-card small,
+.onboarding-score span,
+.onboarding-score small {
   display: block;
+}
+
+.onboarding-score div > span {
+  color: var(--text);
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.onboarding-score small {
+  margin-top: 6px;
+  line-height: 1.35;
 }
 
 .readiness-score-card div > span {
@@ -844,9 +887,35 @@ p,
   background: rgba(255, 255, 255, 0.03);
 }
 
+.onboarding-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.onboarding-item.done {
+  border-color: rgba(82, 214, 196, 0.22);
+  background: rgba(82, 214, 196, 0.045);
+}
+
 .readiness-row strong,
-.readiness-row small {
+.readiness-row small,
+.onboarding-item strong,
+.onboarding-item small {
   display: block;
+}
+
+.onboarding-item strong {
+  font-size: 12px;
+}
+
+.onboarding-item small {
+  margin-top: 3px;
+  line-height: 1.35;
 }
 
 .readiness-action-row {

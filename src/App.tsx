@@ -3307,6 +3307,101 @@ function ProductionReadinessPanel({
   );
 }
 
+function OnboardingChecklistPanel({
+  accessGrants,
+  accountContext,
+  authSession,
+  consentAuthorizations,
+  livePassportRecords,
+  organizationSubscriptions,
+  teamInvitations,
+  teamMembers
+}: {
+  accessGrants: AccessGrantView[];
+  accountContext: AccountContext | null;
+  authSession: AuthSession | null;
+  consentAuthorizations: DbConsentAuthorization[];
+  livePassportRecords: RecordItem[];
+  organizationSubscriptions: DbOrganizationSubscription[];
+  teamInvitations: DbOrganizationInvitation[];
+  teamMembers: OrganizationMemberView[];
+}) {
+  const hasCorporateContext = Boolean(
+    accountContext?.memberships.some((membership) =>
+      ["employer_admin", "employer_reviewer", "staffing_agency_admin", "recruiter"].includes(membership.role)
+    )
+  );
+  const hasSensitiveControls = livePassportRecords.some((record) => record.sensitivity && record.sensitivity !== "standard");
+  const activeSubscription = organizationSubscriptions.some((subscription) => subscription.status !== "cancelled");
+  const checklist = [
+    {
+      label: "Live account",
+      detail: authSession ? authSession.user.email : "Sign in or create a Supabase account",
+      done: Boolean(authSession && accountContext)
+    },
+    {
+      label: "Passport foundation",
+      detail: livePassportRecords.length ? `${livePassportRecords.length} live record${livePassportRecords.length === 1 ? "" : "s"}` : "Add the first Passport record",
+      done: livePassportRecords.length > 0
+    },
+    {
+      label: "Privacy controls",
+      detail: hasSensitiveControls ? "Sensitive records classified" : "Classify sensitive records and consent rules",
+      done: hasSensitiveControls || consentAuthorizations.length > 0
+    },
+    {
+      label: "Corporate workspace",
+      detail: hasCorporateContext ? "Employer or staffing context loaded" : "Create or accept a corporate account",
+      done: hasCorporateContext
+    },
+    {
+      label: "Team and plan",
+      detail: activeSubscription
+        ? "Subscription active"
+        : teamMembers.length || teamInvitations.length
+          ? "Team motion started"
+          : "Activate a plan and invite reviewers",
+      done: activeSubscription && (teamMembers.length > 0 || teamInvitations.length > 0)
+    },
+    {
+      label: "Sharing loop",
+      detail: accessGrants.length ? `${accessGrants.length} Access Grant${accessGrants.length === 1 ? "" : "s"}` : "Request, approve, or sync an Access Grant",
+      done: accessGrants.some((grant) => grant.status === "approved")
+    }
+  ];
+  const completed = checklist.filter((item) => item.done).length;
+  const nextItem = checklist.find((item) => !item.done) ?? checklist[checklist.length - 1];
+
+  return (
+    <section className="onboarding-panel">
+      <div className="mini-heading">
+        <BadgeCheck size={16} />
+        <strong>Launch checklist</strong>
+      </div>
+      <div className="onboarding-score">
+        <div>
+          <span>{completed}/{checklist.length}</span>
+          <small>{nextItem.done ? "Core launch path complete" : nextItem.detail}</small>
+        </div>
+        <span className={`status-chip ${completed === checklist.length ? "success" : "info"}`}>
+          {completed === checklist.length ? "ready" : "in progress"}
+        </span>
+      </div>
+      <div className="onboarding-list">
+        {checklist.map((item) => (
+          <article className={item.done ? "onboarding-item done" : "onboarding-item"} key={item.label}>
+            <span className={`status-dot ${item.done ? "on" : ""}`} />
+            <div>
+              <strong>{item.label}</strong>
+              <small>{item.detail}</small>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function NotificationPanel({
   events,
   message,
@@ -4948,6 +5043,16 @@ function App() {
           activeOrganizationName={activeOrganization.name}
           authSession={authSession}
           teamManagementReady={teamManagementReady}
+        />
+        <OnboardingChecklistPanel
+          accessGrants={accessGrants}
+          accountContext={accountContext}
+          authSession={authSession}
+          consentAuthorizations={consentAuthorizations}
+          livePassportRecords={livePassportRecords}
+          organizationSubscriptions={organizationSubscriptions}
+          teamInvitations={teamInvitations}
+          teamMembers={teamMembers}
         />
         <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
 
