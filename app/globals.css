@@ -1291,6 +1291,27 @@ p {
   gap: 8px;
 }
 
+.directory-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px;
+  gap: 8px;
+}
+
+.directory-controls input,
+.directory-controls select {
+  min-height: 38px;
+  width: 100%;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.directory-controls select {
+  color-scheme: dark;
+}
+
 .directory-metrics div,
 .directory-card {
   border: 1px solid var(--line);
@@ -1839,6 +1860,7 @@ p {
   .work-grid,
   .portal-grid,
   .pricing-grid,
+  .directory-controls,
   .record-form-grid {
     grid-template-columns: 1fr;
   }

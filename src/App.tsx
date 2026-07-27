@@ -1017,20 +1017,42 @@ function CorporateDirectoryPanel({
   requests: VerifyAccessGrantView[];
   sharedRecords: RecordItem[];
 }) {
-  const candidateRows = requests.slice(0, 5).map((request) => ({
+  const [directoryQuery, setDirectoryQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "approved" | "declined" | "revoked">("all");
+  const candidateRows = requests.map((request) => ({
     id: request.id,
     name: request.subject_profile.full_name,
     detail: request.subject_profile.email,
+    rawStatus: request.status,
     status: request.status.replace(/_/g, " "),
     signal: request.purpose
   }));
+  const filteredRows = candidateRows.filter((row) => {
+    const matchesStatus = statusFilter === "all" || row.rawStatus === statusFilter;
+    const haystack = `${row.name} ${row.detail} ${row.signal}`.toLowerCase();
+    return matchesStatus && haystack.includes(directoryQuery.trim().toLowerCase());
+  });
 
   return (
     <section className="corporate-directory-panel">
       <div className="mini-heading">
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
-        <span className="status-chip neutral">{candidateRows.length + sharedRecords.length} visible</span>
+        <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className="directory-controls">
+        <input
+          onChange={(event) => setDirectoryQuery(event.target.value)}
+          placeholder="Search professional, email, or purpose"
+          value={directoryQuery}
+        />
+        <select onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)} value={statusFilter}>
+          <option value="all">All statuses</option>
+          <option value="requested">Requested</option>
+          <option value="approved">Approved</option>
+          <option value="declined">Declined</option>
+          <option value="revoked">Revoked</option>
+        </select>
       </div>
       <div className="directory-metrics">
         <div>
@@ -1047,8 +1069,8 @@ function CorporateDirectoryPanel({
         </div>
       </div>
       <div className="directory-list">
-        {candidateRows.length ? (
-          candidateRows.map((row) => (
+        {filteredRows.length ? (
+          filteredRows.slice(0, 8).map((row) => (
             <article className="directory-card" key={row.id}>
               <div>
                 <strong>{row.name}</strong>
@@ -1061,8 +1083,8 @@ function CorporateDirectoryPanel({
         ) : (
           <article className="directory-card empty">
             <div>
-              <strong>No corporate users visible yet</strong>
-              <p>Professionals appear here only after an Access Grant request or approved share exists.</p>
+              <strong>No matching corporate users</strong>
+              <p>Professionals appear here after an Access Grant request or approved share matches the current filter.</p>
             </div>
           </article>
         )}
