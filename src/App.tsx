@@ -1253,6 +1253,8 @@ function IssuerCredentialsPanel({
   const [busyRole, setBusyRole] = useState(false);
   const [busyIssue, setBusyIssue] = useState(false);
   const [status, setStatus] = useState(message);
+  const expiringCredentials = credentials.filter((credential) => credential.expires_at).length;
+  const noExpiryCredentials = credentials.length - expiringCredentials;
 
   useEffect(() => {
     setStatus(message);
@@ -1293,7 +1295,21 @@ function IssuerCredentialsPanel({
         <ClipboardCheck size={16} />
         <strong>Credential issuer workflow</strong>
       </div>
-      <div className="grant-panel-top">
+      <div className="issuer-summary-grid">
+        <div>
+          <span>Issued</span>
+          <strong>{credentials.length}</strong>
+        </div>
+        <div>
+          <span>Expiring</span>
+          <strong>{expiringCredentials}</strong>
+        </div>
+        <div>
+          <span>No expiry</span>
+          <strong>{noExpiryCredentials}</strong>
+        </div>
+      </div>
+      <div className="grant-panel-top test-tool-strip">
         <small>{status}</small>
         <button
           className="secondary-action"
@@ -1307,7 +1323,7 @@ function IssuerCredentialsPanel({
             }
           }}
         >
-          Sample issuer role
+          Create test issuer role
         </button>
       </div>
       <form className="issuer-form" onSubmit={submitCredential}>
@@ -1349,7 +1365,7 @@ function IssuerCredentialsPanel({
           <article className="issuer-card empty">
             <div>
               <strong>No issued credentials yet</strong>
-              <p>Create a sample issuer role, switch to it, then issue a verified license or certification.</p>
+              <p>Credential issuers can publish verified licenses, certifications, education, and health clearances into a professional Passport.</p>
             </div>
           </article>
         )}
