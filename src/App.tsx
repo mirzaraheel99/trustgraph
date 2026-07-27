@@ -1880,7 +1880,9 @@ function BillingPanel({
   const primaryPlan = primarySubscription?.plan ?? plans.find((plan) => plan.id === primarySubscription?.plan_id) ?? null;
   const totalSeats = activeSubscriptions.reduce((sum, item) => sum + item.seats, 0);
   const monthlyTotal = activeSubscriptions.reduce((sum, item) => sum + (item.plan?.monthly_price_usd ?? 0), 0);
-  const renewsAt = primarySubscription?.renews_at ? dateLabel(primarySubscription.renews_at) : "Trial or manual renewal";
+  const renewsAt = primarySubscription?.renews_at
+    ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(primarySubscription.renews_at))
+    : "Trial or manual renewal";
 
   async function activate(planId: string) {
     setBusyPlanId(planId);
