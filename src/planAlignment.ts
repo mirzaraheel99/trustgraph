@@ -110,8 +110,8 @@ export const foundationTracks: FoundationTrack[] = [
     id: "ai",
     label: "TrustGraph AI",
     planStep: "Step 18",
-    status: "planned",
-    detail: "Governance documented; source-grounded features remain planned.",
-    tone: "neutral"
+    status: "foundation",
+    detail: "Deterministic source-grounded advisory summaries are live in each workspace.",
+    tone: "info"
   }
 ];

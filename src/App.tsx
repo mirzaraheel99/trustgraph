@@ -47,6 +47,7 @@ import {
   type AccountContext
 } from "./accountRepository";
 import { auditActionLabel, loadAuditEvents } from "./auditRepository";
+import { buildAdvisorySummary } from "./aiAdvisor";
 import {
   authModeLabel,
   readStoredSession,
@@ -152,6 +153,35 @@ function ActionCard({ title, detail, due, tone }: Workspace["actions"][number]) 
       </div>
       <span className={`status-chip ${toneClass(tone)}`}>{due}</span>
     </article>
+  );
+}
+
+function AdvisoryCard({ summary }: { summary: ReturnType<typeof buildAdvisorySummary> }) {
+  return (
+    <div className="hero-card ai-card">
+      <div className="hero-card-top">
+        <span className="eyebrow">AI advisory</span>
+        <span className="status-chip info">
+          <Sparkles size={13} />
+          source-grounded
+        </span>
+      </div>
+      <h2>{summary.headline}</h2>
+      <p>{summary.detail}</p>
+      <div className="advisory-signals">
+        {summary.signals.map((signal) => (
+          <span className={`status-chip ${toneClass(signal.tone)}`} key={signal.label}>
+            {signal.label}: {signal.value}
+          </span>
+        ))}
+      </div>
+      <div className="advisory-actions">
+        {summary.nextActions.slice(0, 3).map((action) => (
+          <small key={action}>{action}</small>
+        ))}
+      </div>
+      <small>{summary.sourceCount} authorized source items reviewed</small>
+    </div>
   );
 }
 
@@ -1994,6 +2024,32 @@ function App() {
     );
   }, [livePassportRecords, operationsCases, query, sharedVerifyRecords, verifyRequests, workspace]);
 
+  const advisorySummary = useMemo(
+    () =>
+      buildAdvisorySummary({
+        workspaceId: workspace.id,
+        records,
+        accessGrants,
+        verifyRequests,
+        operationsCases,
+        referenceRequests,
+        issuerCredentials,
+        missingRecordRequests,
+        notificationEvents
+      }),
+    [
+      accessGrants,
+      issuerCredentials,
+      missingRecordRequests,
+      notificationEvents,
+      operationsCases,
+      records,
+      referenceRequests,
+      verifyRequests,
+      workspace.id
+    ]
+  );
+
   const selectedRecord = records.find((record) => record.id === selectedId) ?? records[0] ?? workspace.records[0];
   const selectedRecordIsLive = livePassportRecords.some((record) => record.id === selectedRecord.id);
   const selectedEvidenceDocuments = evidenceDocuments.filter((document) => document.trust_record_id === selectedRecord.id);
@@ -2518,17 +2574,7 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-card ai-card">
-            <div className="hero-card-top">
-              <span className="eyebrow">AI advisory</span>
-              <span className="status-chip info">
-                <Sparkles size={13} />
-                source-grounded
-              </span>
-            </div>
-            <h2>Readiness summary</h2>
-            <p>Generated only from authorized records. Disputed, expired, and revoked claims stay labeled.</p>
-          </div>
+          <AdvisoryCard summary={advisorySummary} />
         </section>
 
         <section className="metrics-grid">

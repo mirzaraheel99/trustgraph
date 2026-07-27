@@ -482,6 +482,23 @@ p {
     var(--panel);
 }
 
+.advisory-signals,
+.advisory-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.advisory-actions {
+  display: grid;
+}
+
+.advisory-actions small {
+  padding-left: 10px;
+  border-left: 2px solid rgba(82, 214, 196, 0.28);
+}
+
 .hero-card-top,
 .panel-heading,
 .mini-heading,
