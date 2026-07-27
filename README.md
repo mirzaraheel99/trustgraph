@@ -13,7 +13,7 @@ This repository contains the first React + TypeScript application foundation for
 - Verification timelines and audit-aware activity
 - Private Supabase Storage evidence uploads
 - Structured references, issuer credentials, missing-record requests, Connect controls, and source-grounded advisory summaries
-- Public website, Professional and Corporate portal entry, pricing tiers, and subscription activation foundation
+- Public website, Professional and Corporate portal entry, pricing tiers, subscription activation, team invitations, and corporate member-management foundation
 
 ## Tech Stack
 
@@ -90,6 +90,10 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `017_evidence_storage_uploads.sql`: private Supabase Storage bucket, object policies, and uploaded evidence linking.
 - `018_connect_api_clients_webhooks.sql`: Connect API client registry, webhook subscriptions, status controls, and audit events.
 - `019_pricing_and_subscriptions.sql`: seeded pricing plans, organization subscriptions, trial activation, and audit events.
+- `020_team_invitations.sql`: corporate team invitations, invite lifecycle controls, notification events, and audit events.
+- `021_accept_team_invitations.sql`: invitee-owned pending invitation reads and acceptance into active organization memberships.
+- `022_member_management.sql`: corporate member directory support, peer profile reads, and admin suspend/restore workflow.
+- `023_corporate_access_grant_requests.sql`: corporate Verify users request Passport access from an existing professional by email.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -99,16 +103,23 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 1. Sign up or sign in with Supabase Auth.
 2. TrustGraph creates a Professional account automatically.
 3. Add live Passport records.
-4. Create a sample employer reviewer role or corporate account.
-5. Generate and approve an Access Grant to share current Passport records.
+4. Create a corporate account or accept an invitation into one.
+5. Corporate users invite team members, activate subscriptions, and request Access Grants from professionals by email.
 6. Switch to Verify to review approved shared records.
 7. Request structured references, missing records, or issuer-created credentials as needed.
 8. Upload private evidence files to Supabase Storage and link them to Passport records.
-9. Create a sample operations role, switch to Admin, seed operations cases, and review/restrict/resolve cases.
+9. Switch to Admin, seed operations cases only for test workflows, and review/restrict/resolve cases.
 10. Manage Connect API clients and webhook subscriptions from Admin.
-11. Activate a corporate subscription plan from the authenticated billing panel.
+11. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
 12. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
 13. Admin audit trail shows recent material workflow events.
+
+## Pending Live Database Approvals
+
+The frontend for these workflows is deployed, but these live Supabase migrations require explicit approval before applying because they change database functions and/or access-control behavior:
+
+- `022_member_management.sql`
+- `023_corporate_access_grant_requests.sql`
 
 ## Public Website and Pricing
 
