@@ -119,7 +119,7 @@ import {
   loadVerificationCases,
   verificationCaseToRecordItem
 } from "./operationsRepository";
-import { foundationTracks } from "./planAlignment";
+import { foundationTracks, lockedProfileAreas } from "./planAlignment";
 import { createPassportRecord, loadPassportRecords, loadSharedVerifyRecords, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
@@ -2096,6 +2096,8 @@ function PlanAlignmentPanel() {
   const deployedCount = foundationTracks.filter((track) => track.status === "deployed").length;
   const foundationCount = foundationTracks.filter((track) => track.status === "foundation").length;
   const plannedCount = foundationTracks.filter((track) => track.status === "planned").length;
+  const coveredProfileAreas = lockedProfileAreas.filter((area) => area.status !== "planned").length;
+  const plannedProfileAreas = lockedProfileAreas.length - coveredProfileAreas;
 
   return (
     <section className="plan-panel">
@@ -2124,6 +2126,33 @@ function PlanAlignmentPanel() {
         </div>
         <span className="status-chip success">database live</span>
       </article>
+      <div className="scope-coverage-panel">
+        <div className="scope-coverage-heading">
+          <div>
+            <span className="eyebrow">Locked profile scope</span>
+            <strong>19 professional record areas</strong>
+            <small>Coverage is traced from the original TrustGraph planning document into implementation status.</small>
+          </div>
+          <div className="scope-coverage-score">
+            <strong>{coveredProfileAreas}/{lockedProfileAreas.length}</strong>
+            <small>{plannedProfileAreas} planned</small>
+          </div>
+        </div>
+        <div className="scope-area-grid">
+          {lockedProfileAreas.map((area) => (
+            <article className="scope-area-card" key={area.id}>
+              <div>
+                <strong>{area.label}</strong>
+                <small>{area.evidence}</small>
+              </div>
+              <div className="plan-track-meta">
+                <span className={`status-chip ${toneClass(area.tone)}`}>{area.status}</span>
+                <span className="status-chip neutral">{area.productArea}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
       <div className="plan-track-grid">
         {foundationTracks.map((track) => (
           <article className="plan-track-card" key={track.id}>

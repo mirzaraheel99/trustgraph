@@ -2212,6 +2212,74 @@ p {
   gap: 8px;
 }
 
+.scope-coverage-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.055), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.scope-coverage-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.scope-coverage-heading strong,
+.scope-coverage-heading small,
+.scope-coverage-score strong,
+.scope-coverage-score small,
+.scope-area-card strong,
+.scope-area-card small {
+  display: block;
+}
+
+.scope-coverage-heading > div:first-child > strong {
+  margin: 5px 0;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.scope-coverage-score {
+  min-width: 104px;
+  text-align: right;
+}
+
+.scope-coverage-score strong {
+  color: var(--teal);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.scope-area-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.scope-area-card {
+  min-height: 132px;
+  display: grid;
+  align-content: space-between;
+  gap: 10px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.scope-area-card small {
+  margin-top: 6px;
+  line-height: 1.35;
+}
+
 .plan-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2726,6 +2794,7 @@ p {
   .operations-controls,
   .operations-summary-grid,
   .plan-summary-grid,
+  .scope-area-grid,
   .team-controls,
   .team-summary-grid,
   .verify-summary-grid,
