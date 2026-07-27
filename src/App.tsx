@@ -58,6 +58,7 @@ import {
   loadVerificationCases,
   verificationCaseToRecordItem
 } from "./operationsRepository";
+import { foundationTracks } from "./planAlignment";
 import { createPassportRecord, loadPassportRecords, loadSharedVerifyRecords, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
@@ -744,6 +745,31 @@ function AuditTrailPanel({
             </div>
           </article>
         )}
+      </div>
+    </section>
+  );
+}
+
+function PlanAlignmentPanel() {
+  return (
+    <section className="plan-panel">
+      <div className="mini-heading">
+        <ClipboardCheck size={16} />
+        <strong>13-track foundation alignment</strong>
+      </div>
+      <div className="plan-track-grid">
+        {foundationTracks.map((track) => (
+          <article className="plan-track-card" key={track.id}>
+            <div>
+              <strong>{track.label}</strong>
+              <small>{track.detail}</small>
+            </div>
+            <div className="plan-track-meta">
+              <span className={`status-chip ${toneClass(track.tone)}`}>{track.status}</span>
+              <span className="status-chip neutral">{track.planStep}</span>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -1704,6 +1730,7 @@ function App() {
                   onDecision={decideLiveOperationsCase}
                 />
                 <AuditTrailPanel events={auditEvents} message={auditStatus} />
+                <PlanAlignmentPanel />
               </>
             ) : null}
           </div>

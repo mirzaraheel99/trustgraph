@@ -766,6 +766,50 @@ p {
   border-style: dashed;
 }
 
+.plan-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(225, 184, 102, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.06), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.plan-track-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.plan-track-card {
+  min-height: 116px;
+  display: grid;
+  align-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.plan-track-card strong,
+.plan-track-card small {
+  display: block;
+}
+
+.plan-track-card small {
+  margin-top: 5px;
+}
+
+.plan-track-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
 .grant-list {
   display: grid;
   gap: 8px;
@@ -1087,6 +1131,7 @@ p {
   .record-edit-grid,
   .account-admin-row,
   .operations-case-card,
+  .plan-track-grid,
   .membership-list,
   .permission-panel {
     grid-template-columns: 1fr;
