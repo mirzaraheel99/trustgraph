@@ -22,7 +22,7 @@ import {
   UserPlus
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
-import type { RecordStatus, RecordType } from "./database";
+import type { DbVerificationCase, RecordStatus, RecordType, VerificationCaseStatus } from "./database";
 import {
   accountContextOrganizations,
   accountContextToSessionUser,
@@ -50,6 +50,13 @@ import {
   type VerifyAccessGrantView,
   type AccessGrantView
 } from "./grantRepository";
+import {
+  createSampleTrustGraphVerifierMembership,
+  createSampleVerificationCases,
+  decideVerificationCase,
+  loadVerificationCases,
+  verificationCaseToRecordItem
+} from "./operationsRepository";
 import { createPassportRecord, loadPassportRecords, loadSharedVerifyRecords, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
@@ -594,6 +601,111 @@ function VerifyRequestsPanel({
   );
 }
 
+function OperationsQueuePanel({
+  cases,
+  disabled,
+  message,
+  onCreateSamples,
+  onDecision
+}: {
+  cases: DbVerificationCase[];
+  disabled: boolean;
+  message: string;
+  onCreateSamples: () => Promise<void>;
+  onDecision: (caseId: string, status: VerificationCaseStatus) => Promise<void>;
+}) {
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [busySamples, setBusySamples] = useState(false);
+
+  async function decide(caseId: string, status: VerificationCaseStatus) {
+    setBusyId(caseId);
+    try {
+      await onDecision(caseId, status);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <section className="operations-panel">
+      <div className="mini-heading">
+        <ShieldAlert size={16} />
+        <strong>Live operations queue</strong>
+      </div>
+      <div className="grant-panel-top">
+        <small>{message}</small>
+        <button
+          className="secondary-action"
+          disabled={disabled || busySamples}
+          onClick={async () => {
+            setBusySamples(true);
+            try {
+              await onCreateSamples();
+            } finally {
+              setBusySamples(false);
+            }
+          }}
+        >
+          Seed cases
+        </button>
+      </div>
+      <div className="operations-case-list">
+        {cases.length ? (
+          cases.map((item) => (
+            <article className="operations-case-card" key={item.id}>
+              <div>
+                <div className="record-row-main">
+                  <span className="record-section">{item.case_type.replace(/_/g, " ")}</span>
+                  <strong>{item.title}</strong>
+                  <small>{item.summary}</small>
+                </div>
+                <div className="record-row-meta">
+                  <span className={`status-chip ${toneClass(item.priority === "critical" ? "danger" : item.priority === "high" ? "warning" : "info")}`}>
+                    {item.priority}
+                  </span>
+                  <span className="status-chip neutral">{item.status.replace(/_/g, " ")}</span>
+                  <span className="status-chip neutral">{item.reason_code}</span>
+                </div>
+              </div>
+              <div className="operations-actions">
+                <button
+                  className="secondary-action"
+                  disabled={disabled || busyId === item.id || item.status === "in_review"}
+                  onClick={() => void decide(item.id, "in_review")}
+                >
+                  Review
+                </button>
+                <button
+                  className="secondary-action"
+                  disabled={disabled || busyId === item.id || item.status === "restricted"}
+                  onClick={() => void decide(item.id, "restricted")}
+                >
+                  Restrict
+                </button>
+                <button
+                  className="primary-action"
+                  disabled={disabled || busyId === item.id || item.status === "resolved"}
+                  onClick={() => void decide(item.id, "resolved")}
+                >
+                  Resolve
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <article className="grant-card empty">
+            <div>
+              <strong>No live operations cases yet</strong>
+              <p>Seed sample cases to test TrustGraph verifier and compliance workflows.</p>
+            </div>
+          </article>
+        )}
+      </div>
+      {disabled ? <small>Switch to a TrustGraph verifier, compliance, or system admin role to manage operations cases.</small> : null}
+    </section>
+  );
+}
+
 function AccountPanel({
   accountUser,
   activeMembership,
@@ -601,6 +713,7 @@ function AccountPanel({
   authStatus,
   organizationList,
   onCreateCorporateAccount,
+  onCreateOperationsRole,
   onAssignRole,
   onSwitch
 }: {
@@ -614,6 +727,7 @@ function AccountPanel({
     organizationType: "employer" | "staffing_agency";
     organizationDomain: string;
   }) => Promise<void>;
+  onCreateOperationsRole: () => Promise<void>;
   onAssignRole: (organizationId: string, role: RoleKey) => Promise<void>;
   onSwitch: (membershipId: string) => void;
 }) {
@@ -662,6 +776,19 @@ function AccountPanel({
       setPanelStatus("Role activated for current profile");
     } catch (error) {
       setPanelStatus(error instanceof Error ? error.message : "Could not activate role");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function createOperationsRole() {
+    setBusy(true);
+    setPanelStatus("Creating operations role...");
+    try {
+      await onCreateOperationsRole();
+      setPanelStatus("TrustGraph Verifier role created");
+    } catch (error) {
+      setPanelStatus(error instanceof Error ? error.message : "Could not create operations role");
     } finally {
       setBusy(false);
     }
@@ -752,6 +879,9 @@ function AccountPanel({
           </button>
         </div>
         <small>{canManageActiveOrg ? "Admin can activate scoped roles for this profile." : "Switch to a corporate admin role to manage RBAC."}</small>
+        <button className="secondary-action" disabled={!authSession || busy} onClick={() => void createOperationsRole()} type="button">
+          Sample ops role
+        </button>
       </form>
       {panelStatus ? <small>{panelStatus}</small> : null}
     </section>
@@ -877,6 +1007,8 @@ function App() {
   const [verifyRequests, setVerifyRequests] = useState<VerifyAccessGrantView[]>([]);
   const [sharedVerifyRecords, setSharedVerifyRecords] = useState<RecordItem[]>([]);
   const [verifyStatus, setVerifyStatus] = useState("Switch to Verify role for live requests");
+  const [operationsCases, setOperationsCases] = useState<DbVerificationCase[]>([]);
+  const [operationsStatus, setOperationsStatus] = useState("Switch to Admin role for live operations");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -1026,6 +1158,39 @@ function App() {
     };
   }, [authSession, accountContext]);
 
+  useEffect(() => {
+    if (!authSession || !accountContext || workspaceId !== "admin") {
+      setOperationsCases([]);
+      setOperationsStatus("Switch to Admin role for live operations");
+      return;
+    }
+
+    if (!canAccessWorkspace(activeMembership.role, "admin")) {
+      setOperationsCases([]);
+      setOperationsStatus("Active role cannot access Admin operations");
+      return;
+    }
+
+    let cancelled = false;
+    setOperationsStatus("Loading live operations queue...");
+
+    loadVerificationCases(authSession.accessToken)
+      .then((items) => {
+        if (cancelled) return;
+        setOperationsCases(items);
+        setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No live operations cases yet");
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setOperationsCases([]);
+        setOperationsStatus(error instanceof Error ? error.message : "Could not load operations queue");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeMembership.role, authSession, accountContext, workspaceId]);
+
   const records = useMemo(() => {
     const q = query.toLowerCase().trim();
     const verifyRecords: RecordItem[] = verifyRequests.map((request) => ({
@@ -1054,11 +1219,14 @@ function App() {
       ]
     }));
     const verifyWorkspaceRecords = [...sharedVerifyRecords, ...verifyRecords];
+    const operationRecords = operationsCases.map(verificationCaseToRecordItem);
     const sourceRecords =
       workspace.id === "passport" && livePassportRecords.length
         ? livePassportRecords
         : workspace.id === "verify" && verifyWorkspaceRecords.length
           ? verifyWorkspaceRecords
+          : workspace.id === "admin" && operationRecords.length
+            ? operationRecords
           : workspace.records;
     return sourceRecords.filter((record) =>
       [record.title, record.subtitle, record.section, record.status, record.trust, record.source]
@@ -1066,7 +1234,7 @@ function App() {
         .toLowerCase()
         .includes(q)
     );
-  }, [livePassportRecords, query, sharedVerifyRecords, verifyRequests, workspace]);
+  }, [livePassportRecords, operationsCases, query, sharedVerifyRecords, verifyRequests, workspace]);
 
   const selectedRecord = records.find((record) => record.id === selectedId) ?? records[0] ?? workspace.records[0];
   const selectedRecordIsLive = livePassportRecords.some((record) => record.id === selectedRecord.id);
@@ -1220,6 +1388,45 @@ function App() {
     setAccountStatus("Corporate RBAC role updated");
   }
 
+  async function createLiveOperationsSamples() {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating operations cases.");
+    }
+
+    const added = await createSampleVerificationCases(authSession.accessToken);
+    const items = await loadVerificationCases(authSession.accessToken);
+    setOperationsCases(items);
+    setOperationsStatus(added ? `Created ${added} sample operations cases` : "Sample operations cases already exist");
+  }
+
+  async function decideLiveOperationsCase(caseId: string, status: VerificationCaseStatus) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before deciding operations cases.");
+    }
+
+    const updated = await decideVerificationCase({
+      caseId,
+      status,
+      resolution: status === "resolved" ? "Resolved from TrustGraph operations queue" : "Updated from TrustGraph operations queue",
+      accessToken: authSession.accessToken
+    });
+    setOperationsCases((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+    setOperationsStatus(`Case moved to ${updated.status.replace(/_/g, " ")}`);
+  }
+
+  async function createLiveOperationsRole() {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating an operations role.");
+    }
+
+    const membership = await createSampleTrustGraphVerifierMembership(authSession.accessToken);
+    const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
+    setAccountContext(context);
+    setActiveMembershipId(membership.id);
+    setWorkspaceId("admin");
+    setAccountStatus("TrustGraph operations role created");
+  }
+
   return (
     <div className="app">
       <aside className="sidebar">
@@ -1251,6 +1458,7 @@ function App() {
           organizationList={organizationList}
           onAssignRole={assignLiveCorporateRole}
           onCreateCorporateAccount={createLiveCorporateAccount}
+          onCreateOperationsRole={createLiveOperationsRole}
           onSwitch={switchMembership}
         />
 
@@ -1421,6 +1629,16 @@ function App() {
                 onCreateReviewerRole={createSampleReviewerRole}
                 requests={verifyRequests}
                 sharedRecords={sharedVerifyRecords}
+              />
+            ) : null}
+
+            {workspace.id === "admin" ? (
+              <OperationsQueuePanel
+                cases={operationsCases}
+                disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
+                message={operationsStatus}
+                onCreateSamples={createLiveOperationsSamples}
+                onDecision={decideLiveOperationsCase}
               />
             ) : null}
           </div>

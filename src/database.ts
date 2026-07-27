@@ -15,6 +15,15 @@ export type RecordType =
   | "health_clearance"
   | "custom";
 export type AccessGrantStatus = "requested" | "approved" | "declined" | "expired" | "revoked";
+export type VerificationCaseType =
+  | "identity_review"
+  | "license_mismatch"
+  | "employment_confirmation"
+  | "document_classification"
+  | "fraud_signal"
+  | "dispute";
+export type VerificationCaseStatus = "open" | "in_review" | "resolved" | "restricted" | "dismissed";
+export type VerificationCasePriority = "low" | "medium" | "high" | "critical";
 
 export interface DbOrganization {
   id: string;
@@ -89,6 +98,25 @@ export interface DbAuditEvent {
   reason: string | null;
   metadata: Record<string, unknown>;
   created_at: string;
+}
+
+export interface DbVerificationCase {
+  id: string;
+  organization_id: string | null;
+  subject_profile_id: string | null;
+  trust_record_id: string | null;
+  case_type: VerificationCaseType;
+  status: VerificationCaseStatus;
+  priority: VerificationCasePriority;
+  title: string;
+  summary: string;
+  reason_code: string;
+  assigned_to_profile_id: string | null;
+  resolution_note: string | null;
+  metadata: Record<string, unknown>;
+  due_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface RoleCapability {
