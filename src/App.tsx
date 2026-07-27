@@ -13,6 +13,7 @@ import {
   FileCheck2,
   FileText,
   Filter,
+  Fingerprint,
   KeyRound,
   LogIn,
   LockKeyhole,
