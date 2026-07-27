@@ -789,6 +789,54 @@ p,
   gap: 8px;
 }
 
+.role-preview-card {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.role-preview-card small,
+.role-preview-meta span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.role-preview-card small {
+  display: block;
+  margin-top: 7px;
+  line-height: 1.45;
+}
+
+.role-preview-meta,
+.role-permission-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.role-preview-meta span,
+.role-permission-list span {
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 800;
+}
+
+.role-permission-list span {
+  color: var(--text);
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
 .workspace {
   padding: 28px;
   min-width: 0;

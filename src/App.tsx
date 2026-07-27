@@ -1864,6 +1864,13 @@ function PlanAlignmentPanel() {
   );
 }
 
+function permissionLabel(permission: string) {
+  return permission
+    .split(":")
+    .map((part) => part.replace(/_/g, " "))
+    .join(" / ");
+}
+
 function AccountPanel({
   accountUser,
   activeMembership,
@@ -1900,6 +1907,7 @@ function AccountPanel({
   const [busy, setBusy] = useState(false);
   const [panelStatus, setPanelStatus] = useState("");
   const canManageActiveOrg = hasPermission(activeMembership.role, "organization:manage");
+  const selectedRole = getRole(targetRole);
   const roleOptions =
     activeOrg.type === "staffing_agency"
       ? (["staffing_agency_admin", "recruiter"] as RoleKey[])
@@ -2037,6 +2045,21 @@ function AccountPanel({
           </button>
         </div>
         <small>{canManageActiveOrg ? "Admin can activate scoped roles for this profile." : "Switch to a corporate admin role to manage RBAC."}</small>
+        <div className="role-preview-card">
+          <div>
+            <span className={`status-chip ${toneClass(selectedRole.risk)}`}>{selectedRole.label}</span>
+            <small>{selectedRole.description}</small>
+          </div>
+          <div className="role-preview-meta">
+            <span>{workspaces.find((workspace) => workspace.id === selectedRole.portal)?.label ?? selectedRole.portal}</span>
+            <span>{selectedRole.permissions.length} permissions</span>
+          </div>
+          <div className="role-permission-list">
+            {selectedRole.permissions.map((permission) => (
+              <span key={permission}>{permissionLabel(permission)}</span>
+            ))}
+          </div>
+        </div>
         <button className="secondary-action" disabled={!authSession || busy} onClick={() => void createOperationsRole()} type="button">
           Sample ops role
         </button>
