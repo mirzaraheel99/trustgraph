@@ -2490,6 +2490,22 @@ function PublicSite({
               Corporate portal
             </button>
           </div>
+          <div className="public-portal-rail">
+            <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")}>
+              <Fingerprint size={18} />
+              <span>
+                <strong>Professionals</strong>
+                <small>Build a private Passport and approve each Access Grant.</small>
+              </span>
+            </button>
+            <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")}>
+              <ShieldCheck size={18} />
+              <span>
+                <strong>Corporate teams</strong>
+                <small>Register an employer or staffing workspace with RBAC.</small>
+              </span>
+            </button>
+          </div>
         </div>
         <aside className="public-proof">
           <div>
@@ -2561,6 +2577,15 @@ function PublicSite({
           </p>
         </div>
         <form className="public-auth-card" onSubmit={submit}>
+          <div className="auth-card-heading">
+            <span className="status-chip neutral">{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</span>
+            <strong>{mode === "signup" ? "Create live account" : "Login to portal"}</strong>
+            <small>
+              {portal === "corporate"
+                ? "Create a company workspace, invite reviewers, activate billing, and request Passport access."
+                : "Create your professional profile, add records, upload evidence, and control sharing."}
+            </small>
+          </div>
           <div className="portal-tabs">
             <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
               Professional

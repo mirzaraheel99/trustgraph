@@ -105,6 +105,43 @@ button {
   line-height: 1.65;
 }
 
+.public-portal-rail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 760px;
+  margin-top: 20px;
+}
+
+.public-portal-rail button {
+  min-height: 106px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-portal-rail button.active {
+  border-color: rgba(82, 214, 196, 0.52);
+  background: rgba(82, 214, 196, 0.08);
+}
+
+.public-portal-rail strong,
+.public-portal-rail small,
+.auth-card-heading strong,
+.auth-card-heading small {
+  display: block;
+}
+
+.public-portal-rail small {
+  margin-top: 6px;
+}
+
 .public-proof {
   display: grid;
   gap: 12px;
@@ -194,6 +231,17 @@ button {
   display: grid;
   gap: 12px;
   padding: 18px;
+}
+
+.auth-card-heading {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.auth-card-heading strong {
+  font-size: 20px;
 }
 
 .public-auth-card input,
@@ -1748,6 +1796,7 @@ p {
   .hero,
   .public-hero,
   .public-auth-section,
+  .public-portal-rail,
   .metrics-grid,
   .work-grid,
   .portal-grid,
