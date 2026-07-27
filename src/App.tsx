@@ -2196,6 +2196,9 @@ function BillingPanel({
   const renewsAt = primarySubscription?.renews_at
     ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(primarySubscription.renews_at))
     : "Trial or manual renewal";
+  const estimatedSeatTotal = plans.length
+    ? Math.min(...plans.map((plan) => Math.max(plan.monthly_price_usd, plan.monthly_price_usd + Math.max(0, seats - plan.included_seats) * 19)))
+    : 0;
 
   async function activate(planId: string) {
     setBusyPlanId(planId);
@@ -2235,26 +2238,47 @@ function BillingPanel({
         <span>Seats</span>
         <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
       </div>
+      <div className="billing-estimate-card">
+        <div>
+          <span>Selected team size</span>
+          <strong>{seats} seats</strong>
+          <small>Estimated from configured live plans; extra seats use the current pilot overage model.</small>
+        </div>
+        <div>
+          <span>Projected monthly</span>
+          <strong>{estimatedSeatTotal ? `$${estimatedSeatTotal}` : "Load plans"}</strong>
+          <small>Activation writes a live organization subscription and audit event.</small>
+        </div>
+      </div>
       <div className="billing-plan-list">
         {plans.length ? (
-          plans.map((plan) => (
-            <article className="billing-plan-card" key={plan.id}>
-              <div>
-                <strong>{plan.name}</strong>
-                <p>${plan.monthly_price_usd}/month</p>
-                <small>
-                  {plan.included_seats} included seats - {plan.features.slice(0, 3).join(", ")}
-                </small>
-              </div>
-              <button
-                className={activePlanIds.has(plan.id) ? "secondary-action" : "primary-action"}
-                disabled={disabled || busyPlanId === plan.id || activePlanIds.has(plan.id)}
-                onClick={() => void activate(plan.id)}
-              >
-                {activePlanIds.has(plan.id) ? "Active" : "Activate"}
-              </button>
-            </article>
-          ))
+          plans.map((plan) => {
+            const extraSeats = Math.max(0, seats - plan.included_seats);
+            const projectedPrice = plan.monthly_price_usd + extraSeats * 19;
+            return (
+              <article className="billing-plan-card" key={plan.id}>
+                <div>
+                  <strong>{plan.name}</strong>
+                  <p>${projectedPrice}/month</p>
+                  <small>
+                    {plan.included_seats} included seats{extraSeats ? ` + ${extraSeats} pilot overage seats` : ""}.
+                  </small>
+                  <div className="billing-feature-row">
+                    {plan.features.slice(0, 4).map((feature) => (
+                      <span key={feature}>{feature}</span>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  className={activePlanIds.has(plan.id) ? "secondary-action" : "primary-action"}
+                  disabled={disabled || busyPlanId === plan.id || activePlanIds.has(plan.id)}
+                  onClick={() => void activate(plan.id)}
+                >
+                  {activePlanIds.has(plan.id) ? "Active" : "Activate"}
+                </button>
+              </article>
+            );
+          })
         ) : (
           <article className="billing-plan-card empty">
             <div>

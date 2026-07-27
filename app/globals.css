@@ -529,6 +529,41 @@ p,
   background: rgba(255, 255, 255, 0.035);
 }
 
+.billing-estimate-card {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.billing-estimate-card div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid rgba(112, 224, 178, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(112, 224, 178, 0.06), transparent 62%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.billing-estimate-card span,
+.billing-estimate-card strong,
+.billing-estimate-card small {
+  display: block;
+}
+
+.billing-estimate-card span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.billing-estimate-card strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
 .billing-plan-list {
   display: grid;
   gap: 8px;
@@ -547,6 +582,26 @@ p,
   margin: 4px 0;
   color: var(--teal);
   font-weight: 900;
+}
+
+.billing-feature-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.billing-feature-row span {
+  min-height: 25px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 7px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .billing-plan-card.empty {
@@ -2396,6 +2451,7 @@ p {
   .public-hero,
   .public-auth-section,
   .public-portal-rail,
+  .billing-estimate-card,
   .metrics-grid,
   .work-grid,
   .portal-grid,
