@@ -69,7 +69,7 @@ import {
   type VerifyAccessGrantView,
   type AccessGrantView
 } from "./grantRepository";
-import { createEvidenceDocument, loadEvidenceDocuments } from "./evidenceRepository";
+import { createEvidenceDocument, loadEvidenceDocuments, uploadEvidenceFile } from "./evidenceRepository";
 import {
   createMissingRecordRequest,
   loadVerifyMissingRecordRequests,
@@ -202,6 +202,7 @@ function RecordDetail({
     documentType: string;
     sourceName: string;
     evidenceSummary: string;
+    file: File | null;
   }) => Promise<void>;
   onUpdate: (input: {
     recordId: string;
@@ -222,6 +223,7 @@ function RecordDetail({
   const [documentType, setDocumentType] = useState("credential");
   const [evidenceSource, setEvidenceSource] = useState("");
   const [evidenceNote, setEvidenceNote] = useState("");
+  const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
   const [evidenceMessage, setEvidenceMessage] = useState("Attach evidence metadata to selected record");
   const [busy, setBusy] = useState(false);
   const [evidenceBusy, setEvidenceBusy] = useState(false);
@@ -236,6 +238,7 @@ function RecordDetail({
     setEvidenceTitle("");
     setEvidenceSource(record.source);
     setEvidenceNote("");
+    setEvidenceFile(null);
     setEvidenceMessage("Attach evidence metadata to selected record");
   }, [record]);
 
@@ -272,11 +275,13 @@ function RecordDetail({
         title: evidenceTitle,
         documentType,
         sourceName: evidenceSource,
-        evidenceSummary: evidenceNote
+        evidenceSummary: evidenceNote,
+        file: evidenceFile
       });
       setEvidenceTitle("");
       setEvidenceNote("");
-      setEvidenceMessage("Evidence metadata linked");
+      setEvidenceFile(null);
+      setEvidenceMessage(evidenceFile ? "Evidence file uploaded" : "Evidence metadata linked");
     } catch (error) {
       setEvidenceMessage(error instanceof Error ? error.message : "Could not link evidence");
     } finally {
@@ -380,10 +385,19 @@ function RecordDetail({
               <input value={evidenceSource} onChange={(event) => setEvidenceSource(event.target.value)} placeholder="Evidence source" />
             </div>
             <input value={evidenceNote} onChange={(event) => setEvidenceNote(event.target.value)} placeholder="Evidence note" />
+            <label className="file-input">
+              <FileCheck2 size={15} />
+              <span>{evidenceFile ? evidenceFile.name : "Attach PDF, image, or text file"}</span>
+              <input
+                accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,application/pdf,image/png,image/jpeg,image/webp,text/plain"
+                onChange={(event) => setEvidenceFile(event.target.files?.[0] ?? null)}
+                type="file"
+              />
+            </label>
             <div className="record-form-footer">
               <small>{evidenceMessage}</small>
               <button className="secondary-action" disabled={evidenceBusy || !evidenceTitle || !evidenceSource} type="submit">
-                Link evidence
+                {evidenceFile ? "Upload evidence" : "Link evidence"}
               </button>
             </div>
           </form>
@@ -2056,14 +2070,37 @@ function App() {
     documentType: string;
     sourceName: string;
     evidenceSummary: string;
+    file: File | null;
   }) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before linking evidence metadata.");
     }
 
+    const allowedTypes = new Set(["application/pdf", "image/jpeg", "image/png", "image/webp", "text/plain"]);
+    if (input.file && !allowedTypes.has(input.file.type)) {
+      throw new Error("Evidence file must be a PDF, image, or text file.");
+    }
+    if (input.file && input.file.size > 10 * 1024 * 1024) {
+      throw new Error("Evidence file must be 10MB or smaller.");
+    }
+
+    const storagePath = input.file
+      ? await uploadEvidenceFile({
+          accessToken: authSession.accessToken,
+          profileId: accountContext.profile.id,
+          recordId: input.recordId,
+          file: input.file
+        })
+      : undefined;
+
     const document = await createEvidenceDocument({
       accessToken: authSession.accessToken,
-      ...input
+      recordId: input.recordId,
+      title: input.title,
+      documentType: input.documentType,
+      sourceName: input.sourceName,
+      evidenceSummary: input.evidenceSummary,
+      storagePath
     });
     const [documents, notifications, events] = await Promise.all([
       loadEvidenceDocuments(authSession.accessToken),

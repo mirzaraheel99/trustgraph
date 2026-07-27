@@ -257,6 +257,28 @@ p,
   font-size: 12px;
 }
 
+.file-input {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: var(--muted);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.file-input input {
+  display: none;
+}
+
+.file-input span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .account-user span,
 .account-user small,
 .membership-button span,

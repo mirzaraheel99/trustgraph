@@ -48,6 +48,43 @@ export async function supabaseRest<T>(path: string, init: RequestInit & { access
   return response.json() as Promise<T>;
 }
 
+export async function supabaseStorageUpload(input: {
+  bucket: string;
+  path: string;
+  file: File;
+  accessToken: string;
+}): Promise<{ path: string }> {
+  const config = getSupabaseConfig();
+
+  if (!config) {
+    throw new Error("Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+  }
+
+  const response = await fetch(
+    `${config.url}/storage/v1/object/${encodeURIComponent(input.bucket)}/${input.path
+      .split("/")
+      .map((part) => encodeURIComponent(part))
+      .join("/")}`,
+    {
+      method: "POST",
+      headers: {
+        apikey: config.anonKey,
+        Authorization: `Bearer ${input.accessToken}`,
+        "Content-Type": input.file.type || "application/octet-stream",
+        "x-upsert": "false"
+      },
+      body: input.file
+    }
+  );
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(`Supabase storage upload failed: ${response.status} ${message}`);
+  }
+
+  return response.json() as Promise<{ path: string }>;
+}
+
 export async function supabaseRpc<T>(
   functionName: string,
   body: Record<string, unknown>,

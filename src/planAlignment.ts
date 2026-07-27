@@ -78,9 +78,9 @@ export const foundationTracks: FoundationTrack[] = [
     id: "documents",
     label: "Evidence Documents",
     planStep: "Steps 07, 15",
-    status: "planned",
-    detail: "Private storage and malware scanning remain next.",
-    tone: "warning"
+    status: "foundation",
+    detail: "Private Supabase Storage upload and evidence metadata linking are live.",
+    tone: "info"
   },
   {
     id: "references",
