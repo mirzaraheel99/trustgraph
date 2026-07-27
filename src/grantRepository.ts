@@ -48,6 +48,23 @@ export async function decideAccessGrant(input: {
   );
 }
 
+export async function createAccessGrantRequest(input: {
+  subjectEmail: string;
+  purpose: string;
+  expiresInDays: number;
+  accessToken: string;
+}): Promise<DbAccessGrant> {
+  return supabaseRpc<DbAccessGrant>(
+    "create_access_grant_request",
+    {
+      target_subject_email: input.subjectEmail,
+      request_purpose: input.purpose,
+      expires_in_days: input.expiresInDays
+    },
+    { accessToken: input.accessToken }
+  );
+}
+
 export async function syncAccessGrantRecords(grantId: string, accessToken: string): Promise<number> {
   return supabaseRpc<number>("sync_access_grant_records", { target_grant_id: grantId }, { accessToken });
 }

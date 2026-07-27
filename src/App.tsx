@@ -84,6 +84,7 @@ import {
   markWebhookSubscriptionStatus
 } from "./connectRepository";
 import {
+  createAccessGrantRequest,
   createSampleAccessGrant,
   decideAccessGrant,
   loadAccessGrants,
@@ -818,6 +819,7 @@ function VerifyRequestsPanel({
   missingRecordRequests,
   requests,
   sharedRecords,
+  onCreateAccessRequest,
   onCreateIssuerRole,
   onCreateMissingRecordRequest,
   onIssueCredential,
@@ -833,6 +835,7 @@ function VerifyRequestsPanel({
   missingRecordRequests: DbMissingRecordRequest[];
   requests: VerifyAccessGrantView[];
   sharedRecords: RecordItem[];
+  onCreateAccessRequest: (input: { subjectEmail: string; purpose: string; expiresInDays: number }) => Promise<void>;
   onCreateIssuerRole: () => Promise<void>;
   onIssueCredential: (input: {
     subjectEmail: string;
@@ -855,6 +858,30 @@ function VerifyRequestsPanel({
   onCreateReviewerRole: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
+  const [requestBusy, setRequestBusy] = useState(false);
+  const [subjectEmail, setSubjectEmail] = useState("");
+  const [purpose, setPurpose] = useState("Hiring readiness review for verified identity, employment, license, and certification records");
+  const [expiresInDays, setExpiresInDays] = useState(14);
+  const [requestStatus, setRequestStatus] = useState(message);
+
+  useEffect(() => {
+    setRequestStatus(message);
+  }, [message]);
+
+  async function submitAccessRequest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setRequestBusy(true);
+    setRequestStatus("Requesting Passport access...");
+    try {
+      await onCreateAccessRequest({ subjectEmail, purpose, expiresInDays });
+      setSubjectEmail("");
+      setRequestStatus("Access request sent to professional");
+    } catch (error) {
+      setRequestStatus(error instanceof Error ? error.message : "Could not create Access Grant request");
+    } finally {
+      setRequestBusy(false);
+    }
+  }
 
   return (
     <section className="verify-panel">
@@ -862,8 +889,39 @@ function VerifyRequestsPanel({
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
       </div>
+      <form className="verify-request-form" onSubmit={submitAccessRequest}>
+        <div className="record-form-grid">
+          <input
+            disabled={disabled || requestBusy}
+            onChange={(event) => setSubjectEmail(event.target.value)}
+            placeholder="professional@email.com"
+            type="email"
+            value={subjectEmail}
+          />
+          <input
+            disabled={disabled || requestBusy}
+            onChange={(event) => setPurpose(event.target.value)}
+            placeholder="Business reason for requesting Passport access"
+            value={purpose}
+          />
+          <input
+            disabled={disabled || requestBusy}
+            max={90}
+            min={1}
+            onChange={(event) => setExpiresInDays(Number(event.target.value))}
+            type="number"
+            value={expiresInDays}
+          />
+        </div>
+        <div className="record-form-footer">
+          <small>{requestStatus}</small>
+          <button className="primary-action" disabled={disabled || requestBusy || !subjectEmail || purpose.length < 12} type="submit">
+            Request access
+          </button>
+        </div>
+      </form>
       <div className="grant-panel-top">
-        <small>{message}</small>
+        <small>Use test tooling only when validating demo data paths.</small>
         <button
           className="secondary-action"
           disabled={busy}
@@ -3246,6 +3304,28 @@ function App() {
     setGrantStatus("Sample Access Grant request created");
   }
 
+  async function createLiveAccessGrantRequest(input: { subjectEmail: string; purpose: string; expiresInDays: number }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in with a corporate role before requesting Passport access.");
+    }
+
+    const grant = await createAccessGrantRequest({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const [requests, events, notifications] = await Promise.all([
+      loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents),
+      loadNotificationEvents(authSession.accessToken).catch(() => notificationEvents)
+    ]);
+    setVerifyRequests(requests);
+    setAuditEvents(events);
+    setNotificationEvents(notifications);
+    setVerifyStatus(`Access request created for ${grant.subject_profile_id}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+  }
+
   async function createSampleReviewerRole() {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before creating a sample reviewer role.");
@@ -3878,6 +3958,7 @@ function App() {
                 message={verifyStatus}
                 missingRecordMessage={missingRecordStatus}
                 missingRecordRequests={missingRecordRequests}
+                onCreateAccessRequest={createLiveAccessGrantRequest}
                 onCreateMissingRecordRequest={createLiveMissingRecordRequest}
                 onCreateIssuerRole={createLiveCredentialIssuerRole}
                 onCreateReviewerRole={createSampleReviewerRole}
