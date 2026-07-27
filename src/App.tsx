@@ -2430,6 +2430,13 @@ function NotificationPanel({
   onStatus: (notificationId: string, status: "delivered" | "suppressed") => Promise<void>;
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [notificationQuery, setNotificationQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "queued" | "delivered" | "suppressed">("all");
+  const filteredEvents = events.filter((event) => {
+    const matchesStatus = statusFilter === "all" || event.status === statusFilter;
+    const haystack = `${event.title} ${event.body} ${event.event_type}`.toLowerCase();
+    return matchesStatus && haystack.includes(notificationQuery.trim().toLowerCase());
+  });
 
   async function updateStatus(notificationId: string, status: "delivered" | "suppressed") {
     setBusyId(notificationId);
@@ -2447,9 +2454,22 @@ function NotificationPanel({
         <strong>Notifications</strong>
       </div>
       <small>{message}</small>
+      <div className="notification-controls">
+        <input
+          onChange={(event) => setNotificationQuery(event.target.value)}
+          placeholder="Search notifications"
+          value={notificationQuery}
+        />
+        <select onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)} value={statusFilter}>
+          <option value="all">All</option>
+          <option value="queued">Queued</option>
+          <option value="delivered">Delivered</option>
+          <option value="suppressed">Suppressed</option>
+        </select>
+      </div>
       <div className="notification-list">
-        {events.length ? (
-          events.slice(0, 4).map((event) => (
+        {filteredEvents.length ? (
+          filteredEvents.slice(0, 6).map((event) => (
             <article className="notification-card" key={event.id}>
               <div>
                 <strong>{event.title}</strong>
@@ -2477,8 +2497,8 @@ function NotificationPanel({
         ) : (
           <article className="notification-card empty">
             <div>
-              <strong>No live notifications</strong>
-              <small>Workflow alerts will appear here.</small>
+              <strong>No matching notifications</strong>
+              <small>Workflow alerts will appear here when they match the current filter.</small>
             </div>
           </article>
         )}

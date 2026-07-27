@@ -576,6 +576,27 @@ p,
   gap: 8px;
 }
 
+.notification-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 112px;
+  gap: 8px;
+}
+
+.notification-controls input,
+.notification-controls select {
+  min-height: 36px;
+  width: 100%;
+  padding: 0 9px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.notification-controls select {
+  color-scheme: dark;
+}
+
 .notification-card {
   display: grid;
   gap: 8px;
