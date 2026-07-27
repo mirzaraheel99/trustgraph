@@ -277,6 +277,17 @@ button {
   padding: 18px;
 }
 
+.public-auth-card.corporate-mode {
+  border-color: rgba(134, 174, 246, 0.32);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 62%),
+    var(--panel);
+}
+
+.public-auth-card.professional-mode {
+  border-color: rgba(82, 214, 196, 0.24);
+}
+
 .auth-card-heading {
   display: grid;
   gap: 8px;

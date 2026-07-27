@@ -2990,6 +2990,11 @@ function PublicSite({
     }
   ];
   const pilotSignals = ["Supabase Auth", "Real database repositories", "Private evidence storage", "GitHub Pages deployment"];
+  function openPortal(nextPortal: "professional" | "corporate") {
+    setPortal(nextPortal);
+    setMode("signup");
+    window.requestAnimationFrame(() => document.getElementById("portal-auth")?.scrollIntoView({ behavior: "smooth" }));
+  }
 
   return (
     <main className="public-site">
@@ -3020,22 +3025,22 @@ function PublicSite({
             a permissioned Verify portal for approved records, missing items, credentials, and audit-backed decisions.
           </p>
           <div className="public-hero-actions">
-            <button className="primary-action" onClick={() => setPortal("professional")}>
+            <button className="primary-action" onClick={() => openPortal("professional")}>
               Professional portal
             </button>
-            <button className="secondary-action" onClick={() => setPortal("corporate")}>
+            <button className="secondary-action" onClick={() => openPortal("corporate")}>
               Corporate portal
             </button>
           </div>
           <div className="public-portal-rail">
-            <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")}>
+            <button className={portal === "professional" ? "active" : ""} onClick={() => openPortal("professional")}>
               <Fingerprint size={18} />
               <span>
                 <strong>Professionals</strong>
                 <small>Build a private Passport and approve each Access Grant.</small>
               </span>
             </button>
-            <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")}>
+            <button className={portal === "corporate" ? "active" : ""} onClick={() => openPortal("corporate")}>
               <ShieldCheck size={18} />
               <span>
                 <strong>Corporate teams</strong>
@@ -3134,7 +3139,7 @@ function PublicSite({
               : "Sign in or register to create your professional account and start building your private Passport."}
           </p>
         </div>
-        <form className="public-auth-card" onSubmit={submit}>
+        <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
           <div className="auth-card-heading">
             <span className="status-chip neutral">{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</span>
             <strong>{mode === "signup" ? "Create live account" : "Login to portal"}</strong>
