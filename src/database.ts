@@ -4,6 +4,7 @@ export type OrganizationType = "professional" | "employer" | "staffing_agency" |
 export type OrganizationStatus = "active" | "pending_approval" | "restricted";
 export type MembershipStatus = "active" | "invited" | "suspended";
 export type RecordStatus = "draft" | "pending_verification" | "verified" | "expired" | "disputed" | "revoked" | "restricted";
+export type TrustRecordSensitivity = "standard" | "sensitive" | "restricted";
 export type RecordType =
   | "identity"
   | "employment"
@@ -87,6 +88,8 @@ export interface DbTrustRecord {
   status: RecordStatus;
   source_name: string;
   evidence_summary: string | null;
+  sensitivity: TrustRecordSensitivity;
+  consent_required: boolean;
   issued_at: string | null;
   expires_at: string | null;
   metadata: Record<string, unknown>;

@@ -197,9 +197,9 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     id: "background-checks",
     label: "Background-check results",
     productArea: "Compliance",
-    status: "planned",
-    evidence: "Sensitive classification is planned; final legal/provider workflow requires counsel and vendor decisions.",
-    tone: "neutral"
+    status: "foundation",
+    evidence: "Sensitive/restricted record classification and explicit consent requirements are live; final legal/provider workflow requires counsel and vendor decisions.",
+    tone: "info"
   },
   {
     id: "training",

@@ -44,6 +44,7 @@ import type {
   ReferenceRequestStatus,
   RecordStatus,
   RecordType,
+  TrustRecordSensitivity,
   VerificationCaseStatus
 } from "./database";
 import {
@@ -289,6 +290,8 @@ function RecordDetail({
     evidenceSummary: string;
     expiresAt: string;
     status: RecordStatus;
+    sensitivity: TrustRecordSensitivity;
+    consentRequired: boolean;
   }) => Promise<void>;
 }) {
   const [title, setTitle] = useState(record.title);
@@ -296,6 +299,8 @@ function RecordDetail({
   const [evidenceSummary, setEvidenceSummary] = useState(record.evidence === "Evidence details pending" ? "" : record.evidence);
   const [expiresAt, setExpiresAt] = useState("");
   const [status, setStatus] = useState<RecordStatus>("draft");
+  const [sensitivity, setSensitivity] = useState<TrustRecordSensitivity>("standard");
+  const [consentRequired, setConsentRequired] = useState(false);
   const [message, setMessage] = useState("Update selected live record");
   const [evidenceTitle, setEvidenceTitle] = useState("");
   const [documentType, setDocumentType] = useState("credential");
@@ -322,6 +327,8 @@ function RecordDetail({
     setEvidenceSummary(record.evidence === "Evidence details pending" ? "" : record.evidence);
     setExpiresAt("");
     setStatus(record.status === "pending verification" ? "pending_verification" : "draft");
+    setSensitivity((record.sensitivity as TrustRecordSensitivity | undefined) ?? "standard");
+    setConsentRequired(Boolean(record.consentRequired));
     setMessage("Update selected live record");
     setEvidenceTitle("");
     setEvidenceSource(record.source);
@@ -344,7 +351,9 @@ function RecordDetail({
         sourceName,
         evidenceSummary,
         expiresAt,
-        status
+        status,
+        sensitivity,
+        consentRequired
       });
       setMessage("Record updated");
     } catch (error) {
@@ -404,6 +413,14 @@ function RecordDetail({
         <div>
           <span>Expiration</span>
           <strong>{record.expires}</strong>
+        </div>
+        <div>
+          <span>Sensitivity</span>
+          <strong>{record.sensitivity ?? "standard"}</strong>
+        </div>
+        <div>
+          <span>Consent rule</span>
+          <strong>{record.consentRequired ? "Required" : "Standard sharing"}</strong>
         </div>
       </div>
 
@@ -493,6 +510,17 @@ function RecordDetail({
                 <option value="pending_verification">Pending verification</option>
               </select>
             </div>
+            <div className="record-edit-grid">
+              <select value={sensitivity} onChange={(event) => setSensitivity(event.target.value as TrustRecordSensitivity)}>
+                <option value="standard">Standard</option>
+                <option value="sensitive">Sensitive</option>
+                <option value="restricted">Restricted</option>
+              </select>
+              <select value={consentRequired ? "required" : "standard"} onChange={(event) => setConsentRequired(event.target.value === "required")}>
+                <option value="standard">Standard sharing</option>
+                <option value="required">Explicit consent required</option>
+              </select>
+            </div>
             <div className="record-form-footer">
               <small>{message}</small>
               <button className="secondary-action" disabled={busy || !title || !sourceName} type="submit">
@@ -573,6 +601,8 @@ function PassportRecordForm({
     evidenceSummary: string;
     issuedAt: string;
     expiresAt: string;
+    sensitivity: TrustRecordSensitivity;
+    consentRequired: boolean;
   }) => Promise<void>;
 }) {
   const [type, setType] = useState<RecordType>("employment");
@@ -581,8 +611,24 @@ function PassportRecordForm({
   const [evidenceSummary, setEvidenceSummary] = useState("");
   const [issuedAt, setIssuedAt] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
+  const [sensitivity, setSensitivity] = useState<TrustRecordSensitivity>("standard");
+  const [consentRequired, setConsentRequired] = useState(false);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState(message);
+
+  function updateType(nextType: RecordType) {
+    setType(nextType);
+    if (["background_check", "performance_review", "health_clearance", "identity"].includes(nextType)) {
+      setSensitivity("restricted");
+      setConsentRequired(true);
+    } else if (["reference", "license", "certification", "training", "continuing_education"].includes(nextType)) {
+      setSensitivity("sensitive");
+      setConsentRequired(nextType === "reference");
+    } else {
+      setSensitivity("standard");
+      setConsentRequired(false);
+    }
+  }
 
   useEffect(() => {
     setStatus(message);
@@ -594,12 +640,14 @@ function PassportRecordForm({
     setStatus("Saving live Passport record...");
 
     try {
-      await onCreate({ type, title, sourceName, evidenceSummary, issuedAt, expiresAt });
+      await onCreate({ type, title, sourceName, evidenceSummary, issuedAt, expiresAt, sensitivity, consentRequired });
       setTitle("");
       setSourceName("");
       setEvidenceSummary("");
       setIssuedAt("");
       setExpiresAt("");
+      setSensitivity("standard");
+      setConsentRequired(false);
       setStatus("Record added to Supabase Passport");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Could not add Passport record");
@@ -615,7 +663,7 @@ function PassportRecordForm({
         <strong>Add live Passport record</strong>
       </div>
       <div className="record-form-grid">
-        <select value={type} onChange={(event) => setType(event.target.value as RecordType)} disabled={disabled || busy}>
+        <select value={type} onChange={(event) => updateType(event.target.value as RecordType)} disabled={disabled || busy}>
           <option value="employment">Employment</option>
           <option value="contract_assignment">Contract assignment</option>
           <option value="education">Education</option>
@@ -661,6 +709,15 @@ function PassportRecordForm({
           placeholder="Evidence summary"
           disabled={disabled || busy}
         />
+        <select value={sensitivity} onChange={(event) => setSensitivity(event.target.value as TrustRecordSensitivity)} disabled={disabled || busy}>
+          <option value="standard">Standard</option>
+          <option value="sensitive">Sensitive</option>
+          <option value="restricted">Restricted</option>
+        </select>
+        <select value={consentRequired ? "required" : "standard"} onChange={(event) => setConsentRequired(event.target.value === "required")} disabled={disabled || busy}>
+          <option value="standard">Standard sharing</option>
+          <option value="required">Explicit consent required</option>
+        </select>
       </div>
       <div className="record-type-guide">
         <span>First-class scope:</span>
@@ -4139,6 +4196,8 @@ function App() {
     evidenceSummary: string;
     issuedAt: string;
     expiresAt: string;
+    sensitivity: TrustRecordSensitivity;
+    consentRequired: boolean;
   }) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before creating live Passport records.");
@@ -4161,6 +4220,8 @@ function App() {
     evidenceSummary: string;
     expiresAt: string;
     status: RecordStatus;
+    sensitivity: TrustRecordSensitivity;
+    consentRequired: boolean;
   }) {
     if (!authSession) {
       throw new Error("Sign in before updating live Passport records.");
@@ -4174,7 +4235,9 @@ function App() {
       evidenceSummary: input.evidenceSummary,
       issuedAt: "",
       expiresAt: input.expiresAt,
-      status: input.status
+      status: input.status,
+      sensitivity: input.sensitivity,
+      consentRequired: input.consentRequired
     });
 
     setLivePassportRecords((current) => current.map((record) => (record.id === updated.id ? updated : record)));

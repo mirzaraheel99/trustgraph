@@ -96,6 +96,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `023_corporate_access_grant_requests.sql`: corporate Verify users request Passport access from an existing professional by email.
 - `024_expand_record_types.sql`: first-class record types for contracts, training, skills, performance reviews, and continuing education.
 - `025_consent_authorizations.sql`: owner-controlled consent authorization records, revoke workflow, RLS, and audit events.
+- `026_sensitive_record_controls.sql`: trust record sensitivity classification, explicit consent requirement flags, and audit coverage.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -118,7 +119,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `025_consent_authorizations.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, and consent authorization records.
+Live Supabase migrations are applied through `026_sensitive_record_controls.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, and sensitive-record privacy controls.
 
 ## Public Website and Pricing
 

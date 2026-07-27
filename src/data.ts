@@ -49,6 +49,8 @@ export interface RecordItem {
   expires: string;
   access: string;
   evidence: string;
+  sensitivity?: string;
+  consentRequired?: boolean;
   tone: Tone;
   progress: number;
   timeline: Array<{

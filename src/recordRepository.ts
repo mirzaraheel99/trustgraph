@@ -1,5 +1,5 @@
 import type { RecordItem, Tone } from "./data";
-import type { DbAccessGrant, DbTrustRecord, RecordStatus, RecordType } from "./database";
+import type { DbAccessGrant, DbTrustRecord, RecordStatus, RecordType, TrustRecordSensitivity } from "./database";
 import { supabaseRest } from "./supabase";
 
 const recordTypeLabels: Record<RecordType, string> = {
@@ -33,6 +33,10 @@ function statusLabel(status: DbTrustRecord["status"]) {
   return status.replace(/_/g, " ");
 }
 
+function sensitivityLabel(sensitivity: TrustRecordSensitivity) {
+  return sensitivity.replace(/_/g, " ");
+}
+
 function dateLabel(value: string | null) {
   if (!value) return "No expiration";
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value));
@@ -55,6 +59,8 @@ export function trustRecordToRecordItem(record: DbTrustRecord): RecordItem {
     expires: record.expires_at ? dateLabel(record.expires_at) : "No expiration",
     access: "Private until shared through an Access Grant",
     evidence: record.evidence_summary || "Evidence details pending",
+    sensitivity: sensitivityLabel(record.sensitivity ?? "standard"),
+    consentRequired: Boolean(record.consent_required),
     tone: statusTone[record.status],
     progress: record.status === "verified" ? 84 : 38,
     timeline: [
@@ -116,6 +122,8 @@ export async function createPassportRecord(input: {
   evidenceSummary?: string;
   issuedAt?: string;
   expiresAt?: string;
+  sensitivity: TrustRecordSensitivity;
+  consentRequired: boolean;
 }): Promise<RecordItem> {
   const [record] = await supabaseRest<DbTrustRecord[]>("trust_records", {
     method: "POST",
@@ -127,6 +135,8 @@ export async function createPassportRecord(input: {
       status: "draft",
       source_name: input.sourceName,
       evidence_summary: input.evidenceSummary || null,
+      sensitivity: input.sensitivity,
+      consent_required: input.consentRequired,
       issued_at: input.issuedAt || null,
       expires_at: input.expiresAt || null
     })
@@ -144,6 +154,8 @@ export async function updatePassportRecord(input: {
   issuedAt?: string;
   expiresAt?: string;
   status: RecordStatus;
+  sensitivity: TrustRecordSensitivity;
+  consentRequired: boolean;
 }): Promise<RecordItem> {
   const [record] = await supabaseRest<DbTrustRecord[]>(`trust_records?id=eq.${encodeURIComponent(input.recordId)}`, {
     method: "PATCH",
@@ -154,7 +166,9 @@ export async function updatePassportRecord(input: {
       evidence_summary: input.evidenceSummary || null,
       issued_at: input.issuedAt || null,
       expires_at: input.expiresAt || null,
-      status: input.status
+      status: input.status,
+      sensitivity: input.sensitivity,
+      consent_required: input.consentRequired
     })
   });
 
