@@ -36,7 +36,12 @@ import {
   signUpWithPassword,
   type AuthSession
 } from "./auth";
-import { decideAccessGrant, loadAccessGrants, type AccessGrantView } from "./grantRepository";
+import {
+  createSampleAccessGrant,
+  decideAccessGrant,
+  loadAccessGrants,
+  type AccessGrantView
+} from "./grantRepository";
 import { createPassportRecord, loadPassportRecords, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
@@ -391,13 +396,16 @@ function AccessGrantsPanel({
   grants,
   message,
   onDecision
+  onSampleRequest
 }: {
   disabled: boolean;
   grants: AccessGrantView[];
   message: string;
   onDecision: (grantId: string, status: "approved" | "declined" | "revoked") => Promise<void>;
+  onSampleRequest: () => Promise<void>;
 }) {
   const [busyGrantId, setBusyGrantId] = useState<string | null>(null);
+  const [sampleBusy, setSampleBusy] = useState(false);
 
   async function decide(grantId: string, status: "approved" | "declined" | "revoked") {
     setBusyGrantId(grantId);
@@ -414,7 +422,23 @@ function AccessGrantsPanel({
         <KeyRound size={16} />
         <strong>Access Grants</strong>
       </div>
-      <small>{message}</small>
+      <div className="grant-panel-top">
+        <small>{message}</small>
+        <button
+          className="secondary-action"
+          disabled={disabled || sampleBusy}
+          onClick={async () => {
+            setSampleBusy(true);
+            try {
+              await onSampleRequest();
+            } finally {
+              setSampleBusy(false);
+            }
+          }}
+        >
+          Sample request
+        </button>
+      </div>
       <div className="grant-list">
         {grants.length ? (
           grants.map((grant) => (
@@ -839,6 +863,17 @@ function App() {
     setGrantStatus("Live Supabase Access Grants");
   }
 
+  async function createSampleGrantRequest() {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating a sample Access Grant request.");
+    }
+
+    await createSampleAccessGrant(authSession.accessToken);
+    const items = await loadAccessGrants(accountContext.profile.id, authSession.accessToken);
+    setAccessGrants(items);
+    setGrantStatus("Sample Access Grant request created");
+  }
+
   return (
     <div className="app">
       <aside className="sidebar">
@@ -1026,6 +1061,7 @@ function App() {
                   grants={accessGrants}
                   message={grantStatus}
                   onDecision={handleGrantDecision}
+                  onSampleRequest={createSampleGrantRequest}
                 />
               </>
             ) : null}

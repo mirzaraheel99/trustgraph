@@ -659,6 +659,13 @@ p {
   gap: 8px;
 }
 
+.grant-panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .grant-card {
   display: flex;
   justify-content: space-between;
@@ -927,6 +934,7 @@ p {
   .topbar,
   .panel-heading,
   .record-row-main,
+  .grant-panel-top,
   .grant-card,
   .topbar-actions,
   .record-form-footer {

@@ -32,3 +32,7 @@ export async function decideAccessGrant(input: {
     { accessToken: input.accessToken }
   );
 }
+
+export async function createSampleAccessGrant(accessToken: string): Promise<DbAccessGrant> {
+  return supabaseRpc<DbAccessGrant>("create_sample_access_grant_request", {}, { accessToken });
+}
