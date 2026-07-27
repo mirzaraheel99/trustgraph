@@ -2879,6 +2879,24 @@ function PublicSite({
       points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"]
     }
   ];
+  const liveWorkflow = [
+    {
+      label: "Professional",
+      value: "Passport",
+      detail: "Create records, attach evidence, request references, and approve corporate Access Grants."
+    },
+    {
+      label: "Corporate",
+      value: "Verify",
+      detail: "Register an employer or staffing workspace, invite reviewers, and work approved records."
+    },
+    {
+      label: "Admin",
+      value: "Control",
+      detail: "Monitor operations cases, audit events, notifications, Connect clients, and readiness status."
+    }
+  ];
+  const pilotSignals = ["Supabase Auth", "Real database repositories", "Private evidence storage", "GitHub Pages deployment"];
 
   return (
     <main className="public-site">
@@ -2973,6 +2991,22 @@ function PublicSite({
         </div>
       </section>
 
+      <section className="public-section workflow-section">
+        <div className="public-section-heading">
+          <span className="eyebrow">Live workflow</span>
+          <h2>From registration to verified workforce decisions</h2>
+        </div>
+        <div className="workflow-grid">
+          {liveWorkflow.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <p>{item.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="public-section pricing-section">
         <div className="public-section-heading">
           <span className="eyebrow">Pricing</span>
@@ -2988,6 +3022,11 @@ function PublicSite({
                 <small key={point}>{point}</small>
               ))}
             </article>
+          ))}
+        </div>
+        <div className="pilot-signal-row">
+          {pilotSignals.map((signal) => (
+            <span key={signal}>{signal}</span>
           ))}
         </div>
       </section>
