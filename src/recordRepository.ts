@@ -5,11 +5,16 @@ import { supabaseRest } from "./supabase";
 const recordTypeLabels: Record<RecordType, string> = {
   identity: "Identity",
   employment: "Work Record",
+  contract_assignment: "Contract Assignment",
   education: "Education",
   license: "Licenses",
   certification: "Certifications",
   reference: "References",
   background_check: "Background Check",
+  training: "Training",
+  skill: "Skills",
+  performance_review: "Performance Review",
+  continuing_education: "Continuing Education",
   health_clearance: "Health Clearance",
   custom: "Custom"
 };

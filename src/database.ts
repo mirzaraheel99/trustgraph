@@ -7,11 +7,16 @@ export type RecordStatus = "draft" | "pending_verification" | "verified" | "expi
 export type RecordType =
   | "identity"
   | "employment"
+  | "contract_assignment"
   | "education"
   | "license"
   | "certification"
   | "reference"
   | "background_check"
+  | "training"
+  | "skill"
+  | "performance_review"
+  | "continuing_education"
   | "health_clearance"
   | "custom";
 export type AccessGrantStatus = "requested" | "approved" | "declined" | "expired" | "revoked";

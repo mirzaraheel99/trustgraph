@@ -146,9 +146,9 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     id: "contracts",
     label: "Short-term contracts",
     productArea: "Work Record",
-    status: "planned",
-    evidence: "Navigation and record model allow contract assignments; dedicated flow is pending.",
-    tone: "neutral"
+    status: "foundation",
+    evidence: "Contract assignment is a first-class Passport and Verify missing-record type.",
+    tone: "info"
   },
   {
     id: "responsibilities",
@@ -194,33 +194,33 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     id: "training",
     label: "Training records",
     productArea: "Credentials",
-    status: "planned",
-    evidence: "Record type support exists, but dedicated training ingestion is pending.",
-    tone: "neutral"
+    status: "foundation",
+    evidence: "Training is a first-class Passport, Verify request, and issuer record type.",
+    tone: "info"
   },
   {
     id: "skills",
     label: "Skills",
     productArea: "Passport",
-    status: "planned",
-    evidence: "Skills appear in locked scope; validation workflow is not implemented yet.",
-    tone: "neutral"
+    status: "foundation",
+    evidence: "Skill evidence is a first-class Passport and Verify missing-record type.",
+    tone: "info"
   },
   {
     id: "performance",
     label: "Performance reviews",
     productArea: "References",
-    status: "planned",
-    evidence: "Confidentiality rules are planned; no review submission workflow yet.",
-    tone: "neutral"
+    status: "foundation",
+    evidence: "Performance review is a first-class scoped record type; confidentiality workflow remains next.",
+    tone: "info"
   },
   {
     id: "continuing-education",
     label: "Continuing education",
     productArea: "Credentials",
-    status: "planned",
-    evidence: "Can be modeled as credential/training records; dedicated CE workflow is pending.",
-    tone: "neutral"
+    status: "foundation",
+    evidence: "Continuing education is a first-class Passport, Verify request, and issuer record type.",
+    tone: "info"
   },
   {
     id: "digital-credentials",

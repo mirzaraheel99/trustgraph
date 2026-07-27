@@ -1,6 +1,11 @@
 import type { DbIssuerCredential, DbOrganizationMembership, RecordType } from "./database";
 import { supabaseRest, supabaseRpc } from "./supabase";
 
+export type IssuerCredentialRecordType = Extract<
+  RecordType,
+  "license" | "certification" | "education" | "training" | "continuing_education" | "health_clearance" | "custom"
+>;
+
 export async function loadIssuerCredentials(organizationId: string, accessToken: string): Promise<DbIssuerCredential[]> {
   return supabaseRest<DbIssuerCredential[]>(
     [
@@ -20,7 +25,7 @@ export async function issueCredentialRecord(input: {
   accessToken: string;
   subjectEmail: string;
   subjectFullName: string;
-  credentialType: Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">;
+  credentialType: IssuerCredentialRecordType;
   title: string;
   evidenceSummary: string;
   issuedAt?: string;

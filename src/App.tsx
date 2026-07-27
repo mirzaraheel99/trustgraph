@@ -144,6 +144,11 @@ const toneLabels: Record<Tone, string> = {
   neutral: "neutral"
 };
 
+type IssuerRecordType = Extract<
+  RecordType,
+  "license" | "certification" | "education" | "training" | "continuing_education" | "health_clearance" | "custom"
+>;
+
 function toneClass(tone: Tone) {
   return `tone-${toneLabels[tone]}`;
 }
@@ -568,13 +573,6 @@ function PassportRecordForm({
     expiresAt: string;
   }) => Promise<void>;
 }) {
-  const plannedRecordGuidance = [
-    "Contract assignments",
-    "Training records",
-    "Skills evidence",
-    "Performance reviews",
-    "Continuing education"
-  ];
   const [type, setType] = useState<RecordType>("employment");
   const [title, setTitle] = useState("");
   const [sourceName, setSourceName] = useState("");
@@ -617,11 +615,16 @@ function PassportRecordForm({
       <div className="record-form-grid">
         <select value={type} onChange={(event) => setType(event.target.value as RecordType)} disabled={disabled || busy}>
           <option value="employment">Employment</option>
+          <option value="contract_assignment">Contract assignment</option>
           <option value="education">Education</option>
           <option value="license">License</option>
           <option value="certification">Certification</option>
           <option value="reference">Reference</option>
           <option value="background_check">Background check</option>
+          <option value="training">Training</option>
+          <option value="skill">Skill</option>
+          <option value="performance_review">Performance review</option>
+          <option value="continuing_education">Continuing education</option>
           <option value="identity">Identity</option>
           <option value="health_clearance">Health clearance</option>
           <option value="custom">Custom</option>
@@ -658,10 +661,12 @@ function PassportRecordForm({
         />
       </div>
       <div className="record-type-guide">
-        <span>Use Custom for:</span>
-        {plannedRecordGuidance.map((item) => (
-          <small key={item}>{item}</small>
-        ))}
+        <span>First-class scope:</span>
+        <small>Contracts</small>
+        <small>Training</small>
+        <small>Skills</small>
+        <small>Performance</small>
+        <small>Continuing education</small>
       </div>
       <div className="record-form-footer">
         <small>{status}</small>
@@ -966,7 +971,7 @@ function VerifyRequestsPanel({
   onIssueCredential: (input: {
     subjectEmail: string;
     subjectFullName: string;
-    credentialType: Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">;
+    credentialType: IssuerRecordType;
     title: string;
     evidenceSummary: string;
     issuedAt: string;
@@ -1480,8 +1485,14 @@ function MissingRecordRequestsPanel({
             <option value="license">License</option>
             <option value="certification">Certification</option>
             <option value="education">Education</option>
+            <option value="contract_assignment">Contract assignment</option>
+            <option value="training">Training</option>
+            <option value="skill">Skill</option>
+            <option value="performance_review">Performance review</option>
+            <option value="continuing_education">Continuing education</option>
             <option value="health_clearance">Health clearance</option>
             <option value="background_check">Background check</option>
+            <option value="reference">Reference</option>
             <option value="custom">Custom</option>
           </select>
           <input disabled={disabled || busy} onChange={(event) => setTitle(event.target.value)} placeholder="Requested record" value={title} />
@@ -1560,7 +1571,7 @@ function IssuerCredentialsPanel({
   onIssueCredential: (input: {
     subjectEmail: string;
     subjectFullName: string;
-    credentialType: Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">;
+    credentialType: IssuerRecordType;
     title: string;
     evidenceSummary: string;
     issuedAt: string;
@@ -1569,8 +1580,7 @@ function IssuerCredentialsPanel({
 }) {
   const [subjectEmail, setSubjectEmail] = useState("");
   const [subjectFullName, setSubjectFullName] = useState("");
-  const [credentialType, setCredentialType] =
-    useState<Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">>("certification");
+  const [credentialType, setCredentialType] = useState<IssuerRecordType>("certification");
   const [title, setTitle] = useState("");
   const [evidenceSummary, setEvidenceSummary] = useState("");
   const [issuedAt, setIssuedAt] = useState("");
@@ -1659,6 +1669,8 @@ function IssuerCredentialsPanel({
             <option value="certification">Certification</option>
             <option value="license">License</option>
             <option value="education">Education</option>
+            <option value="training">Training</option>
+            <option value="continuing_education">Continuing education</option>
             <option value="health_clearance">Health clearance</option>
             <option value="custom">Custom</option>
           </select>
@@ -4140,7 +4152,7 @@ function App() {
   async function issueLiveCredential(input: {
     subjectEmail: string;
     subjectFullName: string;
-    credentialType: Extract<RecordType, "license" | "certification" | "education" | "health_clearance" | "custom">;
+    credentialType: IssuerRecordType;
     title: string;
     evidenceSummary: string;
     issuedAt: string;
