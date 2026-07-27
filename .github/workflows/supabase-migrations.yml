@@ -5,8 +5,7 @@ on:
     inputs:
       migration_path:
         description: SQL file glob to apply
-        required: false
-        default: supabase/migrations/*.sql
+        required: true
 
 permissions:
   contents: read
@@ -16,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
-      MIGRATION_PATH: ${{ inputs.migration_path || 'supabase/migrations/*.sql' }}
+      MIGRATION_PATH: ${{ inputs.migration_path }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
