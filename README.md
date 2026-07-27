@@ -50,12 +50,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 In Supabase Auth URL settings, allow the GitHub Pages URL above as a site/redirect URL.
 Until those variables are present, the app stays in demo mode and keeps the mock RBAC account context available.
 
-For database migrations, add these GitHub repository secrets and run the `Apply Supabase Migrations` workflow manually:
+For database migrations, add this GitHub repository secret and run the `Apply Supabase Migrations` workflow manually:
 
 ```text
-SUPABASE_ACCESS_TOKEN=
-SUPABASE_PROJECT_REF=
-SUPABASE_DB_PASSWORD=
+DIRECT_URL=
 ```
 
 ## Build
