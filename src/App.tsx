@@ -3311,7 +3311,7 @@ function App() {
       loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
     ]);
     const acceptedMembership = context.memberships.find(
-      (membership) => membership.organizationId === invitation.organization_id && membership.role === invitation.role
+      (membership) => membership.organization_id === invitation.organization_id && membership.role === invitation.role
     );
     setAccountContext(context);
     if (acceptedMembership) {
