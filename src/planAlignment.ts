@@ -102,9 +102,9 @@ export const foundationTracks: FoundationTrack[] = [
     id: "connect",
     label: "Connect APIs",
     planStep: "Step 17",
-    status: "planned",
-    detail: "API and integration contracts documented.",
-    tone: "neutral"
+    status: "foundation",
+    detail: "Missing-record request workflow connects Verify needs back to Passport owners.",
+    tone: "info"
   },
   {
     id: "ai",

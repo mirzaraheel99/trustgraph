@@ -36,6 +36,7 @@ export type ReferenceRequestStatus =
   | "declined"
   | "expired"
   | "cancelled";
+export type MissingRecordRequestStatus = "requested" | "in_progress" | "fulfilled" | "declined" | "cancelled" | "expired";
 
 export interface DbOrganization {
   id: string;
@@ -196,6 +197,23 @@ export interface DbIssuerCredential {
   updated_at: string;
   owner_profile: Pick<DbProfile, "id" | "full_name" | "email"> | null;
   issuer_organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
+}
+
+export interface DbMissingRecordRequest {
+  id: string;
+  subject_profile_id: string;
+  requester_organization_id: string;
+  requested_by_profile_id: string | null;
+  record_type: RecordType;
+  title: string;
+  reason: string;
+  status: MissingRecordRequestStatus;
+  due_at: string | null;
+  fulfilled_record_id: string | null;
+  created_at: string;
+  updated_at: string;
+  subject_profile: Pick<DbProfile, "id" | "full_name" | "email"> | null;
+  requester_organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
 }
 
 export interface RoleCapability {

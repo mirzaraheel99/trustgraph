@@ -27,6 +27,7 @@ import type {
   DbAuditEvent,
   DbEvidenceDocument,
   DbIssuerCredential,
+  DbMissingRecordRequest,
   DbNotificationEvent,
   DbReferenceRequest,
   DbVerificationCase,
@@ -69,6 +70,11 @@ import {
   type AccessGrantView
 } from "./grantRepository";
 import { createEvidenceDocument, loadEvidenceDocuments } from "./evidenceRepository";
+import {
+  createMissingRecordRequest,
+  loadVerifyMissingRecordRequests,
+  markMissingRecordRequestStatus
+} from "./missingRecordRepository";
 import { loadNotificationEvents } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
 import {
@@ -731,10 +737,14 @@ function VerifyRequestsPanel({
   issuerDisabled,
   issuerMessage,
   message,
+  missingRecordMessage,
+  missingRecordRequests,
   requests,
   sharedRecords,
   onCreateIssuerRole,
+  onCreateMissingRecordRequest,
   onIssueCredential,
+  onMissingRecordStatus,
   onCreateReviewerRole
 }: {
   disabled: boolean;
@@ -742,6 +752,8 @@ function VerifyRequestsPanel({
   issuerDisabled: boolean;
   issuerMessage: string;
   message: string;
+  missingRecordMessage: string;
+  missingRecordRequests: DbMissingRecordRequest[];
   requests: VerifyAccessGrantView[];
   sharedRecords: RecordItem[];
   onCreateIssuerRole: () => Promise<void>;
@@ -754,6 +766,15 @@ function VerifyRequestsPanel({
     issuedAt: string;
     expiresAt: string;
   }) => Promise<void>;
+  onCreateMissingRecordRequest: (input: {
+    subjectEmail: string;
+    subjectFullName: string;
+    recordType: RecordType;
+    title: string;
+    reason: string;
+    dueAt: string;
+  }) => Promise<void>;
+  onMissingRecordStatus: (requestId: string, status: "in_progress" | "fulfilled" | "declined" | "cancelled") => Promise<void>;
   onCreateReviewerRole: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
@@ -840,6 +861,141 @@ function VerifyRequestsPanel({
         onCreateIssuerRole={onCreateIssuerRole}
         onIssueCredential={onIssueCredential}
       />
+      <MissingRecordRequestsPanel
+        disabled={disabled}
+        message={missingRecordMessage}
+        onCreate={onCreateMissingRecordRequest}
+        onStatus={onMissingRecordStatus}
+        requests={missingRecordRequests}
+      />
+    </section>
+  );
+}
+
+function MissingRecordRequestsPanel({
+  disabled,
+  message,
+  requests,
+  onCreate,
+  onStatus
+}: {
+  disabled: boolean;
+  message: string;
+  requests: DbMissingRecordRequest[];
+  onCreate: (input: {
+    subjectEmail: string;
+    subjectFullName: string;
+    recordType: RecordType;
+    title: string;
+    reason: string;
+    dueAt: string;
+  }) => Promise<void>;
+  onStatus: (requestId: string, status: "in_progress" | "fulfilled" | "declined" | "cancelled") => Promise<void>;
+}) {
+  const [subjectEmail, setSubjectEmail] = useState("");
+  const [subjectFullName, setSubjectFullName] = useState("");
+  const [recordType, setRecordType] = useState<RecordType>("license");
+  const [title, setTitle] = useState("");
+  const [reason, setReason] = useState("");
+  const [dueAt, setDueAt] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [status, setStatus] = useState(message);
+
+  useEffect(() => {
+    setStatus(message);
+  }, [message]);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setStatus("Creating missing-record request...");
+
+    try {
+      await onCreate({ subjectEmail, subjectFullName, recordType, title, reason, dueAt });
+      setSubjectEmail("");
+      setSubjectFullName("");
+      setTitle("");
+      setReason("");
+      setDueAt("");
+      setStatus("Missing-record request created");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not create request");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function decide(requestId: string, nextStatus: "in_progress" | "fulfilled" | "declined" | "cancelled") {
+    setBusyId(requestId);
+    try {
+      await onStatus(requestId, nextStatus);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <section className="missing-panel">
+      <div className="mini-heading">
+        <FileText size={16} />
+        <strong>Missing record requests</strong>
+      </div>
+      <form className="missing-form" onSubmit={submit}>
+        <div className="record-form-grid">
+          <input disabled={disabled || busy} onChange={(event) => setSubjectEmail(event.target.value)} placeholder="Professional email" type="email" value={subjectEmail} />
+          <input disabled={disabled || busy} onChange={(event) => setSubjectFullName(event.target.value)} placeholder="Professional name" value={subjectFullName} />
+          <select disabled={disabled || busy} onChange={(event) => setRecordType(event.target.value as RecordType)} value={recordType}>
+            <option value="license">License</option>
+            <option value="certification">Certification</option>
+            <option value="education">Education</option>
+            <option value="health_clearance">Health clearance</option>
+            <option value="background_check">Background check</option>
+            <option value="custom">Custom</option>
+          </select>
+          <input disabled={disabled || busy} onChange={(event) => setTitle(event.target.value)} placeholder="Requested record" value={title} />
+          <input disabled={disabled || busy} onChange={(event) => setDueAt(event.target.value)} type="date" value={dueAt} />
+          <input disabled={disabled || busy} onChange={(event) => setReason(event.target.value)} placeholder="Reason" value={reason} />
+        </div>
+        <div className="record-form-footer">
+          <small>{status}</small>
+          <button className="secondary-action" disabled={disabled || busy || !subjectEmail || !title} type="submit">
+            Request record
+          </button>
+        </div>
+      </form>
+      <div className="missing-list">
+        {requests.length ? (
+          requests.slice(0, 6).map((request) => (
+            <article className="missing-card" key={request.id}>
+              <div>
+                <strong>{request.title}</strong>
+                <p>{request.subject_profile?.full_name ?? request.subject_profile?.email ?? "Professional profile"}</p>
+                <small>{request.reason}</small>
+              </div>
+              <div className="grant-actions">
+                <span className="status-chip neutral">{request.status.replace(/_/g, " ")}</span>
+                <button className="secondary-action" disabled={disabled || busyId === request.id || request.status === "in_progress"} onClick={() => void decide(request.id, "in_progress")}>
+                  Start
+                </button>
+                <button className="primary-action" disabled={disabled || busyId === request.id || request.status === "fulfilled"} onClick={() => void decide(request.id, "fulfilled")}>
+                  Fulfill
+                </button>
+                <button className="secondary-action" disabled={disabled || busyId === request.id || request.status === "declined"} onClick={() => void decide(request.id, "declined")}>
+                  Decline
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <article className="missing-card empty">
+            <div>
+              <strong>No missing-record requests yet</strong>
+              <p>Request only specific records needed for a role, placement, or compliance workflow.</p>
+            </div>
+          </article>
+        )}
+      </div>
     </section>
   );
 }
@@ -1503,6 +1659,8 @@ function App() {
   const [referenceStatus, setReferenceStatus] = useState("Sign in to manage live references");
   const [issuerCredentials, setIssuerCredentials] = useState<DbIssuerCredential[]>([]);
   const [issuerStatus, setIssuerStatus] = useState("Switch to a credential issuer role");
+  const [missingRecordRequests, setMissingRecordRequests] = useState<DbMissingRecordRequest[]>([]);
+  const [missingRecordStatus, setMissingRecordStatus] = useState("Switch to Verify role for missing-record requests");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -1610,8 +1768,10 @@ function App() {
       setVerifyRequests([]);
       setSharedVerifyRecords([]);
       setIssuerCredentials([]);
+      setMissingRecordRequests([]);
       setVerifyStatus("Switch to Verify role for live requests");
       setIssuerStatus("Switch to a credential issuer role");
+      setMissingRecordStatus("Switch to Verify role for missing-record requests");
       return;
     }
 
@@ -1619,27 +1779,32 @@ function App() {
       setVerifyRequests([]);
       setSharedVerifyRecords([]);
       setIssuerCredentials([]);
+      setMissingRecordRequests([]);
       setVerifyStatus("Active role cannot access Verify workspace");
       setIssuerStatus("Active role cannot access issuer workflow");
+      setMissingRecordStatus("Active role cannot access missing-record requests");
       return;
     }
 
     let cancelled = false;
     setVerifyStatus("Loading live Verify requests...");
     setIssuerStatus("Loading issued credentials...");
+    setMissingRecordStatus("Loading missing-record requests...");
 
     Promise.all([
       loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken),
       loadSharedVerifyRecords(authSession.accessToken),
       hasPermission(activeMembership.role, "record:issue_credential")
         ? loadIssuerCredentials(activeMembership.organizationId, authSession.accessToken)
-        : Promise.resolve([])
+        : Promise.resolve([]),
+      loadVerifyMissingRecordRequests(activeMembership.organizationId, authSession.accessToken)
     ])
-      .then(([items, sharedRecords, credentials]) => {
+      .then(([items, sharedRecords, credentials, missingRecords]) => {
         if (cancelled) return;
         setVerifyRequests(items);
         setSharedVerifyRecords(sharedRecords);
         setIssuerCredentials(credentials);
+        setMissingRecordRequests(missingRecords);
         setVerifyStatus(
           items.length || sharedRecords.length
             ? `Live Supabase Verify data: ${items.length} requests, ${sharedRecords.length} shared records`
@@ -1652,14 +1817,19 @@ function App() {
               : "No issued credentials yet"
             : "Credential issuer role required"
         );
+        setMissingRecordStatus(
+          missingRecords.length ? `Missing-record requests: ${missingRecords.length}` : "No missing-record requests yet"
+        );
       })
       .catch((error) => {
         if (cancelled) return;
         setVerifyRequests([]);
         setSharedVerifyRecords([]);
         setIssuerCredentials([]);
+        setMissingRecordRequests([]);
         setVerifyStatus(error instanceof Error ? error.message : "Could not load Verify requests");
         setIssuerStatus(error instanceof Error ? error.message : "Could not load issued credentials");
+        setMissingRecordStatus(error instanceof Error ? error.message : "Could not load missing-record requests");
       });
 
     return () => {
@@ -2014,6 +2184,53 @@ function App() {
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
   }
 
+  async function createLiveMissingRecordRequest(input: {
+    subjectEmail: string;
+    subjectFullName: string;
+    recordType: RecordType;
+    title: string;
+    reason: string;
+    dueAt: string;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating missing-record requests.");
+    }
+
+    const request = await createMissingRecordRequest({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const [requests, notifications, events] = await Promise.all([
+      loadVerifyMissingRecordRequests(activeMembership.organizationId, authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setMissingRecordRequests(requests);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setMissingRecordStatus(`Missing-record request created: ${request.title}`);
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+  }
+
+  async function updateLiveMissingRecordStatus(
+    requestId: string,
+    status: "in_progress" | "fulfilled" | "declined" | "cancelled"
+  ) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before updating missing-record requests.");
+    }
+
+    const updated = await markMissingRecordRequestStatus({
+      accessToken: authSession.accessToken,
+      requestId,
+      status
+    });
+    const events = await loadAuditEvents(authSession.accessToken).catch(() => auditEvents);
+    setMissingRecordRequests((current) => current.map((request) => (request.id === updated.id ? updated : request)));
+    setAuditEvents(events);
+    setMissingRecordStatus(`Missing-record request moved to ${updated.status.replace(/_/g, " ")}`);
+  }
+
   async function createLiveCorporateAccount(input: {
     organizationName: string;
     organizationType: "employer" | "staffing_agency";
@@ -2313,9 +2530,13 @@ function App() {
                 }
                 issuerMessage={issuerStatus}
                 message={verifyStatus}
+                missingRecordMessage={missingRecordStatus}
+                missingRecordRequests={missingRecordRequests}
+                onCreateMissingRecordRequest={createLiveMissingRecordRequest}
                 onCreateIssuerRole={createLiveCredentialIssuerRole}
                 onCreateReviewerRole={createSampleReviewerRole}
                 onIssueCredential={issueLiveCredential}
+                onMissingRecordStatus={updateLiveMissingRecordStatus}
                 requests={verifyRequests}
                 sharedRecords={sharedVerifyRecords}
               />

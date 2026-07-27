@@ -120,6 +120,8 @@ p,
 .record-form select,
 .issuer-form input,
 .issuer-form select,
+.missing-form input,
+.missing-form select,
 .record-edit-form input,
 .record-edit-form select {
   border-radius: var(--radius);
@@ -783,6 +785,43 @@ p {
 }
 
 .issuer-card.empty {
+  border-style: dashed;
+}
+
+.missing-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(225, 184, 102, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.07), transparent 60%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.missing-form,
+.missing-list {
+  display: grid;
+  gap: 10px;
+}
+
+.missing-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.missing-card p {
+  margin: 6px 0;
+  font-size: 13px;
+}
+
+.missing-card.empty {
   border-style: dashed;
 }
 
