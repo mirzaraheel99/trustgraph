@@ -1122,6 +1122,16 @@ function MissingRecordRequestsPanel({
   const [busy, setBusy] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [status, setStatus] = useState(message);
+  const [requestQuery, setRequestQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "in_progress" | "fulfilled" | "declined" | "cancelled">("all");
+  const openCount = requests.filter((request) => !["fulfilled", "declined", "cancelled"].includes(request.status)).length;
+  const fulfilledCount = requests.filter((request) => request.status === "fulfilled").length;
+  const declinedCount = requests.filter((request) => request.status === "declined").length;
+  const filteredRequests = requests.filter((request) => {
+    const matchesStatus = statusFilter === "all" || request.status === statusFilter;
+    const haystack = `${request.title} ${request.reason} ${request.subject_profile?.full_name ?? ""} ${request.subject_profile?.email ?? ""}`.toLowerCase();
+    return matchesStatus && haystack.includes(requestQuery.trim().toLowerCase());
+  });
 
   useEffect(() => {
     setStatus(message);
@@ -1162,6 +1172,20 @@ function MissingRecordRequestsPanel({
         <FileText size={16} />
         <strong>Missing record requests</strong>
       </div>
+      <div className="missing-summary-grid">
+        <div>
+          <span>Open</span>
+          <strong>{openCount}</strong>
+        </div>
+        <div>
+          <span>Fulfilled</span>
+          <strong>{fulfilledCount}</strong>
+        </div>
+        <div>
+          <span>Declined</span>
+          <strong>{declinedCount}</strong>
+        </div>
+      </div>
       <form className="missing-form" onSubmit={submit}>
         <div className="record-form-grid">
           <input disabled={disabled || busy} onChange={(event) => setSubjectEmail(event.target.value)} placeholder="Professional email" type="email" value={subjectEmail} />
@@ -1185,9 +1209,24 @@ function MissingRecordRequestsPanel({
           </button>
         </div>
       </form>
+      <div className="missing-controls">
+        <input
+          onChange={(event) => setRequestQuery(event.target.value)}
+          placeholder="Search title, person, or reason"
+          value={requestQuery}
+        />
+        <select onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)} value={statusFilter}>
+          <option value="all">All</option>
+          <option value="requested">Requested</option>
+          <option value="in_progress">In progress</option>
+          <option value="fulfilled">Fulfilled</option>
+          <option value="declined">Declined</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
       <div className="missing-list">
-        {requests.length ? (
-          requests.slice(0, 6).map((request) => (
+        {filteredRequests.length ? (
+          filteredRequests.slice(0, 8).map((request) => (
             <article className="missing-card" key={request.id}>
               <div>
                 <strong>{request.title}</strong>
@@ -1211,7 +1250,7 @@ function MissingRecordRequestsPanel({
         ) : (
           <article className="missing-card empty">
             <div>
-              <strong>No missing-record requests yet</strong>
+              <strong>No matching missing-record requests</strong>
               <p>Request only specific records needed for a role, placement, or compliance workflow.</p>
             </div>
           </article>
