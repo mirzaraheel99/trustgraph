@@ -7,6 +7,7 @@ import {
   CalendarClock,
   ChevronRight,
   Clock3,
+  ClipboardCheck,
   Download,
   Eye,
   FileCheck2,
