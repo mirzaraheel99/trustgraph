@@ -1903,6 +1903,146 @@ p {
   font-weight: 850;
 }
 
+.corporate-control-center {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.1), transparent 46%),
+    linear-gradient(160deg, rgba(134, 174, 246, 0.09), transparent 64%),
+    rgba(255, 255, 255, 0.032);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
+.control-center-header,
+.control-center-body,
+.control-center-metrics {
+  display: grid;
+  gap: 12px;
+}
+
+.control-center-header {
+  grid-template-columns: minmax(0, 1fr) 148px;
+  align-items: start;
+}
+
+.control-center-header h2 {
+  margin: 6px 0 8px;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.control-center-header p {
+  max-width: 760px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.control-center-score,
+.control-center-metrics div,
+.control-center-track article,
+.control-center-next {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.control-center-score {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  text-align: right;
+}
+
+.control-center-score span,
+.control-center-score strong,
+.control-center-score small,
+.control-center-metrics span,
+.control-center-metrics strong,
+.control-center-metrics small,
+.control-center-track strong,
+.control-center-track small,
+.control-center-next strong,
+.control-center-next small {
+  display: block;
+}
+
+.control-center-score span,
+.control-center-metrics span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.control-center-score strong {
+  color: var(--teal);
+  font-size: 34px;
+  line-height: 1;
+}
+
+.control-center-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.control-center-metrics div {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+}
+
+.control-center-metrics strong {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.control-center-body {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.36fr);
+  align-items: stretch;
+}
+
+.control-center-track {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.control-center-track article {
+  display: flex;
+  gap: 10px;
+  min-height: 92px;
+  padding: 10px;
+}
+
+.control-center-track article.ready {
+  border-color: rgba(82, 214, 196, 0.24);
+  background: rgba(82, 214, 196, 0.055);
+}
+
+.control-center-track small {
+  margin-top: 5px;
+  line-height: 1.35;
+}
+
+.control-center-next {
+  display: grid;
+  align-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border-color: rgba(225, 184, 102, 0.22);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.07), transparent 64%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.control-center-next strong {
+  font-size: 20px;
+  line-height: 1.15;
+}
+
 .operations-panel {
   display: grid;
   gap: 10px;
@@ -2564,6 +2704,10 @@ p {
   .public-portal-rail,
   .auth-path-grid,
   .billing-estimate-card,
+  .control-center-body,
+  .control-center-header,
+  .control-center-metrics,
+  .control-center-track,
   .metrics-grid,
   .work-grid,
   .portal-grid,

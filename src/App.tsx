@@ -914,9 +914,13 @@ function ReferenceRequestsPanel({
 
 function VerifyRequestsPanel({
   disabled,
+  activeOrganization,
   issuerCredentials,
   issuerDisabled,
   issuerMessage,
+  teamMembers,
+  teamInvitations,
+  subscriptions,
   message,
   missingRecordMessage,
   missingRecordRequests,
@@ -930,9 +934,13 @@ function VerifyRequestsPanel({
   onCreateReviewerRole
 }: {
   disabled: boolean;
+  activeOrganization: Organization;
   issuerCredentials: DbIssuerCredential[];
   issuerDisabled: boolean;
   issuerMessage: string;
+  teamMembers: OrganizationMemberView[];
+  teamInvitations: DbOrganizationInvitation[];
+  subscriptions: DbOrganizationSubscription[];
   message: string;
   missingRecordMessage: string;
   missingRecordRequests: DbMissingRecordRequest[];
@@ -998,6 +1006,16 @@ function VerifyRequestsPanel({
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
       </div>
+      <CorporateControlCenter
+        activeOrganization={activeOrganization}
+        disabled={disabled}
+        missingRecordRequests={missingRecordRequests}
+        requests={requests}
+        sharedRecords={sharedRecords}
+        subscriptions={subscriptions}
+        teamInvitations={teamInvitations}
+        teamMembers={teamMembers}
+      />
       <div className="verify-summary-grid">
         <div>
           <span>Requested</span>
@@ -1132,6 +1150,131 @@ function VerifyRequestsPanel({
         onStatus={onMissingRecordStatus}
         requests={missingRecordRequests}
       />
+    </section>
+  );
+}
+
+function CorporateControlCenter({
+  activeOrganization,
+  disabled,
+  missingRecordRequests,
+  requests,
+  sharedRecords,
+  subscriptions,
+  teamInvitations,
+  teamMembers
+}: {
+  activeOrganization: Organization;
+  disabled: boolean;
+  missingRecordRequests: DbMissingRecordRequest[];
+  requests: VerifyAccessGrantView[];
+  sharedRecords: RecordItem[];
+  subscriptions: DbOrganizationSubscription[];
+  teamInvitations: DbOrganizationInvitation[];
+  teamMembers: OrganizationMemberView[];
+}) {
+  const activeMembers = teamMembers.filter((member) => member.status === "active").length;
+  const pendingInvites = teamInvitations.filter((invitation) => invitation.status === "pending").length;
+  const openGaps = missingRecordRequests.filter(
+    (request) => request.status === "requested" || request.status === "in_progress"
+  ).length;
+  const approvedRequests = requests.filter((request) => request.status === "approved").length;
+  const requestedRequests = requests.filter((request) => request.status === "requested").length;
+  const activeSubscription = subscriptions.find((subscription) => subscription.status !== "cancelled") ?? null;
+  const readinessSignals = [
+    {
+      label: "Corporate account",
+      detail: `${activeOrganization.name} is the active ${activeOrganization.type.replace("_", " ")} context`,
+      ready: !disabled && activeOrganization.status === "active"
+    },
+    {
+      label: "RBAC seats",
+      detail: activeMembers ? `${activeMembers} active member${activeMembers === 1 ? "" : "s"} loaded` : "Invite or restore reviewers before team rollout",
+      ready: activeMembers > 0
+    },
+    {
+      label: "Access pipeline",
+      detail: requests.length ? `${requests.length} live request${requests.length === 1 ? "" : "s"} tracked` : "Send an Access Grant request to start verification",
+      ready: approvedRequests > 0 || requestedRequests > 0
+    },
+    {
+      label: "Shared records",
+      detail: sharedRecords.length ? `${sharedRecords.length} scoped Passport records available` : "Approved grants will sync scoped records here",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Subscription",
+      detail: activeSubscription?.plan?.name ?? "Plan activation enables production account packaging",
+      ready: Boolean(activeSubscription)
+    }
+  ];
+  const readyCount = readinessSignals.filter((signal) => signal.ready).length;
+  const readinessPercent = Math.round((readyCount / readinessSignals.length) * 100);
+  const nextAction =
+    disabled
+      ? "Switch to an employer or staffing role"
+      : !activeSubscription
+        ? "Activate a corporate plan"
+        : requestedRequests
+          ? "Follow up pending Access Grants"
+          : openGaps
+            ? "Resolve candidate record gaps"
+            : "Add the next reviewer or candidate";
+
+  return (
+    <section className="corporate-control-center">
+      <div className="control-center-header">
+        <div>
+          <span className="eyebrow">Corporate Control Center v1</span>
+          <h2>{activeOrganization.name}</h2>
+          <p>Live organization readiness across RBAC, candidate consent, shared Passport records, gaps, and plan status.</p>
+        </div>
+        <div className="control-center-score">
+          <span>Readiness</span>
+          <strong>{readinessPercent}%</strong>
+          <small>{readyCount} of {readinessSignals.length} systems ready</small>
+        </div>
+      </div>
+      <div className="control-center-metrics">
+        <div>
+          <span>Active seats</span>
+          <strong>{activeMembers}</strong>
+          <small>{pendingInvites} pending invite{pendingInvites === 1 ? "" : "s"}</small>
+        </div>
+        <div>
+          <span>Access pipeline</span>
+          <strong>{requests.length}</strong>
+          <small>{approvedRequests} approved, {requestedRequests} requested</small>
+        </div>
+        <div>
+          <span>Shared records</span>
+          <strong>{sharedRecords.length}</strong>
+          <small>Scoped by grant and organization</small>
+        </div>
+        <div>
+          <span>Open gaps</span>
+          <strong>{openGaps}</strong>
+          <small>Missing-record requests in motion</small>
+        </div>
+      </div>
+      <div className="control-center-body">
+        <div className="control-center-track">
+          {readinessSignals.map((signal) => (
+            <article className={signal.ready ? "ready" : ""} key={signal.label}>
+              <span className={signal.ready ? "status-dot on" : "status-dot"} />
+              <div>
+                <strong>{signal.label}</strong>
+                <small>{signal.detail}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+        <article className="control-center-next">
+          <span className="eyebrow">Next best action</span>
+          <strong>{nextAction}</strong>
+          <small>Use the panels below to complete the next workflow step against Supabase.</small>
+        </article>
+      </div>
     </section>
   );
 }
@@ -4541,6 +4684,7 @@ function App() {
 
             {workspace.id === "verify" ? (
               <VerifyRequestsPanel
+                activeOrganization={activeOrganization}
                 disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "verify")}
                 issuerCredentials={issuerCredentials}
                 issuerDisabled={
@@ -4553,6 +4697,9 @@ function App() {
                 message={verifyStatus}
                 missingRecordMessage={missingRecordStatus}
                 missingRecordRequests={missingRecordRequests}
+                subscriptions={organizationSubscriptions}
+                teamInvitations={teamInvitations}
+                teamMembers={teamMembers}
                 onCreateAccessRequest={createLiveAccessGrantRequest}
                 onCreateMissingRecordRequest={createLiveMissingRecordRequest}
                 onCreateIssuerRole={createLiveCredentialIssuerRole}
