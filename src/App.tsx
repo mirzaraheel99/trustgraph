@@ -9,6 +9,7 @@ import {
   Clock3,
   Download,
   Eye,
+  FileCheck2,
   FileText,
   Filter,
   KeyRound,
@@ -500,11 +501,13 @@ function VerifyRequestsPanel({
   disabled,
   message,
   requests,
+  sharedRecords,
   onCreateReviewerRole
 }: {
   disabled: boolean;
   message: string;
   requests: VerifyAccessGrantView[];
+  sharedRecords: RecordItem[];
   onCreateReviewerRole: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
@@ -549,6 +552,36 @@ function VerifyRequestsPanel({
             <div>
               <strong>No live Verify requests yet</strong>
               <p>Create an employer reviewer role, then generate a sample request from Passport.</p>
+            </div>
+          </article>
+        )}
+      </div>
+      <div className="mini-heading verify-shared-heading">
+        <FileCheck2 size={16} />
+        <strong>Shared Passport records</strong>
+        <span className="status-chip neutral">{sharedRecords.length} available</span>
+      </div>
+      <div className="shared-record-grid">
+        {sharedRecords.length ? (
+          sharedRecords.slice(0, 4).map((record) => (
+            <article className="shared-record-card" key={record.id}>
+              <div className="record-row-main">
+                <span className="record-section">{record.section}</span>
+                <strong>{record.title}</strong>
+                <small>{record.subtitle}</small>
+              </div>
+              <div className="record-row-meta">
+                <span className={`status-chip ${toneClass(record.tone)}`}>{record.status}</span>
+                <span className="status-chip neutral">{record.source}</span>
+              </div>
+              <small>{record.access}</small>
+            </article>
+          ))
+        ) : (
+          <article className="grant-card empty">
+            <div>
+              <strong>No shared records yet</strong>
+              <p>Approve an Access Grant from Passport to sync the professional's current records here.</p>
             </div>
           </article>
         )}
@@ -1234,6 +1267,7 @@ function App() {
                 message={verifyStatus}
                 onCreateReviewerRole={createSampleReviewerRole}
                 requests={verifyRequests}
+                sharedRecords={sharedVerifyRecords}
               />
             ) : null}
           </div>
