@@ -21,7 +21,7 @@ import {
   UserPlus
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
-import type { RecordType } from "./database";
+import type { RecordStatus, RecordType } from "./database";
 import {
   accountContextOrganizations,
   accountContextToSessionUser,
@@ -36,7 +36,7 @@ import {
   signUpWithPassword,
   type AuthSession
 } from "./auth";
-import { createPassportRecord, loadPassportRecords } from "./recordRepository";
+import { createPassportRecord, loadPassportRecords, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
   getActiveMembership,
@@ -136,7 +136,61 @@ function RecordRow({
   );
 }
 
-function RecordDetail({ record }: { record: RecordItem }) {
+function RecordDetail({
+  record,
+  canEdit,
+  onUpdate
+}: {
+  record: RecordItem;
+  canEdit: boolean;
+  onUpdate: (input: {
+    recordId: string;
+    title: string;
+    sourceName: string;
+    evidenceSummary: string;
+    expiresAt: string;
+    status: RecordStatus;
+  }) => Promise<void>;
+}) {
+  const [title, setTitle] = useState(record.title);
+  const [sourceName, setSourceName] = useState(record.source);
+  const [evidenceSummary, setEvidenceSummary] = useState(record.evidence === "Evidence details pending" ? "" : record.evidence);
+  const [expiresAt, setExpiresAt] = useState("");
+  const [status, setStatus] = useState<RecordStatus>("draft");
+  const [message, setMessage] = useState("Update selected live record");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setTitle(record.title);
+    setSourceName(record.source);
+    setEvidenceSummary(record.evidence === "Evidence details pending" ? "" : record.evidence);
+    setExpiresAt("");
+    setStatus(record.status === "pending verification" ? "pending_verification" : "draft");
+    setMessage("Update selected live record");
+  }, [record]);
+
+  async function submitUpdate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setMessage("Updating Passport record...");
+
+    try {
+      await onUpdate({
+        recordId: record.id,
+        title,
+        sourceName,
+        evidenceSummary,
+        expiresAt,
+        status
+      });
+      setMessage("Record updated");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not update record");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <aside className="detail-panel">
       <div className="detail-top">
@@ -173,6 +227,35 @@ function RecordDetail({ record }: { record: RecordItem }) {
         <p>{record.evidence}</p>
         <small>{record.access}</small>
       </section>
+
+      {canEdit ? (
+        <form className="record-edit-form" onSubmit={submitUpdate}>
+          <div className="mini-heading">
+            <KeyRound size={16} />
+            <strong>Edit live record</strong>
+          </div>
+          <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Title" />
+          <input value={sourceName} onChange={(event) => setSourceName(event.target.value)} placeholder="Source" />
+          <input
+            value={evidenceSummary}
+            onChange={(event) => setEvidenceSummary(event.target.value)}
+            placeholder="Evidence summary"
+          />
+          <div className="record-edit-grid">
+            <input value={expiresAt} onChange={(event) => setExpiresAt(event.target.value)} type="date" />
+            <select value={status} onChange={(event) => setStatus(event.target.value as RecordStatus)}>
+              <option value="draft">Draft</option>
+              <option value="pending_verification">Pending verification</option>
+            </select>
+          </div>
+          <div className="record-form-footer">
+            <small>{message}</small>
+            <button className="secondary-action" disabled={busy || !title || !sourceName} type="submit">
+              Save changes
+            </button>
+          </div>
+        </form>
+      ) : null}
 
       <section>
         <div className="mini-heading">
@@ -559,6 +642,7 @@ function App() {
   }, [livePassportRecords, query, workspace]);
 
   const selectedRecord = records.find((record) => record.id === selectedId) ?? records[0] ?? workspace.records[0];
+  const selectedRecordIsLive = livePassportRecords.some((record) => record.id === selectedRecord.id);
 
   function changeWorkspace(id: WorkspaceId) {
     const next = workspaces.find((item) => item.id === id);
@@ -596,6 +680,33 @@ function App() {
     });
     setLivePassportRecords((current) => [record, ...current]);
     setSelectedId(record.id);
+    setRecordStatus("Live Supabase Passport records");
+  }
+
+  async function updateLivePassportRecord(input: {
+    recordId: string;
+    title: string;
+    sourceName: string;
+    evidenceSummary: string;
+    expiresAt: string;
+    status: RecordStatus;
+  }) {
+    if (!authSession) {
+      throw new Error("Sign in before updating live Passport records.");
+    }
+
+    const updated = await updatePassportRecord({
+      recordId: input.recordId,
+      accessToken: authSession.accessToken,
+      title: input.title,
+      sourceName: input.sourceName,
+      evidenceSummary: input.evidenceSummary,
+      issuedAt: "",
+      expiresAt: input.expiresAt,
+      status: input.status
+    });
+
+    setLivePassportRecords((current) => current.map((record) => (record.id === updated.id ? updated : record)));
     setRecordStatus("Live Supabase Passport records");
   }
 
@@ -793,7 +904,11 @@ function App() {
                 <ActionCard key={action.title} {...action} />
               ))}
             </section>
-            <RecordDetail record={selectedRecord} />
+            <RecordDetail
+              canEdit={workspace.id === "passport" && selectedRecordIsLive}
+              onUpdate={updateLivePassportRecord}
+              record={selectedRecord}
+            />
           </div>
         </section>
 

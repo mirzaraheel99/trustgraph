@@ -1,5 +1,5 @@
 import type { RecordItem, Tone } from "./data";
-import type { DbTrustRecord, RecordType } from "./database";
+import type { DbTrustRecord, RecordStatus, RecordType } from "./database";
 import { supabaseRest } from "./supabase";
 
 const recordTypeLabels: Record<RecordType, string> = {
@@ -102,6 +102,32 @@ export async function createPassportRecord(input: {
       evidence_summary: input.evidenceSummary || null,
       issued_at: input.issuedAt || null,
       expires_at: input.expiresAt || null
+    })
+  });
+
+  return trustRecordToRecordItem(record);
+}
+
+export async function updatePassportRecord(input: {
+  recordId: string;
+  accessToken: string;
+  title: string;
+  sourceName: string;
+  evidenceSummary?: string;
+  issuedAt?: string;
+  expiresAt?: string;
+  status: RecordStatus;
+}): Promise<RecordItem> {
+  const [record] = await supabaseRest<DbTrustRecord[]>(`trust_records?id=eq.${encodeURIComponent(input.recordId)}`, {
+    method: "PATCH",
+    accessToken: input.accessToken,
+    body: JSON.stringify({
+      title: input.title,
+      source_name: input.sourceName,
+      evidence_summary: input.evidenceSummary || null,
+      issued_at: input.issuedAt || null,
+      expires_at: input.expiresAt || null,
+      status: input.status
     })
   });
 
