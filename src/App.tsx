@@ -33,6 +33,7 @@ import type {
   DbIssuerCredential,
   DbMissingRecordRequest,
   DbNotificationEvent,
+  DbOrganizationInvitation,
   DbOrganizationSubscription,
   DbReferenceRequest,
   DbSubscriptionPlan,
@@ -98,6 +99,11 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
+import {
+  createOrganizationInvitation,
+  loadOrganizationInvitations,
+  markOrganizationInvitationStatus
+} from "./teamRepository";
 import {
   createSampleTrustGraphVerifierMembership,
   createSampleVerificationCases,
@@ -1856,6 +1862,103 @@ function BillingPanel({
   );
 }
 
+function TeamInvitationsPanel({
+  disabled,
+  invitations,
+  message,
+  onCreate,
+  onStatus
+}: {
+  disabled: boolean;
+  invitations: DbOrganizationInvitation[];
+  message: string;
+  onCreate: (input: { email: string; role: Extract<RoleKey, "employer_admin" | "employer_reviewer" | "staffing_agency_admin" | "recruiter"> }) => Promise<void>;
+  onStatus: (invitationId: string, status: "cancelled" | "expired") => Promise<void>;
+}) {
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<Extract<RoleKey, "employer_admin" | "employer_reviewer" | "staffing_agency_admin" | "recruiter">>("employer_reviewer");
+  const [busy, setBusy] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [status, setStatus] = useState(message);
+
+  useEffect(() => {
+    setStatus(message);
+  }, [message]);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setStatus("Creating team invitation...");
+    try {
+      await onCreate({ email, role });
+      setEmail("");
+      setStatus("Team invitation created");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not create team invitation");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function updateStatus(invitationId: string, nextStatus: "cancelled" | "expired") {
+    setBusyId(invitationId);
+    try {
+      await onStatus(invitationId, nextStatus);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <section className="team-panel">
+      <div className="mini-heading">
+        <UserPlus size={16} />
+        <strong>Team invitations</strong>
+      </div>
+      <form className="team-form" onSubmit={submit}>
+        <input disabled={disabled || busy} onChange={(event) => setEmail(event.target.value)} placeholder="reviewer@company.com" type="email" value={email} />
+        <select disabled={disabled || busy} onChange={(event) => setRole(event.target.value as typeof role)} value={role}>
+          <option value="employer_reviewer">Employer reviewer</option>
+          <option value="employer_admin">Employer admin</option>
+          <option value="recruiter">Recruiter</option>
+          <option value="staffing_agency_admin">Staffing admin</option>
+        </select>
+        <div className="record-form-footer">
+          <small>{status}</small>
+          <button className="secondary-action" disabled={disabled || busy || !email} type="submit">
+            Invite
+          </button>
+        </div>
+      </form>
+      <div className="team-list">
+        {invitations.length ? (
+          invitations.slice(0, 5).map((invitation) => (
+            <article className="team-card" key={invitation.id}>
+              <div>
+                <strong>{invitation.invited_email}</strong>
+                <small>{invitation.role.replace(/_/g, " ")}</small>
+              </div>
+              <div className="grant-actions">
+                <span className="status-chip neutral">{invitation.status}</span>
+                <button className="secondary-action" disabled={disabled || busyId === invitation.id || invitation.status !== "pending"} onClick={() => void updateStatus(invitation.id, "cancelled")}>
+                  Cancel
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <article className="team-card empty">
+            <div>
+              <strong>No team invitations yet</strong>
+              <small>Invite reviewers, recruiters, or admins for corporate portal access.</small>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function AuthPanel({
   session,
   accountStatus,
@@ -2266,6 +2369,8 @@ function App() {
   const [subscriptionPlans, setSubscriptionPlans] = useState<DbSubscriptionPlan[]>([]);
   const [organizationSubscriptions, setOrganizationSubscriptions] = useState<DbOrganizationSubscription[]>([]);
   const [billingStatus, setBillingStatus] = useState("Sign in to manage billing plans");
+  const [teamInvitations, setTeamInvitations] = useState<DbOrganizationInvitation[]>([]);
+  const [teamStatus, setTeamStatus] = useState("Sign in to invite corporate team members");
   const [livePassportRecords, setLivePassportRecords] = useState<RecordItem[]>([]);
   const [recordStatus, setRecordStatus] = useState("Sign in to add live Passport records");
   const [accessGrants, setAccessGrants] = useState<AccessGrantView[]>([]);
@@ -2314,6 +2419,8 @@ function App() {
       setSubscriptionPlans([]);
       setOrganizationSubscriptions([]);
       setBillingStatus("Sign in to manage billing plans");
+      setTeamInvitations([]);
+      setTeamStatus("Sign in to invite corporate team members");
       setActiveMembershipId(sessionUser.activeMembershipId);
       return;
     }
@@ -2353,27 +2460,32 @@ function App() {
 
     Promise.all([
       loadSubscriptionPlans(authSession.accessToken),
-      loadOrganizationSubscriptions(authSession.accessToken).catch(() => [])
+      loadOrganizationSubscriptions(authSession.accessToken).catch(() => []),
+      loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions]) => {
+      .then(([plans, subscriptions, invitations]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
+        setTeamInvitations(invitations);
         setBillingStatus(
           subscriptions.length ? `Live subscriptions: ${subscriptions.length}` : "Choose a plan for corporate workflows"
         );
+        setTeamStatus(invitations.length ? `Team invitations: ${invitations.length}` : "No team invitations yet");
       })
       .catch((error) => {
         if (cancelled) return;
         setSubscriptionPlans([]);
         setOrganizationSubscriptions([]);
+        setTeamInvitations([]);
         setBillingStatus(error instanceof Error ? error.message : "Could not load billing plans");
+        setTeamStatus(error instanceof Error ? error.message : "Could not load team invitations");
       });
 
     return () => {
       cancelled = true;
     };
-  }, [authSession, accountContext]);
+  }, [activeMembership.organizationId, authSession, accountContext]);
 
   useEffect(() => {
     if (!authSession || !accountContext || !pendingCorporateAccount) {
@@ -3055,6 +3167,43 @@ function App() {
     setBillingStatus(`Plan activated: ${subscription.plan_id}`);
   }
 
+  async function createLiveTeamInvitation(input: {
+    email: string;
+    role: Extract<RoleKey, "employer_admin" | "employer_reviewer" | "staffing_agency_admin" | "recruiter">;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before inviting team members.");
+    }
+
+    const invitation = await createOrganizationInvitation({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const [invitations, events] = await Promise.all([
+      loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setTeamInvitations(invitations);
+    setAuditEvents(events);
+    setTeamStatus(`Invitation created for ${invitation.invited_email}`);
+  }
+
+  async function updateLiveTeamInvitationStatus(invitationId: string, status: "cancelled" | "expired") {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before updating team invitations.");
+    }
+
+    const updated = await markOrganizationInvitationStatus({
+      accessToken: authSession.accessToken,
+      invitationId,
+      status
+    });
+    const events = await loadAuditEvents(authSession.accessToken).catch(() => auditEvents);
+    setTeamInvitations((current) => current.map((invitation) => (invitation.id === updated.id ? updated : invitation)));
+    setAuditEvents(events);
+    setTeamStatus(`Invitation moved to ${updated.status}`);
+  }
+
   async function assignLiveCorporateRole(organizationId: string, role: RoleKey) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before managing corporate roles.");
@@ -3241,6 +3390,13 @@ function App() {
           onActivate={activateLiveSubscription}
           plans={subscriptionPlans}
           subscriptions={organizationSubscriptions}
+        />
+        <TeamInvitationsPanel
+          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+          invitations={teamInvitations}
+          message={teamStatus}
+          onCreate={createLiveTeamInvitation}
+          onStatus={updateLiveTeamInvitationStatus}
         />
 
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />

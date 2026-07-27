@@ -40,6 +40,7 @@ export type MissingRecordRequestStatus = "requested" | "in_progress" | "fulfille
 export type ApiClientStatus = "active" | "paused" | "revoked";
 export type WebhookSubscriptionStatus = "active" | "paused" | "failed" | "revoked";
 export type SubscriptionStatus = "trialing" | "active" | "past_due" | "cancelled";
+export type OrganizationInvitationStatus = "pending" | "accepted" | "cancelled" | "expired";
 
 export interface DbOrganization {
   id: string;
@@ -269,6 +270,20 @@ export interface DbOrganizationSubscription {
   created_at: string;
   updated_at: string;
   plan: DbSubscriptionPlan | null;
+}
+
+export interface DbOrganizationInvitation {
+  id: string;
+  organization_id: string;
+  invited_email: string;
+  role: RoleKey;
+  status: OrganizationInvitationStatus;
+  invited_by_profile_id: string | null;
+  accepted_by_profile_id: string | null;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
+  organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
 }
 
 export interface RoleCapability {
