@@ -39,6 +39,7 @@ export type ReferenceRequestStatus =
 export type MissingRecordRequestStatus = "requested" | "in_progress" | "fulfilled" | "declined" | "cancelled" | "expired";
 export type ApiClientStatus = "active" | "paused" | "revoked";
 export type WebhookSubscriptionStatus = "active" | "paused" | "failed" | "revoked";
+export type SubscriptionStatus = "trialing" | "active" | "past_due" | "cancelled";
 
 export interface DbOrganization {
   id: string;
@@ -242,6 +243,32 @@ export interface DbWebhookSubscription {
   last_delivered_at: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface DbSubscriptionPlan {
+  id: string;
+  name: string;
+  audience: string;
+  monthly_price_usd: number;
+  annual_price_usd: number | null;
+  included_seats: number;
+  features: string[];
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbOrganizationSubscription {
+  id: string;
+  organization_id: string;
+  plan_id: string;
+  status: SubscriptionStatus;
+  seats: number;
+  started_at: string;
+  renews_at: string | null;
+  created_at: string;
+  updated_at: string;
+  plan: DbSubscriptionPlan | null;
 }
 
 export interface RoleCapability {

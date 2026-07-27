@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   Activity,
+  BadgeCheck,
   Bell,
   CalendarClock,
   ChevronRight,
@@ -32,7 +33,9 @@ import type {
   DbIssuerCredential,
   DbMissingRecordRequest,
   DbNotificationEvent,
+  DbOrganizationSubscription,
   DbReferenceRequest,
+  DbSubscriptionPlan,
   DbVerificationCase,
   DbWebhookSubscription,
   ReferenceRequestStatus,
@@ -60,6 +63,11 @@ import {
   signUpWithPassword,
   type AuthSession
 } from "./auth";
+import {
+  activateOrganizationSubscription,
+  loadOrganizationSubscriptions,
+  loadSubscriptionPlans
+} from "./billingRepository";
 import {
   createSampleCredentialIssuerMembership,
   issueCredentialRecord,
@@ -1780,6 +1788,74 @@ function AccountPanel({
   );
 }
 
+function BillingPanel({
+  disabled,
+  message,
+  onActivate,
+  plans,
+  subscriptions
+}: {
+  disabled: boolean;
+  message: string;
+  onActivate: (planId: string, seats: number) => Promise<void>;
+  plans: DbSubscriptionPlan[];
+  subscriptions: DbOrganizationSubscription[];
+}) {
+  const [seats, setSeats] = useState(5);
+  const [busyPlanId, setBusyPlanId] = useState<string | null>(null);
+  const activePlanIds = new Set(subscriptions.filter((item) => item.status !== "cancelled").map((item) => item.plan_id));
+
+  async function activate(planId: string) {
+    setBusyPlanId(planId);
+    try {
+      await onActivate(planId, seats);
+    } finally {
+      setBusyPlanId(null);
+    }
+  }
+
+  return (
+    <section className="billing-panel">
+      <div className="mini-heading">
+        <BadgeCheck size={16} />
+        <strong>Billing and plans</strong>
+      </div>
+      <small>{message}</small>
+      <div className="billing-seat-row">
+        <span>Seats</span>
+        <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
+      </div>
+      <div className="billing-plan-list">
+        {plans.length ? (
+          plans.map((plan) => (
+            <article className="billing-plan-card" key={plan.id}>
+              <div>
+                <strong>{plan.name}</strong>
+                <p>${plan.monthly_price_usd}/month</p>
+                <small>{plan.features.slice(0, 3).join(", ")}</small>
+              </div>
+              <button
+                className={activePlanIds.has(plan.id) ? "secondary-action" : "primary-action"}
+                disabled={disabled || busyPlanId === plan.id || activePlanIds.has(plan.id)}
+                onClick={() => void activate(plan.id)}
+              >
+                {activePlanIds.has(plan.id) ? "Active" : "Activate"}
+              </button>
+            </article>
+          ))
+        ) : (
+          <article className="billing-plan-card empty">
+            <div>
+              <strong>No live plans loaded</strong>
+              <p>Run pricing migrations to activate plan selection.</p>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function AuthPanel({
   session,
   accountStatus,
@@ -2187,6 +2263,9 @@ function App() {
   } | null>(null);
   const [accountContext, setAccountContext] = useState<AccountContext | null>(null);
   const [accountStatus, setAccountStatus] = useState("Demo account context");
+  const [subscriptionPlans, setSubscriptionPlans] = useState<DbSubscriptionPlan[]>([]);
+  const [organizationSubscriptions, setOrganizationSubscriptions] = useState<DbOrganizationSubscription[]>([]);
+  const [billingStatus, setBillingStatus] = useState("Sign in to manage billing plans");
   const [livePassportRecords, setLivePassportRecords] = useState<RecordItem[]>([]);
   const [recordStatus, setRecordStatus] = useState("Sign in to add live Passport records");
   const [accessGrants, setAccessGrants] = useState<AccessGrantView[]>([]);
@@ -2232,6 +2311,9 @@ function App() {
     if (!authSession) {
       setAccountContext(null);
       setAccountStatus("Demo account context");
+      setSubscriptionPlans([]);
+      setOrganizationSubscriptions([]);
+      setBillingStatus("Sign in to manage billing plans");
       setActiveMembershipId(sessionUser.activeMembershipId);
       return;
     }
@@ -2260,6 +2342,38 @@ function App() {
       cancelled = true;
     };
   }, [authSession]);
+
+  useEffect(() => {
+    if (!authSession || !accountContext) {
+      return;
+    }
+
+    let cancelled = false;
+    setBillingStatus("Loading billing plans...");
+
+    Promise.all([
+      loadSubscriptionPlans(authSession.accessToken),
+      loadOrganizationSubscriptions(authSession.accessToken).catch(() => [])
+    ])
+      .then(([plans, subscriptions]) => {
+        if (cancelled) return;
+        setSubscriptionPlans(plans);
+        setOrganizationSubscriptions(subscriptions);
+        setBillingStatus(
+          subscriptions.length ? `Live subscriptions: ${subscriptions.length}` : "Choose a plan for corporate workflows"
+        );
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setSubscriptionPlans([]);
+        setOrganizationSubscriptions([]);
+        setBillingStatus(error instanceof Error ? error.message : "Could not load billing plans");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authSession, accountContext]);
 
   useEffect(() => {
     if (!authSession || !accountContext || !pendingCorporateAccount) {
@@ -2922,6 +3036,25 @@ function App() {
     setAccountStatus("Corporate account created");
   }
 
+  async function activateLiveSubscription(planId: string, seats: number) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before activating subscriptions.");
+    }
+
+    const subscription = await activateOrganizationSubscription({
+      accessToken: authSession.accessToken,
+      planId,
+      seats
+    });
+    const [subscriptions, events] = await Promise.all([
+      loadOrganizationSubscriptions(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setOrganizationSubscriptions(subscriptions);
+    setAuditEvents(events);
+    setBillingStatus(`Plan activated: ${subscription.plan_id}`);
+  }
+
   async function assignLiveCorporateRole(organizationId: string, role: RoleKey) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before managing corporate roles.");
@@ -3101,6 +3234,13 @@ function App() {
           onCreateCorporateAccount={createLiveCorporateAccount}
           onCreateOperationsRole={createLiveOperationsRole}
           onSwitch={switchMembership}
+        />
+        <BillingPanel
+          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+          message={billingStatus}
+          onActivate={activateLiveSubscription}
+          plans={subscriptionPlans}
+          subscriptions={organizationSubscriptions}
         />
 
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />

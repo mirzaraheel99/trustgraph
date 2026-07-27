@@ -382,6 +382,58 @@ p,
     rgba(255, 255, 255, 0.028);
 }
 
+.billing-panel {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(112, 224, 178, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(112, 224, 178, 0.07), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.billing-seat-row {
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  align-items: center;
+  gap: 8px;
+}
+
+.billing-seat-row input {
+  min-height: 34px;
+  width: 100%;
+  padding: 0 8px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.billing-plan-list {
+  display: grid;
+  gap: 8px;
+}
+
+.billing-plan-card {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.billing-plan-card p {
+  margin: 4px 0;
+  color: var(--teal);
+  font-weight: 900;
+}
+
+.billing-plan-card.empty {
+  border-style: dashed;
+}
+
 .notification-panel {
   display: grid;
   gap: 10px;
