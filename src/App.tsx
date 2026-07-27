@@ -1146,6 +1146,7 @@ function ReferenceRequestsPanel({
 function VerifyRequestsPanel({
   disabled,
   activeOrganization,
+  consentAuthorizations,
   issuerCredentials,
   issuerDisabled,
   issuerMessage,
@@ -1166,6 +1167,7 @@ function VerifyRequestsPanel({
 }: {
   disabled: boolean;
   activeOrganization: Organization;
+  consentAuthorizations: DbConsentAuthorization[];
   issuerCredentials: DbIssuerCredential[];
   issuerDisabled: boolean;
   issuerMessage: string;
@@ -1211,6 +1213,15 @@ function VerifyRequestsPanel({
     (request) => request.status === "declined" || request.status === "expired" || request.status === "revoked"
   ).length;
   const lifecycle = ["Request", "Professional approval", "Scoped record sync", "Audit event"];
+  const activeConsentRecordIds = new Set(
+    consentAuthorizations
+      .filter((authorization) => authorization.status === "active" && authorization.trust_record_id)
+      .map((authorization) => authorization.trust_record_id)
+  );
+  const sharedRecordsNeedingConsent = sharedRecords.filter(
+    (record) => record.consentRequired || record.sensitivity === "sensitive" || record.sensitivity === "restricted"
+  );
+  const coveredConsentRecords = sharedRecordsNeedingConsent.filter((record) => activeConsentRecordIds.has(record.id)).length;
 
   useEffect(() => {
     setRequestStatus(message);
@@ -1361,6 +1372,38 @@ function VerifyRequestsPanel({
             <div>
               <strong>No shared records yet</strong>
               <p>Approve an Access Grant from Passport to sync the professional's current records here.</p>
+            </div>
+          </article>
+        )}
+      </div>
+      <div className="mini-heading verify-shared-heading">
+        <ShieldCheck size={16} />
+        <strong>Consent coverage</strong>
+        <span className="status-chip neutral">{coveredConsentRecords}/{sharedRecordsNeedingConsent.length} covered</span>
+      </div>
+      <div className="shared-record-grid">
+        {sharedRecordsNeedingConsent.length ? (
+          sharedRecordsNeedingConsent.slice(0, 4).map((record) => {
+            const covered = activeConsentRecordIds.has(record.id);
+            return (
+              <article className="shared-record-card" key={record.id}>
+                <div className="record-row-main">
+                  <span className="record-section">{record.section}</span>
+                  <strong>{record.title}</strong>
+                  <small>{record.sensitivity ?? "standard"} sensitivity</small>
+                </div>
+                <div className="record-row-meta">
+                  <span className={`status-chip ${covered ? "success" : "warning"}`}>{covered ? "Consent active" : "Consent review"}</span>
+                  <span className="status-chip neutral">{record.consentRequired ? "explicit consent" : "policy sensitive"}</span>
+                </div>
+              </article>
+            );
+          })
+        ) : (
+          <article className="grant-card empty">
+            <div>
+              <strong>No sensitive shared records</strong>
+              <p>Restricted and sensitive Passport records will appear here when a shared record needs consent coverage.</p>
             </div>
           </article>
         )}
@@ -5075,6 +5118,7 @@ function App() {
             {workspace.id === "verify" ? (
               <VerifyRequestsPanel
                 activeOrganization={activeOrganization}
+                consentAuthorizations={consentAuthorizations}
                 disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "verify")}
                 issuerCredentials={issuerCredentials}
                 issuerDisabled={
