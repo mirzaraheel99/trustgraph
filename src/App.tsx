@@ -100,8 +100,10 @@ import {
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
 import {
+  acceptOrganizationInvitation,
   createOrganizationInvitation,
   loadOrganizationInvitations,
+  loadMyPendingInvitations,
   markOrganizationInvitationStatus
 } from "./teamRepository";
 import {
@@ -1959,6 +1961,65 @@ function TeamInvitationsPanel({
   );
 }
 
+function MyInvitationsPanel({
+  disabled,
+  invitations,
+  message,
+  onAccept
+}: {
+  disabled: boolean;
+  invitations: DbOrganizationInvitation[];
+  message: string;
+  onAccept: (invitationId: string) => Promise<void>;
+}) {
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  async function accept(invitationId: string) {
+    setBusyId(invitationId);
+    try {
+      await onAccept(invitationId);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  if (!invitations.length && disabled) {
+    return null;
+  }
+
+  return (
+    <section className="team-panel">
+      <div className="mini-heading">
+        <UserPlus size={16} />
+        <strong>My invitations</strong>
+      </div>
+      <small>{message}</small>
+      <div className="team-list">
+        {invitations.length ? (
+          invitations.map((invitation) => (
+            <article className="team-card" key={invitation.id}>
+              <div>
+                <strong>{invitation.organization?.name ?? "Corporate workspace"}</strong>
+                <small>{invitation.role.replace(/_/g, " ")}</small>
+              </div>
+              <button className="primary-action" disabled={disabled || busyId === invitation.id} onClick={() => void accept(invitation.id)}>
+                Accept
+              </button>
+            </article>
+          ))
+        ) : (
+          <article className="team-card empty">
+            <div>
+              <strong>No pending invitations</strong>
+              <small>Corporate invitations for your email will appear here.</small>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function AuthPanel({
   session,
   accountStatus,
@@ -2371,6 +2432,8 @@ function App() {
   const [billingStatus, setBillingStatus] = useState("Sign in to manage billing plans");
   const [teamInvitations, setTeamInvitations] = useState<DbOrganizationInvitation[]>([]);
   const [teamStatus, setTeamStatus] = useState("Sign in to invite corporate team members");
+  const [myInvitations, setMyInvitations] = useState<DbOrganizationInvitation[]>([]);
+  const [myInvitationStatus, setMyInvitationStatus] = useState("Sign in to review workspace invitations");
   const [livePassportRecords, setLivePassportRecords] = useState<RecordItem[]>([]);
   const [recordStatus, setRecordStatus] = useState("Sign in to add live Passport records");
   const [accessGrants, setAccessGrants] = useState<AccessGrantView[]>([]);
@@ -2421,6 +2484,8 @@ function App() {
       setBillingStatus("Sign in to manage billing plans");
       setTeamInvitations([]);
       setTeamStatus("Sign in to invite corporate team members");
+      setMyInvitations([]);
+      setMyInvitationStatus("Sign in to review workspace invitations");
       setActiveMembershipId(sessionUser.activeMembershipId);
       return;
     }
@@ -2486,6 +2551,33 @@ function App() {
       cancelled = true;
     };
   }, [activeMembership.organizationId, authSession, accountContext]);
+
+  useEffect(() => {
+    if (!authSession || !accountContext) {
+      setMyInvitations([]);
+      setMyInvitationStatus("Sign in to review workspace invitations");
+      return;
+    }
+
+    let cancelled = false;
+    setMyInvitationStatus("Checking pending invitations...");
+
+    loadMyPendingInvitations(accountContext.profile.email, authSession.accessToken)
+      .then((invitations) => {
+        if (cancelled) return;
+        setMyInvitations(invitations);
+        setMyInvitationStatus(invitations.length ? `Pending invitations: ${invitations.length}` : "No pending invitations");
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setMyInvitations([]);
+        setMyInvitationStatus(error instanceof Error ? error.message : "Could not load pending invitations");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authSession, accountContext]);
 
   useEffect(() => {
     if (!authSession || !accountContext || !pendingCorporateAccount) {
@@ -3204,6 +3296,34 @@ function App() {
     setTeamStatus(`Invitation moved to ${updated.status}`);
   }
 
+  async function acceptLiveTeamInvitation(invitationId: string) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before accepting team invitations.");
+    }
+
+    const invitation = await acceptOrganizationInvitation({
+      accessToken: authSession.accessToken,
+      invitationId
+    });
+    const [context, invitations, events] = await Promise.all([
+      loadAccountContext(accountContext.profile.id, authSession.accessToken),
+      loadMyPendingInvitations(accountContext.profile.email, authSession.accessToken).catch(() => []),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    const acceptedMembership = context.memberships.find(
+      (membership) => membership.organizationId === invitation.organization_id && membership.role === invitation.role
+    );
+    setAccountContext(context);
+    if (acceptedMembership) {
+      setActiveMembershipId(acceptedMembership.id);
+      setWorkspaceId(getRole(acceptedMembership.role).portal);
+    }
+    setMyInvitations(invitations);
+    setAuditEvents(events);
+    setMyInvitationStatus(`Invitation accepted for ${invitation.organization?.name ?? "workspace"}`);
+    setAccountStatus("Workspace invitation accepted");
+  }
+
   async function assignLiveCorporateRole(organizationId: string, role: RoleKey) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before managing corporate roles.");
@@ -3397,6 +3517,12 @@ function App() {
           message={teamStatus}
           onCreate={createLiveTeamInvitation}
           onStatus={updateLiveTeamInvitationStatus}
+        />
+        <MyInvitationsPanel
+          disabled={!authSession || !accountContext}
+          invitations={myInvitations}
+          message={myInvitationStatus}
+          onAccept={acceptLiveTeamInvitation}
         />
 
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />

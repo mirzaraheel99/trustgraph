@@ -17,6 +17,19 @@ export async function loadOrganizationInvitations(
   );
 }
 
+export async function loadMyPendingInvitations(profileEmail: string, accessToken: string): Promise<DbOrganizationInvitation[]> {
+  return supabaseRest<DbOrganizationInvitation[]>(
+    [
+      `organization_invitations?invited_email=eq.${encodeURIComponent(profileEmail.toLowerCase())}`,
+      "status=eq.pending",
+      "select=*,organization:organizations!organization_invitations_organization_id_fkey(id,name,type)",
+      "order=created_at.desc",
+      "limit=8"
+    ].join("&"),
+    { accessToken }
+  );
+}
+
 export async function createOrganizationInvitation(input: {
   accessToken: string;
   email: string;
@@ -42,6 +55,19 @@ export async function markOrganizationInvitationStatus(input: {
     {
       target_invitation_id: input.invitationId,
       next_status: input.status
+    },
+    { accessToken: input.accessToken }
+  );
+}
+
+export async function acceptOrganizationInvitation(input: {
+  accessToken: string;
+  invitationId: string;
+}): Promise<DbOrganizationInvitation> {
+  return supabaseRpc<DbOrganizationInvitation>(
+    "accept_organization_invitation",
+    {
+      target_invitation_id: input.invitationId
     },
     { accessToken: input.accessToken }
   );
