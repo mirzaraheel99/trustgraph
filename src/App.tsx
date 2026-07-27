@@ -23,7 +23,8 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  UserPlus
+  UserPlus,
+  Users
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
 import type {
@@ -102,9 +103,12 @@ import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStat
 import {
   acceptOrganizationInvitation,
   createOrganizationInvitation,
+  loadOrganizationMembers,
   loadOrganizationInvitations,
   loadMyPendingInvitations,
-  markOrganizationInvitationStatus
+  markOrganizationInvitationStatus,
+  markOrganizationMemberStatus,
+  type OrganizationMemberView
 } from "./teamRepository";
 import {
   createSampleTrustGraphVerifierMembership,
@@ -2020,6 +2024,81 @@ function MyInvitationsPanel({
   );
 }
 
+function TeamMembersPanel({
+  disabled,
+  members,
+  message,
+  currentProfileId,
+  onStatus
+}: {
+  disabled: boolean;
+  members: OrganizationMemberView[];
+  message: string;
+  currentProfileId: string | null;
+  onStatus: (membershipId: string, status: "active" | "suspended") => Promise<void>;
+}) {
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  async function updateStatus(membershipId: string, status: "active" | "suspended") {
+    setBusyId(membershipId);
+    try {
+      await onStatus(membershipId, status);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <section className="team-panel">
+      <div className="mini-heading">
+        <Users size={16} />
+        <strong>Team members</strong>
+      </div>
+      <small>{message}</small>
+      <div className="team-list">
+        {members.length ? (
+          members.slice(0, 8).map((member) => {
+            const isSelf = member.profile_id === currentProfileId;
+            return (
+              <article className="team-card" key={member.id}>
+                <div>
+                  <strong>{member.profile?.full_name || member.profile?.email || "Workspace member"}</strong>
+                  <small>
+                    {member.role.replace(/_/g, " ")} - {member.status}
+                  </small>
+                </div>
+                <div className="grant-actions">
+                  <button
+                    className="secondary-action"
+                    disabled={disabled || isSelf || busyId === member.id || member.status === "suspended"}
+                    onClick={() => void updateStatus(member.id, "suspended")}
+                  >
+                    Suspend
+                  </button>
+                  <button
+                    className="secondary-action"
+                    disabled={disabled || busyId === member.id || member.status === "active"}
+                    onClick={() => void updateStatus(member.id, "active")}
+                  >
+                    Restore
+                  </button>
+                </div>
+              </article>
+            );
+          })
+        ) : (
+          <article className="team-card empty">
+            <div>
+              <strong>No live members loaded</strong>
+              <small>Accepted team members will appear after the workspace loads.</small>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function AuthPanel({
   session,
   accountStatus,
@@ -2432,6 +2511,8 @@ function App() {
   const [billingStatus, setBillingStatus] = useState("Sign in to manage billing plans");
   const [teamInvitations, setTeamInvitations] = useState<DbOrganizationInvitation[]>([]);
   const [teamStatus, setTeamStatus] = useState("Sign in to invite corporate team members");
+  const [teamMembers, setTeamMembers] = useState<OrganizationMemberView[]>([]);
+  const [memberStatus, setMemberStatus] = useState("Sign in to manage corporate seats");
   const [myInvitations, setMyInvitations] = useState<DbOrganizationInvitation[]>([]);
   const [myInvitationStatus, setMyInvitationStatus] = useState("Sign in to review workspace invitations");
   const [livePassportRecords, setLivePassportRecords] = useState<RecordItem[]>([]);
@@ -2484,6 +2565,8 @@ function App() {
       setBillingStatus("Sign in to manage billing plans");
       setTeamInvitations([]);
       setTeamStatus("Sign in to invite corporate team members");
+      setTeamMembers([]);
+      setMemberStatus("Sign in to manage corporate seats");
       setMyInvitations([]);
       setMyInvitationStatus("Sign in to review workspace invitations");
       setActiveMembershipId(sessionUser.activeMembershipId);
@@ -2526,25 +2609,30 @@ function App() {
     Promise.all([
       loadSubscriptionPlans(authSession.accessToken),
       loadOrganizationSubscriptions(authSession.accessToken).catch(() => []),
-      loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => [])
+      loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
+      loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, invitations]) => {
+      .then(([plans, subscriptions, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
         setTeamInvitations(invitations);
+        setTeamMembers(members);
         setBillingStatus(
           subscriptions.length ? `Live subscriptions: ${subscriptions.length}` : "Choose a plan for corporate workflows"
         );
         setTeamStatus(invitations.length ? `Team invitations: ${invitations.length}` : "No team invitations yet");
+        setMemberStatus(members.length ? `Team seats: ${members.length}` : "No live team members loaded");
       })
       .catch((error) => {
         if (cancelled) return;
         setSubscriptionPlans([]);
         setOrganizationSubscriptions([]);
         setTeamInvitations([]);
+        setTeamMembers([]);
         setBillingStatus(error instanceof Error ? error.message : "Could not load billing plans");
         setTeamStatus(error instanceof Error ? error.message : "Could not load team invitations");
+        setMemberStatus(error instanceof Error ? error.message : "Could not load team members");
       });
 
     return () => {
@@ -3324,6 +3412,27 @@ function App() {
     setAccountStatus("Workspace invitation accepted");
   }
 
+  async function updateLiveTeamMemberStatus(membershipId: string, status: "active" | "suspended") {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before managing team members.");
+    }
+
+    const updated = await markOrganizationMemberStatus({
+      accessToken: authSession.accessToken,
+      membershipId,
+      status
+    });
+    const [members, events, context] = await Promise.all([
+      loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents),
+      loadAccountContext(accountContext.profile.id, authSession.accessToken)
+    ]);
+    setTeamMembers(members);
+    setAuditEvents(events);
+    setAccountContext(context);
+    setMemberStatus(`Member ${updated.status === "active" ? "restored" : "suspended"}`);
+  }
+
   async function assignLiveCorporateRole(organizationId: string, role: RoleKey) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before managing corporate roles.");
@@ -3517,6 +3626,13 @@ function App() {
           message={teamStatus}
           onCreate={createLiveTeamInvitation}
           onStatus={updateLiveTeamInvitationStatus}
+        />
+        <TeamMembersPanel
+          currentProfileId={accountContext?.profile.id ?? null}
+          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+          members={teamMembers}
+          message={memberStatus}
+          onStatus={updateLiveTeamMemberStatus}
         />
         <MyInvitationsPanel
           disabled={!authSession || !accountContext}
