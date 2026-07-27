@@ -1,0 +1,109 @@
+import type { RecordItem, Tone } from "./data";
+import type { DbTrustRecord, RecordType } from "./database";
+import { supabaseRest } from "./supabase";
+
+const recordTypeLabels: Record<RecordType, string> = {
+  identity: "Identity",
+  employment: "Work Record",
+  education: "Education",
+  license: "Licenses",
+  certification: "Certifications",
+  reference: "References",
+  background_check: "Background Check",
+  health_clearance: "Health Clearance",
+  custom: "Custom"
+};
+
+const statusTone: Record<DbTrustRecord["status"], Tone> = {
+  draft: "neutral",
+  pending_verification: "warning",
+  verified: "success",
+  expired: "warning",
+  disputed: "danger",
+  revoked: "danger",
+  restricted: "danger"
+};
+
+function statusLabel(status: DbTrustRecord["status"]) {
+  return status.replace(/_/g, " ");
+}
+
+function dateLabel(value: string | null) {
+  if (!value) return "No expiration";
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value));
+}
+
+export function trustRecordToRecordItem(record: DbTrustRecord): RecordItem {
+  const createdDate = dateLabel(record.created_at);
+  const issuedDate = record.issued_at ? dateLabel(record.issued_at) : createdDate;
+
+  return {
+    id: record.id,
+    section: recordTypeLabels[record.type],
+    title: record.title,
+    subtitle: record.evidence_summary || `${recordTypeLabels[record.type]} record from ${record.source_name}`,
+    status: statusLabel(record.status),
+    trust: record.status === "verified" ? "Self-entered verified status" : "Self-entered",
+    source: record.source_name,
+    owner: "Professional-controlled record",
+    updated: `Created ${createdDate}`,
+    expires: record.expires_at ? dateLabel(record.expires_at) : "No expiration",
+    access: "Private until shared through an Access Grant",
+    evidence: record.evidence_summary || "Evidence details pending",
+    tone: statusTone[record.status],
+    progress: record.status === "verified" ? 84 : 38,
+    timeline: [
+      {
+        label: "Created",
+        detail: "Professional added record to live Supabase Passport",
+        date: createdDate
+      },
+      {
+        label: "Issued",
+        detail: record.issued_at ? "Issue date captured" : "Issue date not provided",
+        date: issuedDate
+      }
+    ]
+  };
+}
+
+export async function loadPassportRecords(profileId: string, accessToken: string): Promise<RecordItem[]> {
+  const records = await supabaseRest<DbTrustRecord[]>(
+    [
+      `trust_records?owner_profile_id=eq.${encodeURIComponent(profileId)}`,
+      "select=*",
+      "order=created_at.desc"
+    ].join("&"),
+    { accessToken }
+  );
+
+  return records.map(trustRecordToRecordItem);
+}
+
+export async function createPassportRecord(input: {
+  profileId: string;
+  accessToken: string;
+  type: RecordType;
+  title: string;
+  sourceName: string;
+  evidenceSummary?: string;
+  issuedAt?: string;
+  expiresAt?: string;
+}): Promise<RecordItem> {
+  const [record] = await supabaseRest<DbTrustRecord[]>("trust_records", {
+    method: "POST",
+    accessToken: input.accessToken,
+    body: JSON.stringify({
+      owner_profile_id: input.profileId,
+      type: input.type,
+      title: input.title,
+      status: "draft",
+      source_name: input.sourceName,
+      evidence_summary: input.evidenceSummary || null,
+      issued_at: input.issuedAt || null,
+      expires_at: input.expiresAt || null
+    })
+  });
+
+  return trustRecordToRecordItem(record);
+}

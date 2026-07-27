@@ -21,6 +21,7 @@ import {
   UserPlus
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
+import type { RecordType } from "./database";
 import {
   accountContextOrganizations,
   accountContextToSessionUser,
@@ -35,6 +36,7 @@ import {
   signUpWithPassword,
   type AuthSession
 } from "./auth";
+import { createPassportRecord, loadPassportRecords } from "./recordRepository";
 import {
   canAccessWorkspace,
   getActiveMembership,
@@ -191,6 +193,112 @@ function RecordDetail({ record }: { record: RecordItem }) {
         </div>
       </section>
     </aside>
+  );
+}
+
+function PassportRecordForm({
+  disabled,
+  message,
+  onCreate
+}: {
+  disabled: boolean;
+  message: string;
+  onCreate: (input: {
+    type: RecordType;
+    title: string;
+    sourceName: string;
+    evidenceSummary: string;
+    issuedAt: string;
+    expiresAt: string;
+  }) => Promise<void>;
+}) {
+  const [type, setType] = useState<RecordType>("employment");
+  const [title, setTitle] = useState("");
+  const [sourceName, setSourceName] = useState("");
+  const [evidenceSummary, setEvidenceSummary] = useState("");
+  const [issuedAt, setIssuedAt] = useState("");
+  const [expiresAt, setExpiresAt] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState(message);
+
+  useEffect(() => {
+    setStatus(message);
+  }, [message]);
+
+  async function submitRecord(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setStatus("Saving live Passport record...");
+
+    try {
+      await onCreate({ type, title, sourceName, evidenceSummary, issuedAt, expiresAt });
+      setTitle("");
+      setSourceName("");
+      setEvidenceSummary("");
+      setIssuedAt("");
+      setExpiresAt("");
+      setStatus("Record added to Supabase Passport");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not add Passport record");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <form className="record-form" onSubmit={submitRecord}>
+      <div className="mini-heading">
+        <FileText size={16} />
+        <strong>Add live Passport record</strong>
+      </div>
+      <div className="record-form-grid">
+        <select value={type} onChange={(event) => setType(event.target.value as RecordType)} disabled={disabled || busy}>
+          <option value="employment">Employment</option>
+          <option value="education">Education</option>
+          <option value="license">License</option>
+          <option value="certification">Certification</option>
+          <option value="identity">Identity</option>
+          <option value="health_clearance">Health clearance</option>
+          <option value="custom">Custom</option>
+        </select>
+        <input
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          placeholder="Record title"
+          disabled={disabled || busy}
+        />
+        <input
+          value={sourceName}
+          onChange={(event) => setSourceName(event.target.value)}
+          placeholder="Source or issuer"
+          disabled={disabled || busy}
+        />
+        <input
+          value={issuedAt}
+          onChange={(event) => setIssuedAt(event.target.value)}
+          type="date"
+          disabled={disabled || busy}
+        />
+        <input
+          value={expiresAt}
+          onChange={(event) => setExpiresAt(event.target.value)}
+          type="date"
+          disabled={disabled || busy}
+        />
+        <input
+          value={evidenceSummary}
+          onChange={(event) => setEvidenceSummary(event.target.value)}
+          placeholder="Evidence summary"
+          disabled={disabled || busy}
+        />
+      </div>
+      <div className="record-form-footer">
+        <small>{status}</small>
+        <button className="primary-action" disabled={disabled || busy || !title || !sourceName} type="submit">
+          Add record
+        </button>
+      </div>
+    </form>
   );
 }
 
@@ -359,6 +467,8 @@ function App() {
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
   const [accountContext, setAccountContext] = useState<AccountContext | null>(null);
   const [accountStatus, setAccountStatus] = useState("Demo account context");
+  const [livePassportRecords, setLivePassportRecords] = useState<RecordItem[]>([]);
+  const [recordStatus, setRecordStatus] = useState("Sign in to add live Passport records");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -407,15 +517,46 @@ function App() {
     };
   }, [authSession]);
 
+  useEffect(() => {
+    if (!authSession || !accountContext) {
+      setLivePassportRecords([]);
+      setRecordStatus("Sign in to add live Passport records");
+      return;
+    }
+
+    let cancelled = false;
+    setRecordStatus("Loading live Passport records...");
+
+    loadPassportRecords(accountContext.profile.id, authSession.accessToken)
+      .then((items) => {
+        if (cancelled) return;
+        setLivePassportRecords(items);
+        setRecordStatus(items.length ? "Live Supabase Passport records" : "No live records yet");
+        if (items[0]) {
+          setSelectedId(items[0].id);
+        }
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setLivePassportRecords([]);
+        setRecordStatus(error instanceof Error ? error.message : "Could not load live Passport records");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authSession, accountContext]);
+
   const records = useMemo(() => {
     const q = query.toLowerCase().trim();
-    return workspace.records.filter((record) =>
+    const sourceRecords = workspace.id === "passport" && livePassportRecords.length ? livePassportRecords : workspace.records;
+    return sourceRecords.filter((record) =>
       [record.title, record.subtitle, record.section, record.status, record.trust, record.source]
         .join(" ")
         .toLowerCase()
         .includes(q)
     );
-  }, [query, workspace]);
+  }, [livePassportRecords, query, workspace]);
 
   const selectedRecord = records.find((record) => record.id === selectedId) ?? records[0] ?? workspace.records[0];
 
@@ -434,6 +575,28 @@ function App() {
     setWorkspaceId(role.portal);
     setQuery("");
     setSelectedId(workspaces.find((item) => item.id === role.portal)?.records[0]?.id ?? "");
+  }
+
+  async function createLivePassportRecord(input: {
+    type: RecordType;
+    title: string;
+    sourceName: string;
+    evidenceSummary: string;
+    issuedAt: string;
+    expiresAt: string;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating live Passport records.");
+    }
+
+    const record = await createPassportRecord({
+      profileId: accountContext.profile.id,
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    setLivePassportRecords((current) => [record, ...current]);
+    setSelectedId(record.id);
+    setRecordStatus("Live Supabase Passport records");
   }
 
   return (
@@ -610,6 +773,14 @@ function App() {
                 />
               ))}
             </div>
+
+            {workspace.id === "passport" ? (
+              <PassportRecordForm
+                disabled={!authSession || !accountContext}
+                message={recordStatus}
+                onCreate={createLivePassportRecord}
+              />
+            ) : null}
           </div>
 
           <div className="side-stack">
