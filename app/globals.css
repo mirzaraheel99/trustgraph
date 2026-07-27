@@ -1659,6 +1659,54 @@ p {
   gap: 9px;
 }
 
+.operations-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.operations-summary-grid div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.operations-summary-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.operations-summary-grid strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.operations-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px 132px;
+  gap: 8px;
+}
+
+.operations-controls input,
+.operations-controls select {
+  min-height: 38px;
+  width: 100%;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.operations-controls select {
+  color-scheme: dark;
+}
+
 .operations-case-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -2215,6 +2263,8 @@ p {
   .issuer-summary-grid,
   .missing-controls,
   .missing-summary-grid,
+  .operations-controls,
+  .operations-summary-grid,
   .plan-summary-grid,
   .team-controls,
   .team-summary-grid,

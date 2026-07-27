@@ -1469,6 +1469,18 @@ function OperationsQueuePanel({
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [busySamples, setBusySamples] = useState(false);
+  const [caseQuery, setCaseQuery] = useState("");
+  const [caseStatusFilter, setCaseStatusFilter] = useState<"all" | VerificationCaseStatus>("all");
+  const [priorityFilter, setPriorityFilter] = useState<"all" | "low" | "medium" | "high" | "critical">("all");
+  const openCaseCount = cases.filter((item) => item.status === "open" || item.status === "in_review").length;
+  const restrictedCaseCount = cases.filter((item) => item.status === "restricted").length;
+  const criticalCaseCount = cases.filter((item) => item.priority === "critical" || item.priority === "high").length;
+  const filteredCases = cases.filter((item) => {
+    const matchesStatus = caseStatusFilter === "all" || item.status === caseStatusFilter;
+    const matchesPriority = priorityFilter === "all" || item.priority === priorityFilter;
+    const haystack = `${item.case_type} ${item.title} ${item.summary} ${item.reason_code} ${item.status} ${item.priority}`.toLowerCase();
+    return matchesStatus && matchesPriority && haystack.includes(caseQuery.trim().toLowerCase());
+  });
 
   async function decide(caseId: string, status: VerificationCaseStatus) {
     setBusyId(caseId);
@@ -1484,6 +1496,20 @@ function OperationsQueuePanel({
       <div className="mini-heading">
         <ShieldAlert size={16} />
         <strong>Live operations queue</strong>
+      </div>
+      <div className="operations-summary-grid">
+        <div>
+          <span>Open</span>
+          <strong>{openCaseCount}</strong>
+        </div>
+        <div>
+          <span>Restricted</span>
+          <strong>{restrictedCaseCount}</strong>
+        </div>
+        <div>
+          <span>High risk</span>
+          <strong>{criticalCaseCount}</strong>
+        </div>
       </div>
       <div className="grant-panel-top test-tool-strip">
         <small>{message}</small>
@@ -1502,9 +1528,31 @@ function OperationsQueuePanel({
           Seed test cases
         </button>
       </div>
+      <div className="operations-controls">
+        <input
+          onChange={(event) => setCaseQuery(event.target.value)}
+          placeholder="Search case, reason, summary, or priority"
+          value={caseQuery}
+        />
+        <select onChange={(event) => setCaseStatusFilter(event.target.value as typeof caseStatusFilter)} value={caseStatusFilter}>
+          <option value="all">All status</option>
+          <option value="open">Open</option>
+          <option value="in_review">In review</option>
+          <option value="resolved">Resolved</option>
+          <option value="restricted">Restricted</option>
+          <option value="dismissed">Dismissed</option>
+        </select>
+        <select onChange={(event) => setPriorityFilter(event.target.value as typeof priorityFilter)} value={priorityFilter}>
+          <option value="all">All priority</option>
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
       <div className="operations-case-list">
-        {cases.length ? (
-          cases.map((item) => (
+        {filteredCases.length ? (
+          filteredCases.slice(0, 10).map((item) => (
             <article className="operations-case-card" key={item.id}>
               <div>
                 <div className="record-row-main">
@@ -1548,7 +1596,7 @@ function OperationsQueuePanel({
         ) : (
           <article className="grant-card empty">
             <div>
-              <strong>No live operations cases yet</strong>
+              <strong>No matching operations cases</strong>
               <p>Fraud, compliance, and verifier review cases will appear here as live workflows create exceptions.</p>
             </div>
           </article>
