@@ -46,6 +46,7 @@ export type ApiClientStatus = "active" | "paused" | "revoked";
 export type WebhookSubscriptionStatus = "active" | "paused" | "failed" | "revoked";
 export type SubscriptionStatus = "trialing" | "active" | "past_due" | "cancelled";
 export type OrganizationInvitationStatus = "pending" | "accepted" | "cancelled" | "expired";
+export type ConsentAuthorizationStatus = "active" | "revoked" | "expired";
 
 export interface DbOrganization {
   id: string;
@@ -289,6 +290,24 @@ export interface DbOrganizationInvitation {
   created_at: string;
   updated_at: string;
   organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
+}
+
+export interface DbConsentAuthorization {
+  id: string;
+  subject_profile_id: string;
+  requester_organization_id: string | null;
+  trust_record_id: string | null;
+  purpose: string;
+  consent_scope: string[];
+  status: ConsentAuthorizationStatus;
+  granted_by_profile_id: string;
+  granted_at: string;
+  revoked_at: string | null;
+  expires_at: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  requester_organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
 }
 
 export interface RoleCapability {

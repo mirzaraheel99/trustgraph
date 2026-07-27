@@ -30,6 +30,7 @@ import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceI
 import type {
   DbAuditEvent,
   DbApiClient,
+  DbConsentAuthorization,
   DbEvidenceDocument,
   DbIssuerCredential,
   DbMissingRecordRequest,
@@ -83,6 +84,7 @@ import {
   markApiClientStatus,
   markWebhookSubscriptionStatus
 } from "./connectRepository";
+import { loadConsentAuthorizations, revokeConsentAuthorization } from "./consentRepository";
 import {
   createAccessGrantRequest,
   createSampleAccessGrant,
@@ -811,6 +813,88 @@ function AccessGrantsPanel({
             <div>
               <strong>No matching Access Grants</strong>
               <p>Corporate Verify requests will appear here when a live employer or staffing team requests Passport access.</p>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ConsentAuthorizationsPanel({
+  authorizations,
+  disabled,
+  message,
+  onRevoke
+}: {
+  authorizations: DbConsentAuthorization[];
+  disabled: boolean;
+  message: string;
+  onRevoke: (consentId: string) => Promise<void>;
+}) {
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const activeCount = authorizations.filter((authorization) => authorization.status === "active").length;
+  const revokedCount = authorizations.filter((authorization) => authorization.status === "revoked").length;
+  const expiringCount = authorizations.filter((authorization) => authorization.expires_at).length;
+
+  async function revoke(consentId: string) {
+    setBusyId(consentId);
+    try {
+      await onRevoke(consentId);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <section className="consent-panel">
+      <div className="mini-heading">
+        <LockKeyhole size={16} />
+        <strong>Consent authorizations</strong>
+      </div>
+      <small>{message}</small>
+      <div className="consent-summary-grid">
+        <div>
+          <span>Active</span>
+          <strong>{activeCount}</strong>
+        </div>
+        <div>
+          <span>Revoked</span>
+          <strong>{revokedCount}</strong>
+        </div>
+        <div>
+          <span>Expiring</span>
+          <strong>{expiringCount}</strong>
+        </div>
+      </div>
+      <div className="consent-list">
+        {authorizations.length ? (
+          authorizations.slice(0, 8).map((authorization) => (
+            <article className="consent-card" key={authorization.id}>
+              <div>
+                <strong>{authorization.requester_organization?.name ?? "Personal authorization"}</strong>
+                <p>{authorization.purpose}</p>
+                <small>{authorization.consent_scope.join(", ")}</small>
+              </div>
+              <div className="grant-actions">
+                <span className={`status-chip ${authorization.status === "active" ? "success" : "neutral"}`}>
+                  {authorization.status}
+                </span>
+                <button
+                  className="secondary-action"
+                  disabled={disabled || busyId === authorization.id || authorization.status !== "active"}
+                  onClick={() => void revoke(authorization.id)}
+                >
+                  Revoke
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <article className="consent-card empty">
+            <div>
+              <strong>No live consent authorizations yet</strong>
+              <p>Record-specific consent authorizations appear here when sensitive workflow permissions are granted.</p>
             </div>
           </article>
         )}
@@ -2149,7 +2233,7 @@ function PlanAlignmentPanel() {
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 024 are active, including member controls, corporate Access Grant requests, and first-class locked-scope record types.</small>
+          <small>Migrations through 025 are active, including member controls, corporate Access Grant requests, first-class record types, and consent authorizations.</small>
         </div>
         <span className="status-chip success">database live</span>
       </article>
@@ -3474,6 +3558,8 @@ function App() {
   const [recordStatus, setRecordStatus] = useState("Sign in to add live Passport records");
   const [accessGrants, setAccessGrants] = useState<AccessGrantView[]>([]);
   const [grantStatus, setGrantStatus] = useState("Sign in to review Access Grants");
+  const [consentAuthorizations, setConsentAuthorizations] = useState<DbConsentAuthorization[]>([]);
+  const [consentStatus, setConsentStatus] = useState("Sign in to review consent authorizations");
   const [verifyRequests, setVerifyRequests] = useState<VerifyAccessGrantView[]>([]);
   const [sharedVerifyRecords, setSharedVerifyRecords] = useState<RecordItem[]>([]);
   const [verifyStatus, setVerifyStatus] = useState("Switch to Verify role for live requests");
@@ -3666,6 +3752,8 @@ function App() {
       setNotificationStatus("Sign in for live workflow notifications");
       setReferenceRequests([]);
       setReferenceStatus("Sign in to manage live references");
+      setConsentAuthorizations([]);
+      setConsentStatus("Sign in to review consent authorizations");
       return;
     }
 
@@ -3673,24 +3761,28 @@ function App() {
     setRecordStatus("Loading live Passport records...");
     setNotificationStatus("Loading notifications...");
     setReferenceStatus("Loading reference requests...");
+    setConsentStatus("Loading consent authorizations...");
 
     Promise.all([
       loadPassportRecords(accountContext.profile.id, authSession.accessToken),
       loadEvidenceDocuments(authSession.accessToken),
       loadNotificationEvents(authSession.accessToken),
-      loadReferenceRequests(authSession.accessToken)
+      loadReferenceRequests(authSession.accessToken),
+      loadConsentAuthorizations(authSession.accessToken)
     ])
-      .then(([items, documents, notifications, references]) => {
+      .then(([items, documents, notifications, references, consents]) => {
         if (cancelled) return;
         setLivePassportRecords(items);
         setEvidenceDocuments(documents);
         setNotificationEvents(notifications);
         setReferenceRequests(references);
+        setConsentAuthorizations(consents);
         setRecordStatus(items.length ? "Live Supabase Passport records" : "No live records yet");
         setNotificationStatus(
           notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet"
         );
         setReferenceStatus(references.length ? `Live reference requests: ${references.length}` : "No live reference requests yet");
+        setConsentStatus(consents.length ? `Live consent authorizations: ${consents.length}` : "No live consent authorizations yet");
         if (items[0]) {
           setSelectedId(items[0].id);
         }
@@ -3701,9 +3793,11 @@ function App() {
         setEvidenceDocuments([]);
         setNotificationEvents([]);
         setReferenceRequests([]);
+        setConsentAuthorizations([]);
         setRecordStatus(error instanceof Error ? error.message : "Could not load live Passport records");
         setNotificationStatus(error instanceof Error ? error.message : "Could not load notifications");
         setReferenceStatus(error instanceof Error ? error.message : "Could not load reference requests");
+        setConsentStatus(error instanceof Error ? error.message : "Could not load consent authorizations");
       });
 
     return () => {
@@ -4143,6 +4237,25 @@ function App() {
     const items = await loadAccessGrants(accountContext.profile.id, authSession.accessToken);
     setAccessGrants(items);
     setGrantStatus("Sample Access Grant request created");
+  }
+
+  async function revokeLiveConsentAuthorization(consentId: string) {
+    if (!authSession) {
+      throw new Error("Sign in before revoking consent authorizations.");
+    }
+
+    const updated = await revokeConsentAuthorization({
+      accessToken: authSession.accessToken,
+      consentId,
+      reason: "Professional revoked consent from Passport workspace"
+    });
+    const [consents, events] = await Promise.all([
+      loadConsentAuthorizations(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setConsentAuthorizations(consents);
+    setAuditEvents(events);
+    setConsentStatus(`Consent authorization ${updated.status}`);
   }
 
   async function createLiveAccessGrantRequest(input: { subjectEmail: string; purpose: string; expiresInDays: number }) {
@@ -4774,6 +4887,12 @@ function App() {
                   message={grantStatus}
                   onDecision={handleGrantDecision}
                   onSampleRequest={createSampleGrantRequest}
+                />
+                <ConsentAuthorizationsPanel
+                  authorizations={consentAuthorizations}
+                  disabled={!authSession || !accountContext}
+                  message={consentStatus}
+                  onRevoke={revokeLiveConsentAuthorization}
                 />
                 <ReferenceRequestsPanel
                   disabled={!authSession || !accountContext}

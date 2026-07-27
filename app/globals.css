@@ -2432,6 +2432,79 @@ p {
   gap: 8px;
 }
 
+.consent-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.065), transparent 60%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.consent-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.consent-summary-grid div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.consent-summary-grid span,
+.consent-summary-grid strong {
+  display: block;
+}
+
+.consent-summary-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.consent-summary-grid strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.consent-list {
+  display: grid;
+  gap: 8px;
+}
+
+.consent-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.consent-card strong,
+.consent-card small {
+  display: block;
+}
+
+.consent-card p {
+  margin: 6px 0;
+  font-size: 13px;
+}
+
+.consent-card.empty {
+  border-style: dashed;
+}
+
 .grant-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2885,6 +2958,7 @@ p {
   .directory-controls,
   .audit-controls,
   .connect-summary-grid,
+  .consent-summary-grid,
   .evidence-controls,
   .evidence-summary-grid,
   .grant-controls,
@@ -2922,6 +2996,7 @@ p {
   .record-row-main,
   .grant-panel-top,
   .grant-card,
+  .consent-card,
   .reference-card,
   .connect-card,
   .missing-card,
