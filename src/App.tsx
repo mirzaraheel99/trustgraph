@@ -75,7 +75,7 @@ import {
   loadVerifyMissingRecordRequests,
   markMissingRecordRequestStatus
 } from "./missingRecordRepository";
-import { loadNotificationEvents } from "./notificationRepository";
+import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
 import {
   createSampleTrustGraphVerifierMembership,
@@ -1581,11 +1581,24 @@ function AuthPanel({
 
 function NotificationPanel({
   events,
-  message
+  message,
+  onStatus
 }: {
   events: DbNotificationEvent[];
   message: string;
+  onStatus: (notificationId: string, status: "delivered" | "suppressed") => Promise<void>;
 }) {
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  async function updateStatus(notificationId: string, status: "delivered" | "suppressed") {
+    setBusyId(notificationId);
+    try {
+      await onStatus(notificationId, status);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   return (
     <section className="notification-panel">
       <div className="mini-heading">
@@ -1601,7 +1614,23 @@ function NotificationPanel({
                 <strong>{event.title}</strong>
                 <small>{event.body}</small>
               </div>
-              <span className="status-chip neutral">{event.status}</span>
+              <div className="notification-actions">
+                <span className="status-chip neutral">{event.status}</span>
+                <button
+                  className="secondary-action"
+                  disabled={busyId === event.id || event.status === "delivered"}
+                  onClick={() => void updateStatus(event.id, "delivered")}
+                >
+                  Read
+                </button>
+                <button
+                  className="secondary-action"
+                  disabled={busyId === event.id || event.status === "suppressed"}
+                  onClick={() => void updateStatus(event.id, "suppressed")}
+                >
+                  Mute
+                </button>
+              </div>
             </article>
           ))
         ) : (
@@ -2231,6 +2260,22 @@ function App() {
     setMissingRecordStatus(`Missing-record request moved to ${updated.status.replace(/_/g, " ")}`);
   }
 
+  async function updateLiveNotificationStatus(notificationId: string, status: "delivered" | "suppressed") {
+    if (!authSession) {
+      throw new Error("Sign in before updating notifications.");
+    }
+
+    const updated = await markNotificationEvent({
+      accessToken: authSession.accessToken,
+      notificationId,
+      status
+    });
+    const events = await loadAuditEvents(authSession.accessToken).catch(() => auditEvents);
+    setNotificationEvents((current) => current.map((event) => (event.id === updated.id ? updated : event)));
+    setAuditEvents(events);
+    setNotificationStatus(`Notification marked ${updated.status}`);
+  }
+
   async function createLiveCorporateAccount(input: {
     organizationName: string;
     organizationType: "employer" | "staffing_agency";
@@ -2351,7 +2396,7 @@ function App() {
         />
 
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
-        <NotificationPanel events={notificationEvents} message={notificationStatus} />
+        <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
 
         <nav className="module-nav" aria-label="Workspace modules">
           {workspace.nav.map((item) => {

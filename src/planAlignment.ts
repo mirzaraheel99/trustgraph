@@ -71,7 +71,7 @@ export const foundationTracks: FoundationTrack[] = [
     label: "Notifications",
     planStep: "Step 14",
     status: "foundation",
-    detail: "In-app notification events exist; outbound delivery remains planned.",
+    detail: "In-app events, recipient status controls, and audit-backed inbox actions are live.",
     tone: "info"
   },
   {

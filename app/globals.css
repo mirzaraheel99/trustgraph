@@ -244,6 +244,19 @@ p,
   border-style: dashed;
 }
 
+.notification-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.notification-actions .secondary-action {
+  min-height: 30px;
+  padding: 0 9px;
+  font-size: 12px;
+}
+
 .account-user span,
 .account-user small,
 .membership-button span,
