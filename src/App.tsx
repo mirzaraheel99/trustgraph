@@ -1719,12 +1719,37 @@ function ConnectPanel({
 }
 
 function PlanAlignmentPanel() {
+  const deployedCount = foundationTracks.filter((track) => track.status === "deployed").length;
+  const foundationCount = foundationTracks.filter((track) => track.status === "foundation").length;
+  const plannedCount = foundationTracks.filter((track) => track.status === "planned").length;
+
   return (
     <section className="plan-panel">
       <div className="mini-heading">
         <ClipboardCheck size={16} />
         <strong>13-track foundation alignment</strong>
       </div>
+      <div className="plan-summary-grid">
+        <div>
+          <span>Deployed</span>
+          <strong>{deployedCount}</strong>
+        </div>
+        <div>
+          <span>Foundation</span>
+          <strong>{foundationCount}</strong>
+        </div>
+        <div>
+          <span>Planned</span>
+          <strong>{plannedCount}</strong>
+        </div>
+      </div>
+      <article className="plan-migration-card">
+        <div>
+          <strong>Pending live database approval</strong>
+          <small>Apply migrations 022 and 023 to activate member status controls and real corporate Access Grant requests.</small>
+        </div>
+        <span className="status-chip warning">approval needed</span>
+      </article>
       <div className="plan-track-grid">
         {foundationTracks.map((track) => (
           <article className="plan-track-card" key={track.id}>
