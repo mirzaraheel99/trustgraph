@@ -16,6 +16,7 @@ import {
   KeyRound,
   LogIn,
   LockKeyhole,
+  Network,
   ShieldAlert,
   Search,
   ShieldCheck,
@@ -25,12 +26,14 @@ import {
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
 import type {
   DbAuditEvent,
+  DbApiClient,
   DbEvidenceDocument,
   DbIssuerCredential,
   DbMissingRecordRequest,
   DbNotificationEvent,
   DbReferenceRequest,
   DbVerificationCase,
+  DbWebhookSubscription,
   ReferenceRequestStatus,
   RecordStatus,
   RecordType,
@@ -61,6 +64,14 @@ import {
   issueCredentialRecord,
   loadIssuerCredentials
 } from "./credentialRepository";
+import {
+  createSampleApiClient,
+  createWebhookSubscription,
+  loadApiClients,
+  loadWebhookSubscriptions,
+  markApiClientStatus,
+  markWebhookSubscriptionStatus
+} from "./connectRepository";
 import {
   createSampleAccessGrant,
   decideAccessGrant,
@@ -1328,6 +1339,175 @@ function AuditTrailPanel({
   );
 }
 
+function ConnectPanel({
+  apiClients,
+  disabled,
+  message,
+  webhooks,
+  onClientStatus,
+  onCreateClient,
+  onCreateWebhook,
+  onWebhookStatus
+}: {
+  apiClients: DbApiClient[];
+  disabled: boolean;
+  message: string;
+  webhooks: DbWebhookSubscription[];
+  onClientStatus: (clientId: string, status: "active" | "paused" | "revoked") => Promise<void>;
+  onCreateClient: () => Promise<void>;
+  onCreateWebhook: (input: { apiClientId: string; eventType: string; targetUrl: string }) => Promise<void>;
+  onWebhookStatus: (subscriptionId: string, status: "active" | "paused" | "revoked") => Promise<void>;
+}) {
+  const [busyClientId, setBusyClientId] = useState<string | null>(null);
+  const [busyWebhookId, setBusyWebhookId] = useState<string | null>(null);
+  const [busyCreate, setBusyCreate] = useState(false);
+  const [eventType, setEventType] = useState("access_grant.approved");
+  const [targetUrl, setTargetUrl] = useState("");
+  const [status, setStatus] = useState(message);
+
+  useEffect(() => {
+    setStatus(message);
+  }, [message]);
+
+  async function updateClient(clientId: string, nextStatus: "active" | "paused" | "revoked") {
+    setBusyClientId(clientId);
+    try {
+      await onClientStatus(clientId, nextStatus);
+    } finally {
+      setBusyClientId(null);
+    }
+  }
+
+  async function updateWebhook(subscriptionId: string, nextStatus: "active" | "paused" | "revoked") {
+    setBusyWebhookId(subscriptionId);
+    try {
+      await onWebhookStatus(subscriptionId, nextStatus);
+    } finally {
+      setBusyWebhookId(null);
+    }
+  }
+
+  async function submitWebhook(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const apiClientId = apiClients[0]?.id;
+    if (!apiClientId) {
+      setStatus("Create an API client before adding a webhook.");
+      return;
+    }
+
+    setBusyCreate(true);
+    try {
+      await onCreateWebhook({ apiClientId, eventType, targetUrl });
+      setTargetUrl("");
+      setStatus("Webhook subscription created");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not create webhook");
+    } finally {
+      setBusyCreate(false);
+    }
+  }
+
+  return (
+    <section className="connect-panel">
+      <div className="mini-heading">
+        <Network size={16} />
+        <strong>Connect control plane</strong>
+      </div>
+      <div className="grant-panel-top">
+        <small>{status}</small>
+        <button
+          className="secondary-action"
+          disabled={disabled || busyCreate}
+          onClick={async () => {
+            setBusyCreate(true);
+            try {
+              await onCreateClient();
+            } finally {
+              setBusyCreate(false);
+            }
+          }}
+        >
+          Sample API client
+        </button>
+      </div>
+      <div className="connect-list">
+        {apiClients.length ? (
+          apiClients.map((client) => (
+            <article className="connect-card" key={client.id}>
+              <div>
+                <strong>{client.name}</strong>
+                <p>{client.organization?.name ?? "Organization client"}</p>
+                <small>{client.scopes.join(", ")}</small>
+              </div>
+              <div className="grant-actions">
+                <span className="status-chip neutral">{client.status}</span>
+                <button className="secondary-action" disabled={disabled || busyClientId === client.id || client.status === "paused"} onClick={() => void updateClient(client.id, "paused")}>
+                  Pause
+                </button>
+                <button className="secondary-action" disabled={disabled || busyClientId === client.id || client.status === "active"} onClick={() => void updateClient(client.id, "active")}>
+                  Activate
+                </button>
+                <button className="secondary-action" disabled={disabled || busyClientId === client.id || client.status === "revoked"} onClick={() => void updateClient(client.id, "revoked")}>
+                  Revoke
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <article className="connect-card empty">
+            <div>
+              <strong>No API clients yet</strong>
+              <p>Create a pilot client to model Connect API scopes and webhook ownership.</p>
+            </div>
+          </article>
+        )}
+      </div>
+      <form className="connect-form" onSubmit={submitWebhook}>
+        <div className="record-form-grid">
+          <select disabled={disabled || busyCreate || !apiClients.length} onChange={(event) => setEventType(event.target.value)} value={eventType}>
+            <option value="access_grant.approved">Access grant approved</option>
+            <option value="credential.issued">Credential issued</option>
+            <option value="missing_record.requested">Missing record requested</option>
+            <option value="verification_case.resolved">Verification case resolved</option>
+          </select>
+          <input disabled={disabled || busyCreate || !apiClients.length} onChange={(event) => setTargetUrl(event.target.value)} placeholder="https://example.com/webhooks/trustgraph" value={targetUrl} />
+        </div>
+        <div className="record-form-footer">
+          <small>Webhook targets must use HTTPS.</small>
+          <button className="secondary-action" disabled={disabled || busyCreate || !apiClients.length || !targetUrl} type="submit">
+            Add webhook
+          </button>
+        </div>
+      </form>
+      <div className="connect-list">
+        {webhooks.length ? (
+          webhooks.map((webhook) => (
+            <article className="connect-card" key={webhook.id}>
+              <div>
+                <strong>{webhook.event_type}</strong>
+                <p>{webhook.target_url}</p>
+                <small>{webhook.failure_count} delivery failures</small>
+              </div>
+              <div className="grant-actions">
+                <span className="status-chip neutral">{webhook.status}</span>
+                <button className="secondary-action" disabled={disabled || busyWebhookId === webhook.id || webhook.status === "paused"} onClick={() => void updateWebhook(webhook.id, "paused")}>
+                  Pause
+                </button>
+                <button className="secondary-action" disabled={disabled || busyWebhookId === webhook.id || webhook.status === "active"} onClick={() => void updateWebhook(webhook.id, "active")}>
+                  Activate
+                </button>
+                <button className="secondary-action" disabled={disabled || busyWebhookId === webhook.id || webhook.status === "revoked"} onClick={() => void updateWebhook(webhook.id, "revoked")}>
+                  Revoke
+                </button>
+              </div>
+            </article>
+          ))
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 function PlanAlignmentPanel() {
   return (
     <section className="plan-panel">
@@ -1725,6 +1905,9 @@ function App() {
   const [operationsStatus, setOperationsStatus] = useState("Switch to Admin role for live operations");
   const [auditEvents, setAuditEvents] = useState<DbAuditEvent[]>([]);
   const [auditStatus, setAuditStatus] = useState("Switch to Admin role for audit events");
+  const [apiClients, setApiClients] = useState<DbApiClient[]>([]);
+  const [webhookSubscriptions, setWebhookSubscriptions] = useState<DbWebhookSubscription[]>([]);
+  const [connectStatus, setConnectStatus] = useState("Switch to Admin role for Connect controls");
   const [evidenceDocuments, setEvidenceDocuments] = useState<DbEvidenceDocument[]>([]);
   const [notificationEvents, setNotificationEvents] = useState<DbNotificationEvent[]>([]);
   const [notificationStatus, setNotificationStatus] = useState("Sign in for live workflow notifications");
@@ -1943,6 +2126,9 @@ function App() {
       setOperationsStatus("Switch to Admin role for live operations");
       setAuditEvents([]);
       setAuditStatus("Switch to Admin role for audit events");
+      setApiClients([]);
+      setWebhookSubscriptions([]);
+      setConnectStatus("Switch to Admin role for Connect controls");
       return;
     }
 
@@ -1951,27 +2137,46 @@ function App() {
       setOperationsStatus("Active role cannot access Admin operations");
       setAuditEvents([]);
       setAuditStatus("Active role cannot access audit events");
+      setApiClients([]);
+      setWebhookSubscriptions([]);
+      setConnectStatus("Active role cannot access Connect controls");
       return;
     }
 
     let cancelled = false;
     setOperationsStatus("Loading live operations queue...");
     setAuditStatus("Loading audit events...");
+    setConnectStatus("Loading Connect controls...");
 
-    Promise.all([loadVerificationCases(authSession.accessToken), loadAuditEvents(authSession.accessToken)])
-      .then(([items, events]) => {
+    Promise.all([
+      loadVerificationCases(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken),
+      loadApiClients(authSession.accessToken),
+      loadWebhookSubscriptions(authSession.accessToken)
+    ])
+      .then(([items, events, clients, webhooks]) => {
         if (cancelled) return;
         setOperationsCases(items);
         setAuditEvents(events);
+        setApiClients(clients);
+        setWebhookSubscriptions(webhooks);
         setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No live operations cases yet");
         setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
+        setConnectStatus(
+          clients.length || webhooks.length
+            ? `Connect controls: ${clients.length} clients, ${webhooks.length} webhooks`
+            : "No Connect clients yet"
+        );
       })
       .catch((error) => {
         if (cancelled) return;
         setOperationsCases([]);
         setAuditEvents([]);
+        setApiClients([]);
+        setWebhookSubscriptions([]);
         setOperationsStatus(error instanceof Error ? error.message : "Could not load operations queue");
         setAuditStatus(error instanceof Error ? error.message : "Could not load audit events");
+        setConnectStatus(error instanceof Error ? error.message : "Could not load Connect controls");
       });
 
     return () => {
@@ -2453,6 +2658,71 @@ function App() {
     setAccountStatus("TrustGraph operations role created");
   }
 
+  async function createLiveApiClient() {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating Connect API clients.");
+    }
+
+    const client = await createSampleApiClient(authSession.accessToken);
+    const [clients, events] = await Promise.all([
+      loadApiClients(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setApiClients(clients);
+    setAuditEvents(events);
+    setConnectStatus(`API client created: ${client.name}`);
+  }
+
+  async function updateLiveApiClientStatus(clientId: string, status: "active" | "paused" | "revoked") {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before managing Connect API clients.");
+    }
+
+    const updated = await markApiClientStatus({
+      accessToken: authSession.accessToken,
+      apiClientId: clientId,
+      status
+    });
+    const events = await loadAuditEvents(authSession.accessToken).catch(() => auditEvents);
+    setApiClients((current) => current.map((client) => (client.id === updated.id ? updated : client)));
+    setAuditEvents(events);
+    setConnectStatus(`API client moved to ${updated.status}`);
+  }
+
+  async function createLiveWebhookSubscription(input: { apiClientId: string; eventType: string; targetUrl: string }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating Connect webhooks.");
+    }
+
+    const webhook = await createWebhookSubscription({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const [webhooks, events] = await Promise.all([
+      loadWebhookSubscriptions(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setWebhookSubscriptions(webhooks);
+    setAuditEvents(events);
+    setConnectStatus(`Webhook created: ${webhook.event_type}`);
+  }
+
+  async function updateLiveWebhookStatus(subscriptionId: string, status: "active" | "paused" | "revoked") {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before managing Connect webhooks.");
+    }
+
+    const updated = await markWebhookSubscriptionStatus({
+      accessToken: authSession.accessToken,
+      subscriptionId,
+      status
+    });
+    const events = await loadAuditEvents(authSession.accessToken).catch(() => auditEvents);
+    setWebhookSubscriptions((current) => current.map((webhook) => (webhook.id === updated.id ? updated : webhook)));
+    setAuditEvents(events);
+    setConnectStatus(`Webhook moved to ${updated.status}`);
+  }
+
   return (
     <div className="app">
       <aside className="sidebar">
@@ -2678,6 +2948,16 @@ function App() {
                   message={operationsStatus}
                   onCreateSamples={createLiveOperationsSamples}
                   onDecision={decideLiveOperationsCase}
+                />
+                <ConnectPanel
+                  apiClients={apiClients}
+                  disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
+                  message={connectStatus}
+                  onClientStatus={updateLiveApiClientStatus}
+                  onCreateClient={createLiveApiClient}
+                  onCreateWebhook={createLiveWebhookSubscription}
+                  onWebhookStatus={updateLiveWebhookStatus}
+                  webhooks={webhookSubscriptions}
                 />
                 <AuditTrailPanel events={auditEvents} message={auditStatus} />
                 <PlanAlignmentPanel />

@@ -37,6 +37,8 @@ export type ReferenceRequestStatus =
   | "expired"
   | "cancelled";
 export type MissingRecordRequestStatus = "requested" | "in_progress" | "fulfilled" | "declined" | "cancelled" | "expired";
+export type ApiClientStatus = "active" | "paused" | "revoked";
+export type WebhookSubscriptionStatus = "active" | "paused" | "failed" | "revoked";
 
 export interface DbOrganization {
   id: string;
@@ -214,6 +216,32 @@ export interface DbMissingRecordRequest {
   updated_at: string;
   subject_profile: Pick<DbProfile, "id" | "full_name" | "email"> | null;
   requester_organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
+}
+
+export interface DbApiClient {
+  id: string;
+  organization_id: string;
+  created_by_profile_id: string | null;
+  name: string;
+  status: ApiClientStatus;
+  scopes: string[];
+  last_used_at: string | null;
+  created_at: string;
+  updated_at: string;
+  organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
+}
+
+export interface DbWebhookSubscription {
+  id: string;
+  api_client_id: string;
+  organization_id: string;
+  event_type: string;
+  target_url: string;
+  status: WebhookSubscriptionStatus;
+  failure_count: number;
+  last_delivered_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface RoleCapability {
