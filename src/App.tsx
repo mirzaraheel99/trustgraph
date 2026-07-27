@@ -909,6 +909,7 @@ function VerifyRequestsPanel({
           </article>
         )}
       </div>
+      <CorporateDirectoryPanel missingRecordRequests={missingRecordRequests} requests={requests} sharedRecords={sharedRecords} />
       {disabled ? <small>Switch to an employer or staffing reviewer role to use live Verify data.</small> : null}
       <IssuerCredentialsPanel
         credentials={issuerCredentials}
@@ -924,6 +925,69 @@ function VerifyRequestsPanel({
         onStatus={onMissingRecordStatus}
         requests={missingRecordRequests}
       />
+    </section>
+  );
+}
+
+function CorporateDirectoryPanel({
+  missingRecordRequests,
+  requests,
+  sharedRecords
+}: {
+  missingRecordRequests: DbMissingRecordRequest[];
+  requests: VerifyAccessGrantView[];
+  sharedRecords: RecordItem[];
+}) {
+  const candidateRows = requests.slice(0, 5).map((request) => ({
+    id: request.id,
+    name: request.subject_profile.full_name,
+    detail: request.subject_profile.email,
+    status: request.status.replace(/_/g, " "),
+    signal: request.purpose
+  }));
+
+  return (
+    <section className="corporate-directory-panel">
+      <div className="mini-heading">
+        <UserPlus size={16} />
+        <strong>Corporate user database</strong>
+        <span className="status-chip neutral">{candidateRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className="directory-metrics">
+        <div>
+          <strong>{requests.length}</strong>
+          <small>Access records</small>
+        </div>
+        <div>
+          <strong>{sharedRecords.length}</strong>
+          <small>Shared Passport records</small>
+        </div>
+        <div>
+          <strong>{missingRecordRequests.filter((request) => request.status !== "fulfilled").length}</strong>
+          <small>Open gaps</small>
+        </div>
+      </div>
+      <div className="directory-list">
+        {candidateRows.length ? (
+          candidateRows.map((row) => (
+            <article className="directory-card" key={row.id}>
+              <div>
+                <strong>{row.name}</strong>
+                <p>{row.signal}</p>
+                <small>{row.detail}</small>
+              </div>
+              <span className="status-chip neutral">{row.status}</span>
+            </article>
+          ))
+        ) : (
+          <article className="directory-card empty">
+            <div>
+              <strong>No corporate users visible yet</strong>
+              <p>Professionals appear here only after an Access Grant request or approved share exists.</p>
+            </div>
+          </article>
+        )}
+      </div>
     </section>
   );
 }
