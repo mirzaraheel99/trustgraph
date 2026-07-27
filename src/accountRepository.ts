@@ -1,4 +1,5 @@
-import type { DbOrganization, DbOrganizationMembership, DbProfile } from "./database";
+import type { DbOrganization, DbOrganizationMembership, DbProfile, OrganizationType } from "./database";
+import type { RoleKey } from "./rbac";
 import type { Organization, SessionUser } from "./rbac";
 import { supabaseRest, supabaseRpc } from "./supabase";
 
@@ -111,4 +112,36 @@ export function accountContextOrganizations(context: AccountContext): Organizati
 
 export async function createSampleEmployerReviewerMembership(accessToken: string) {
   return supabaseRpc("create_sample_employer_reviewer_membership", {}, { accessToken });
+}
+
+export async function createCorporateAccount(input: {
+  accessToken: string;
+  organizationName: string;
+  organizationType: Extract<OrganizationType, "employer" | "staffing_agency">;
+  organizationDomain?: string;
+}) {
+  return supabaseRpc<DbOrganizationMembership>(
+    "create_corporate_account",
+    {
+      organization_name: input.organizationName,
+      organization_type: input.organizationType,
+      organization_domain: input.organizationDomain || null
+    },
+    { accessToken: input.accessToken }
+  );
+}
+
+export async function assignOwnCorporateRole(input: {
+  accessToken: string;
+  organizationId: string;
+  role: Extract<RoleKey, "employer_admin" | "employer_reviewer" | "staffing_agency_admin" | "recruiter">;
+}) {
+  return supabaseRpc<DbOrganizationMembership>(
+    "assign_own_corporate_role",
+    {
+      target_organization_id: input.organizationId,
+      target_role: input.role
+    },
+    { accessToken: input.accessToken }
+  );
 }

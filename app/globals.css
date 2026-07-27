@@ -222,12 +222,30 @@ p,
 }
 
 .auth-form,
-.auth-session {
+.auth-session,
+.account-admin-form {
   display: grid;
   gap: 8px;
 }
 
-.auth-form input {
+.account-admin-form {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.account-admin-form.compact {
+  gap: 9px;
+}
+
+.account-admin-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.auth-form input,
+.account-admin-form input,
+.account-admin-form select {
   width: 100%;
   min-height: 38px;
   padding: 0 10px;

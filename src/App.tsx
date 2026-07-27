@@ -26,6 +26,8 @@ import type { RecordStatus, RecordType } from "./database";
 import {
   accountContextOrganizations,
   accountContextToSessionUser,
+  assignOwnCorporateRole,
+  createCorporateAccount,
   createSampleEmployerReviewerMembership,
   ensureProfessionalAccount,
   loadAccountContext,
@@ -57,6 +59,7 @@ import {
   getRole,
   hasPermission,
   organizations,
+  type RoleKey,
   sessionUser,
   type Organization,
   type SessionUser,
@@ -597,6 +600,8 @@ function AccountPanel({
   authSession,
   authStatus,
   organizationList,
+  onCreateCorporateAccount,
+  onAssignRole,
   onSwitch
 }: {
   accountUser: SessionUser;
@@ -604,10 +609,63 @@ function AccountPanel({
   authSession: AuthSession | null;
   authStatus: string;
   organizationList: Organization[];
+  onCreateCorporateAccount: (input: {
+    organizationName: string;
+    organizationType: "employer" | "staffing_agency";
+    organizationDomain: string;
+  }) => Promise<void>;
+  onAssignRole: (organizationId: string, role: RoleKey) => Promise<void>;
   onSwitch: (membershipId: string) => void;
 }) {
   const activeRole = getRole(activeMembership.role);
   const activeOrg = getOrganizationFromList(activeMembership.organizationId, organizationList);
+  const [organizationName, setOrganizationName] = useState("");
+  const [organizationDomain, setOrganizationDomain] = useState("");
+  const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
+  const [targetRole, setTargetRole] = useState<RoleKey>(
+    activeOrg.type === "staffing_agency" ? "recruiter" : "employer_reviewer"
+  );
+  const [busy, setBusy] = useState(false);
+  const [panelStatus, setPanelStatus] = useState("");
+  const canManageActiveOrg = hasPermission(activeMembership.role, "organization:manage");
+  const roleOptions =
+    activeOrg.type === "staffing_agency"
+      ? (["staffing_agency_admin", "recruiter"] as RoleKey[])
+      : (["employer_admin", "employer_reviewer"] as RoleKey[]);
+
+  useEffect(() => {
+    setTargetRole(activeOrg.type === "staffing_agency" ? "recruiter" : "employer_reviewer");
+  }, [activeOrg.type]);
+
+  async function submitCorporateAccount(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setPanelStatus("Creating corporate account...");
+    try {
+      await onCreateCorporateAccount({ organizationName, organizationType, organizationDomain });
+      setOrganizationName("");
+      setOrganizationDomain("");
+      setPanelStatus("Corporate account created");
+    } catch (error) {
+      setPanelStatus(error instanceof Error ? error.message : "Could not create corporate account");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function submitRoleActivation(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setPanelStatus("Activating role...");
+    try {
+      await onAssignRole(activeOrg.id, targetRole);
+      setPanelStatus("Role activated for current profile");
+    } catch (error) {
+      setPanelStatus(error instanceof Error ? error.message : "Could not activate role");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <section className="account-panel">
@@ -640,6 +698,62 @@ function AccountPanel({
         <small>{activeOrg.status.replace("_", " ")} organization context</small>
         <small>{authStatus}</small>
       </div>
+      <form className="account-admin-form" onSubmit={submitCorporateAccount}>
+        <div className="mini-heading">
+          <UserPlus size={16} />
+          <strong>Create corporate account</strong>
+        </div>
+        <input
+          disabled={!authSession || busy}
+          onChange={(event) => setOrganizationName(event.target.value)}
+          placeholder="Organization name"
+          required
+          value={organizationName}
+        />
+        <div className="account-admin-row">
+          <select
+            disabled={!authSession || busy}
+            onChange={(event) => setOrganizationType(event.target.value as "employer" | "staffing_agency")}
+            value={organizationType}
+          >
+            <option value="employer">Employer</option>
+            <option value="staffing_agency">Staffing agency</option>
+          </select>
+          <input
+            disabled={!authSession || busy}
+            onChange={(event) => setOrganizationDomain(event.target.value)}
+            placeholder="company.com"
+            value={organizationDomain}
+          />
+        </div>
+        <button className="secondary-action" disabled={!authSession || busy} type="submit">
+          Create admin org
+        </button>
+      </form>
+      <form className="account-admin-form compact" onSubmit={submitRoleActivation}>
+        <div className="mini-heading">
+          <KeyRound size={16} />
+          <strong>RBAC role admin</strong>
+        </div>
+        <div className="account-admin-row">
+          <select
+            disabled={!authSession || !canManageActiveOrg || busy}
+            onChange={(event) => setTargetRole(event.target.value as RoleKey)}
+            value={targetRole}
+          >
+            {roleOptions.map((role) => (
+              <option key={role} value={role}>
+                {getRole(role).label}
+              </option>
+            ))}
+          </select>
+          <button className="secondary-action" disabled={!authSession || !canManageActiveOrg || busy} type="submit">
+            Activate
+          </button>
+        </div>
+        <small>{canManageActiveOrg ? "Admin can activate scoped roles for this profile." : "Switch to a corporate admin role to manage RBAC."}</small>
+      </form>
+      {panelStatus ? <small>{panelStatus}</small> : null}
     </section>
   );
 }
@@ -1069,6 +1183,43 @@ function App() {
     setVerifyStatus("Sample employer reviewer role created");
   }
 
+  async function createLiveCorporateAccount(input: {
+    organizationName: string;
+    organizationType: "employer" | "staffing_agency";
+    organizationDomain: string;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating a corporate account.");
+    }
+
+    const membership = await createCorporateAccount({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
+    setAccountContext(context);
+    setActiveMembershipId(membership.id);
+    setWorkspaceId("verify");
+    setAccountStatus("Corporate account created");
+  }
+
+  async function assignLiveCorporateRole(organizationId: string, role: RoleKey) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before managing corporate roles.");
+    }
+
+    const membership = await assignOwnCorporateRole({
+      accessToken: authSession.accessToken,
+      organizationId,
+      role: role as Extract<RoleKey, "employer_admin" | "employer_reviewer" | "staffing_agency_admin" | "recruiter">
+    });
+    const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
+    setAccountContext(context);
+    setActiveMembershipId(membership.id);
+    setWorkspaceId(getRole(membership.role).portal);
+    setAccountStatus("Corporate RBAC role updated");
+  }
+
   return (
     <div className="app">
       <aside className="sidebar">
@@ -1098,6 +1249,8 @@ function App() {
           authSession={authSession}
           authStatus={authStatus}
           organizationList={organizationList}
+          onAssignRole={assignLiveCorporateRole}
+          onCreateCorporateAccount={createLiveCorporateAccount}
           onSwitch={switchMembership}
         />
 
