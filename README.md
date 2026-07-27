@@ -13,6 +13,7 @@ This repository contains the first React + TypeScript application foundation for
 - Verification timelines and audit-aware activity
 - Private Supabase Storage evidence uploads
 - Structured references, issuer credentials, missing-record requests, Connect controls, and source-grounded advisory summaries
+- Public website, Professional and Corporate portal entry, pricing tiers, and subscription activation foundation
 
 ## Tech Stack
 
@@ -88,6 +89,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `016_notification_event_status_controls.sql`: notification read/mute status controls with audit events.
 - `017_evidence_storage_uploads.sql`: private Supabase Storage bucket, object policies, and uploaded evidence linking.
 - `018_connect_api_clients_webhooks.sql`: Connect API client registry, webhook subscriptions, status controls, and audit events.
+- `019_pricing_and_subscriptions.sql`: seeded pricing plans, organization subscriptions, trial activation, and audit events.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -104,8 +106,19 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 8. Upload private evidence files to Supabase Storage and link them to Passport records.
 9. Create a sample operations role, switch to Admin, seed operations cases, and review/restrict/resolve cases.
 10. Manage Connect API clients and webhook subscriptions from Admin.
-11. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
-12. Admin audit trail shows recent material workflow events.
+11. Activate a corporate subscription plan from the authenticated billing panel.
+12. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
+13. Admin audit trail shows recent material workflow events.
+
+## Public Website and Pricing
+
+Unauthenticated visitors land on a public TrustGraph website with portal entry points, pricing, and registration:
+
+- Professional: free Passport foundation for records, evidence uploads, Access Grants, and references.
+- Corporate Verify: `$149/month` pilot tier for corporate RBAC, shared Passport review, missing-record requests, and audit.
+- TrustGraph Scale: custom/enterprise tier for issuer workflows, Connect API clients, webhooks, and compliance operations.
+
+Corporate registration collects organization name, domain, and type, then provisions an employer or staffing agency portal after Supabase account creation.
 
 ## Product Planning
 
