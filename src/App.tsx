@@ -1886,12 +1886,205 @@ function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; work
   );
 }
 
+function PublicSite({
+  onOpenDemo,
+  onSession
+}: {
+  onOpenDemo: () => void;
+  onSession: (session: AuthSession) => void;
+}) {
+  const [portal, setPortal] = useState<"professional" | "corporate">("professional");
+  const [mode, setMode] = useState<"signin" | "signup">("signup");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("Create your TrustGraph account");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setMessage(mode === "signin" ? "Signing in..." : "Creating account...");
+
+    try {
+      const session =
+        mode === "signin"
+          ? await signInWithPassword({ email, password })
+          : await signUpWithPassword({ email, password });
+      onSession(session);
+      setMessage(portal === "corporate" ? "Corporate portal ready" : "Professional Passport ready");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Authentication failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const pricing = [
+    {
+      name: "Professional",
+      price: "$0",
+      detail: "Own your Passport, records, references, and sharing consent.",
+      points: ["Private Passport", "Evidence uploads", "Access Grants", "Reference requests"]
+    },
+    {
+      name: "Corporate Verify",
+      price: "$149",
+      detail: "For employers and staffing teams reviewing approved shared records.",
+      points: ["Corporate RBAC", "Missing-record requests", "Readiness review", "Audit trail"]
+    },
+    {
+      name: "TrustGraph Scale",
+      price: "Custom",
+      detail: "For issuer, integration, compliance, and multi-team workflows.",
+      points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"]
+    }
+  ];
+
+  return (
+    <main className="public-site">
+      <header className="public-nav">
+        <div className="brand">
+          <div className="brand-symbol">TG</div>
+          <div>
+            <strong>TrustGraph</strong>
+            <span>Verified workforce record platform</span>
+          </div>
+        </div>
+        <div className="public-nav-actions">
+          <button className="secondary-action" onClick={onOpenDemo}>
+            Open demo
+          </button>
+          <button className="primary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView()}>
+            Get started
+          </button>
+        </div>
+      </header>
+
+      <section className="public-hero">
+        <div>
+          <span className="eyebrow">Passport, Verify, Admin, Connect</span>
+          <h1>Verified workforce records for professionals and corporate hiring teams.</h1>
+          <p>
+            TrustGraph gives professionals a private evidence-first Passport and gives employers or staffing agencies
+            a permissioned Verify portal for approved records, missing items, credentials, and audit-backed decisions.
+          </p>
+          <div className="public-hero-actions">
+            <button className="primary-action" onClick={() => setPortal("professional")}>
+              Professional portal
+            </button>
+            <button className="secondary-action" onClick={() => setPortal("corporate")}>
+              Corporate portal
+            </button>
+          </div>
+        </div>
+        <aside className="public-proof">
+          <div>
+            <span>13</span>
+            <small>foundation tracks</small>
+          </div>
+          <div>
+            <span>Live</span>
+            <small>Supabase auth, database, storage</small>
+          </div>
+          <div>
+            <span>RBAC</span>
+            <small>Professional, corporate, issuer, admin</small>
+          </div>
+        </aside>
+      </section>
+
+      <section className="public-section">
+        <div className="public-section-heading">
+          <span className="eyebrow">Portals</span>
+          <h2>One product, separate experiences</h2>
+        </div>
+        <div className="portal-grid">
+          <article>
+            <Fingerprint size={24} />
+            <strong>Professional Passport</strong>
+            <p>Create records, upload evidence, request references, approve Access Grants, and control sharing.</p>
+          </article>
+          <article>
+            <ShieldCheck size={24} />
+            <strong>Corporate Verify</strong>
+            <p>Review approved shared Passports, request missing records, manage issuer workflows, and monitor readiness.</p>
+          </article>
+          <article>
+            <Network size={24} />
+            <strong>Connect and Admin</strong>
+            <p>Operate API clients, webhooks, audit events, verification cases, and source-grounded advisory summaries.</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="public-section pricing-section">
+        <div className="public-section-heading">
+          <span className="eyebrow">Pricing</span>
+          <h2>Start simple, scale into corporate workflows</h2>
+        </div>
+        <div className="pricing-grid">
+          {pricing.map((plan) => (
+            <article className="pricing-card" key={plan.name}>
+              <strong>{plan.name}</strong>
+              <span>{plan.price}</span>
+              <p>{plan.detail}</p>
+              {plan.points.map((point) => (
+                <small key={point}>{point}</small>
+              ))}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="public-auth-section" id="portal-auth">
+        <div>
+          <span className="eyebrow">Login and registration</span>
+          <h2>{portal === "corporate" ? "Corporate portal access" : "Professional Passport access"}</h2>
+          <p>
+            {portal === "corporate"
+              ? "Sign in or register, then create an employer or staffing agency account from the live RBAC panel."
+              : "Sign in or register to create your professional account and start building your private Passport."}
+          </p>
+        </div>
+        <form className="public-auth-card" onSubmit={submit}>
+          <div className="portal-tabs">
+            <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+              Professional
+            </button>
+            <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+              Corporate
+            </button>
+          </div>
+          <div className="portal-tabs">
+            <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+              Register
+            </button>
+            <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+              Login
+            </button>
+          </div>
+          <input onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
+          <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
+          <button className="primary-action" disabled={busy || !email || !password} type="submit">
+            {mode === "signin" ? "Login" : "Create account"}
+          </button>
+          <button className="secondary-action" onClick={onOpenDemo} type="button">
+            Explore demo app
+          </button>
+          <small>{message}</small>
+        </form>
+      </section>
+    </main>
+  );
+}
+
 function App() {
   const [workspaceId, setWorkspaceId] = useState<WorkspaceId>("passport");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("identity");
   const [activeMembershipId, setActiveMembershipId] = useState(sessionUser.activeMembershipId);
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
+  const [showPublicSite, setShowPublicSite] = useState(true);
   const [accountContext, setAccountContext] = useState<AccountContext | null>(null);
   const [accountStatus, setAccountStatus] = useState("Demo account context");
   const [livePassportRecords, setLivePassportRecords] = useState<RecordItem[]>([]);
@@ -1930,6 +2123,9 @@ function App() {
   useEffect(() => {
     const storedSession = readStoredSession();
     setAuthSession(storedSession);
+    if (storedSession) {
+      setShowPublicSite(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -2721,6 +2917,18 @@ function App() {
     setWebhookSubscriptions((current) => current.map((webhook) => (webhook.id === updated.id ? updated : webhook)));
     setAuditEvents(events);
     setConnectStatus(`Webhook moved to ${updated.status}`);
+  }
+
+  if (showPublicSite && !authSession) {
+    return (
+      <PublicSite
+        onOpenDemo={() => setShowPublicSite(false)}
+        onSession={(session) => {
+          setAuthSession(session);
+          setShowPublicSite(false);
+        }}
+      />
+    );
   }
 
   return (
