@@ -2403,7 +2403,7 @@ function PlanAlignmentPanel() {
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 025 are active, including member controls, corporate Access Grant requests, first-class record types, and consent authorizations.</small>
+          <small>Migrations through 026 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, and sensitive-record controls.</small>
         </div>
         <span className="status-chip success">database live</span>
       </article>
@@ -2444,6 +2444,107 @@ function PlanAlignmentPanel() {
             <div className="plan-track-meta">
               <span className={`status-chip ${toneClass(track.tone)}`}>{track.status}</span>
               <span className="status-chip neutral">{track.planStep}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WorkflowQaPanel({
+  accessGrants,
+  apiClients,
+  auditEvents,
+  consentAuthorizations,
+  livePassportRecords,
+  notificationEvents,
+  operationsCases,
+  referenceRequests,
+  sharedVerifyRecords,
+  subscriptions,
+  teamMembers,
+  webhookSubscriptions
+}: {
+  accessGrants: AccessGrantView[];
+  apiClients: DbApiClient[];
+  auditEvents: DbAuditEvent[];
+  consentAuthorizations: DbConsentAuthorization[];
+  livePassportRecords: RecordItem[];
+  notificationEvents: DbNotificationEvent[];
+  operationsCases: DbVerificationCase[];
+  referenceRequests: DbReferenceRequest[];
+  sharedVerifyRecords: RecordItem[];
+  subscriptions: DbOrganizationSubscription[];
+  teamMembers: OrganizationMemberView[];
+  webhookSubscriptions: DbWebhookSubscription[];
+}) {
+  const sensitiveRecords = livePassportRecords.filter(
+    (record) => record.sensitivity === "sensitive" || record.sensitivity === "restricted" || record.consentRequired
+  ).length;
+  const checks = [
+    {
+      label: "Passport data",
+      ok: livePassportRecords.length > 0,
+      detail: livePassportRecords.length ? `${livePassportRecords.length} live records` : "No live Passport records yet"
+    },
+    {
+      label: "Sensitive controls",
+      ok: sensitiveRecords === 0 || consentAuthorizations.some((authorization) => authorization.status === "active"),
+      detail: sensitiveRecords ? `${sensitiveRecords} sensitive records, ${consentAuthorizations.length} consent records` : "No sensitive records requiring coverage"
+    },
+    {
+      label: "Access sharing",
+      ok: accessGrants.some((grant) => grant.status === "approved") || sharedVerifyRecords.length > 0,
+      detail: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} shared Verify records` : `${accessGrants.length} Access Grants tracked`
+    },
+    {
+      label: "Corporate account",
+      ok: teamMembers.some((member) => member.status === "active") || subscriptions.some((subscription) => subscription.status !== "cancelled"),
+      detail: `${teamMembers.length} members, ${subscriptions.length} subscriptions`
+    },
+    {
+      label: "Operations queue",
+      ok: operationsCases.every((item) => item.priority !== "critical" || item.status === "resolved"),
+      detail: `${operationsCases.filter((item) => item.status === "open" || item.status === "in_review").length} open cases`
+    },
+    {
+      label: "Connect surface",
+      ok: apiClients.length > 0 || webhookSubscriptions.length > 0,
+      detail: `${apiClients.length} clients, ${webhookSubscriptions.length} webhooks`
+    },
+    {
+      label: "Audit and notices",
+      ok: auditEvents.length > 0 || notificationEvents.length > 0 || referenceRequests.length > 0,
+      detail: `${auditEvents.length} audit events, ${notificationEvents.length} notifications`
+    }
+  ];
+  const passed = checks.filter((check) => check.ok).length;
+  const score = Math.round((passed / checks.length) * 100);
+
+  return (
+    <section className="qa-panel">
+      <div className="mini-heading">
+        <Activity size={16} />
+        <strong>Workflow QA</strong>
+      </div>
+      <div className="qa-score-card">
+        <div>
+          <span>Build health</span>
+          <strong>{score}%</strong>
+          <small>{passed} of {checks.length} workflow checks passing</small>
+        </div>
+        <span className={`status-chip ${score >= 80 ? "success" : score >= 50 ? "warning" : "danger"}`}>
+          {score >= 80 ? "healthy" : "needs data"}
+        </span>
+      </div>
+      <div className="qa-check-grid">
+        {checks.map((check) => (
+          <article className="qa-check-card" key={check.label}>
+            <span className={`status-dot ${check.ok ? "on" : ""}`} />
+            <div>
+              <strong>{check.label}</strong>
+              <small>{check.detail}</small>
             </div>
           </article>
         ))}
@@ -5270,6 +5371,20 @@ function App() {
                   webhooks={webhookSubscriptions}
                 />
                 <AuditTrailPanel events={auditEvents} message={auditStatus} />
+                <WorkflowQaPanel
+                  accessGrants={accessGrants}
+                  apiClients={apiClients}
+                  auditEvents={auditEvents}
+                  consentAuthorizations={consentAuthorizations}
+                  livePassportRecords={livePassportRecords}
+                  notificationEvents={notificationEvents}
+                  operationsCases={operationsCases}
+                  referenceRequests={referenceRequests}
+                  sharedVerifyRecords={sharedVerifyRecords}
+                  subscriptions={organizationSubscriptions}
+                  teamMembers={teamMembers}
+                  webhookSubscriptions={webhookSubscriptions}
+                />
                 <ConsentPolicyMatrixPanel />
                 <PlanAlignmentPanel />
               </>

@@ -2265,6 +2265,77 @@ p {
   border-style: dashed;
 }
 
+.qa-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.06), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.qa-score-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.qa-score-card span,
+.qa-score-card strong,
+.qa-score-card small {
+  display: block;
+}
+
+.qa-score-card div > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.qa-score-card strong {
+  margin: 5px 0;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.qa-check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.qa-check-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.qa-check-card strong,
+.qa-check-card small {
+  display: block;
+}
+
+.qa-check-card small {
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
 .plan-panel {
   display: grid;
   gap: 10px;
