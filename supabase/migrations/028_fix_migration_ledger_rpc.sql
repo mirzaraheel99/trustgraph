@@ -1,31 +1,3 @@
-create table if not exists public.schema_migration_runs (
-  id uuid primary key default gen_random_uuid(),
-  migration_path text not null,
-  commit_sha text,
-  workflow_run_id text,
-  applied_by text,
-  status text not null default 'applied',
-  notes text,
-  applied_at timestamptz not null default now(),
-  unique (migration_path, commit_sha)
-);
-
-alter table public.schema_migration_runs enable row level security;
-
-drop policy if exists "admins read schema migration runs" on public.schema_migration_runs;
-create policy "admins read schema migration runs"
-on public.schema_migration_runs
-for select
-using (
-  exists (
-    select 1
-    from public.organization_memberships membership
-    where membership.profile_id = auth.uid()
-      and membership.status = 'active'
-      and membership.role in ('trustgraph_verifier', 'compliance_admin', 'system_admin', 'auditor')
-  )
-);
-
 create or replace function public.record_schema_migration_run(
   input_migration_path text,
   input_commit_sha text default null,
