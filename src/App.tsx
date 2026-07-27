@@ -395,7 +395,7 @@ function AccessGrantsPanel({
   disabled,
   grants,
   message,
-  onDecision
+  onDecision,
   onSampleRequest
 }: {
   disabled: boolean;
