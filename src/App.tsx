@@ -22,7 +22,7 @@ import {
   UserPlus
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
-import type { DbVerificationCase, RecordStatus, RecordType, VerificationCaseStatus } from "./database";
+import type { DbAuditEvent, DbVerificationCase, RecordStatus, RecordType, VerificationCaseStatus } from "./database";
 import {
   accountContextOrganizations,
   accountContextToSessionUser,
@@ -33,6 +33,7 @@ import {
   loadAccountContext,
   type AccountContext
 } from "./accountRepository";
+import { auditActionLabel, loadAuditEvents } from "./auditRepository";
 import {
   authModeLabel,
   readStoredSession,
@@ -706,6 +707,48 @@ function OperationsQueuePanel({
   );
 }
 
+function AuditTrailPanel({
+  events,
+  message
+}: {
+  events: DbAuditEvent[];
+  message: string;
+}) {
+  return (
+    <section className="audit-panel">
+      <div className="mini-heading">
+        <Activity size={16} />
+        <strong>Audit trail</strong>
+      </div>
+      <small>{message}</small>
+      <div className="audit-list">
+        {events.length ? (
+          events.map((event) => (
+            <article className="audit-card" key={event.id}>
+              <div>
+                <strong>{auditActionLabel(event.action)}</strong>
+                <small>{event.reason || event.target_table}</small>
+              </div>
+              <time>
+                {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(
+                  new Date(event.created_at)
+                )}
+              </time>
+            </article>
+          ))
+        ) : (
+          <article className="audit-card empty">
+            <div>
+              <strong>No live audit events yet</strong>
+              <small>Material workflow actions will appear here.</small>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function AccountPanel({
   accountUser,
   activeMembership,
@@ -1009,6 +1052,8 @@ function App() {
   const [verifyStatus, setVerifyStatus] = useState("Switch to Verify role for live requests");
   const [operationsCases, setOperationsCases] = useState<DbVerificationCase[]>([]);
   const [operationsStatus, setOperationsStatus] = useState("Switch to Admin role for live operations");
+  const [auditEvents, setAuditEvents] = useState<DbAuditEvent[]>([]);
+  const [auditStatus, setAuditStatus] = useState("Switch to Admin role for audit events");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -1162,28 +1207,37 @@ function App() {
     if (!authSession || !accountContext || workspaceId !== "admin") {
       setOperationsCases([]);
       setOperationsStatus("Switch to Admin role for live operations");
+      setAuditEvents([]);
+      setAuditStatus("Switch to Admin role for audit events");
       return;
     }
 
     if (!canAccessWorkspace(activeMembership.role, "admin")) {
       setOperationsCases([]);
       setOperationsStatus("Active role cannot access Admin operations");
+      setAuditEvents([]);
+      setAuditStatus("Active role cannot access audit events");
       return;
     }
 
     let cancelled = false;
     setOperationsStatus("Loading live operations queue...");
+    setAuditStatus("Loading audit events...");
 
-    loadVerificationCases(authSession.accessToken)
-      .then((items) => {
+    Promise.all([loadVerificationCases(authSession.accessToken), loadAuditEvents(authSession.accessToken)])
+      .then(([items, events]) => {
         if (cancelled) return;
         setOperationsCases(items);
+        setAuditEvents(events);
         setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No live operations cases yet");
+        setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
       })
       .catch((error) => {
         if (cancelled) return;
         setOperationsCases([]);
+        setAuditEvents([]);
         setOperationsStatus(error instanceof Error ? error.message : "Could not load operations queue");
+        setAuditStatus(error instanceof Error ? error.message : "Could not load audit events");
       });
 
     return () => {
@@ -1394,9 +1448,14 @@ function App() {
     }
 
     const added = await createSampleVerificationCases(authSession.accessToken);
-    const items = await loadVerificationCases(authSession.accessToken);
+    const [items, events] = await Promise.all([
+      loadVerificationCases(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken)
+    ]);
     setOperationsCases(items);
+    setAuditEvents(events);
     setOperationsStatus(added ? `Created ${added} sample operations cases` : "Sample operations cases already exist");
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
   }
 
   async function decideLiveOperationsCase(caseId: string, status: VerificationCaseStatus) {
@@ -1410,8 +1469,11 @@ function App() {
       resolution: status === "resolved" ? "Resolved from TrustGraph operations queue" : "Updated from TrustGraph operations queue",
       accessToken: authSession.accessToken
     });
+    const events = await loadAuditEvents(authSession.accessToken);
     setOperationsCases((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+    setAuditEvents(events);
     setOperationsStatus(`Case moved to ${updated.status.replace(/_/g, " ")}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
   }
 
   async function createLiveOperationsRole() {
@@ -1633,13 +1695,16 @@ function App() {
             ) : null}
 
             {workspace.id === "admin" ? (
-              <OperationsQueuePanel
-                cases={operationsCases}
-                disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
-                message={operationsStatus}
-                onCreateSamples={createLiveOperationsSamples}
-                onDecision={decideLiveOperationsCase}
-              />
+              <>
+                <OperationsQueuePanel
+                  cases={operationsCases}
+                  disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
+                  message={operationsStatus}
+                  onCreateSamples={createLiveOperationsSamples}
+                  onDecision={decideLiveOperationsCase}
+                />
+                <AuditTrailPanel events={auditEvents} message={auditStatus} />
+              </>
             ) : null}
           </div>
 

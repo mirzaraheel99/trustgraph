@@ -40,7 +40,7 @@ https://mirzaraheel99.github.io/trustgraph/
 
 ## Supabase Auth
 
-Add these repository or deployment environment variables when the Supabase project is ready:
+Add these repository/deployment environment variables for hosted live mode:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL=
@@ -50,10 +50,13 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 In Supabase Auth URL settings, allow the GitHub Pages URL above as a site/redirect URL.
 Until those variables are present, the app stays in demo mode and keeps the mock RBAC account context available.
 
-For database migrations, add this GitHub repository secret and run the `Apply Supabase Migrations` workflow manually:
+For database migrations, add these GitHub repository secrets and run the `Apply Supabase Migrations` workflow manually:
 
 ```text
 DIRECT_URL=
+SUPABASE_PROJECT_REF=
+SUPABASE_SECRET_KEY=
+SUPABASE_DB_PASSWORD=
 ```
 
 ## Build
@@ -72,9 +75,24 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `005_professional_onboarding_rpc.sql`: self-service professional profile, personal organization, and membership creation.
 - `006_sample_access_grant_rpc.sql`: development sample employer Access Grant request for end-to-end sharing checks.
 - `007_sample_employer_reviewer_rpc.sql`: development sample employer reviewer membership for Verify workspace checks.
+- `008_sync_access_grant_records_rpc.sql`: syncs a Professional's current Passport records into approved Access Grants.
+- `009_corporate_account_rbac_rpc.sql`: self-service employer/staffing account creation and scoped RBAC activation.
+- `010_verification_operations_queue.sql`: TrustGraph operations case table, sample verifier role, queue seeding, and case decisions.
+- `011_operations_audit_hardening.sql`: operations case timestamp trigger and operations organization helper.
 
 TypeScript mirrors for the core database rows live in `src/database.ts`.
-The first Supabase REST adapter lives in `src/supabase.ts`, with account-context queries in `src/accountRepository.ts`.
+The Supabase REST/RPC adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, operations cases, and audit events.
+
+## Current Live Workflow
+
+1. Sign up or sign in with Supabase Auth.
+2. TrustGraph creates a Professional account automatically.
+3. Add live Passport records.
+4. Create a sample employer reviewer role or corporate account.
+5. Generate and approve an Access Grant to share current Passport records.
+6. Switch to Verify to review approved shared records.
+7. Create a sample operations role, switch to Admin, seed operations cases, and review/restrict/resolve cases.
+8. Admin audit trail shows recent material workflow events.
 
 ## Product Planning
 
