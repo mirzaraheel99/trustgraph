@@ -1525,6 +1525,17 @@ p {
   gap: 12px;
 }
 
+.test-tool-strip {
+  padding: 10px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.test-tool-strip small {
+  color: var(--faint);
+}
+
 .grant-card {
   display: flex;
   justify-content: space-between;

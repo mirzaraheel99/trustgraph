@@ -627,8 +627,8 @@ function AccessGrantsPanel({
         <KeyRound size={16} />
         <strong>Access Grants</strong>
       </div>
-      <div className="grant-panel-top">
-        <small>{message}</small>
+      <div className="grant-panel-top test-tool-strip">
+        <small>Test data tool for validating Passport approval without waiting on an external corporate request.</small>
         <button
           className="secondary-action"
           disabled={disabled || sampleBusy}
@@ -641,7 +641,7 @@ function AccessGrantsPanel({
             }
           }}
         >
-          Sample request
+          Create test request
         </button>
       </div>
       <div className="grant-list">
@@ -687,7 +687,7 @@ function AccessGrantsPanel({
           <article className="grant-card empty">
             <div>
               <strong>No live Access Grants yet</strong>
-              <p>Employer and staffing requests will appear here once Verify workspace is connected.</p>
+              <p>Corporate Verify requests will appear here when a live employer or staffing team requests Passport access.</p>
             </div>
           </article>
         )}
@@ -920,8 +920,8 @@ function VerifyRequestsPanel({
           </button>
         </div>
       </form>
-      <div className="grant-panel-top">
-        <small>Use test tooling only when validating demo data paths.</small>
+      <div className="grant-panel-top test-tool-strip">
+        <small>Test data tool for quickly adding a reviewer role while validating a new Supabase project.</small>
         <button
           className="secondary-action"
           disabled={busy}
@@ -934,7 +934,7 @@ function VerifyRequestsPanel({
             }
           }}
         >
-          Sample reviewer role
+          Create test reviewer
         </button>
       </div>
       <div className="grant-list">
@@ -953,7 +953,7 @@ function VerifyRequestsPanel({
           <article className="grant-card empty">
             <div>
               <strong>No live Verify requests yet</strong>
-              <p>Create an employer reviewer role, then generate a sample request from Passport.</p>
+              <p>Request Passport access from a professional by email, then track the approval state here.</p>
             </div>
           </article>
         )}
@@ -1367,7 +1367,7 @@ function OperationsQueuePanel({
         <ShieldAlert size={16} />
         <strong>Live operations queue</strong>
       </div>
-      <div className="grant-panel-top">
+      <div className="grant-panel-top test-tool-strip">
         <small>{message}</small>
         <button
           className="secondary-action"
@@ -1381,7 +1381,7 @@ function OperationsQueuePanel({
             }
           }}
         >
-          Seed cases
+          Seed test cases
         </button>
       </div>
       <div className="operations-case-list">
@@ -1431,7 +1431,7 @@ function OperationsQueuePanel({
           <article className="grant-card empty">
             <div>
               <strong>No live operations cases yet</strong>
-              <p>Seed sample cases to test TrustGraph verifier and compliance workflows.</p>
+              <p>Fraud, compliance, and verifier review cases will appear here as live workflows create exceptions.</p>
             </div>
           </article>
         )}
