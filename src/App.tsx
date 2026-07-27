@@ -959,6 +959,12 @@ function VerifyRequestsPanel({
   const [purpose, setPurpose] = useState("Hiring readiness review for verified identity, employment, license, and certification records");
   const [expiresInDays, setExpiresInDays] = useState(14);
   const [requestStatus, setRequestStatus] = useState(message);
+  const requestedCount = requests.filter((request) => request.status === "requested").length;
+  const approvedCount = requests.filter((request) => request.status === "approved").length;
+  const inactiveCount = requests.filter(
+    (request) => request.status === "declined" || request.status === "expired" || request.status === "revoked"
+  ).length;
+  const lifecycle = ["Request", "Professional approval", "Scoped record sync", "Audit event"];
 
   useEffect(() => {
     setRequestStatus(message);
@@ -984,6 +990,20 @@ function VerifyRequestsPanel({
       <div className="mini-heading">
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
+      </div>
+      <div className="verify-summary-grid">
+        <div>
+          <span>Requested</span>
+          <strong>{requestedCount}</strong>
+        </div>
+        <div>
+          <span>Approved</span>
+          <strong>{approvedCount}</strong>
+        </div>
+        <div>
+          <span>Inactive</span>
+          <strong>{inactiveCount}</strong>
+        </div>
       </div>
       <form className="verify-request-form" onSubmit={submitAccessRequest}>
         <div className="record-form-grid">
@@ -1014,6 +1034,11 @@ function VerifyRequestsPanel({
           <button className="primary-action" disabled={disabled || requestBusy || !subjectEmail || purpose.length < 12} type="submit">
             Request access
           </button>
+        </div>
+        <div className="verify-lifecycle-row">
+          {lifecycle.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
         </div>
       </form>
       <div className="grant-panel-top test-tool-strip">
