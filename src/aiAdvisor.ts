@@ -19,6 +19,7 @@ export interface AdvisorySummary {
   detail: string;
   signals: AdvisorySignal[];
   nextActions: string[];
+  sourceMix: AdvisorySignal[];
   sourceCount: number;
 }
 
@@ -74,6 +75,11 @@ export function buildAdvisorySummary(input: {
         casesOpen ? "Move stale cases into review or resolution." : "Seed sample cases only when testing operations flows.",
         unreadNotifications ? "Mark handled notifications as read." : "Keep notification queue clear."
       ],
+      sourceMix: [
+        { label: "Records", value: String(input.records.length), tone: "info" },
+        { label: "Cases", value: String(input.operationsCases.length), tone: casesOpen ? "warning" : "success" },
+        { label: "Notifications", value: String(input.notificationEvents.length), tone: unreadNotifications ? "warning" : "success" }
+      ],
       sourceCount: input.records.length + input.operationsCases.length + input.notificationEvents.length
     };
   }
@@ -93,6 +99,11 @@ export function buildAdvisorySummary(input: {
         missingOpen ? "Follow up on open missing-record requests." : "Review the latest shared Passport records.",
         issuedCredentials ? "Audit newly issued credentials for issuer context." : "Create an issuer role when credential workflows are needed.",
         unreadNotifications ? "Clear handled Verify notifications." : "Keep Verify inbox clean."
+      ],
+      sourceMix: [
+        { label: "Shared", value: String(input.verifyRequests.length), tone: sharedProfiles ? "info" : "neutral" },
+        { label: "Credentials", value: String(input.issuerCredentials.length), tone: issuedCredentials ? "success" : "neutral" },
+        { label: "Gaps", value: String(input.missingRecordRequests.length), tone: missingOpen ? "warning" : "success" }
       ],
       sourceCount:
         input.records.length +
@@ -118,6 +129,11 @@ export function buildAdvisorySummary(input: {
       pendingGrants ? "Review pending Access Grants." : "Keep Access Grants scoped and current.",
       warningRecords ? "Update expiring or partially verified records." : "Maintain current evidence coverage.",
       missingOpen ? "Respond to missing-record requests." : "No missing-record request is blocking the current Passport."
+    ],
+    sourceMix: [
+      { label: "Records", value: String(input.records.length), tone: "info" },
+      { label: "Grants", value: String(input.accessGrants.length), tone: pendingGrants ? "warning" : "success" },
+      { label: "References", value: String(input.referenceRequests.length), tone: submittedReferences ? "success" : "neutral" }
     ],
     sourceCount:
       input.records.length +

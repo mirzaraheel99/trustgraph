@@ -209,6 +209,13 @@ function AdvisoryCard({ summary }: { summary: ReturnType<typeof buildAdvisorySum
           </span>
         ))}
       </div>
+      <div className="advisory-source-grid">
+        {summary.sourceMix.map((source) => (
+          <span className={`status-chip ${toneClass(source.tone)}`} key={source.label}>
+            {source.label} {source.value}
+          </span>
+        ))}
+      </div>
       <div className="advisory-actions">
         {summary.nextActions.slice(0, 3).map((action) => (
           <small key={action}>{action}</small>

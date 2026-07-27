@@ -1200,11 +1200,20 @@ p {
 }
 
 .advisory-signals,
+.advisory-source-grid,
 .advisory-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 14px;
+}
+
+.advisory-source-grid {
+  margin-top: 10px;
+}
+
+.advisory-source-grid .status-chip {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .advisory-actions {
