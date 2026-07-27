@@ -1470,6 +1470,15 @@ function AuditTrailPanel({
   events: DbAuditEvent[];
   message: string;
 }) {
+  const [auditQuery, setAuditQuery] = useState("");
+  const [actionFilter, setActionFilter] = useState<"all" | "access" | "organization" | "record" | "connect" | "verification">("all");
+  const filteredEvents = events.filter((event) => {
+    const action = event.action.toLowerCase();
+    const matchesAction = actionFilter === "all" || action.includes(actionFilter);
+    const haystack = `${event.action} ${event.reason ?? ""} ${event.target_table ?? ""}`.toLowerCase();
+    return matchesAction && haystack.includes(auditQuery.trim().toLowerCase());
+  });
+
   return (
     <section className="audit-panel">
       <div className="mini-heading">
@@ -1477,9 +1486,24 @@ function AuditTrailPanel({
         <strong>Audit trail</strong>
       </div>
       <small>{message}</small>
+      <div className="audit-controls">
+        <input
+          onChange={(event) => setAuditQuery(event.target.value)}
+          placeholder="Search action, target, or reason"
+          value={auditQuery}
+        />
+        <select onChange={(event) => setActionFilter(event.target.value as typeof actionFilter)} value={actionFilter}>
+          <option value="all">All actions</option>
+          <option value="access">Access</option>
+          <option value="organization">Organization</option>
+          <option value="record">Records</option>
+          <option value="connect">Connect</option>
+          <option value="verification">Verification</option>
+        </select>
+      </div>
       <div className="audit-list">
-        {events.length ? (
-          events.map((event) => (
+        {filteredEvents.length ? (
+          filteredEvents.map((event) => (
             <article className="audit-card" key={event.id}>
               <div>
                 <strong>{auditActionLabel(event.action)}</strong>
@@ -1495,8 +1519,8 @@ function AuditTrailPanel({
         ) : (
           <article className="audit-card empty">
             <div>
-              <strong>No live audit events yet</strong>
-              <small>Material workflow actions will appear here.</small>
+              <strong>No matching audit events</strong>
+              <small>Material workflow actions will appear here when they match the current filter.</small>
             </div>
           </article>
         )}
