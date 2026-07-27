@@ -1530,6 +1530,9 @@ function ConnectPanel({
   const [eventType, setEventType] = useState("access_grant.approved");
   const [targetUrl, setTargetUrl] = useState("");
   const [status, setStatus] = useState(message);
+  const activeClients = apiClients.filter((client) => client.status === "active").length;
+  const activeWebhooks = webhooks.filter((webhook) => webhook.status === "active").length;
+  const deliveryFailures = webhooks.reduce((sum, webhook) => sum + webhook.failure_count, 0);
 
   useEffect(() => {
     setStatus(message);
@@ -1579,7 +1582,24 @@ function ConnectPanel({
         <Network size={16} />
         <strong>Connect control plane</strong>
       </div>
-      <div className="grant-panel-top">
+      <div className="connect-summary-grid">
+        <div>
+          <span>Clients</span>
+          <strong>{apiClients.length}</strong>
+          <small>{activeClients} active</small>
+        </div>
+        <div>
+          <span>Webhooks</span>
+          <strong>{webhooks.length}</strong>
+          <small>{activeWebhooks} active</small>
+        </div>
+        <div>
+          <span>Failures</span>
+          <strong>{deliveryFailures}</strong>
+          <small>recent delivery count</small>
+        </div>
+      </div>
+      <div className="grant-panel-top test-tool-strip">
         <small>{status}</small>
         <button
           className="secondary-action"
@@ -1593,7 +1613,7 @@ function ConnectPanel({
             }
           }}
         >
-          Sample API client
+          Create pilot client
         </button>
       </div>
       <div className="connect-list">
@@ -1623,7 +1643,7 @@ function ConnectPanel({
           <article className="connect-card empty">
             <div>
               <strong>No API clients yet</strong>
-              <p>Create a pilot client to model Connect API scopes and webhook ownership.</p>
+              <p>Create a pilot client when an integration team is ready to test scoped API and webhook ownership.</p>
             </div>
           </article>
         )}

@@ -1369,6 +1369,39 @@ p {
   gap: 10px;
 }
 
+.connect-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.connect-summary-grid div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.connect-summary-grid span,
+.connect-summary-grid strong,
+.connect-summary-grid small {
+  display: block;
+}
+
+.connect-summary-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.connect-summary-grid strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
 .connect-card {
   display: flex;
   justify-content: space-between;
@@ -1861,6 +1894,7 @@ p {
   .portal-grid,
   .pricing-grid,
   .directory-controls,
+  .connect-summary-grid,
   .record-form-grid {
     grid-template-columns: 1fr;
   }
