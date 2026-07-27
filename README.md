@@ -11,6 +11,8 @@ This repository contains the first React + TypeScript application foundation for
 - Access Grant and sharing concepts
 - Credential expiration monitoring
 - Verification timelines and audit-aware activity
+- Private Supabase Storage evidence uploads
+- Structured references, issuer credentials, missing-record requests, Connect controls, and source-grounded advisory summaries
 
 ## Tech Stack
 
@@ -79,9 +81,16 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `009_corporate_account_rbac_rpc.sql`: self-service employer/staffing account creation and scoped RBAC activation.
 - `010_verification_operations_queue.sql`: TrustGraph operations case table, sample verifier role, queue seeding, and case decisions.
 - `011_operations_audit_hardening.sql`: operations case timestamp trigger and operations organization helper.
+- `012_evidence_documents_notifications.sql`: evidence document metadata, notification events, RLS, and evidence linking.
+- `013_reference_requests_foundation.sql`: structured reference request lifecycle and audit coverage.
+- `014_credential_issuer_foundation.sql`: credential issuer role and verified credential issue workflow.
+- `015_missing_record_requests.sql`: Verify-to-Passport missing-record request workflow.
+- `016_notification_event_status_controls.sql`: notification read/mute status controls with audit events.
+- `017_evidence_storage_uploads.sql`: private Supabase Storage bucket, object policies, and uploaded evidence linking.
+- `018_connect_api_clients_webhooks.sql`: Connect API client registry, webhook subscriptions, status controls, and audit events.
 
-TypeScript mirrors for the core database rows live in `src/database.ts`.
-The Supabase REST/RPC adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, operations cases, and audit events.
+TypeScript mirrors for database rows live in `src/database.ts`.
+The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
 
 ## Current Live Workflow
 
@@ -91,8 +100,12 @@ The Supabase REST/RPC adapter lives in `src/supabase.ts`, with focused repositor
 4. Create a sample employer reviewer role or corporate account.
 5. Generate and approve an Access Grant to share current Passport records.
 6. Switch to Verify to review approved shared records.
-7. Create a sample operations role, switch to Admin, seed operations cases, and review/restrict/resolve cases.
-8. Admin audit trail shows recent material workflow events.
+7. Request structured references, missing records, or issuer-created credentials as needed.
+8. Upload private evidence files to Supabase Storage and link them to Passport records.
+9. Create a sample operations role, switch to Admin, seed operations cases, and review/restrict/resolve cases.
+10. Manage Connect API clients and webhook subscriptions from Admin.
+11. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
+12. Admin audit trail shows recent material workflow events.
 
 ## Product Planning
 
