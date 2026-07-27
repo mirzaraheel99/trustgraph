@@ -94,6 +94,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `021_accept_team_invitations.sql`: invitee-owned pending invitation reads and acceptance into active organization memberships.
 - `022_member_management.sql`: corporate member directory support, peer profile reads, and admin suspend/restore workflow.
 - `023_corporate_access_grant_requests.sql`: corporate Verify users request Passport access from an existing professional by email.
+- `024_expand_record_types.sql`: first-class record types for contracts, training, skills, performance reviews, and continuing education.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -116,7 +117,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `023_corporate_access_grant_requests.sql`, including corporate member-management controls and corporate Access Grant requests by professional email.
+Live Supabase migrations are applied through `024_expand_record_types.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, and first-class locked-scope record categories.
 
 ## Public Website and Pricing
 

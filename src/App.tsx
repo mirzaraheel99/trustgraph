@@ -2149,7 +2149,7 @@ function PlanAlignmentPanel() {
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations 022 and 023 are active for member status controls and real corporate Access Grant requests.</small>
+          <small>Migrations through 024 are active, including member controls, corporate Access Grant requests, and first-class locked-scope record types.</small>
         </div>
         <span className="status-chip success">database live</span>
       </article>
