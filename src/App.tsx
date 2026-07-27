@@ -1888,9 +1888,14 @@ function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; work
 }
 
 function PublicSite({
+  onCorporateSession,
   onOpenDemo,
   onSession
 }: {
+  onCorporateSession: (
+    session: AuthSession,
+    input: { organizationName: string; organizationType: "employer" | "staffing_agency"; organizationDomain: string }
+  ) => void;
   onOpenDemo: () => void;
   onSession: (session: AuthSession) => void;
 }) {
@@ -1898,6 +1903,9 @@ function PublicSite({
   const [mode, setMode] = useState<"signin" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
+  const [organizationDomain, setOrganizationDomain] = useState("");
+  const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
   const [message, setMessage] = useState("Create your TrustGraph account");
   const [busy, setBusy] = useState(false);
 
@@ -1912,7 +1920,11 @@ function PublicSite({
           ? await signInWithPassword(email, password)
           : await signUpWithPassword(email, password);
       if (session) {
-        onSession(session);
+        if (portal === "corporate" && mode === "signup") {
+          onCorporateSession(session, { organizationName, organizationType, organizationDomain });
+        } else {
+          onSession(session);
+        }
         setMessage(portal === "corporate" ? "Corporate portal ready" : "Professional Passport ready");
       } else {
         setMessage("Check your email to confirm the account, then login.");
@@ -2070,7 +2082,21 @@ function PublicSite({
           </div>
           <input onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
           <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
-          <button className="primary-action" disabled={busy || !email || !password} type="submit">
+          {portal === "corporate" && mode === "signup" ? (
+            <>
+              <input onChange={(event) => setOrganizationName(event.target.value)} placeholder="Organization name" value={organizationName} />
+              <input onChange={(event) => setOrganizationDomain(event.target.value)} placeholder="company.com" value={organizationDomain} />
+              <select onChange={(event) => setOrganizationType(event.target.value as typeof organizationType)} value={organizationType}>
+                <option value="employer">Employer</option>
+                <option value="staffing_agency">Staffing agency</option>
+              </select>
+            </>
+          ) : null}
+          <button
+            className="primary-action"
+            disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && !organizationName)}
+            type="submit"
+          >
             {mode === "signin" ? "Login" : "Create account"}
           </button>
           <button className="secondary-action" onClick={onOpenDemo} type="button">
@@ -2090,6 +2116,11 @@ function App() {
   const [activeMembershipId, setActiveMembershipId] = useState(sessionUser.activeMembershipId);
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
   const [showPublicSite, setShowPublicSite] = useState(true);
+  const [pendingCorporateAccount, setPendingCorporateAccount] = useState<{
+    organizationName: string;
+    organizationType: "employer" | "staffing_agency";
+    organizationDomain: string;
+  } | null>(null);
   const [accountContext, setAccountContext] = useState<AccountContext | null>(null);
   const [accountStatus, setAccountStatus] = useState("Demo account context");
   const [livePassportRecords, setLivePassportRecords] = useState<RecordItem[]>([]);
@@ -2165,6 +2196,38 @@ function App() {
       cancelled = true;
     };
   }, [authSession]);
+
+  useEffect(() => {
+    if (!authSession || !accountContext || !pendingCorporateAccount) {
+      return;
+    }
+
+    let cancelled = false;
+    setAccountStatus("Creating corporate portal...");
+
+    createCorporateAccount({
+      accessToken: authSession.accessToken,
+      ...pendingCorporateAccount
+    })
+      .then(async (membership) => {
+        const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
+        if (cancelled) return;
+        setAccountContext(context);
+        setActiveMembershipId(membership.id);
+        setWorkspaceId("verify");
+        setAccountStatus("Corporate portal created");
+        setPendingCorporateAccount(null);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setAccountStatus(error instanceof Error ? error.message : "Could not create corporate portal");
+        setPendingCorporateAccount(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [accountContext, authSession, pendingCorporateAccount]);
 
   useEffect(() => {
     if (!authSession || !accountContext) {
@@ -2927,6 +2990,11 @@ function App() {
   if (showPublicSite && !authSession) {
     return (
       <PublicSite
+        onCorporateSession={(session, input) => {
+          setPendingCorporateAccount(input);
+          setAuthSession(session);
+          setShowPublicSite(false);
+        }}
         onOpenDemo={() => setShowPublicSite(false)}
         onSession={(session) => {
           setAuthSession(session);

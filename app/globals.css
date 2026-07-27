@@ -197,6 +197,7 @@ button {
 }
 
 .public-auth-card input,
+.public-auth-card select,
 .portal-tabs button {
   min-height: 42px;
   border: 1px solid var(--line);
@@ -205,9 +206,14 @@ button {
   background: rgba(255, 255, 255, 0.035);
 }
 
-.public-auth-card input {
+.public-auth-card input,
+.public-auth-card select {
   width: 100%;
   padding: 0 12px;
+}
+
+.public-auth-card select {
+  color-scheme: dark;
 }
 
 .portal-tabs button {
