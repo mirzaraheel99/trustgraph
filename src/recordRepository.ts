@@ -1,5 +1,5 @@
 import type { RecordItem, Tone } from "./data";
-import type { DbTrustRecord, RecordStatus, RecordType } from "./database";
+import type { DbAccessGrant, DbTrustRecord, RecordStatus, RecordType } from "./database";
 import { supabaseRest } from "./supabase";
 
 const recordTypeLabels: Record<RecordType, string> = {
@@ -78,6 +78,28 @@ export async function loadPassportRecords(profileId: string, accessToken: string
   );
 
   return records.map(trustRecordToRecordItem);
+}
+
+export async function loadSharedVerifyRecords(accessToken: string): Promise<RecordItem[]> {
+  const rows = await supabaseRest<
+    {
+      access_grant: DbAccessGrant;
+      trust_record: DbTrustRecord;
+    }[]
+  >(
+    [
+      "access_grant_records?select=access_grant:access_grants!inner(*),trust_record:trust_records!inner(*)",
+      "access_grant.status=eq.approved"
+    ].join("&"),
+    { accessToken }
+  );
+
+  return rows.map(({ access_grant: grant, trust_record: record }) => ({
+    ...trustRecordToRecordItem(record),
+    owner: "Shared with Verify workspace",
+    access: grant.expires_at ? `Shared until ${dateLabel(grant.expires_at)}` : "Approved Access Grant",
+    trust: record.status === "verified" ? "Shared verified record" : "Shared Passport record"
+  }));
 }
 
 export async function createPassportRecord(input: {

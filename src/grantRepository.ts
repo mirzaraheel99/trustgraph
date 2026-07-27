@@ -48,6 +48,10 @@ export async function decideAccessGrant(input: {
   );
 }
 
+export async function syncAccessGrantRecords(grantId: string, accessToken: string): Promise<number> {
+  return supabaseRpc<number>("sync_access_grant_records", { target_grant_id: grantId }, { accessToken });
+}
+
 export async function createSampleAccessGrant(accessToken: string): Promise<DbAccessGrant> {
   return supabaseRpc<DbAccessGrant>("create_sample_access_grant_request", {}, { accessToken });
 }

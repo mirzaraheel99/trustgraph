@@ -43,10 +43,11 @@ import {
   decideAccessGrant,
   loadAccessGrants,
   loadVerifyAccessGrants,
+  syncAccessGrantRecords,
   type VerifyAccessGrantView,
   type AccessGrantView
 } from "./grantRepository";
-import { createPassportRecord, loadPassportRecords, updatePassportRecord } from "./recordRepository";
+import { createPassportRecord, loadPassportRecords, loadSharedVerifyRecords, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
   getActiveMembership,
@@ -727,6 +728,7 @@ function App() {
   const [accessGrants, setAccessGrants] = useState<AccessGrantView[]>([]);
   const [grantStatus, setGrantStatus] = useState("Sign in to review Access Grants");
   const [verifyRequests, setVerifyRequests] = useState<VerifyAccessGrantView[]>([]);
+  const [sharedVerifyRecords, setSharedVerifyRecords] = useState<RecordItem[]>([]);
   const [verifyStatus, setVerifyStatus] = useState("Switch to Verify role for live requests");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
@@ -809,12 +811,14 @@ function App() {
   useEffect(() => {
     if (!authSession || !accountContext || workspaceId !== "verify") {
       setVerifyRequests([]);
+      setSharedVerifyRecords([]);
       setVerifyStatus("Switch to Verify role for live requests");
       return;
     }
 
     if (!canAccessWorkspace(activeMembership.role, "verify")) {
       setVerifyRequests([]);
+      setSharedVerifyRecords([]);
       setVerifyStatus("Active role cannot access Verify workspace");
       return;
     }
@@ -822,15 +826,24 @@ function App() {
     let cancelled = false;
     setVerifyStatus("Loading live Verify requests...");
 
-    loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken)
-      .then((items) => {
+    Promise.all([
+      loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken),
+      loadSharedVerifyRecords(authSession.accessToken)
+    ])
+      .then(([items, sharedRecords]) => {
         if (cancelled) return;
         setVerifyRequests(items);
-        setVerifyStatus(items.length ? "Live Supabase Verify requests" : "No live Verify requests yet");
+        setSharedVerifyRecords(sharedRecords);
+        setVerifyStatus(
+          items.length || sharedRecords.length
+            ? `Live Supabase Verify data: ${items.length} requests, ${sharedRecords.length} shared records`
+            : "No live Verify requests yet"
+        );
       })
       .catch((error) => {
         if (cancelled) return;
         setVerifyRequests([]);
+        setSharedVerifyRecords([]);
         setVerifyStatus(error instanceof Error ? error.message : "Could not load Verify requests");
       });
 
@@ -893,11 +906,12 @@ function App() {
         }
       ]
     }));
+    const verifyWorkspaceRecords = [...sharedVerifyRecords, ...verifyRecords];
     const sourceRecords =
       workspace.id === "passport" && livePassportRecords.length
         ? livePassportRecords
-        : workspace.id === "verify" && verifyRecords.length
-          ? verifyRecords
+        : workspace.id === "verify" && verifyWorkspaceRecords.length
+          ? verifyWorkspaceRecords
           : workspace.records;
     return sourceRecords.filter((record) =>
       [record.title, record.subtitle, record.section, record.status, record.trust, record.source]
@@ -905,7 +919,7 @@ function App() {
         .toLowerCase()
         .includes(q)
     );
-  }, [livePassportRecords, query, verifyRequests, workspace]);
+  }, [livePassportRecords, query, sharedVerifyRecords, verifyRequests, workspace]);
 
   const selectedRecord = records.find((record) => record.id === selectedId) ?? records[0] ?? workspace.records[0];
   const selectedRecordIsLive = livePassportRecords.some((record) => record.id === selectedRecord.id);
@@ -987,11 +1001,12 @@ function App() {
       reason: "professional decision from Passport workspace",
       accessToken: authSession.accessToken
     });
+    const syncedCount = status === "approved" ? await syncAccessGrantRecords(grantId, authSession.accessToken) : 0;
 
     setAccessGrants((current) =>
       current.map((grant) => (grant.id === updated.id ? { ...grant, status: updated.status } : grant))
     );
-    setGrantStatus("Live Supabase Access Grants");
+    setGrantStatus(status === "approved" ? `Access approved and ${syncedCount} records shared` : "Live Supabase Access Grants");
   }
 
   async function createSampleGrantRequest() {
