@@ -2626,6 +2626,16 @@ function AuthPanel({
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(authModeLabel());
   const [busy, setBusy] = useState(false);
+  const authPaths = [
+    {
+      label: "Professional",
+      detail: "Create a Passport, add records, upload evidence, approve Access Grants."
+    },
+    {
+      label: "Corporate",
+      detail: "Create employer or staffing workspace from Corporate account and RBAC."
+    }
+  ];
 
   async function handleAuth(event: FormEvent<HTMLFormElement>, mode: "signin" | "signup") {
     event.preventDefault();
@@ -2659,6 +2669,10 @@ function AuthPanel({
         <div className="auth-session">
           <span>{session.user.email}</span>
           <small>Supabase session stored in this browser</small>
+          <div className="auth-session-meta">
+            <span>Live database access</span>
+            <span>RBAC context loading</span>
+          </div>
           <button
             className="secondary-action"
             onClick={() => {
@@ -2672,6 +2686,14 @@ function AuthPanel({
         </div>
       ) : (
         <form className="auth-form" onSubmit={(event) => handleAuth(event, "signin")}>
+          <div className="auth-path-grid">
+            {authPaths.map((path) => (
+              <article key={path.label}>
+                <strong>{path.label}</strong>
+                <small>{path.detail}</small>
+              </article>
+            ))}
+          </div>
           <input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" type="email" />
           <input
             value={password}

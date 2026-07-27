@@ -944,6 +944,32 @@ p,
   gap: 8px;
 }
 
+.auth-path-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auth-path-grid article {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.auth-path-grid strong,
+.auth-path-grid small {
+  display: block;
+}
+
+.auth-path-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .primary-action:disabled,
 .secondary-action:disabled {
   cursor: not-allowed;
@@ -951,6 +977,25 @@ p,
 }
 
 .auth-session span {
+  font-weight: 850;
+}
+
+.auth-session-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.auth-session-meta span {
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 11px;
   font-weight: 850;
 }
 
@@ -2497,6 +2542,7 @@ p {
   .public-hero,
   .public-auth-section,
   .public-portal-rail,
+  .auth-path-grid,
   .billing-estimate-card,
   .metrics-grid,
   .work-grid,
