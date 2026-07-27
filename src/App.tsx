@@ -2183,6 +2183,15 @@ function TeamInvitationsPanel({
   const [busy, setBusy] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [status, setStatus] = useState(message);
+  const [invitationQuery, setInvitationQuery] = useState("");
+  const [invitationStatusFilter, setInvitationStatusFilter] = useState<"all" | "pending" | "accepted" | "cancelled" | "expired">("all");
+  const pendingCount = invitations.filter((invitation) => invitation.status === "pending").length;
+  const acceptedCount = invitations.filter((invitation) => invitation.status === "accepted").length;
+  const filteredInvitations = invitations.filter((invitation) => {
+    const matchesStatus = invitationStatusFilter === "all" || invitation.status === invitationStatusFilter;
+    const haystack = `${invitation.invited_email} ${invitation.role} ${invitation.status}`.toLowerCase();
+    return matchesStatus && haystack.includes(invitationQuery.trim().toLowerCase());
+  });
 
   useEffect(() => {
     setStatus(message);
@@ -2218,6 +2227,16 @@ function TeamInvitationsPanel({
         <UserPlus size={16} />
         <strong>Team invitations</strong>
       </div>
+      <div className="team-summary-grid">
+        <div>
+          <span>Pending</span>
+          <strong>{pendingCount}</strong>
+        </div>
+        <div>
+          <span>Accepted</span>
+          <strong>{acceptedCount}</strong>
+        </div>
+      </div>
       <form className="team-form" onSubmit={submit}>
         <input disabled={disabled || busy} onChange={(event) => setEmail(event.target.value)} placeholder="reviewer@company.com" type="email" value={email} />
         <select disabled={disabled || busy} onChange={(event) => setRole(event.target.value as typeof role)} value={role}>
@@ -2233,9 +2252,23 @@ function TeamInvitationsPanel({
           </button>
         </div>
       </form>
+      <div className="team-controls">
+        <input
+          onChange={(event) => setInvitationQuery(event.target.value)}
+          placeholder="Search invitee, role, or status"
+          value={invitationQuery}
+        />
+        <select onChange={(event) => setInvitationStatusFilter(event.target.value as typeof invitationStatusFilter)} value={invitationStatusFilter}>
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="accepted">Accepted</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="expired">Expired</option>
+        </select>
+      </div>
       <div className="team-list">
-        {invitations.length ? (
-          invitations.slice(0, 5).map((invitation) => (
+        {filteredInvitations.length ? (
+          filteredInvitations.slice(0, 8).map((invitation) => (
             <article className="team-card" key={invitation.id}>
               <div>
                 <strong>{invitation.invited_email}</strong>
@@ -2252,7 +2285,7 @@ function TeamInvitationsPanel({
         ) : (
           <article className="team-card empty">
             <div>
-              <strong>No team invitations yet</strong>
+              <strong>No matching team invitations</strong>
               <small>Invite reviewers, recruiters, or admins for corporate portal access.</small>
             </div>
           </article>
@@ -2335,6 +2368,15 @@ function TeamMembersPanel({
   onStatus: (membershipId: string, status: "active" | "suspended") => Promise<void>;
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [memberQuery, setMemberQuery] = useState("");
+  const [memberStatusFilter, setMemberStatusFilter] = useState<"all" | "active" | "suspended" | "invited">("all");
+  const activeCount = members.filter((member) => member.status === "active").length;
+  const suspendedCount = members.filter((member) => member.status === "suspended").length;
+  const filteredMembers = members.filter((member) => {
+    const matchesStatus = memberStatusFilter === "all" || member.status === memberStatusFilter;
+    const haystack = `${member.profile?.full_name ?? ""} ${member.profile?.email ?? ""} ${member.role} ${member.status}`.toLowerCase();
+    return matchesStatus && haystack.includes(memberQuery.trim().toLowerCase());
+  });
 
   async function updateStatus(membershipId: string, status: "active" | "suspended") {
     setBusyId(membershipId);
@@ -2352,9 +2394,32 @@ function TeamMembersPanel({
         <strong>Team members</strong>
       </div>
       <small>{message}</small>
+      <div className="team-summary-grid">
+        <div>
+          <span>Active</span>
+          <strong>{activeCount}</strong>
+        </div>
+        <div>
+          <span>Suspended</span>
+          <strong>{suspendedCount}</strong>
+        </div>
+      </div>
+      <div className="team-controls">
+        <input
+          onChange={(event) => setMemberQuery(event.target.value)}
+          placeholder="Search member, email, role, or status"
+          value={memberQuery}
+        />
+        <select onChange={(event) => setMemberStatusFilter(event.target.value as typeof memberStatusFilter)} value={memberStatusFilter}>
+          <option value="all">All</option>
+          <option value="active">Active</option>
+          <option value="suspended">Suspended</option>
+          <option value="invited">Invited</option>
+        </select>
+      </div>
       <div className="team-list">
-        {members.length ? (
-          members.slice(0, 8).map((member) => {
+        {filteredMembers.length ? (
+          filteredMembers.slice(0, 10).map((member) => {
             const isSelf = member.profile_id === currentProfileId;
             return (
               <article className="team-card" key={member.id}>
@@ -2386,7 +2451,7 @@ function TeamMembersPanel({
         ) : (
           <article className="team-card empty">
             <div>
-              <strong>No live members loaded</strong>
+              <strong>No matching team members</strong>
               <small>Accepted team members will appear after the workspace loads.</small>
             </div>
           </article>

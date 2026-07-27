@@ -526,8 +526,41 @@ p,
   gap: 8px;
 }
 
-.team-form input,
-.team-form select {
+.team-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.team-summary-grid div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.team-summary-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.team-summary-grid strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.team-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  gap: 8px;
+}
+
+.team-controls input,
+.team-controls select {
   min-height: 36px;
   width: 100%;
   padding: 0 10px;
@@ -537,7 +570,20 @@ p,
   background: rgba(255, 255, 255, 0.035);
 }
 
-.team-form select {
+.team-form input,
+.team-form select,
+.team-controls select {
+  min-height: 36px;
+  width: 100%;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.team-form select,
+.team-controls select {
   color-scheme: dark;
 }
 
@@ -2170,6 +2216,8 @@ p {
   .missing-controls,
   .missing-summary-grid,
   .plan-summary-grid,
+  .team-controls,
+  .team-summary-grid,
   .record-form-grid {
     grid-template-columns: 1fr;
   }
