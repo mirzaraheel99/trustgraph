@@ -1874,7 +1874,13 @@ function BillingPanel({
 }) {
   const [seats, setSeats] = useState(5);
   const [busyPlanId, setBusyPlanId] = useState<string | null>(null);
-  const activePlanIds = new Set(subscriptions.filter((item) => item.status !== "cancelled").map((item) => item.plan_id));
+  const activeSubscriptions = subscriptions.filter((item) => item.status !== "cancelled");
+  const activePlanIds = new Set(activeSubscriptions.map((item) => item.plan_id));
+  const primarySubscription = activeSubscriptions[0] ?? null;
+  const primaryPlan = primarySubscription?.plan ?? plans.find((plan) => plan.id === primarySubscription?.plan_id) ?? null;
+  const totalSeats = activeSubscriptions.reduce((sum, item) => sum + item.seats, 0);
+  const monthlyTotal = activeSubscriptions.reduce((sum, item) => sum + (item.plan?.monthly_price_usd ?? 0), 0);
+  const renewsAt = primarySubscription?.renews_at ? dateLabel(primarySubscription.renews_at) : "Trial or manual renewal";
 
   async function activate(planId: string) {
     setBusyPlanId(planId);
@@ -1892,6 +1898,24 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="billing-summary-grid">
+        <div>
+          <span>Active plan</span>
+          <strong>{primaryPlan?.name ?? "No plan active"}</strong>
+        </div>
+        <div>
+          <span>Seats</span>
+          <strong>{totalSeats || seats}</strong>
+        </div>
+        <div>
+          <span>Renewal</span>
+          <strong>{renewsAt}</strong>
+        </div>
+        <div>
+          <span>Monthly</span>
+          <strong>{monthlyTotal ? `$${monthlyTotal}` : "Not active"}</strong>
+        </div>
+      </div>
       <div className="billing-seat-row">
         <span>Seats</span>
         <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
@@ -1903,7 +1927,9 @@ function BillingPanel({
               <div>
                 <strong>{plan.name}</strong>
                 <p>${plan.monthly_price_usd}/month</p>
-                <small>{plan.features.slice(0, 3).join(", ")}</small>
+                <small>
+                  {plan.included_seats} included seats - {plan.features.slice(0, 3).join(", ")}
+                </small>
               </div>
               <button
                 className={activePlanIds.has(plan.id) ? "secondary-action" : "primary-action"}
