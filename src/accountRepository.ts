@@ -1,5 +1,6 @@
 import type { DbOrganization, DbOrganizationMembership, DbProfile } from "./database";
-import { supabaseRest } from "./supabase";
+import type { Organization, SessionUser } from "./rbac";
+import { supabaseRest, supabaseRpc } from "./supabase";
 
 export interface AccountContext {
   profile: DbProfile;
@@ -52,4 +53,58 @@ export async function requestAccessGrant(input: {
       expires_at: input.expiresAt ?? null
     })
   });
+}
+
+export async function ensureProfessionalAccount(input: {
+  profileId: string;
+  email: string;
+  fullName?: string;
+  accessToken: string;
+}): Promise<AccountContext> {
+  const existing = await tryLoadAccountContext(input.profileId, input.accessToken);
+  if (existing && existing.memberships.length > 0) {
+    return existing;
+  }
+
+  await supabaseRpc("create_professional_account", {
+    profile_email: input.email,
+    profile_full_name: input.fullName || input.email
+  }, {
+    accessToken: input.accessToken,
+  });
+
+  return loadAccountContext(input.profileId, input.accessToken);
+}
+
+export async function tryLoadAccountContext(profileId: string, accessToken: string): Promise<AccountContext | null> {
+  try {
+    return await loadAccountContext(profileId, accessToken);
+  } catch {
+    return null;
+  }
+}
+
+export function accountContextToSessionUser(context: AccountContext): SessionUser {
+  return {
+    id: context.profile.id,
+    name: context.profile.full_name,
+    email: context.profile.email,
+    activeMembershipId: context.memberships[0]?.id ?? "",
+    memberships: context.memberships.map((membership) => ({
+      id: membership.id,
+      organizationId: membership.organization_id,
+      role: membership.role,
+      status: membership.status
+    }))
+  };
+}
+
+export function accountContextOrganizations(context: AccountContext): Organization[] {
+  return context.memberships.map((membership) => ({
+    id: membership.organization.id,
+    name: membership.organization.name,
+    type: membership.organization.type,
+    status: membership.organization.status,
+    domain: membership.organization.domain ?? undefined
+  }));
 }

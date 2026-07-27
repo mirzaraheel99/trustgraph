@@ -69,6 +69,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `001_trustgraph_core.sql`: organizations, profiles, memberships, trust records, access grants, and audit events.
 - `002_trustgraph_rls.sql`: first-pass row level security for RBAC, professional-owned records, scoped sharing, and audit access.
 - `003_trustgraph_workflow_functions.sql`: updated timestamp triggers, audit event writer, access grant decisions, and trust record status changes.
+- `005_professional_onboarding_rpc.sql`: self-service professional profile, personal organization, and membership creation.
 
 TypeScript mirrors for the core database rows live in `src/database.ts`.
 The first Supabase REST adapter lives in `src/supabase.ts`, with account-context queries in `src/accountRepository.ts`.

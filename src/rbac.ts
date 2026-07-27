@@ -238,6 +238,10 @@ export function getOrganization(organizationId: string) {
   return organizations.find((item) => item.id === organizationId) ?? organizations[0];
 }
 
+export function getOrganizationFromList(organizationId: string, organizationList: Organization[]) {
+  return organizationList.find((item) => item.id === organizationId) ?? getOrganization(organizationId);
+}
+
 export function getActiveMembership(user: SessionUser) {
   return user.memberships.find((item) => item.id === user.activeMembershipId) ?? user.memberships[0];
 }

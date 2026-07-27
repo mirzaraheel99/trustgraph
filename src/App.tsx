@@ -22,6 +22,12 @@ import {
 } from "lucide-react";
 import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceId } from "./data";
 import {
+  accountContextOrganizations,
+  accountContextToSessionUser,
+  ensureProfessionalAccount,
+  type AccountContext
+} from "./accountRepository";
+import {
   authModeLabel,
   readStoredSession,
   signInWithPassword,
@@ -33,9 +39,13 @@ import {
   canAccessWorkspace,
   getActiveMembership,
   getOrganization,
+  getOrganizationFromList,
   getRole,
   hasPermission,
+  organizations,
   sessionUser,
+  type Organization,
+  type SessionUser,
   type Membership
 } from "./rbac";
 
@@ -185,18 +195,22 @@ function RecordDetail({ record }: { record: RecordItem }) {
 }
 
 function AccountPanel({
+  accountUser,
   activeMembership,
   authSession,
   authStatus,
+  organizationList,
   onSwitch
 }: {
+  accountUser: SessionUser;
   activeMembership: Membership;
   authSession: AuthSession | null;
   authStatus: string;
+  organizationList: Organization[];
   onSwitch: (membershipId: string) => void;
 }) {
   const activeRole = getRole(activeMembership.role);
-  const activeOrg = getOrganization(activeMembership.organizationId);
+  const activeOrg = getOrganizationFromList(activeMembership.organizationId, organizationList);
 
   return (
     <section className="account-panel">
@@ -205,13 +219,13 @@ function AccountPanel({
         <strong>Corporate account and RBAC</strong>
       </div>
       <div className="account-user">
-        <span>{authSession?.user.email ?? sessionUser.name}</span>
-        <small>{authSession ? `Live profile ${authSession.user.id.slice(0, 8)}` : sessionUser.email}</small>
+        <span>{accountUser.name}</span>
+        <small>{authSession ? `Live profile ${authSession.user.id.slice(0, 8)}` : accountUser.email}</small>
       </div>
       <div className="membership-list">
-        {sessionUser.memberships.map((membership) => {
+        {accountUser.memberships.map((membership) => {
           const role = getRole(membership.role);
-          const org = getOrganization(membership.organizationId);
+          const org = getOrganizationFromList(membership.organizationId, organizationList);
           return (
             <button
               className={`membership-button ${membership.id === activeMembership.id ? "active" : ""}`}
@@ -235,9 +249,11 @@ function AccountPanel({
 
 function AuthPanel({
   session,
+  accountStatus,
   onSession
 }: {
   session: AuthSession | null;
+  accountStatus: string;
   onSession: (session: AuthSession | null) => void;
 }) {
   const [email, setEmail] = useState("");
@@ -314,7 +330,7 @@ function AuthPanel({
           </div>
         </form>
       )}
-      <small>{message}</small>
+      <small>{session ? accountStatus : message}</small>
     </section>
   );
 }
@@ -341,17 +357,55 @@ function App() {
   const [selectedId, setSelectedId] = useState("identity");
   const [activeMembershipId, setActiveMembershipId] = useState(sessionUser.activeMembershipId);
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
+  const [accountContext, setAccountContext] = useState<AccountContext | null>(null);
+  const [accountStatus, setAccountStatus] = useState("Demo account context");
+  const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
+  const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
-    sessionUser.memberships.find((membership) => membership.id === activeMembershipId) ?? getActiveMembership(sessionUser);
+    accountUser.memberships.find((membership) => membership.id === activeMembershipId) ?? getActiveMembership(accountUser);
   const activeRole = getRole(activeMembership.role);
-  const activeOrganization = getOrganization(activeMembership.organizationId);
+  const activeOrganization = getOrganizationFromList(activeMembership.organizationId, organizationList);
   const workspace = workspaces.find((item) => item.id === workspaceId) ?? workspaces[0];
   const workspaceAllowed = canAccessWorkspace(activeMembership.role, workspace.id);
-  const authStatus = authSession ? "Live Supabase session active" : authModeLabel();
+  const authStatus = authSession ? accountStatus : authModeLabel();
 
   useEffect(() => {
-    setAuthSession(readStoredSession());
+    const storedSession = readStoredSession();
+    setAuthSession(storedSession);
   }, []);
+
+  useEffect(() => {
+    if (!authSession) {
+      setAccountContext(null);
+      setAccountStatus("Demo account context");
+      setActiveMembershipId(sessionUser.activeMembershipId);
+      return;
+    }
+
+    let cancelled = false;
+    setAccountStatus("Loading live account context...");
+
+    ensureProfessionalAccount({
+      profileId: authSession.user.id,
+      email: authSession.user.email,
+      accessToken: authSession.accessToken
+    })
+      .then((context) => {
+        if (cancelled) return;
+        setAccountContext(context);
+        setActiveMembershipId(context.memberships[0]?.id ?? sessionUser.activeMembershipId);
+        setAccountStatus("Live Supabase account context");
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setAccountContext(null);
+        setAccountStatus(error instanceof Error ? error.message : "Could not load live account context");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authSession]);
 
   const records = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -373,7 +427,7 @@ function App() {
   }
 
   function switchMembership(membershipId: string) {
-    const membership = sessionUser.memberships.find((item) => item.id === membershipId);
+    const membership = accountUser.memberships.find((item) => item.id === membershipId);
     if (!membership) return;
     const role = getRole(membership.role);
     setActiveMembershipId(membershipId);
@@ -406,13 +460,15 @@ function App() {
         </div>
 
         <AccountPanel
+          accountUser={accountUser}
           activeMembership={activeMembership}
           authSession={authSession}
           authStatus={authStatus}
+          organizationList={organizationList}
           onSwitch={switchMembership}
         />
 
-        <AuthPanel session={authSession} onSession={setAuthSession} />
+        <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
 
         <nav className="module-nav" aria-label="Workspace modules">
           {workspace.nav.map((item) => {

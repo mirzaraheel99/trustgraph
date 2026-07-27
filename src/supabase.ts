@@ -47,3 +47,15 @@ export async function supabaseRest<T>(path: string, init: RequestInit & { access
 
   return response.json() as Promise<T>;
 }
+
+export async function supabaseRpc<T>(
+  functionName: string,
+  body: Record<string, unknown>,
+  init: RequestInit & { accessToken?: string } = {}
+): Promise<T> {
+  return supabaseRest<T>(`rpc/${functionName}`, {
+    ...init,
+    method: "POST",
+    body: JSON.stringify(body)
+  });
+}
