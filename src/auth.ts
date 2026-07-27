@@ -114,6 +114,26 @@ export async function signUpWithPassword(email: string, password: string): Promi
   return session;
 }
 
+export async function requestPasswordRecovery(email: string): Promise<void> {
+  const config = getSupabaseConfig();
+  if (!config) {
+    throw new Error("Supabase is not configured for this deployment.");
+  }
+
+  const response = await fetch(`${config.url}/auth/v1/recover`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email })
+  });
+
+  if (!response.ok) {
+    throw new Error("Password recovery request failed. Check Supabase Auth email settings.");
+  }
+}
+
 export function signOut() {
   persistSession(null);
 }

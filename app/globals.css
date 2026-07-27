@@ -548,6 +548,29 @@ p,
   gap: 8px;
 }
 
+.billing-decision-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(225, 184, 102, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.07), transparent 60%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.billing-decision-card strong,
+.billing-decision-card small {
+  display: block;
+}
+
+.billing-decision-card small {
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
 .billing-estimate-card div {
   display: grid;
   gap: 5px;
@@ -808,12 +831,28 @@ p,
     rgba(255, 255, 255, 0.025);
 }
 
+.demo-panel {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(225, 184, 102, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.065), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
 .readiness-list {
   display: grid;
   gap: 8px;
 }
 
 .onboarding-list {
+  display: grid;
+  gap: 7px;
+}
+
+.demo-step-list {
   display: grid;
   gap: 7px;
 }
@@ -897,23 +936,56 @@ p,
   background: rgba(255, 255, 255, 0.026);
 }
 
+.demo-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
 .onboarding-item.done {
   border-color: rgba(82, 214, 196, 0.22);
   background: rgba(82, 214, 196, 0.045);
 }
 
+.demo-step.done {
+  border-color: rgba(82, 214, 196, 0.22);
+  background: rgba(82, 214, 196, 0.045);
+}
+
+.demo-step > span {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  font-weight: 900;
+}
+
 .readiness-row strong,
 .readiness-row small,
 .onboarding-item strong,
-.onboarding-item small {
+.onboarding-item small,
+.demo-step strong,
+.demo-step small {
   display: block;
 }
 
-.onboarding-item strong {
+.onboarding-item strong,
+.demo-step strong {
   font-size: 12px;
 }
 
-.onboarding-item small {
+.onboarding-item small,
+.demo-step small {
   margin-top: 3px;
   line-height: 1.35;
 }
@@ -1022,7 +1094,7 @@ p,
 
 .auth-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -2220,12 +2292,13 @@ p {
 
 .audit-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 150px;
+  grid-template-columns: minmax(0, 1fr) 150px 112px;
   gap: 8px;
 }
 
 .audit-controls input,
-.audit-controls select {
+.audit-controls select,
+.audit-controls button {
   min-height: 38px;
   width: 100%;
   padding: 0 10px;
@@ -2332,6 +2405,49 @@ p {
 }
 
 .qa-check-card small {
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+.security-review-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255, 103, 124, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 103, 124, 0.055), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.security-review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.security-review-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.security-review-card.done {
+  border-color: rgba(82, 214, 196, 0.18);
+}
+
+.security-review-card strong,
+.security-review-card small {
+  display: block;
+}
+
+.security-review-card small {
   margin-top: 3px;
   line-height: 1.35;
 }
@@ -3023,6 +3139,20 @@ p {
   display: block;
 }
 
+.evidence-document-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.evidence-document-actions .secondary-action {
+  min-height: 30px;
+  padding: 0 9px;
+  font-size: 12px;
+}
+
 .timeline {
   display: grid;
   gap: 12px;
@@ -3092,6 +3222,7 @@ p {
   .public-portal-rail,
   .auth-path-grid,
   .billing-estimate-card,
+  .billing-decision-card,
   .control-center-body,
   .control-center-header,
   .control-center-metrics,
@@ -3117,7 +3248,9 @@ p {
   .plan-summary-grid,
   .policy-grid,
   .policy-summary-grid,
+  .qa-check-grid,
   .scope-area-grid,
+  .security-review-grid,
   .team-controls,
   .team-summary-grid,
   .verify-summary-grid,
@@ -3148,7 +3281,10 @@ p {
   .missing-card,
   .issuer-card,
   .audit-card,
+  .billing-decision-card,
   .topbar-actions,
+  .evidence-document-card,
+  .evidence-document-actions,
   .record-form-footer {
     flex-direction: column;
     align-items: stretch;
@@ -3156,6 +3292,7 @@ p {
 
   .workspace-stack,
   .module-nav,
+  .auth-actions,
   .detail-grid,
   .record-edit-grid,
   .account-admin-row,

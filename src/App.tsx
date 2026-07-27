@@ -62,6 +62,7 @@ import { buildAdvisorySummary } from "./aiAdvisor";
 import {
   authModeLabel,
   readStoredSession,
+  requestPasswordRecovery,
   signInWithPassword,
   signOut,
   signUpWithPassword,
@@ -96,7 +97,7 @@ import {
   type VerifyAccessGrantView,
   type AccessGrantView
 } from "./grantRepository";
-import { createEvidenceDocument, loadEvidenceDocuments, uploadEvidenceFile } from "./evidenceRepository";
+import { createEvidenceDocument, createEvidenceDownloadUrl, loadEvidenceDocuments, uploadEvidenceFile } from "./evidenceRepository";
 import {
   createMissingRecordRequest,
   loadVerifyMissingRecordRequests,
@@ -270,6 +271,7 @@ function RecordDetail({
   canEdit,
   evidenceDocuments,
   onCreateEvidence,
+  onOpenEvidence,
   onUpdate
 }: {
   record: RecordItem;
@@ -283,6 +285,7 @@ function RecordDetail({
     evidenceSummary: string;
     file: File | null;
   }) => Promise<void>;
+  onOpenEvidence: (document: DbEvidenceDocument, mode: "preview" | "download") => Promise<void>;
   onUpdate: (input: {
     recordId: string;
     title: string;
@@ -310,6 +313,7 @@ function RecordDetail({
   const [evidenceMessage, setEvidenceMessage] = useState("Attach evidence metadata to selected record");
   const [busy, setBusy] = useState(false);
   const [evidenceBusy, setEvidenceBusy] = useState(false);
+  const [openingEvidenceId, setOpeningEvidenceId] = useState<string | null>(null);
   const [evidenceQuery, setEvidenceQuery] = useState("");
   const [evidenceStatusFilter, setEvidenceStatusFilter] = useState<"all" | "uploaded" | "classified" | "linked" | "restricted" | "rejected" | "archived">("all");
   const linkedEvidenceCount = evidenceDocuments.filter((document) => document.status === "linked").length;
@@ -385,6 +389,19 @@ function RecordDetail({
       setEvidenceMessage(error instanceof Error ? error.message : "Could not link evidence");
     } finally {
       setEvidenceBusy(false);
+    }
+  }
+
+  async function openEvidence(document: DbEvidenceDocument, mode: "preview" | "download") {
+    setOpeningEvidenceId(document.id);
+    setEvidenceMessage(mode === "preview" ? "Creating preview link..." : "Creating download link...");
+    try {
+      await onOpenEvidence(document, mode);
+      setEvidenceMessage(mode === "preview" ? "Preview link opened" : "Download link opened");
+    } catch (error) {
+      setEvidenceMessage(error instanceof Error ? error.message : "Could not open evidence file");
+    } finally {
+      setOpeningEvidenceId(null);
     }
   }
 
@@ -473,7 +490,25 @@ function RecordDetail({
                       <strong>{document.title}</strong>
                       <small>{document.document_type} - {document.source_name}</small>
                     </div>
-                    <span className="status-chip neutral">{document.status}</span>
+                    <div className="evidence-document-actions">
+                      <span className="status-chip neutral">{document.status}</span>
+                      <button
+                        className="secondary-action"
+                        disabled={!document.storage_path || openingEvidenceId === document.id}
+                        onClick={() => void openEvidence(document, "preview")}
+                        type="button"
+                      >
+                        Preview
+                      </button>
+                      <button
+                        className="secondary-action"
+                        disabled={!document.storage_path || openingEvidenceId === document.id}
+                        onClick={() => void openEvidence(document, "download")}
+                        type="button"
+                      >
+                        Download
+                      </button>
+                    </div>
                   </article>
                 ))
               ) : (
@@ -2133,6 +2168,7 @@ function AuditTrailPanel({
     const haystack = `${event.action} ${event.reason ?? ""} ${event.target_table ?? ""}`.toLowerCase();
     return matchesAction && haystack.includes(auditQuery.trim().toLowerCase());
   });
+  const exportName = `trustgraph-audit-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return (
     <section className="audit-panel">
@@ -2155,6 +2191,14 @@ function AuditTrailPanel({
           <option value="connect">Connect</option>
           <option value="verification">Verification</option>
         </select>
+        <button
+          className="secondary-action"
+          disabled={!filteredEvents.length}
+          onClick={() => downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv")}
+          type="button"
+        >
+          Export CSV
+        </button>
       </div>
       <div className="audit-list">
         {filteredEvents.length ? (
@@ -2553,6 +2597,73 @@ function WorkflowQaPanel({
   );
 }
 
+function SecurityReviewPanel({
+  apiClients,
+  consentAuthorizations,
+  evidenceDocuments,
+  teamMembers,
+  webhookSubscriptions
+}: {
+  apiClients: DbApiClient[];
+  consentAuthorizations: DbConsentAuthorization[];
+  evidenceDocuments: DbEvidenceDocument[];
+  teamMembers: OrganizationMemberView[];
+  webhookSubscriptions: DbWebhookSubscription[];
+}) {
+  const checks = [
+    {
+      label: "RLS-backed reads",
+      detail: "Records, grants, members, audit, evidence, and consent load through Supabase auth tokens.",
+      done: true
+    },
+    {
+      label: "Private evidence storage",
+      detail: evidenceDocuments.some((item) => item.storage_path) ? "Signed URL preview/download enabled" : "No stored evidence files loaded yet",
+      done: true
+    },
+    {
+      label: "Consent revocation",
+      detail: consentAuthorizations.length ? `${consentAuthorizations.length} consent records loaded` : "Create consent records during pilot QA",
+      done: consentAuthorizations.length > 0
+    },
+    {
+      label: "RBAC least privilege",
+      detail: teamMembers.length ? `${teamMembers.length} organization members visible by role` : "Load corporate account to inspect members",
+      done: teamMembers.length > 0
+    },
+    {
+      label: "Connect secrets",
+      detail: apiClients.length || webhookSubscriptions.length ? "Client/webhook controls loaded" : "Create sample client before external integration",
+      done: apiClients.length > 0 || webhookSubscriptions.length > 0
+    },
+    {
+      label: "Production review",
+      detail: "Run external RLS/security review before real background-check or payment traffic.",
+      done: false
+    }
+  ];
+
+  return (
+    <section className="security-review-panel">
+      <div className="mini-heading">
+        <ShieldAlert size={16} />
+        <strong>Security/RLS review v1</strong>
+      </div>
+      <div className="security-review-grid">
+        {checks.map((check) => (
+          <article className={check.done ? "security-review-card done" : "security-review-card"} key={check.label}>
+            <span className={`status-dot ${check.done ? "on" : ""}`} />
+            <div>
+              <strong>{check.label}</strong>
+              <small>{check.detail}</small>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ConsentPolicyMatrixPanel() {
   const consentRequiredCount = consentPolicyAreas.filter((area) => area.consent === "required").length;
   const legalReviewCount = consentPolicyAreas.filter((area) => area.review.toLowerCase().includes("counsel")).length;
@@ -2605,6 +2716,41 @@ function permissionLabel(permission: string) {
     .split(":")
     .map((part) => part.replace(/_/g, " "))
     .join(" / ");
+}
+
+function downloadTextFile(filename: string, content: string, mimeType = "text/plain") {
+  if (typeof window === "undefined") return;
+
+  const blob = new Blob([content], { type: mimeType });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+function csvCell(value: string | null | undefined) {
+  return `"${String(value ?? "").replace(/"/g, '""')}"`;
+}
+
+function auditEventsToCsv(events: DbAuditEvent[]) {
+  const rows = [
+    ["created_at", "action", "target_table", "target_id", "organization_id", "actor_profile_id", "reason"],
+    ...events.map((event) => [
+      event.created_at,
+      event.action,
+      event.target_table,
+      event.target_id ?? "",
+      event.organization_id ?? "",
+      event.actor_profile_id ?? "",
+      event.reason ?? ""
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
 function AccountPanel({
@@ -2882,6 +3028,13 @@ function BillingPanel({
           <strong>{estimatedSeatTotal ? `$${estimatedSeatTotal}` : "Load plans"}</strong>
           <small>Activation writes a live organization subscription and audit event.</small>
         </div>
+      </div>
+      <div className="billing-decision-card">
+        <div>
+          <strong>Billing v1 decision</strong>
+          <small>Current pilot flow activates a tracked organization subscription in Supabase. Stripe checkout remains a production integration decision.</small>
+        </div>
+        <span className="status-chip warning">stub active</span>
       </div>
       <div className="billing-plan-list">
         {plans.length ? (
@@ -3267,6 +3420,19 @@ function AuthPanel({
     }
   }
 
+  async function recoverPassword() {
+    setBusy(true);
+    setMessage("Sending recovery email...");
+    try {
+      await requestPasswordRecovery(email);
+      setMessage("Password recovery email requested");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not request password recovery.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <section className="auth-panel">
       <div className="mini-heading">
@@ -3322,6 +3488,9 @@ function AuthPanel({
             >
               <UserPlus size={16} />
               Sign up
+            </button>
+            <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+              Reset password
             </button>
           </div>
         </form>
@@ -3495,6 +3664,80 @@ function OnboardingChecklistPanel({
             <div>
               <strong>{item.label}</strong>
               <small>{item.detail}</small>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function DemoScriptPanel({
+  accessGrants,
+  consentAuthorizations,
+  livePassportRecords,
+  sharedVerifyRecords,
+  teamInvitations,
+  teamMembers
+}: {
+  accessGrants: AccessGrantView[];
+  consentAuthorizations: DbConsentAuthorization[];
+  livePassportRecords: RecordItem[];
+  sharedVerifyRecords: RecordItem[];
+  teamInvitations: DbOrganizationInvitation[];
+  teamMembers: OrganizationMemberView[];
+}) {
+  const steps = [
+    {
+      label: "Professional signup",
+      detail: "Sign up or sign in, then confirm the Professional account context loads.",
+      done: livePassportRecords.length > 0
+    },
+    {
+      label: "Create Passport record",
+      detail: "Add employment, credential, or sensitive background-check record.",
+      done: livePassportRecords.length > 0
+    },
+    {
+      label: "Attach evidence",
+      detail: "Upload or link evidence metadata, then verify preview/download controls.",
+      done: livePassportRecords.some((record) => record.evidence !== "Evidence details pending")
+    },
+    {
+      label: "Corporate workspace",
+      detail: "Create employer/staffing account, activate role, invite reviewer.",
+      done: teamMembers.length > 0 || teamInvitations.length > 0
+    },
+    {
+      label: "Access Grant loop",
+      detail: "Request access from Verify, approve from Passport, sync records.",
+      done: accessGrants.some((grant) => grant.status === "approved") || sharedVerifyRecords.length > 0
+    },
+    {
+      label: "Consent check",
+      detail: "Create or revoke consent authorization for a sensitive shared record.",
+      done: consentAuthorizations.length > 0
+    },
+    {
+      label: "Admin review",
+      detail: "Open Admin, export audit CSV, inspect Workflow QA and security checklist.",
+      done: true
+    }
+  ];
+
+  return (
+    <section className="demo-panel">
+      <div className="mini-heading">
+        <ClipboardCheck size={16} />
+        <strong>Demo/test script v1</strong>
+      </div>
+      <div className="demo-step-list">
+        {steps.map((step, index) => (
+          <article className={step.done ? "demo-step done" : "demo-step"} key={step.label}>
+            <span>{index + 1}</span>
+            <div>
+              <strong>{step.label}</strong>
+              <small>{step.detail}</small>
             </div>
           </article>
         ))}
@@ -4533,6 +4776,25 @@ function App() {
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
   }
 
+  async function openLiveEvidenceDocument(document: DbEvidenceDocument, mode: "preview" | "download") {
+    if (!authSession) {
+      throw new Error("Sign in before opening private evidence files.");
+    }
+    if (!document.storage_path) {
+      throw new Error("This evidence item has metadata only; no file is attached.");
+    }
+
+    const signedUrl = await createEvidenceDownloadUrl({
+      accessToken: authSession.accessToken,
+      storagePath: document.storage_path,
+      expiresIn: mode === "download" ? 120 : 300
+    });
+
+    if (typeof window !== "undefined") {
+      window.open(signedUrl, "_blank", "noopener,noreferrer");
+    }
+  }
+
   async function createLiveReferenceRequest(input: {
     providerName: string;
     providerEmail: string;
@@ -5155,6 +5417,14 @@ function App() {
           teamInvitations={teamInvitations}
           teamMembers={teamMembers}
         />
+        <DemoScriptPanel
+          accessGrants={accessGrants}
+          consentAuthorizations={consentAuthorizations}
+          livePassportRecords={livePassportRecords}
+          sharedVerifyRecords={sharedVerifyRecords}
+          teamInvitations={teamInvitations}
+          teamMembers={teamMembers}
+        />
         <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
 
         <nav className="module-nav" aria-label="Workspace modules">
@@ -5385,6 +5655,13 @@ function App() {
                   teamMembers={teamMembers}
                   webhookSubscriptions={webhookSubscriptions}
                 />
+                <SecurityReviewPanel
+                  apiClients={apiClients}
+                  consentAuthorizations={consentAuthorizations}
+                  evidenceDocuments={evidenceDocuments}
+                  teamMembers={teamMembers}
+                  webhookSubscriptions={webhookSubscriptions}
+                />
                 <ConsentPolicyMatrixPanel />
                 <PlanAlignmentPanel />
               </>
@@ -5405,6 +5682,7 @@ function App() {
               canEdit={workspace.id === "passport" && selectedRecordIsLive}
               evidenceDocuments={selectedEvidenceDocuments}
               onCreateEvidence={createLiveEvidenceDocument}
+              onOpenEvidence={openLiveEvidenceDocument}
               onUpdate={updateLivePassportRecord}
               record={selectedRecord}
             />

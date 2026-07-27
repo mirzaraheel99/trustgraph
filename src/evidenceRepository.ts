@@ -1,5 +1,5 @@
 import type { DbEvidenceDocument } from "./database";
-import { supabaseRest, supabaseRpc, supabaseStorageUpload } from "./supabase";
+import { supabaseRest, supabaseRpc, supabaseStorageSignedUrl, supabaseStorageUpload } from "./supabase";
 
 const EVIDENCE_BUCKET = "trustgraph-evidence";
 
@@ -55,4 +55,19 @@ export async function uploadEvidenceFile(input: {
   });
 
   return uploaded.path || path;
+}
+
+export async function createEvidenceDownloadUrl(input: {
+  accessToken: string;
+  storagePath: string;
+  expiresIn?: number;
+}): Promise<string> {
+  const result = await supabaseStorageSignedUrl({
+    bucket: EVIDENCE_BUCKET,
+    path: input.storagePath,
+    accessToken: input.accessToken,
+    expiresIn: input.expiresIn
+  });
+
+  return result.signedURL;
 }

@@ -85,6 +85,42 @@ export async function supabaseStorageUpload(input: {
   return response.json() as Promise<{ path: string }>;
 }
 
+export async function supabaseStorageSignedUrl(input: {
+  bucket: string;
+  path: string;
+  accessToken: string;
+  expiresIn?: number;
+}): Promise<{ signedURL: string }> {
+  const config = getSupabaseConfig();
+
+  if (!config) {
+    throw new Error("Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+  }
+
+  const response = await fetch(
+    `${config.url}/storage/v1/object/sign/${encodeURIComponent(input.bucket)}/${input.path
+      .split("/")
+      .map((part) => encodeURIComponent(part))
+      .join("/")}`,
+    {
+      method: "POST",
+      headers: {
+        apikey: config.anonKey,
+        Authorization: `Bearer ${input.accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ expiresIn: input.expiresIn ?? 300 })
+    }
+  );
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(`Supabase storage signed URL failed: ${response.status} ${message}`);
+  }
+
+  return response.json() as Promise<{ signedURL: string }>;
+}
+
 export async function supabaseRpc<T>(
   functionName: string,
   body: Record<string, unknown>,
