@@ -94,12 +94,12 @@ for select
 using (
   exists (
     select 1
-    from public.access_grants grant
-    join public.access_grant_records shared_record on shared_record.access_grant_id = grant.id
+    from public.access_grants access_grant
+    join public.access_grant_records shared_record on shared_record.access_grant_id = access_grant.id
     where shared_record.trust_record_id = trust_records.id
-      and grant.status = 'approved'
-      and (grant.expires_at is null or grant.expires_at > now())
-      and public.has_active_membership(grant.requester_organization_id)
+      and access_grant.status = 'approved'
+      and (access_grant.expires_at is null or access_grant.expires_at > now())
+      and public.has_active_membership(access_grant.requester_organization_id)
   )
 );
 
@@ -141,11 +141,11 @@ for select
 using (
   exists (
     select 1
-    from public.access_grants grant
-    where grant.id = access_grant_records.access_grant_id
+    from public.access_grants access_grant
+    where access_grant.id = access_grant_records.access_grant_id
       and (
-        grant.subject_profile_id = public.current_profile_id()
-        or public.has_active_membership(grant.requester_organization_id)
+        access_grant.subject_profile_id = public.current_profile_id()
+        or public.has_active_membership(access_grant.requester_organization_id)
       )
   )
 );
@@ -156,9 +156,9 @@ for all
 using (
   exists (
     select 1
-    from public.access_grants grant
-    where grant.id = access_grant_records.access_grant_id
-      and grant.subject_profile_id = public.current_profile_id()
+    from public.access_grants access_grant
+    where access_grant.id = access_grant_records.access_grant_id
+      and access_grant.subject_profile_id = public.current_profile_id()
   )
 );
 

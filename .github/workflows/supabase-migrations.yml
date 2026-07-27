@@ -2,6 +2,11 @@ name: Apply Supabase Migrations
 
 on:
   workflow_dispatch:
+    inputs:
+      migration_path:
+        description: SQL file glob to apply
+        required: false
+        default: supabase/migrations/*.sql
 
 permissions:
   contents: read
@@ -11,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
+      MIGRATION_PATH: ${{ inputs.migration_path || 'supabase/migrations/*.sql' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,7 +30,7 @@ jobs:
 
       - name: Apply SQL migrations
         run: |
-          for file in supabase/migrations/*.sql; do
+          for file in $MIGRATION_PATH; do
             echo "Applying $file"
             psql "$DIRECT_URL" --set ON_ERROR_STOP=1 --file "$file"
           done
