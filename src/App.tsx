@@ -568,6 +568,13 @@ function PassportRecordForm({
     expiresAt: string;
   }) => Promise<void>;
 }) {
+  const plannedRecordGuidance = [
+    "Contract assignments",
+    "Training records",
+    "Skills evidence",
+    "Performance reviews",
+    "Continuing education"
+  ];
   const [type, setType] = useState<RecordType>("employment");
   const [title, setTitle] = useState("");
   const [sourceName, setSourceName] = useState("");
@@ -613,6 +620,8 @@ function PassportRecordForm({
           <option value="education">Education</option>
           <option value="license">License</option>
           <option value="certification">Certification</option>
+          <option value="reference">Reference</option>
+          <option value="background_check">Background check</option>
           <option value="identity">Identity</option>
           <option value="health_clearance">Health clearance</option>
           <option value="custom">Custom</option>
@@ -647,6 +656,12 @@ function PassportRecordForm({
           placeholder="Evidence summary"
           disabled={disabled || busy}
         />
+      </div>
+      <div className="record-type-guide">
+        <span>Use Custom for:</span>
+        {plannedRecordGuidance.map((item) => (
+          <small key={item}>{item}</small>
+        ))}
       </div>
       <div className="record-form-footer">
         <small>{status}</small>
