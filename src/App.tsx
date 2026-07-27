@@ -100,6 +100,7 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
+import { isSupabaseConfigured } from "./supabase";
 import {
   acceptOrganizationInvitation,
   createOrganizationInvitation,
@@ -2187,6 +2188,61 @@ function AuthPanel({
   );
 }
 
+function ProductionReadinessPanel({
+  accountContext,
+  authSession,
+  activeOrganizationName,
+  teamManagementReady
+}: {
+  accountContext: AccountContext | null;
+  authSession: AuthSession | null;
+  activeOrganizationName: string;
+  teamManagementReady: boolean;
+}) {
+  const checks = [
+    {
+      label: "Supabase environment",
+      ok: isSupabaseConfigured(),
+      detail: isSupabaseConfigured() ? "Hosted live mode" : "Missing public Supabase keys"
+    },
+    {
+      label: "Authenticated portal",
+      ok: Boolean(authSession),
+      detail: authSession ? authSession.user.email : "Sign in for live database access"
+    },
+    {
+      label: "Account context",
+      ok: Boolean(accountContext),
+      detail: accountContext ? `${accountContext.memberships.length} active memberships` : "Demo shell only"
+    },
+    {
+      label: "Corporate database",
+      ok: teamManagementReady,
+      detail: teamManagementReady ? activeOrganizationName : "Awaiting live member-management migration"
+    }
+  ];
+
+  return (
+    <section className="readiness-panel">
+      <div className="mini-heading">
+        <ShieldCheck size={16} />
+        <strong>Production mode</strong>
+      </div>
+      <div className="readiness-list">
+        {checks.map((check) => (
+          <article className="readiness-row" key={check.label}>
+            <span className={`status-dot ${check.ok ? "on" : ""}`} />
+            <div>
+              <strong>{check.label}</strong>
+              <small>{check.detail}</small>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function NotificationPanel({
   events,
   message,
@@ -2547,6 +2603,9 @@ function App() {
   const workspace = workspaces.find((item) => item.id === workspaceId) ?? workspaces[0];
   const workspaceAllowed = canAccessWorkspace(activeMembership.role, workspace.id);
   const authStatus = authSession ? accountStatus : authModeLabel();
+  const teamManagementReady = Boolean(
+    authSession && accountContext && teamMembers.length && !memberStatus.toLowerCase().includes("failed")
+  );
 
   useEffect(() => {
     const storedSession = readStoredSession();
@@ -3642,6 +3701,12 @@ function App() {
         />
 
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
+        <ProductionReadinessPanel
+          accountContext={accountContext}
+          activeOrganizationName={activeOrganization.name}
+          authSession={authSession}
+          teamManagementReady={teamManagementReady}
+        />
         <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
 
         <nav className="module-nav" aria-label="Workspace modules">
