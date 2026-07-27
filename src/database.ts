@@ -313,6 +313,17 @@ export interface DbConsentAuthorization {
   requester_organization: Pick<DbOrganization, "id" | "name" | "type"> | null;
 }
 
+export interface DbSchemaMigrationRun {
+  id: string;
+  migration_path: string;
+  commit_sha: string | null;
+  workflow_run_id: string | null;
+  applied_by: string | null;
+  status: string;
+  notes: string | null;
+  applied_at: string;
+}
+
 export interface RoleCapability {
   role: RoleKey;
   permissions: PermissionKey[];

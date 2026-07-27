@@ -38,6 +38,7 @@ import type {
   DbOrganizationInvitation,
   DbOrganizationSubscription,
   DbReferenceRequest,
+  DbSchemaMigrationRun,
   DbSubscriptionPlan,
   DbVerificationCase,
   DbWebhookSubscription,
@@ -105,6 +106,7 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
+import { loadSchemaMigrationRuns } from "./releaseRepository";
 import { isSupabaseConfigured } from "./supabase";
 import {
   acceptOrganizationInvitation,
@@ -2597,6 +2599,63 @@ function WorkflowQaPanel({
   );
 }
 
+function ReleaseLedgerPanel({
+  message,
+  migrations
+}: {
+  message: string;
+  migrations: DbSchemaMigrationRun[];
+}) {
+  const latest = migrations[0] ?? null;
+  const appliedCount = migrations.filter((run) => run.status === "applied").length;
+
+  return (
+    <section className="release-panel">
+      <div className="mini-heading">
+        <CalendarClock size={16} />
+        <strong>Release ledger</strong>
+      </div>
+      <small>{message}</small>
+      <div className="release-summary-grid">
+        <div>
+          <span>Tracked</span>
+          <strong>{migrations.length}</strong>
+        </div>
+        <div>
+          <span>Applied</span>
+          <strong>{appliedCount}</strong>
+        </div>
+        <div>
+          <span>Latest</span>
+          <strong>{latest?.migration_path.replace("supabase/migrations/", "") ?? "None"}</strong>
+        </div>
+      </div>
+      <div className="release-list">
+        {migrations.length ? (
+          migrations.slice(0, 6).map((run) => (
+            <article className="release-card" key={run.id}>
+              <div>
+                <strong>{run.migration_path.replace("supabase/migrations/", "")}</strong>
+                <small>
+                  {run.commit_sha ? run.commit_sha.slice(0, 7) : "manual"} - {run.applied_by ?? "unknown"} - {run.workflow_run_id ?? "no run id"}
+                </small>
+              </div>
+              <span className={`status-chip ${run.status === "applied" ? "success" : "warning"}`}>{run.status}</span>
+            </article>
+          ))
+        ) : (
+          <article className="release-card empty">
+            <div>
+              <strong>No migration ledger entries</strong>
+              <small>Apply migration `027` once, then future targeted workflow runs will record here.</small>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function SecurityReviewPanel({
   apiClients,
   consentAuthorizations,
@@ -4176,6 +4235,8 @@ function App() {
   const [operationsStatus, setOperationsStatus] = useState("Switch to Admin role for live operations");
   const [auditEvents, setAuditEvents] = useState<DbAuditEvent[]>([]);
   const [auditStatus, setAuditStatus] = useState("Switch to Admin role for audit events");
+  const [schemaMigrationRuns, setSchemaMigrationRuns] = useState<DbSchemaMigrationRun[]>([]);
+  const [releaseStatus, setReleaseStatus] = useState("Switch to Admin role for release ledger");
   const [apiClients, setApiClients] = useState<DbApiClient[]>([]);
   const [webhookSubscriptions, setWebhookSubscriptions] = useState<DbWebhookSubscription[]>([]);
   const [connectStatus, setConnectStatus] = useState("Switch to Admin role for Connect controls");
@@ -4521,6 +4582,8 @@ function App() {
       setOperationsStatus("Switch to Admin role for live operations");
       setAuditEvents([]);
       setAuditStatus("Switch to Admin role for audit events");
+      setSchemaMigrationRuns([]);
+      setReleaseStatus("Switch to Admin role for release ledger");
       setApiClients([]);
       setWebhookSubscriptions([]);
       setConnectStatus("Switch to Admin role for Connect controls");
@@ -4532,6 +4595,8 @@ function App() {
       setOperationsStatus("Active role cannot access Admin operations");
       setAuditEvents([]);
       setAuditStatus("Active role cannot access audit events");
+      setSchemaMigrationRuns([]);
+      setReleaseStatus("Active role cannot access release ledger");
       setApiClients([]);
       setWebhookSubscriptions([]);
       setConnectStatus("Active role cannot access Connect controls");
@@ -4541,22 +4606,26 @@ function App() {
     let cancelled = false;
     setOperationsStatus("Loading live operations queue...");
     setAuditStatus("Loading audit events...");
+    setReleaseStatus("Loading release ledger...");
     setConnectStatus("Loading Connect controls...");
 
     Promise.all([
       loadVerificationCases(authSession.accessToken),
       loadAuditEvents(authSession.accessToken),
+      loadSchemaMigrationRuns(authSession.accessToken).catch(() => []),
       loadApiClients(authSession.accessToken),
       loadWebhookSubscriptions(authSession.accessToken)
     ])
-      .then(([items, events, clients, webhooks]) => {
+      .then(([items, events, migrations, clients, webhooks]) => {
         if (cancelled) return;
         setOperationsCases(items);
         setAuditEvents(events);
+        setSchemaMigrationRuns(migrations);
         setApiClients(clients);
         setWebhookSubscriptions(webhooks);
         setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No live operations cases yet");
         setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
+        setReleaseStatus(migrations.length ? `Release ledger: ${migrations.length} recent migrations` : "No release ledger entries yet");
         setConnectStatus(
           clients.length || webhooks.length
             ? `Connect controls: ${clients.length} clients, ${webhooks.length} webhooks`
@@ -4567,10 +4636,12 @@ function App() {
         if (cancelled) return;
         setOperationsCases([]);
         setAuditEvents([]);
+        setSchemaMigrationRuns([]);
         setApiClients([]);
         setWebhookSubscriptions([]);
         setOperationsStatus(error instanceof Error ? error.message : "Could not load operations queue");
         setAuditStatus(error instanceof Error ? error.message : "Could not load audit events");
+        setReleaseStatus(error instanceof Error ? error.message : "Could not load release ledger");
         setConnectStatus(error instanceof Error ? error.message : "Could not load Connect controls");
       });
 
@@ -5641,6 +5712,7 @@ function App() {
                   webhooks={webhookSubscriptions}
                 />
                 <AuditTrailPanel events={auditEvents} message={auditStatus} />
+                <ReleaseLedgerPanel message={releaseStatus} migrations={schemaMigrationRuns} />
                 <WorkflowQaPanel
                   accessGrants={accessGrants}
                   apiClients={apiClients}
