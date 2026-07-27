@@ -734,6 +734,38 @@ p,
   gap: 8px;
 }
 
+.readiness-score-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.readiness-score-card span,
+.readiness-score-card strong,
+.readiness-score-card small {
+  display: block;
+}
+
+.readiness-score-card div > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.readiness-score-card strong {
+  margin: 5px 0;
+  font-size: 32px;
+  line-height: 1;
+}
+
 .readiness-row {
   display: flex;
   align-items: flex-start;
@@ -747,6 +779,25 @@ p,
 .readiness-row strong,
 .readiness-row small {
   display: block;
+}
+
+.readiness-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.readiness-action-row span {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 11px;
+  font-weight: 850;
 }
 
 .status-dot {

@@ -2685,12 +2685,29 @@ function ProductionReadinessPanel({
       detail: teamManagementReady ? activeOrganizationName : "Awaiting live member-management migration"
     }
   ];
+  const readyCount = checks.filter((check) => check.ok).length;
+  const readinessScore = Math.round((readyCount / checks.length) * 100);
+  const nextActions = [
+    teamManagementReady ? "Corporate member database active" : "Approve migrations 022 and 023",
+    authSession ? "Live portal session connected" : "Sign in to connect live data",
+    accountContext ? "RBAC context loaded" : "Create or load account context"
+  ];
 
   return (
     <section className="readiness-panel">
       <div className="mini-heading">
         <ShieldCheck size={16} />
         <strong>Production mode</strong>
+      </div>
+      <div className="readiness-score-card">
+        <div>
+          <span>Readiness</span>
+          <strong>{readinessScore}%</strong>
+          <small>{readyCount} of {checks.length} live checks passing</small>
+        </div>
+        <span className={`status-chip ${teamManagementReady ? "success" : "warning"}`}>
+          {teamManagementReady ? "database live" : "migration approval needed"}
+        </span>
       </div>
       <div className="readiness-list">
         {checks.map((check) => (
@@ -2701,6 +2718,11 @@ function ProductionReadinessPanel({
               <small>{check.detail}</small>
             </div>
           </article>
+        ))}
+      </div>
+      <div className="readiness-action-row">
+        {nextActions.map((action) => (
+          <span key={action}>{action}</span>
         ))}
       </div>
     </section>
