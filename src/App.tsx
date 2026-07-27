@@ -611,6 +611,18 @@ function AccessGrantsPanel({
 }) {
   const [busyGrantId, setBusyGrantId] = useState<string | null>(null);
   const [sampleBusy, setSampleBusy] = useState(false);
+  const [grantQuery, setGrantQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "approved" | "declined" | "expired" | "revoked">("all");
+  const requestedCount = grants.filter((grant) => grant.status === "requested").length;
+  const approvedCount = grants.filter((grant) => grant.status === "approved").length;
+  const inactiveCount = grants.filter(
+    (grant) => grant.status === "declined" || grant.status === "expired" || grant.status === "revoked"
+  ).length;
+  const filteredGrants = grants.filter((grant) => {
+    const matchesStatus = statusFilter === "all" || grant.status === statusFilter;
+    const haystack = `${grant.requester_organization.name} ${grant.purpose} ${grant.status}`.toLowerCase();
+    return matchesStatus && haystack.includes(grantQuery.trim().toLowerCase());
+  });
 
   async function decide(grantId: string, status: "approved" | "declined" | "revoked") {
     setBusyGrantId(grantId);
@@ -626,6 +638,20 @@ function AccessGrantsPanel({
       <div className="mini-heading">
         <KeyRound size={16} />
         <strong>Access Grants</strong>
+      </div>
+      <div className="grant-summary-grid">
+        <div>
+          <span>Requested</span>
+          <strong>{requestedCount}</strong>
+        </div>
+        <div>
+          <span>Approved</span>
+          <strong>{approvedCount}</strong>
+        </div>
+        <div>
+          <span>Inactive</span>
+          <strong>{inactiveCount}</strong>
+        </div>
       </div>
       <div className="grant-panel-top test-tool-strip">
         <small>Test data tool for validating Passport approval without waiting on an external corporate request.</small>
@@ -644,9 +670,24 @@ function AccessGrantsPanel({
           Create test request
         </button>
       </div>
+      <div className="grant-controls">
+        <input
+          onChange={(event) => setGrantQuery(event.target.value)}
+          placeholder="Search company, purpose, or status"
+          value={grantQuery}
+        />
+        <select onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)} value={statusFilter}>
+          <option value="all">All</option>
+          <option value="requested">Requested</option>
+          <option value="approved">Approved</option>
+          <option value="declined">Declined</option>
+          <option value="expired">Expired</option>
+          <option value="revoked">Revoked</option>
+        </select>
+      </div>
       <div className="grant-list">
-        {grants.length ? (
-          grants.map((grant) => (
+        {filteredGrants.length ? (
+          filteredGrants.slice(0, 8).map((grant) => (
             <article className="grant-card" key={grant.id}>
               <div>
                 <strong>{grant.requester_organization.name}</strong>
@@ -686,7 +727,7 @@ function AccessGrantsPanel({
         ) : (
           <article className="grant-card empty">
             <div>
-              <strong>No live Access Grants yet</strong>
+              <strong>No matching Access Grants</strong>
               <p>Corporate Verify requests will appear here when a live employer or staffing team requests Passport access.</p>
             </div>
           </article>

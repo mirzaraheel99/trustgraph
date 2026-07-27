@@ -1745,6 +1745,54 @@ p {
   gap: 8px;
 }
 
+.grant-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.grant-summary-grid div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.grant-summary-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.grant-summary-grid strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.grant-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 8px;
+}
+
+.grant-controls input,
+.grant-controls select {
+  min-height: 38px;
+  width: 100%;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.grant-controls select {
+  color-scheme: dark;
+}
+
 .verify-shared-heading {
   margin-top: 8px;
   padding-top: 12px;
@@ -2068,6 +2116,8 @@ p {
   .directory-controls,
   .audit-controls,
   .connect-summary-grid,
+  .grant-controls,
+  .grant-summary-grid,
   .issuer-summary-grid,
   .missing-controls,
   .missing-summary-grid,
