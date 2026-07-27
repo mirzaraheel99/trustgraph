@@ -18,6 +18,17 @@ export interface LockedProfileArea {
   tone: Tone;
 }
 
+export interface ConsentPolicyArea {
+  id: string;
+  label: string;
+  classification: string;
+  consent: "required" | "recommended" | "not required";
+  visibility: string;
+  review: string;
+  audit: string;
+  tone: Tone;
+}
+
 export const foundationTracks: FoundationTrack[] = [
   {
     id: "auth",
@@ -276,6 +287,69 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     productArea: "Audit",
     status: "foundation",
     evidence: "Audit events are created for material workflows and visible in Admin.",
+    tone: "info"
+  }
+];
+
+export const consentPolicyAreas: ConsentPolicyArea[] = [
+  {
+    id: "identity",
+    label: "Identity and government ID",
+    classification: "Sensitive personal data",
+    consent: "required",
+    visibility: "Status only for employers; raw evidence restricted",
+    review: "Provider integration and biometric rules require legal review",
+    audit: "Verification, view, share, and evidence access",
+    tone: "danger"
+  },
+  {
+    id: "work-record",
+    label: "Employment and contracts",
+    classification: "Professional-controlled data",
+    consent: "required",
+    visibility: "Shared through active Access Grants",
+    review: "Employer confirmation wording requires policy review",
+    audit: "Create, confirm, correct, share, and revoke",
+    tone: "info"
+  },
+  {
+    id: "credentials",
+    label: "Licenses, certifications, training, CE",
+    classification: "Credential and compliance data",
+    consent: "required",
+    visibility: "Issuer status visible only inside approved scope",
+    review: "Issuer-source agreements required before automation",
+    audit: "Issue, expire, revoke, view, and export",
+    tone: "warning"
+  },
+  {
+    id: "references",
+    label: "References and performance reviews",
+    classification: "Employer-restricted confidential data",
+    consent: "required",
+    visibility: "Restricted by provider terms and professional sharing",
+    review: "Reference liability and defamation risk require counsel",
+    audit: "Invite, submit, view, share, dispute, and redact",
+    tone: "danger"
+  },
+  {
+    id: "background",
+    label: "Background checks",
+    classification: "Background-screening data",
+    consent: "required",
+    visibility: "Never exposed without explicit authorization and purpose",
+    review: "FCRA/adverse-action boundaries require counsel",
+    audit: "Authorization, provider result, view, decision boundary, deletion",
+    tone: "danger"
+  },
+  {
+    id: "skills",
+    label: "Skills and AI summaries",
+    classification: "Derived professional data",
+    consent: "recommended",
+    visibility: "Summary must cite source records and hide unsupported claims",
+    review: "AI must stay advisory and never make employment decisions",
+    audit: "Source mix, generation, human review, and export",
     tone: "info"
   }
 ];

@@ -119,7 +119,7 @@ import {
   loadVerificationCases,
   verificationCaseToRecordItem
 } from "./operationsRepository";
-import { foundationTracks, lockedProfileAreas } from "./planAlignment";
+import { consentPolicyAreas, foundationTracks, lockedProfileAreas } from "./planAlignment";
 import { createPassportRecord, loadPassportRecords, loadSharedVerifyRecords, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
@@ -2191,6 +2191,53 @@ function PlanAlignmentPanel() {
               <span className={`status-chip ${toneClass(track.tone)}`}>{track.status}</span>
               <span className="status-chip neutral">{track.planStep}</span>
             </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ConsentPolicyMatrixPanel() {
+  const consentRequiredCount = consentPolicyAreas.filter((area) => area.consent === "required").length;
+  const legalReviewCount = consentPolicyAreas.filter((area) => area.review.toLowerCase().includes("counsel")).length;
+  const restrictedCount = consentPolicyAreas.filter(
+    (area) => area.classification.includes("Sensitive") || area.classification.includes("confidential") || area.classification.includes("Background")
+  ).length;
+
+  return (
+    <section className="policy-panel">
+      <div className="mini-heading">
+        <ShieldAlert size={16} />
+        <strong>Consent and confidentiality matrix</strong>
+      </div>
+      <div className="policy-summary-grid">
+        <div>
+          <span>Consent required</span>
+          <strong>{consentRequiredCount}</strong>
+        </div>
+        <div>
+          <span>Restricted classes</span>
+          <strong>{restrictedCount}</strong>
+        </div>
+        <div>
+          <span>Counsel review</span>
+          <strong>{legalReviewCount}</strong>
+        </div>
+      </div>
+      <div className="policy-grid">
+        {consentPolicyAreas.map((area) => (
+          <article className="policy-card" key={area.id}>
+            <div>
+              <strong>{area.label}</strong>
+              <small>{area.classification}</small>
+            </div>
+            <div className="policy-row">
+              <span className={`status-chip ${toneClass(area.tone)}`}>{area.consent}</span>
+              <span className="status-chip neutral">{area.visibility}</span>
+            </div>
+            <p>{area.review}</p>
+            <small>Audit: {area.audit}</small>
           </article>
         ))}
       </div>
@@ -4787,6 +4834,7 @@ function App() {
                   webhooks={webhookSubscriptions}
                 />
                 <AuditTrailPanel events={auditEvents} message={auditStatus} />
+                <ConsentPolicyMatrixPanel />
                 <PlanAlignmentPanel />
               </>
             ) : null}

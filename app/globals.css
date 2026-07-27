@@ -2206,6 +2206,82 @@ p {
     rgba(255, 255, 255, 0.025);
 }
 
+.policy-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255, 103, 124, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 103, 124, 0.055), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.policy-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.policy-summary-grid div,
+.policy-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.policy-summary-grid div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+}
+
+.policy-summary-grid span,
+.policy-summary-grid strong,
+.policy-card strong,
+.policy-card small {
+  display: block;
+}
+
+.policy-summary-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.policy-summary-grid strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.policy-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 164px;
+  padding: 12px;
+}
+
+.policy-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.policy-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
 .plan-track-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2819,6 +2895,8 @@ p {
   .operations-controls,
   .operations-summary-grid,
   .plan-summary-grid,
+  .policy-grid,
+  .policy-summary-grid,
   .scope-area-grid,
   .team-controls,
   .team-summary-grid,
