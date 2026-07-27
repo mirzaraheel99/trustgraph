@@ -291,6 +291,16 @@ function RecordDetail({
   const [evidenceMessage, setEvidenceMessage] = useState("Attach evidence metadata to selected record");
   const [busy, setBusy] = useState(false);
   const [evidenceBusy, setEvidenceBusy] = useState(false);
+  const [evidenceQuery, setEvidenceQuery] = useState("");
+  const [evidenceStatusFilter, setEvidenceStatusFilter] = useState<"all" | "uploaded" | "classified" | "linked" | "restricted" | "rejected" | "archived">("all");
+  const linkedEvidenceCount = evidenceDocuments.filter((document) => document.status === "linked").length;
+  const uploadedEvidenceCount = evidenceDocuments.filter((document) => document.status === "uploaded").length;
+  const flaggedEvidenceCount = evidenceDocuments.filter((document) => document.status === "restricted" || document.status === "rejected").length;
+  const filteredEvidenceDocuments = evidenceDocuments.filter((document) => {
+    const matchesStatus = evidenceStatusFilter === "all" || document.status === evidenceStatusFilter;
+    const haystack = `${document.title} ${document.document_type} ${document.source_name} ${document.status}`.toLowerCase();
+    return matchesStatus && haystack.includes(evidenceQuery.trim().toLowerCase());
+  });
 
   useEffect(() => {
     setTitle(record.title);
@@ -304,6 +314,8 @@ function RecordDetail({
     setEvidenceNote("");
     setEvidenceFile(null);
     setEvidenceMessage("Attach evidence metadata to selected record");
+    setEvidenceQuery("");
+    setEvidenceStatusFilter("all");
   }, [record]);
 
   async function submitUpdate(event: FormEvent<HTMLFormElement>) {
@@ -389,17 +401,60 @@ function RecordDetail({
         <p>{record.evidence}</p>
         <small>{record.access}</small>
         {evidenceDocuments.length ? (
-          <div className="evidence-document-list">
-            {evidenceDocuments.map((document) => (
-              <article className="evidence-document-card" key={document.id}>
-                <div>
-                  <strong>{document.title}</strong>
-                  <small>{document.document_type} · {document.source_name}</small>
-                </div>
-                <span className="status-chip neutral">{document.status}</span>
-              </article>
-            ))}
+          <div className="evidence-summary-grid">
+            <div>
+              <span>Linked</span>
+              <strong>{linkedEvidenceCount}</strong>
+            </div>
+            <div>
+              <span>Uploaded</span>
+              <strong>{uploadedEvidenceCount}</strong>
+            </div>
+            <div>
+              <span>Flagged</span>
+              <strong>{flaggedEvidenceCount}</strong>
+            </div>
           </div>
+        ) : null}
+        {evidenceDocuments.length ? (
+          <>
+            <div className="evidence-controls">
+              <input
+                onChange={(event) => setEvidenceQuery(event.target.value)}
+                placeholder="Search evidence"
+                value={evidenceQuery}
+              />
+              <select onChange={(event) => setEvidenceStatusFilter(event.target.value as typeof evidenceStatusFilter)} value={evidenceStatusFilter}>
+                <option value="all">All</option>
+                <option value="uploaded">Uploaded</option>
+                <option value="classified">Classified</option>
+                <option value="linked">Linked</option>
+                <option value="restricted">Restricted</option>
+                <option value="rejected">Rejected</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+            <div className="evidence-document-list">
+              {filteredEvidenceDocuments.length ? (
+                filteredEvidenceDocuments.map((document) => (
+                  <article className="evidence-document-card" key={document.id}>
+                    <div>
+                      <strong>{document.title}</strong>
+                      <small>{document.document_type} - {document.source_name}</small>
+                    </div>
+                    <span className="status-chip neutral">{document.status}</span>
+                  </article>
+                ))
+              ) : (
+                <article className="evidence-document-card empty">
+                  <div>
+                    <strong>No matching evidence</strong>
+                    <small>Attached evidence will appear when it matches the selected filter.</small>
+                  </div>
+                </article>
+              )}
+            </div>
+          </>
         ) : null}
       </section>
 
