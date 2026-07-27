@@ -27,6 +27,15 @@ export type VerificationCasePriority = "low" | "medium" | "high" | "critical";
 export type EvidenceDocumentStatus = "uploaded" | "classified" | "linked" | "restricted" | "rejected" | "archived";
 export type NotificationEventStatus = "queued" | "sent" | "delivered" | "failed" | "suppressed";
 export type NotificationChannel = "in_app" | "email" | "sms";
+export type ReferenceRequestStatus =
+  | "draft"
+  | "sent"
+  | "opened"
+  | "in_progress"
+  | "submitted"
+  | "declined"
+  | "expired"
+  | "cancelled";
 
 export interface DbOrganization {
   id: string;
@@ -152,6 +161,21 @@ export interface DbNotificationEvent {
   target_table: string | null;
   target_id: string | null;
   metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbReferenceRequest {
+  id: string;
+  subject_profile_id: string;
+  requester_profile_id: string;
+  provider_name: string;
+  provider_email: string;
+  relationship: string;
+  status: ReferenceRequestStatus;
+  request_message: string | null;
+  submitted_summary: string | null;
+  expires_at: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -70,9 +70,9 @@ export const foundationTracks: FoundationTrack[] = [
     id: "notifications",
     label: "Notifications",
     planStep: "Step 14",
-    status: "planned",
-    detail: "Model documented; delivery service not yet built.",
-    tone: "neutral"
+    status: "foundation",
+    detail: "In-app notification events exist; outbound delivery remains planned.",
+    tone: "info"
   },
   {
     id: "documents",
@@ -86,9 +86,9 @@ export const foundationTracks: FoundationTrack[] = [
     id: "references",
     label: "References",
     planStep: "Phase 3",
-    status: "planned",
-    detail: "Reference module is scoped, not yet live.",
-    tone: "neutral"
+    status: "foundation",
+    detail: "Structured reference requests and lifecycle states are live.",
+    tone: "info"
   },
   {
     id: "credentials",

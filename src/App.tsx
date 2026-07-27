@@ -27,7 +27,9 @@ import type {
   DbAuditEvent,
   DbEvidenceDocument,
   DbNotificationEvent,
+  DbReferenceRequest,
   DbVerificationCase,
+  ReferenceRequestStatus,
   RecordStatus,
   RecordType,
   VerificationCaseStatus
@@ -62,6 +64,7 @@ import {
 } from "./grantRepository";
 import { createEvidenceDocument, loadEvidenceDocuments } from "./evidenceRepository";
 import { loadNotificationEvents } from "./notificationRepository";
+import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
 import {
   createSampleTrustGraphVerifierMembership,
   createSampleVerificationCases,
@@ -595,6 +598,119 @@ function AccessGrantsPanel({
             <div>
               <strong>No live Access Grants yet</strong>
               <p>Employer and staffing requests will appear here once Verify workspace is connected.</p>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ReferenceRequestsPanel({
+  disabled,
+  message,
+  requests,
+  onCreate,
+  onStatus
+}: {
+  disabled: boolean;
+  message: string;
+  requests: DbReferenceRequest[];
+  onCreate: (input: { providerName: string; providerEmail: string; relationship: string; message: string }) => Promise<void>;
+  onStatus: (requestId: string, status: ReferenceRequestStatus) => Promise<void>;
+}) {
+  const [providerName, setProviderName] = useState("");
+  const [providerEmail, setProviderEmail] = useState("");
+  const [relationship, setRelationship] = useState("");
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [status, setStatus] = useState(message);
+
+  useEffect(() => {
+    setStatus(message);
+  }, [message]);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setStatus("Creating reference request...");
+    try {
+      await onCreate({ providerName, providerEmail, relationship, message: note });
+      setProviderName("");
+      setProviderEmail("");
+      setRelationship("");
+      setNote("");
+      setStatus("Reference request created");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not create reference request");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function updateStatus(requestId: string, nextStatus: ReferenceRequestStatus) {
+    setBusyId(requestId);
+    try {
+      await onStatus(requestId, nextStatus);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <section className="references-panel">
+      <div className="mini-heading">
+        <UserPlus size={16} />
+        <strong>Structured references</strong>
+      </div>
+      <form className="reference-form" onSubmit={submit}>
+        <div className="record-form-grid">
+          <input disabled={disabled || busy} onChange={(event) => setProviderName(event.target.value)} placeholder="Provider name" value={providerName} />
+          <input disabled={disabled || busy} onChange={(event) => setProviderEmail(event.target.value)} placeholder="provider@email.com" type="email" value={providerEmail} />
+          <input disabled={disabled || busy} onChange={(event) => setRelationship(event.target.value)} placeholder="Relationship" value={relationship} />
+          <input disabled={disabled || busy} onChange={(event) => setNote(event.target.value)} placeholder="Request note" value={note} />
+        </div>
+        <div className="record-form-footer">
+          <small>{status}</small>
+          <button className="secondary-action" disabled={disabled || busy || !providerName || !providerEmail || !relationship} type="submit">
+            Request reference
+          </button>
+        </div>
+      </form>
+      <div className="reference-list">
+        {requests.length ? (
+          requests.map((request) => (
+            <article className="reference-card" key={request.id}>
+              <div>
+                <strong>{request.provider_name}</strong>
+                <p>{request.relationship}</p>
+                <small>{request.provider_email}</small>
+              </div>
+              <div className="grant-actions">
+                <span className="status-chip neutral">{request.status.replace(/_/g, " ")}</span>
+                <button
+                  className="secondary-action"
+                  disabled={disabled || busyId === request.id || request.status === "submitted"}
+                  onClick={() => void updateStatus(request.id, "submitted")}
+                >
+                  Mark submitted
+                </button>
+                <button
+                  className="secondary-action"
+                  disabled={disabled || busyId === request.id || request.status === "cancelled"}
+                  onClick={() => void updateStatus(request.id, "cancelled")}
+                >
+                  Cancel
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <article className="reference-card empty">
+            <div>
+              <strong>No live reference requests yet</strong>
+              <p>Request structured references from managers, supervisors, clients, or colleagues.</p>
             </div>
           </article>
         )}
@@ -1215,6 +1331,8 @@ function App() {
   const [evidenceDocuments, setEvidenceDocuments] = useState<DbEvidenceDocument[]>([]);
   const [notificationEvents, setNotificationEvents] = useState<DbNotificationEvent[]>([]);
   const [notificationStatus, setNotificationStatus] = useState("Sign in for live workflow notifications");
+  const [referenceRequests, setReferenceRequests] = useState<DbReferenceRequest[]>([]);
+  const [referenceStatus, setReferenceStatus] = useState("Sign in to manage live references");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -1270,27 +1388,33 @@ function App() {
       setEvidenceDocuments([]);
       setNotificationEvents([]);
       setNotificationStatus("Sign in for live workflow notifications");
+      setReferenceRequests([]);
+      setReferenceStatus("Sign in to manage live references");
       return;
     }
 
     let cancelled = false;
     setRecordStatus("Loading live Passport records...");
     setNotificationStatus("Loading notifications...");
+    setReferenceStatus("Loading reference requests...");
 
     Promise.all([
       loadPassportRecords(accountContext.profile.id, authSession.accessToken),
       loadEvidenceDocuments(authSession.accessToken),
-      loadNotificationEvents(authSession.accessToken)
+      loadNotificationEvents(authSession.accessToken),
+      loadReferenceRequests(authSession.accessToken)
     ])
-      .then(([items, documents, notifications]) => {
+      .then(([items, documents, notifications, references]) => {
         if (cancelled) return;
         setLivePassportRecords(items);
         setEvidenceDocuments(documents);
         setNotificationEvents(notifications);
+        setReferenceRequests(references);
         setRecordStatus(items.length ? "Live Supabase Passport records" : "No live records yet");
         setNotificationStatus(
           notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet"
         );
+        setReferenceStatus(references.length ? `Live reference requests: ${references.length}` : "No live reference requests yet");
         if (items[0]) {
           setSelectedId(items[0].id);
         }
@@ -1300,8 +1424,10 @@ function App() {
         setLivePassportRecords([]);
         setEvidenceDocuments([]);
         setNotificationEvents([]);
+        setReferenceRequests([]);
         setRecordStatus(error instanceof Error ? error.message : "Could not load live Passport records");
         setNotificationStatus(error instanceof Error ? error.message : "Could not load notifications");
+        setReferenceStatus(error instanceof Error ? error.message : "Could not load reference requests");
       });
 
     return () => {
@@ -1561,6 +1687,54 @@ function App() {
     setNotificationEvents(notifications);
     setAuditEvents(events);
     setRecordStatus(`Evidence linked: ${document.title}`);
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+  }
+
+  async function createLiveReferenceRequest(input: {
+    providerName: string;
+    providerEmail: string;
+    relationship: string;
+    message: string;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating reference requests.");
+    }
+
+    const request = await createReferenceRequest({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const [references, notifications, events] = await Promise.all([
+      loadReferenceRequests(authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setReferenceRequests(references);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setReferenceStatus(`Reference request created for ${request.provider_name}`);
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+  }
+
+  async function updateLiveReferenceStatus(requestId: string, status: ReferenceRequestStatus) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before updating reference requests.");
+    }
+
+    const updated = await markReferenceRequestStatus({
+      accessToken: authSession.accessToken,
+      requestId,
+      status,
+      summary: status === "submitted" ? "Structured reference response captured for MVP workflow." : undefined
+    });
+    const [notifications, events] = await Promise.all([
+      loadNotificationEvents(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setReferenceRequests((current) => current.map((request) => (request.id === updated.id ? updated : request)));
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setReferenceStatus(`Reference request moved to ${updated.status.replace(/_/g, " ")}`);
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
   }
 
@@ -1886,6 +2060,13 @@ function App() {
                   message={grantStatus}
                   onDecision={handleGrantDecision}
                   onSampleRequest={createSampleGrantRequest}
+                />
+                <ReferenceRequestsPanel
+                  disabled={!authSession || !accountContext}
+                  message={referenceStatus}
+                  onCreate={createLiveReferenceRequest}
+                  onStatus={updateLiveReferenceStatus}
+                  requests={referenceRequests}
                 />
               </>
             ) : null}
