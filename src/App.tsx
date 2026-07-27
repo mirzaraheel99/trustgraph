@@ -25,7 +25,9 @@ import type { RecordStatus, RecordType } from "./database";
 import {
   accountContextOrganizations,
   accountContextToSessionUser,
+  createSampleEmployerReviewerMembership,
   ensureProfessionalAccount,
+  loadAccountContext,
   type AccountContext
 } from "./accountRepository";
 import {
@@ -40,6 +42,8 @@ import {
   createSampleAccessGrant,
   decideAccessGrant,
   loadAccessGrants,
+  loadVerifyAccessGrants,
+  type VerifyAccessGrantView,
   type AccessGrantView
 } from "./grantRepository";
 import { createPassportRecord, loadPassportRecords, updatePassportRecord } from "./recordRepository";
@@ -491,6 +495,68 @@ function AccessGrantsPanel({
   );
 }
 
+function VerifyRequestsPanel({
+  disabled,
+  message,
+  requests,
+  onCreateReviewerRole
+}: {
+  disabled: boolean;
+  message: string;
+  requests: VerifyAccessGrantView[];
+  onCreateReviewerRole: () => Promise<void>;
+}) {
+  const [busy, setBusy] = useState(false);
+
+  return (
+    <section className="verify-panel">
+      <div className="mini-heading">
+        <ShieldCheck size={16} />
+        <strong>Live Verify requests</strong>
+      </div>
+      <div className="grant-panel-top">
+        <small>{message}</small>
+        <button
+          className="secondary-action"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              await onCreateReviewerRole();
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          Sample reviewer role
+        </button>
+      </div>
+      <div className="grant-list">
+        {requests.length ? (
+          requests.map((request) => (
+            <article className="grant-card" key={request.id}>
+              <div>
+                <strong>{request.subject_profile.full_name}</strong>
+                <p>{request.purpose}</p>
+                <small>{request.status.replace("_", " ")} access request</small>
+              </div>
+              <span className="status-chip neutral">{request.subject_profile.email}</span>
+            </article>
+          ))
+        ) : (
+          <article className="grant-card empty">
+            <div>
+              <strong>No live Verify requests yet</strong>
+              <p>Create an employer reviewer role, then generate a sample request from Passport.</p>
+            </div>
+          </article>
+        )}
+      </div>
+      {disabled ? <small>Switch to an employer or staffing reviewer role to use live Verify data.</small> : null}
+    </section>
+  );
+}
+
 function AccountPanel({
   accountUser,
   activeMembership,
@@ -660,6 +726,8 @@ function App() {
   const [recordStatus, setRecordStatus] = useState("Sign in to add live Passport records");
   const [accessGrants, setAccessGrants] = useState<AccessGrantView[]>([]);
   const [grantStatus, setGrantStatus] = useState("Sign in to review Access Grants");
+  const [verifyRequests, setVerifyRequests] = useState<VerifyAccessGrantView[]>([]);
+  const [verifyStatus, setVerifyStatus] = useState("Switch to Verify role for live requests");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -739,6 +807,39 @@ function App() {
   }, [authSession, accountContext]);
 
   useEffect(() => {
+    if (!authSession || !accountContext || workspaceId !== "verify") {
+      setVerifyRequests([]);
+      setVerifyStatus("Switch to Verify role for live requests");
+      return;
+    }
+
+    if (!canAccessWorkspace(activeMembership.role, "verify")) {
+      setVerifyRequests([]);
+      setVerifyStatus("Active role cannot access Verify workspace");
+      return;
+    }
+
+    let cancelled = false;
+    setVerifyStatus("Loading live Verify requests...");
+
+    loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken)
+      .then((items) => {
+        if (cancelled) return;
+        setVerifyRequests(items);
+        setVerifyStatus(items.length ? "Live Supabase Verify requests" : "No live Verify requests yet");
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setVerifyRequests([]);
+        setVerifyStatus(error instanceof Error ? error.message : "Could not load Verify requests");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeMembership.organizationId, activeMembership.role, authSession, accountContext, workspaceId]);
+
+  useEffect(() => {
     if (!authSession || !accountContext) {
       setAccessGrants([]);
       setGrantStatus("Sign in to review Access Grants");
@@ -767,14 +868,44 @@ function App() {
 
   const records = useMemo(() => {
     const q = query.toLowerCase().trim();
-    const sourceRecords = workspace.id === "passport" && livePassportRecords.length ? livePassportRecords : workspace.records;
+    const verifyRecords: RecordItem[] = verifyRequests.map((request) => ({
+      id: request.id,
+      section: "Access Request",
+      title: request.subject_profile.full_name,
+      subtitle: request.purpose,
+      status: request.status.replace("_", " "),
+      trust: request.status === "approved" ? "Access Grant active" : "Access Grant requested",
+      source: request.subject_profile.email,
+      owner: "Employer reviewer workspace",
+      updated: `Requested ${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(request.created_at))}`,
+      expires: request.expires_at
+        ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(request.expires_at))
+        : "No expiration set",
+      access: "Visible through requester organization membership and grant status",
+      evidence: "Shared records become visible after professional approval",
+      tone: request.status === "approved" ? "success" : request.status === "requested" ? "info" : "warning",
+      progress: request.status === "approved" ? 82 : 46,
+      timeline: [
+        {
+          label: "Requested",
+          detail: "Access Grant request created",
+          date: "Live"
+        }
+      ]
+    }));
+    const sourceRecords =
+      workspace.id === "passport" && livePassportRecords.length
+        ? livePassportRecords
+        : workspace.id === "verify" && verifyRecords.length
+          ? verifyRecords
+          : workspace.records;
     return sourceRecords.filter((record) =>
       [record.title, record.subtitle, record.section, record.status, record.trust, record.source]
         .join(" ")
         .toLowerCase()
         .includes(q)
     );
-  }, [livePassportRecords, query, workspace]);
+  }, [livePassportRecords, query, verifyRequests, workspace]);
 
   const selectedRecord = records.find((record) => record.id === selectedId) ?? records[0] ?? workspace.records[0];
   const selectedRecordIsLive = livePassportRecords.some((record) => record.id === selectedRecord.id);
@@ -872,6 +1003,22 @@ function App() {
     const items = await loadAccessGrants(accountContext.profile.id, authSession.accessToken);
     setAccessGrants(items);
     setGrantStatus("Sample Access Grant request created");
+  }
+
+  async function createSampleReviewerRole() {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before creating a sample reviewer role.");
+    }
+
+    await createSampleEmployerReviewerMembership(authSession.accessToken);
+    const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
+    setAccountContext(context);
+    const reviewerMembership = context.memberships.find((membership) => membership.role === "employer_reviewer");
+    if (reviewerMembership) {
+      setActiveMembershipId(reviewerMembership.id);
+      setWorkspaceId("verify");
+    }
+    setVerifyStatus("Sample employer reviewer role created");
   }
 
   return (
@@ -1064,6 +1211,15 @@ function App() {
                   onSampleRequest={createSampleGrantRequest}
                 />
               </>
+            ) : null}
+
+            {workspace.id === "verify" ? (
+              <VerifyRequestsPanel
+                disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "verify")}
+                message={verifyStatus}
+                onCreateReviewerRole={createSampleReviewerRole}
+                requests={verifyRequests}
+              />
             ) : null}
           </div>
 

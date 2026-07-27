@@ -108,3 +108,7 @@ export function accountContextOrganizations(context: AccountContext): Organizati
     domain: membership.organization.domain ?? undefined
   }));
 }
+
+export async function createSampleEmployerReviewerMembership(accessToken: string) {
+  return supabaseRpc("create_sample_employer_reviewer_membership", {}, { accessToken });
+}
