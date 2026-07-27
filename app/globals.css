@@ -393,6 +393,8 @@ p,
 .auth-form input,
 .record-form input,
 .record-form select,
+.consent-form input,
+.consent-form select,
 .issuer-form input,
 .issuer-form select,
 .missing-form input,
@@ -2476,6 +2478,7 @@ p {
   line-height: 1;
 }
 
+.consent-form,
 .consent-list {
   display: grid;
   gap: 8px;
@@ -2631,14 +2634,17 @@ p {
 }
 
 .record-form input,
-.record-form select {
+.record-form select,
+.consent-form input,
+.consent-form select {
   min-height: 38px;
   width: 100%;
   padding: 0 10px;
   outline: 0;
 }
 
-.record-form select {
+.record-form select,
+.consent-form select {
   color-scheme: dark;
 }
 

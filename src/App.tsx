@@ -84,7 +84,7 @@ import {
   markApiClientStatus,
   markWebhookSubscriptionStatus
 } from "./connectRepository";
-import { loadConsentAuthorizations, revokeConsentAuthorization } from "./consentRepository";
+import { createConsentAuthorization, loadConsentAuthorizations, revokeConsentAuthorization } from "./consentRepository";
 import {
   createAccessGrantRequest,
   createSampleAccessGrant,
@@ -824,18 +824,40 @@ function AccessGrantsPanel({
 function ConsentAuthorizationsPanel({
   authorizations,
   disabled,
+  grants,
   message,
+  records,
+  onCreate,
   onRevoke
 }: {
   authorizations: DbConsentAuthorization[];
   disabled: boolean;
+  grants: AccessGrantView[];
   message: string;
+  records: RecordItem[];
+  onCreate: (input: {
+    requesterOrganizationId: string | null;
+    trustRecordId: string | null;
+    purpose: string;
+    scope: string[];
+    expiresAt: string;
+  }) => Promise<void>;
   onRevoke: (consentId: string) => Promise<void>;
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [createBusy, setCreateBusy] = useState(false);
+  const [requesterOrganizationId, setRequesterOrganizationId] = useState("");
+  const [trustRecordId, setTrustRecordId] = useState("");
+  const [purpose, setPurpose] = useState("Scoped review of sensitive TrustGraph Passport evidence");
+  const [scope, setScope] = useState("view_status, view_evidence_metadata");
+  const [expiresAt, setExpiresAt] = useState("");
   const activeCount = authorizations.filter((authorization) => authorization.status === "active").length;
   const revokedCount = authorizations.filter((authorization) => authorization.status === "revoked").length;
   const expiringCount = authorizations.filter((authorization) => authorization.expires_at).length;
+  const requesterOptions = grants.reduce<Array<{ id: string; name: string }>>((items, grant) => {
+    if (items.some((item) => item.id === grant.requester_organization_id)) return items;
+    return [...items, { id: grant.requester_organization_id, name: grant.requester_organization.name }];
+  }, []);
 
   async function revoke(consentId: string) {
     setBusyId(consentId);
@@ -843,6 +865,25 @@ function ConsentAuthorizationsPanel({
       await onRevoke(consentId);
     } finally {
       setBusyId(null);
+    }
+  }
+
+  async function submitCreate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCreateBusy(true);
+    try {
+      await onCreate({
+        requesterOrganizationId: requesterOrganizationId || null,
+        trustRecordId: trustRecordId || null,
+        purpose,
+        scope: scope.split(",").map((item) => item.trim()).filter(Boolean),
+        expiresAt
+      });
+      setPurpose("Scoped review of sensitive TrustGraph Passport evidence");
+      setScope("view_status, view_evidence_metadata");
+      setExpiresAt("");
+    } finally {
+      setCreateBusy(false);
     }
   }
 
@@ -867,6 +908,35 @@ function ConsentAuthorizationsPanel({
           <strong>{expiringCount}</strong>
         </div>
       </div>
+      <form className="consent-form" onSubmit={submitCreate}>
+        <div className="record-form-grid">
+          <select
+            disabled={disabled || createBusy}
+            onChange={(event) => setRequesterOrganizationId(event.target.value)}
+            value={requesterOrganizationId}
+          >
+            <option value="">Personal authorization</option>
+            {requesterOptions.map((option) => (
+              <option key={option.id} value={option.id}>{option.name}</option>
+            ))}
+          </select>
+          <select disabled={disabled || createBusy} onChange={(event) => setTrustRecordId(event.target.value)} value={trustRecordId}>
+            <option value="">All scoped records</option>
+            {records.map((record) => (
+              <option key={record.id} value={record.id}>{record.title}</option>
+            ))}
+          </select>
+          <input disabled={disabled || createBusy} onChange={(event) => setExpiresAt(event.target.value)} type="date" value={expiresAt} />
+          <input disabled={disabled || createBusy} onChange={(event) => setPurpose(event.target.value)} placeholder="Consent purpose" value={purpose} />
+          <input disabled={disabled || createBusy} onChange={(event) => setScope(event.target.value)} placeholder="Comma-separated scope" value={scope} />
+        </div>
+        <div className="record-form-footer">
+          <small>Creates an audited consent authorization owned by the professional.</small>
+          <button className="secondary-action" disabled={disabled || createBusy || purpose.length < 12 || !scope.trim()} type="submit">
+            Create consent
+          </button>
+        </div>
+      </form>
       <div className="consent-list">
         {authorizations.length ? (
           authorizations.slice(0, 8).map((authorization) => (
@@ -4258,6 +4328,38 @@ function App() {
     setConsentStatus(`Consent authorization ${updated.status}`);
   }
 
+  async function createLiveConsentAuthorization(input: {
+    requesterOrganizationId: string | null;
+    trustRecordId: string | null;
+    purpose: string;
+    scope: string[];
+    expiresAt: string;
+  }) {
+    if (!authSession) {
+      throw new Error("Sign in before creating consent authorizations.");
+    }
+
+    if (!input.scope.length) {
+      throw new Error("Consent scope is required.");
+    }
+
+    const consent = await createConsentAuthorization({
+      accessToken: authSession.accessToken,
+      requesterOrganizationId: input.requesterOrganizationId,
+      trustRecordId: input.trustRecordId,
+      purpose: input.purpose,
+      scope: input.scope,
+      expiresAt: input.expiresAt
+    });
+    const [consents, events] = await Promise.all([
+      loadConsentAuthorizations(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setConsentAuthorizations(consents);
+    setAuditEvents(events);
+    setConsentStatus(`Consent authorization created: ${consent.purpose}`);
+  }
+
   async function createLiveAccessGrantRequest(input: { subjectEmail: string; purpose: string; expiresInDays: number }) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in with a corporate role before requesting Passport access.");
@@ -4891,7 +4993,10 @@ function App() {
                 <ConsentAuthorizationsPanel
                   authorizations={consentAuthorizations}
                   disabled={!authSession || !accountContext}
+                  grants={accessGrants}
                   message={consentStatus}
+                  records={livePassportRecords}
+                  onCreate={createLiveConsentAuthorization}
                   onRevoke={revokeLiveConsentAuthorization}
                 />
                 <ReferenceRequestsPanel
