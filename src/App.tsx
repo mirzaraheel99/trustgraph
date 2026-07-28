@@ -3471,6 +3471,27 @@ function teamMembersToCsv(members: OrganizationMemberView[]) {
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function teamInvitationsToCsv(invitations: DbOrganizationInvitation[]) {
+  const rows = [
+    ["invitation_id", "organization_id", "organization_name", "invited_email", "role", "status", "invited_by_profile_id", "accepted_by_profile_id", "expires_at", "created_at", "updated_at"],
+    ...invitations.map((invitation) => [
+      invitation.id,
+      invitation.organization_id,
+      invitation.organization?.name ?? "",
+      invitation.invited_email,
+      invitation.role,
+      invitation.status,
+      invitation.invited_by_profile_id ?? "",
+      invitation.accepted_by_profile_id ?? "",
+      invitation.expires_at ?? "",
+      invitation.created_at,
+      invitation.updated_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function billingSubscriptionsToCsv(subscriptions: DbOrganizationSubscription[]) {
   const rows = [
     ["subscription_id", "organization_id", "plan_id", "plan_name", "status", "seats", "monthly_price_usd", "annual_price_usd", "renews_at", "created_at"],
@@ -3994,6 +4015,7 @@ function TeamInvitationsPanel({
     const haystack = `${invitation.invited_email} ${invitation.role} ${invitation.status}`.toLowerCase();
     return matchesStatus && haystack.includes(invitationQuery.trim().toLowerCase());
   });
+  const exportName = `trustgraph-team-invitations-${new Date().toISOString().slice(0, 10)}.csv`;
 
   useEffect(() => {
     setStatus(message);
@@ -4067,6 +4089,18 @@ function TeamInvitationsPanel({
           <option value="cancelled">Cancelled</option>
           <option value="expired">Expired</option>
         </select>
+        <button
+          className="secondary-action"
+          disabled={!filteredInvitations.length}
+          onClick={() => downloadTextFile(exportName, teamInvitationsToCsv(filteredInvitations), "text/csv")}
+          type="button"
+        >
+          Export invites
+        </button>
+      </div>
+      <div className="team-source-strip">
+        <span className="status-chip success">Invitation database</span>
+        <small>Exports live organization invitation rows for reviewer access, recruiter access, cancellations, and acceptance handoff.</small>
       </div>
       <div className="team-list">
         {filteredInvitations.length ? (

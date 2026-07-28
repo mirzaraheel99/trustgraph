@@ -137,6 +137,8 @@ assertIncludesAny(bundleText, ["Live database view"], "Corporate user database s
 assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");
 assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soon queue signal");
 assertIncludesAny(bundleText, ["Membership database"], "Corporate team member source label");
+assertIncludesAny(bundleText, ["Invitation database"], "Corporate team invitation source label");
+assertIncludesAny(bundleText, ["Export invites"], "Corporate team invitation export control");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
 assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
