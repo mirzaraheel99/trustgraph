@@ -714,6 +714,20 @@ p,
   line-height: 1.4;
 }
 
+.billing-decision-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.billing-decision-actions .secondary-action {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
 .billing-gate-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

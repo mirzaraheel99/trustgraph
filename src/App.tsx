@@ -3077,6 +3077,26 @@ function teamMembersToCsv(members: OrganizationMemberView[]) {
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function billingSubscriptionsToCsv(subscriptions: DbOrganizationSubscription[]) {
+  const rows = [
+    ["subscription_id", "organization_id", "plan_id", "plan_name", "status", "seats", "monthly_price_usd", "annual_price_usd", "renews_at", "created_at"],
+    ...subscriptions.map((subscription) => [
+      subscription.id,
+      subscription.organization_id,
+      subscription.plan_id,
+      subscription.plan?.name ?? "",
+      subscription.status,
+      String(subscription.seats),
+      String(subscription.plan?.monthly_price_usd ?? ""),
+      String(subscription.plan?.annual_price_usd ?? ""),
+      subscription.renews_at ?? "",
+      subscription.created_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function securityChecksToCsv(checks: Array<{ label: string; detail: string; done: boolean }>) {
   const rows = [
     ["check", "status", "detail"],
@@ -3320,6 +3340,7 @@ function BillingPanel({
   const estimatedSeatTotal = plans.length
     ? Math.min(...plans.map((plan) => Math.max(plan.monthly_price_usd, plan.monthly_price_usd + Math.max(0, seats - plan.included_seats) * 19)))
     : 0;
+  const exportName = `trustgraph-billing-ledger-${new Date().toISOString().slice(0, 10)}.csv`;
 
   async function activate(planId: string) {
     setBusyPlanId(planId);
@@ -3376,7 +3397,17 @@ function BillingPanel({
           <strong>Billing v1 decision</strong>
           <small>Current pilot flow activates a tracked organization subscription in Supabase and writes audit history. Real payment collection remains gated until Stripe products, tax handling, invoices, refunds, webhooks, and dunning are approved.</small>
         </div>
-        <span className="status-chip warning">pilot ledger</span>
+        <div className="billing-decision-actions">
+          <span className="status-chip warning">pilot ledger</span>
+          <button
+            className="secondary-action"
+            disabled={!subscriptions.length}
+            onClick={() => downloadTextFile(exportName, billingSubscriptionsToCsv(subscriptions), "text/csv")}
+            type="button"
+          >
+            Export ledger
+          </button>
+        </div>
       </div>
       <div className="billing-gate-grid">
         {["Stripe product mapping", "Checkout + customer portal", "Tax and invoice policy", "Webhook reconciliation"].map((item) => (
