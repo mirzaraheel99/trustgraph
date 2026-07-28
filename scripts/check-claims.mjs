@@ -39,6 +39,18 @@ const bannedClaims = [
   }
 ];
 
+const bannedOperationalLanguage = [
+  {
+    pattern: /\bdemo\b/i,
+    reason: "Use pilot acceptance, workflow QA, operator review, or live preview wording instead of demo language."
+  },
+  {
+    pattern: /\bsample\b/i,
+    reason: "Use pilot, seeded pilot, or QA fixture wording instead of sample language in app source."
+  }
+];
+const operationalLanguageRoots = ["src/", "app/"];
+
 const requiredPhrases = [
   {
     file: "PILOT_RUNBOOK.md",
@@ -91,6 +103,15 @@ for (const file of files) {
     const match = claimText.match(claim.pattern);
     if (match) {
       failures.push(`${relative}: unsafe claim "${match[0]}" found. ${claim.reason}`);
+    }
+  }
+
+  if (operationalLanguageRoots.some((root) => relative.startsWith(root))) {
+    for (const languageRule of bannedOperationalLanguage) {
+      const match = claimText.match(languageRule.pattern);
+      if (match) {
+        failures.push(`${relative}: non-premium operational language "${match[0]}" found. ${languageRule.reason}`);
+      }
     }
   }
 }
