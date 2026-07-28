@@ -8,6 +8,7 @@
     "build": "next build",
     "typecheck": "tsc --noEmit",
     "check:claims": "node scripts/check-claims.mjs",
+    "check:responsive": "node scripts/check-responsive.mjs",
     "check:rls": "node scripts/check-rls.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },

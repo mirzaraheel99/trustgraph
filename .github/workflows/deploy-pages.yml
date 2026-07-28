@@ -45,6 +45,9 @@ jobs:
       - name: Verify claims boundaries
         run: pnpm check:claims
 
+      - name: Verify responsive coverage
+        run: pnpm check:responsive
+
       - name: Build
         run: pnpm build
         env:
