@@ -12,6 +12,7 @@ const requiredMobileStacks = [
   ".issuer-source-strip",
   ".missing-source-strip",
   ".notification-source-strip",
+  ".operations-source-strip",
   ".reference-source-strip",
   ".team-source-strip"
 ];

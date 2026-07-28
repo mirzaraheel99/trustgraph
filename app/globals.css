@@ -3222,6 +3222,26 @@ p {
   color-scheme: dark;
 }
 
+.operations-source-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 132px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.operations-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.operations-source-strip button {
+  min-height: 34px;
+}
+
 .operations-case-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -4622,6 +4642,7 @@ p {
   .notification-summary-grid,
   .operations-controls,
   .operations-summary-grid,
+  .operations-source-strip,
   .plan-summary-grid,
   .policy-grid,
   .policy-summary-grid,
@@ -4678,6 +4699,7 @@ p {
   .connect-card,
   .missing-card,
   .issuer-card,
+  .operations-source-strip,
   .audit-card,
   .billing-decision-card,
   .topbar-actions,

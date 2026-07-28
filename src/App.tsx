@@ -2224,6 +2224,7 @@ function OperationsQueuePanel({
     const haystack = `${item.case_type} ${item.title} ${item.summary} ${item.reason_code} ${item.status} ${item.priority}`.toLowerCase();
     return matchesStatus && matchesPriority && haystack.includes(caseQuery.trim().toLowerCase());
   });
+  const exportName = `trustgraph-operations-cases-${new Date().toISOString().slice(0, 10)}.csv`;
 
   async function decide(caseId: string, status: VerificationCaseStatus) {
     setBusyId(caseId);
@@ -2269,6 +2270,18 @@ function OperationsQueuePanel({
           }}
         >
           Create pilot cases
+        </button>
+      </div>
+      <div className="operations-source-strip">
+        <span className="status-chip success">Operations database</span>
+        <small>Exports filtered verification cases with priority, reason code, assignee, due date, resolution, and metadata context.</small>
+        <button
+          className="secondary-action"
+          disabled={!filteredCases.length}
+          onClick={() => downloadTextFile(exportName, verificationCasesToCsv(filteredCases), "text/csv")}
+          type="button"
+        >
+          Export cases
         </button>
       </div>
       <div className="operations-controls">
@@ -3596,6 +3609,32 @@ function webhookSubscriptionsToCsv(webhooks: DbWebhookSubscription[]) {
       webhook.last_delivered_at ?? "",
       webhook.created_at,
       webhook.updated_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function verificationCasesToCsv(cases: DbVerificationCase[]) {
+  const rows = [
+    ["case_id", "organization_id", "subject_profile_id", "trust_record_id", "case_type", "status", "priority", "title", "summary", "reason_code", "assigned_to_profile_id", "resolution_note", "due_at", "metadata", "created_at", "updated_at"],
+    ...cases.map((item) => [
+      item.id,
+      item.organization_id ?? "",
+      item.subject_profile_id ?? "",
+      item.trust_record_id ?? "",
+      item.case_type,
+      item.status,
+      item.priority,
+      item.title,
+      item.summary,
+      item.reason_code,
+      item.assigned_to_profile_id ?? "",
+      item.resolution_note ?? "",
+      item.due_at ?? "",
+      JSON.stringify(item.metadata ?? {}),
+      item.created_at,
+      item.updated_at
     ])
   ];
 
