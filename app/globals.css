@@ -417,6 +417,31 @@ button {
   color-scheme: dark;
 }
 
+.pending-registration-note {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.24);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.07);
+}
+
+.pending-registration-note strong,
+.pending-registration-note small {
+  display: block;
+}
+
+.pending-registration-note strong {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.pending-registration-note small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .portal-tabs button {
   padding: 0 12px;
   color: var(--muted);

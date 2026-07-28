@@ -4245,6 +4245,7 @@ function PublicSite({
   const [organizationDomain, setOrganizationDomain] = useState("");
   const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
   const [message, setMessage] = useState("Create an account. Email verification may be required before first login.");
+  const [hasPendingCorporateRegistration, setHasPendingCorporateRegistration] = useState(false);
   const [busy, setBusy] = useState(false);
   const authReady = isSupabaseConfigured();
   const authRedirectUrl =
@@ -4262,6 +4263,7 @@ function PublicSite({
   function savePendingCorporateRegistration() {
     if (typeof window === "undefined") return;
     window.localStorage.setItem(pendingCorporateRegistrationKey, JSON.stringify(pendingCorporateRegistration()));
+    setHasPendingCorporateRegistration(true);
   }
 
   function readPendingCorporateRegistration() {
@@ -4290,7 +4292,21 @@ function PublicSite({
   function clearPendingCorporateRegistration() {
     if (typeof window === "undefined") return;
     window.localStorage.removeItem(pendingCorporateRegistrationKey);
+    setHasPendingCorporateRegistration(false);
   }
+
+  useEffect(() => {
+    const storedCorporateRegistration = readPendingCorporateRegistration();
+    if (!storedCorporateRegistration) return;
+
+    setHasPendingCorporateRegistration(true);
+    setPortal("corporate");
+    setMode("signin");
+    setOrganizationName(storedCorporateRegistration.organizationName);
+    setOrganizationDomain(storedCorporateRegistration.organizationDomain);
+    setOrganizationType(storedCorporateRegistration.organizationType);
+    setMessage("Corporate workspace details are saved in this browser. Login after email verification to finish provisioning.");
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -4643,6 +4659,12 @@ function PublicSite({
               Login
             </button>
           </div>
+          {hasPendingCorporateRegistration ? (
+            <div className="pending-registration-note">
+              <strong>Corporate setup saved</strong>
+              <small>Login with the verified account in this browser to create the live corporate workspace.</small>
+            </div>
+          ) : null}
           <input onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
           <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
           {portal === "corporate" && mode === "signup" ? (
