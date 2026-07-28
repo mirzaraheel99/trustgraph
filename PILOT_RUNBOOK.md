@@ -9,6 +9,7 @@ Use this runbook for v1 pilot verification before inviting real employers, staff
 3. Run only targeted Supabase migrations through `Apply Supabase Migrations`.
 4. Confirm Admin release ledger shows the latest migration as `applied`.
 5. Export the Admin security runbook CSV and store it with pilot QA notes.
+6. Review `V1_READINESS_CHECKLIST.md` before inviting a new pilot organization.
 
 ## Live Workflow Acceptance
 
@@ -25,6 +26,7 @@ Use this runbook for v1 pilot verification before inviting real employers, staff
 11. Open Verify and confirm approved shared records are visible.
 12. Open Admin and review operations, Connect, audit, QA, release ledger, and security panels.
 13. Export audit CSV and security runbook CSV.
+14. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
 
 ## Security Review Boundary
 
