@@ -44,6 +44,7 @@ import type {
   DbSubscriptionPlan,
   DbVerificationCase,
   DbWebhookSubscription,
+  ProductionGateStatus,
   ReferenceRequestStatus,
   RecordStatus,
   RecordType,
@@ -2615,11 +2616,11 @@ function PlanAlignmentPanel({
   productionGateDecisions
 }: {
   disabled: boolean;
-  onRecordGateDecision: (input: { gateKey: string; status: string; evidenceUrl: string; notes: string }) => Promise<void>;
+  onRecordGateDecision: (input: { gateKey: string; status: ProductionGateStatus; evidenceUrl: string; notes: string }) => Promise<void>;
   productionGateDecisions: DbProductionGateDecision[];
 }) {
   const [gateKey, setGateKey] = useState("stripe_billing_launch");
-  const [gateStatus, setGateStatus] = useState("human_decision_required");
+  const [gateStatus, setGateStatus] = useState<ProductionGateStatus>("human_decision_required");
   const [gateEvidenceUrl, setGateEvidenceUrl] = useState("");
   const [gateNotes, setGateNotes] = useState("");
   const [gateBusy, setGateBusy] = useState(false);
@@ -2746,7 +2747,7 @@ function PlanAlignmentPanel({
             <option value="legal_employment_language">Legal and employment language</option>
             <option value="pilot_operations_owner">Pilot operations owner</option>
           </select>
-          <select disabled={disabled || gateBusy} onChange={(event) => setGateStatus(event.target.value)} value={gateStatus}>
+          <select disabled={disabled || gateBusy} onChange={(event) => setGateStatus(event.target.value as ProductionGateStatus)} value={gateStatus}>
             <option value="human_decision_required">Human decision required</option>
             <option value="external_signoff_required">External sign-off required</option>
             <option value="legal_review_required">Legal review required</option>
@@ -6544,7 +6545,7 @@ function App() {
     setAccountStatus("TrustGraph operations role created");
   }
 
-  async function recordLiveProductionGateDecision(input: { gateKey: string; status: string; evidenceUrl: string; notes: string }) {
+  async function recordLiveProductionGateDecision(input: { gateKey: string; status: ProductionGateStatus; evidenceUrl: string; notes: string }) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before recording production gate decisions.");
     }

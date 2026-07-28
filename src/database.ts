@@ -48,6 +48,13 @@ export type WebhookSubscriptionStatus = "active" | "paused" | "failed" | "revoke
 export type SubscriptionStatus = "trialing" | "active" | "past_due" | "cancelled";
 export type OrganizationInvitationStatus = "pending" | "accepted" | "cancelled" | "expired";
 export type ConsentAuthorizationStatus = "active" | "revoked" | "expired";
+export type ProductionGateStatus =
+  | "human_decision_required"
+  | "external_signoff_required"
+  | "legal_review_required"
+  | "pilot_roster_required"
+  | "approved_for_pilot"
+  | "approved_for_production";
 
 export interface DbOrganization {
   id: string;
@@ -329,7 +336,7 @@ export interface DbProductionGateDecision {
   gate_key: string;
   label: string;
   owner: string;
-  status: string;
+  status: ProductionGateStatus;
   evidence_required: string;
   evidence_url: string | null;
   decided_by_profile_id: string | null;

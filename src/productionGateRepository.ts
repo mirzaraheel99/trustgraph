@@ -1,4 +1,4 @@
-import type { DbProductionGateDecision } from "./database";
+import type { DbProductionGateDecision, ProductionGateStatus } from "./database";
 import { supabaseRest, supabaseRpc } from "./supabase";
 
 export async function loadProductionGateDecisions(accessToken: string): Promise<DbProductionGateDecision[]> {
@@ -10,7 +10,7 @@ export async function loadProductionGateDecisions(accessToken: string): Promise<
 export async function recordProductionGateDecision(input: {
   accessToken: string;
   gateKey: string;
-  status: string;
+  status: ProductionGateStatus;
   evidenceUrl?: string;
   notes?: string;
 }): Promise<DbProductionGateDecision> {
