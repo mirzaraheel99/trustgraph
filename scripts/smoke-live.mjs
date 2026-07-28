@@ -156,6 +156,8 @@ assertIncludesAny(bundleText, ["Auth redirect needs the hosted GitHub Pages URL"
 assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
 assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact intake");
+assertIncludesAny(bundleText, ["Stop conditions"], "production stop condition summary");
+assertIncludesAny(bundleText, ["Allowed mode"], "production allowed-mode summary");
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
 assertIncludesAny(bundleText, ["Evaluation role"], "signed-out evaluation role label");
 assertIncludesAny(bundleText, ["Preview account context"], "signed-out account context label");

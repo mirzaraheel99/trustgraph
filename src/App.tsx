@@ -2837,6 +2837,8 @@ function PlanAlignmentPanel({
         evidence: gate.evidence_required
       }))
     : fallbackProductionGates;
+  const approvedProductionGateCount = productionGates.filter((gate) => gate.status === "approved for production").length;
+  const openProductionGateCount = productionGates.length - approvedProductionGateCount;
   const gateExportName = `trustgraph-production-gates-${new Date().toISOString().slice(0, 10)}.csv`;
   const fallbackPilotContacts = [
     { label: "Pilot customer roster", responsibility: "Named pilot customer organizations and launch contacts.", status: "missing", organization: "", contact: "", email: "", notes: "" },
@@ -2926,6 +2928,23 @@ function PlanAlignmentPanel({
         <span className="status-chip success">database live</span>
       </article>
       <div className="production-gate-panel">
+        <div className="production-stop-summary">
+          <div>
+            <span>Stop conditions</span>
+            <strong>{openProductionGateCount}</strong>
+            <small>Human gates still prevent unrestricted production launch.</small>
+          </div>
+          <div>
+            <span>Production approved</span>
+            <strong>{approvedProductionGateCount}</strong>
+            <small>Only gates with recorded approval count here.</small>
+          </div>
+          <div>
+            <span>Allowed mode</span>
+            <strong>{openProductionGateCount ? "Pilot" : "Production"}</strong>
+            <small>{openProductionGateCount ? "No live payments or regulated employment decisions." : "All gate records show production approval."}</small>
+          </div>
+        </div>
         <div className="production-gate-heading">
           <div>
             <span className="eyebrow">Human decision gates</span>

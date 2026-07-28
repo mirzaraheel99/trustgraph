@@ -3956,6 +3956,37 @@ p {
   line-height: 1.4;
 }
 
+.production-stop-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.production-stop-summary div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 193, 7, 0.18);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.production-stop-summary span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.production-stop-summary strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 22px;
+  line-height: 1.05;
+}
+
 .production-gate-heading {
   display: flex;
   align-items: flex-start;
@@ -4668,6 +4699,7 @@ p {
   .policy-summary-grid,
   .production-gate-register,
   .production-gate-form,
+  .production-stop-summary,
   .qa-check-grid,
   .reference-summary-grid,
   .reference-source-strip,
