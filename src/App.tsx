@@ -2956,7 +2956,7 @@ function SecurityReviewPanel({
           <strong>{completed} / {checks.length}</strong>
           <small>External review remains required before regulated or payment traffic.</small>
         </div>
-        <button className="secondary-action" onClick={() => downloadTextFile(runbookName, securityChecksToCsv(checks), "text/csv")} type="button">
+        <button className="secondary-action" onClick={() => downloadTextFile(runbookName, securityRunbookToCsv(checks, humanDecisions), "text/csv")} type="button">
           Export runbook
         </button>
       </div>
@@ -3138,6 +3138,16 @@ function securityChecksToCsv(checks: Array<{ label: string; detail: string; done
   const rows = [
     ["check", "status", "detail"],
     ...checks.map((check) => [check.label, check.done ? "ready" : "needs_review", check.detail])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function securityRunbookToCsv(checks: Array<{ label: string; detail: string; done: boolean }>, decisions: string[]) {
+  const rows = [
+    ["section", "item", "status", "detail"],
+    ...checks.map((check) => ["security_check", check.label, check.done ? "ready" : "needs_review", check.detail]),
+    ...decisions.map((decision) => ["human_decision_gate", decision, "required_before_production", "Owner sign-off required"])
   ];
 
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
