@@ -3960,7 +3960,7 @@ function ProductionReadinessPanel({
     {
       label: "Account context",
       ok: Boolean(accountContext),
-      detail: accountContext ? `${accountContext.memberships.length} active memberships` : "Demo shell only"
+      detail: accountContext ? `${accountContext.memberships.length} active memberships` : "Preview context only"
     },
     {
       label: "Corporate database",
@@ -4031,7 +4031,7 @@ function LiveDataModePanel({
   const rows = [
     { label: "Profile", value: profileLabel },
     { label: "Organization", value: isLive ? activeOrganization.name : "Preview organization" },
-    { label: "Role", value: isLive ? activeRoleLabel : "Demo role" },
+    { label: "Role", value: isLive ? activeRoleLabel : "Preview role" },
     { label: "Workspace", value: workspaceLabel }
   ];
 

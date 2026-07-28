@@ -85,5 +85,7 @@ assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
 assertIncludesAny(bundleText, ["Migrations through 029"], "current database migration coverage copy");
+assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
+assertIncludesAny(bundleText, ["Preview role"], "signed-out preview role label");
 
 console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal, recovery, and data-mode copy verified)`);
