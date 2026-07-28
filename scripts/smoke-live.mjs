@@ -108,6 +108,8 @@ assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed databa
 assertIncludesAny(bundleText, ["Guided evaluation mode"], "evaluation mode indicator");
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
 assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
+assertIncludesAny(bundleText, ["All signal levels"], "audit signal filter");
+assertIncludesAny(bundleText, ["Export JSON"], "audit JSON export control");
 assertIncludesAny(bundleText, ["Workflow notification rows"], "notification database source label");
 assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
 assertIncludesAny(bundleText, ["human_decision_gate"], "security runbook human decision export rows");

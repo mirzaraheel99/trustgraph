@@ -2290,10 +2290,24 @@ function AuditTrailPanel({
   const [targetFilter, setTargetFilter] = useState("all");
   const [actorFilter, setActorFilter] = useState("all");
   const [timeFilter, setTimeFilter] = useState<"all" | "24h" | "7d" | "30d">("all");
+  const [signalFilter, setSignalFilter] = useState<"all" | "guardrail" | "high" | "standard">("all");
   const targetTables = Array.from(new Set(events.map((event) => event.target_table).filter(Boolean))).sort();
   const actors = Array.from(
     new Set(events.map((event) => event.actor_profile_id).filter((actor): actor is string => Boolean(actor)))
   ).sort();
+  const classifySignal = (event: DbAuditEvent) => {
+    const haystack = `${event.action} ${event.target_table ?? ""} ${event.reason ?? ""}`.toLowerCase();
+
+    if (haystack.includes("production_gate") || haystack.includes("schema_migration") || haystack.includes("security")) {
+      return "guardrail";
+    }
+
+    if (haystack.includes("restricted") || haystack.includes("revoked") || haystack.includes("failed") || haystack.includes("evidence") || haystack.includes("consent")) {
+      return "high";
+    }
+
+    return "standard";
+  };
   const timeCutoff =
     timeFilter === "24h"
       ? Date.now() - 24 * 60 * 60 * 1000
@@ -2308,14 +2322,18 @@ function AuditTrailPanel({
     const matchesTarget = targetFilter === "all" || event.target_table === targetFilter;
     const matchesActor = actorFilter === "all" || event.actor_profile_id === actorFilter;
     const matchesTime = timeCutoff === null || new Date(event.created_at).getTime() >= timeCutoff;
+    const matchesSignal = signalFilter === "all" || classifySignal(event) === signalFilter;
     const haystack = `${event.action} ${event.reason ?? ""} ${event.target_table ?? ""} ${event.target_id ?? ""} ${JSON.stringify(
       event.metadata ?? {}
     )}`.toLowerCase();
-    return matchesAction && matchesTarget && matchesActor && matchesTime && haystack.includes(auditQuery.trim().toLowerCase());
+    return matchesAction && matchesTarget && matchesActor && matchesTime && matchesSignal && haystack.includes(auditQuery.trim().toLowerCase());
   });
   const latestEvent = filteredEvents[0];
   const actorCount = new Set(filteredEvents.map((event) => event.actor_profile_id).filter(Boolean)).size;
+  const guardrailCount = filteredEvents.filter((event) => classifySignal(event) === "guardrail").length;
+  const highSignalCount = filteredEvents.filter((event) => classifySignal(event) === "high").length;
   const exportName = `trustgraph-audit-${new Date().toISOString().slice(0, 10)}.csv`;
+  const exportJsonName = `trustgraph-audit-evidence-${new Date().toISOString().slice(0, 10)}.json`;
 
   return (
     <section className="audit-panel">
@@ -2336,6 +2354,14 @@ function AuditTrailPanel({
         <span>
           <strong>{actorCount}</strong>
           <small>actors</small>
+        </span>
+        <span>
+          <strong>{guardrailCount}</strong>
+          <small>guardrails</small>
+        </span>
+        <span>
+          <strong>{highSignalCount}</strong>
+          <small>high signal</small>
         </span>
         <span>
           <strong>{latestEvent ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(latestEvent.created_at)) : "None"}</strong>
@@ -2380,6 +2406,12 @@ function AuditTrailPanel({
           <option value="7d">Last 7 days</option>
           <option value="30d">Last 30 days</option>
         </select>
+        <select onChange={(event) => setSignalFilter(event.target.value as typeof signalFilter)} value={signalFilter}>
+          <option value="all">All signal levels</option>
+          <option value="guardrail">Guardrail events</option>
+          <option value="high">High-signal events</option>
+          <option value="standard">Standard events</option>
+        </select>
         <button
           className="secondary-action"
           disabled={!filteredEvents.length}
@@ -2388,6 +2420,14 @@ function AuditTrailPanel({
         >
           Export CSV
         </button>
+        <button
+          className="secondary-action"
+          disabled={!filteredEvents.length}
+          onClick={() => downloadTextFile(exportJsonName, JSON.stringify(filteredEvents, null, 2), "application/json")}
+          type="button"
+        >
+          Export JSON
+        </button>
       </div>
       <div className="audit-list">
         {filteredEvents.length ? (
@@ -2395,6 +2435,9 @@ function AuditTrailPanel({
             <article className="audit-card" key={event.id}>
               <div>
                 <strong>{auditActionLabel(event.action)}</strong>
+                <span className={`status-chip ${classifySignal(event) === "guardrail" ? "warning" : classifySignal(event) === "high" ? "danger" : "neutral"}`}>
+                  {classifySignal(event)}
+                </span>
                 <small>{event.reason || event.target_table}</small>
                 <small>
                   {event.target_table}
