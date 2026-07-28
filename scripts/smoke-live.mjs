@@ -98,6 +98,8 @@ assertIncludesAny(bundleText, ["Professional user portal"], "Professional databa
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
 assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command center hero");
 assertIncludesAny(bundleText, ["Organization name"], "Corporate registration organization field");
+assertIncludesAny(bundleText, ["Pending corporate workspace"], "pending Corporate setup continuation card");
+assertIncludesAny(bundleText, ["Clear saved setup"], "pending Corporate setup reset control");
 assertIncludesAny(bundleText, ["Every portal connects to the live database foundation"], "live database registration outcome copy");
 assertIncludesAny(bundleText, ["After registration"], "registration outcome section");
 assertIncludesAny(bundleText, ["Set new password"], "password recovery update control");

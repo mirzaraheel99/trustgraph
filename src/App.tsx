@@ -5577,8 +5577,38 @@ function PublicSite({
           </div>
           {hasPendingCorporateRegistration ? (
             <div className="pending-registration-note">
-              <strong>Corporate setup saved</strong>
-              <small>Login with the verified account in this browser to create the live corporate workspace.</small>
+              <div>
+                <strong>Pending corporate workspace</strong>
+                <small>Login with the verified account in this browser to create the live corporate workspace.</small>
+              </div>
+              <div className="pending-registration-grid">
+                <span>
+                  <strong>{organizationName}</strong>
+                  <small>Organization</small>
+                </span>
+                <span>
+                  <strong>{organizationDomain}</strong>
+                  <small>Domain</small>
+                </span>
+                <span>
+                  <strong>{organizationType.replace("_", " ")}</strong>
+                  <small>Type</small>
+                </span>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() => {
+                  clearPendingCorporateRegistration();
+                  setOrganizationName("");
+                  setOrganizationDomain("");
+                  setOrganizationType("employer");
+                  setMode("signup");
+                  setMessage("Saved corporate setup cleared. Enter company details again to restart registration.");
+                }}
+                type="button"
+              >
+                Clear saved setup
+              </button>
             </div>
           ) : null}
           <input onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />

@@ -611,11 +611,16 @@ button {
 
 .pending-registration-note {
   display: grid;
-  gap: 4px;
+  gap: 9px;
   padding: 10px;
   border: 1px solid rgba(134, 174, 246, 0.24);
   border-radius: var(--radius);
   background: rgba(134, 174, 246, 0.07);
+}
+
+.pending-registration-note > div:first-child {
+  display: grid;
+  gap: 3px;
 }
 
 .pending-registration-note strong,
@@ -632,6 +637,29 @@ button {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.4;
+}
+
+.pending-registration-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.pending-registration-grid span {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.pending-registration-grid strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pending-registration-note .secondary-action {
+  justify-content: center;
 }
 
 .portal-tabs button {
@@ -4448,6 +4476,7 @@ p {
   .portal-route-grid,
   .workflow-grid,
   .pricing-grid,
+  .pending-registration-grid,
   .registration-grid,
   .directory-controls,
   .audit-controls,
