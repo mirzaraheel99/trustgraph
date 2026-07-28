@@ -455,6 +455,30 @@ button {
   font-weight: 850;
 }
 
+.pricing-database-note {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.16);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.045);
+}
+
+.pricing-database-note span {
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 950;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.pricing-database-note small {
+  padding-top: 0;
+  border-top: 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
 .pricing-card small {
   display: block;
   padding-top: 8px;

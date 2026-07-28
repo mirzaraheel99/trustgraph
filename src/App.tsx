@@ -5071,14 +5071,14 @@ function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; work
 
 function PublicSite({
   onCorporateSession,
-  onOpenDemo,
+  onOpenGuidedEvaluation,
   onSession
 }: {
   onCorporateSession: (
     session: AuthSession,
     input: { organizationName: string; organizationType: "employer" | "staffing_agency"; organizationDomain: string }
   ) => void;
-  onOpenDemo: () => void;
+  onOpenGuidedEvaluation: () => void;
   onSession: (session: AuthSession) => void;
 }) {
   const [portal, setPortal] = useState<"professional" | "corporate">("professional");
@@ -5225,6 +5225,7 @@ function PublicSite({
       action: "Start Passport",
       detail: "Build a private Passport and decide exactly which records can be shared.",
       points: ["Private records", "Evidence uploads", "Access Grants", "Reference requests"],
+      database: "Writes profile, personal organization, membership, Passport records, and evidence metadata.",
       portal: "professional" as const
     },
     {
@@ -5235,6 +5236,7 @@ function PublicSite({
       action: "Start Corporate",
       detail: "Review approved Passport records with scoped access, team roles, and audit history.",
       points: ["Corporate RBAC", "Missing-record requests", "Readiness review", "Audit trail"],
+      database: "Writes organization, admin membership, plan ledger, invitations, Access Grants, and gap requests.",
       portal: "corporate" as const
     },
     {
@@ -5245,6 +5247,7 @@ function PublicSite({
       action: "Request Scale",
       detail: "For issuers, integrations, compliance operations, and multi-team rollout.",
       points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"],
+      database: "Uses gated production decisions before external billing, regulated traffic, or issuer rollout.",
       portal: "corporate" as const
     }
   ];
@@ -5329,7 +5332,7 @@ function PublicSite({
           </div>
         </div>
         <div className="public-nav-actions">
-          <button className="secondary-action" onClick={onOpenDemo}>
+          <button className="secondary-action" onClick={onOpenGuidedEvaluation}>
             Open product
           </button>
           <button className="primary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView()}>
@@ -5462,6 +5465,10 @@ function PublicSite({
               <span>{plan.price}</span>
               <small className="pricing-cadence">{plan.cadence}</small>
               <p>{plan.detail}</p>
+              <div className="pricing-database-note">
+                <span>Database path</span>
+                <small>{plan.database}</small>
+              </div>
               {plan.points.map((point) => (
                 <small key={point}>{point}</small>
               ))}
@@ -5593,7 +5600,7 @@ function PublicSite({
           >
             {mode === "signin" ? "Login" : "Create account"}
           </button>
-          <button className="secondary-action" onClick={onOpenDemo} type="button">
+          <button className="secondary-action" onClick={onOpenGuidedEvaluation} type="button">
             Open guided evaluation
           </button>
           <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
@@ -6979,7 +6986,7 @@ function App() {
           setAuthSession(session);
           setShowPublicSite(false);
         }}
-        onOpenDemo={() => setShowPublicSite(false)}
+        onOpenGuidedEvaluation={() => setShowPublicSite(false)}
         onSession={(session) => {
           setAuthSession(session);
           setShowPublicSite(false);

@@ -89,6 +89,9 @@ assertIncludesAny(bundleText, ["Professional Passport"], "Professional portal co
 assertIncludesAny(bundleText, ["Corporate Verify"], "Corporate portal copy");
 assertIncludesAny(bundleText, ["Pilot monthly"], "Corporate pricing cadence");
 assertIncludesAny(bundleText, ["$149"], "Corporate Verify pilot price");
+assertIncludesAny(bundleText, ["Database path"], "pricing database path label");
+assertIncludesAny(bundleText, ["Writes organization, admin membership, plan ledger"], "Corporate pricing database consequence copy");
+assertIncludesAny(bundleText, ["gated production decisions"], "Scale pricing human gate copy");
 assertIncludesAny(bundleText, ["Corporate portal access"], "Corporate portal registration/login entry");
 assertIncludesAny(bundleText, ["Professional Passport access"], "Professional portal registration/login entry");
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
