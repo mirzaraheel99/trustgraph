@@ -2789,7 +2789,7 @@ p {
 
 .audit-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 150px 150px 112px;
+  grid-template-columns: minmax(0, 1fr) repeat(4, minmax(118px, 0.18fr)) 112px;
   gap: 8px;
 }
 

@@ -2189,15 +2189,30 @@ function AuditTrailPanel({
     "all" | "access" | "organization" | "record" | "connect" | "verification" | "evidence" | "schema"
   >("all");
   const [targetFilter, setTargetFilter] = useState("all");
+  const [actorFilter, setActorFilter] = useState("all");
+  const [timeFilter, setTimeFilter] = useState<"all" | "24h" | "7d" | "30d">("all");
   const targetTables = Array.from(new Set(events.map((event) => event.target_table).filter(Boolean))).sort();
+  const actors = Array.from(
+    new Set(events.map((event) => event.actor_profile_id).filter((actor): actor is string => Boolean(actor)))
+  ).sort();
+  const timeCutoff =
+    timeFilter === "24h"
+      ? Date.now() - 24 * 60 * 60 * 1000
+      : timeFilter === "7d"
+        ? Date.now() - 7 * 24 * 60 * 60 * 1000
+        : timeFilter === "30d"
+          ? Date.now() - 30 * 24 * 60 * 60 * 1000
+          : null;
   const filteredEvents = events.filter((event) => {
     const action = event.action.toLowerCase();
     const matchesAction = actionFilter === "all" || action.includes(actionFilter);
     const matchesTarget = targetFilter === "all" || event.target_table === targetFilter;
+    const matchesActor = actorFilter === "all" || event.actor_profile_id === actorFilter;
+    const matchesTime = timeCutoff === null || new Date(event.created_at).getTime() >= timeCutoff;
     const haystack = `${event.action} ${event.reason ?? ""} ${event.target_table ?? ""} ${event.target_id ?? ""} ${JSON.stringify(
       event.metadata ?? {}
     )}`.toLowerCase();
-    return matchesAction && matchesTarget && haystack.includes(auditQuery.trim().toLowerCase());
+    return matchesAction && matchesTarget && matchesActor && matchesTime && haystack.includes(auditQuery.trim().toLowerCase());
   });
   const latestEvent = filteredEvents[0];
   const actorCount = new Set(filteredEvents.map((event) => event.actor_profile_id).filter(Boolean)).size;
@@ -2251,6 +2266,20 @@ function AuditTrailPanel({
               {target.replace(/_/g, " ")}
             </option>
           ))}
+        </select>
+        <select onChange={(event) => setActorFilter(event.target.value)} value={actorFilter}>
+          <option value="all">All actors</option>
+          {actors.map((actor) => (
+            <option key={actor} value={actor}>
+              {actor.slice(0, 8)}
+            </option>
+          ))}
+        </select>
+        <select onChange={(event) => setTimeFilter(event.target.value as typeof timeFilter)} value={timeFilter}>
+          <option value="all">All time</option>
+          <option value="24h">Last 24 hours</option>
+          <option value="7d">Last 7 days</option>
+          <option value="30d">Last 30 days</option>
         </select>
         <button
           className="secondary-action"
