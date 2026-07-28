@@ -1398,6 +1398,46 @@ p,
     rgba(255, 255, 255, 0.03);
 }
 
+.onboarding-score-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.onboarding-score-actions .secondary-action {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+
+.onboarding-current-step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 0.8fr) minmax(0, 1.8fr);
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.onboarding-current-step strong,
+.onboarding-current-step small {
+  min-width: 0;
+  display: block;
+}
+
+.onboarding-current-step strong {
+  font-size: 12px;
+}
+
+.onboarding-current-step small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .readiness-score-card span,
 .readiness-score-card strong,
 .readiness-score-card small,
@@ -1534,6 +1574,26 @@ p,
 .mini-action:hover {
   border-color: rgba(82, 214, 196, 0.3);
   background: rgba(82, 214, 196, 0.1);
+}
+
+.onboarding-step-number {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.onboarding-step-number.on {
+  color: var(--text);
+  border-color: rgba(82, 214, 196, 0.34);
+  background: rgba(82, 214, 196, 0.12);
 }
 
 .demo-step {
@@ -4373,6 +4433,7 @@ p {
   .security-review-grid,
   .security-review-topline,
   .human-decision-list,
+  .onboarding-current-step,
   .seed-result-grid,
   .team-controls,
   .team-summary-grid,
@@ -4421,6 +4482,7 @@ p {
   }
 
   .qa-score-card,
+  .onboarding-score,
   .onboarding-seed-row,
   .demo-panel-header,
   .demo-score-row,
@@ -4431,12 +4493,14 @@ p {
 
   .grant-actions,
   .operations-actions,
+  .onboarding-score-actions,
   .evidence-document-actions {
     justify-content: stretch;
   }
 
   .grant-actions button,
   .operations-actions button,
+  .onboarding-score-actions button,
   .mini-action,
   .evidence-document-actions button {
     flex: 1 1 120px;

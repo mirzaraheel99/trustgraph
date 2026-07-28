@@ -121,6 +121,8 @@ assertIncludesAny(bundleText, ["Record gate decision"], "production gate decisio
 assertIncludesAny(bundleText, ["Approved for production"], "production gate approved status option");
 assertIncludesAny(bundleText, ["external sign-off required"], "external security gate status");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
+assertIncludesAny(bundleText, ["Export setup evidence"], "guided onboarding export control");
+assertIncludesAny(bundleText, ["Prepare live pilot workspace"], "guided onboarding live workspace control");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
 assertIncludesAny(bundleText, ["Live database view"], "Corporate user database source label");

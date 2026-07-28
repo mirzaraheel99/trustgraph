@@ -3289,6 +3289,15 @@ function productionGatesToCsv(gates: Array<{ label: string; owner: string; statu
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function onboardingChecklistToCsv(checklist: Array<{ label: string; detail: string; done: boolean; actionLabel: string }>) {
+  const rows = [
+    ["step", "status", "detail", "next_action"],
+    ...checklist.map((item) => [item.label, item.done ? "ready" : "needs_action", item.detail, item.done ? "Review" : item.actionLabel])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function securityChecksToCsv(checks: Array<{ label: string; detail: string; done: boolean }>) {
   const rows = [
     ["check", "status", "detail"],
@@ -4434,6 +4443,7 @@ function OnboardingChecklistPanel({
   ];
   const completed = checklist.filter((item) => item.done).length;
   const nextItem = checklist.find((item) => !item.done) ?? checklist[checklist.length - 1];
+  const checklistExportName = `trustgraph-guided-setup-${new Date().toISOString().slice(0, 10)}.csv`;
 
   async function seedLiveData() {
     setSeedBusy(true);
@@ -4460,14 +4470,24 @@ function OnboardingChecklistPanel({
           <span>{completed}/{checklist.length}</span>
           <small>{nextItem.done ? "Core launch path complete" : nextItem.detail}</small>
         </div>
-        <span className={`status-chip ${completed === checklist.length ? "success" : "info"}`}>
-          {completed === checklist.length ? "ready" : "in progress"}
-        </span>
+        <div className="onboarding-score-actions">
+          <span className={`status-chip ${completed === checklist.length ? "success" : "info"}`}>
+            {completed === checklist.length ? "ready" : "in progress"}
+          </span>
+          <button className="secondary-action" onClick={() => downloadTextFile(checklistExportName, onboardingChecklistToCsv(checklist), "text/csv")} type="button">
+            Export setup evidence
+          </button>
+        </div>
+      </div>
+      <div className="onboarding-current-step">
+        <span className="status-chip neutral">current step</span>
+        <strong>{nextItem.label}</strong>
+        <small>{nextItem.done ? "Review live account, records, corporate access, team, and sharing evidence before production gates." : nextItem.detail}</small>
       </div>
       <div className="onboarding-seed-row">
         <small>{seedStatus}</small>
         <button className="secondary-action" disabled={!authSession || seedBusy} onClick={() => void seedLiveData()} type="button">
-          Seed live pilot workspace
+          Prepare live pilot workspace
         </button>
       </div>
       {seedResult ? (
@@ -4508,9 +4528,9 @@ function OnboardingChecklistPanel({
         </>
       ) : null}
       <div className="onboarding-list">
-        {checklist.map((item) => (
+        {checklist.map((item, index) => (
           <article className={item.done ? "onboarding-item done" : "onboarding-item"} key={item.label}>
-            <span className={`status-dot ${item.done ? "on" : ""}`} />
+            <span className={`onboarding-step-number ${item.done ? "on" : ""}`}>{index + 1}</span>
             <div>
               <strong>{item.label}</strong>
               <small>{item.detail}</small>
