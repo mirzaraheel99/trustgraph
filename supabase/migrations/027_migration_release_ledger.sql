@@ -26,6 +26,8 @@ using (
   )
 );
 
+drop function if exists public.record_schema_migration_run(text, text, text, text, text, text);
+
 create or replace function public.record_schema_migration_run(
   input_migration_path text,
   input_commit_sha text default null,
