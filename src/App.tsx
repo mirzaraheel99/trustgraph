@@ -2792,6 +2792,12 @@ function SecurityReviewPanel({
       done: false
     }
   ];
+  const humanDecisions = [
+    "Stripe products, tax, invoices, refunds, dunning, and webhook reconciliation",
+    "External RLS/security and private evidence-storage review",
+    "Legal language for regulated employment and adverse-action boundaries",
+    "Named pilot customers, onboarding owner, support path, and incident owner"
+  ];
   const completed = checks.filter((check) => check.done).length;
   const runbookName = `trustgraph-security-runbook-${new Date().toISOString().slice(0, 10)}.csv`;
 
@@ -2821,6 +2827,17 @@ function SecurityReviewPanel({
             </div>
           </article>
         ))}
+      </div>
+      <div className="human-decision-panel">
+        <div className="mini-heading">
+          <LockKeyhole size={16} />
+          <strong>Human approval required before production traffic</strong>
+        </div>
+        <div className="human-decision-list">
+          {humanDecisions.map((decision) => (
+            <span key={decision}>{decision}</span>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -4130,13 +4147,8 @@ function DemoScriptPanel({
 }) {
   const steps = [
     {
-      label: "Professional signup",
-      detail: "Sign up or sign in, then confirm the Professional account context and RBAC role load.",
-      done: livePassportRecords.length > 0
-    },
-    {
-      label: "Create Passport record",
-      detail: "Add employment, credential, or sensitive background-check record.",
+      label: "Professional Passport setup",
+      detail: "Sign up or sign in, confirm RBAC context, then add a Passport record.",
       done: livePassportRecords.length > 0
     },
     {
