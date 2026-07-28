@@ -3611,6 +3611,22 @@ function AuthPanel({
       detail: "Create employer or staffing workspace from Corporate account and RBAC."
     }
   ];
+  const authChecks = [
+    {
+      label: "Hosted redirect",
+      detail: authRedirectUrl.includes("localhost")
+        ? "Open the GitHub Pages app before requesting new verification links."
+        : "Verification and recovery emails should return to this hosted app."
+    },
+    {
+      label: "Email rate limit",
+      detail: "If Supabase blocks signups or resends, wait before retrying and reuse existing inbox links."
+    },
+    {
+      label: "After confirmation",
+      detail: "Return here, sign in, then use Launch checklist to seed or create live pilot data."
+    }
+  ];
 
   async function handleAuth(event: FormEvent<HTMLFormElement>, mode: "signin" | "signup") {
     event.preventDefault();
@@ -3726,6 +3742,17 @@ function AuthPanel({
           <div className="auth-recovery-note">
             <strong>Recovery redirect</strong>
             <small>Add this URL in Supabase Auth redirect settings: {authRedirectUrl}</small>
+          </div>
+          <div className="auth-support-grid">
+            {authChecks.map((check) => (
+              <article key={check.label}>
+                <span className="status-dot on" />
+                <div>
+                  <strong>{check.label}</strong>
+                  <small>{check.detail}</small>
+                </div>
+              </article>
+            ))}
           </div>
         </form>
       )}

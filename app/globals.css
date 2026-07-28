@@ -1272,6 +1272,38 @@ p,
   line-height: 1.45;
 }
 
+.auth-support-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.auth-support-grid article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: start;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.auth-support-grid strong,
+.auth-support-grid small {
+  display: block;
+}
+
+.auth-support-grid strong {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.auth-support-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .primary-action:disabled,
 .secondary-action:disabled {
   cursor: not-allowed;
