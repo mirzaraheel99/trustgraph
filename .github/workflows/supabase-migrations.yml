@@ -27,17 +27,31 @@ jobs:
         run: |
           test -n "$DIRECT_URL"
 
+      - name: Validate migration input
+        run: |
+          test -n "$MIGRATION_PATH"
+          rm -f /tmp/trustgraph-migrations.txt
+          for file in $MIGRATION_PATH; do
+            case "$file" in
+              supabase/migrations/*.sql) ;;
+              *) echo "Migration path must stay under supabase/migrations/*.sql: $file" >&2; exit 1 ;;
+            esac
+            test -f "$file"
+            printf '%s\n' "$file" >> /tmp/trustgraph-migrations.txt
+          done
+          test -s /tmp/trustgraph-migrations.txt
+
       - name: Apply SQL migrations
         run: |
-          for file in $MIGRATION_PATH; do
+          while IFS= read -r file; do
             echo "Applying $file"
             PGOPTIONS="-c statement_timeout=30000" psql "$DIRECT_URL" --set ON_ERROR_STOP=1 --echo-errors --file "$file"
-          done
+          done < /tmp/trustgraph-migrations.txt
 
       - name: Record migration ledger
         run: |
-          for file in $MIGRATION_PATH; do
+          while IFS= read -r file; do
             echo "Recording $file"
             PGOPTIONS="-c statement_timeout=30000" psql "$DIRECT_URL" --set ON_ERROR_STOP=1 --echo-errors \
               --command "select public.record_schema_migration_run('$file', '${{ github.sha }}', '${{ github.run_id }}', '${{ github.actor }}', 'applied', 'Applied through GitHub Actions');"
-          done
+          done < /tmp/trustgraph-migrations.txt
