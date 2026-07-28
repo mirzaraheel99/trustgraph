@@ -1122,6 +1122,9 @@ function ReferenceRequestsPanel({
   const [busy, setBusy] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [status, setStatus] = useState(message);
+  const openCount = requests.filter((request) => !["submitted", "declined", "expired", "cancelled"].includes(request.status)).length;
+  const submittedCount = requests.filter((request) => request.status === "submitted").length;
+  const exportName = `trustgraph-reference-requests-${new Date().toISOString().slice(0, 10)}.csv`;
 
   useEffect(() => {
     setStatus(message);
@@ -1159,6 +1162,28 @@ function ReferenceRequestsPanel({
       <div className="mini-heading">
         <UserPlus size={16} />
         <strong>Structured references</strong>
+      </div>
+      <div className="reference-summary-grid">
+        <div>
+          <span>Open</span>
+          <strong>{openCount}</strong>
+        </div>
+        <div>
+          <span>Submitted</span>
+          <strong>{submittedCount}</strong>
+        </div>
+      </div>
+      <div className="reference-source-strip">
+        <span className="status-chip success">Reference database</span>
+        <small>Exports live provider requests, relationship context, status, submitted summaries, and expiration dates.</small>
+        <button
+          className="secondary-action"
+          disabled={!requests.length}
+          onClick={() => downloadTextFile(exportName, referenceRequestsToCsv(requests), "text/csv")}
+          type="button"
+        >
+          Export references
+        </button>
       </div>
       <form className="reference-form" onSubmit={submit}>
         <div className="record-form-grid">
@@ -3447,6 +3472,28 @@ function missingRecordRequestsToCsv(requests: DbMissingRecordRequest[]) {
       request.due_at ?? "",
       request.reason,
       request.requester_organization?.name ?? ""
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function referenceRequestsToCsv(requests: DbReferenceRequest[]) {
+  const rows = [
+    ["request_id", "subject_profile_id", "requester_profile_id", "provider_name", "provider_email", "relationship", "status", "expires_at", "request_message", "submitted_summary", "created_at", "updated_at"],
+    ...requests.map((request) => [
+      request.id,
+      request.subject_profile_id,
+      request.requester_profile_id,
+      request.provider_name,
+      request.provider_email,
+      request.relationship,
+      request.status,
+      request.expires_at ?? "",
+      request.request_message ?? "",
+      request.submitted_summary ?? "",
+      request.created_at,
+      request.updated_at
     ])
   ];
 

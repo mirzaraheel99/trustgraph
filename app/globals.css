@@ -2480,6 +2480,53 @@ p {
   gap: 10px;
 }
 
+.reference-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.reference-summary-grid div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.reference-summary-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.reference-summary-grid strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.reference-source-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 156px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.reference-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.reference-source-strip button {
+  min-height: 34px;
+}
+
 .reference-list {
   display: grid;
   gap: 8px;
@@ -4532,6 +4579,8 @@ p {
   .production-gate-register,
   .production-gate-form,
   .qa-check-grid,
+  .reference-summary-grid,
+  .reference-source-strip,
   .release-summary-grid,
   .scope-area-grid,
   .security-review-grid,
@@ -4573,6 +4622,7 @@ p {
   .grant-card,
   .consent-card,
   .reference-card,
+  .reference-source-strip,
   .release-card,
   .connect-card,
   .missing-card,
