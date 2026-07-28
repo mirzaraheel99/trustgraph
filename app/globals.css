@@ -1124,6 +1124,33 @@ p,
   line-height: 1.4;
 }
 
+.auth-recovery-note {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(88, 166, 255, 0.18);
+  border-radius: var(--radius);
+  background: rgba(88, 166, 255, 0.06);
+}
+
+.auth-recovery-note strong,
+.auth-recovery-note small {
+  display: block;
+}
+
+.auth-recovery-note strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.auth-recovery-note small {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .primary-action:disabled,
 .secondary-action:disabled {
   cursor: not-allowed;

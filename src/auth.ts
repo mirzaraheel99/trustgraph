@@ -114,7 +114,7 @@ export async function signUpWithPassword(email: string, password: string): Promi
   return session;
 }
 
-export async function requestPasswordRecovery(email: string): Promise<void> {
+export async function requestPasswordRecovery(email: string, redirectTo?: string): Promise<void> {
   const config = getSupabaseConfig();
   if (!config) {
     throw new Error("Supabase is not configured for this deployment.");
@@ -126,7 +126,7 @@ export async function requestPasswordRecovery(email: string): Promise<void> {
       apikey: config.anonKey,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ email })
+    body: JSON.stringify({ email, redirect_to: redirectTo })
   });
 
   if (!response.ok) {

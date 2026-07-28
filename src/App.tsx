@@ -3488,6 +3488,8 @@ function AuthPanel({
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(authModeLabel());
   const [busy, setBusy] = useState(false);
+  const recoveryRedirectUrl =
+    typeof window === "undefined" ? "https://mirzaraheel99.github.io/trustgraph/" : `${window.location.origin}${window.location.pathname}`;
   const authPaths = [
     {
       label: "Professional",
@@ -3525,8 +3527,8 @@ function AuthPanel({
     setBusy(true);
     setMessage("Sending recovery email...");
     try {
-      await requestPasswordRecovery(email);
-      setMessage("Password recovery email requested");
+      await requestPasswordRecovery(email, recoveryRedirectUrl);
+      setMessage("Password recovery email requested. Use the link in your inbox to return to TrustGraph.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not request password recovery.");
     } finally {
@@ -3593,6 +3595,10 @@ function AuthPanel({
             <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
               Reset password
             </button>
+          </div>
+          <div className="auth-recovery-note">
+            <strong>Recovery redirect</strong>
+            <small>Add this URL in Supabase Auth redirect settings: {recoveryRedirectUrl}</small>
           </div>
         </form>
       )}
