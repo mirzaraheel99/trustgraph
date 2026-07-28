@@ -42,6 +42,9 @@ jobs:
       - name: Verify RLS coverage
         run: pnpm check:rls
 
+      - name: Verify claims boundaries
+        run: pnpm check:claims
+
       - name: Build
         run: pnpm build
         env:

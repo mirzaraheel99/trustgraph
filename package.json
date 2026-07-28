@@ -7,6 +7,7 @@
     "dev": "next dev -H 127.0.0.1 -p 4173",
     "build": "next build",
     "typecheck": "tsc --noEmit",
+    "check:claims": "node scripts/check-claims.mjs",
     "check:rls": "node scripts/check-rls.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
