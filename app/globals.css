@@ -3459,6 +3459,26 @@ p {
   font-size: 18px;
 }
 
+.release-source-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 148px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.release-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.release-source-strip button {
+  min-height: 34px;
+}
+
 .release-list {
   display: grid;
   gap: 8px;
@@ -4652,6 +4672,7 @@ p {
   .reference-summary-grid,
   .reference-source-strip,
   .release-summary-grid,
+  .release-source-strip,
   .scope-area-grid,
   .security-review-grid,
   .rls-coverage-strip,
@@ -4696,6 +4717,7 @@ p {
   .reference-card,
   .reference-source-strip,
   .release-card,
+  .release-source-strip,
   .connect-card,
   .missing-card,
   .issuer-card,

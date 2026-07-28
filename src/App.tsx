@@ -3186,6 +3186,7 @@ function ReleaseLedgerPanel({
   const latest = migrations[0] ?? null;
   const appliedCount = migrations.filter((run) => run.status === "applied").length;
   const failedCount = migrations.filter((run) => run.status !== "applied").length;
+  const exportName = `trustgraph-release-ledger-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return (
     <section className="release-panel">
@@ -3194,6 +3195,18 @@ function ReleaseLedgerPanel({
         <strong>Release ledger</strong>
       </div>
       <small>{message}</small>
+      <div className="release-source-strip">
+        <span className="status-chip success">Release database</span>
+        <small>Exports tracked migration runs with commit SHA, workflow run, operator, status, notes, and applied timestamp.</small>
+        <button
+          className="secondary-action"
+          disabled={!migrations.length}
+          onClick={() => downloadTextFile(exportName, schemaMigrationRunsToCsv(migrations), "text/csv")}
+          type="button"
+        >
+          Export releases
+        </button>
+      </div>
       <div className="release-summary-grid">
         <div>
           <span>Tracked</span>
@@ -3635,6 +3648,24 @@ function verificationCasesToCsv(cases: DbVerificationCase[]) {
       JSON.stringify(item.metadata ?? {}),
       item.created_at,
       item.updated_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function schemaMigrationRunsToCsv(migrations: DbSchemaMigrationRun[]) {
+  const rows = [
+    ["run_id", "migration_path", "commit_sha", "workflow_run_id", "applied_by", "status", "notes", "applied_at"],
+    ...migrations.map((run) => [
+      run.id,
+      run.migration_path,
+      run.commit_sha ?? "",
+      run.workflow_run_id ?? "",
+      run.applied_by ?? "",
+      run.status,
+      run.notes ?? "",
+      run.applied_at
     ])
   ];
 
