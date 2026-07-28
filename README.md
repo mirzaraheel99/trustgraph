@@ -68,6 +68,14 @@ SUPABASE_DB_PASSWORD=
 pnpm build
 ```
 
+## Live Smoke Check
+
+```bash
+npm run smoke:live
+```
+
+Set `TRUSTGRAPH_SMOKE_URL` to smoke-check a different hosted URL.
+
 ## Database Foundation
 
 Supabase-ready migrations live in `supabase/migrations/`:

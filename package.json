@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev -H 127.0.0.1 -p 4173",
     "build": "next build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {
     "@types/react": "^19.0.2",

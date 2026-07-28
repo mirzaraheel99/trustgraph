@@ -5,7 +5,7 @@ Use this runbook for v1 pilot verification before inviting real employers, staff
 ## Release Gates
 
 1. Confirm GitHub Pages deployment is green for the latest `main` commit.
-2. Smoke-check the hosted app at `https://mirzaraheel99.github.io/trustgraph/`.
+2. Smoke-check the hosted app at `https://mirzaraheel99.github.io/trustgraph/` or run `npm run smoke:live`.
 3. Run only targeted Supabase migrations through `Apply Supabase Migrations`.
 4. Confirm Admin release ledger shows the latest migration as `applied`.
 5. Export the Admin security runbook CSV and store it with pilot QA notes.
