@@ -1319,9 +1319,24 @@ p,
 
 .auth-form,
 .auth-session,
+.password-update-form,
 .account-admin-form {
   display: grid;
   gap: 8px;
+}
+
+.password-update-form {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.password-update-form input {
+  width: 100%;
+  min-height: 36px;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .account-admin-form {
@@ -3862,6 +3877,7 @@ p {
   .workspace-stack,
   .module-nav,
   .auth-actions,
+  .password-update-form,
   .detail-grid,
   .record-edit-grid,
   .account-admin-row,

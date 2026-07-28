@@ -70,6 +70,7 @@ import {
   signInWithPassword,
   signOut,
   signUpWithPassword,
+  updatePassword,
   type AuthSession
 } from "./auth";
 import {
@@ -3607,6 +3608,7 @@ function AuthPanel({
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState(authModeLabel());
   const [busy, setBusy] = useState(false);
   const authRedirectUrl =
@@ -3686,6 +3688,23 @@ function AuthPanel({
     }
   }
 
+  async function submitPasswordUpdate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!session) return;
+
+    setBusy(true);
+    setMessage("Updating password...");
+    try {
+      await updatePassword(session.accessToken, newPassword);
+      setNewPassword("");
+      setMessage("Password updated. This session remains connected.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not update password.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <section className="auth-panel">
       <div className="mini-heading">
@@ -3700,6 +3719,18 @@ function AuthPanel({
             <span>Live database access</span>
             <span>RBAC context loading</span>
           </div>
+          <form className="password-update-form" onSubmit={submitPasswordUpdate}>
+            <input
+              minLength={8}
+              onChange={(event) => setNewPassword(event.target.value)}
+              placeholder="New password"
+              type="password"
+              value={newPassword}
+            />
+            <button className="secondary-action" disabled={busy || newPassword.length < 8} type="submit">
+              Set new password
+            </button>
+          </form>
           <button
             className="secondary-action"
             onClick={() => {

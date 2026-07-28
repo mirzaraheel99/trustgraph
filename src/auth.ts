@@ -243,6 +243,27 @@ export async function requestPasswordRecovery(email: string, redirectTo?: string
   }
 }
 
+export async function updatePassword(accessToken: string, password: string): Promise<void> {
+  const config = getSupabaseConfig();
+  if (!config) {
+    throw new Error("Supabase is not configured for this deployment.");
+  }
+
+  const response = await fetch(`${config.url}/auth/v1/user`, {
+    method: "PUT",
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ password })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Password update failed: ${await readAuthError(response, "Use a valid recovery link or login again.")}`);
+  }
+}
+
 export async function resendSignupConfirmation(email: string, redirectTo?: string): Promise<void> {
   const config = getSupabaseConfig();
   if (!config) {
