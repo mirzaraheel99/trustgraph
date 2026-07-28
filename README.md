@@ -50,7 +50,7 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-In Supabase Auth URL settings, allow the GitHub Pages URL above as a site/redirect URL.
+In Supabase Auth URL settings, set the Site URL to `https://mirzaraheel99.github.io/trustgraph/` and add the same URL under Redirect URLs. If Site URL remains `localhost`, verification emails will open a localhost link instead of the hosted app.
 Until those variables are present, the app stays in demo mode and keeps the mock RBAC account context available.
 
 For database migrations, add these GitHub repository secrets and run the `Apply Supabase Migrations` workflow manually:

@@ -97,7 +97,7 @@ export async function signInWithPassword(email: string, password: string): Promi
   return session;
 }
 
-export async function signUpWithPassword(email: string, password: string): Promise<AuthSession | null> {
+export async function signUpWithPassword(email: string, password: string, redirectTo?: string): Promise<AuthSession | null> {
   const config = getSupabaseConfig();
   if (!config) {
     throw new Error("Supabase is not configured for this deployment.");
@@ -109,7 +109,7 @@ export async function signUpWithPassword(email: string, password: string): Promi
       apikey: config.anonKey,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email, password, options: redirectTo ? { email_redirect_to: redirectTo } : undefined })
   });
 
   if (!response.ok) {

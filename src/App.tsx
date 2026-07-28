@@ -3550,7 +3550,7 @@ function AuthPanel({
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(authModeLabel());
   const [busy, setBusy] = useState(false);
-  const recoveryRedirectUrl =
+  const authRedirectUrl =
     typeof window === "undefined" ? "https://mirzaraheel99.github.io/trustgraph/" : `${window.location.origin}${window.location.pathname}`;
   const authPaths = [
     {
@@ -3574,7 +3574,7 @@ function AuthPanel({
 
     try {
       const nextSession =
-        mode === "signin" ? await signInWithPassword(email, password) : await signUpWithPassword(email, password);
+        mode === "signin" ? await signInWithPassword(email, password) : await signUpWithPassword(email, password, authRedirectUrl);
       onSession(nextSession);
       setMessage(nextSession ? "Live Supabase session connected" : "Check your email to confirm the account");
       setPassword("");
@@ -3589,7 +3589,7 @@ function AuthPanel({
     setBusy(true);
     setMessage("Sending recovery email...");
     try {
-      await requestPasswordRecovery(email, recoveryRedirectUrl);
+      await requestPasswordRecovery(email, authRedirectUrl);
       setMessage("Password recovery email requested. Use the link in your inbox to return to TrustGraph.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not request password recovery.");
@@ -3660,7 +3660,7 @@ function AuthPanel({
           </div>
           <div className="auth-recovery-note">
             <strong>Recovery redirect</strong>
-            <small>Add this URL in Supabase Auth redirect settings: {recoveryRedirectUrl}</small>
+            <small>Add this URL in Supabase Auth redirect settings: {authRedirectUrl}</small>
           </div>
         </form>
       )}
@@ -4085,6 +4085,8 @@ function PublicSite({
   const [message, setMessage] = useState("Create your TrustGraph account");
   const [busy, setBusy] = useState(false);
   const authReady = isSupabaseConfigured();
+  const authRedirectUrl =
+    typeof window === "undefined" ? "https://mirzaraheel99.github.io/trustgraph/" : `${window.location.origin}${window.location.pathname}`;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -4103,7 +4105,7 @@ function PublicSite({
       const session =
         mode === "signin"
           ? await signInWithPassword(email, password)
-          : await signUpWithPassword(email, password);
+          : await signUpWithPassword(email, password, authRedirectUrl);
       if (session) {
         if (portal === "corporate" && mode === "signup") {
           onCorporateSession(session, { organizationName, organizationType, organizationDomain });
@@ -4359,7 +4361,7 @@ function PublicSite({
           <small>{message}</small>
           <small>
             {authReady
-              ? "Hosted Supabase Auth is configured. If signup still fails, check Supabase Auth providers, allowed redirect URLs, and email confirmation settings."
+              ? `Hosted Supabase Auth is configured. Allowed redirect URL must include: ${authRedirectUrl}`
               : "Hosted build is missing public Supabase Auth configuration."}
           </small>
         </form>
