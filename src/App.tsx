@@ -2951,6 +2951,15 @@ function securityChecksToCsv(checks: Array<{ label: string; detail: string; done
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function pilotAcceptanceToCsv(steps: Array<{ label: string; detail: string; done: boolean }>) {
+  const rows = [
+    ["step", "status", "acceptance_criterion"],
+    ...steps.map((step, index) => [`${index + 1}. ${step.label}`, step.done ? "passing" : "needs_data", step.detail])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function AccountPanel({
   accountUser,
   activeMembership,
@@ -4078,12 +4087,25 @@ function DemoScriptPanel({
       done: auditEvents.length > 0 && schemaMigrationRuns.length > 0
     }
   ];
+  const completed = steps.filter((step) => step.done).length;
+  const exportName = `trustgraph-pilot-acceptance-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return (
     <section className="demo-panel">
-      <div className="mini-heading">
-        <ClipboardCheck size={16} />
-        <strong>Pilot acceptance script v1</strong>
+      <div className="demo-panel-header">
+        <div className="mini-heading">
+          <ClipboardCheck size={16} />
+          <strong>Pilot acceptance script v1</strong>
+        </div>
+        <button className="secondary-action" onClick={() => downloadTextFile(exportName, pilotAcceptanceToCsv(steps), "text/csv")} type="button">
+          Export script
+        </button>
+      </div>
+      <div className="demo-score-row">
+        <span className={`status-chip ${completed === steps.length ? "success" : "info"}`}>
+          {completed}/{steps.length} passing
+        </span>
+        <small>Export before and after pilot testing to preserve acceptance evidence.</small>
       </div>
       <div className="demo-step-list">
         {steps.map((step, index) => (
