@@ -2839,6 +2839,26 @@ p {
   line-height: 1.4;
 }
 
+.invitation-handoff-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 148px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.16);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.04);
+}
+
+.invitation-handoff-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.invitation-handoff-strip button {
+  min-height: 34px;
+}
+
 .directory-metrics strong {
   font-size: 26px;
   line-height: 1;
@@ -4709,6 +4729,7 @@ p {
   .grant-summary-grid,
   .issuer-summary-grid,
   .issuer-source-strip,
+  .invitation-handoff-strip,
   .missing-controls,
   .missing-summary-grid,
   .notification-summary-grid,
@@ -4760,6 +4781,7 @@ p {
   .auth-recovery-note,
   .directory-source-strip,
   .evidence-source-strip,
+  .invitation-handoff-strip,
   .missing-source-strip,
   .notification-source-strip,
   .team-source-strip,

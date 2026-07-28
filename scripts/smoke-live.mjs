@@ -141,6 +141,8 @@ assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soo
 assertIncludesAny(bundleText, ["Membership database"], "Corporate team member source label");
 assertIncludesAny(bundleText, ["Invitation database"], "Corporate team invitation source label");
 assertIncludesAny(bundleText, ["Export invites"], "Corporate team invitation export control");
+assertIncludesAny(bundleText, ["Invitation handoff"], "personal invitation handoff source label");
+assertIncludesAny(bundleText, ["Export my invites"], "personal invitation export control");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
 assertIncludesAny(bundleText, ["Reference database"], "structured reference source label");
 assertIncludesAny(bundleText, ["Export references"], "structured reference export control");

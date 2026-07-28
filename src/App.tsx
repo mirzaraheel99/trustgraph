@@ -4416,6 +4416,7 @@ function MyInvitationsPanel({
   onAccept: (invitationId: string) => Promise<void>;
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
+  const exportName = `trustgraph-my-invitations-${new Date().toISOString().slice(0, 10)}.csv`;
 
   async function accept(invitationId: string) {
     setBusyId(invitationId);
@@ -4437,13 +4438,32 @@ function MyInvitationsPanel({
         <strong>My invitations</strong>
       </div>
       <small>{message}</small>
+      <div className="invitation-handoff-strip">
+        <span className="status-chip success">Invitation handoff</span>
+        <small>Reads invitee-owned pending invitations from Supabase and creates active organization membership on acceptance.</small>
+        <button
+          className="secondary-action"
+          disabled={!invitations.length}
+          onClick={() => downloadTextFile(exportName, teamInvitationsToCsv(invitations), "text/csv")}
+          type="button"
+        >
+          Export my invites
+        </button>
+      </div>
       <div className="team-list">
         {invitations.length ? (
           invitations.map((invitation) => (
             <article className="team-card" key={invitation.id}>
               <div>
                 <strong>{invitation.organization?.name ?? "Corporate workspace"}</strong>
-                <small>{invitation.role.replace(/_/g, " ")}</small>
+                <small>
+                  {invitation.role.replace(/_/g, " ")} -{" "}
+                  {invitation.expires_at
+                    ? `expires ${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(
+                        new Date(invitation.expires_at)
+                      )}`
+                    : "no expiration stored"}
+                </small>
               </div>
               <button className="primary-action" disabled={disabled || busyId === invitation.id} onClick={() => void accept(invitation.id)}>
                 Accept
