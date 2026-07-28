@@ -1104,6 +1104,39 @@ p,
   line-height: 1.35;
 }
 
+.seed-result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.seed-result-grid div {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.16);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.04);
+}
+
+.seed-result-grid span,
+.seed-result-grid strong {
+  display: block;
+}
+
+.seed-result-grid span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.seed-result-grid strong {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+}
+
 .readiness-score-card div > span {
   color: var(--muted);
   font-size: 11px;
@@ -3762,6 +3795,7 @@ p {
   .scope-area-grid,
   .security-review-grid,
   .security-review-topline,
+  .seed-result-grid,
   .team-controls,
   .team-summary-grid,
   .verify-summary-grid,

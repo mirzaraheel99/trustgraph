@@ -3870,9 +3870,10 @@ function OnboardingChecklistPanel({
   teamMembers: OrganizationMemberView[];
   onOpenHostedRegistration: () => void;
   onOpenWorkspace: (workspaceId: WorkspaceId) => void;
-  onSeedPilotWorkspace: () => Promise<void>;
+  onSeedPilotWorkspace: () => Promise<Awaited<ReturnType<typeof seedPilotWorkspace>>>;
 }) {
   const [seedStatus, setSeedStatus] = useState("Create live pilot rows after signing in.");
+  const [seedResult, setSeedResult] = useState<Awaited<ReturnType<typeof seedPilotWorkspace>> | null>(null);
   const [seedBusy, setSeedBusy] = useState(false);
   const hasCorporateContext = Boolean(
     accountContext?.memberships.some((membership) =>
@@ -3942,8 +3943,9 @@ function OnboardingChecklistPanel({
     setSeedBusy(true);
     setSeedStatus("Creating live pilot rows in Supabase...");
     try {
-      await onSeedPilotWorkspace();
-      setSeedStatus("Live pilot workspace seeded. Refreshing portal data...");
+      const result = await onSeedPilotWorkspace();
+      setSeedResult(result);
+      setSeedStatus("Live pilot workspace seeded and portal data refreshed.");
     } catch (error) {
       setSeedStatus(error instanceof Error ? error.message : "Could not seed live pilot workspace");
     } finally {
@@ -3972,6 +3974,34 @@ function OnboardingChecklistPanel({
           Seed live pilot workspace
         </button>
       </div>
+      {seedResult ? (
+        <div className="seed-result-grid">
+          <div>
+            <span>Passport</span>
+            <strong>{seedResult.passport_records}</strong>
+          </div>
+          <div>
+            <span>Evidence</span>
+            <strong>{seedResult.evidence_documents}</strong>
+          </div>
+          <div>
+            <span>Subscription</span>
+            <strong>{seedResult.subscription_id.slice(0, 8)}</strong>
+          </div>
+          <div>
+            <span>Access Grant</span>
+            <strong>{seedResult.access_grant_id.slice(0, 8)}</strong>
+          </div>
+          <div>
+            <span>Consent</span>
+            <strong>{seedResult.consent_authorization_id.slice(0, 8)}</strong>
+          </div>
+          <div>
+            <span>Corporate org</span>
+            <strong>{seedResult.corporate_organization_id.slice(0, 8)}</strong>
+          </div>
+        </div>
+      ) : null}
       <div className="onboarding-list">
         {checklist.map((item) => (
           <article className={item.done ? "onboarding-item done" : "onboarding-item"} key={item.label}>
@@ -5719,6 +5749,7 @@ function App() {
     );
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+    return seeded;
   }
 
   async function activateLiveSubscription(planId: string, seats: number) {
