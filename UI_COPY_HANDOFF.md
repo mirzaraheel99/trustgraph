@@ -8,9 +8,10 @@ TrustGraph is a workforce trust and verification platform with three visible aud
 
 1. Professionals who build a private Passport of employment, credentials, references, and evidence.
 2. Corporate teams who request scoped access, manage reviewers, and verify shared records.
-3. TrustGraph operators who monitor audit, release, evidence, security, and Connect readiness.
+3. TrustGraph operators who monitor audit, release, evidence, security, pilot launch contacts, and Connect readiness.
 
 The live app is hosted at `https://mirzaraheel99.github.io/trustgraph/`.
+The GitHub repo is `https://github.com/mirzaraheel99/trustgraph`.
 
 ## Design Direction
 
@@ -43,8 +44,8 @@ Avoid:
 1. Public website first viewport: make TrustGraph, Passport, Corporate Verify, and Admin trust operations obvious in the first screen.
 2. Auth panel: make Professional vs Corporate paths clearer and make hosted redirect guidance reassuring.
 3. Launch checklist: make the next action obvious after signup or login.
-4. Passport record detail: improve evidence preview/download hierarchy and consent messaging.
-5. Verify workspace: make shared-record status, missing-record requests, and Access Grants faster to scan.
+4. Passport record detail: improve evidence preview/download, evidence manifest export, and consent messaging.
+5. Verify workspace: make shared-record status, missing-record gap packets, and Access Grants faster to scan.
 6. Corporate account/RBAC: make role management feel intentional and less demo-like.
 7. Billing panel: keep pilot subscription language honest and premium.
 8. Admin: make audit, release ledger, security review, and exports feel like an operations command center.
@@ -73,21 +74,22 @@ Goal:
 Make TrustGraph feel like a premium modern SaaS product, not a demo. Improve visual hierarchy, wording, page structure, spacing, mobile behavior, and operational clarity while preserving the current React/TypeScript/Next.js implementation and live Supabase-backed flows.
 
 Product:
-TrustGraph is an evidence-first workforce trust platform. Professionals create a private Passport for work history, credentials, training, references, and evidence. Corporate teams use Corporate Verify to request scoped access and review only owner-approved records. Operators manage audit, release, security, Connect, evidence, billing pilot, and workflow QA.
+TrustGraph is an evidence-first workforce trust platform. Professionals create a private Passport for work history, credentials, training, references, and evidence. Corporate teams use Corporate Verify to request scoped access, request missing records, export gap packets, and review only owner-approved records. Operators manage audit, release, security, Connect, evidence, pilot contacts, billing pilot, and workflow QA.
 
 Current foundation:
 - Next.js, React, TypeScript.
 - Static GitHub Pages deployment.
 - Supabase Auth, database, Storage, RLS, and RPC functions.
-- Professional Passport, Corporate Verify, RBAC/team roles, Access Grants, evidence preview/download, missing-record requests, references, credentials, notifications, billing pilot ledger, audit exports, release ledger, security/RLS checklist, pilot acceptance script, and 13-track v1 alignment panel.
+- Professional Passport, Corporate Verify, RBAC/team roles, Access Grants, evidence preview/download, evidence manifest export, missing-record requests, gap packet export, references, credentials, notifications, billing pilot ledger, production gate decisions, pilot launch contact register, audit exports, release ledger, security/RLS checklist, pilot acceptance script, and 13-track v1 alignment panel.
 
 What to improve:
 1. Public website first viewport: make Passport, Corporate Verify, and operator trust controls obvious in the first 10 seconds.
 2. Auth and registration: make Professional vs Corporate paths clearer, remove confusion around local vs hosted redirect links, and reassure users about verification.
 3. Workspace information architecture: make Passport, Verify, Account, Billing, Admin, Evidence, Audit, and Security feel like one coherent SaaS system.
 4. Copy: replace vague demo language with concrete operational wording. Use "scoped access", "consent", "audit trail", "signed evidence links", "pilot subscription ledger", and "human decision gates" consistently.
-5. Visual design: premium B2B SaaS, restrained, high-trust, dense but readable. Avoid noisy decoration, generic startup claims, and over-large cards inside operational screens.
+5. Visual design: premium B2B SaaS, restrained, high-trust, dense but readable. Avoid noisy decoration, generic startup claims, one-color themes, and over-large cards inside operational screens.
 6. Mobile: make navigation, cards, filters, forms, and action rows stack cleanly without overlap or clipped text.
+7. Wording structure: propose clearer section names, empty states, action labels, and microcopy. Ask questions where buyer positioning or legal/payment claims require a human decision.
 
 Hard guardrails:
 - Do not remove current product workflows.
@@ -103,9 +105,13 @@ Before major changes, ask these questions:
 2. Should public pricing stay visible, or should Corporate/Scale become request-access flows?
 3. What truthful proof points can be shown now: live Supabase, private evidence storage, RBAC, audit exports, GitHub Pages deployment, or pilot readiness?
 4. Should the visual tone be more enterprise compliance, fast hiring operations, or professional-owned identity?
+5. Which pilot launch contacts are real and approved to show: customer roster, onboarding owner, support owner, and incident owner?
+6. Which copy requires legal review before it can mention background-check-adjacent or regulated employment workflows?
 
 Verification required before handoff:
 - npm run typecheck
+- npm run check:claims
+- npm run check:rls
 - npm run build
 - npm run smoke:live after deployment, or explain why live smoke could not be run
 ```
