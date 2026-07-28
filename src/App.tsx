@@ -106,6 +106,7 @@ import {
 import { createEvidenceDocument, createEvidenceDownloadUrl, loadEvidenceDocuments, uploadEvidenceFile } from "./evidenceRepository";
 import {
   createMissingRecordRequest,
+  loadPassportMissingRecordRequests,
   loadVerifyMissingRecordRequests,
   markMissingRecordRequestStatus
 } from "./missingRecordRepository";
@@ -1870,6 +1871,91 @@ function MissingRecordRequestsPanel({
   );
 }
 
+function PassportMissingRecordPanel({
+  disabled,
+  message,
+  requests,
+  onStatus
+}: {
+  disabled: boolean;
+  message: string;
+  requests: DbMissingRecordRequest[];
+  onStatus: (requestId: string, status: "in_progress" | "fulfilled" | "declined" | "cancelled") => Promise<void>;
+}) {
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const openCount = requests.filter((request) => !["fulfilled", "declined", "cancelled"].includes(request.status)).length;
+  const dueSoonCount = requests.filter((request) => {
+    if (!request.due_at || ["fulfilled", "declined", "cancelled"].includes(request.status)) return false;
+    return new Date(request.due_at).getTime() <= Date.now() + 7 * 24 * 60 * 60 * 1000;
+  }).length;
+
+  async function update(requestId: string, nextStatus: "in_progress" | "fulfilled" | "declined") {
+    setBusyId(requestId);
+    try {
+      await onStatus(requestId, nextStatus);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <section className="missing-panel passport-missing-panel">
+      <div className="mini-heading">
+        <FileText size={16} />
+        <strong>Requested Passport records</strong>
+      </div>
+      <small>{message}</small>
+      <div className="missing-summary-grid">
+        <div>
+          <span>Open</span>
+          <strong>{openCount}</strong>
+        </div>
+        <div>
+          <span>Due soon</span>
+          <strong>{dueSoonCount}</strong>
+        </div>
+        <div>
+          <span>Total</span>
+          <strong>{requests.length}</strong>
+        </div>
+      </div>
+      <div className="missing-list">
+        {requests.length ? (
+          requests.slice(0, 6).map((request) => (
+            <article className="missing-card" key={request.id}>
+              <div>
+                <strong>{request.title}</strong>
+                <p>{request.requester_organization?.name ?? "Corporate requester"}</p>
+                <small>{request.reason}</small>
+                {request.due_at ? <small>Due {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(request.due_at))}</small> : null}
+              </div>
+              <div className="grant-actions">
+                <span className="status-chip neutral">{request.status.replace(/_/g, " ")}</span>
+                <button className="secondary-action" disabled={disabled || busyId === request.id || request.status === "in_progress"} onClick={() => void update(request.id, "in_progress")}>
+                  Start
+                </button>
+                <button className="primary-action" disabled={disabled || busyId === request.id || request.status === "fulfilled"} onClick={() => void update(request.id, "fulfilled")}>
+                  Fulfill
+                </button>
+                <button className="secondary-action" disabled={disabled || busyId === request.id || request.status === "declined"} onClick={() => void update(request.id, "declined")}>
+                  Decline
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <article className="missing-card empty">
+            <div>
+              <strong>No corporate record requests yet</strong>
+              <p>When a Verify team asks for a license, training, reference, or evidence gap, it appears here for the Professional to resolve.</p>
+            </div>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function IssuerCredentialsPanel({
   credentials,
   disabled,
@@ -2541,7 +2627,7 @@ function PlanAlignmentPanel() {
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 026 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, and sensitive-record controls.</small>
+          <small>Migrations through 029 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, and live pilot workspace seeding.</small>
         </div>
         <span className="status-chip success">database live</span>
       </article>
@@ -4906,6 +4992,8 @@ function App() {
   const [issuerStatus, setIssuerStatus] = useState("Switch to a credential issuer role");
   const [missingRecordRequests, setMissingRecordRequests] = useState<DbMissingRecordRequest[]>([]);
   const [missingRecordStatus, setMissingRecordStatus] = useState("Switch to Verify role for missing-record requests");
+  const [passportMissingRecordRequests, setPassportMissingRecordRequests] = useState<DbMissingRecordRequest[]>([]);
+  const [passportMissingRecordStatus, setPassportMissingRecordStatus] = useState("Sign in to review requested Passport records");
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -5097,6 +5185,8 @@ function App() {
       setReferenceStatus("Sign in to manage live references");
       setConsentAuthorizations([]);
       setConsentStatus("Sign in to review consent authorizations");
+      setPassportMissingRecordRequests([]);
+      setPassportMissingRecordStatus("Sign in to review requested Passport records");
       return;
     }
 
@@ -5105,27 +5195,33 @@ function App() {
     setNotificationStatus("Loading notifications...");
     setReferenceStatus("Loading reference requests...");
     setConsentStatus("Loading consent authorizations...");
+    setPassportMissingRecordStatus("Loading requested Passport records...");
 
     Promise.all([
       loadPassportRecords(accountContext.profile.id, authSession.accessToken),
       loadEvidenceDocuments(authSession.accessToken),
       loadNotificationEvents(authSession.accessToken),
       loadReferenceRequests(authSession.accessToken),
-      loadConsentAuthorizations(authSession.accessToken)
+      loadConsentAuthorizations(authSession.accessToken),
+      loadPassportMissingRecordRequests(accountContext.profile.id, authSession.accessToken)
     ])
-      .then(([items, documents, notifications, references, consents]) => {
+      .then(([items, documents, notifications, references, consents, missingRecords]) => {
         if (cancelled) return;
         setLivePassportRecords(items);
         setEvidenceDocuments(documents);
         setNotificationEvents(notifications);
         setReferenceRequests(references);
         setConsentAuthorizations(consents);
+        setPassportMissingRecordRequests(missingRecords);
         setRecordStatus(items.length ? "Live Supabase Passport records" : "Passport records not loaded yet");
         setNotificationStatus(
           notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet"
         );
         setReferenceStatus(references.length ? `Live reference requests: ${references.length}` : "No reference requests yet");
         setConsentStatus(consents.length ? `Live consent authorizations: ${consents.length}` : "No consent authorizations yet");
+        setPassportMissingRecordStatus(
+          missingRecords.length ? `Requested Passport records: ${missingRecords.length}` : "No requested Passport records yet"
+        );
         if (items[0]) {
           setSelectedId(items[0].id);
         }
@@ -5137,10 +5233,12 @@ function App() {
         setNotificationEvents([]);
         setReferenceRequests([]);
         setConsentAuthorizations([]);
+        setPassportMissingRecordRequests([]);
         setRecordStatus(error instanceof Error ? error.message : "Could not load live Passport records");
         setNotificationStatus(error instanceof Error ? error.message : "Could not load notifications");
         setReferenceStatus(error instanceof Error ? error.message : "Could not load reference requests");
         setConsentStatus(error instanceof Error ? error.message : "Could not load consent authorizations");
+        setPassportMissingRecordStatus(error instanceof Error ? error.message : "Could not load requested Passport records");
       });
 
     return () => {
@@ -5789,10 +5887,16 @@ function App() {
       requestId,
       status
     });
-    const events = await loadAuditEvents(authSession.accessToken).catch(() => auditEvents);
-    setMissingRecordRequests((current) => current.map((request) => (request.id === updated.id ? updated : request)));
+    const [passportRequests, verifyRequestsAfterUpdate, events] = await Promise.all([
+      loadPassportMissingRecordRequests(accountContext.profile.id, authSession.accessToken).catch(() => passportMissingRecordRequests),
+      loadVerifyMissingRecordRequests(activeMembership.organizationId, authSession.accessToken).catch(() => missingRecordRequests),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setMissingRecordRequests(verifyRequestsAfterUpdate);
+    setPassportMissingRecordRequests(passportRequests);
     setAuditEvents(events);
     setMissingRecordStatus(`Missing-record request moved to ${updated.status.replace(/_/g, " ")}`);
+    setPassportMissingRecordStatus(`Requested Passport record moved to ${updated.status.replace(/_/g, " ")}`);
   }
 
   async function updateLiveNotificationStatus(notificationId: string, status: "delivered" | "suppressed") {
@@ -6413,6 +6517,12 @@ function App() {
                   onCreate={createLiveReferenceRequest}
                   onStatus={updateLiveReferenceStatus}
                   requests={referenceRequests}
+                />
+                <PassportMissingRecordPanel
+                  disabled={!authSession || !accountContext}
+                  message={passportMissingRecordStatus}
+                  onStatus={updateLiveMissingRecordStatus}
+                  requests={passportMissingRecordRequests}
                 />
               </>
             ) : null}

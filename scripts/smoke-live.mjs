@@ -83,5 +83,7 @@ assertIncludesAny(bundleText, ["Human approval required before production traffi
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
+assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
+assertIncludesAny(bundleText, ["Migrations through 029"], "current database migration coverage copy");
 
 console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal, recovery, and data-mode copy verified)`);
