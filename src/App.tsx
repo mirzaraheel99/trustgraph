@@ -38,6 +38,7 @@ import type {
   DbNotificationEvent,
   DbOrganizationInvitation,
   DbOrganizationSubscription,
+  DbProductionGateDecision,
   DbReferenceRequest,
   DbSchemaMigrationRun,
   DbSubscriptionPlan,
@@ -112,6 +113,7 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
+import { loadProductionGateDecisions } from "./productionGateRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
 import { isSupabaseConfigured } from "./supabase";
 import {
@@ -2607,13 +2609,13 @@ function ConnectPanel({
   );
 }
 
-function PlanAlignmentPanel() {
+function PlanAlignmentPanel({ productionGateDecisions }: { productionGateDecisions: DbProductionGateDecision[] }) {
   const deployedCount = foundationTracks.filter((track) => track.status === "deployed").length;
   const foundationCount = foundationTracks.filter((track) => track.status === "foundation").length;
   const plannedCount = foundationTracks.filter((track) => track.status === "planned").length;
   const coveredProfileAreas = lockedProfileAreas.filter((area) => area.status !== "planned").length;
   const plannedProfileAreas = lockedProfileAreas.length - coveredProfileAreas;
-  const productionGates = [
+  const fallbackProductionGates = [
     {
       label: "Stripe billing launch",
       owner: "Business operations",
@@ -2639,6 +2641,14 @@ function PlanAlignmentPanel() {
       evidence: "Named pilot customers, onboarding owner, support path, and incident response owner documented."
     }
   ];
+  const productionGates = productionGateDecisions.length
+    ? productionGateDecisions.map((gate) => ({
+        label: gate.label,
+        owner: gate.owner,
+        status: gate.status.replace(/_/g, " "),
+        evidence: gate.evidence_required
+      }))
+    : fallbackProductionGates;
   const gateExportName = `trustgraph-production-gates-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return (
@@ -2664,7 +2674,7 @@ function PlanAlignmentPanel() {
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 029 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, and live pilot workspace seeding.</small>
+          <small>Migrations through 030 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, and production gate decision tracking.</small>
         </div>
         <span className="status-chip success">database live</span>
       </article>
@@ -2674,6 +2684,7 @@ function PlanAlignmentPanel() {
             <span className="eyebrow">Human decision gates</span>
             <strong>Pilot-ready, not unrestricted production traffic</strong>
             <small>These approvals remain outside the automated build loop and must be resolved before live payments or regulated employment workflows.</small>
+            <small>{productionGateDecisions.length ? "Production gate decisions loaded from Supabase" : "Production gate decisions use fallback plan copy until migration 030 is applied."}</small>
           </div>
           <button className="secondary-action" onClick={() => downloadTextFile(gateExportName, productionGatesToCsv(productionGates), "text/csv")} type="button">
             Export production gates
@@ -5282,6 +5293,7 @@ function App() {
   const [auditEvents, setAuditEvents] = useState<DbAuditEvent[]>([]);
   const [auditStatus, setAuditStatus] = useState("Switch to Admin role for audit events");
   const [schemaMigrationRuns, setSchemaMigrationRuns] = useState<DbSchemaMigrationRun[]>([]);
+  const [productionGateDecisions, setProductionGateDecisions] = useState<DbProductionGateDecision[]>([]);
   const [releaseStatus, setReleaseStatus] = useState("Switch to Admin role for release ledger");
   const [apiClients, setApiClients] = useState<DbApiClient[]>([]);
   const [webhookSubscriptions, setWebhookSubscriptions] = useState<DbWebhookSubscription[]>([]);
@@ -5657,6 +5669,7 @@ function App() {
       setAuditEvents([]);
       setAuditStatus("Switch to Admin role for audit events");
       setSchemaMigrationRuns([]);
+      setProductionGateDecisions([]);
       setReleaseStatus("Switch to Admin role for release ledger");
       setApiClients([]);
       setWebhookSubscriptions([]);
@@ -5670,6 +5683,7 @@ function App() {
       setAuditEvents([]);
       setAuditStatus("Active role cannot access audit events");
       setSchemaMigrationRuns([]);
+      setProductionGateDecisions([]);
       setReleaseStatus("Active role cannot access release ledger");
       setApiClients([]);
       setWebhookSubscriptions([]);
@@ -5687,19 +5701,25 @@ function App() {
       loadVerificationCases(authSession.accessToken),
       loadAuditEvents(authSession.accessToken),
       loadSchemaMigrationRuns(authSession.accessToken).catch(() => []),
+      loadProductionGateDecisions(authSession.accessToken).catch(() => []),
       loadApiClients(authSession.accessToken),
       loadWebhookSubscriptions(authSession.accessToken)
     ])
-      .then(([items, events, migrations, clients, webhooks]) => {
+      .then(([items, events, migrations, gates, clients, webhooks]) => {
         if (cancelled) return;
         setOperationsCases(items);
         setAuditEvents(events);
         setSchemaMigrationRuns(migrations);
+        setProductionGateDecisions(gates);
         setApiClients(clients);
         setWebhookSubscriptions(webhooks);
         setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No operations cases yet");
         setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
-        setReleaseStatus(migrations.length ? `Release ledger: ${migrations.length} recent migrations` : "No release ledger entries yet");
+        setReleaseStatus(
+          migrations.length || gates.length
+            ? `Release ledger: ${migrations.length} migrations, ${gates.length} production gates`
+            : "No release ledger entries yet"
+        );
         setConnectStatus(
           clients.length || webhooks.length
             ? `Connect controls: ${clients.length} clients, ${webhooks.length} webhooks`
@@ -5711,6 +5731,7 @@ function App() {
         setOperationsCases([]);
         setAuditEvents([]);
         setSchemaMigrationRuns([]);
+        setProductionGateDecisions([]);
         setApiClients([]);
         setWebhookSubscriptions([]);
         setOperationsStatus(error instanceof Error ? error.message : "Could not load operations queue");
@@ -6906,7 +6927,7 @@ function App() {
                   webhookSubscriptions={webhookSubscriptions}
                 />
                 <ConsentPolicyMatrixPanel />
-                <PlanAlignmentPanel />
+                <PlanAlignmentPanel productionGateDecisions={productionGateDecisions} />
               </>
             ) : null}
           </div>

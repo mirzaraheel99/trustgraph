@@ -324,6 +324,22 @@ export interface DbSchemaMigrationRun {
   applied_at: string;
 }
 
+export interface DbProductionGateDecision {
+  id: string;
+  gate_key: string;
+  label: string;
+  owner: string;
+  status: string;
+  evidence_required: string;
+  evidence_url: string | null;
+  decided_by_profile_id: string | null;
+  decided_at: string | null;
+  notes: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface RoleCapability {
   role: RoleKey;
   permissions: PermissionKey[];

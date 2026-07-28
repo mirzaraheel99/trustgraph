@@ -25,7 +25,8 @@ const requiredRlsTables = [
   "organization_subscriptions",
   "organization_invitations",
   "consent_authorizations",
-  "schema_migration_runs"
+  "schema_migration_runs",
+  "production_gate_decisions"
 ];
 
 const missingTables = requiredRlsTables.filter(
