@@ -4249,6 +4249,48 @@ function PublicSite({
   const authReady = isSupabaseConfigured();
   const authRedirectUrl =
     typeof window === "undefined" ? "https://mirzaraheel99.github.io/trustgraph/" : `${window.location.origin}${window.location.pathname}`;
+  const pendingCorporateRegistrationKey = "trustgraph.pendingCorporateRegistration";
+
+  function pendingCorporateRegistration() {
+    return {
+      organizationName,
+      organizationType,
+      organizationDomain
+    };
+  }
+
+  function savePendingCorporateRegistration() {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(pendingCorporateRegistrationKey, JSON.stringify(pendingCorporateRegistration()));
+  }
+
+  function readPendingCorporateRegistration() {
+    if (typeof window === "undefined") return null;
+
+    const stored = window.localStorage.getItem(pendingCorporateRegistrationKey);
+    if (!stored) return null;
+
+    try {
+      const parsed = JSON.parse(stored) as {
+        organizationName?: string;
+        organizationType?: "employer" | "staffing_agency";
+        organizationDomain?: string;
+      };
+      if (!parsed.organizationName || !parsed.organizationDomain || !parsed.organizationType) return null;
+      return {
+        organizationName: parsed.organizationName,
+        organizationType: parsed.organizationType,
+        organizationDomain: parsed.organizationDomain
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function clearPendingCorporateRegistration() {
+    if (typeof window === "undefined") return;
+    window.localStorage.removeItem(pendingCorporateRegistrationKey);
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -4269,14 +4311,21 @@ function PublicSite({
           ? await signInWithPassword(email, password)
           : await signUpWithPassword(email, password, authRedirectUrl);
       if (session) {
-        if (portal === "corporate" && mode === "signup") {
-          onCorporateSession(session, { organizationName, organizationType, organizationDomain });
+        const storedCorporateRegistration = portal === "corporate" ? readPendingCorporateRegistration() : null;
+        if (portal === "corporate" && (mode === "signup" || storedCorporateRegistration)) {
+          onCorporateSession(session, storedCorporateRegistration ?? pendingCorporateRegistration());
+          clearPendingCorporateRegistration();
         } else {
           onSession(session);
         }
         setMessage(portal === "corporate" ? "Corporate portal ready" : "Professional Passport ready");
       } else {
-        setMessage("Check your email to confirm the account, then login.");
+        if (portal === "corporate" && mode === "signup") {
+          savePendingCorporateRegistration();
+          setMessage("Check your email to confirm the account, then return here and login. Corporate workspace details are saved in this browser.");
+        } else {
+          setMessage("Check your email to confirm the account, then login.");
+        }
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Authentication failed");
