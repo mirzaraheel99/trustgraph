@@ -70,6 +70,8 @@ assertIncludesAny(bundleText, ["Pilot monthly"], "Corporate pricing cadence");
 assertIncludesAny(bundleText, ["$149"], "Corporate Verify pilot price");
 assertIncludesAny(bundleText, ["Corporate portal access"], "Corporate portal registration/login entry");
 assertIncludesAny(bundleText, ["Professional Passport access"], "Professional portal registration/login entry");
+assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
+assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
 assertIncludesAny(bundleText, ["Organization name"], "Corporate registration organization field");
 assertIncludesAny(bundleText, ["Every portal connects to the live database foundation"], "live database registration outcome copy");
 assertIncludesAny(bundleText, ["After registration"], "registration outcome section");

@@ -4755,6 +4755,24 @@ function PublicSite({
       detail: "Admin workspace tracks audit events, release ledger, security review, Connect controls, and pilot acceptance exports."
     }
   ];
+  const portalRoutes = [
+    {
+      label: "Professional user portal",
+      icon: Fingerprint,
+      action: "Register a Passport",
+      detail: "Creates the signed-in professional profile and live Passport context before records or evidence are saved.",
+      database: "profiles, organizations, memberships, trust_records, evidence_documents",
+      portal: "professional" as const
+    },
+    {
+      label: "Corporate company portal",
+      icon: ShieldCheck,
+      action: "Register a company",
+      detail: "Creates the signed-in corporate admin, employer or staffing organization, and Verify workspace access.",
+      database: "organizations, organization_memberships, invitations, subscriptions, access_grants",
+      portal: "corporate" as const
+    }
+  ];
   const selectedPortalSteps =
     portal === "corporate"
       ? [
@@ -4916,6 +4934,33 @@ function PublicSite({
           {pilotSignals.map((signal) => (
             <span key={signal}>{signal}</span>
           ))}
+        </div>
+      </section>
+
+      <section className="public-section portal-route-section">
+        <div className="public-section-heading">
+          <span className="eyebrow">Portal registration</span>
+          <h2>Choose the account type before data is written</h2>
+        </div>
+        <div className="portal-route-grid">
+          {portalRoutes.map((route) => {
+            const Icon = route.icon;
+
+            return (
+              <article className={portal === route.portal ? "active" : ""} key={route.label}>
+                <div>
+                  <Icon size={22} />
+                  <span className="status-chip neutral">Live Supabase</span>
+                </div>
+                <strong>{route.label}</strong>
+                <p>{route.detail}</p>
+                <small>{route.database}</small>
+                <button className={route.portal === "professional" ? "primary-action" : "secondary-action"} onClick={() => openPortal(route.portal)} type="button">
+                  {route.action}
+                </button>
+              </article>
+            );
+          })}
         </div>
       </section>
 

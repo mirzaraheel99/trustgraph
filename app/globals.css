@@ -155,6 +155,7 @@ button {
 
 .public-proof div,
 .portal-grid article,
+.portal-route-grid article,
 .pricing-card,
 .public-auth-card {
   border: 1px solid var(--line);
@@ -201,6 +202,7 @@ button {
 
 .portal-grid,
 .workflow-grid,
+.portal-route-grid,
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -209,6 +211,7 @@ button {
 
 .portal-grid article,
 .workflow-grid article,
+.portal-route-grid article,
 .pricing-card {
   display: grid;
   gap: 12px;
@@ -218,6 +221,55 @@ button {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.018)),
     rgba(17, 27, 31, 0.78);
+}
+
+.portal-route-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.portal-route-grid article {
+  min-height: 244px;
+}
+
+.portal-route-grid article.active {
+  border-color: rgba(82, 214, 196, 0.34);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), rgba(134, 174, 246, 0.045)),
+    rgba(17, 27, 31, 0.84);
+}
+
+.portal-route-grid article > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.portal-route-grid svg {
+  color: var(--teal);
+}
+
+.portal-route-grid strong {
+  font-size: 20px;
+}
+
+.portal-route-grid p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.portal-route-grid small {
+  display: block;
+  padding: 9px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.026);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.portal-route-grid button {
+  margin-top: auto;
 }
 
 .portal-grid svg {
@@ -3964,6 +4016,7 @@ p {
   .metrics-grid,
   .work-grid,
   .portal-grid,
+  .portal-route-grid,
   .workflow-grid,
   .pricing-grid,
   .registration-grid,
