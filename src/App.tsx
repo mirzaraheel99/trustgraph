@@ -792,16 +792,16 @@ function AccessGrantsPanel({
   grants,
   message,
   onDecision,
-  onSampleRequest
+  onPilotRequest
 }: {
   disabled: boolean;
   grants: AccessGrantView[];
   message: string;
   onDecision: (grantId: string, status: "approved" | "declined" | "revoked") => Promise<void>;
-  onSampleRequest: () => Promise<void>;
+  onPilotRequest: () => Promise<void>;
 }) {
   const [busyGrantId, setBusyGrantId] = useState<string | null>(null);
-  const [sampleBusy, setSampleBusy] = useState(false);
+  const [pilotBusy, setPilotBusy] = useState(false);
   const [grantQuery, setGrantQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "approved" | "declined" | "expired" | "revoked">("all");
   const requestedCount = grants.filter((grant) => grant.status === "requested").length;
@@ -845,20 +845,20 @@ function AccessGrantsPanel({
         </div>
       </div>
       <div className="grant-panel-top test-tool-strip">
-        <small>Pilot QA tool for validating Passport approval before an external corporate request arrives.</small>
+        <small>Create a live pilot Access Grant request when a corporate reviewer has not submitted one yet.</small>
         <button
           className="secondary-action"
-          disabled={disabled || sampleBusy}
+          disabled={disabled || pilotBusy}
           onClick={async () => {
-            setSampleBusy(true);
+            setPilotBusy(true);
             try {
-              await onSampleRequest();
+              await onPilotRequest();
             } finally {
-              setSampleBusy(false);
+              setPilotBusy(false);
             }
           }}
         >
-          Seed QA request
+          Create pilot request
         </button>
       </div>
       <div className="grant-controls">
@@ -1359,7 +1359,7 @@ function VerifyRequestsPanel({
         </div>
       </form>
       <div className="grant-panel-top test-tool-strip">
-        <small>QA seed for adding a reviewer role while validating a new Supabase project.</small>
+        <small>Add a live Corporate Verify reviewer role for this signed-in account.</small>
         <button
           className="secondary-action"
           disabled={busy}
@@ -1372,7 +1372,7 @@ function VerifyRequestsPanel({
             }
           }}
         >
-          Add QA reviewer role
+          Add Verify reviewer role
         </button>
       </div>
       <div className="grant-list">
@@ -1971,7 +1971,7 @@ function IssuerCredentialsPanel({
             }
           }}
         >
-          Add QA issuer role
+          Add issuer role
         </button>
       </div>
       <form className="issuer-form" onSubmit={submitCredential}>
@@ -2095,7 +2095,7 @@ function OperationsQueuePanel({
             }
           }}
         >
-          Seed QA cases
+          Create pilot cases
         </button>
       </div>
       <div className="operations-controls">
@@ -3199,7 +3199,7 @@ function AccountPanel({
           </div>
         </div>
         <button className="secondary-action" disabled={!authSession || busy} onClick={() => void createOperationsRole()} type="button">
-          Add QA ops role
+          Add operations role
         </button>
       </form>
       {panelStatus ? <small>{panelStatus}</small> : null}
@@ -4217,7 +4217,7 @@ function DemoScriptPanel({
     },
     {
       label: "Operations queue",
-      detail: "Open Admin, seed QA cases if needed, then restrict, resolve, or dismiss a case.",
+      detail: "Open Admin, create pilot cases if needed, then restrict, resolve, or dismiss a case.",
       done: auditEvents.some((event) => event.action.includes("verification_case"))
     },
     {
@@ -5606,15 +5606,15 @@ function App() {
     setGrantStatus(status === "approved" ? `Access approved and ${syncedCount} records shared` : "Live Supabase Access Grants");
   }
 
-  async function createSampleGrantRequest() {
+  async function createPilotGrantRequest() {
     if (!authSession || !accountContext) {
-      throw new Error("Sign in before seeding a QA Access Grant request.");
+      throw new Error("Sign in before creating a pilot Access Grant request.");
     }
 
     await createSampleAccessGrant(authSession.accessToken);
     const items = await loadAccessGrants(accountContext.profile.id, authSession.accessToken);
     setAccessGrants(items);
-    setGrantStatus("QA Access Grant request created");
+    setGrantStatus("Live pilot Access Grant request created");
   }
 
   async function revokeLiveConsentAuthorization(consentId: string) {
@@ -5692,7 +5692,7 @@ function App() {
 
   async function createSampleReviewerRole() {
     if (!authSession || !accountContext) {
-      throw new Error("Sign in before adding a QA reviewer role.");
+      throw new Error("Sign in before adding a Verify reviewer role.");
     }
 
     await createSampleEmployerReviewerMembership(authSession.accessToken);
@@ -5703,7 +5703,7 @@ function App() {
       setActiveMembershipId(reviewerMembership.id);
       setWorkspaceId("verify");
     }
-    setVerifyStatus("QA employer reviewer role created");
+    setVerifyStatus("Corporate Verify reviewer role created");
   }
 
   async function createLiveCredentialIssuerRole() {
@@ -5716,7 +5716,7 @@ function App() {
     setAccountContext(context);
     setActiveMembershipId(membership.id);
     setWorkspaceId("verify");
-    setIssuerStatus("QA credential issuer role created");
+    setIssuerStatus("Credential issuer role created");
   }
 
   async function issueLiveCredential(input: {
@@ -6026,7 +6026,7 @@ function App() {
     ]);
     setOperationsCases(items);
     setAuditEvents(events);
-    setOperationsStatus(added ? `Created ${added} QA operations cases` : "QA operations cases already exist");
+    setOperationsStatus(added ? `Created ${added} pilot operations cases` : "Pilot operations cases already exist");
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
@@ -6396,7 +6396,7 @@ function App() {
                   grants={accessGrants}
                   message={grantStatus}
                   onDecision={handleGrantDecision}
-                  onSampleRequest={createSampleGrantRequest}
+                  onPilotRequest={createPilotGrantRequest}
                 />
                 <ConsentAuthorizationsPanel
                   authorizations={consentAuthorizations}

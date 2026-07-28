@@ -76,5 +76,7 @@ assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
 assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
 assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
+assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
+assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
 
 console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal, recovery, and data-mode copy verified)`);
