@@ -51,7 +51,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
 In Supabase Auth URL settings, set the Site URL to `https://mirzaraheel99.github.io/trustgraph/` and add the same URL under Redirect URLs. If Site URL remains `localhost`, verification emails will open a localhost link instead of the hosted app.
-Until those variables are present, the app stays in demo mode and keeps the mock RBAC account context available.
+Until those variables are present, the app stays in guided preview mode and keeps a local RBAC account context available.
 
 For database migrations, add these GitHub repository secrets and run the `Apply Supabase Migrations` workflow manually:
 
@@ -76,11 +76,11 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `002_trustgraph_rls.sql`: first-pass row level security for RBAC, professional-owned records, scoped sharing, and audit access.
 - `003_trustgraph_workflow_functions.sql`: updated timestamp triggers, audit event writer, access grant decisions, and trust record status changes.
 - `005_professional_onboarding_rpc.sql`: self-service professional profile, personal organization, and membership creation.
-- `006_sample_access_grant_rpc.sql`: development sample employer Access Grant request for end-to-end sharing checks.
-- `007_sample_employer_reviewer_rpc.sql`: development sample employer reviewer membership for Verify workspace checks.
+- `006_sample_access_grant_rpc.sql`: QA employer Access Grant request for end-to-end sharing checks.
+- `007_sample_employer_reviewer_rpc.sql`: QA employer reviewer membership for Verify workspace checks.
 - `008_sync_access_grant_records_rpc.sql`: syncs a Professional's current Passport records into approved Access Grants.
 - `009_corporate_account_rbac_rpc.sql`: self-service employer/staffing account creation and scoped RBAC activation.
-- `010_verification_operations_queue.sql`: TrustGraph operations case table, sample verifier role, queue seeding, and case decisions.
+- `010_verification_operations_queue.sql`: TrustGraph operations case table, QA verifier role, queue seeding, and case decisions.
 - `011_operations_audit_hardening.sql`: operations case timestamp trigger and operations organization helper.
 - `012_evidence_documents_notifications.sql`: evidence document metadata, notification events, RLS, and evidence linking.
 - `013_reference_requests_foundation.sql`: structured reference request lifecycle and audit coverage.

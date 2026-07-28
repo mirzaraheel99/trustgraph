@@ -72,7 +72,7 @@ export function buildAdvisorySummary(input: {
       ],
       nextActions: [
         highCases ? "Open the highest-priority verification case first." : "Review recent audit events for unusual activity.",
-        casesOpen ? "Move stale cases into review or resolution." : "Seed sample cases only when testing operations flows.",
+        casesOpen ? "Move stale cases into review or resolution." : "Seed QA cases only when validating operations flows.",
         unreadNotifications ? "Mark handled notifications as read." : "Keep notification queue clear."
       ],
       sourceMix: [

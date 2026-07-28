@@ -3954,7 +3954,7 @@ function DemoScriptPanel({
       done: teamMembers.length > 0 || teamInvitations.length > 0
     },
     {
-      label: "Billing stub",
+      label: "Pilot subscription",
       detail: "Activate a tracked pilot subscription and confirm the audit event writes.",
       done: subscriptions.some((subscription) => subscription.status !== "cancelled")
     },

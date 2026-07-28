@@ -16,7 +16,7 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 10. Admin operations: verification cases, reason codes, decisions, release ledger, audit exports, and security runbook export are implemented.
 11. Connect surface: API clients, webhook subscriptions, and status controls are implemented as a pilot control plane.
 12. Advisory and notifications: deterministic advisory summary and workflow notification status controls are implemented.
-13. Pilot readiness: demo script, runbook, deployment smoke checks, and human-decision boundaries are documented.
+13. Pilot readiness: pilot acceptance script, runbook, deployment smoke checks, and human-decision boundaries are documented.
 
 ## Verification Loop
 
