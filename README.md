@@ -152,5 +152,6 @@ The `docs/` folder contains the planning documents used to shape this foundation
 - `24` through `28`: master requirements index, traceability matrix, module dependency map, release backlog, and Codex build instructions.
 - `PILOT_RUNBOOK.md`: short v1 operator checklist for release gates, workflow acceptance, security boundary, and human decisions.
 - `V1_READINESS_CHECKLIST.md`: 13-track implementation coverage, verification loop, and production stop conditions.
+- `UI_COPY_HANDOFF.md`: premium SaaS UI/copy brief for design-agent or contractor polish without breaking v1 workflows.
 
 The Admin workspace includes a 13-track foundation alignment panel so the live product surface stays connected to the roadmap.
