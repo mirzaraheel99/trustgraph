@@ -4099,7 +4099,7 @@ function PublicSite({
   const [organizationName, setOrganizationName] = useState("");
   const [organizationDomain, setOrganizationDomain] = useState("");
   const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
-  const [message, setMessage] = useState("Create your TrustGraph account");
+  const [message, setMessage] = useState("Create an account. Email verification may be required before first login.");
   const [busy, setBusy] = useState(false);
   const authReady = isSupabaseConfigured();
   const authRedirectUrl =
@@ -4166,40 +4166,40 @@ function PublicSite({
     {
       name: "Professional",
       price: "$0",
-      detail: "Own your Passport, records, references, and sharing consent.",
-      points: ["Private Passport", "Evidence uploads", "Access Grants", "Reference requests"]
+      detail: "Build a private Passport and decide exactly which records can be shared.",
+      points: ["Private records", "Evidence uploads", "Access Grants", "Reference requests"]
     },
     {
       name: "Corporate Verify",
       price: "$149",
-      detail: "For employers and staffing teams reviewing approved shared records.",
+      detail: "Review approved Passport records with scoped access, team roles, and audit history.",
       points: ["Corporate RBAC", "Missing-record requests", "Readiness review", "Audit trail"]
     },
     {
       name: "TrustGraph Scale",
       price: "Custom",
-      detail: "For issuer, integration, compliance, and multi-team workflows.",
+      detail: "For issuers, integrations, compliance operations, and multi-team rollout.",
       points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"]
     }
   ];
   const liveWorkflow = [
     {
-      label: "Professional",
-      value: "Passport",
-      detail: "Create records, attach evidence, request references, and approve corporate Access Grants."
+      label: "1",
+      value: "Build the Passport",
+      detail: "Professionals add work records, credentials, training, references, and evidence."
     },
     {
-      label: "Corporate",
-      value: "Verify",
-      detail: "Register an employer or staffing workspace, invite reviewers, and work approved records."
+      label: "2",
+      value: "Grant scoped access",
+      detail: "Employers and staffing teams request only the records needed for a workflow."
     },
     {
-      label: "Admin",
-      value: "Control",
-      detail: "Monitor operations cases, audit events, notifications, Connect clients, and readiness status."
+      label: "3",
+      value: "Operate with audit",
+      detail: "Admin teams monitor cases, release readiness, security checks, and exports."
     }
   ];
-  const pilotSignals = ["Supabase Auth", "Real database repositories", "Private evidence storage", "GitHub Pages deployment"];
+  const pilotSignals = ["Live Supabase Auth", "Private evidence storage", "Scoped RBAC", "Audit-ready workflows"];
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -4218,7 +4218,7 @@ function PublicSite({
         </div>
         <div className="public-nav-actions">
           <button className="secondary-action" onClick={onOpenDemo}>
-            Open demo
+            Open product
           </button>
           <button className="primary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView()}>
             Get started
@@ -4228,11 +4228,11 @@ function PublicSite({
 
       <section className="public-hero">
         <div>
-          <span className="eyebrow">Passport, Verify, Admin, Connect</span>
-          <h1>Verified workforce records for professionals and corporate hiring teams.</h1>
+          <span className="eyebrow">Evidence-first workforce records</span>
+          <h1>Verified professional records, shared only with permission.</h1>
           <p>
-            TrustGraph gives professionals a private evidence-first Passport and gives employers or staffing agencies
-            a permissioned Verify portal for approved records, missing items, credentials, and audit-backed decisions.
+            TrustGraph gives professionals a private Passport for work history, credentials, references, training, and
+            evidence. Employers and staffing teams use Verify to request scoped access and review only approved records.
           </p>
           <div className="public-hero-actions">
             <button className="primary-action" onClick={() => openPortal("professional")}>
@@ -4247,14 +4247,14 @@ function PublicSite({
               <Fingerprint size={18} />
               <span>
                 <strong>Professionals</strong>
-                <small>Build a private Passport and approve each Access Grant.</small>
+                <small>Own records, evidence, consent, and Access Grants.</small>
               </span>
             </button>
             <button className={portal === "corporate" ? "active" : ""} onClick={() => openPortal("corporate")}>
               <ShieldCheck size={18} />
               <span>
                 <strong>Corporate teams</strong>
-                <small>Register an employer or staffing workspace with RBAC.</small>
+                <small>Request approved records through role-based Verify workspaces.</small>
               </span>
             </button>
           </div>
@@ -4262,47 +4262,47 @@ function PublicSite({
         <aside className="public-proof">
           <div>
             <span>13</span>
-            <small>foundation tracks</small>
+            <small>planned foundation tracks</small>
           </div>
           <div>
             <span>Live</span>
-            <small>Supabase auth, database, storage</small>
+            <small>Auth, database, storage, audit</small>
           </div>
           <div>
             <span>RBAC</span>
-            <small>Professional, corporate, issuer, admin</small>
+            <small>Professional, corporate, issuer, admin roles</small>
           </div>
         </aside>
       </section>
 
       <section className="public-section">
         <div className="public-section-heading">
-          <span className="eyebrow">Portals</span>
-          <h2>One product, separate experiences</h2>
+          <span className="eyebrow">Operating model</span>
+          <h2>Separate portals, one verified record graph</h2>
         </div>
         <div className="portal-grid">
           <article>
             <Fingerprint size={24} />
             <strong>Professional Passport</strong>
-            <p>Create records, upload evidence, request references, approve Access Grants, and control sharing.</p>
+            <p>Create records, attach private evidence, request references, and approve each Access Grant.</p>
           </article>
           <article>
             <ShieldCheck size={24} />
             <strong>Corporate Verify</strong>
-            <p>Review approved shared Passports, request missing records, manage issuer workflows, and monitor readiness.</p>
+            <p>Review approved records, request missing items, invite reviewers, and keep scope visible.</p>
           </article>
           <article>
             <Network size={24} />
             <strong>Connect and Admin</strong>
-            <p>Operate API clients, webhooks, audit events, verification cases, and source-grounded advisory summaries.</p>
+            <p>Operate Connect clients, audit events, release ledger, workflow QA, and security review.</p>
           </article>
         </div>
       </section>
 
       <section className="public-section workflow-section">
         <div className="public-section-heading">
-          <span className="eyebrow">Live workflow</span>
-          <h2>From registration to verified workforce decisions</h2>
+          <span className="eyebrow">Workflow</span>
+          <h2>From record ownership to permissioned review</h2>
         </div>
         <div className="workflow-grid">
           {liveWorkflow.map((item) => (
@@ -4317,8 +4317,8 @@ function PublicSite({
 
       <section className="public-section pricing-section">
         <div className="public-section-heading">
-          <span className="eyebrow">Pricing</span>
-          <h2>Start simple, scale into corporate workflows</h2>
+          <span className="eyebrow">Pilot access</span>
+          <h2>Start with controlled workflows, then scale</h2>
         </div>
         <div className="pricing-grid">
           {pricing.map((plan) => (
@@ -4341,22 +4341,22 @@ function PublicSite({
 
       <section className="public-auth-section" id="portal-auth">
         <div>
-          <span className="eyebrow">Login and registration</span>
+          <span className="eyebrow">Portal access</span>
           <h2>{portal === "corporate" ? "Corporate portal access" : "Professional Passport access"}</h2>
           <p>
             {portal === "corporate"
-              ? "Sign in or register, then create an employer or staffing agency account from the live RBAC panel."
-              : "Sign in or register to create your professional account and start building your private Passport."}
+              ? "Create a user account, verify email, then provision an employer or staffing workspace."
+              : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
           <div className="auth-card-heading">
             <span className="status-chip neutral">{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</span>
-            <strong>{mode === "signup" ? "Create live account" : "Login to portal"}</strong>
+            <strong>{mode === "signup" ? "Create account" : "Sign in"}</strong>
             <small>
               {portal === "corporate"
-                ? "Create a company workspace, invite reviewers, activate billing, and request Passport access."
-                : "Create your professional profile, add records, upload evidence, and control sharing."}
+                ? "Company workspace creation starts after email verification and login."
+                : "Passport setup starts after email verification and login."}
             </small>
           </div>
           <div className="portal-tabs">
