@@ -82,57 +82,57 @@ export const foundationTracks: FoundationTrack[] = [
     id: "audit",
     label: "Audit History",
     planStep: "Steps 07, 15",
-    status: "foundation",
-    detail: "Audit events are written and visible in Admin.",
-    tone: "info"
+    status: "deployed",
+    detail: "Audit events, filters, exports, and material workflow history are visible in Admin.",
+    tone: "success"
   },
   {
     id: "notifications",
     label: "Notifications",
     planStep: "Step 14",
-    status: "foundation",
+    status: "deployed",
     detail: "In-app events, recipient status controls, and audit-backed inbox actions are live.",
-    tone: "info"
+    tone: "success"
   },
   {
     id: "documents",
     label: "Evidence Documents",
     planStep: "Steps 07, 15",
-    status: "foundation",
-    detail: "Private Supabase Storage upload and evidence metadata linking are live.",
-    tone: "info"
+    status: "deployed",
+    detail: "Private Supabase Storage upload, evidence metadata, signed preview, and download controls are live.",
+    tone: "success"
   },
   {
     id: "references",
     label: "References",
     planStep: "Phase 3",
-    status: "foundation",
+    status: "deployed",
     detail: "Structured reference requests and lifecycle states are live.",
-    tone: "info"
+    tone: "success"
   },
   {
     id: "credentials",
     label: "Credentials",
     planStep: "Phase 2",
-    status: "foundation",
+    status: "deployed",
     detail: "Credential issuer role, verified issue workflow, audit, and notifications are live.",
-    tone: "info"
+    tone: "success"
   },
   {
     id: "connect",
     label: "Connect APIs",
     planStep: "Step 17",
-    status: "foundation",
+    status: "deployed",
     detail: "API client registry, webhook subscriptions, status controls, and audit are live.",
-    tone: "info"
+    tone: "success"
   },
   {
     id: "ai",
     label: "TrustGraph AI",
     planStep: "Step 18",
-    status: "foundation",
+    status: "deployed",
     detail: "Deterministic source-grounded advisory summaries are live in each workspace.",
-    tone: "info"
+    tone: "success"
   }
 ];
 

@@ -80,6 +80,8 @@ assertIncludesAny(bundleText, ["Guided preview mode"], "preview mode indicator")
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
 assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
 assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
+assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment register");
+assertIncludesAny(bundleText, ["Human decision gates"], "production decision gate register");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");

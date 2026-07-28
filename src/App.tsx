@@ -2603,12 +2603,18 @@ function PlanAlignmentPanel() {
   const plannedCount = foundationTracks.filter((track) => track.status === "planned").length;
   const coveredProfileAreas = lockedProfileAreas.filter((area) => area.status !== "planned").length;
   const plannedProfileAreas = lockedProfileAreas.length - coveredProfileAreas;
+  const productionGates = [
+    "Stripe products, taxes, invoices, refunds, dunning, and webhook reconciliation.",
+    "External RLS and private evidence-storage security review.",
+    "Legal review for background-check-adjacent language and adverse-action boundaries.",
+    "Named pilot customers, onboarding owner, support process, and incident response owner."
+  ];
 
   return (
     <section className="plan-panel">
       <div className="mini-heading">
         <ClipboardCheck size={16} />
-        <strong>13-track foundation alignment</strong>
+        <strong>13-track v1 alignment</strong>
       </div>
       <div className="plan-summary-grid">
         <div>
@@ -2631,6 +2637,18 @@ function PlanAlignmentPanel() {
         </div>
         <span className="status-chip success">database live</span>
       </article>
+      <div className="production-gate-panel">
+        <div>
+          <span className="eyebrow">Human decision gates</span>
+          <strong>Pilot-ready, not unrestricted production traffic</strong>
+          <small>These approvals remain outside the automated build loop and must be resolved before live payments or regulated employment workflows.</small>
+        </div>
+        <div className="production-gate-list">
+          {productionGates.map((gate) => (
+            <span key={gate}>{gate}</span>
+          ))}
+        </div>
+      </div>
       <div className="scope-coverage-panel">
         <div className="scope-coverage-heading">
           <div>
