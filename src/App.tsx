@@ -3744,6 +3744,10 @@ function TeamMembersPanel({
           <strong>{suspendedCount}</strong>
         </div>
       </div>
+      <div className="team-source-strip">
+        <span className="status-chip success">Membership database</span>
+        <small>Reads live organization memberships and profile rows from Supabase. Current signed-in users cannot suspend their own active seat.</small>
+      </div>
       <div className="team-controls">
         <input
           onChange={(event) => setMemberQuery(event.target.value)}
