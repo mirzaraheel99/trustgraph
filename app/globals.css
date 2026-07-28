@@ -994,6 +994,28 @@ p,
   background: rgba(255, 255, 255, 0.026);
 }
 
+.onboarding-item > div {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.mini-action {
+  min-height: 28px;
+  padding: 0 9px;
+  color: var(--text);
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.08);
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.mini-action:hover {
+  border-color: rgba(82, 214, 196, 0.3);
+  background: rgba(82, 214, 196, 0.1);
+}
+
 .demo-step {
   display: flex;
   align-items: flex-start;
@@ -3585,6 +3607,7 @@ p {
   .public-nav,
   .panel-heading,
   .record-row-main,
+  .onboarding-item,
   .grant-panel-top,
   .grant-card,
   .consent-card,
@@ -3617,6 +3640,7 @@ p {
 
   .grant-actions button,
   .operations-actions button,
+  .mini-action,
   .evidence-document-actions button {
     flex: 1 1 120px;
   }

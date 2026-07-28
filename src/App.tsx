@@ -1355,7 +1355,7 @@ function VerifyRequestsPanel({
         </div>
       </form>
       <div className="grant-panel-top test-tool-strip">
-        <small>Test data tool for quickly adding a reviewer role while validating a new Supabase project.</small>
+        <small>QA seed for adding a reviewer role while validating a new Supabase project.</small>
         <button
           className="secondary-action"
           disabled={busy}
@@ -3771,7 +3771,9 @@ function OnboardingChecklistPanel({
   livePassportRecords,
   organizationSubscriptions,
   teamInvitations,
-  teamMembers
+  teamMembers,
+  onOpenHostedRegistration,
+  onOpenWorkspace
 }: {
   accessGrants: AccessGrantView[];
   accountContext: AccountContext | null;
@@ -3781,6 +3783,8 @@ function OnboardingChecklistPanel({
   organizationSubscriptions: DbOrganizationSubscription[];
   teamInvitations: DbOrganizationInvitation[];
   teamMembers: OrganizationMemberView[];
+  onOpenHostedRegistration: () => void;
+  onOpenWorkspace: (workspaceId: WorkspaceId) => void;
 }) {
   const hasCorporateContext = Boolean(
     accountContext?.memberships.some((membership) =>
@@ -3789,26 +3793,40 @@ function OnboardingChecklistPanel({
   );
   const hasSensitiveControls = livePassportRecords.some((record) => record.sensitivity && record.sensitivity !== "standard");
   const activeSubscription = organizationSubscriptions.some((subscription) => subscription.status !== "cancelled");
-  const checklist = [
+  const checklist: Array<{
+    label: string;
+    detail: string;
+    done: boolean;
+    actionLabel: string;
+    onAction: () => void;
+  }> = [
     {
       label: "Live account",
       detail: authSession ? authSession.user.email : "Sign in or create a Supabase account",
-      done: Boolean(authSession && accountContext)
+      done: Boolean(authSession && accountContext),
+      actionLabel: authSession ? "View account" : "Register",
+      onAction: authSession ? () => onOpenWorkspace("passport") : onOpenHostedRegistration
     },
     {
       label: "Passport foundation",
       detail: livePassportRecords.length ? `${livePassportRecords.length} live record${livePassportRecords.length === 1 ? "" : "s"}` : "Add the first Passport record",
-      done: livePassportRecords.length > 0
+      done: livePassportRecords.length > 0,
+      actionLabel: "Open Passport",
+      onAction: () => onOpenWorkspace("passport")
     },
     {
       label: "Privacy controls",
       detail: hasSensitiveControls ? "Sensitive records classified" : "Classify sensitive records and consent rules",
-      done: hasSensitiveControls || consentAuthorizations.length > 0
+      done: hasSensitiveControls || consentAuthorizations.length > 0,
+      actionLabel: "Open consent",
+      onAction: () => onOpenWorkspace("passport")
     },
     {
       label: "Corporate workspace",
       detail: hasCorporateContext ? "Employer or staffing context loaded" : "Create or accept a corporate account",
-      done: hasCorporateContext
+      done: hasCorporateContext,
+      actionLabel: hasCorporateContext ? "Open Verify" : "Corporate signup",
+      onAction: hasCorporateContext ? () => onOpenWorkspace("verify") : onOpenHostedRegistration
     },
     {
       label: "Team and plan",
@@ -3817,12 +3835,16 @@ function OnboardingChecklistPanel({
         : teamMembers.length || teamInvitations.length
           ? "Team motion started"
           : "Activate a plan and invite reviewers",
-      done: activeSubscription && (teamMembers.length > 0 || teamInvitations.length > 0)
+      done: activeSubscription && (teamMembers.length > 0 || teamInvitations.length > 0),
+      actionLabel: "Open account",
+      onAction: () => onOpenWorkspace("verify")
     },
     {
       label: "Sharing loop",
       detail: accessGrants.length ? `${accessGrants.length} Access Grant${accessGrants.length === 1 ? "" : "s"}` : "Request, approve, or sync an Access Grant",
-      done: accessGrants.some((grant) => grant.status === "approved")
+      done: accessGrants.some((grant) => grant.status === "approved"),
+      actionLabel: "Open sharing",
+      onAction: () => onOpenWorkspace(hasCorporateContext ? "verify" : "passport")
     }
   ];
   const completed = checklist.filter((item) => item.done).length;
@@ -3851,6 +3873,9 @@ function OnboardingChecklistPanel({
               <strong>{item.label}</strong>
               <small>{item.detail}</small>
             </div>
+            <button className="mini-action" onClick={item.onAction} type="button">
+              {item.done ? "Review" : item.actionLabel}
+            </button>
           </article>
         ))}
       </div>
@@ -3960,7 +3985,7 @@ function DemoScriptPanel({
     <section className="demo-panel">
       <div className="mini-heading">
         <ClipboardCheck size={16} />
-        <strong>Demo/test script v1</strong>
+        <strong>Pilot acceptance script v1</strong>
       </div>
       <div className="demo-step-list">
         {steps.map((step, index) => (
@@ -4395,7 +4420,7 @@ function PublicSite({
             {mode === "signin" ? "Login" : "Create account"}
           </button>
           <button className="secondary-action" onClick={onOpenDemo} type="button">
-            Explore demo app
+            Open guided preview
           </button>
           <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
             Resend verification
@@ -5605,7 +5630,7 @@ function App() {
     setConnectStatus(`Webhook moved to ${updated.status}`);
   }
 
-  if (showPublicSite && !authSession) {
+  if (showPublicSite) {
     return (
       <PublicSite
         onCorporateSession={(session, input) => {
@@ -5702,6 +5727,8 @@ function App() {
           organizationSubscriptions={organizationSubscriptions}
           teamInvitations={teamInvitations}
           teamMembers={teamMembers}
+          onOpenHostedRegistration={() => setShowPublicSite(true)}
+          onOpenWorkspace={changeWorkspace}
         />
         <DemoScriptPanel
           accessGrants={accessGrants}
