@@ -293,5 +293,5 @@ export function signOut() {
 }
 
 export function authModeLabel() {
-  return isSupabaseConfigured() ? "Live Supabase Auth ready" : "Demo mode - add Supabase env vars";
+  return isSupabaseConfigured() ? "Live Supabase Auth ready" : "Preview mode - add Supabase env vars";
 }
