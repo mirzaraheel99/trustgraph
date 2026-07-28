@@ -5633,6 +5633,7 @@ function App() {
           </div>
         </div>
 
+        <div className="sidebar-section-label">Workspaces</div>
         <div className="workspace-stack">
           {workspaces.map((item) => (
             <WorkspaceButton
@@ -5645,6 +5646,7 @@ function App() {
           ))}
         </div>
 
+        <div className="sidebar-section-label">Account</div>
         <AccountPanel
           accountUser={accountUser}
           activeMembership={activeMembership}
@@ -5716,6 +5718,7 @@ function App() {
         />
         <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
 
+        <div className="sidebar-section-label">Current workspace</div>
         <nav className="module-nav" aria-label="Workspace modules">
           {workspace.nav.map((item) => {
             const Icon = item.icon;
@@ -5751,6 +5754,9 @@ function App() {
             </div>
           </div>
           <div className="topbar-actions">
+            <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+              Public site
+            </button>
             <button aria-label="View notifications">
               <Bell size={18} />
             </button>

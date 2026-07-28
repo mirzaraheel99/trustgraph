@@ -354,13 +354,16 @@ button {
   position: sticky;
   top: 0;
   height: 100vh;
+  overflow-y: auto;
   padding: 22px;
   border-right: 1px solid var(--line);
-  background: rgba(8, 13, 15, 0.72);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.026), transparent 32%),
+    rgba(8, 13, 15, 0.82);
   backdrop-filter: blur(22px);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 .brand {
@@ -379,6 +382,14 @@ button {
   color: #03100e;
   background: linear-gradient(135deg, #d9fff8, var(--teal));
   font-weight: 900;
+}
+
+.sidebar-section-label {
+  margin: 6px 0 -4px;
+  color: var(--faint);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
 }
 
 .brand strong,
@@ -427,9 +438,13 @@ p,
 }
 
 .workspace-button {
-  min-height: 62px;
+  min-height: 58px;
   padding: 12px;
   text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .workspace-button span,
@@ -447,6 +462,11 @@ p,
   box-shadow: 0 12px 30px rgba(82, 214, 196, 0.08);
 }
 
+.workspace-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+}
+
 .workspace-button:disabled {
   cursor: not-allowed;
   color: var(--faint);
@@ -455,12 +475,12 @@ p,
 }
 
 .module-nav {
-  padding-top: 8px;
-  border-top: 1px solid var(--line);
+  gap: 6px;
+  padding-top: 2px;
 }
 
 .module-nav button {
-  height: 40px;
+  height: 36px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1298,7 +1318,7 @@ p,
 }
 
 .workspace {
-  padding: 28px;
+  padding: 28px clamp(22px, 3vw, 38px);
   min-width: 0;
 }
 
@@ -1356,14 +1376,21 @@ p {
 
 .topbar-actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
 }
 
-.topbar-actions button {
+.topbar-actions button:not(.secondary-action):not(.primary-action) {
   width: 44px;
   height: 44px;
   display: grid;
   place-items: center;
+}
+
+.topbar-actions .secondary-action,
+.topbar-actions .primary-action {
+  min-height: 44px;
 }
 
 .hero,
@@ -1375,7 +1402,7 @@ p {
 
 .hero {
   grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.92fr) minmax(280px, 0.7fr);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .hero-card,
@@ -1390,7 +1417,7 @@ p {
 }
 
 .hero-card {
-  min-height: 236px;
+  min-height: 226px;
   padding: 20px;
   overflow: hidden;
 }
@@ -3433,6 +3460,10 @@ p {
   .module-nav,
   .membership-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sidebar-section-label {
+    margin-top: 12px;
   }
 
   .hero,
