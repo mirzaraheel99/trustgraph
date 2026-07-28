@@ -3660,19 +3660,59 @@ p {
   line-height: 1.4;
 }
 
-.production-gate-list {
+.production-gate-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.production-gate-heading .secondary-action {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 11px;
+  font-size: 12px;
+}
+
+.production-gate-register {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
-.production-gate-list span {
-  min-height: 42px;
-  padding: 9px 10px;
-  color: var(--text);
+.production-gate-register > .eyebrow {
+  grid-column: 1 / -1;
+}
+
+.production-gate-register article {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 108px;
+  padding: 10px;
   border: 1px solid rgba(255, 193, 7, 0.18);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.035);
+}
+
+.production-gate-register article > div {
+  min-width: 0;
+}
+
+.production-gate-register article > div:last-child {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+  text-align: right;
+}
+
+.production-gate-register strong,
+.production-gate-register small {
+  overflow-wrap: anywhere;
+}
+
+.production-gate-register small {
   font-size: 12px;
   line-height: 1.35;
 }
@@ -4292,7 +4332,7 @@ p {
   .plan-summary-grid,
   .policy-grid,
   .policy-summary-grid,
-  .production-gate-list,
+  .production-gate-register,
   .qa-check-grid,
   .release-summary-grid,
   .scope-area-grid,

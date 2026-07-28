@@ -92,6 +92,8 @@ assertIncludesAny(bundleText, ["Human approval required before production traffi
 assertIncludesAny(bundleText, ["human_decision_gate"], "security runbook human decision export rows");
 assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment register");
 assertIncludesAny(bundleText, ["Human decision gates"], "production decision gate register");
+assertIncludesAny(bundleText, ["Export production gates"], "production gate export control");
+assertIncludesAny(bundleText, ["external sign-off required"], "external security gate status");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");

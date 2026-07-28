@@ -2614,11 +2614,32 @@ function PlanAlignmentPanel() {
   const coveredProfileAreas = lockedProfileAreas.filter((area) => area.status !== "planned").length;
   const plannedProfileAreas = lockedProfileAreas.length - coveredProfileAreas;
   const productionGates = [
-    "Stripe products, taxes, invoices, refunds, dunning, and webhook reconciliation.",
-    "External RLS and private evidence-storage security review.",
-    "Legal review for background-check-adjacent language and adverse-action boundaries.",
-    "Named pilot customers, onboarding owner, support process, and incident response owner."
+    {
+      label: "Stripe billing launch",
+      owner: "Business operations",
+      status: "human decision required",
+      evidence: "Products, taxes, invoices, refunds, dunning, and webhook reconciliation approved."
+    },
+    {
+      label: "External RLS and storage review",
+      owner: "Security reviewer",
+      status: "external sign-off required",
+      evidence: "RLS policies, private evidence storage, and signed URL handling reviewed."
+    },
+    {
+      label: "Legal and employment language",
+      owner: "Legal counsel",
+      status: "legal review required",
+      evidence: "Background-check-adjacent wording, adverse-action boundaries, and regulated workflow language approved."
+    },
+    {
+      label: "Pilot operations owner",
+      owner: "Founder/operator",
+      status: "pilot roster required",
+      evidence: "Named pilot customers, onboarding owner, support path, and incident response owner documented."
+    }
   ];
+  const gateExportName = `trustgraph-production-gates-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return (
     <section className="plan-panel">
@@ -2648,14 +2669,29 @@ function PlanAlignmentPanel() {
         <span className="status-chip success">database live</span>
       </article>
       <div className="production-gate-panel">
-        <div>
-          <span className="eyebrow">Human decision gates</span>
-          <strong>Pilot-ready, not unrestricted production traffic</strong>
-          <small>These approvals remain outside the automated build loop and must be resolved before live payments or regulated employment workflows.</small>
+        <div className="production-gate-heading">
+          <div>
+            <span className="eyebrow">Human decision gates</span>
+            <strong>Pilot-ready, not unrestricted production traffic</strong>
+            <small>These approvals remain outside the automated build loop and must be resolved before live payments or regulated employment workflows.</small>
+          </div>
+          <button className="secondary-action" onClick={() => downloadTextFile(gateExportName, productionGatesToCsv(productionGates), "text/csv")} type="button">
+            Export production gates
+          </button>
         </div>
-        <div className="production-gate-list">
+        <div className="production-gate-register">
+          <span className="eyebrow">Production gate register</span>
           {productionGates.map((gate) => (
-            <span key={gate}>{gate}</span>
+            <article key={gate.label}>
+              <div>
+                <strong>{gate.label}</strong>
+                <small>{gate.evidence}</small>
+              </div>
+              <div>
+                <span className="status-chip warning">{gate.status}</span>
+                <small>{gate.owner}</small>
+              </div>
+            </article>
           ))}
         </div>
       </div>
@@ -3129,6 +3165,15 @@ function billingDecisionGatesToCsv(gates: Array<{ label: string; owner: string; 
   const rows = [
     ["gate", "owner", "status"],
     ...gates.map((gate) => [gate.label, gate.owner, gate.status])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function productionGatesToCsv(gates: Array<{ label: string; owner: string; status: string; evidence: string }>) {
+  const rows = [
+    ["gate", "owner", "status", "evidence_required"],
+    ...gates.map((gate) => [gate.label, gate.owner, gate.status, gate.evidence])
   ];
 
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
