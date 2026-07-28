@@ -121,13 +121,14 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 5. Corporate users invite team members, activate subscriptions, and request Access Grants from professionals by email.
 6. Switch to Verify to review approved shared records.
 7. Request structured references, missing records, or issuer-created credentials as needed.
-8. Upload private evidence files to Supabase Storage and link them to Passport records.
-9. Switch to Admin, seed operations cases only for test workflows, and review/restrict/resolve cases.
-10. Manage Connect API clients and webhook subscriptions from Admin.
-11. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
-12. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
-13. Admin audit trail shows recent material workflow events.
-14. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
+8. Professionals review and resolve Corporate missing-record requests from Passport.
+9. Upload private evidence files to Supabase Storage and link them to Passport records.
+10. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
+11. Manage Connect API clients and webhook subscriptions from Admin.
+12. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
+13. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
+14. Admin audit trail shows recent material workflow events.
+15. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
 
 ## Live Database Status
 

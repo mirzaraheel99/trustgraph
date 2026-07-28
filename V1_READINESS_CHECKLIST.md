@@ -10,7 +10,7 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 4. RBAC: Professional, Corporate, Verify, Issuer, Admin, Auditor, and System roles are mapped to workspace access and permissions.
 5. Access Grants: corporate requests, Passport approval/decline/revoke, and shared-record sync are implemented.
 6. Consent controls: sensitive and restricted records can require explicit consent and consent can be revoked.
-7. References and missing records: structured reference requests and Verify missing-record requests are implemented.
+7. References and missing records: structured reference requests, Corporate Verify missing-record requests, and Professional Passport request resolution are implemented.
 8. Issuer workflow: issuer role and verified credential creation are implemented.
 9. Evidence preview/download: evidence metadata, upload, signed URL preview, and download controls are implemented.
 10. Admin operations: verification cases, reason codes, decisions, release ledger, audit exports, and security runbook export are implemented.
@@ -32,7 +32,7 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 10. Approve the Access Grant from Passport.
 11. Confirm shared records render in Verify with scope context.
 12. Create a consent authorization for a sensitive record, then revoke it.
-13. Open Admin, seed QA cases if needed, resolve or restrict one case, export audit CSV, and export the security runbook.
+13. Open Admin, create pilot cases if needed, resolve or restrict one case, export audit CSV, and export the security runbook.
 
 ## Stop Conditions
 
