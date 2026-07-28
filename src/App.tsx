@@ -1624,6 +1624,7 @@ function CorporateDirectoryPanel({
     const haystack = `${row.name} ${row.detail} ${row.signal}`.toLowerCase();
     return matchesStatus && haystack.includes(directoryQuery.trim().toLowerCase());
   });
+  const exportName = `trustgraph-corporate-directory-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return (
     <section className="corporate-directory-panel">
@@ -1645,6 +1646,14 @@ function CorporateDirectoryPanel({
           <option value="declined">Declined</option>
           <option value="revoked">Revoked</option>
         </select>
+        <button
+          className="secondary-action"
+          disabled={!filteredRows.length}
+          onClick={() => downloadTextFile(exportName, corporateDirectoryToCsv(filteredRows), "text/csv")}
+          type="button"
+        >
+          Export CSV
+        </button>
       </div>
       <div className="directory-metrics">
         <div>
@@ -2904,6 +2913,35 @@ function auditEventsToCsv(events: DbAuditEvent[]) {
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function corporateDirectoryToCsv(
+  rows: Array<{ id: string; name: string; detail: string; rawStatus: string; status: string; signal: string }>
+) {
+  const csvRows = [
+    ["access_grant_id", "professional_name", "professional_email", "status", "purpose"],
+    ...rows.map((row) => [row.id, row.name, row.detail, row.status, row.signal])
+  ];
+
+  return csvRows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function teamMembersToCsv(members: OrganizationMemberView[]) {
+  const rows = [
+    ["membership_id", "profile_id", "member_name", "member_email", "role", "status", "created_at", "updated_at"],
+    ...members.map((member) => [
+      member.id,
+      member.profile_id,
+      member.profile?.full_name ?? "",
+      member.profile?.email ?? "",
+      member.role,
+      member.status,
+      member.created_at,
+      member.updated_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function securityChecksToCsv(checks: Array<{ label: string; detail: string; done: boolean }>) {
   const rows = [
     ["check", "status", "detail"],
@@ -3455,6 +3493,7 @@ function TeamMembersPanel({
     const haystack = `${member.profile?.full_name ?? ""} ${member.profile?.email ?? ""} ${member.role} ${member.status}`.toLowerCase();
     return matchesStatus && haystack.includes(memberQuery.trim().toLowerCase());
   });
+  const exportName = `trustgraph-team-members-${new Date().toISOString().slice(0, 10)}.csv`;
 
   async function updateStatus(membershipId: string, status: "active" | "suspended") {
     setBusyId(membershipId);
@@ -3494,6 +3533,14 @@ function TeamMembersPanel({
           <option value="suspended">Suspended</option>
           <option value="invited">Invited</option>
         </select>
+        <button
+          className="secondary-action"
+          disabled={!filteredMembers.length}
+          onClick={() => downloadTextFile(exportName, teamMembersToCsv(filteredMembers), "text/csv")}
+          type="button"
+        >
+          Export CSV
+        </button>
       </div>
       <div className="team-list">
         {filteredMembers.length ? (

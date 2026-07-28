@@ -772,12 +772,13 @@ p,
 
 .team-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 132px;
+  grid-template-columns: minmax(0, 1fr) 132px 112px;
   gap: 8px;
 }
 
 .team-controls input,
-.team-controls select {
+.team-controls select,
+.team-controls button {
   min-height: 36px;
   width: 100%;
   padding: 0 10px;
@@ -2005,12 +2006,13 @@ p {
 
 .directory-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 160px;
+  grid-template-columns: minmax(0, 1fr) 160px 112px;
   gap: 8px;
 }
 
 .directory-controls input,
-.directory-controls select {
+.directory-controls select,
+.directory-controls button {
   min-height: 38px;
   width: 100%;
   padding: 0 10px;
