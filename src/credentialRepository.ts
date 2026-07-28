@@ -17,8 +17,8 @@ export async function loadIssuerCredentials(organizationId: string, accessToken:
   );
 }
 
-export async function createSampleCredentialIssuerMembership(accessToken: string) {
-  return supabaseRpc<DbOrganizationMembership>("create_sample_credential_issuer_membership", {}, { accessToken });
+export async function ensureCredentialIssuerMembership(accessToken: string) {
+  return supabaseRpc<DbOrganizationMembership>("ensure_credential_issuer_membership", {}, { accessToken });
 }
 
 export async function issueCredentialRecord(input: {

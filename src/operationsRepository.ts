@@ -58,12 +58,12 @@ export async function loadVerificationCases(accessToken: string): Promise<DbVeri
   );
 }
 
-export async function createSampleVerificationCases(accessToken: string): Promise<number> {
-  return supabaseRpc<number>("create_sample_verification_cases", {}, { accessToken });
+export async function createOperatorVerificationCases(accessToken: string): Promise<number> {
+  return supabaseRpc<number>("create_operator_verification_cases", {}, { accessToken });
 }
 
-export async function createSampleTrustGraphVerifierMembership(accessToken: string) {
-  return supabaseRpc<DbOrganizationMembership>("create_sample_trustgraph_verifier_membership", {}, { accessToken });
+export async function ensureTrustGraphVerifierMembership(accessToken: string) {
+  return supabaseRpc<DbOrganizationMembership>("ensure_trustgraph_verifier_membership", {}, { accessToken });
 }
 
 export async function decideVerificationCase(input: {

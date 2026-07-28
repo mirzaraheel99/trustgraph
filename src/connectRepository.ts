@@ -14,8 +14,8 @@ export async function loadWebhookSubscriptions(accessToken: string): Promise<DbW
   });
 }
 
-export async function createSampleApiClient(accessToken: string): Promise<DbApiClient> {
-  return supabaseRpc<DbApiClient>("create_sample_api_client", {}, { accessToken });
+export async function createPilotApiClient(accessToken: string): Promise<DbApiClient> {
+  return supabaseRpc<DbApiClient>("create_pilot_api_client", {}, { accessToken });
 }
 
 export async function createWebhookSubscription(input: {

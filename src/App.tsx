@@ -56,7 +56,7 @@ import {
   accountContextToSessionUser,
   assignOwnCorporateRole,
   createCorporateAccount,
-  createSampleEmployerReviewerMembership,
+  ensureEmployerReviewerMembership,
   ensureProfessionalAccount,
   loadAccountContext,
   seedPilotWorkspace,
@@ -82,12 +82,12 @@ import {
   loadSubscriptionPlans
 } from "./billingRepository";
 import {
-  createSampleCredentialIssuerMembership,
+  ensureCredentialIssuerMembership,
   issueCredentialRecord,
   loadIssuerCredentials
 } from "./credentialRepository";
 import {
-  createSampleApiClient,
+  createPilotApiClient,
   createWebhookSubscription,
   loadApiClients,
   loadWebhookSubscriptions,
@@ -97,10 +97,10 @@ import {
 import { createConsentAuthorization, loadConsentAuthorizations, revokeConsentAuthorization } from "./consentRepository";
 import {
   createAccessGrantRequest,
-  createSampleAccessGrant,
   decideAccessGrant,
   loadAccessGrants,
   loadVerifyAccessGrants,
+  preparePilotAccessGrant,
   syncAccessGrantRecords,
   type VerifyAccessGrantView,
   type AccessGrantView
@@ -128,9 +128,9 @@ import {
   type OrganizationMemberView
 } from "./teamRepository";
 import {
-  createSampleTrustGraphVerifierMembership,
-  createSampleVerificationCases,
+  createOperatorVerificationCases,
   decideVerificationCase,
+  ensureTrustGraphVerifierMembership,
   loadVerificationCases,
   verificationCaseToRecordItem
 } from "./operationsRepository";
@@ -2127,17 +2127,17 @@ function OperationsQueuePanel({
   cases,
   disabled,
   message,
-  onCreateSamples,
+  onCreatePilotCases,
   onDecision
 }: {
   cases: DbVerificationCase[];
   disabled: boolean;
   message: string;
-  onCreateSamples: () => Promise<void>;
+  onCreatePilotCases: () => Promise<void>;
   onDecision: (caseId: string, status: VerificationCaseStatus) => Promise<void>;
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [busySamples, setBusySamples] = useState(false);
+  const [busyPilotCases, setBusyPilotCases] = useState(false);
   const [caseQuery, setCaseQuery] = useState("");
   const [caseStatusFilter, setCaseStatusFilter] = useState<"all" | VerificationCaseStatus>("all");
   const [priorityFilter, setPriorityFilter] = useState<"all" | "low" | "medium" | "high" | "critical">("all");
@@ -2184,13 +2184,13 @@ function OperationsQueuePanel({
         <small>{message}</small>
         <button
           className="secondary-action"
-          disabled={disabled || busySamples}
+          disabled={disabled || busyPilotCases}
           onClick={async () => {
-            setBusySamples(true);
+            setBusyPilotCases(true);
             try {
-              await onCreateSamples();
+              await onCreatePilotCases();
             } finally {
-              setBusySamples(false);
+              setBusyPilotCases(false);
             }
           }}
         >
@@ -2748,7 +2748,7 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 031 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate decision tracking, and gate status constraints.</small>
+          <small>Migrations through 032 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate decision tracking, gate status constraints, and operator-named pilot workflow RPCs.</small>
         </div>
         <span className="status-chip success">database live</span>
       </article>
@@ -6152,7 +6152,7 @@ function App() {
       throw new Error("Sign in before creating a pilot Access Grant request.");
     }
 
-    await createSampleAccessGrant(authSession.accessToken);
+    await preparePilotAccessGrant(authSession.accessToken);
     const items = await loadAccessGrants(accountContext.profile.id, authSession.accessToken);
     setAccessGrants(items);
     setGrantStatus("Live pilot Access Grant request created");
@@ -6231,12 +6231,12 @@ function App() {
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
-  async function createSampleReviewerRole() {
+  async function createPilotReviewerRole() {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before adding a Verify reviewer role.");
     }
 
-    await createSampleEmployerReviewerMembership(authSession.accessToken);
+    await ensureEmployerReviewerMembership(authSession.accessToken);
     const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
     setAccountContext(context);
     const reviewerMembership = context.memberships.find((membership) => membership.role === "employer_reviewer");
@@ -6252,7 +6252,7 @@ function App() {
       throw new Error("Sign in before creating a credential issuer role.");
     }
 
-    const membership = await createSampleCredentialIssuerMembership(authSession.accessToken);
+    const membership = await ensureCredentialIssuerMembership(authSession.accessToken);
     const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
     setAccountContext(context);
     setActiveMembershipId(membership.id);
@@ -6561,12 +6561,12 @@ function App() {
     setAccountStatus("Corporate RBAC role updated");
   }
 
-  async function createLiveOperationsSamples() {
+  async function createLiveOperationsPilotCases() {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before creating operations cases.");
     }
 
-    const added = await createSampleVerificationCases(authSession.accessToken);
+    const added = await createOperatorVerificationCases(authSession.accessToken);
     const [items, events] = await Promise.all([
       loadVerificationCases(authSession.accessToken),
       loadAuditEvents(authSession.accessToken)
@@ -6600,7 +6600,7 @@ function App() {
       throw new Error("Sign in before creating an operations role.");
     }
 
-    const membership = await createSampleTrustGraphVerifierMembership(authSession.accessToken);
+    const membership = await ensureTrustGraphVerifierMembership(authSession.accessToken);
     const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
     setAccountContext(context);
     setActiveMembershipId(membership.id);
@@ -6636,7 +6636,7 @@ function App() {
       throw new Error("Sign in before creating Connect API clients.");
     }
 
-    const client = await createSampleApiClient(authSession.accessToken);
+    const client = await createPilotApiClient(authSession.accessToken);
     const [clients, events] = await Promise.all([
       loadApiClients(authSession.accessToken),
       loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
@@ -7015,7 +7015,7 @@ function App() {
                 onCreateAccessRequest={createLiveAccessGrantRequest}
                 onCreateMissingRecordRequest={createLiveMissingRecordRequest}
                 onCreateIssuerRole={createLiveCredentialIssuerRole}
-                onCreateReviewerRole={createSampleReviewerRole}
+                onCreateReviewerRole={createPilotReviewerRole}
                 onIssueCredential={issueLiveCredential}
                 onMissingRecordStatus={updateLiveMissingRecordStatus}
                 requests={verifyRequests}
@@ -7029,7 +7029,7 @@ function App() {
                   cases={operationsCases}
                   disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
                   message={operationsStatus}
-                  onCreateSamples={createLiveOperationsSamples}
+                  onCreatePilotCases={createLiveOperationsPilotCases}
                   onDecision={decideLiveOperationsCase}
                 />
                 <ConnectPanel

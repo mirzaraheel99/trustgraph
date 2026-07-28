@@ -110,8 +110,8 @@ export function accountContextOrganizations(context: AccountContext): Organizati
   }));
 }
 
-export async function createSampleEmployerReviewerMembership(accessToken: string) {
-  return supabaseRpc("create_sample_employer_reviewer_membership", {}, { accessToken });
+export async function ensureEmployerReviewerMembership(accessToken: string) {
+  return supabaseRpc("ensure_employer_reviewer_membership", {}, { accessToken });
 }
 
 export async function createCorporateAccount(input: {

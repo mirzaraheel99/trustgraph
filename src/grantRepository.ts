@@ -69,6 +69,6 @@ export async function syncAccessGrantRecords(grantId: string, accessToken: strin
   return supabaseRpc<number>("sync_access_grant_records", { target_grant_id: grantId }, { accessToken });
 }
 
-export async function createSampleAccessGrant(accessToken: string): Promise<DbAccessGrant> {
-  return supabaseRpc<DbAccessGrant>("create_sample_access_grant_request", {}, { accessToken });
+export async function preparePilotAccessGrant(accessToken: string): Promise<DbAccessGrant> {
+  return supabaseRpc<DbAccessGrant>("prepare_pilot_access_grant_request", {}, { accessToken });
 }

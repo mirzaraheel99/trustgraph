@@ -45,9 +45,9 @@ async function assertRepoReadinessArtifacts() {
   ]);
   const sqlMigrations = migrationFiles.filter((file) => file.endsWith(".sql")).sort();
 
-  assert(sqlMigrations.length >= 31, `Expected at least 31 Supabase migrations, found ${sqlMigrations.length}`);
+  assert(sqlMigrations.length >= 32, `Expected at least 32 Supabase migrations, found ${sqlMigrations.length}`);
   assert(sqlMigrations[0]?.startsWith("001_"), "Expected migration sequence to start at 001");
-  assert(sqlMigrations.at(-1)?.startsWith("031_"), "Expected migration sequence to include 031 production gate status constraints");
+  assert(sqlMigrations.at(-1)?.startsWith("032_"), "Expected migration sequence to include 032 operator-named pilot RPCs");
   assert(readiness.includes("13-Track Product Coverage"), "Expected v1 readiness checklist to include 13-track coverage");
   assert(readiness.includes("Stop Conditions"), "Expected v1 readiness checklist to include production stop conditions");
   assert(runbook.includes("Live Workflow Acceptance"), "Expected pilot runbook to include live workflow acceptance");
@@ -128,7 +128,7 @@ assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify re
 assertIncludesAny(bundleText, ["Live database view"], "Corporate user database source label");
 assertIncludesAny(bundleText, ["Membership database"], "Corporate team member source label");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
-assertIncludesAny(bundleText, ["Migrations through 031"], "current database migration coverage copy");
+assertIncludesAny(bundleText, ["Migrations through 032"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
 assertIncludesAny(bundleText, ["Evaluation role"], "signed-out evaluation role label");
 assertIncludesAny(bundleText, ["Preview account context"], "signed-out account context label");

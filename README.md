@@ -110,6 +110,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `029_pilot_workspace_seed.sql`: authenticated pilot seed RPC for live Passport, Corporate Verify, subscription, Access Grant, consent, evidence, notification, and audit rows.
 - `030_production_gate_decisions.sql`: production gate decision register, RLS, seeded human gates, and audited sign-off RPC.
 - `031_production_gate_status_constraints.sql`: constrained production gate statuses and stricter audited sign-off RPC validation.
+- `032_operator_named_pilot_rpcs.sql`: operator-named pilot RPC aliases so the app uses live workflow language instead of sample function names.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -134,7 +135,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `031_production_gate_status_constraints.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, and constrained gate decision statuses.
+Live Supabase migrations are applied through `032_operator_named_pilot_rpcs.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, and operator-named pilot workflow RPCs.
 
 ## Public Website and Pricing
 
