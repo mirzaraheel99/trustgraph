@@ -84,6 +84,7 @@ assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed databa
 assertIncludesAny(bundleText, ["Guided preview mode"], "preview mode indicator");
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
 assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
+assertIncludesAny(bundleText, ["Workflow notification rows"], "notification database source label");
 assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
 assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment register");
 assertIncludesAny(bundleText, ["Human decision gates"], "production decision gate register");

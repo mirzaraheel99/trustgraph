@@ -4516,6 +4516,9 @@ function NotificationPanel({
   const [busyId, setBusyId] = useState<string | null>(null);
   const [notificationQuery, setNotificationQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "queued" | "delivered" | "suppressed">("all");
+  const queuedCount = events.filter((event) => event.status === "queued").length;
+  const deliveredCount = events.filter((event) => event.status === "delivered").length;
+  const suppressedCount = events.filter((event) => event.status === "suppressed").length;
   const filteredEvents = events.filter((event) => {
     const matchesStatus = statusFilter === "all" || event.status === statusFilter;
     const haystack = `${event.title} ${event.body} ${event.event_type}`.toLowerCase();
@@ -4538,6 +4541,24 @@ function NotificationPanel({
         <strong>Notifications</strong>
       </div>
       <small>{message}</small>
+      <div className="notification-summary-grid">
+        <div>
+          <span>Queued</span>
+          <strong>{queuedCount}</strong>
+        </div>
+        <div>
+          <span>Read</span>
+          <strong>{deliveredCount}</strong>
+        </div>
+        <div>
+          <span>Muted</span>
+          <strong>{suppressedCount}</strong>
+        </div>
+      </div>
+      <div className="notification-source-strip">
+        <span className="status-chip success">Workflow notification rows</span>
+        <small>Reads Supabase notification events and writes status changes when alerts are marked read or muted.</small>
+      </div>
       <div className="notification-controls">
         <input
           onChange={(event) => setNotificationQuery(event.target.value)}

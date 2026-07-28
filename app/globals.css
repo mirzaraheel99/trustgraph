@@ -1001,6 +1001,54 @@ p,
   gap: 8px;
 }
 
+.notification-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.notification-summary-grid div {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.notification-summary-grid span,
+.notification-summary-grid strong {
+  display: block;
+}
+
+.notification-summary-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.notification-summary-grid strong {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.notification-source-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.16);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.04);
+}
+
+.notification-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
 .notification-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 112px;
@@ -4109,6 +4157,7 @@ p {
   .issuer-summary-grid,
   .missing-controls,
   .missing-summary-grid,
+  .notification-summary-grid,
   .operations-controls,
   .operations-summary-grid,
   .plan-summary-grid,
@@ -4148,6 +4197,7 @@ p {
   .auth-recovery-note,
   .directory-source-strip,
   .evidence-source-strip,
+  .notification-source-strip,
   .team-source-strip,
   .grant-panel-top,
   .grant-card,
