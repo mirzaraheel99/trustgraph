@@ -117,6 +117,7 @@ assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
 assertIncludesAny(bundleText, ["All signal levels"], "audit signal filter");
 assertIncludesAny(bundleText, ["Export JSON"], "audit JSON export control");
 assertIncludesAny(bundleText, ["Workflow notification rows"], "notification database source label");
+assertIncludesAny(bundleText, ["Export notifications"], "notification export control");
 assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
 assertIncludesAny(bundleText, ["human_decision_gate"], "security runbook human decision export rows");
 assertIncludesAny(bundleText, ["protected tables"], "RLS protected table coverage summary");

@@ -1202,9 +1202,9 @@ p,
 }
 
 .notification-source-strip {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 172px;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   padding: 10px;
   border: 1px solid rgba(82, 214, 196, 0.16);
@@ -1215,6 +1215,10 @@ p,
 .notification-source-strip small {
   min-width: 0;
   line-height: 1.4;
+}
+
+.notification-source-strip button {
+  min-height: 34px;
 }
 
 .notification-controls {

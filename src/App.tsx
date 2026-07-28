@@ -3691,6 +3691,30 @@ function schemaMigrationRunsToCsv(migrations: DbSchemaMigrationRun[]) {
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function notificationEventsToCsv(events: DbNotificationEvent[]) {
+  const rows = [
+    ["notification_id", "recipient_profile_id", "organization_id", "channel", "status", "priority", "event_type", "title", "body", "target_table", "target_id", "metadata", "created_at", "updated_at"],
+    ...events.map((event) => [
+      event.id,
+      event.recipient_profile_id ?? "",
+      event.organization_id ?? "",
+      event.channel,
+      event.status,
+      event.priority,
+      event.event_type,
+      event.title,
+      event.body,
+      event.target_table ?? "",
+      event.target_id ?? "",
+      JSON.stringify(event.metadata ?? {}),
+      event.created_at,
+      event.updated_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function teamMembersToCsv(members: OrganizationMemberView[]) {
   const rows = [
     ["membership_id", "profile_id", "member_name", "member_email", "role", "status", "created_at", "updated_at"],
@@ -5293,6 +5317,7 @@ function NotificationPanel({
     const haystack = `${event.title} ${event.body} ${event.event_type}`.toLowerCase();
     return matchesStatus && haystack.includes(notificationQuery.trim().toLowerCase());
   });
+  const exportName = `trustgraph-notifications-${new Date().toISOString().slice(0, 10)}.csv`;
 
   async function updateStatus(notificationId: string, status: "delivered" | "suppressed") {
     setBusyId(notificationId);
@@ -5327,6 +5352,14 @@ function NotificationPanel({
       <div className="notification-source-strip">
         <span className="status-chip success">Workflow notification rows</span>
         <small>Reads Supabase notification events and writes status changes when alerts are marked read or muted.</small>
+        <button
+          className="secondary-action"
+          disabled={!filteredEvents.length}
+          onClick={() => downloadTextFile(exportName, notificationEventsToCsv(filteredEvents), "text/csv")}
+          type="button"
+        >
+          Export notifications
+        </button>
       </div>
       <div className="notification-controls">
         <input
