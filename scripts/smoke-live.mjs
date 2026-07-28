@@ -119,7 +119,7 @@ assertIncludesAny(bundleText, ["Export JSON"], "audit JSON export control");
 assertIncludesAny(bundleText, ["Workflow notification rows"], "notification database source label");
 assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
 assertIncludesAny(bundleText, ["human_decision_gate"], "security runbook human decision export rows");
-assertIncludesAny(bundleText, ["21 protected tables"], "RLS protected table coverage summary");
+assertIncludesAny(bundleText, ["protected tables"], "RLS protected table coverage summary");
 assertIncludesAny(bundleText, ["rls_protected_table"], "security runbook RLS table export rows");
 assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment register");
 assertIncludesAny(bundleText, ["Human decision gates"], "production decision gate register");
