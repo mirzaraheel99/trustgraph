@@ -88,5 +88,6 @@ assertIncludesAny(bundleText, ["Migrations through 029"], "current database migr
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
 assertIncludesAny(bundleText, ["Preview role"], "signed-out preview role label");
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");
+assertIncludesAny(bundleText, ["notes captured"], "pilot acceptance note capture");
 
 console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal, recovery, and data-mode copy verified)`);

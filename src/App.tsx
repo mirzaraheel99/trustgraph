@@ -3106,10 +3106,10 @@ function securityChecksToCsv(checks: Array<{ label: string; detail: string; done
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
-function pilotAcceptanceToCsv(steps: Array<{ label: string; detail: string; done: boolean }>) {
+function pilotAcceptanceToCsv(steps: Array<{ label: string; detail: string; done: boolean; note?: string }>) {
   const rows = [
-    ["step", "status", "acceptance_criterion"],
-    ...steps.map((step, index) => [`${index + 1}. ${step.label}`, step.done ? "passing" : "needs_data", step.detail])
+    ["step", "status", "acceptance_criterion", "operator_note"],
+    ...steps.map((step, index) => [`${index + 1}. ${step.label}`, step.done ? "passing" : "needs_data", step.detail, step.note ?? ""])
   ];
 
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
@@ -4291,6 +4291,7 @@ function DemoScriptPanel({
   teamInvitations: DbOrganizationInvitation[];
   teamMembers: OrganizationMemberView[];
 }) {
+  const [qaNotes, setQaNotes] = useState<Record<string, string>>({});
   const steps = [
     {
       label: "Professional Passport setup",
@@ -4358,8 +4359,30 @@ function DemoScriptPanel({
       done: auditEvents.length > 0 && schemaMigrationRuns.length > 0
     }
   ];
+  const notedSteps = steps.map((step) => ({ ...step, note: qaNotes[step.label] ?? "" }));
   const completed = steps.filter((step) => step.done).length;
+  const noted = notedSteps.filter((step) => step.note.trim()).length;
   const exportName = `trustgraph-pilot-acceptance-${new Date().toISOString().slice(0, 10)}.csv`;
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem("trustgraph-pilot-acceptance-notes");
+      if (stored) {
+        setQaNotes(JSON.parse(stored) as Record<string, string>);
+      }
+    } catch {
+      setQaNotes({});
+    }
+  }, []);
+
+  function updateNote(label: string, note: string) {
+    const nextNotes = { ...qaNotes, [label]: note };
+    if (!note.trim()) {
+      delete nextNotes[label];
+    }
+    setQaNotes(nextNotes);
+    window.localStorage.setItem("trustgraph-pilot-acceptance-notes", JSON.stringify(nextNotes));
+  }
 
   return (
     <section className="demo-panel">
@@ -4368,7 +4391,7 @@ function DemoScriptPanel({
           <ClipboardCheck size={16} />
           <strong>Pilot acceptance script v1</strong>
         </div>
-        <button className="secondary-action" onClick={() => downloadTextFile(exportName, pilotAcceptanceToCsv(steps), "text/csv")} type="button">
+        <button className="secondary-action" onClick={() => downloadTextFile(exportName, pilotAcceptanceToCsv(notedSteps), "text/csv")} type="button">
           Export script
         </button>
       </div>
@@ -4376,15 +4399,22 @@ function DemoScriptPanel({
         <span className={`status-chip ${completed === steps.length ? "success" : "info"}`}>
           {completed}/{steps.length} passing
         </span>
+        <span className={noted ? "status-chip success" : "status-chip warning"}>{noted} notes captured</span>
         <small>Export before and after pilot testing to preserve acceptance evidence.</small>
       </div>
       <div className="demo-step-list">
-        {steps.map((step, index) => (
+        {notedSteps.map((step, index) => (
           <article className={step.done ? "demo-step done" : "demo-step"} key={step.label}>
             <span>{index + 1}</span>
             <div>
               <strong>{step.label}</strong>
               <small>{step.detail}</small>
+              <textarea
+                aria-label={`${step.label} pilot note`}
+                onChange={(event) => updateNote(step.label, event.target.value)}
+                placeholder="Add pilot evidence, blocker, or reviewer note"
+                value={step.note}
+              />
             </div>
           </article>
         ))}

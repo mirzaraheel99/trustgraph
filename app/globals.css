@@ -1312,6 +1312,32 @@ p,
   font-weight: 900;
 }
 
+.demo-step > div {
+  width: 100%;
+  min-width: 0;
+}
+
+.demo-step textarea {
+  width: 100%;
+  min-height: 58px;
+  margin-top: 8px;
+  padding: 9px 10px;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  outline: none;
+  resize: vertical;
+  background: rgba(255, 255, 255, 0.035);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.demo-step textarea:focus {
+  border-color: rgba(82, 214, 196, 0.42);
+  box-shadow: 0 0 0 3px rgba(82, 214, 196, 0.1);
+}
+
 .readiness-row strong,
 .readiness-row small,
 .onboarding-item strong,
