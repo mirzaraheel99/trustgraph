@@ -4267,8 +4267,8 @@ function LiveDataModePanel({
   const membershipCount = accountContext?.memberships.length ?? 0;
   const rows = [
     { label: "Profile", value: profileLabel },
-    { label: "Organization", value: isLive ? activeOrganization.name : "Preview organization" },
-    { label: "Role", value: isLive ? activeRoleLabel : "Preview role" },
+    { label: "Organization", value: isLive ? activeOrganization.name : "Evaluation organization" },
+    { label: "Role", value: isLive ? activeRoleLabel : "Evaluation role" },
     { label: "Workspace", value: workspaceLabel }
   ];
 
@@ -4276,12 +4276,12 @@ function LiveDataModePanel({
     <section className={`live-data-panel ${isLive ? "live" : "preview"}`}>
       <div className="mini-heading">
         <Database size={16} />
-        <strong>{isLive ? "Live Supabase database mode" : "Guided preview mode"}</strong>
+        <strong>{isLive ? "Live Supabase database mode" : "Guided evaluation mode"}</strong>
       </div>
       <p>
         {isLive
           ? "This portal is reading and writing hosted Supabase data with account RBAC enforced."
-          : "This portal is showing product preview data only. Register or login before relying on saved records."}
+          : "This portal is showing guided evaluation data only. Register or login before relying on saved records."}
       </p>
       <div className="live-data-grid">
         {rows.map((row) => (
@@ -4292,7 +4292,7 @@ function LiveDataModePanel({
         ))}
       </div>
       <div className="live-data-footer">
-        <span className={`status-chip ${isLive ? "success" : "warning"}`}>{isLive ? "writes enabled" : "preview only"}</span>
+        <span className={`status-chip ${isLive ? "success" : "warning"}`}>{isLive ? "writes enabled" : "evaluation only"}</span>
         <small>{isLive ? `${membershipCount} RBAC memberships loaded` : "Supabase keys are configured; login unlocks live rows."}</small>
       </div>
     </section>
@@ -5293,7 +5293,7 @@ function PublicSite({
             {mode === "signin" ? "Login" : "Create account"}
           </button>
           <button className="secondary-action" onClick={onOpenDemo} type="button">
-            Open guided preview
+            Open guided evaluation
           </button>
           <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
             Resend verification

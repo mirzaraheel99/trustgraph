@@ -105,7 +105,7 @@ assertIncludesAny(bundleText, ["not localhost"], "hosted auth redirect localhost
 assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signed URL label");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed database evidence");
-assertIncludesAny(bundleText, ["Guided preview mode"], "preview mode indicator");
+assertIncludesAny(bundleText, ["Guided evaluation mode"], "evaluation mode indicator");
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
 assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
 assertIncludesAny(bundleText, ["Workflow notification rows"], "notification database source label");
@@ -126,7 +126,7 @@ assertIncludesAny(bundleText, ["Membership database"], "Corporate team member so
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
 assertIncludesAny(bundleText, ["Migrations through 030"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
-assertIncludesAny(bundleText, ["Preview role"], "signed-out preview role label");
+assertIncludesAny(bundleText, ["Evaluation role"], "signed-out evaluation role label");
 assertIncludesAny(bundleText, ["Preview account context"], "signed-out account context label");
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");
 assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export control");
