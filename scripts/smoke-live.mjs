@@ -72,5 +72,9 @@ assertIncludesAny(bundleText, ["Set new password"], "password recovery update co
 assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Guided preview mode"], "preview mode indicator");
+assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
+assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
+assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
+assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 
 console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal, recovery, and data-mode copy verified)`);
