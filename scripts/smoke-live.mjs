@@ -1,3 +1,5 @@
+import { readdir, readFile } from "node:fs/promises";
+
 const targetUrl = process.env.TRUSTGRAPH_SMOKE_URL || "https://mirzaraheel99.github.io/trustgraph/";
 
 async function fetchText(url) {
@@ -35,8 +37,27 @@ function assertIncludesAny(source, expectedValues, label) {
   assert(found, `Expected hosted build to include ${label}: ${expectedValues.join(" or ")}`);
 }
 
+async function assertRepoReadinessArtifacts() {
+  const [migrationFiles, readiness, runbook] = await Promise.all([
+    readdir(new URL("../supabase/migrations/", import.meta.url)),
+    readFile(new URL("../V1_READINESS_CHECKLIST.md", import.meta.url), "utf8"),
+    readFile(new URL("../PILOT_RUNBOOK.md", import.meta.url), "utf8")
+  ]);
+  const sqlMigrations = migrationFiles.filter((file) => file.endsWith(".sql")).sort();
+
+  assert(sqlMigrations.length >= 29, `Expected at least 29 Supabase migrations, found ${sqlMigrations.length}`);
+  assert(sqlMigrations[0]?.startsWith("001_"), "Expected migration sequence to start at 001");
+  assert(sqlMigrations.at(-1)?.startsWith("029_"), "Expected migration sequence to include 029 pilot workspace seed");
+  assert(readiness.includes("13-Track Product Coverage"), "Expected v1 readiness checklist to include 13-track coverage");
+  assert(readiness.includes("Stop Conditions"), "Expected v1 readiness checklist to include production stop conditions");
+  assert(runbook.includes("Live Workflow Acceptance"), "Expected pilot runbook to include live workflow acceptance");
+  assert(runbook.includes("Human Decisions Still Required"), "Expected pilot runbook to include human decision gates");
+}
+
 const pageUrl = `${targetUrl}?smoke=live-script`;
 const { response, text } = await fetchText(pageUrl);
+
+await assertRepoReadinessArtifacts();
 
 assert(response.ok, `Expected 2xx response from ${targetUrl}, received ${response.status}`);
 assert(text.includes("<!DOCTYPE html>"), "Expected an HTML document");
@@ -109,4 +130,4 @@ assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export co
 assertIncludesAny(bundleText, ["notes captured"], "pilot acceptance note capture");
 assertIncludesAny(bundleText, ["Export runbook"], "pilot acceptance markdown runbook export control");
 
-console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal, recovery, and data-mode copy verified)`);
+console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, repo artifacts, portal, recovery, and data-mode copy verified)`);
