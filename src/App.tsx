@@ -4459,6 +4459,29 @@ function TeamMembersPanel({
   );
 }
 
+function authFailureMessage(error: unknown, redirectUrl: string, fallback = "Authentication failed.") {
+  const message = error instanceof Error ? error.message : fallback;
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes("rate limit") || normalized.includes("email rate")) {
+    return "Supabase email rate limit is active. Wait 60+ minutes before requesting another verification or recovery email, or configure custom SMTP for testing.";
+  }
+
+  if (normalized.includes("redirect") || normalized.includes("localhost")) {
+    return `Auth redirect needs the hosted GitHub Pages URL in Supabase settings: ${redirectUrl}`;
+  }
+
+  if (normalized.includes("email not confirmed")) {
+    return "Email is not confirmed yet. Use the latest verification email, then return to this hosted app and login.";
+  }
+
+  if (normalized.includes("invalid login") || normalized.includes("invalid credentials")) {
+    return "Login failed. Check the email and password, or use Reset password if this account was already created.";
+  }
+
+  return message;
+}
+
 function AuthPanel({
   session,
   accountStatus,
@@ -4518,7 +4541,7 @@ function AuthPanel({
       setMessage(nextSession ? "Live Supabase session connected" : "Check your email to confirm the account. Built-in Supabase email may pause after 2 emails per hour.");
       setPassword("");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Authentication failed.");
+      setMessage(authFailureMessage(error, authRedirectUrl));
     } finally {
       setBusy(false);
     }
@@ -4531,7 +4554,7 @@ function AuthPanel({
       await requestPasswordRecovery(email, authRedirectUrl);
       setMessage("Password recovery email requested. Use the inbox link to return to TrustGraph; wait 60+ minutes if Supabase rate-limits email.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not request password recovery.");
+      setMessage(authFailureMessage(error, authRedirectUrl, "Could not request password recovery."));
     } finally {
       setBusy(false);
     }
@@ -4544,7 +4567,7 @@ function AuthPanel({
       await resendSignupConfirmation(email, authRedirectUrl);
       setMessage("Verification email requested. If Supabase says rate limit exceeded, wait 60+ minutes or configure custom SMTP.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not resend verification email.");
+      setMessage(authFailureMessage(error, authRedirectUrl, "Could not resend verification email."));
     } finally {
       setBusy(false);
     }
@@ -4570,7 +4593,7 @@ function AuthPanel({
       setNewPassword("");
       setMessage("Password updated. This session remains connected.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not update password.");
+      setMessage(authFailureMessage(error, authRedirectUrl, "Could not update password."));
     } finally {
       setBusy(false);
     }
@@ -5404,7 +5427,7 @@ function PublicSite({
         }
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Authentication failed");
+      setMessage(authFailureMessage(error, authRedirectUrl, "Authentication failed"));
     } finally {
       setBusy(false);
     }
@@ -5426,7 +5449,7 @@ function PublicSite({
       await resendSignupConfirmation(email, authRedirectUrl);
       setMessage("Verification email requested. If the rate limit is active, wait 60+ minutes or configure custom SMTP.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not resend verification email.");
+      setMessage(authFailureMessage(error, authRedirectUrl, "Could not resend verification email."));
     } finally {
       setBusy(false);
     }

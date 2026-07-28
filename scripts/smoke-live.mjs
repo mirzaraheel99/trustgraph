@@ -147,6 +147,8 @@ assertIncludesAny(bundleText, ["Export credentials"], "credential issuer export 
 assertIncludesAny(bundleText, ["Connect database"], "Connect source label");
 assertIncludesAny(bundleText, ["Export clients"], "Connect client export control");
 assertIncludesAny(bundleText, ["Export webhooks"], "Connect webhook export control");
+assertIncludesAny(bundleText, ["Supabase email rate limit is active"], "auth rate-limit recovery guidance");
+assertIncludesAny(bundleText, ["Auth redirect needs the hosted GitHub Pages URL"], "hosted auth redirect repair guidance");
 assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
 assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact intake");
