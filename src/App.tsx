@@ -464,6 +464,10 @@ function RecordDetail({
               <span>Flagged</span>
               <strong>{flaggedEvidenceCount}</strong>
             </div>
+            <div>
+              <span>Files</span>
+              <strong>{evidenceDocuments.filter((document) => document.storage_path).length}</strong>
+            </div>
           </div>
         ) : null}
         {evidenceDocuments.length ? (
@@ -491,6 +495,10 @@ function RecordDetail({
                     <div>
                       <strong>{document.title}</strong>
                       <small>{document.document_type} - {document.source_name}</small>
+                      <small>
+                        {document.storage_path ? "Private file attached" : "Metadata only"} -{" "}
+                        {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(document.created_at))}
+                      </small>
                     </div>
                     <div className="evidence-document-actions">
                       <span className="status-chip neutral">{document.status}</span>
@@ -2649,6 +2657,7 @@ function ReleaseLedgerPanel({
 }) {
   const latest = migrations[0] ?? null;
   const appliedCount = migrations.filter((run) => run.status === "applied").length;
+  const failedCount = migrations.filter((run) => run.status !== "applied").length;
 
   return (
     <section className="release-panel">
@@ -2669,6 +2678,10 @@ function ReleaseLedgerPanel({
         <div>
           <span>Latest</span>
           <strong>{latest?.migration_path.replace("supabase/migrations/", "") ?? "None"}</strong>
+        </div>
+        <div>
+          <span>Attention</span>
+          <strong>{failedCount}</strong>
         </div>
       </div>
       <div className="release-list">
@@ -2699,14 +2712,20 @@ function ReleaseLedgerPanel({
 
 function SecurityReviewPanel({
   apiClients,
+  auditEvents,
   consentAuthorizations,
   evidenceDocuments,
+  schemaMigrationRuns,
+  subscriptions,
   teamMembers,
   webhookSubscriptions
 }: {
   apiClients: DbApiClient[];
+  auditEvents: DbAuditEvent[];
   consentAuthorizations: DbConsentAuthorization[];
   evidenceDocuments: DbEvidenceDocument[];
+  schemaMigrationRuns: DbSchemaMigrationRun[];
+  subscriptions: DbOrganizationSubscription[];
   teamMembers: OrganizationMemberView[];
   webhookSubscriptions: DbWebhookSubscription[];
 }) {
@@ -2719,7 +2738,7 @@ function SecurityReviewPanel({
     {
       label: "Private evidence storage",
       detail: evidenceDocuments.some((item) => item.storage_path) ? "Signed URL preview/download enabled" : "No stored evidence files loaded yet",
-      done: true
+      done: evidenceDocuments.some((item) => item.storage_path)
     },
     {
       label: "Consent revocation",
@@ -2737,17 +2756,46 @@ function SecurityReviewPanel({
       done: apiClients.length > 0 || webhookSubscriptions.length > 0
     },
     {
+      label: "Billing boundary",
+      detail: subscriptions.some((subscription) => subscription.status !== "cancelled")
+        ? "Pilot subscription ledger active; Stripe checkout still gated"
+        : "Activate a pilot plan before charging workflow review",
+      done: subscriptions.some((subscription) => subscription.status !== "cancelled")
+    },
+    {
+      label: "Release evidence",
+      detail: schemaMigrationRuns.length ? `${schemaMigrationRuns.length} migration ledger records loaded` : "Run migration workflow to populate release ledger",
+      done: schemaMigrationRuns.length > 0
+    },
+    {
+      label: "Audit export path",
+      detail: auditEvents.length ? `${auditEvents.length} audit events available for filtered export` : "Generate workflow events before audit review",
+      done: auditEvents.length > 0
+    },
+    {
       label: "Production review",
       detail: "Run external RLS/security review before real background-check or payment traffic.",
       done: false
     }
   ];
+  const completed = checks.filter((check) => check.done).length;
+  const runbookName = `trustgraph-security-runbook-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return (
     <section className="security-review-panel">
       <div className="mini-heading">
         <ShieldAlert size={16} />
         <strong>Security/RLS review v1</strong>
+      </div>
+      <div className="security-review-topline">
+        <div>
+          <span>Readiness</span>
+          <strong>{completed} / {checks.length}</strong>
+          <small>External review remains required before regulated or payment traffic.</small>
+        </div>
+        <button className="secondary-action" onClick={() => downloadTextFile(runbookName, securityChecksToCsv(checks), "text/csv")} type="button">
+          Export runbook
+        </button>
       </div>
       <div className="security-review-grid">
         {checks.map((check) => (
@@ -2849,6 +2897,15 @@ function auditEventsToCsv(events: DbAuditEvent[]) {
       event.reason ?? "",
       JSON.stringify(event.metadata ?? {})
     ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function securityChecksToCsv(checks: Array<{ label: string; detail: string; done: boolean }>) {
+  const rows = [
+    ["check", "status", "detail"],
+    ...checks.map((check) => [check.label, check.done ? "ready" : "needs_review", check.detail])
   ];
 
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
@@ -3133,9 +3190,14 @@ function BillingPanel({
       <div className="billing-decision-card">
         <div>
           <strong>Billing v1 decision</strong>
-          <small>Current pilot flow activates a tracked organization subscription in Supabase. Stripe checkout remains a production integration decision.</small>
+          <small>Current pilot flow activates a tracked organization subscription in Supabase and writes audit history. Real payment collection remains gated until Stripe products, tax handling, invoices, refunds, webhooks, and dunning are approved.</small>
         </div>
-        <span className="status-chip warning">stub active</span>
+        <span className="status-chip warning">pilot ledger</span>
+      </div>
+      <div className="billing-gate-grid">
+        {["Stripe product mapping", "Checkout + customer portal", "Tax and invoice policy", "Webhook reconciliation"].map((item) => (
+          <span key={item}>{item}</span>
+        ))}
       </div>
       <div className="billing-plan-list">
         {plans.length ? (
@@ -5827,8 +5889,11 @@ function App() {
                 />
                 <SecurityReviewPanel
                   apiClients={apiClients}
+                  auditEvents={auditEvents}
                   consentAuthorizations={consentAuthorizations}
                   evidenceDocuments={evidenceDocuments}
+                  schemaMigrationRuns={schemaMigrationRuns}
+                  subscriptions={organizationSubscriptions}
                   teamMembers={teamMembers}
                   webhookSubscriptions={webhookSubscriptions}
                 />

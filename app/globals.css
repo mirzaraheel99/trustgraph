@@ -571,6 +571,25 @@ p,
   line-height: 1.4;
 }
 
+.billing-gate-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.billing-gate-grid span {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--muted);
+  border: 1px solid rgba(225, 184, 102, 0.16);
+  border-radius: var(--radius);
+  background: rgba(225, 184, 102, 0.045);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .billing-estimate-card div {
   display: grid;
   gap: 5px;
@@ -2419,7 +2438,7 @@ p {
 
 .release-summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -2571,6 +2590,41 @@ p {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+}
+
+.security-review-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(7, 13, 24, 0.42);
+}
+
+.security-review-topline span,
+.security-review-topline strong,
+.security-review-topline small {
+  display: block;
+}
+
+.security-review-topline span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.security-review-topline strong {
+  margin-top: 2px;
+  font-size: 20px;
+  font-weight: 950;
+}
+
+.security-review-topline small {
+  color: var(--muted);
+  line-height: 1.35;
 }
 
 .security-review-card {
@@ -3369,6 +3423,7 @@ p {
   .auth-path-grid,
   .billing-estimate-card,
   .billing-decision-card,
+  .billing-gate-grid,
   .control-center-body,
   .control-center-header,
   .control-center-metrics,
@@ -3377,11 +3432,11 @@ p {
   .work-grid,
   .portal-grid,
   .workflow-grid,
-   .pricing-grid,
-   .directory-controls,
-   .audit-controls,
-   .audit-summary-grid,
-   .connect-summary-grid,
+  .pricing-grid,
+  .directory-controls,
+  .audit-controls,
+  .audit-summary-grid,
+  .connect-summary-grid,
   .consent-summary-grid,
   .evidence-controls,
   .evidence-summary-grid,
@@ -3399,6 +3454,7 @@ p {
   .release-summary-grid,
   .scope-area-grid,
   .security-review-grid,
+  .security-review-topline,
   .team-controls,
   .team-summary-grid,
   .verify-summary-grid,
