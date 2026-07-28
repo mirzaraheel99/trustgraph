@@ -214,6 +214,8 @@ function ActionCard({ title, detail, due, tone }: Workspace["actions"][number]) 
 }
 
 function AdvisoryCard({ summary }: { summary: ReturnType<typeof buildAdvisorySummary> }) {
+  const exportName = `trustgraph-advisory-packet-${new Date().toISOString().slice(0, 10)}.json`;
+
   return (
     <div className="hero-card ai-card">
       <div className="hero-card-top">
@@ -244,7 +246,16 @@ function AdvisoryCard({ summary }: { summary: ReturnType<typeof buildAdvisorySum
           <small key={action}>{action}</small>
         ))}
       </div>
-      <small>{summary.sourceCount} authorized source items reviewed</small>
+      <div className="advisory-export-row">
+        <small>{summary.sourceCount} authorized source items reviewed</small>
+        <button
+          className="secondary-action"
+          onClick={() => downloadTextFile(exportName, JSON.stringify(summary, null, 2), "application/json")}
+          type="button"
+        >
+          Export advisory packet
+        </button>
+      </div>
     </div>
   );
 }

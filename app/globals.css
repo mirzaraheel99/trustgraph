@@ -2204,6 +2204,23 @@ p {
   border-left: 2px solid rgba(82, 214, 196, 0.28);
 }
 
+.advisory-export-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.advisory-export-row small {
+  min-width: 0;
+}
+
+.advisory-export-row button {
+  flex: 0 0 auto;
+  min-height: 34px;
+}
+
 .hero-card-top,
 .panel-heading,
 .mini-heading,
@@ -4735,6 +4752,7 @@ p {
   }
 
   .topbar,
+  .advisory-export-row,
   .public-nav,
   .panel-heading,
   .record-row-main,
