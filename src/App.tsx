@@ -4253,32 +4253,41 @@ function OnboardingChecklistPanel({
         </button>
       </div>
       {seedResult ? (
-        <div className="seed-result-grid">
-          <div>
-            <span>Passport</span>
-            <strong>{seedResult.passport_records}</strong>
+        <>
+          <div className="seed-result-grid">
+            <div>
+              <span>Passport</span>
+              <strong>{seedResult.passport_records}</strong>
+            </div>
+            <div>
+              <span>Evidence</span>
+              <strong>{seedResult.evidence_documents}</strong>
+            </div>
+            <div>
+              <span>Subscription</span>
+              <strong>{seedResult.subscription_id.slice(0, 8)}</strong>
+            </div>
+            <div>
+              <span>Access Grant</span>
+              <strong>{seedResult.access_grant_id.slice(0, 8)}</strong>
+            </div>
+            <div>
+              <span>Consent</span>
+              <strong>{seedResult.consent_authorization_id.slice(0, 8)}</strong>
+            </div>
+            <div>
+              <span>Corporate org</span>
+              <strong>{seedResult.corporate_organization_id.slice(0, 8)}</strong>
+            </div>
           </div>
-          <div>
-            <span>Evidence</span>
-            <strong>{seedResult.evidence_documents}</strong>
+          <div className="seed-evidence-card">
+            <span className="status-chip success">Supabase rows written</span>
+            <small>
+              Live pilot database evidence: subscription {seedResult.subscription_id}, Access Grant {seedResult.access_grant_id},
+              consent authorization {seedResult.consent_authorization_id}, corporate organization {seedResult.corporate_organization_id}.
+            </small>
           </div>
-          <div>
-            <span>Subscription</span>
-            <strong>{seedResult.subscription_id.slice(0, 8)}</strong>
-          </div>
-          <div>
-            <span>Access Grant</span>
-            <strong>{seedResult.access_grant_id.slice(0, 8)}</strong>
-          </div>
-          <div>
-            <span>Consent</span>
-            <strong>{seedResult.consent_authorization_id.slice(0, 8)}</strong>
-          </div>
-          <div>
-            <span>Corporate org</span>
-            <strong>{seedResult.corporate_organization_id.slice(0, 8)}</strong>
-          </div>
-        </div>
+        </>
       ) : null}
       <div className="onboarding-list">
         {checklist.map((item) => (

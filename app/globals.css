@@ -1275,6 +1275,20 @@ p,
   text-overflow: ellipsis;
 }
 
+.seed-evidence-card {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.05);
+}
+
+.seed-evidence-card small {
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+
 .readiness-score-card div > span {
   color: var(--muted);
   font-size: 11px;

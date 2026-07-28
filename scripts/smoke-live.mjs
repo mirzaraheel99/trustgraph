@@ -79,6 +79,7 @@ assertIncludesAny(bundleText, ["Set new password"], "password recovery update co
 assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
 assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
+assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed database evidence");
 assertIncludesAny(bundleText, ["Guided preview mode"], "preview mode indicator");
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
 assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
