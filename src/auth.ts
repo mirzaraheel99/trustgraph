@@ -73,6 +73,55 @@ export function readStoredSession(): AuthSession | null {
   }
 }
 
+export function readStoredSessionUnsafe(): AuthSession | null {
+  if (typeof window === "undefined") return null;
+
+  const stored = window.localStorage.getItem(STORAGE_KEY);
+  if (!stored) return null;
+
+  try {
+    return JSON.parse(stored) as AuthSession;
+  } catch {
+    return null;
+  }
+}
+
+export async function refreshStoredSession(session: AuthSession): Promise<AuthSession> {
+  const config = getSupabaseConfig();
+  if (!config) {
+    throw new Error("Supabase is not configured for this deployment.");
+  }
+
+  const response = await fetch(`${config.url}/auth/v1/token?grant_type=refresh_token`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ refresh_token: session.refreshToken })
+  });
+
+  if (!response.ok) {
+    persistSession(null);
+    throw new Error(`Session refresh failed: ${await readAuthError(response, "Login again to reconnect live database access.")}`);
+  }
+
+  const nextSession = toSession((await response.json()) as SupabaseAuthResponse);
+  persistSession(nextSession);
+  return nextSession;
+}
+
+export async function loadStoredSession(): Promise<AuthSession | null> {
+  const session = readStoredSessionUnsafe();
+  if (!session) return null;
+
+  if (session.expiresAt > Date.now() + 60_000) {
+    return session;
+  }
+
+  return refreshStoredSession(session);
+}
+
 export async function signInWithPassword(email: string, password: string): Promise<AuthSession> {
   const config = getSupabaseConfig();
   if (!config) {

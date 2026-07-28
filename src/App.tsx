@@ -63,7 +63,7 @@ import { auditActionLabel, loadAuditEvents } from "./auditRepository";
 import { buildAdvisorySummary } from "./aiAdvisor";
 import {
   authModeLabel,
-  readStoredSession,
+  loadStoredSession,
   requestPasswordRecovery,
   resendSignupConfirmation,
   signInWithPassword,
@@ -4796,11 +4796,25 @@ function App() {
   );
 
   useEffect(() => {
-    const storedSession = readStoredSession();
-    setAuthSession(storedSession);
-    if (storedSession) {
-      setShowPublicSite(false);
-    }
+    let cancelled = false;
+
+    loadStoredSession()
+      .then((storedSession) => {
+        if (cancelled) return;
+        setAuthSession(storedSession);
+        if (storedSession) {
+          setShowPublicSite(false);
+          setAccountStatus("Live session restored");
+        }
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setAccountStatus(error instanceof Error ? error.message : "Login again to reconnect live database access.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
