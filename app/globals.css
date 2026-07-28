@@ -3717,6 +3717,39 @@ p {
   line-height: 1.35;
 }
 
+.production-gate-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px 190px;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(255, 193, 7, 0.18);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.production-gate-form > div {
+  grid-column: 1 / -1;
+}
+
+.production-gate-form input,
+.production-gate-form select {
+  min-height: 36px;
+  width: 100%;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.production-gate-form select {
+  color-scheme: dark;
+}
+
+.production-gate-form .secondary-action {
+  min-height: 36px;
+}
+
 .plan-track-card {
   min-height: 116px;
   display: grid;
@@ -4333,6 +4366,7 @@ p {
   .policy-grid,
   .policy-summary-grid,
   .production-gate-register,
+  .production-gate-form,
   .qa-check-grid,
   .release-summary-grid,
   .scope-area-grid,

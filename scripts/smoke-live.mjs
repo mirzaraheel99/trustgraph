@@ -115,6 +115,8 @@ assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment regi
 assertIncludesAny(bundleText, ["Human decision gates"], "production decision gate register");
 assertIncludesAny(bundleText, ["Production gate decisions"], "production gate database source label");
 assertIncludesAny(bundleText, ["Export production gates"], "production gate export control");
+assertIncludesAny(bundleText, ["Record gate decision"], "production gate decision intake control");
+assertIncludesAny(bundleText, ["Approved for production"], "production gate approved status option");
 assertIncludesAny(bundleText, ["external sign-off required"], "external security gate status");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");

@@ -113,7 +113,7 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
-import { loadProductionGateDecisions } from "./productionGateRepository";
+import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
 import { isSupabaseConfigured } from "./supabase";
 import {
@@ -2609,7 +2609,21 @@ function ConnectPanel({
   );
 }
 
-function PlanAlignmentPanel({ productionGateDecisions }: { productionGateDecisions: DbProductionGateDecision[] }) {
+function PlanAlignmentPanel({
+  disabled,
+  onRecordGateDecision,
+  productionGateDecisions
+}: {
+  disabled: boolean;
+  onRecordGateDecision: (input: { gateKey: string; status: string; evidenceUrl: string; notes: string }) => Promise<void>;
+  productionGateDecisions: DbProductionGateDecision[];
+}) {
+  const [gateKey, setGateKey] = useState("stripe_billing_launch");
+  const [gateStatus, setGateStatus] = useState("human_decision_required");
+  const [gateEvidenceUrl, setGateEvidenceUrl] = useState("");
+  const [gateNotes, setGateNotes] = useState("");
+  const [gateBusy, setGateBusy] = useState(false);
+  const [gateMessage, setGateMessage] = useState("Record production gate decisions only after human sign-off.");
   const deployedCount = foundationTracks.filter((track) => track.status === "deployed").length;
   const foundationCount = foundationTracks.filter((track) => track.status === "foundation").length;
   const plannedCount = foundationTracks.filter((track) => track.status === "planned").length;
@@ -2650,6 +2664,22 @@ function PlanAlignmentPanel({ productionGateDecisions }: { productionGateDecisio
       }))
     : fallbackProductionGates;
   const gateExportName = `trustgraph-production-gates-${new Date().toISOString().slice(0, 10)}.csv`;
+
+  async function submitGateDecision(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setGateBusy(true);
+    setGateMessage("Recording production gate decision...");
+    try {
+      await onRecordGateDecision({ gateKey, status: gateStatus, evidenceUrl: gateEvidenceUrl, notes: gateNotes });
+      setGateEvidenceUrl("");
+      setGateNotes("");
+      setGateMessage("Production gate decision recorded with audit history.");
+    } catch (error) {
+      setGateMessage(error instanceof Error ? error.message : "Could not record production gate decision");
+    } finally {
+      setGateBusy(false);
+    }
+  }
 
   return (
     <section className="plan-panel">
@@ -2705,6 +2735,31 @@ function PlanAlignmentPanel({ productionGateDecisions }: { productionGateDecisio
             </article>
           ))}
         </div>
+        <form className="production-gate-form" onSubmit={submitGateDecision}>
+          <div>
+            <strong>Record human decision evidence</strong>
+            <small>{gateMessage}</small>
+          </div>
+          <select disabled={disabled || gateBusy} onChange={(event) => setGateKey(event.target.value)} value={gateKey}>
+            <option value="stripe_billing_launch">Stripe billing launch</option>
+            <option value="external_rls_storage_review">External RLS and storage review</option>
+            <option value="legal_employment_language">Legal and employment language</option>
+            <option value="pilot_operations_owner">Pilot operations owner</option>
+          </select>
+          <select disabled={disabled || gateBusy} onChange={(event) => setGateStatus(event.target.value)} value={gateStatus}>
+            <option value="human_decision_required">Human decision required</option>
+            <option value="external_signoff_required">External sign-off required</option>
+            <option value="legal_review_required">Legal review required</option>
+            <option value="pilot_roster_required">Pilot roster required</option>
+            <option value="approved_for_pilot">Approved for pilot</option>
+            <option value="approved_for_production">Approved for production</option>
+          </select>
+          <input disabled={disabled || gateBusy} onChange={(event) => setGateEvidenceUrl(event.target.value)} placeholder="Evidence URL or document reference" value={gateEvidenceUrl} />
+          <input disabled={disabled || gateBusy} onChange={(event) => setGateNotes(event.target.value)} placeholder="Decision note" value={gateNotes} />
+          <button className="secondary-action" disabled={disabled || gateBusy} type="submit">
+            Record gate decision
+          </button>
+        </form>
       </div>
       <div className="scope-coverage-panel">
         <div className="scope-coverage-heading">
@@ -6489,6 +6544,29 @@ function App() {
     setAccountStatus("TrustGraph operations role created");
   }
 
+  async function recordLiveProductionGateDecision(input: { gateKey: string; status: string; evidenceUrl: string; notes: string }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before recording production gate decisions.");
+    }
+
+    await recordProductionGateDecision({
+      accessToken: authSession.accessToken,
+      gateKey: input.gateKey,
+      status: input.status,
+      evidenceUrl: input.evidenceUrl,
+      notes: input.notes
+    });
+
+    const [gates, events] = await Promise.all([
+      loadProductionGateDecisions(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setProductionGateDecisions(gates);
+    setAuditEvents(events);
+    setReleaseStatus(`Release ledger: ${schemaMigrationRuns.length} migrations, ${gates.length} production gates`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
   async function createLiveApiClient() {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before creating Connect API clients.");
@@ -6927,7 +7005,11 @@ function App() {
                   webhookSubscriptions={webhookSubscriptions}
                 />
                 <ConsentPolicyMatrixPanel />
-                <PlanAlignmentPanel productionGateDecisions={productionGateDecisions} />
+                <PlanAlignmentPanel
+                  disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
+                  onRecordGateDecision={recordLiveProductionGateDecision}
+                  productionGateDecisions={productionGateDecisions}
+                />
               </>
             ) : null}
           </div>
