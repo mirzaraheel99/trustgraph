@@ -4910,10 +4910,11 @@ function PublicSite({
       <section className="public-hero">
         <div>
           <span className="eyebrow">Evidence-first workforce records</span>
-          <h1>Verified professional records, shared only with permission.</h1>
+          <h1>Private professional Passports for high-trust hiring workflows.</h1>
           <p>
-            TrustGraph gives professionals a private Passport for work history, credentials, references, training, and
-            evidence. Employers and staffing teams use Verify to request scoped access and review only approved records.
+            TrustGraph gives professionals a controlled Passport for work history, credentials, references, training, and
+            evidence. Employers use Corporate Verify to request scoped access, review approved records, and keep every
+            decision audit-ready.
           </p>
           <div className="public-hero-actions">
             <button className="primary-action" onClick={() => openPortal("professional")}>
@@ -4940,18 +4941,37 @@ function PublicSite({
             </button>
           </div>
         </div>
-        <aside className="public-proof">
-          <div>
-            <span>13</span>
-            <small>planned foundation tracks</small>
+        <aside className="public-proof public-command-center" aria-label="TrustGraph live product preview">
+          <div className="command-center-top">
+            <span className="status-chip success">Live pilot</span>
+            <strong>Corporate Verify review</strong>
+            <small>Scoped Passport request ready for employer review</small>
           </div>
-          <div>
-            <span>Live</span>
-            <small>Auth, database, storage, audit</small>
+          <div className="command-center-record">
+            <span>Access Grant</span>
+            <strong>14-day review window</strong>
+            <small>Identity, license, training, and references approved by owner.</small>
           </div>
-          <div>
-            <span>RBAC</span>
-            <small>Professional, corporate, issuer, admin roles</small>
+          <div className="command-center-microgrid">
+            <section>
+              <strong>13</strong>
+              <small>v1 foundation tracks</small>
+            </section>
+            <section>
+              <strong>RBAC</strong>
+              <small>role-scoped workspaces</small>
+            </section>
+          </div>
+          <div className="command-center-record">
+            <span>Evidence vault</span>
+            <strong>Signed preview and download</strong>
+            <small>Private Supabase Storage links with audit context.</small>
+          </div>
+          <div className="command-center-footer">
+            <span>Auth</span>
+            <span>Database</span>
+            <span>Storage</span>
+            <span>Audit</span>
           </div>
         </aside>
       </section>

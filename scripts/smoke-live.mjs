@@ -72,6 +72,7 @@ assertIncludesAny(bundleText, ["Corporate portal access"], "Corporate portal reg
 assertIncludesAny(bundleText, ["Professional Passport access"], "Professional portal registration/login entry");
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
+assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command center hero");
 assertIncludesAny(bundleText, ["Organization name"], "Corporate registration organization field");
 assertIncludesAny(bundleText, ["Every portal connects to the live database foundation"], "live database registration outcome copy");
 assertIncludesAny(bundleText, ["After registration"], "registration outcome section");

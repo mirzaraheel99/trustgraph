@@ -17,6 +17,7 @@
   --blue: #86aef6;
   --green: #70e0b2;
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+  --shadow-tight: 0 16px 44px rgba(0, 0, 0, 0.34);
   --radius: 8px;
 }
 
@@ -58,6 +59,10 @@ button {
 
 .public-site {
   min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.018), transparent 220px),
+    radial-gradient(circle at 78% 16%, rgba(225, 184, 102, 0.11), transparent 22%),
+    radial-gradient(circle at 8% 34%, rgba(134, 174, 246, 0.08), transparent 24%);
 }
 
 .public-nav {
@@ -84,7 +89,7 @@ button {
 .public-hero {
   min-height: min(820px, calc(100vh - 76px));
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.65fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.72fr);
   align-items: center;
   gap: clamp(26px, 5vw, 68px);
   padding: clamp(40px, 7vw, 92px) clamp(20px, 5vw, 64px) clamp(28px, 5vw, 58px);
@@ -93,8 +98,8 @@ button {
 .public-hero h1 {
   max-width: 880px;
   margin: 12px 0 18px;
-  font-size: clamp(46px, 6.4vw, 86px);
-  line-height: 0.96;
+  font-size: clamp(46px, 6.1vw, 84px);
+  line-height: 0.98;
   letter-spacing: 0;
 }
 
@@ -127,6 +132,16 @@ button {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02)),
     rgba(8, 13, 15, 0.66);
+  box-shadow: var(--shadow-tight);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.public-portal-rail button:hover {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
 }
 
 .public-portal-rail button.active {
@@ -153,7 +168,104 @@ button {
   gap: 12px;
 }
 
-.public-proof div,
+.public-command-center {
+  position: relative;
+  padding: 14px;
+  border: 1px solid rgba(201, 214, 207, 0.16);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.026)),
+    rgba(8, 13, 15, 0.72);
+  box-shadow: 0 32px 110px rgba(0, 0, 0, 0.48);
+}
+
+.command-center-top,
+.command-center-record,
+.command-center-microgrid section,
+.command-center-footer {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.command-center-top {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-color: rgba(82, 214, 196, 0.22);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.11), rgba(134, 174, 246, 0.055)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.command-center-top strong {
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.command-center-record {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.command-center-record span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.command-center-record strong {
+  font-size: 18px;
+}
+
+.command-center-record small,
+.command-center-top small {
+  line-height: 1.4;
+}
+
+.command-center-microgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.command-center-microgrid section {
+  display: grid;
+  gap: 8px;
+  min-height: 116px;
+  padding: 14px;
+}
+
+.command-center-microgrid strong {
+  color: var(--teal);
+  font-size: 34px;
+  line-height: 1;
+}
+
+.command-center-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+}
+
+.command-center-footer span {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.public-proof:not(.public-command-center) div,
 .portal-grid article,
 .portal-route-grid article,
 .pricing-card,
@@ -164,7 +276,7 @@ button {
   box-shadow: var(--shadow);
 }
 
-.public-proof div {
+.public-proof:not(.public-command-center) div {
   min-height: 126px;
   display: grid;
   align-content: center;
@@ -181,6 +293,10 @@ button {
   font-size: 38px;
   line-height: 1;
   font-weight: 950;
+}
+
+.public-command-center > span {
+  font-size: 12px;
 }
 
 .public-section,
@@ -4280,6 +4396,18 @@ p {
   }
 
   .public-hero {
+    min-height: auto;
+  }
+
+  .public-command-center {
+    padding: 10px;
+  }
+
+  .command-center-microgrid {
+    grid-template-columns: 1fr;
+  }
+
+  .command-center-microgrid section {
     min-height: auto;
   }
 
