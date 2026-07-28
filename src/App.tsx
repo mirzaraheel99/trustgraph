@@ -1748,11 +1748,16 @@ function MissingRecordRequestsPanel({
   const openCount = requests.filter((request) => !["fulfilled", "declined", "cancelled"].includes(request.status)).length;
   const fulfilledCount = requests.filter((request) => request.status === "fulfilled").length;
   const declinedCount = requests.filter((request) => request.status === "declined").length;
+  const dueSoonCount = requests.filter((request) => {
+    if (!request.due_at || ["fulfilled", "declined", "cancelled"].includes(request.status)) return false;
+    return new Date(request.due_at).getTime() <= Date.now() + 7 * 24 * 60 * 60 * 1000;
+  }).length;
   const filteredRequests = requests.filter((request) => {
     const matchesStatus = statusFilter === "all" || request.status === statusFilter;
     const haystack = `${request.title} ${request.reason} ${request.subject_profile?.full_name ?? ""} ${request.subject_profile?.email ?? ""}`.toLowerCase();
     return matchesStatus && haystack.includes(requestQuery.trim().toLowerCase());
   });
+  const exportName = `trustgraph-missing-record-gap-packet-${new Date().toISOString().slice(0, 10)}.csv`;
 
   useEffect(() => {
     setStatus(message);
@@ -1806,6 +1811,10 @@ function MissingRecordRequestsPanel({
           <span>Declined</span>
           <strong>{declinedCount}</strong>
         </div>
+        <div>
+          <span>Due soon</span>
+          <strong>{dueSoonCount}</strong>
+        </div>
       </div>
       <form className="missing-form" onSubmit={submit}>
         <div className="record-form-grid">
@@ -1850,6 +1859,20 @@ function MissingRecordRequestsPanel({
           <option value="declined">Declined</option>
           <option value="cancelled">Cancelled</option>
         </select>
+        <button
+          className="secondary-action"
+          disabled={!filteredRequests.length}
+          onClick={() => downloadTextFile(exportName, missingRecordRequestsToCsv(filteredRequests), "text/csv")}
+          type="button"
+        >
+          Export gap packet
+        </button>
+      </div>
+      <div className="missing-source-strip">
+        <span className={dueSoonCount ? "status-chip warning" : "status-chip success"}>
+          {dueSoonCount ? `${dueSoonCount} due soon` : "No near-term due gaps"}
+        </span>
+        <small>{filteredRequests.length} filtered request{filteredRequests.length === 1 ? "" : "s"} ready for operator handoff or reviewer follow-up.</small>
       </div>
       <div className="missing-list">
         {filteredRequests.length ? (
@@ -1859,6 +1882,7 @@ function MissingRecordRequestsPanel({
                 <strong>{request.title}</strong>
                 <p>{request.subject_profile?.full_name ?? request.subject_profile?.email ?? "Professional profile"}</p>
                 <small>{request.reason}</small>
+                {request.due_at ? <small>Due {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(request.due_at))}</small> : null}
               </div>
               <div className="grant-actions">
                 <span className="status-chip neutral">{request.status.replace(/_/g, " ")}</span>
@@ -3348,6 +3372,25 @@ function corporateDirectoryToCsv(
   ];
 
   return csvRows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function missingRecordRequestsToCsv(requests: DbMissingRecordRequest[]) {
+  const rows = [
+    ["request_id", "professional_name", "professional_email", "record_type", "title", "status", "due_at", "reason", "requester_organization"],
+    ...requests.map((request) => [
+      request.id,
+      request.subject_profile?.full_name ?? "",
+      request.subject_profile?.email ?? "",
+      request.record_type,
+      request.title,
+      request.status,
+      request.due_at ?? "",
+      request.reason,
+      request.requester_organization?.name ?? ""
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
 function teamMembersToCsv(members: OrganizationMemberView[]) {

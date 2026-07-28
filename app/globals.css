@@ -2541,7 +2541,7 @@ p {
 
 .missing-summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -2573,12 +2573,13 @@ p {
 
 .missing-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 140px;
+  grid-template-columns: minmax(0, 1fr) 140px 156px;
   gap: 8px;
 }
 
 .missing-controls input,
-.missing-controls select {
+.missing-controls select,
+.missing-controls button {
   min-height: 38px;
   width: 100%;
   padding: 0 10px;
@@ -2590,6 +2591,22 @@ p {
 
 .missing-controls select {
   color-scheme: dark;
+}
+
+.missing-source-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(225, 184, 102, 0.16);
+  border-radius: var(--radius);
+  background: rgba(225, 184, 102, 0.045);
+}
+
+.missing-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
 }
 
 .missing-card {
@@ -4461,6 +4478,7 @@ p {
   .auth-recovery-note,
   .directory-source-strip,
   .evidence-source-strip,
+  .missing-source-strip,
   .notification-source-strip,
   .team-source-strip,
   .grant-panel-top,

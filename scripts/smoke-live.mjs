@@ -126,6 +126,8 @@ assertIncludesAny(bundleText, ["Prepare live pilot workspace"], "guided onboardi
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
 assertIncludesAny(bundleText, ["Live database view"], "Corporate user database source label");
+assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");
+assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soon queue signal");
 assertIncludesAny(bundleText, ["Membership database"], "Corporate team member source label");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
 assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
