@@ -13,8 +13,8 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 7. References and missing records: structured reference requests, Corporate Verify missing-record requests, and Professional Passport request resolution are implemented.
 8. Issuer workflow: issuer role and verified credential creation are implemented.
 9. Evidence preview/download: evidence metadata, upload, signed URL preview, and download controls are implemented.
-10. Admin operations: verification cases, reason codes, decisions, release ledger, audit exports, and security runbook export are implemented.
-11. Connect surface: API clients, webhook subscriptions, and status controls are implemented as a pilot control plane.
+10. Admin operations: verification cases, reason codes, decisions, operations case export, release ledger export, audit exports, and security runbook export are implemented.
+11. Connect surface: API clients, webhook subscriptions, status controls, client export, and webhook export are implemented as a pilot control plane.
 12. Advisory and notifications: deterministic advisory summary and workflow notification status controls are implemented.
 13. Pilot readiness: pilot acceptance script, runbook, deployment smoke checks, and human-decision boundaries are documented.
 
@@ -32,7 +32,8 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 10. Approve the Access Grant from Passport.
 11. Confirm shared records render in Verify with scope context.
 12. Create a consent authorization for a sensitive record, then revoke it.
-13. Open Admin, create pilot cases if needed, resolve or restrict one case, export audit CSV, and export the security runbook.
+13. Open Admin, create pilot cases if needed, resolve or restrict one case, export operations cases, export audit CSV/JSON, export release ledger, and export the security runbook.
+14. Confirm the CI responsive coverage guard passes before accepting mobile and narrow desktop layouts.
 
 ## Stop Conditions
 
