@@ -3162,6 +3162,19 @@ function pilotAcceptanceToCsv(steps: Array<{ label: string; detail: string; done
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function pilotAcceptanceToMarkdown(steps: Array<{ label: string; detail: string; done: boolean; note?: string }>) {
+  const today = new Date().toISOString().slice(0, 10);
+  const completed = steps.filter((step) => step.done).length;
+  const rows = steps
+    .map((step, index) => {
+      const note = step.note?.trim() ? `\n   - Operator note: ${step.note.trim()}` : "";
+      return `${index + 1}. [${step.done ? "x" : " "}] ${step.label}\n   - Acceptance: ${step.detail}${note}`;
+    })
+    .join("\n");
+
+  return `# TrustGraph Pilot Acceptance Runbook\n\nDate: ${today}\nStatus: ${completed}/${steps.length} checks passing\n\n## Workflow Checks\n\n${rows}\n\n## Required Human Gates\n\n- Stripe products, tax, invoices, refunds, dunning, and webhook reconciliation are not production-approved.\n- External RLS/security and evidence-storage review must sign off before regulated traffic.\n- Legal review is required before background-check-adjacent or adverse-action workflows.\n- Pilot customer list, onboarding owner, support path, and incident owner must be named before launch.\n`;
+}
+
 function AccountPanel({
   accountUser,
   activeMembership,
@@ -4454,6 +4467,7 @@ function DemoScriptPanel({
   const completed = steps.filter((step) => step.done).length;
   const noted = notedSteps.filter((step) => step.note.trim()).length;
   const exportName = `trustgraph-pilot-acceptance-${new Date().toISOString().slice(0, 10)}.csv`;
+  const runbookName = `trustgraph-pilot-runbook-${new Date().toISOString().slice(0, 10)}.md`;
 
   useEffect(() => {
     try {
@@ -4482,9 +4496,14 @@ function DemoScriptPanel({
           <ClipboardCheck size={16} />
           <strong>Pilot acceptance script v1</strong>
         </div>
-        <button className="secondary-action" onClick={() => downloadTextFile(exportName, pilotAcceptanceToCsv(notedSteps), "text/csv")} type="button">
-          Export script
-        </button>
+        <div className="demo-export-actions">
+          <button className="secondary-action" onClick={() => downloadTextFile(exportName, pilotAcceptanceToCsv(notedSteps), "text/csv")} type="button">
+            Export CSV
+          </button>
+          <button className="secondary-action" onClick={() => downloadTextFile(runbookName, pilotAcceptanceToMarkdown(notedSteps), "text/markdown")} type="button">
+            Export runbook
+          </button>
+        </div>
       </div>
       <div className="demo-score-row">
         <span className={`status-chip ${completed === steps.length ? "success" : "info"}`}>

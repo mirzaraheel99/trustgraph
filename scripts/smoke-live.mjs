@@ -103,5 +103,6 @@ assertIncludesAny(bundleText, ["Preview account context"], "signed-out account c
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");
 assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export control");
 assertIncludesAny(bundleText, ["notes captured"], "pilot acceptance note capture");
+assertIncludesAny(bundleText, ["Export runbook"], "pilot acceptance markdown runbook export control");
 
 console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal, recovery, and data-mode copy verified)`);
