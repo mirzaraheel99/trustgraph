@@ -457,24 +457,30 @@ function RecordDetail({
         <p>{record.evidence}</p>
         <small>{record.access}</small>
         {evidenceDocuments.length ? (
-          <div className="evidence-summary-grid">
-            <div>
-              <span>Linked</span>
-              <strong>{linkedEvidenceCount}</strong>
+          <>
+            <div className="evidence-summary-grid">
+              <div>
+                <span>Linked</span>
+                <strong>{linkedEvidenceCount}</strong>
+              </div>
+              <div>
+                <span>Uploaded</span>
+                <strong>{uploadedEvidenceCount}</strong>
+              </div>
+              <div>
+                <span>Flagged</span>
+                <strong>{flaggedEvidenceCount}</strong>
+              </div>
+              <div>
+                <span>Files</span>
+                <strong>{evidenceDocuments.filter((document) => document.storage_path).length}</strong>
+              </div>
             </div>
-            <div>
-              <span>Uploaded</span>
-              <strong>{uploadedEvidenceCount}</strong>
+            <div className="evidence-source-strip">
+              <span className="status-chip success">Signed evidence links</span>
+              <small>Private files stay in Supabase Storage and open through short-lived preview or download URLs; metadata-only evidence remains visible without exposing files.</small>
             </div>
-            <div>
-              <span>Flagged</span>
-              <strong>{flaggedEvidenceCount}</strong>
-            </div>
-            <div>
-              <span>Files</span>
-              <strong>{evidenceDocuments.filter((document) => document.storage_path).length}</strong>
-            </div>
-          </div>
+          </>
         ) : null}
         {evidenceDocuments.length ? (
           <>

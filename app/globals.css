@@ -3937,6 +3937,23 @@ p {
   line-height: 1;
 }
 
+.evidence-source-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.16);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.04);
+}
+
+.evidence-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
 .evidence-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 128px;
@@ -4130,6 +4147,7 @@ p {
   .onboarding-item,
   .auth-recovery-note,
   .directory-source-strip,
+  .evidence-source-strip,
   .team-source-strip,
   .grant-panel-top,
   .grant-card,

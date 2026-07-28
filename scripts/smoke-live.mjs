@@ -78,6 +78,7 @@ assertIncludesAny(bundleText, ["After registration"], "registration outcome sect
 assertIncludesAny(bundleText, ["Set new password"], "password recovery update control");
 assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
 assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");
+assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signed URL label");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed database evidence");
 assertIncludesAny(bundleText, ["Guided preview mode"], "preview mode indicator");
