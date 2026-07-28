@@ -3182,6 +3182,29 @@ function SecurityReviewPanel({
   teamMembers: OrganizationMemberView[];
   webhookSubscriptions: DbWebhookSubscription[];
 }) {
+  const rlsProtectedTables = [
+    "organizations",
+    "profiles",
+    "organization_memberships",
+    "trust_records",
+    "access_grants",
+    "access_grant_records",
+    "audit_events",
+    "verification_cases",
+    "evidence_documents",
+    "notification_events",
+    "reference_requests",
+    "missing_record_requests",
+    "api_clients",
+    "webhook_subscriptions",
+    "subscription_plans",
+    "organization_subscriptions",
+    "organization_invitations",
+    "consent_authorizations",
+    "schema_migration_runs",
+    "production_gate_decisions",
+    "pilot_launch_contacts"
+  ];
   const checks = [
     {
       label: "RLS-backed reads",
@@ -3252,9 +3275,18 @@ function SecurityReviewPanel({
           <strong>{completed} / {checks.length}</strong>
           <small>External review remains required before regulated or payment traffic.</small>
         </div>
-        <button className="secondary-action" onClick={() => downloadTextFile(runbookName, securityRunbookToCsv(checks, humanDecisions), "text/csv")} type="button">
+        <button className="secondary-action" onClick={() => downloadTextFile(runbookName, securityRunbookToCsv(checks, humanDecisions, rlsProtectedTables), "text/csv")} type="button">
           Export runbook
         </button>
+      </div>
+      <div className="rls-coverage-strip">
+        <span className="status-chip success">{rlsProtectedTables.length} protected tables</span>
+        <small>CI verifies row-level security enablement across the live migration set before every hosted deployment.</small>
+      </div>
+      <div className="rls-table-grid">
+        {rlsProtectedTables.map((table) => (
+          <span key={table}>{table}</span>
+        ))}
       </div>
       <div className="security-review-grid">
         {checks.map((check) => (
@@ -3513,10 +3545,11 @@ function securityChecksToCsv(checks: Array<{ label: string; detail: string; done
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
-function securityRunbookToCsv(checks: Array<{ label: string; detail: string; done: boolean }>, decisions: string[]) {
+function securityRunbookToCsv(checks: Array<{ label: string; detail: string; done: boolean }>, decisions: string[], protectedTables: string[]) {
   const rows = [
     ["section", "item", "status", "detail"],
     ...checks.map((check) => ["security_check", check.label, check.done ? "ready" : "needs_review", check.detail]),
+    ...protectedTables.map((table) => ["rls_protected_table", table, "enabled_in_migrations", "Verified by npm run check:rls before hosted deployment"]),
     ...decisions.map((decision) => ["human_decision_gate", decision, "required_before_production", "Owner sign-off required"])
   ];
 
