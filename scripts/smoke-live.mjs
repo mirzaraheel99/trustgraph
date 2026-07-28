@@ -89,6 +89,7 @@ assertIncludesAny(bundleText, ["Human decision gates"], "production decision gat
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
+assertIncludesAny(bundleText, ["Live database view"], "Corporate user database source label");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
 assertIncludesAny(bundleText, ["Migrations through 029"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");

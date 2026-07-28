@@ -1673,6 +1673,10 @@ function CorporateDirectoryPanel({
           <small>Open gaps</small>
         </div>
       </div>
+      <div className="directory-source-strip">
+        <span className="status-chip success">Live database view</span>
+        <small>Reads corporate visibility from Supabase Access Grants, shared Passport records, professional profiles, and missing-record requests.</small>
+      </div>
       <div className="directory-list">
         {filteredRows.length ? (
           filteredRows.slice(0, 8).map((row) => (

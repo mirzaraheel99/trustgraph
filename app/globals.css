@@ -2412,6 +2412,22 @@ p {
   padding: 12px;
 }
 
+.directory-source-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.16);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.04);
+}
+
+.directory-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
 .directory-metrics strong {
   font-size: 26px;
   line-height: 1;
@@ -4096,6 +4112,7 @@ p {
   .record-row-main,
   .onboarding-item,
   .auth-recovery-note,
+  .directory-source-strip,
   .grant-panel-top,
   .grant-card,
   .consent-card,
