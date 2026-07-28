@@ -2704,7 +2704,7 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 030 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, and production gate decision tracking.</small>
+          <small>Migrations through 031 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate decision tracking, and gate status constraints.</small>
         </div>
         <span className="status-chip success">database live</span>
       </article>

@@ -109,6 +109,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `028_fix_migration_ledger_rpc.sql`: production repair for deterministic migration ledger recording.
 - `029_pilot_workspace_seed.sql`: authenticated pilot seed RPC for live Passport, Corporate Verify, subscription, Access Grant, consent, evidence, notification, and audit rows.
 - `030_production_gate_decisions.sql`: production gate decision register, RLS, seeded human gates, and audited sign-off RPC.
+- `031_production_gate_status_constraints.sql`: constrained production gate statuses and stricter audited sign-off RPC validation.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -133,7 +134,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `030_production_gate_decisions.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, and database-backed production gate tracking.
+Live Supabase migrations are applied through `031_production_gate_status_constraints.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, and constrained gate decision statuses.
 
 ## Public Website and Pricing
 
