@@ -2163,13 +2163,22 @@ function AuditTrailPanel({
   message: string;
 }) {
   const [auditQuery, setAuditQuery] = useState("");
-  const [actionFilter, setActionFilter] = useState<"all" | "access" | "organization" | "record" | "connect" | "verification">("all");
+  const [actionFilter, setActionFilter] = useState<
+    "all" | "access" | "organization" | "record" | "connect" | "verification" | "evidence" | "schema"
+  >("all");
+  const [targetFilter, setTargetFilter] = useState("all");
+  const targetTables = Array.from(new Set(events.map((event) => event.target_table).filter(Boolean))).sort();
   const filteredEvents = events.filter((event) => {
     const action = event.action.toLowerCase();
     const matchesAction = actionFilter === "all" || action.includes(actionFilter);
-    const haystack = `${event.action} ${event.reason ?? ""} ${event.target_table ?? ""}`.toLowerCase();
-    return matchesAction && haystack.includes(auditQuery.trim().toLowerCase());
+    const matchesTarget = targetFilter === "all" || event.target_table === targetFilter;
+    const haystack = `${event.action} ${event.reason ?? ""} ${event.target_table ?? ""} ${event.target_id ?? ""} ${JSON.stringify(
+      event.metadata ?? {}
+    )}`.toLowerCase();
+    return matchesAction && matchesTarget && haystack.includes(auditQuery.trim().toLowerCase());
   });
+  const latestEvent = filteredEvents[0];
+  const actorCount = new Set(filteredEvents.map((event) => event.actor_profile_id).filter(Boolean)).size;
   const exportName = `trustgraph-audit-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return (
@@ -2179,10 +2188,28 @@ function AuditTrailPanel({
         <strong>Audit trail</strong>
       </div>
       <small>{message}</small>
+      <div className="audit-summary-grid">
+        <span>
+          <strong>{events.length}</strong>
+          <small>loaded events</small>
+        </span>
+        <span>
+          <strong>{filteredEvents.length}</strong>
+          <small>matching view</small>
+        </span>
+        <span>
+          <strong>{actorCount}</strong>
+          <small>actors</small>
+        </span>
+        <span>
+          <strong>{latestEvent ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(latestEvent.created_at)) : "None"}</strong>
+          <small>latest match</small>
+        </span>
+      </div>
       <div className="audit-controls">
         <input
           onChange={(event) => setAuditQuery(event.target.value)}
-          placeholder="Search action, target, or reason"
+          placeholder="Search action, target, reason, or metadata"
           value={auditQuery}
         />
         <select onChange={(event) => setActionFilter(event.target.value as typeof actionFilter)} value={actionFilter}>
@@ -2192,6 +2219,16 @@ function AuditTrailPanel({
           <option value="record">Records</option>
           <option value="connect">Connect</option>
           <option value="verification">Verification</option>
+          <option value="evidence">Evidence</option>
+          <option value="schema">Schema</option>
+        </select>
+        <select onChange={(event) => setTargetFilter(event.target.value)} value={targetFilter}>
+          <option value="all">All targets</option>
+          {targetTables.map((target) => (
+            <option key={target} value={target}>
+              {target.replace(/_/g, " ")}
+            </option>
+          ))}
         </select>
         <button
           className="secondary-action"
@@ -2209,6 +2246,10 @@ function AuditTrailPanel({
               <div>
                 <strong>{auditActionLabel(event.action)}</strong>
                 <small>{event.reason || event.target_table}</small>
+                <small>
+                  {event.target_table}
+                  {event.target_id ? ` / ${event.target_id.slice(0, 8)}` : ""}
+                </small>
               </div>
               <time>
                 {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(
@@ -2797,7 +2838,7 @@ function csvCell(value: string | null | undefined) {
 
 function auditEventsToCsv(events: DbAuditEvent[]) {
   const rows = [
-    ["created_at", "action", "target_table", "target_id", "organization_id", "actor_profile_id", "reason"],
+    ["created_at", "action", "target_table", "target_id", "organization_id", "actor_profile_id", "reason", "metadata"],
     ...events.map((event) => [
       event.created_at,
       event.action,
@@ -2805,7 +2846,8 @@ function auditEventsToCsv(events: DbAuditEvent[]) {
       event.target_id ?? "",
       event.organization_id ?? "",
       event.actor_profile_id ?? "",
-      event.reason ?? ""
+      event.reason ?? "",
+      JSON.stringify(event.metadata ?? {})
     ])
   ];
 
