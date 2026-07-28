@@ -4283,13 +4283,14 @@ p {
 
 .evidence-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 128px;
+  grid-template-columns: minmax(0, 1fr) 128px 184px;
   gap: 8px;
   margin-top: 12px;
 }
 
 .evidence-controls input,
-.evidence-controls select {
+.evidence-controls select,
+.evidence-controls button {
   min-height: 36px;
   width: 100%;
   padding: 0 10px;

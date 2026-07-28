@@ -338,6 +338,7 @@ function RecordDetail({
     const haystack = `${document.title} ${document.document_type} ${document.source_name} ${document.status}`.toLowerCase();
     return matchesStatus && haystack.includes(evidenceQuery.trim().toLowerCase());
   });
+  const evidenceManifestName = `trustgraph-evidence-manifest-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.csv`;
 
   useEffect(() => {
     setTitle(record.title);
@@ -505,6 +506,14 @@ function RecordDetail({
                 <option value="rejected">Rejected</option>
                 <option value="archived">Archived</option>
               </select>
+              <button
+                className="secondary-action"
+                disabled={!filteredEvidenceDocuments.length}
+                onClick={() => downloadTextFile(evidenceManifestName, evidenceDocumentsToCsv(filteredEvidenceDocuments), "text/csv")}
+                type="button"
+              >
+                Export evidence manifest
+              </button>
             </div>
             <div className="evidence-document-list">
               {filteredEvidenceDocuments.length ? (
@@ -3357,6 +3366,25 @@ function auditEventsToCsv(events: DbAuditEvent[]) {
       event.actor_profile_id ?? "",
       event.reason ?? "",
       JSON.stringify(event.metadata ?? {})
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function evidenceDocumentsToCsv(documents: DbEvidenceDocument[]) {
+  const rows = [
+    ["document_id", "trust_record_id", "title", "document_type", "source_name", "status", "file_attached", "created_at", "evidence_summary"],
+    ...documents.map((document) => [
+      document.id,
+      document.trust_record_id,
+      document.title,
+      document.document_type,
+      document.source_name,
+      document.status,
+      document.storage_path ? "yes" : "no",
+      document.created_at,
+      document.evidence_summary ?? ""
     ])
   ];
 
