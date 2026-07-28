@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import {
   Activity,
   BadgeCheck,
@@ -160,6 +160,14 @@ function toneClass(tone: Tone) {
   return `tone-${toneLabels[tone]}`;
 }
 
+function titleCase(value: string) {
+  return value
+    .replace(/_/g, " ")
+    .split(" ")
+    .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : word))
+    .join(" ");
+}
+
 function WorkspaceButton({
   workspace,
   active,
@@ -206,7 +214,7 @@ function AdvisoryCard({ summary }: { summary: ReturnType<typeof buildAdvisorySum
   return (
     <div className="hero-card ai-card">
       <div className="hero-card-top">
-        <span className="eyebrow">AI advisory</span>
+        <span className="eyebrow">Guidance summary</span>
         <span className="status-chip info">
           <Sparkles size={13} />
           source-grounded
@@ -694,7 +702,7 @@ function PassportRecordForm({
       setExpiresAt("");
       setSensitivity("standard");
       setConsentRequired(false);
-      setStatus("Record added to Supabase Passport");
+      setStatus("Record added to your Passport");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Could not add Passport record");
     } finally {
@@ -1355,7 +1363,7 @@ function VerifyRequestsPanel({
         </div>
       </form>
       <div className="grant-panel-top test-tool-strip">
-        <small>Test data tool for quickly adding a reviewer role while validating a new Supabase project.</small>
+        <small>Test data tool for quickly adding a reviewer role while validating a new environment.</small>
         <button
           className="secondary-action"
           disabled={busy}
@@ -1592,7 +1600,7 @@ function CorporateControlCenter({
         <article className="control-center-next">
           <span className="eyebrow">Next best action</span>
           <strong>{nextAction}</strong>
-          <small>Use the panels below to complete the next workflow step against Supabase.</small>
+          <small>Use the panels below to complete the next workflow step.</small>
         </article>
       </div>
     </section>
@@ -2733,7 +2741,7 @@ function SecurityReviewPanel({
   const checks = [
     {
       label: "RLS-backed reads",
-      detail: "Records, grants, members, audit, evidence, and consent load through Supabase auth tokens.",
+      detail: "Records, grants, members, audit, evidence, and consent load through authenticated session tokens.",
       done: true
     },
     {
@@ -3190,8 +3198,8 @@ function BillingPanel({
       </div>
       <div className="billing-decision-card">
         <div>
-          <strong>Billing v1 decision</strong>
-          <small>Current pilot flow activates a tracked organization subscription in Supabase and writes audit history. Real payment collection remains gated until Stripe products, tax handling, invoices, refunds, webhooks, and dunning are approved.</small>
+          <strong>Billing pilot ledger</strong>
+          <small>Activation records a tracked organization subscription and writes it to the audit trail. Real payment collection stays gated until card processing, tax handling, invoices, refunds, and dunning are approved.</small>
         </div>
         <span className="status-chip warning">pilot ledger</span>
       </div>
@@ -3577,7 +3585,7 @@ function AuthPanel({
       const nextSession =
         mode === "signin" ? await signInWithPassword(email, password) : await signUpWithPassword(email, password, authRedirectUrl);
       onSession(nextSession);
-      setMessage(nextSession ? "Live Supabase session connected" : "Check your email to confirm the account");
+      setMessage(nextSession ? "Session connected" : "Check your email to confirm the account");
       setPassword("");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Authentication failed.");
@@ -3604,7 +3612,7 @@ function AuthPanel({
     setMessage("Sending verification email...");
     try {
       await resendSignupConfirmation(email, authRedirectUrl);
-      setMessage("Verification email requested. If Supabase says rate limit exceeded, wait before trying again.");
+      setMessage("Verification email requested. If a send limit is active, wait before trying again.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not resend verification email.");
     } finally {
@@ -3616,15 +3624,15 @@ function AuthPanel({
     <section className="auth-panel">
       <div className="mini-heading">
         <KeyRound size={16} />
-        <strong>Live auth</strong>
+        <strong>Account access</strong>
       </div>
       {session ? (
         <div className="auth-session">
           <span>{session.user.email}</span>
-          <small>Supabase session stored in this browser</small>
+          <small>Session stored securely in this browser</small>
           <div className="auth-session-meta">
-            <span>Live database access</span>
-            <span>RBAC context loading</span>
+            <span>Live account access</span>
+            <span>Role and permissions loaded</span>
           </div>
           <button
             className="secondary-action"
@@ -3672,12 +3680,12 @@ function AuthPanel({
               Reset password
             </button>
             <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-              Resend verify
+              Resend verification
             </button>
           </div>
           <div className="auth-recovery-note">
-            <strong>Recovery redirect</strong>
-            <small>Add this URL in Supabase Auth redirect settings: {authRedirectUrl}</small>
+            <strong>Sign-up needs email verification</strong>
+            <small>Confirmation and recovery links return to: {authRedirectUrl}</small>
           </div>
         </form>
       )}
@@ -3792,7 +3800,7 @@ function OnboardingChecklistPanel({
   const checklist = [
     {
       label: "Live account",
-      detail: authSession ? authSession.user.email : "Sign in or create a Supabase account",
+      detail: authSession ? authSession.user.email : "Sign in or create an account",
       done: Boolean(authSession && accountContext)
     },
     {
@@ -3891,7 +3899,7 @@ function DemoScriptPanel({
     },
     {
       label: "Create Passport record",
-      detail: "Add employment, credential, or sensitive background-check record.",
+      detail: "Add an employment, credential, or sensitive compliance record.",
       done: livePassportRecords.length > 0
     },
     {
@@ -3905,7 +3913,7 @@ function DemoScriptPanel({
       done: teamMembers.length > 0 || teamInvitations.length > 0
     },
     {
-      label: "Billing stub",
+      label: "Billing pilot ledger",
       detail: "Activate a tracked pilot subscription and confirm the audit event writes.",
       done: subscriptions.some((subscription) => subscription.status !== "cancelled")
     },
@@ -3946,7 +3954,7 @@ function DemoScriptPanel({
     },
     {
       label: "Release ledger",
-      detail: "Confirm Supabase migration runs appear in Admin after workflow execution.",
+      detail: "Confirm migration runs appear in Admin after workflow execution.",
       done: schemaMigrationRuns.length > 0
     },
     {
@@ -3960,7 +3968,7 @@ function DemoScriptPanel({
     <section className="demo-panel">
       <div className="mini-heading">
         <ClipboardCheck size={16} />
-        <strong>Demo/test script v1</strong>
+        <strong>Workflow acceptance script</strong>
       </div>
       <div className="demo-step-list">
         {steps.map((step, index) => (
@@ -4069,14 +4077,36 @@ function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; work
     <section className="permission-panel">
       <ShieldAlert size={34} />
       <div>
-        <span className="eyebrow">Permission denied state</span>
-        <h2>{roleLabel} cannot open {workspaceLabel}</h2>
+        <span className="eyebrow">Access restricted</span>
+        <h2>{roleLabel} does not have access to {workspaceLabel}</h2>
         <p>
-          TrustGraph blocks portal access unless the active Organization Membership grants the matching role. Switch
-          account context to continue.
+          This workspace is scoped to specific roles. Switch to an account membership with matching access to
+          continue.
         </p>
       </div>
     </section>
+  );
+}
+
+function SidebarSection({
+  title,
+  badge,
+  defaultOpen = false,
+  children
+}: {
+  title: string;
+  badge?: string;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <details className="sidebar-section" open={defaultOpen}>
+      <summary>
+        <span>{title}</span>
+        {badge ? <span className="status-chip neutral">{badge}</span> : null}
+      </summary>
+      <div className="sidebar-section-body">{children}</div>
+    </details>
   );
 }
 
@@ -4131,7 +4161,7 @@ function PublicSite({
         }
         setMessage(portal === "corporate" ? "Corporate portal ready" : "Professional Passport ready");
       } else {
-        setMessage("Check your email to confirm the account, then login.");
+        setMessage("Check your email to confirm the account, then sign in.");
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Authentication failed");
@@ -4162,44 +4192,55 @@ function PublicSite({
     }
   }
 
+  const howItWorks = [
+    {
+      icon: Fingerprint,
+      tag: "Professional",
+      title: "Passport",
+      detail: "Create records, attach evidence, request references, and approve every Access Grant before anything is shared."
+    },
+    {
+      icon: ShieldCheck,
+      tag: "Employer & staffing",
+      title: "Verify",
+      detail: "Review approved records only, request missing items, and track credential currency — never raw, never unscoped."
+    },
+    {
+      icon: Network,
+      tag: "Operations",
+      title: "Admin",
+      detail: "Monitor the audit trail, release ledger, workflow QA, and Connect controls from one operations console."
+    }
+  ];
   const pricing = [
     {
       name: "Professional",
-      price: "$0",
-      detail: "Own your Passport, records, references, and sharing consent.",
-      points: ["Private Passport", "Evidence uploads", "Access Grants", "Reference requests"]
+      price: "Free",
+      detail: "Own your Passport for good — records, evidence, references, and sharing consent.",
+      points: ["Private Passport", "Evidence uploads", "Access Grants", "Reference requests"],
+      cta: "Create your Passport",
+      target: "professional" as const,
+      featured: false
     },
     {
       name: "Corporate Verify",
-      price: "$149",
-      detail: "For employers and staffing teams reviewing approved shared records.",
-      points: ["Corporate RBAC", "Missing-record requests", "Readiness review", "Audit trail"]
+      price: "Pilot access",
+      detail: "For employers and staffing teams reviewing approved records at scale.",
+      points: ["Corporate RBAC", "Missing-record requests", "Readiness review", "Audit trail"],
+      cta: "Request pilot access",
+      target: "corporate" as const,
+      featured: true
     },
     {
       name: "TrustGraph Scale",
       price: "Custom",
-      detail: "For issuer, integration, compliance, and multi-team workflows.",
-      points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"]
+      detail: "For issuer, integration, compliance, and multi-team programs.",
+      points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"],
+      cta: "Talk to us",
+      target: "corporate" as const,
+      featured: false
     }
   ];
-  const liveWorkflow = [
-    {
-      label: "Professional",
-      value: "Passport",
-      detail: "Create records, attach evidence, request references, and approve corporate Access Grants."
-    },
-    {
-      label: "Corporate",
-      value: "Verify",
-      detail: "Register an employer or staffing workspace, invite reviewers, and work approved records."
-    },
-    {
-      label: "Admin",
-      value: "Control",
-      detail: "Monitor operations cases, audit events, notifications, Connect clients, and readiness status."
-    }
-  ];
-  const pilotSignals = ["Supabase Auth", "Real database repositories", "Private evidence storage", "GitHub Pages deployment"];
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -4213,12 +4254,12 @@ function PublicSite({
           <div className="brand-symbol">TG</div>
           <div>
             <strong>TrustGraph</strong>
-            <span>Verified workforce record platform</span>
+            <span>Verified workforce records</span>
           </div>
         </div>
         <div className="public-nav-actions">
           <button className="secondary-action" onClick={onOpenDemo}>
-            Open demo
+            Preview workspace
           </button>
           <button className="primary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView()}>
             Get started
@@ -4228,18 +4269,19 @@ function PublicSite({
 
       <section className="public-hero">
         <div>
-          <span className="eyebrow">Passport, Verify, Admin, Connect</span>
-          <h1>Verified workforce records for professionals and corporate hiring teams.</h1>
+          <span className="eyebrow">Passport · Verify · Admin</span>
+          <h1>A verified work record, owned by the person it belongs to.</h1>
           <p>
-            TrustGraph gives professionals a private evidence-first Passport and gives employers or staffing agencies
-            a permissioned Verify portal for approved records, missing items, credentials, and audit-backed decisions.
+            TrustGraph replaces scattered documents and one-off checks with a single evidence-backed Passport.
+            Professionals decide what to share. Employers and staffing teams see only what's been approved — every
+            access consented, scoped, and logged.
           </p>
           <div className="public-hero-actions">
             <button className="primary-action" onClick={() => openPortal("professional")}>
-              Professional portal
+              Create your Passport
             </button>
-            <button className="secondary-action" onClick={() => openPortal("corporate")}>
-              Corporate portal
+            <button className="secondary-action" onClick={onOpenDemo}>
+              Preview the workspace
             </button>
           </div>
           <div className="public-portal-rail">
@@ -4253,109 +4295,88 @@ function PublicSite({
             <button className={portal === "corporate" ? "active" : ""} onClick={() => openPortal("corporate")}>
               <ShieldCheck size={18} />
               <span>
-                <strong>Corporate teams</strong>
-                <small>Register an employer or staffing workspace with RBAC.</small>
+                <strong>Employers &amp; staffing agencies</strong>
+                <small>Register a corporate workspace and review approved records.</small>
               </span>
             </button>
           </div>
         </div>
         <aside className="public-proof">
           <div>
-            <span>13</span>
-            <small>foundation tracks</small>
+            <span>Consent</span>
+            <small>Every Access Grant is requested and approved, never assumed</small>
           </div>
           <div>
-            <span>Live</span>
-            <small>Supabase auth, database, storage</small>
+            <span>Evidence</span>
+            <small>Every record keeps its source, status, and audit trail</small>
           </div>
           <div>
-            <span>RBAC</span>
-            <small>Professional, corporate, issuer, admin</small>
+            <span>Scoped</span>
+            <small>Professional, employer, staffing, and admin roles</small>
           </div>
         </aside>
       </section>
 
       <section className="public-section">
         <div className="public-section-heading">
-          <span className="eyebrow">Portals</span>
-          <h2>One product, separate experiences</h2>
+          <span className="eyebrow">How it works</span>
+          <h2>One record. Three permissioned views.</h2>
         </div>
         <div className="portal-grid">
-          <article>
-            <Fingerprint size={24} />
-            <strong>Professional Passport</strong>
-            <p>Create records, upload evidence, request references, approve Access Grants, and control sharing.</p>
-          </article>
-          <article>
-            <ShieldCheck size={24} />
-            <strong>Corporate Verify</strong>
-            <p>Review approved shared Passports, request missing records, manage issuer workflows, and monitor readiness.</p>
-          </article>
-          <article>
-            <Network size={24} />
-            <strong>Connect and Admin</strong>
-            <p>Operate API clients, webhooks, audit events, verification cases, and source-grounded advisory summaries.</p>
-          </article>
-        </div>
-      </section>
-
-      <section className="public-section workflow-section">
-        <div className="public-section-heading">
-          <span className="eyebrow">Live workflow</span>
-          <h2>From registration to verified workforce decisions</h2>
-        </div>
-        <div className="workflow-grid">
-          {liveWorkflow.map((item) => (
-            <article key={item.label}>
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <p>{item.detail}</p>
-            </article>
-          ))}
+          {howItWorks.map((item) => {
+            const Icon = item.icon;
+            return (
+              <article key={item.title}>
+                <Icon size={24} />
+                <span className="eyebrow">{item.tag}</span>
+                <strong>{item.title}</strong>
+                <p>{item.detail}</p>
+              </article>
+            );
+          })}
         </div>
       </section>
 
       <section className="public-section pricing-section">
         <div className="public-section-heading">
-          <span className="eyebrow">Pricing</span>
-          <h2>Start simple, scale into corporate workflows</h2>
+          <span className="eyebrow">Access</span>
+          <h2>Start free. Bring your team in when you're ready.</h2>
         </div>
         <div className="pricing-grid">
           {pricing.map((plan) => (
-            <article className="pricing-card" key={plan.name}>
+            <article className={`pricing-card ${plan.featured ? "featured" : ""}`} key={plan.name}>
+              {plan.featured ? <span className="status-chip success pricing-card-tag">Most teams start here</span> : null}
               <strong>{plan.name}</strong>
-              <span>{plan.price}</span>
+              <span className="pricing-card-price">{plan.price}</span>
               <p>{plan.detail}</p>
               {plan.points.map((point) => (
                 <small key={point}>{point}</small>
               ))}
+              <button className={plan.featured ? "primary-action" : "secondary-action"} onClick={() => openPortal(plan.target)} type="button">
+                {plan.cta}
+              </button>
             </article>
-          ))}
-        </div>
-        <div className="pilot-signal-row">
-          {pilotSignals.map((signal) => (
-            <span key={signal}>{signal}</span>
           ))}
         </div>
       </section>
 
       <section className="public-auth-section" id="portal-auth">
         <div>
-          <span className="eyebrow">Login and registration</span>
-          <h2>{portal === "corporate" ? "Corporate portal access" : "Professional Passport access"}</h2>
+          <span className="eyebrow">Sign in or register</span>
+          <h2>{portal === "corporate" ? "Corporate account access" : "Professional Passport access"}</h2>
           <p>
             {portal === "corporate"
-              ? "Sign in or register, then create an employer or staffing agency account from the live RBAC panel."
-              : "Sign in or register to create your professional account and start building your private Passport."}
+              ? "Sign in or register, then set up your employer or staffing workspace in a few steps."
+              : "Sign in or register to start building your private, evidence-backed Passport."}
           </p>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
           <div className="auth-card-heading">
             <span className="status-chip neutral">{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</span>
-            <strong>{mode === "signup" ? "Create live account" : "Login to portal"}</strong>
+            <strong>{mode === "signup" ? "Create your account" : "Sign in"}</strong>
             <small>
               {portal === "corporate"
-                ? "Create a company workspace, invite reviewers, activate billing, and request Passport access."
+                ? "Create a company workspace, invite reviewers, activate a plan, and request Passport access."
                 : "Create your professional profile, add records, upload evidence, and control sharing."}
             </small>
           </div>
@@ -4372,7 +4393,7 @@ function PublicSite({
               Register
             </button>
             <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-              Login
+              Sign in
             </button>
           </div>
           <input onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
@@ -4392,20 +4413,18 @@ function PublicSite({
             disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}
             type="submit"
           >
-            {mode === "signin" ? "Login" : "Create account"}
+            {mode === "signin" ? "Sign in" : "Create account"}
           </button>
           <button className="secondary-action" onClick={onOpenDemo} type="button">
-            Explore demo app
+            Preview the workspace
           </button>
           <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-            Resend verification
+            Resend verification email
           </button>
           <small>{message}</small>
-          <small>
-            {authReady
-              ? `Hosted Supabase Auth is configured. Allowed redirect URL must include: ${authRedirectUrl}`
-              : "Hosted build is missing public Supabase Auth configuration."}
-          </small>
+          {!authReady ? (
+            <small>Hosted authentication isn't configured yet. Add the Supabase environment keys to enable live sign-in.</small>
+          ) : null}
         </form>
       </section>
     </main>
@@ -4414,6 +4433,7 @@ function PublicSite({
 
 function App() {
   const [workspaceId, setWorkspaceId] = useState<WorkspaceId>("passport");
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("identity");
   const [activeMembershipId, setActiveMembershipId] = useState(sessionUser.activeMembershipId);
@@ -4512,7 +4532,7 @@ function App() {
         if (cancelled) return;
         setAccountContext(context);
         setActiveMembershipId(context.memberships[0]?.id ?? sessionUser.activeMembershipId);
-        setAccountStatus("Live Supabase account context");
+        setAccountStatus("Live account context");
       })
       .catch((error) => {
         if (cancelled) return;
@@ -4660,7 +4680,7 @@ function App() {
         setNotificationEvents(notifications);
         setReferenceRequests(references);
         setConsentAuthorizations(consents);
-        setRecordStatus(items.length ? "Live Supabase Passport records" : "No live records yet");
+        setRecordStatus(items.length ? "Live Passport records" : "No live records yet");
         setNotificationStatus(
           notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet"
         );
@@ -4732,7 +4752,7 @@ function App() {
         setMissingRecordRequests(missingRecords);
         setVerifyStatus(
           items.length || sharedRecords.length
-            ? `Live Supabase Verify data: ${items.length} requests, ${sharedRecords.length} shared records`
+            ? `Live Verify data: ${items.length} requests, ${sharedRecords.length} shared records`
             : "No live Verify requests yet"
         );
         setIssuerStatus(
@@ -4776,7 +4796,7 @@ function App() {
       .then((items) => {
         if (cancelled) return;
         setAccessGrants(items);
-        setGrantStatus(items.length ? "Live Supabase Access Grants" : "No live Access Grants yet");
+        setGrantStatus(items.length ? "Live Access Grants" : "No live Access Grants yet");
       })
       .catch((error) => {
         if (cancelled) return;
@@ -4836,7 +4856,7 @@ function App() {
         setSchemaMigrationRuns(migrations);
         setApiClients(clients);
         setWebhookSubscriptions(webhooks);
-        setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No live operations cases yet");
+        setOperationsStatus(items.length ? `Live operations queue: ${items.length} cases` : "No live operations cases yet");
         setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
         setReleaseStatus(migrations.length ? `Release ledger: ${migrations.length} recent migrations` : "No release ledger entries yet");
         setConnectStatus(
@@ -4933,6 +4953,7 @@ function App() {
       workspace.id
     ]
   );
+  const unreadNotificationCount = notificationEvents.filter((event) => event.status === "queued").length;
 
   const selectedRecord = records.find((record) => record.id === selectedId) ?? records[0] ?? workspace.records[0];
   const selectedRecordIsLive = livePassportRecords.some((record) => record.id === selectedRecord.id);
@@ -4976,7 +4997,7 @@ function App() {
     });
     setLivePassportRecords((current) => [record, ...current]);
     setSelectedId(record.id);
-    setRecordStatus("Live Supabase Passport records");
+    setRecordStatus("Live Passport records");
   }
 
   async function updateLivePassportRecord(input: {
@@ -5007,7 +5028,7 @@ function App() {
     });
 
     setLivePassportRecords((current) => current.map((record) => (record.id === updated.id ? updated : record)));
-    setRecordStatus("Live Supabase Passport records");
+    setRecordStatus("Live Passport records");
   }
 
   async function createLiveEvidenceDocument(input: {
@@ -5143,7 +5164,7 @@ function App() {
     setAccessGrants((current) =>
       current.map((grant) => (grant.id === updated.id ? { ...grant, status: updated.status } : grant))
     );
-    setGrantStatus(status === "approved" ? `Access approved and ${syncedCount} records shared` : "Live Supabase Access Grants");
+    setGrantStatus(status === "approved" ? `Access approved and ${syncedCount} records shared` : "Live Access Grants");
   }
 
   async function createSampleGrantRequest() {
@@ -5656,65 +5677,72 @@ function App() {
           onCreateOperationsRole={createLiveOperationsRole}
           onSwitch={switchMembership}
         />
-        <BillingPanel
-          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-          message={billingStatus}
-          onActivate={activateLiveSubscription}
-          plans={subscriptionPlans}
-          subscriptions={organizationSubscriptions}
-        />
-        <TeamInvitationsPanel
-          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-          invitations={teamInvitations}
-          message={teamStatus}
-          onCreate={createLiveTeamInvitation}
-          onStatus={updateLiveTeamInvitationStatus}
-        />
-        <TeamMembersPanel
-          currentProfileId={accountContext?.profile.id ?? null}
-          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-          members={teamMembers}
-          message={memberStatus}
-          onStatus={updateLiveTeamMemberStatus}
-        />
-        <MyInvitationsPanel
-          disabled={!authSession || !accountContext}
-          invitations={myInvitations}
-          message={myInvitationStatus}
-          onAccept={acceptLiveTeamInvitation}
-        />
-
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
-        <ProductionReadinessPanel
-          accountContext={accountContext}
-          activeOrganizationName={activeOrganization.name}
-          authSession={authSession}
-          teamManagementReady={teamManagementReady}
-        />
-        <OnboardingChecklistPanel
-          accessGrants={accessGrants}
-          accountContext={accountContext}
-          authSession={authSession}
-          consentAuthorizations={consentAuthorizations}
-          livePassportRecords={livePassportRecords}
-          organizationSubscriptions={organizationSubscriptions}
-          teamInvitations={teamInvitations}
-          teamMembers={teamMembers}
-        />
-        <DemoScriptPanel
-          accessGrants={accessGrants}
-          apiClients={apiClients}
-          auditEvents={auditEvents}
-          consentAuthorizations={consentAuthorizations}
-          evidenceDocuments={evidenceDocuments}
-          livePassportRecords={livePassportRecords}
-          schemaMigrationRuns={schemaMigrationRuns}
-          sharedVerifyRecords={sharedVerifyRecords}
-          subscriptions={organizationSubscriptions}
-          teamInvitations={teamInvitations}
-          teamMembers={teamMembers}
-        />
-        <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
+
+        <SidebarSection title="Setup &amp; readiness" defaultOpen>
+          <OnboardingChecklistPanel
+            accessGrants={accessGrants}
+            accountContext={accountContext}
+            authSession={authSession}
+            consentAuthorizations={consentAuthorizations}
+            livePassportRecords={livePassportRecords}
+            organizationSubscriptions={organizationSubscriptions}
+            teamInvitations={teamInvitations}
+            teamMembers={teamMembers}
+          />
+          <ProductionReadinessPanel
+            accountContext={accountContext}
+            activeOrganizationName={activeOrganization.name}
+            authSession={authSession}
+            teamManagementReady={teamManagementReady}
+          />
+          <DemoScriptPanel
+            accessGrants={accessGrants}
+            apiClients={apiClients}
+            auditEvents={auditEvents}
+            consentAuthorizations={consentAuthorizations}
+            evidenceDocuments={evidenceDocuments}
+            livePassportRecords={livePassportRecords}
+            schemaMigrationRuns={schemaMigrationRuns}
+            sharedVerifyRecords={sharedVerifyRecords}
+            subscriptions={organizationSubscriptions}
+            teamInvitations={teamInvitations}
+            teamMembers={teamMembers}
+          />
+        </SidebarSection>
+
+        <SidebarSection
+          title="Billing &amp; team"
+          badge={myInvitations.length ? `${myInvitations.length} pending` : undefined}
+        >
+          <BillingPanel
+            disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+            message={billingStatus}
+            onActivate={activateLiveSubscription}
+            plans={subscriptionPlans}
+            subscriptions={organizationSubscriptions}
+          />
+          <TeamInvitationsPanel
+            disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+            invitations={teamInvitations}
+            message={teamStatus}
+            onCreate={createLiveTeamInvitation}
+            onStatus={updateLiveTeamInvitationStatus}
+          />
+          <TeamMembersPanel
+            currentProfileId={accountContext?.profile.id ?? null}
+            disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+            members={teamMembers}
+            message={memberStatus}
+            onStatus={updateLiveTeamMemberStatus}
+          />
+          <MyInvitationsPanel
+            disabled={!authSession || !accountContext}
+            invitations={myInvitations}
+            message={myInvitationStatus}
+            onAccept={acceptLiveTeamInvitation}
+          />
+        </SidebarSection>
 
         <nav className="module-nav" aria-label="Workspace modules">
           {workspace.nav.map((item) => {
@@ -5731,8 +5759,8 @@ function App() {
         <div className="security-card">
           <ShieldCheck size={18} />
           <div>
-            <strong>Evidence-first trust</strong>
-            <span>No universal Trust Score. Every claim keeps source, status, and audit context.</span>
+            <strong>Evidence-first, not scored</strong>
+            <span>TrustGraph never reduces a person to a single score. Every record keeps its source, status, and audit trail.</span>
           </div>
         </div>
       </aside>
@@ -5746,17 +5774,31 @@ function App() {
             <div className="session-strip">
               <span className={`status-chip ${toneClass(activeRole.risk)}`}>{activeRole.label}</span>
               <span className="status-chip neutral">{activeOrganization.name}</span>
-              <span className="status-chip neutral">{activeOrganization.type.replace("_", " ")}</span>
-              <span className="status-chip neutral">{authSession ? "live auth" : "demo session"}</span>
+              <span className="status-chip neutral">{titleCase(activeOrganization.type)}</span>
+              <span className="status-chip neutral">{authSession ? "Live session" : "Preview mode"}</span>
             </div>
           </div>
           <div className="topbar-actions">
-            <button aria-label="View notifications">
+            <button
+              aria-expanded={notificationsOpen}
+              aria-label="View notifications"
+              className={notificationsOpen ? "active" : ""}
+              onClick={() => setNotificationsOpen((open) => !open)}
+            >
               <Bell size={18} />
+              {unreadNotificationCount ? <span className="notification-count">{unreadNotificationCount}</span> : null}
             </button>
             <button aria-label="Export authorized report">
               <Download size={18} />
             </button>
+            {notificationsOpen ? (
+              <>
+                <div aria-hidden="true" className="notification-backdrop" onClick={() => setNotificationsOpen(false)} />
+                <div className="notification-popover">
+                  <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
+                </div>
+              </>
+            ) : null}
           </div>
         </header>
 

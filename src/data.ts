@@ -323,7 +323,7 @@ export const workspaces: Workspace[] = [
       { label: "Documents", icon: FileCheck2 },
       { label: "Audit Logs", icon: Activity },
       { label: "Policies", icon: LockKeyhole },
-      { label: "AI Governance", icon: Sparkles }
+      { label: "Governance", icon: Sparkles }
     ],
     records: [
       {
