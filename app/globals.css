@@ -1560,12 +1560,18 @@ p,
 }
 
 .auth-recovery-note {
-  display: grid;
-  gap: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   padding: 10px;
   border: 1px solid rgba(88, 166, 255, 0.18);
   border-radius: var(--radius);
   background: rgba(88, 166, 255, 0.06);
+}
+
+.auth-recovery-note > div {
+  min-width: 0;
 }
 
 .auth-recovery-note strong,
@@ -1584,6 +1590,13 @@ p,
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
+}
+
+.auth-recovery-note button {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
 }
 
 .auth-support-grid {
@@ -4068,6 +4081,7 @@ p {
   .panel-heading,
   .record-row-main,
   .onboarding-item,
+  .auth-recovery-note,
   .grant-panel-top,
   .grant-card,
   .consent-card,

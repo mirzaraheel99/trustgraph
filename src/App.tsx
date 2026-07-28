@@ -3870,6 +3870,15 @@ function AuthPanel({
     }
   }
 
+  async function copyRedirectUrl() {
+    try {
+      await navigator.clipboard.writeText(authRedirectUrl);
+      setMessage("Hosted redirect URL copied for Supabase Auth settings.");
+    } catch {
+      setMessage(`Copy this hosted redirect URL into Supabase Auth settings: ${authRedirectUrl}`);
+    }
+  }
+
   async function submitPasswordUpdate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!session) return;
@@ -3963,8 +3972,13 @@ function AuthPanel({
             </button>
           </div>
           <div className="auth-recovery-note">
-            <strong>Recovery redirect</strong>
-            <small>Add this URL in Supabase Auth redirect settings: {authRedirectUrl}</small>
+            <div>
+              <strong>Recovery redirect</strong>
+              <small>Add this URL in Supabase Auth redirect settings: {authRedirectUrl}</small>
+            </div>
+            <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
+              Copy URL
+            </button>
           </div>
           <div className="auth-support-grid">
             {authChecks.map((check) => (

@@ -77,6 +77,7 @@ assertIncludesAny(bundleText, ["Every portal connects to the live database found
 assertIncludesAny(bundleText, ["After registration"], "registration outcome section");
 assertIncludesAny(bundleText, ["Set new password"], "password recovery update control");
 assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
+assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Guided preview mode"], "preview mode indicator");
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
