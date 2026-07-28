@@ -68,5 +68,7 @@ assertIncludesAny(bundleText, ["Professional Passport"], "Professional portal co
 assertIncludesAny(bundleText, ["Corporate Verify"], "Corporate portal copy");
 assertIncludesAny(bundleText, ["Pilot monthly"], "Corporate pricing cadence");
 assertIncludesAny(bundleText, ["After registration"], "registration outcome section");
+assertIncludesAny(bundleText, ["Set new password"], "password recovery update control");
+assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
 
-console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal copy verified)`);
+console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal and recovery copy verified)`);
