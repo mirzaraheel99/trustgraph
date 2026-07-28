@@ -58,6 +58,67 @@ Avoid:
 4. Should pricing stay visible publicly, or should Corporate and Scale become "request access" flows?
 5. What proof points can be stated truthfully today: live Supabase, GitHub Pages deployment, private evidence storage, RBAC, audit exports, or pilot-only readiness?
 
+## Ready-To-Paste Claude Prompt
+
+Use this prompt when asking another model or designer to improve the UI:
+
+```text
+You are improving the TrustGraph GitHub repo:
+https://github.com/mirzaraheel99/trustgraph
+
+Live app:
+https://mirzaraheel99.github.io/trustgraph/
+
+Goal:
+Make TrustGraph feel like a premium modern SaaS product, not a demo. Improve visual hierarchy, wording, page structure, spacing, mobile behavior, and operational clarity while preserving the current React/TypeScript/Next.js implementation and live Supabase-backed flows.
+
+Product:
+TrustGraph is an evidence-first workforce trust platform. Professionals create a private Passport for work history, credentials, training, references, and evidence. Corporate teams use Corporate Verify to request scoped access and review only owner-approved records. Operators manage audit, release, security, Connect, evidence, billing pilot, and workflow QA.
+
+Current foundation:
+- Next.js, React, TypeScript.
+- Static GitHub Pages deployment.
+- Supabase Auth, database, Storage, RLS, and RPC functions.
+- Professional Passport, Corporate Verify, RBAC/team roles, Access Grants, evidence preview/download, missing-record requests, references, credentials, notifications, billing pilot ledger, audit exports, release ledger, security/RLS checklist, pilot acceptance script, and 13-track v1 alignment panel.
+
+What to improve:
+1. Public website first viewport: make Passport, Corporate Verify, and operator trust controls obvious in the first 10 seconds.
+2. Auth and registration: make Professional vs Corporate paths clearer, remove confusion around local vs hosted redirect links, and reassure users about verification.
+3. Workspace information architecture: make Passport, Verify, Account, Billing, Admin, Evidence, Audit, and Security feel like one coherent SaaS system.
+4. Copy: replace vague demo language with concrete operational wording. Use "scoped access", "consent", "audit trail", "signed evidence links", "pilot subscription ledger", and "human decision gates" consistently.
+5. Visual design: premium B2B SaaS, restrained, high-trust, dense but readable. Avoid noisy decoration, generic startup claims, and over-large cards inside operational screens.
+6. Mobile: make navigation, cards, filters, forms, and action rows stack cleanly without overlap or clipped text.
+
+Hard guardrails:
+- Do not remove current product workflows.
+- Do not imply Stripe/payment collection is live. Billing is a pilot ledger until a human Stripe decision is approved.
+- Do not imply legal/compliance/background-check production readiness.
+- Do not imply automated hiring decisions.
+- Do not remove Supabase environment assumptions or GitHub Pages static export behavior.
+- Keep TypeScript clean.
+- Do not commit generated .next, out, tsconfig.tsbuildinfo, or package-lock.json.
+
+Before major changes, ask these questions:
+1. Which first buyer should the public page prioritize: healthcare staffing, general employers, staffing agencies, or professionals?
+2. Should public pricing stay visible, or should Corporate/Scale become request-access flows?
+3. What truthful proof points can be shown now: live Supabase, private evidence storage, RBAC, audit exports, GitHub Pages deployment, or pilot readiness?
+4. Should the visual tone be more enterprise compliance, fast hiring operations, or professional-owned identity?
+
+Verification required before handoff:
+- npm run typecheck
+- npm run build
+- npm run smoke:live after deployment, or explain why live smoke could not be run
+```
+
+## Review Checklist For UI Changes
+
+- The first screen says what TrustGraph is, who it serves, and what is live.
+- The Professional path and Corporate path have distinct labels, actions, and database consequences.
+- Every admin/security/payment claim includes the correct pilot or human-approval boundary.
+- Tables, filters, exports, and forms remain usable at mobile width.
+- Status chips and metrics use consistent labels: live, preview, gated, ready, needs review.
+- The smoke script includes assertions for any new critical first-screen wording or control labels.
+
 ## Engineering Guardrails
 
 - Keep the existing Next.js, React, and TypeScript structure.
