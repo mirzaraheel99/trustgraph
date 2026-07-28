@@ -38,6 +38,7 @@ import type {
   DbNotificationEvent,
   DbOrganizationInvitation,
   DbOrganizationSubscription,
+  DbPilotLaunchContact,
   DbProductionGateDecision,
   DbReferenceRequest,
   DbSchemaMigrationRun,
@@ -45,6 +46,7 @@ import type {
   DbVerificationCase,
   DbWebhookSubscription,
   ProductionGateStatus,
+  PilotLaunchContactStatus,
   ReferenceRequestStatus,
   RecordStatus,
   RecordType,
@@ -115,6 +117,7 @@ import {
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
 import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
+import { loadPilotLaunchContacts, recordPilotLaunchContact } from "./pilotLaunchRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
 import { isSupabaseConfigured } from "./supabase";
 import {
@@ -2655,11 +2658,22 @@ function ConnectPanel({
 
 function PlanAlignmentPanel({
   disabled,
+  onRecordPilotLaunchContact,
   onRecordGateDecision,
+  pilotLaunchContacts,
   productionGateDecisions
 }: {
   disabled: boolean;
+  onRecordPilotLaunchContact: (input: {
+    contactKey: string;
+    status: PilotLaunchContactStatus;
+    organizationName: string;
+    contactName: string;
+    contactEmail: string;
+    notes: string;
+  }) => Promise<void>;
   onRecordGateDecision: (input: { gateKey: string; status: ProductionGateStatus; evidenceUrl: string; notes: string }) => Promise<void>;
+  pilotLaunchContacts: DbPilotLaunchContact[];
   productionGateDecisions: DbProductionGateDecision[];
 }) {
   const [gateKey, setGateKey] = useState("stripe_billing_launch");
@@ -2668,6 +2682,14 @@ function PlanAlignmentPanel({
   const [gateNotes, setGateNotes] = useState("");
   const [gateBusy, setGateBusy] = useState(false);
   const [gateMessage, setGateMessage] = useState("Record production gate decisions only after human sign-off.");
+  const [pilotContactKey, setPilotContactKey] = useState("pilot_customer_roster");
+  const [pilotContactStatus, setPilotContactStatus] = useState<PilotLaunchContactStatus>("missing");
+  const [pilotOrganizationName, setPilotOrganizationName] = useState("");
+  const [pilotContactName, setPilotContactName] = useState("");
+  const [pilotContactEmail, setPilotContactEmail] = useState("");
+  const [pilotContactNotes, setPilotContactNotes] = useState("");
+  const [pilotContactBusy, setPilotContactBusy] = useState(false);
+  const [pilotContactMessage, setPilotContactMessage] = useState("Record pilot launch owners after the human roster decision is available.");
   const deployedCount = foundationTracks.filter((track) => track.status === "deployed").length;
   const foundationCount = foundationTracks.filter((track) => track.status === "foundation").length;
   const plannedCount = foundationTracks.filter((track) => track.status === "planned").length;
@@ -2708,6 +2730,24 @@ function PlanAlignmentPanel({
       }))
     : fallbackProductionGates;
   const gateExportName = `trustgraph-production-gates-${new Date().toISOString().slice(0, 10)}.csv`;
+  const fallbackPilotContacts = [
+    { label: "Pilot customer roster", responsibility: "Named pilot customer organizations and launch contacts.", status: "missing", organization: "", contact: "", email: "", notes: "" },
+    { label: "Onboarding owner", responsibility: "Accountable operator for setup, verification, and first-week adoption.", status: "missing", organization: "", contact: "", email: "", notes: "" },
+    { label: "Support owner", responsibility: "Named owner for inbound support, account recovery, and pilot issue triage.", status: "missing", organization: "", contact: "", email: "", notes: "" },
+    { label: "Incident response owner", responsibility: "Named owner for access, evidence, privacy, or availability incidents.", status: "missing", organization: "", contact: "", email: "", notes: "" }
+  ];
+  const pilotContacts = pilotLaunchContacts.length
+    ? pilotLaunchContacts.map((contact) => ({
+        label: contact.label,
+        responsibility: contact.responsibility,
+        status: contact.status,
+        organization: contact.organization_name ?? "",
+        contact: contact.contact_name ?? "",
+        email: contact.contact_email ?? "",
+        notes: contact.notes ?? ""
+      }))
+    : fallbackPilotContacts;
+  const pilotContactsExportName = `trustgraph-pilot-launch-contacts-${new Date().toISOString().slice(0, 10)}.csv`;
 
   async function submitGateDecision(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -2722,6 +2762,31 @@ function PlanAlignmentPanel({
       setGateMessage(error instanceof Error ? error.message : "Could not record production gate decision");
     } finally {
       setGateBusy(false);
+    }
+  }
+
+  async function submitPilotContact(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPilotContactBusy(true);
+    setPilotContactMessage("Recording pilot launch contact...");
+    try {
+      await onRecordPilotLaunchContact({
+        contactKey: pilotContactKey,
+        status: pilotContactStatus,
+        organizationName: pilotOrganizationName,
+        contactName: pilotContactName,
+        contactEmail: pilotContactEmail,
+        notes: pilotContactNotes
+      });
+      setPilotOrganizationName("");
+      setPilotContactName("");
+      setPilotContactEmail("");
+      setPilotContactNotes("");
+      setPilotContactMessage("Pilot launch contact recorded with audit history.");
+    } catch (error) {
+      setPilotContactMessage(error instanceof Error ? error.message : "Could not record pilot launch contact");
+    } finally {
+      setPilotContactBusy(false);
     }
   }
 
@@ -2748,7 +2813,7 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 032 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate decision tracking, gate status constraints, and operator-named pilot workflow RPCs.</small>
+          <small>Migrations through 033 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate decision tracking, gate status constraints, operator-named pilot workflow RPCs, and pilot launch contact tracking.</small>
         </div>
         <span className="status-chip success">database live</span>
       </article>
@@ -2802,6 +2867,58 @@ function PlanAlignmentPanel({
           <input disabled={disabled || gateBusy} onChange={(event) => setGateNotes(event.target.value)} placeholder="Decision note" value={gateNotes} />
           <button className="secondary-action" disabled={disabled || gateBusy} type="submit">
             Record gate decision
+          </button>
+        </form>
+      </div>
+      <div className="production-gate-panel">
+        <div className="production-gate-heading">
+          <div>
+            <span className="eyebrow">Pilot launch contacts</span>
+            <strong>Customer, onboarding, support, and incident owners</strong>
+            <small>{pilotLaunchContacts.length ? "Pilot launch contacts loaded from Supabase" : "Pilot launch contacts use fallback gate copy until migration 033 is applied."}</small>
+          </div>
+          <button className="secondary-action" onClick={() => downloadTextFile(pilotContactsExportName, pilotLaunchContactsToCsv(pilotContacts), "text/csv")} type="button">
+            Export pilot contacts
+          </button>
+        </div>
+        <div className="production-gate-register">
+          <span className="eyebrow">Pilot operations register</span>
+          {pilotContacts.map((contact) => (
+            <article key={contact.label}>
+              <div>
+                <strong>{contact.label}</strong>
+                <small>{contact.responsibility}</small>
+                <small>{contact.notes || contact.organization || "No contact evidence recorded yet"}</small>
+              </div>
+              <div>
+                <span className={`status-chip ${contact.status === "confirmed" ? "success" : contact.status === "identified" ? "info" : "warning"}`}>{contact.status.replace(/_/g, " ")}</span>
+                <small>{contact.contact || contact.email || "Owner missing"}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+        <form className="production-gate-form" onSubmit={submitPilotContact}>
+          <div>
+            <strong>Record pilot owner evidence</strong>
+            <small>{pilotContactMessage}</small>
+          </div>
+          <select disabled={disabled || pilotContactBusy} onChange={(event) => setPilotContactKey(event.target.value)} value={pilotContactKey}>
+            <option value="pilot_customer_roster">Pilot customer roster</option>
+            <option value="onboarding_owner">Onboarding owner</option>
+            <option value="support_owner">Support owner</option>
+            <option value="incident_owner">Incident response owner</option>
+          </select>
+          <select disabled={disabled || pilotContactBusy} onChange={(event) => setPilotContactStatus(event.target.value as PilotLaunchContactStatus)} value={pilotContactStatus}>
+            <option value="missing">Missing</option>
+            <option value="identified">Identified</option>
+            <option value="confirmed">Confirmed</option>
+          </select>
+          <input disabled={disabled || pilotContactBusy} onChange={(event) => setPilotOrganizationName(event.target.value)} placeholder="Organization or team" value={pilotOrganizationName} />
+          <input disabled={disabled || pilotContactBusy} onChange={(event) => setPilotContactName(event.target.value)} placeholder="Contact name" value={pilotContactName} />
+          <input disabled={disabled || pilotContactBusy} onChange={(event) => setPilotContactEmail(event.target.value)} placeholder="Contact email" type="email" value={pilotContactEmail} />
+          <input disabled={disabled || pilotContactBusy} onChange={(event) => setPilotContactNotes(event.target.value)} placeholder="Launch note or support path" value={pilotContactNotes} />
+          <button className="secondary-action" disabled={disabled || pilotContactBusy} type="submit">
+            Record pilot contact
           </button>
         </form>
       </div>
@@ -3284,6 +3401,15 @@ function productionGatesToCsv(gates: Array<{ label: string; owner: string; statu
   const rows = [
     ["gate", "owner", "status", "evidence_required"],
     ...gates.map((gate) => [gate.label, gate.owner, gate.status, gate.evidence])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function pilotLaunchContactsToCsv(contacts: Array<{ label: string; responsibility: string; status: string; organization: string; contact: string; email: string; notes: string }>) {
+  const rows = [
+    ["slot", "responsibility", "status", "organization", "contact", "email", "notes"],
+    ...contacts.map((contact) => [contact.label, contact.responsibility, contact.status, contact.organization, contact.contact, contact.email, contact.notes])
   ];
 
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
@@ -5413,6 +5539,7 @@ function App() {
   const [auditStatus, setAuditStatus] = useState("Switch to Admin role for audit events");
   const [schemaMigrationRuns, setSchemaMigrationRuns] = useState<DbSchemaMigrationRun[]>([]);
   const [productionGateDecisions, setProductionGateDecisions] = useState<DbProductionGateDecision[]>([]);
+  const [pilotLaunchContacts, setPilotLaunchContacts] = useState<DbPilotLaunchContact[]>([]);
   const [releaseStatus, setReleaseStatus] = useState("Switch to Admin role for release ledger");
   const [apiClients, setApiClients] = useState<DbApiClient[]>([]);
   const [webhookSubscriptions, setWebhookSubscriptions] = useState<DbWebhookSubscription[]>([]);
@@ -5789,6 +5916,7 @@ function App() {
       setAuditStatus("Switch to Admin role for audit events");
       setSchemaMigrationRuns([]);
       setProductionGateDecisions([]);
+      setPilotLaunchContacts([]);
       setReleaseStatus("Switch to Admin role for release ledger");
       setApiClients([]);
       setWebhookSubscriptions([]);
@@ -5803,6 +5931,7 @@ function App() {
       setAuditStatus("Active role cannot access audit events");
       setSchemaMigrationRuns([]);
       setProductionGateDecisions([]);
+      setPilotLaunchContacts([]);
       setReleaseStatus("Active role cannot access release ledger");
       setApiClients([]);
       setWebhookSubscriptions([]);
@@ -5821,22 +5950,24 @@ function App() {
       loadAuditEvents(authSession.accessToken),
       loadSchemaMigrationRuns(authSession.accessToken).catch(() => []),
       loadProductionGateDecisions(authSession.accessToken).catch(() => []),
+      loadPilotLaunchContacts(authSession.accessToken).catch(() => []),
       loadApiClients(authSession.accessToken),
       loadWebhookSubscriptions(authSession.accessToken)
     ])
-      .then(([items, events, migrations, gates, clients, webhooks]) => {
+      .then(([items, events, migrations, gates, pilotContacts, clients, webhooks]) => {
         if (cancelled) return;
         setOperationsCases(items);
         setAuditEvents(events);
         setSchemaMigrationRuns(migrations);
         setProductionGateDecisions(gates);
+        setPilotLaunchContacts(pilotContacts);
         setApiClients(clients);
         setWebhookSubscriptions(webhooks);
         setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No operations cases yet");
         setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
         setReleaseStatus(
-          migrations.length || gates.length
-            ? `Release ledger: ${migrations.length} migrations, ${gates.length} production gates`
+          migrations.length || gates.length || pilotContacts.length
+            ? `Release ledger: ${migrations.length} migrations, ${gates.length} production gates, ${pilotContacts.length} pilot contacts`
             : "No release ledger entries yet"
         );
         setConnectStatus(
@@ -5851,6 +5982,7 @@ function App() {
         setAuditEvents([]);
         setSchemaMigrationRuns([]);
         setProductionGateDecisions([]);
+        setPilotLaunchContacts([]);
         setApiClients([]);
         setWebhookSubscriptions([]);
         setOperationsStatus(error instanceof Error ? error.message : "Could not load operations queue");
@@ -6631,6 +6763,38 @@ function App() {
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
+  async function recordLivePilotLaunchContact(input: {
+    contactKey: string;
+    status: PilotLaunchContactStatus;
+    organizationName: string;
+    contactName: string;
+    contactEmail: string;
+    notes: string;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before recording pilot launch contacts.");
+    }
+
+    await recordPilotLaunchContact({
+      accessToken: authSession.accessToken,
+      contactKey: input.contactKey,
+      status: input.status,
+      organizationName: input.organizationName,
+      contactName: input.contactName,
+      contactEmail: input.contactEmail,
+      notes: input.notes
+    });
+
+    const [contacts, events] = await Promise.all([
+      loadPilotLaunchContacts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setPilotLaunchContacts(contacts);
+    setAuditEvents(events);
+    setReleaseStatus(`Release ledger: ${schemaMigrationRuns.length} migrations, ${productionGateDecisions.length} production gates, ${contacts.length} pilot contacts`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
   async function createLiveApiClient() {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before creating Connect API clients.");
@@ -7071,7 +7235,9 @@ function App() {
                 <ConsentPolicyMatrixPanel />
                 <PlanAlignmentPanel
                   disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
+                  onRecordPilotLaunchContact={recordLivePilotLaunchContact}
                   onRecordGateDecision={recordLiveProductionGateDecision}
+                  pilotLaunchContacts={pilotLaunchContacts}
                   productionGateDecisions={productionGateDecisions}
                 />
               </>

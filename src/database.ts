@@ -55,6 +55,7 @@ export type ProductionGateStatus =
   | "pilot_roster_required"
   | "approved_for_pilot"
   | "approved_for_production";
+export type PilotLaunchContactStatus = "missing" | "identified" | "confirmed";
 
 export interface DbOrganization {
   id: string;
@@ -342,6 +343,23 @@ export interface DbProductionGateDecision {
   decided_by_profile_id: string | null;
   decided_at: string | null;
   notes: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbPilotLaunchContact {
+  id: string;
+  contact_key: string;
+  label: string;
+  responsibility: string;
+  status: PilotLaunchContactStatus;
+  organization_name: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  notes: string | null;
+  recorded_by_profile_id: string | null;
+  recorded_at: string | null;
   metadata: Record<string, unknown>;
   created_at: string;
   updated_at: string;
