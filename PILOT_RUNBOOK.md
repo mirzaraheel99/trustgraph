@@ -13,19 +13,22 @@ Use this runbook for v1 pilot verification before inviting real employers, staff
 
 ## Live Workflow Acceptance
 
-1. Sign up or sign in with Supabase Auth.
-2. Confirm Professional account context is created and create at least one Passport record.
-3. Attach evidence metadata and one private evidence file.
-4. Create a Corporate workspace.
-5. Activate a pilot subscription ledger entry.
-6. Invite or activate a corporate team member.
-7. Request a Passport Access Grant from Verify.
-8. Approve the Access Grant from Passport and sync shared records.
-9. Create or revoke a consent authorization for sensitive scope.
-10. Open Verify and confirm approved shared records are visible.
-11. Open Admin and review operations, Connect, audit, workflow QA, release ledger, and security panels.
-12. Export audit CSV and security runbook CSV.
-13. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
+1. Open the hosted app at `https://mirzaraheel99.github.io/trustgraph/`; do not start pilot accounts from a `localhost` verification link.
+2. Sign up or sign in with Supabase Auth from the Professional or Corporate portal.
+3. For Corporate signup, enter organization name, domain, and type before creating the account, then return after email verification and login in the same browser.
+4. If Supabase reports an email rate limit, wait at least 60 minutes or use custom SMTP before continuing account creation tests.
+5. Confirm Professional account context is created and create at least one Passport record.
+6. Attach evidence metadata and one private evidence file.
+7. Create a Corporate workspace.
+8. Activate a pilot subscription ledger entry.
+9. Invite or activate a corporate team member.
+10. Request a Passport Access Grant from Verify.
+11. Approve the Access Grant from Passport and sync shared records.
+12. Create or revoke a consent authorization for sensitive scope.
+13. Open Verify and confirm approved shared records are visible.
+14. Open Admin and review operations, Connect, audit, workflow QA, release ledger, and security panels.
+15. Export audit CSV and security runbook CSV.
+16. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
 
 ## Security Review Boundary
 

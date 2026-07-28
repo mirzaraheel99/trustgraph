@@ -41,6 +41,17 @@ GitHub Pages URL:
 https://mirzaraheel99.github.io/trustgraph/
 ```
 
+## Hosted Registration Checklist
+
+Use the hosted URL for account creation and login. The local development URL is optional and should not be used in Supabase Auth redirects for pilot users.
+
+1. Open `https://mirzaraheel99.github.io/trustgraph/`.
+2. Choose `Professional portal` to create a Passport user, or `Corporate portal` to create a company workspace.
+3. For Corporate signup, enter organization name, domain, and organization type before creating the user account.
+4. Confirm the Supabase email verification link. It must return to `https://mirzaraheel99.github.io/trustgraph/`, not `localhost`.
+5. Login from the hosted page after verification. Corporate workspace details saved in the same browser are then provisioned into Supabase.
+6. Use the Launch checklist only when pilot operators need database-backed validation rows for workflow acceptance.
+
 ## Supabase Auth
 
 Add these repository/deployment environment variables for hosted live mode:
@@ -52,6 +63,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
 In Supabase Auth URL settings, set the Site URL to `https://mirzaraheel99.github.io/trustgraph/` and add the same URL under Redirect URLs. If Site URL remains `localhost`, verification emails will open a localhost link instead of the hosted app.
 Until those variables are present, the app stays in guided preview mode and keeps a local RBAC account context available.
+
+Supabase built-in email is limited to 2 messages per hour project-wide. If signup, resend verification, or recovery returns an email rate-limit error, wait at least 60 minutes or configure custom SMTP before heavier testing.
 
 For database migrations, add these GitHub repository secrets and run the `Apply Supabase Migrations` workflow manually:
 
@@ -146,7 +159,7 @@ Unauthenticated visitors land on a public TrustGraph website with portal entry p
 - Corporate Verify: `$149/month` pilot tier for corporate RBAC, shared Passport review, missing-record requests, and audit.
 - TrustGraph Scale: custom/enterprise tier for issuer workflows, Connect API clients, webhooks, and compliance operations.
 
-Corporate registration collects organization name, domain, and type, then provisions an employer or staffing agency portal after Supabase account creation.
+Corporate registration collects organization name, domain, and type, then provisions an employer or staffing agency portal after Supabase account creation and verified hosted login. Pricing cards now show the database path for each portal so buyers can see what is written immediately and what remains human-gated.
 
 ## Product Planning
 
