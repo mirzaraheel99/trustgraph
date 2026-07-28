@@ -4084,9 +4084,18 @@ function PublicSite({
   const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
   const [message, setMessage] = useState("Create your TrustGraph account");
   const [busy, setBusy] = useState(false);
+  const authReady = isSupabaseConfigured();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!authReady) {
+      setMessage("Hosted auth is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in GitHub secrets.");
+      return;
+    }
+    if (portal === "corporate" && mode === "signup" && (!organizationName.trim() || !organizationDomain.trim())) {
+      setMessage("Enter organization name and domain before creating a corporate account.");
+      return;
+    }
     setBusy(true);
     setMessage(mode === "signin" ? "Signing in..." : "Creating account...");
 
@@ -4339,7 +4348,7 @@ function PublicSite({
           ) : null}
           <button
             className="primary-action"
-            disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && !organizationName)}
+            disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}
             type="submit"
           >
             {mode === "signin" ? "Login" : "Create account"}
@@ -4348,6 +4357,11 @@ function PublicSite({
             Explore demo app
           </button>
           <small>{message}</small>
+          <small>
+            {authReady
+              ? "Hosted Supabase Auth is configured. If signup still fails, check Supabase Auth providers, allowed redirect URLs, and email confirmation settings."
+              : "Hosted build is missing public Supabase Auth configuration."}
+          </small>
         </form>
       </section>
     </main>

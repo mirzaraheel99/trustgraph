@@ -47,6 +47,18 @@ function persistSession(session: AuthSession | null) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
 }
 
+async function readAuthError(response: Response, fallback: string) {
+  const text = await response.text();
+  if (!text) return fallback;
+
+  try {
+    const payload = JSON.parse(text) as { error?: string; error_description?: string; msg?: string; message?: string };
+    return payload.error_description || payload.msg || payload.message || payload.error || fallback;
+  } catch {
+    return text;
+  }
+}
+
 export function readStoredSession(): AuthSession | null {
   if (typeof window === "undefined") return null;
 
@@ -77,7 +89,7 @@ export async function signInWithPassword(email: string, password: string): Promi
   });
 
   if (!response.ok) {
-    throw new Error("Sign in failed. Check the email, password, and Supabase Auth settings.");
+    throw new Error(`Sign in failed: ${await readAuthError(response, "Check the email, password, and Supabase Auth settings.")}`);
   }
 
   const session = toSession((await response.json()) as SupabaseAuthResponse);
@@ -101,7 +113,7 @@ export async function signUpWithPassword(email: string, password: string): Promi
   });
 
   if (!response.ok) {
-    throw new Error("Sign up failed. Check Supabase Auth settings.");
+    throw new Error(`Sign up failed: ${await readAuthError(response, "Check Supabase Auth settings.")}`);
   }
 
   const payload = (await response.json()) as Partial<SupabaseAuthResponse>;
@@ -130,7 +142,7 @@ export async function requestPasswordRecovery(email: string, redirectTo?: string
   });
 
   if (!response.ok) {
-    throw new Error("Password recovery request failed. Check Supabase Auth email settings.");
+    throw new Error(`Password recovery request failed: ${await readAuthError(response, "Check Supabase Auth email settings.")}`);
   }
 }
 
