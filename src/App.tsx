@@ -841,7 +841,7 @@ function AccessGrantsPanel({
         </div>
       </div>
       <div className="grant-panel-top test-tool-strip">
-        <small>Test data tool for validating Passport approval without waiting on an external corporate request.</small>
+        <small>Pilot QA tool for validating Passport approval before an external corporate request arrives.</small>
         <button
           className="secondary-action"
           disabled={disabled || sampleBusy}
@@ -854,7 +854,7 @@ function AccessGrantsPanel({
             }
           }}
         >
-          Create test request
+          Seed QA request
         </button>
       </div>
       <div className="grant-controls">
@@ -914,8 +914,8 @@ function AccessGrantsPanel({
         ) : (
           <article className="grant-card empty">
             <div>
-              <strong>No matching Access Grants</strong>
-              <p>Corporate Verify requests will appear here when a live employer or staffing team requests Passport access.</p>
+              <strong>No Access Grants in this view</strong>
+              <p>Approved, pending, and revoked corporate requests appear here once a reviewer asks for Passport access.</p>
             </div>
           </article>
         )}
@@ -1066,8 +1066,8 @@ function ConsentAuthorizationsPanel({
         ) : (
           <article className="consent-card empty">
             <div>
-              <strong>No live consent authorizations yet</strong>
-              <p>Record-specific consent authorizations appear here when sensitive workflow permissions are granted.</p>
+              <strong>No consent authorizations yet</strong>
+              <p>Sensitive record permissions appear here after a professional grants scoped consent.</p>
             </div>
           </article>
         )}
@@ -1179,8 +1179,8 @@ function ReferenceRequestsPanel({
         ) : (
           <article className="reference-card empty">
             <div>
-              <strong>No live reference requests yet</strong>
-              <p>Request structured references from managers, supervisors, clients, or colleagues.</p>
+              <strong>No reference requests yet</strong>
+              <p>Structured references from managers, supervisors, clients, or colleagues will be tracked here.</p>
             </div>
           </article>
         )}
@@ -1368,7 +1368,7 @@ function VerifyRequestsPanel({
             }
           }}
         >
-          Create test reviewer
+          Add QA reviewer role
         </button>
       </div>
       <div className="grant-list">
@@ -1386,8 +1386,8 @@ function VerifyRequestsPanel({
         ) : (
           <article className="grant-card empty">
             <div>
-              <strong>No live Verify requests yet</strong>
-              <p>Request Passport access from a professional by email, then track the approval state here.</p>
+              <strong>No Verify requests yet</strong>
+              <p>Request Passport access by professional email, then track approval state and shared scope here.</p>
             </div>
           </article>
         )}
@@ -1416,8 +1416,8 @@ function VerifyRequestsPanel({
         ) : (
           <article className="grant-card empty">
             <div>
-              <strong>No shared records yet</strong>
-              <p>Approve an Access Grant from Passport to sync the professional's current records here.</p>
+              <strong>No shared Passport records yet</strong>
+              <p>Approved Access Grants sync the professional's current authorized records into this reviewer workspace.</p>
             </div>
           </article>
         )}
@@ -1448,8 +1448,8 @@ function VerifyRequestsPanel({
         ) : (
           <article className="grant-card empty">
             <div>
-              <strong>No sensitive shared records</strong>
-              <p>Restricted and sensitive Passport records will appear here when a shared record needs consent coverage.</p>
+              <strong>No sensitive shared records in scope</strong>
+              <p>Restricted and sensitive Passport records appear here only when the share requires consent coverage.</p>
             </div>
           </article>
         )}
@@ -1674,7 +1674,7 @@ function CorporateDirectoryPanel({
         ) : (
           <article className="directory-card empty">
             <div>
-              <strong>No matching corporate users</strong>
+              <strong>No professionals match this view</strong>
               <p>Professionals appear here after an Access Grant request or approved share matches the current filter.</p>
             </div>
           </article>
@@ -1847,8 +1847,8 @@ function MissingRecordRequestsPanel({
         ) : (
           <article className="missing-card empty">
             <div>
-              <strong>No matching missing-record requests</strong>
-              <p>Request only specific records needed for a role, placement, or compliance workflow.</p>
+              <strong>No missing-record requests in this view</strong>
+              <p>Specific evidence requests for a role, placement, or compliance workflow will appear here.</p>
             </div>
           </article>
         )}
@@ -1958,7 +1958,7 @@ function IssuerCredentialsPanel({
             }
           }}
         >
-          Create test issuer role
+          Add QA issuer role
         </button>
       </div>
       <form className="issuer-form" onSubmit={submitCredential}>
@@ -2002,7 +2002,7 @@ function IssuerCredentialsPanel({
           <article className="issuer-card empty">
             <div>
               <strong>No issued credentials yet</strong>
-              <p>Credential issuers can publish verified licenses, certifications, education, and health clearances into a professional Passport.</p>
+              <p>Credential issuers can publish verified licenses, certifications, education, and health clearances into a Passport.</p>
             </div>
           </article>
         )}
@@ -2082,7 +2082,7 @@ function OperationsQueuePanel({
             }
           }}
         >
-          Seed test cases
+          Seed QA cases
         </button>
       </div>
       <div className="operations-controls">
@@ -2153,8 +2153,8 @@ function OperationsQueuePanel({
         ) : (
           <article className="grant-card empty">
             <div>
-              <strong>No matching operations cases</strong>
-              <p>Fraud, compliance, and verifier review cases will appear here as live workflows create exceptions.</p>
+              <strong>No operations cases in this view</strong>
+              <p>Fraud, compliance, and verifier review exceptions appear here with reason codes and audit history.</p>
             </div>
           </article>
         )}
@@ -2417,7 +2417,7 @@ function ConnectPanel({
         ) : (
           <article className="connect-card empty">
             <div>
-              <strong>No API clients yet</strong>
+              <strong>No Connect clients yet</strong>
               <p>Create a pilot client when an integration team is ready to test scoped API and webhook ownership.</p>
             </div>
           </article>
@@ -2582,7 +2582,7 @@ function WorkflowQaPanel({
     {
       label: "Passport data",
       ok: livePassportRecords.length > 0,
-      detail: livePassportRecords.length ? `${livePassportRecords.length} live records` : "No live Passport records yet"
+      detail: livePassportRecords.length ? `${livePassportRecords.length} live records` : "Passport records not loaded yet"
     },
     {
       label: "Sensitive controls",
@@ -2753,7 +2753,7 @@ function SecurityReviewPanel({
     },
     {
       label: "Connect secrets",
-      detail: apiClients.length || webhookSubscriptions.length ? "Client/webhook controls loaded" : "Create sample client before external integration",
+      detail: apiClients.length || webhookSubscriptions.length ? "Client/webhook controls loaded" : "Create a pilot client before external integration",
       done: apiClients.length > 0 || webhookSubscriptions.length > 0
     },
     {
@@ -3102,7 +3102,7 @@ function AccountPanel({
           </div>
         </div>
         <button className="secondary-action" disabled={!authSession || busy} onClick={() => void createOperationsRole()} type="button">
-          Sample ops role
+          Add QA ops role
         </button>
       </form>
       {panelStatus ? <small>{panelStatus}</small> : null}
@@ -3232,8 +3232,8 @@ function BillingPanel({
         ) : (
           <article className="billing-plan-card empty">
             <div>
-              <strong>No live plans loaded</strong>
-              <p>Run pricing migrations to activate plan selection.</p>
+              <strong>No billing plans loaded</strong>
+              <p>Apply pricing migrations to activate pilot plan selection.</p>
             </div>
           </article>
         )}
@@ -3931,7 +3931,7 @@ function DemoScriptPanel({
     },
     {
       label: "Operations queue",
-      detail: "Open Admin, seed test cases if needed, then restrict, resolve, or dismiss a case.",
+      detail: "Open Admin, seed QA cases if needed, then restrict, resolve, or dismiss a case.",
       done: auditEvents.some((event) => event.action.includes("verification_case"))
     },
     {
@@ -4549,7 +4549,7 @@ function App() {
           subscriptions.length ? `Live subscriptions: ${subscriptions.length}` : "Choose a plan for corporate workflows"
         );
         setTeamStatus(invitations.length ? `Team invitations: ${invitations.length}` : "No team invitations yet");
-        setMemberStatus(members.length ? `Team seats: ${members.length}` : "No live team members loaded");
+        setMemberStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
       })
       .catch((error) => {
         if (cancelled) return;
@@ -4660,12 +4660,12 @@ function App() {
         setNotificationEvents(notifications);
         setReferenceRequests(references);
         setConsentAuthorizations(consents);
-        setRecordStatus(items.length ? "Live Supabase Passport records" : "No live records yet");
+        setRecordStatus(items.length ? "Live Supabase Passport records" : "Passport records not loaded yet");
         setNotificationStatus(
-          notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet"
+          notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet"
         );
-        setReferenceStatus(references.length ? `Live reference requests: ${references.length}` : "No live reference requests yet");
-        setConsentStatus(consents.length ? `Live consent authorizations: ${consents.length}` : "No live consent authorizations yet");
+        setReferenceStatus(references.length ? `Live reference requests: ${references.length}` : "No reference requests yet");
+        setConsentStatus(consents.length ? `Live consent authorizations: ${consents.length}` : "No consent authorizations yet");
         if (items[0]) {
           setSelectedId(items[0].id);
         }
@@ -4733,7 +4733,7 @@ function App() {
         setVerifyStatus(
           items.length || sharedRecords.length
             ? `Live Supabase Verify data: ${items.length} requests, ${sharedRecords.length} shared records`
-            : "No live Verify requests yet"
+            : "No Verify requests yet"
         );
         setIssuerStatus(
           hasPermission(activeMembership.role, "record:issue_credential")
@@ -4776,7 +4776,7 @@ function App() {
       .then((items) => {
         if (cancelled) return;
         setAccessGrants(items);
-        setGrantStatus(items.length ? "Live Supabase Access Grants" : "No live Access Grants yet");
+        setGrantStatus(items.length ? "Live Supabase Access Grants" : "No Access Grants yet");
       })
       .catch((error) => {
         if (cancelled) return;
@@ -4836,8 +4836,8 @@ function App() {
         setSchemaMigrationRuns(migrations);
         setApiClients(clients);
         setWebhookSubscriptions(webhooks);
-        setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No live operations cases yet");
-        setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
+        setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No operations cases yet");
+        setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
         setReleaseStatus(migrations.length ? `Release ledger: ${migrations.length} recent migrations` : "No release ledger entries yet");
         setConnectStatus(
           clients.length || webhooks.length
@@ -5057,7 +5057,7 @@ function App() {
     setNotificationEvents(notifications);
     setAuditEvents(events);
     setRecordStatus(`Evidence linked: ${document.title}`);
-    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
   async function openLiveEvidenceDocument(document: DbEvidenceDocument, mode: "preview" | "download") {
@@ -5102,7 +5102,7 @@ function App() {
     setNotificationEvents(notifications);
     setAuditEvents(events);
     setReferenceStatus(`Reference request created for ${request.provider_name}`);
-    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
   async function updateLiveReferenceStatus(requestId: string, status: ReferenceRequestStatus) {
@@ -5124,7 +5124,7 @@ function App() {
     setNotificationEvents(notifications);
     setAuditEvents(events);
     setReferenceStatus(`Reference request moved to ${updated.status.replace(/_/g, " ")}`);
-    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
   async function handleGrantDecision(grantId: string, status: "approved" | "declined" | "revoked") {
@@ -5148,13 +5148,13 @@ function App() {
 
   async function createSampleGrantRequest() {
     if (!authSession || !accountContext) {
-      throw new Error("Sign in before creating a sample Access Grant request.");
+      throw new Error("Sign in before seeding a QA Access Grant request.");
     }
 
     await createSampleAccessGrant(authSession.accessToken);
     const items = await loadAccessGrants(accountContext.profile.id, authSession.accessToken);
     setAccessGrants(items);
-    setGrantStatus("Sample Access Grant request created");
+    setGrantStatus("QA Access Grant request created");
   }
 
   async function revokeLiveConsentAuthorization(consentId: string) {
@@ -5226,13 +5226,13 @@ function App() {
     setAuditEvents(events);
     setNotificationEvents(notifications);
     setVerifyStatus(`Access request created for ${grant.subject_profile_id}`);
-    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
-    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
   async function createSampleReviewerRole() {
     if (!authSession || !accountContext) {
-      throw new Error("Sign in before creating a sample reviewer role.");
+      throw new Error("Sign in before adding a QA reviewer role.");
     }
 
     await createSampleEmployerReviewerMembership(authSession.accessToken);
@@ -5243,7 +5243,7 @@ function App() {
       setActiveMembershipId(reviewerMembership.id);
       setWorkspaceId("verify");
     }
-    setVerifyStatus("Sample employer reviewer role created");
+    setVerifyStatus("QA employer reviewer role created");
   }
 
   async function createLiveCredentialIssuerRole() {
@@ -5256,7 +5256,7 @@ function App() {
     setAccountContext(context);
     setActiveMembershipId(membership.id);
     setWorkspaceId("verify");
-    setIssuerStatus("Sample credential issuer role created");
+    setIssuerStatus("QA credential issuer role created");
   }
 
   async function issueLiveCredential(input: {
@@ -5285,7 +5285,7 @@ function App() {
     setNotificationEvents(notifications);
     setAuditEvents(events);
     setIssuerStatus(`Credential issued: ${credential.title}`);
-    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
   async function createLiveMissingRecordRequest(input: {
@@ -5313,7 +5313,7 @@ function App() {
     setNotificationEvents(notifications);
     setAuditEvents(events);
     setMissingRecordStatus(`Missing-record request created: ${request.title}`);
-    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No live notifications yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
   async function updateLiveMissingRecordStatus(
@@ -5505,8 +5505,8 @@ function App() {
     ]);
     setOperationsCases(items);
     setAuditEvents(events);
-    setOperationsStatus(added ? `Created ${added} sample operations cases` : "Sample operations cases already exist");
-    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
+    setOperationsStatus(added ? `Created ${added} QA operations cases` : "QA operations cases already exist");
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
   async function decideLiveOperationsCase(caseId: string, status: VerificationCaseStatus) {
@@ -5524,7 +5524,7 @@ function App() {
     setOperationsCases((current) => current.map((item) => (item.id === updated.id ? updated : item)));
     setAuditEvents(events);
     setOperationsStatus(`Case moved to ${updated.status.replace(/_/g, " ")}`);
-    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No live audit events yet");
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
   async function createLiveOperationsRole() {
@@ -5750,7 +5750,7 @@ function App() {
               <span className={`status-chip ${toneClass(activeRole.risk)}`}>{activeRole.label}</span>
               <span className="status-chip neutral">{activeOrganization.name}</span>
               <span className="status-chip neutral">{activeOrganization.type.replace("_", " ")}</span>
-              <span className="status-chip neutral">{authSession ? "live auth" : "demo session"}</span>
+              <span className="status-chip neutral">{authSession ? "live auth" : "guided preview"}</span>
             </div>
           </div>
           <div className="topbar-actions">
