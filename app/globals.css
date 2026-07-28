@@ -787,16 +787,31 @@ p,
 }
 
 .billing-gate-grid span {
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
+  min-height: 58px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 9px 10px;
   color: var(--muted);
   border: 1px solid rgba(225, 184, 102, 0.16);
   border-radius: var(--radius);
   background: rgba(225, 184, 102, 0.045);
   font-size: 12px;
   font-weight: 800;
+}
+
+.billing-gate-grid strong,
+.billing-gate-grid small {
+  display: block;
+}
+
+.billing-gate-grid strong {
+  color: var(--text);
+  font-size: 12px;
+}
+
+.billing-gate-grid small {
+  line-height: 1.3;
 }
 
 .billing-estimate-card div {

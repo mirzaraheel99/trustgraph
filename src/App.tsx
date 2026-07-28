@@ -3119,6 +3119,15 @@ function billingSubscriptionsToCsv(subscriptions: DbOrganizationSubscription[]) 
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function billingDecisionGatesToCsv(gates: Array<{ label: string; owner: string; status: string }>) {
+  const rows = [
+    ["gate", "owner", "status"],
+    ...gates.map((gate) => [gate.label, gate.owner, gate.status])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function securityChecksToCsv(checks: Array<{ label: string; detail: string; done: boolean }>) {
   const rows = [
     ["check", "status", "detail"],
@@ -3363,6 +3372,13 @@ function BillingPanel({
     ? Math.min(...plans.map((plan) => Math.max(plan.monthly_price_usd, plan.monthly_price_usd + Math.max(0, seats - plan.included_seats) * 19)))
     : 0;
   const exportName = `trustgraph-billing-ledger-${new Date().toISOString().slice(0, 10)}.csv`;
+  const gateExportName = `trustgraph-billing-decision-gates-${new Date().toISOString().slice(0, 10)}.csv`;
+  const billingGates = [
+    { label: "Stripe product mapping", owner: "Business operations", status: "human decision required" },
+    { label: "Checkout + customer portal", owner: "Engineering", status: "not connected for pilot" },
+    { label: "Tax and invoice policy", owner: "Finance/legal", status: "human decision required" },
+    { label: "Webhook reconciliation", owner: "Engineering/security", status: "blocked until Stripe decision" }
+  ];
 
   async function activate(planId: string) {
     setBusyPlanId(planId);
@@ -3429,11 +3445,21 @@ function BillingPanel({
           >
             Export ledger
           </button>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(gateExportName, billingDecisionGatesToCsv(billingGates), "text/csv")}
+            type="button"
+          >
+            Export gates
+          </button>
         </div>
       </div>
       <div className="billing-gate-grid">
-        {["Stripe product mapping", "Checkout + customer portal", "Tax and invoice policy", "Webhook reconciliation"].map((item) => (
-          <span key={item}>{item}</span>
+        {billingGates.map((gate) => (
+          <span key={gate.label}>
+            <strong>{gate.label}</strong>
+            <small>{gate.status}</small>
+          </span>
         ))}
       </div>
       <div className="billing-plan-list">
