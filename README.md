@@ -97,6 +97,8 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `024_expand_record_types.sql`: first-class record types for contracts, training, skills, performance reviews, and continuing education.
 - `025_consent_authorizations.sql`: owner-controlled consent authorization records, revoke workflow, RLS, and audit events.
 - `026_sensitive_record_controls.sql`: trust record sensitivity classification, explicit consent requirement flags, and audit coverage.
+- `027_migration_release_ledger.sql`: release migration ledger table, admin/auditor RLS, and workflow recording RPC.
+- `028_fix_migration_ledger_rpc.sql`: production repair for deterministic migration ledger recording.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -119,7 +121,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `026_sensitive_record_controls.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, and sensitive-record privacy controls.
+Live Supabase migrations are applied through `028_fix_migration_ledger_rpc.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, and the Admin release migration ledger.
 
 ## Public Website and Pricing
 

@@ -3781,23 +3781,33 @@ function OnboardingChecklistPanel({
 
 function DemoScriptPanel({
   accessGrants,
+  apiClients,
+  auditEvents,
   consentAuthorizations,
+  evidenceDocuments,
   livePassportRecords,
+  schemaMigrationRuns,
   sharedVerifyRecords,
+  subscriptions,
   teamInvitations,
   teamMembers
 }: {
   accessGrants: AccessGrantView[];
+  apiClients: DbApiClient[];
+  auditEvents: DbAuditEvent[];
   consentAuthorizations: DbConsentAuthorization[];
+  evidenceDocuments: DbEvidenceDocument[];
   livePassportRecords: RecordItem[];
+  schemaMigrationRuns: DbSchemaMigrationRun[];
   sharedVerifyRecords: RecordItem[];
+  subscriptions: DbOrganizationSubscription[];
   teamInvitations: DbOrganizationInvitation[];
   teamMembers: OrganizationMemberView[];
 }) {
   const steps = [
     {
       label: "Professional signup",
-      detail: "Sign up or sign in, then confirm the Professional account context loads.",
+      detail: "Sign up or sign in, then confirm the Professional account context and RBAC role load.",
       done: livePassportRecords.length > 0
     },
     {
@@ -3808,12 +3818,22 @@ function DemoScriptPanel({
     {
       label: "Attach evidence",
       detail: "Upload or link evidence metadata, then verify preview/download controls.",
-      done: livePassportRecords.some((record) => record.evidence !== "Evidence details pending")
+      done: evidenceDocuments.length > 0 || livePassportRecords.some((record) => record.evidence !== "Evidence details pending")
     },
     {
       label: "Corporate workspace",
       detail: "Create employer/staffing account, activate role, invite reviewer.",
       done: teamMembers.length > 0 || teamInvitations.length > 0
+    },
+    {
+      label: "Billing stub",
+      detail: "Activate a tracked pilot subscription and confirm the audit event writes.",
+      done: subscriptions.some((subscription) => subscription.status !== "cancelled")
+    },
+    {
+      label: "Team controls",
+      detail: "Invite, accept, suspend, or restore a corporate team member.",
+      done: teamMembers.length > 0
     },
     {
       label: "Access Grant loop",
@@ -3826,9 +3846,34 @@ function DemoScriptPanel({
       done: consentAuthorizations.length > 0
     },
     {
-      label: "Admin review",
-      detail: "Open Admin, export audit CSV, inspect Workflow QA and security checklist.",
-      done: true
+      label: "Verify review",
+      detail: "Open Verify and confirm approved shared Passport records render with scope context.",
+      done: sharedVerifyRecords.length > 0
+    },
+    {
+      label: "Operations queue",
+      detail: "Open Admin, seed test cases if needed, then restrict, resolve, or dismiss a case.",
+      done: auditEvents.some((event) => event.action.includes("verification_case"))
+    },
+    {
+      label: "Audit export",
+      detail: "Filter audit events by action or target, then export CSV with metadata.",
+      done: auditEvents.length > 0
+    },
+    {
+      label: "Connect controls",
+      detail: "Create an API client or webhook subscription and confirm status controls.",
+      done: apiClients.length > 0
+    },
+    {
+      label: "Release ledger",
+      detail: "Confirm Supabase migration runs appear in Admin after workflow execution.",
+      done: schemaMigrationRuns.length > 0
+    },
+    {
+      label: "Security review",
+      detail: "Inspect Workflow QA, RLS checklist, privacy gates, and live deployment smoke status.",
+      done: auditEvents.length > 0 && schemaMigrationRuns.length > 0
     }
   ];
 
@@ -5538,9 +5583,14 @@ function App() {
         />
         <DemoScriptPanel
           accessGrants={accessGrants}
+          apiClients={apiClients}
+          auditEvents={auditEvents}
           consentAuthorizations={consentAuthorizations}
+          evidenceDocuments={evidenceDocuments}
           livePassportRecords={livePassportRecords}
+          schemaMigrationRuns={schemaMigrationRuns}
           sharedVerifyRecords={sharedVerifyRecords}
+          subscriptions={organizationSubscriptions}
           teamInvitations={teamInvitations}
           teamMembers={teamMembers}
         />
