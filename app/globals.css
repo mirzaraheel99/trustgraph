@@ -276,11 +276,35 @@ button {
   border-top: 1px solid var(--line);
 }
 
+.pricing-card button {
+  margin-top: auto;
+}
+
 .public-auth-section {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(320px, 520px);
   gap: clamp(22px, 5vw, 64px);
   align-items: start;
+}
+
+.portal-outcome-list {
+  display: grid;
+  gap: 8px;
+  max-width: 620px;
+  margin-top: 18px;
+}
+
+.portal-outcome-list span {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid rgba(82, 214, 196, 0.16);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.028);
+  font-size: 13px;
+  font-weight: 850;
 }
 
 .public-auth-card {

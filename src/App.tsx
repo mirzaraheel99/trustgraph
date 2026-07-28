@@ -4249,6 +4249,20 @@ function PublicSite({
     }
   ];
   const pilotSignals = ["Live Supabase Auth", "Private evidence storage", "Scoped RBAC", "Audit-ready workflows"];
+  const selectedPortalSteps =
+    portal === "corporate"
+      ? [
+          "Create employer or staffing organization",
+          "Activate Corporate Verify pilot plan",
+          "Invite reviewers and request Passport access",
+          "Review shared records with audit context"
+        ]
+      : [
+          "Create private Professional Passport",
+          "Add records and evidence metadata",
+          "Approve or decline each Access Grant",
+          "Control sensitive consent and sharing"
+        ];
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -4378,6 +4392,13 @@ function PublicSite({
               {plan.points.map((point) => (
                 <small key={point}>{point}</small>
               ))}
+              <button
+                className={plan.name === "Professional" ? "primary-action" : "secondary-action"}
+                onClick={() => openPortal(plan.name === "Professional" ? "professional" : "corporate")}
+                type="button"
+              >
+                {plan.name === "Professional" ? "Start Passport" : "Start Corporate"}
+              </button>
             </article>
           ))}
         </div>
@@ -4397,6 +4418,11 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className="portal-outcome-list">
+            {selectedPortalSteps.map((step) => (
+              <span key={step}>{step}</span>
+            ))}
+          </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
           <div className="auth-card-heading">
