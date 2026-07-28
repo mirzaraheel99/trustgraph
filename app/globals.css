@@ -3978,6 +3978,10 @@ p {
   .module-nav,
   .auth-actions,
   .password-update-form,
+  .public-portal-rail,
+  .live-data-grid,
+  .live-data-footer,
+  .timeline-item,
   .detail-grid,
   .record-edit-grid,
   .account-admin-row,
@@ -3993,8 +3997,52 @@ p {
     width: 100%;
   }
 
+  .public-nav-actions,
+  .public-hero-actions,
+  .portal-tabs,
+  .notification-actions,
+  .readiness-action-row {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .public-nav-actions button,
+  .public-hero-actions button,
+  .portal-tabs button,
+  .notification-actions button,
+  .readiness-action-row span {
+    flex: 1 1 140px;
+  }
+
+  .public-hero {
+    min-height: auto;
+  }
+
   .public-hero h1 {
     font-size: 42px;
+    line-height: 1;
+  }
+
+  .public-hero p,
+  .public-auth-section p {
+    font-size: 16px;
+  }
+
+  .public-portal-rail button {
+    min-height: auto;
+  }
+
+  .live-data-footer {
+    display: grid;
+    text-align: left;
+  }
+
+  .live-data-footer small {
+    text-align: left;
+  }
+
+  .timeline-item time {
+    padding-left: 22px;
   }
 
   .public-proof div,
