@@ -2601,6 +2601,26 @@ p {
   line-height: 1;
 }
 
+.issuer-source-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 158px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.issuer-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.issuer-source-strip button {
+  min-height: 34px;
+}
+
 .issuer-card {
   display: flex;
   justify-content: space-between;
@@ -4568,6 +4588,7 @@ p {
   .grant-controls,
   .grant-summary-grid,
   .issuer-summary-grid,
+  .issuer-source-strip,
   .missing-controls,
   .missing-summary-grid,
   .notification-summary-grid,
@@ -4621,6 +4642,7 @@ p {
   .grant-panel-top,
   .grant-card,
   .consent-card,
+  .issuer-source-strip,
   .reference-card,
   .reference-source-strip,
   .release-card,

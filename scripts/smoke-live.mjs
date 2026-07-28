@@ -142,6 +142,8 @@ assertIncludesAny(bundleText, ["Export invites"], "Corporate team invitation exp
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
 assertIncludesAny(bundleText, ["Reference database"], "structured reference source label");
 assertIncludesAny(bundleText, ["Export references"], "structured reference export control");
+assertIncludesAny(bundleText, ["Issuer database"], "credential issuer source label");
+assertIncludesAny(bundleText, ["Export credentials"], "credential issuer export control");
 assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
 assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact intake");

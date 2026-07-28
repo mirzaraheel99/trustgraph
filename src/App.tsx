@@ -2063,6 +2063,7 @@ function IssuerCredentialsPanel({
   const [status, setStatus] = useState(message);
   const expiringCredentials = credentials.filter((credential) => credential.expires_at).length;
   const noExpiryCredentials = credentials.length - expiringCredentials;
+  const exportName = `trustgraph-issued-credentials-${new Date().toISOString().slice(0, 10)}.csv`;
 
   useEffect(() => {
     setStatus(message);
@@ -2132,6 +2133,18 @@ function IssuerCredentialsPanel({
           }}
         >
           Add issuer role
+        </button>
+      </div>
+      <div className="issuer-source-strip">
+        <span className="status-chip success">Issuer database</span>
+        <small>Exports issued Passport credentials, subject profile, issuer organization, source, status, and expiration dates.</small>
+        <button
+          className="secondary-action"
+          disabled={!credentials.length}
+          onClick={() => downloadTextFile(exportName, issuerCredentialsToCsv(credentials), "text/csv")}
+          type="button"
+        >
+          Export credentials
         </button>
       </div>
       <form className="issuer-form" onSubmit={submitCredential}>
@@ -3494,6 +3507,31 @@ function referenceRequestsToCsv(requests: DbReferenceRequest[]) {
       request.submitted_summary ?? "",
       request.created_at,
       request.updated_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function issuerCredentialsToCsv(credentials: DbIssuerCredential[]) {
+  const rows = [
+    ["credential_id", "owner_profile_id", "owner_name", "owner_email", "issuer_organization_id", "issuer_organization_name", "type", "title", "status", "source_name", "evidence_summary", "issued_at", "expires_at", "created_at", "updated_at"],
+    ...credentials.map((credential) => [
+      credential.id,
+      credential.owner_profile_id,
+      credential.owner_profile?.full_name ?? "",
+      credential.owner_profile?.email ?? "",
+      credential.issuer_organization_id ?? "",
+      credential.issuer_organization?.name ?? "",
+      credential.type,
+      credential.title,
+      credential.status,
+      credential.source_name,
+      credential.evidence_summary ?? "",
+      credential.issued_at ?? "",
+      credential.expires_at ?? "",
+      credential.created_at,
+      credential.updated_at
     ])
   ];
 
