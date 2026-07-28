@@ -140,5 +140,6 @@ The `docs/` folder contains the planning documents used to shape this foundation
 - `01` through `13`: product scope, roles, journeys, trust rules, business rules, privacy, legal, IA, screen inventory, UX, data model, and state model.
 - `14` through `23`: notifications, security, technical architecture, APIs, AI governance, MVP, roadmap, quality, deployment readiness, and pilot plan.
 - `24` through `28`: master requirements index, traceability matrix, module dependency map, release backlog, and Codex build instructions.
+- `PILOT_RUNBOOK.md`: short v1 operator checklist for release gates, workflow acceptance, security boundary, and human decisions.
 
 The Admin workspace includes a 13-track foundation alignment panel so the live product surface stays connected to the roadmap.
