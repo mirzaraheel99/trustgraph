@@ -6,7 +6,7 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 
 1. Product foundation: public website, hosted app, and GitHub Pages deployment are live.
 2. Professional Passport: account creation, Passport records, record types, evidence metadata, and private evidence storage are implemented.
-3. Corporate account: employer and staffing agency account creation, role activation, plans, invitations, and member controls are implemented.
+3. Corporate account: employer and staffing agency account creation, role activation, plans, invitations, invitee acceptance handoff, and member controls are implemented.
 4. RBAC: Professional, Corporate, Verify, Issuer, Admin, Auditor, and System roles are mapped to workspace access and permissions.
 5. Access Grants: corporate requests, Passport approval/decline/revoke, and shared-record sync are implemented.
 6. Consent controls: sensitive and restricted records can require explicit consent and consent can be revoked.
@@ -27,13 +27,14 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 5. Create a Passport record and attach evidence metadata.
 6. Upload one private evidence file and test preview/download.
 7. Create a Corporate workspace and activate a pilot plan.
-8. Add or invite a reviewer, then switch to the Verify workspace.
+8. Add or invite a reviewer, then confirm the invitee can review and accept the pending workspace invitation.
 9. Request Passport access by professional email.
 10. Approve the Access Grant from Passport.
 11. Confirm shared records render in Verify with scope context.
 12. Create a consent authorization for a sensitive record, then revoke it.
-13. Open Admin, create pilot cases if needed, resolve or restrict one case, export operations cases, export audit CSV/JSON, export release ledger, and export the security runbook.
-14. Confirm the CI responsive coverage guard passes before accepting mobile and narrow desktop layouts.
+13. Export team invitations and personal pending invitations for the pilot acceptance packet.
+14. Open Admin, create pilot cases if needed, resolve or restrict one case, export operations cases, export audit CSV/JSON, export release ledger, and export the security runbook.
+15. Confirm the CI responsive coverage guard passes before accepting mobile and narrow desktop layouts.
 
 ## Stop Conditions
 

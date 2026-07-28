@@ -22,13 +22,14 @@ Use this runbook for v1 pilot verification before inviting real employers, staff
 7. Create a Corporate workspace.
 8. Activate a pilot subscription ledger entry.
 9. Invite or activate a corporate team member.
-10. Request a Passport Access Grant from Verify.
-11. Approve the Access Grant from Passport and sync shared records.
-12. Create or revoke a consent authorization for sensitive scope.
-13. Open Verify and confirm approved shared records are visible.
-14. Open Admin and review operations, Connect, audit, workflow QA, release ledger, and security panels.
-15. Export audit CSV and security runbook CSV.
-16. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
+10. Sign in as the invited reviewer, confirm the pending invitation is visible, accept it, and export the personal invitation handoff CSV.
+11. Request a Passport Access Grant from Verify.
+12. Approve the Access Grant from Passport and sync shared records.
+13. Create or revoke a consent authorization for sensitive scope.
+14. Open Verify and confirm approved shared records are visible.
+15. Open Admin and review operations, Connect, audit, workflow QA, release ledger, and security panels.
+16. Export audit CSV, team invitation CSV, and security runbook CSV.
+17. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
 
 ## Security Review Boundary
 

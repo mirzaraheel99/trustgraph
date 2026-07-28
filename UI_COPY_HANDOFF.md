@@ -80,7 +80,7 @@ Current foundation:
 - Next.js, React, TypeScript.
 - Static GitHub Pages deployment.
 - Supabase Auth, database, Storage, RLS, and RPC functions.
-- Professional Passport, Corporate Verify, RBAC/team roles, Access Grants, evidence preview/download, evidence manifest export, missing-record requests, gap packet export, references, credentials, notifications, billing pilot ledger, production gate decisions, pilot launch contact register, audit exports, release ledger, security/RLS checklist, pilot acceptance script, and 13-track v1 alignment panel.
+- Professional Passport, Corporate Verify, RBAC/team roles, team invitation creation, invitee acceptance handoff, invitation exports, Access Grants, evidence preview/download, evidence manifest export, missing-record requests, gap packet export, references, credentials, notifications, billing pilot ledger, production gate decisions, pilot launch contact register, audit exports, release ledger, security/RLS checklist, pilot acceptance script, and 13-track v1 alignment panel.
 
 What to improve:
 1. Public website first viewport: make Passport, Corporate Verify, and operator trust controls obvious in the first 10 seconds.
