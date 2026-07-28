@@ -30,6 +30,11 @@ function assert(condition, message) {
   }
 }
 
+function assertIncludesAny(source, expectedValues, label) {
+  const found = expectedValues.some((value) => source.includes(value));
+  assert(found, `Expected hosted build to include ${label}: ${expectedValues.join(" or ")}`);
+}
+
 const pageUrl = `${targetUrl}?smoke=live-script`;
 const { response, text } = await fetchText(pageUrl);
 
@@ -47,4 +52,21 @@ await Promise.all(
   })
 );
 
-console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked)`);
+const bundleText = (
+  await Promise.all(
+    assetUrls
+      .filter((assetUrl) => assetUrl.endsWith(".js"))
+      .slice(0, 6)
+      .map(async (assetUrl) => {
+        const { text: assetText } = await fetchText(assetUrl);
+        return assetText;
+      })
+  )
+).join("\n");
+
+assertIncludesAny(bundleText, ["Professional Passport"], "Professional portal copy");
+assertIncludesAny(bundleText, ["Corporate Verify"], "Corporate portal copy");
+assertIncludesAny(bundleText, ["Pilot monthly"], "Corporate pricing cadence");
+assertIncludesAny(bundleText, ["After registration"], "registration outcome section");
+
+console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal copy verified)`);
