@@ -70,5 +70,7 @@ assertIncludesAny(bundleText, ["Pilot monthly"], "Corporate pricing cadence");
 assertIncludesAny(bundleText, ["After registration"], "registration outcome section");
 assertIncludesAny(bundleText, ["Set new password"], "password recovery update control");
 assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
+assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
+assertIncludesAny(bundleText, ["Guided preview mode"], "preview mode indicator");
 
-console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal and recovery copy verified)`);
+console.log(`TrustGraph live smoke passed: ${response.status} ${targetUrl} (${assetUrls.length} assets checked, portal, recovery, and data-mode copy verified)`);

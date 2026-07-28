@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Clock3,
   ClipboardCheck,
+  Database,
   Download,
   Eye,
   FileCheck2,
@@ -3879,6 +3880,56 @@ function ProductionReadinessPanel({
   );
 }
 
+function LiveDataModePanel({
+  accountContext,
+  activeOrganization,
+  activeRoleLabel,
+  authSession,
+  workspaceLabel
+}: {
+  accountContext: AccountContext | null;
+  activeOrganization: Organization;
+  activeRoleLabel: string;
+  authSession: AuthSession | null;
+  workspaceLabel: string;
+}) {
+  const isLive = Boolean(authSession && accountContext);
+  const profileLabel = authSession?.user.email ?? "Not signed in";
+  const membershipCount = accountContext?.memberships.length ?? 0;
+  const rows = [
+    { label: "Profile", value: profileLabel },
+    { label: "Organization", value: isLive ? activeOrganization.name : "Preview organization" },
+    { label: "Role", value: isLive ? activeRoleLabel : "Demo role" },
+    { label: "Workspace", value: workspaceLabel }
+  ];
+
+  return (
+    <section className={`live-data-panel ${isLive ? "live" : "preview"}`}>
+      <div className="mini-heading">
+        <Database size={16} />
+        <strong>{isLive ? "Live Supabase database mode" : "Guided preview mode"}</strong>
+      </div>
+      <p>
+        {isLive
+          ? "This portal is reading and writing hosted Supabase data with account RBAC enforced."
+          : "This portal is showing product preview data only. Register or login before relying on saved records."}
+      </p>
+      <div className="live-data-grid">
+        {rows.map((row) => (
+          <article key={row.label}>
+            <small>{row.label}</small>
+            <strong>{row.value}</strong>
+          </article>
+        ))}
+      </div>
+      <div className="live-data-footer">
+        <span className={`status-chip ${isLive ? "success" : "warning"}`}>{isLive ? "writes enabled" : "preview only"}</span>
+        <small>{isLive ? `${membershipCount} RBAC memberships loaded` : "Supabase keys are configured; login unlocks live rows."}</small>
+      </div>
+    </section>
+  );
+}
+
 function OnboardingChecklistPanel({
   accessGrants,
   accountContext,
@@ -6116,6 +6167,13 @@ function App() {
         />
 
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
+        <LiveDataModePanel
+          accountContext={accountContext}
+          activeOrganization={activeOrganization}
+          activeRoleLabel={activeRole.label}
+          authSession={authSession}
+          workspaceLabel={workspace.label}
+        />
         <ProductionReadinessPanel
           accountContext={accountContext}
           activeOrganizationName={activeOrganization.name}
