@@ -64,6 +64,7 @@ import {
   authModeLabel,
   readStoredSession,
   requestPasswordRecovery,
+  resendSignupConfirmation,
   signInWithPassword,
   signOut,
   signUpWithPassword,
@@ -3598,6 +3599,19 @@ function AuthPanel({
     }
   }
 
+  async function resendVerification() {
+    setBusy(true);
+    setMessage("Sending verification email...");
+    try {
+      await resendSignupConfirmation(email, authRedirectUrl);
+      setMessage("Verification email requested. If Supabase says rate limit exceeded, wait before trying again.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not resend verification email.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <section className="auth-panel">
       <div className="mini-heading">
@@ -3656,6 +3670,9 @@ function AuthPanel({
             </button>
             <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
               Reset password
+            </button>
+            <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+              Resend verify
             </button>
           </div>
           <div className="auth-recovery-note">
@@ -4123,6 +4140,28 @@ function PublicSite({
     }
   }
 
+  async function resendVerification() {
+    if (!authReady) {
+      setMessage("Hosted auth is not configured.");
+      return;
+    }
+    if (!email) {
+      setMessage("Enter your email first.");
+      return;
+    }
+
+    setBusy(true);
+    setMessage("Sending verification email...");
+    try {
+      await resendSignupConfirmation(email, authRedirectUrl);
+      setMessage("Verification email requested. If the rate limit is active, wait before trying again.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not resend verification email.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const pricing = [
     {
       name: "Professional",
@@ -4357,6 +4396,9 @@ function PublicSite({
           </button>
           <button className="secondary-action" onClick={onOpenDemo} type="button">
             Explore demo app
+          </button>
+          <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+            Resend verification
           </button>
           <small>{message}</small>
           <small>

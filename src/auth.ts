@@ -146,6 +146,30 @@ export async function requestPasswordRecovery(email: string, redirectTo?: string
   }
 }
 
+export async function resendSignupConfirmation(email: string, redirectTo?: string): Promise<void> {
+  const config = getSupabaseConfig();
+  if (!config) {
+    throw new Error("Supabase is not configured for this deployment.");
+  }
+
+  const response = await fetch(`${config.url}/auth/v1/resend`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email,
+      type: "signup",
+      options: redirectTo ? { email_redirect_to: redirectTo } : undefined
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Verification resend failed: ${await readAuthError(response, "Wait for the email rate limit to reset, then try again.")}`);
+  }
+}
+
 export function signOut() {
   persistSession(null);
 }
