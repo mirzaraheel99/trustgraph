@@ -145,3 +145,16 @@ export async function assignOwnCorporateRole(input: {
     { accessToken: input.accessToken }
   );
 }
+
+export async function seedPilotWorkspace(accessToken: string) {
+  return supabaseRpc<{
+    profile_id: string;
+    corporate_organization_id: string;
+    membership_id: string;
+    subscription_id: string;
+    access_grant_id: string;
+    consent_authorization_id: string;
+    passport_records: number;
+    evidence_documents: number;
+  }>("seed_pilot_workspace", {}, { accessToken });
+}

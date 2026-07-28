@@ -56,6 +56,7 @@ import {
   createSampleEmployerReviewerMembership,
   ensureProfessionalAccount,
   loadAccountContext,
+  seedPilotWorkspace,
   type AccountContext
 } from "./accountRepository";
 import { auditActionLabel, loadAuditEvents } from "./auditRepository";
@@ -3773,7 +3774,8 @@ function OnboardingChecklistPanel({
   teamInvitations,
   teamMembers,
   onOpenHostedRegistration,
-  onOpenWorkspace
+  onOpenWorkspace,
+  onSeedPilotWorkspace
 }: {
   accessGrants: AccessGrantView[];
   accountContext: AccountContext | null;
@@ -3785,7 +3787,10 @@ function OnboardingChecklistPanel({
   teamMembers: OrganizationMemberView[];
   onOpenHostedRegistration: () => void;
   onOpenWorkspace: (workspaceId: WorkspaceId) => void;
+  onSeedPilotWorkspace: () => Promise<void>;
 }) {
+  const [seedStatus, setSeedStatus] = useState("Create live pilot rows after signing in.");
+  const [seedBusy, setSeedBusy] = useState(false);
   const hasCorporateContext = Boolean(
     accountContext?.memberships.some((membership) =>
       ["employer_admin", "employer_reviewer", "staffing_agency_admin", "recruiter"].includes(membership.role)
@@ -3850,6 +3855,19 @@ function OnboardingChecklistPanel({
   const completed = checklist.filter((item) => item.done).length;
   const nextItem = checklist.find((item) => !item.done) ?? checklist[checklist.length - 1];
 
+  async function seedLiveData() {
+    setSeedBusy(true);
+    setSeedStatus("Creating live pilot rows in Supabase...");
+    try {
+      await onSeedPilotWorkspace();
+      setSeedStatus("Live pilot workspace seeded. Refreshing portal data...");
+    } catch (error) {
+      setSeedStatus(error instanceof Error ? error.message : "Could not seed live pilot workspace");
+    } finally {
+      setSeedBusy(false);
+    }
+  }
+
   return (
     <section className="onboarding-panel">
       <div className="mini-heading">
@@ -3864,6 +3882,12 @@ function OnboardingChecklistPanel({
         <span className={`status-chip ${completed === checklist.length ? "success" : "info"}`}>
           {completed === checklist.length ? "ready" : "in progress"}
         </span>
+      </div>
+      <div className="onboarding-seed-row">
+        <small>{seedStatus}</small>
+        <button className="secondary-action" disabled={!authSession || seedBusy} onClick={() => void seedLiveData()} type="button">
+          Seed live pilot workspace
+        </button>
       </div>
       <div className="onboarding-list">
         {checklist.map((item) => (
@@ -5396,6 +5420,66 @@ function App() {
     setAccountStatus("Corporate account created");
   }
 
+  async function seedLivePilotWorkspace() {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before seeding the live pilot workspace.");
+    }
+
+    const seeded = await seedPilotWorkspace(authSession.accessToken);
+    const [
+      context,
+      records,
+      documents,
+      grants,
+      consents,
+      subscriptions,
+      members,
+      verifyRequests,
+      sharedRecords,
+      notifications,
+      events
+    ] = await Promise.all([
+      loadAccountContext(accountContext.profile.id, authSession.accessToken),
+      loadPassportRecords(accountContext.profile.id, authSession.accessToken),
+      loadEvidenceDocuments(authSession.accessToken),
+      loadAccessGrants(accountContext.profile.id, authSession.accessToken),
+      loadConsentAuthorizations(authSession.accessToken),
+      loadOrganizationSubscriptions(authSession.accessToken),
+      loadOrganizationMembers(seeded.corporate_organization_id, authSession.accessToken),
+      loadVerifyAccessGrants(seeded.corporate_organization_id, authSession.accessToken),
+      loadSharedVerifyRecords(authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+
+    setAccountContext(context);
+    setActiveMembershipId(seeded.membership_id);
+    setWorkspaceId("verify");
+    setLivePassportRecords(records);
+    setEvidenceDocuments(documents);
+    setAccessGrants(grants);
+    setConsentAuthorizations(consents);
+    setOrganizationSubscriptions(subscriptions);
+    setTeamMembers(members);
+    setVerifyRequests(verifyRequests);
+    setSharedVerifyRecords(sharedRecords);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setAccountStatus("Live pilot workspace seeded");
+    setRecordStatus(`Pilot Passport loaded: ${seeded.passport_records} records`);
+    setGrantStatus(grants.length ? "Live Supabase Access Grants" : "No Access Grants yet");
+    setConsentStatus(consents.length ? `Live consent authorizations: ${consents.length}` : "No consent authorizations yet");
+    setBillingStatus(subscriptions.length ? `Live subscriptions: ${subscriptions.length}` : "Choose a plan for corporate workflows");
+    setTeamStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
+    setVerifyStatus(
+      verifyRequests.length || sharedRecords.length
+        ? `Live Supabase Verify data: ${verifyRequests.length} requests, ${sharedRecords.length} shared records`
+        : "No Verify requests yet"
+    );
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
   async function activateLiveSubscription(planId: string, seats: number) {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before activating subscriptions.");
@@ -5729,6 +5813,7 @@ function App() {
           teamMembers={teamMembers}
           onOpenHostedRegistration={() => setShowPublicSite(true)}
           onOpenWorkspace={changeWorkspace}
+          onSeedPilotWorkspace={seedLivePilotWorkspace}
         />
         <DemoScriptPanel
           accessGrants={accessGrants}

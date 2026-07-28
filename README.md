@@ -99,6 +99,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `026_sensitive_record_controls.sql`: trust record sensitivity classification, explicit consent requirement flags, and audit coverage.
 - `027_migration_release_ledger.sql`: release migration ledger table, admin/auditor RLS, and workflow recording RPC.
 - `028_fix_migration_ledger_rpc.sql`: production repair for deterministic migration ledger recording.
+- `029_pilot_workspace_seed.sql`: authenticated pilot seed RPC for live Passport, Corporate Verify, subscription, Access Grant, consent, evidence, notification, and audit rows.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -118,10 +119,11 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 11. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
 12. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
 13. Admin audit trail shows recent material workflow events.
+14. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `028_fix_migration_ledger_rpc.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, and the Admin release migration ledger.
+Live Supabase migrations are applied through `029_pilot_workspace_seed.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, and authenticated pilot workspace seeding.
 
 ## Public Website and Pricing
 
