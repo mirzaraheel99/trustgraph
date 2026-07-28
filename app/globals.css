@@ -1311,7 +1311,7 @@ p,
     rgba(255, 255, 255, 0.025);
 }
 
-.demo-panel {
+.pilot-acceptance-panel {
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -1322,35 +1322,35 @@ p,
     rgba(255, 255, 255, 0.025);
 }
 
-.demo-panel-header,
-.demo-score-row {
+.pilot-acceptance-panel-header,
+.pilot-acceptance-score-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
 }
 
-.demo-score-row {
+.pilot-acceptance-score-row {
   padding: 10px;
   border: 1px solid rgba(225, 184, 102, 0.18);
   border-radius: var(--radius);
   background: rgba(225, 184, 102, 0.045);
 }
 
-.demo-export-actions {
+.pilot-acceptance-export-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
 }
 
-.demo-export-actions .secondary-action {
+.pilot-acceptance-export-actions .secondary-action {
   min-height: 34px;
   padding: 0 11px;
   font-size: 12px;
 }
 
-.demo-score-row small {
+.pilot-acceptance-score-row small {
   min-width: 0;
   color: var(--muted);
   font-size: 12px;
@@ -1367,7 +1367,7 @@ p,
   gap: 7px;
 }
 
-.demo-step-list {
+.pilot-acceptance-step-list {
   display: grid;
   gap: 7px;
 }
@@ -1596,7 +1596,7 @@ p,
   background: rgba(82, 214, 196, 0.12);
 }
 
-.demo-step {
+.pilot-acceptance-step {
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -1611,12 +1611,12 @@ p,
   background: rgba(82, 214, 196, 0.045);
 }
 
-.demo-step.done {
+.pilot-acceptance-step.done {
   border-color: rgba(82, 214, 196, 0.22);
   background: rgba(82, 214, 196, 0.045);
 }
 
-.demo-step > span {
+.pilot-acceptance-step > span {
   width: 22px;
   height: 22px;
   display: grid;
@@ -1630,12 +1630,12 @@ p,
   font-weight: 900;
 }
 
-.demo-step > div {
+.pilot-acceptance-step > div {
   width: 100%;
   min-width: 0;
 }
 
-.demo-step textarea {
+.pilot-acceptance-step textarea {
   width: 100%;
   min-height: 58px;
   margin-top: 8px;
@@ -1651,7 +1651,7 @@ p,
   line-height: 1.45;
 }
 
-.demo-step textarea:focus {
+.pilot-acceptance-step textarea:focus {
   border-color: rgba(82, 214, 196, 0.42);
   box-shadow: 0 0 0 3px rgba(82, 214, 196, 0.1);
 }
@@ -1660,18 +1660,18 @@ p,
 .readiness-row small,
 .onboarding-item strong,
 .onboarding-item small,
-.demo-step strong,
-.demo-step small {
+.pilot-acceptance-step strong,
+.pilot-acceptance-step small {
   display: block;
 }
 
 .onboarding-item strong,
-.demo-step strong {
+.pilot-acceptance-step strong {
   font-size: 12px;
 }
 
 .onboarding-item small,
-.demo-step small {
+.pilot-acceptance-step small {
   margin-top: 3px;
   line-height: 1.35;
 }
@@ -4484,8 +4484,8 @@ p {
   .qa-score-card,
   .onboarding-score,
   .onboarding-seed-row,
-  .demo-panel-header,
-  .demo-score-row,
+  .pilot-acceptance-panel-header,
+  .pilot-acceptance-score-row,
   .security-review-topline {
     flex-direction: column;
     align-items: stretch;

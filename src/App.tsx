@@ -4711,7 +4711,7 @@ function OnboardingChecklistPanel({
   );
 }
 
-function DemoScriptPanel({
+function PilotAcceptancePanel({
   accessGrants,
   apiClients,
   auditEvents,
@@ -4831,13 +4831,13 @@ function DemoScriptPanel({
   }
 
   return (
-    <section className="demo-panel">
-      <div className="demo-panel-header">
+    <section className="pilot-acceptance-panel">
+      <div className="pilot-acceptance-panel-header">
         <div className="mini-heading">
           <ClipboardCheck size={16} />
           <strong>Pilot acceptance script v1</strong>
         </div>
-        <div className="demo-export-actions">
+        <div className="pilot-acceptance-export-actions">
           <button className="secondary-action" onClick={() => downloadTextFile(exportName, pilotAcceptanceToCsv(notedSteps), "text/csv")} type="button">
             Export CSV
           </button>
@@ -4846,16 +4846,16 @@ function DemoScriptPanel({
           </button>
         </div>
       </div>
-      <div className="demo-score-row">
+      <div className="pilot-acceptance-score-row">
         <span className={`status-chip ${completed === steps.length ? "success" : "info"}`}>
           {completed}/{steps.length} passing
         </span>
         <span className={noted ? "status-chip success" : "status-chip warning"}>{noted} notes captured</span>
         <small>Export before and after pilot testing to preserve acceptance evidence.</small>
       </div>
-      <div className="demo-step-list">
+      <div className="pilot-acceptance-step-list">
         {notedSteps.map((step, index) => (
-          <article className={step.done ? "demo-step done" : "demo-step"} key={step.label}>
+          <article className={step.done ? "pilot-acceptance-step done" : "pilot-acceptance-step"} key={step.label}>
             <span>{index + 1}</span>
             <div>
               <strong>{step.label}</strong>
@@ -7008,7 +7008,7 @@ function App() {
           onOpenWorkspace={changeWorkspace}
           onSeedPilotWorkspace={seedLivePilotWorkspace}
         />
-        <DemoScriptPanel
+        <PilotAcceptancePanel
           accessGrants={accessGrants}
           apiClients={apiClients}
           auditEvents={auditEvents}
