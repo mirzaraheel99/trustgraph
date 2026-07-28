@@ -64,6 +64,7 @@ import { buildAdvisorySummary } from "./aiAdvisor";
 import {
   authModeLabel,
   loadStoredSession,
+  readSessionFromUrl,
   requestPasswordRecovery,
   resendSignupConfirmation,
   signInWithPassword,
@@ -4798,13 +4799,15 @@ function App() {
   useEffect(() => {
     let cancelled = false;
 
-    loadStoredSession()
+    Promise.resolve()
+      .then(() => readSessionFromUrl())
+      .then((callbackSession) => callbackSession ?? loadStoredSession())
       .then((storedSession) => {
         if (cancelled) return;
         setAuthSession(storedSession);
         if (storedSession) {
           setShowPublicSite(false);
-          setAccountStatus("Live session restored");
+          setAccountStatus("Live session connected");
         }
       })
       .catch((error) => {

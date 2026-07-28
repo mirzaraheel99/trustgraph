@@ -24,6 +24,11 @@ interface SupabaseAuthResponse {
   };
 }
 
+interface SupabaseUserResponse {
+  id: string;
+  email?: string;
+}
+
 function toSession(response: SupabaseAuthResponse): AuthSession {
   return {
     accessToken: response.access_token,
@@ -120,6 +125,49 @@ export async function loadStoredSession(): Promise<AuthSession | null> {
   }
 
   return refreshStoredSession(session);
+}
+
+export async function readSessionFromUrl(): Promise<AuthSession | null> {
+  const config = getSupabaseConfig();
+  if (!config || typeof window === "undefined") return null;
+
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const queryParams = new URLSearchParams(window.location.search);
+  const accessToken = hashParams.get("access_token") ?? queryParams.get("access_token");
+  const refreshToken = hashParams.get("refresh_token") ?? queryParams.get("refresh_token");
+  const expiresIn = Number(hashParams.get("expires_in") ?? queryParams.get("expires_in") ?? "0");
+
+  if (!accessToken || !refreshToken || !expiresIn) {
+    return null;
+  }
+
+  const response = await fetch(`${config.url}/auth/v1/user`, {
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Auth callback failed: ${await readAuthError(response, "Login again to reconnect live database access.")}`);
+  }
+
+  const user = (await response.json()) as SupabaseUserResponse;
+  const session: AuthSession = {
+    accessToken,
+    refreshToken,
+    expiresAt: Date.now() + expiresIn * 1000,
+    user: {
+      id: user.id,
+      email: user.email ?? "unknown"
+    }
+  };
+
+  persistSession(session);
+
+  const cleanUrl = `${window.location.origin}${window.location.pathname}`;
+  window.history.replaceState({}, document.title, cleanUrl);
+  return session;
 }
 
 export async function signInWithPassword(email: string, password: string): Promise<AuthSession> {
