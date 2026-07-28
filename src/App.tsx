@@ -3877,7 +3877,7 @@ function AuthPanel({
     },
     {
       label: "Email rate limit",
-      detail: "If Supabase blocks signups or resends, wait before retrying and reuse existing inbox links."
+      detail: "Built-in Supabase email allows 2 emails per hour project-wide; wait 60+ minutes or add custom SMTP for more."
     },
     {
       label: "After confirmation",
@@ -3898,7 +3898,7 @@ function AuthPanel({
       const nextSession =
         mode === "signin" ? await signInWithPassword(email, password) : await signUpWithPassword(email, password, authRedirectUrl);
       onSession(nextSession);
-      setMessage(nextSession ? "Live Supabase session connected" : "Check your email to confirm the account");
+      setMessage(nextSession ? "Live Supabase session connected" : "Check your email to confirm the account. Built-in Supabase email may pause after 2 emails per hour.");
       setPassword("");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Authentication failed.");
@@ -3912,7 +3912,7 @@ function AuthPanel({
     setMessage("Sending recovery email...");
     try {
       await requestPasswordRecovery(email, authRedirectUrl);
-      setMessage("Password recovery email requested. Use the link in your inbox to return to TrustGraph.");
+      setMessage("Password recovery email requested. Use the inbox link to return to TrustGraph; wait 60+ minutes if Supabase rate-limits email.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not request password recovery.");
     } finally {
@@ -3925,7 +3925,7 @@ function AuthPanel({
     setMessage("Sending verification email...");
     try {
       await resendSignupConfirmation(email, authRedirectUrl);
-      setMessage("Verification email requested. If Supabase says rate limit exceeded, wait before trying again.");
+      setMessage("Verification email requested. If Supabase says rate limit exceeded, wait 60+ minutes or configure custom SMTP.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not resend verification email.");
     } finally {
@@ -4037,7 +4037,7 @@ function AuthPanel({
           <div className="auth-recovery-note">
             <div>
               <strong>Recovery redirect</strong>
-              <small>Add this URL in Supabase Auth redirect settings: {authRedirectUrl}</small>
+              <small>Add this hosted URL in Supabase Auth redirect settings so emails do not return to localhost: {authRedirectUrl}</small>
             </div>
             <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
               Copy URL
@@ -4676,7 +4676,7 @@ function PublicSite({
   const [organizationName, setOrganizationName] = useState("");
   const [organizationDomain, setOrganizationDomain] = useState("");
   const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
-  const [message, setMessage] = useState("Create an account. Email verification may be required before first login.");
+  const [message, setMessage] = useState("Create an account. Email verification may be required; Supabase built-in email allows 2 messages per hour.");
   const [hasPendingCorporateRegistration, setHasPendingCorporateRegistration] = useState(false);
   const [busy, setBusy] = useState(false);
   const authReady = isSupabaseConfigured();
@@ -4770,9 +4770,9 @@ function PublicSite({
       } else {
         if (portal === "corporate" && mode === "signup") {
           savePendingCorporateRegistration();
-          setMessage("Check your email to confirm the account, then return here and login. Corporate workspace details are saved in this browser.");
+          setMessage("Check your email to confirm the account, then return here and login. Corporate workspace details are saved in this browser. If email is rate-limited, wait 60+ minutes.");
         } else {
-          setMessage("Check your email to confirm the account, then login.");
+          setMessage("Check your email to confirm the account, then login. If email is rate-limited, wait 60+ minutes.");
         }
       }
     } catch (error) {
@@ -4796,7 +4796,7 @@ function PublicSite({
     setMessage("Sending verification email...");
     try {
       await resendSignupConfirmation(email, authRedirectUrl);
-      setMessage("Verification email requested. If the rate limit is active, wait before trying again.");
+      setMessage("Verification email requested. If the rate limit is active, wait 60+ minutes or configure custom SMTP.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not resend verification email.");
     } finally {
@@ -5190,9 +5190,10 @@ function PublicSite({
           <small>{message}</small>
           <small>
             {authReady
-              ? `Hosted Supabase Auth is configured. Allowed redirect URL must include: ${authRedirectUrl}`
+              ? `Hosted Supabase Auth is configured. Allowed redirect URL must include this GitHub Pages URL, not localhost: ${authRedirectUrl}`
               : "Hosted build is missing public Supabase Auth configuration."}
           </small>
+          <small>Supabase built-in email is limited to 2 emails per hour project-wide; custom SMTP is needed for heavier testing.</small>
         </form>
       </section>
     </main>
