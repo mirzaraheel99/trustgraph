@@ -4311,20 +4311,32 @@ function PublicSite({
     {
       name: "Professional",
       price: "$0",
+      cadence: "Free",
+      buyer: "Individuals",
+      action: "Start Passport",
       detail: "Build a private Passport and decide exactly which records can be shared.",
-      points: ["Private records", "Evidence uploads", "Access Grants", "Reference requests"]
+      points: ["Private records", "Evidence uploads", "Access Grants", "Reference requests"],
+      portal: "professional" as const
     },
     {
       name: "Corporate Verify",
       price: "$149",
+      cadence: "Pilot monthly",
+      buyer: "Employers and staffing teams",
+      action: "Start Corporate",
       detail: "Review approved Passport records with scoped access, team roles, and audit history.",
-      points: ["Corporate RBAC", "Missing-record requests", "Readiness review", "Audit trail"]
+      points: ["Corporate RBAC", "Missing-record requests", "Readiness review", "Audit trail"],
+      portal: "corporate" as const
     },
     {
       name: "TrustGraph Scale",
       price: "Custom",
+      cadence: "Pilot agreement",
+      buyer: "Issuers and compliance teams",
+      action: "Request Scale",
       detail: "For issuers, integrations, compliance operations, and multi-team rollout.",
-      points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"]
+      points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"],
+      portal: "corporate" as const
     }
   ];
   const liveWorkflow = [
@@ -4345,6 +4357,20 @@ function PublicSite({
     }
   ];
   const pilotSignals = ["Live Supabase Auth", "Private evidence storage", "Scoped RBAC", "Audit-ready workflows"];
+  const registrationOutcomes = [
+    {
+      label: "Professional",
+      detail: "Creates a live profile, personal organization, Professional role, Passport records, evidence, consent, and Access Grants."
+    },
+    {
+      label: "Corporate",
+      detail: "Creates a live employer or staffing organization, admin membership, plans, invitations, member controls, and Verify requests."
+    },
+    {
+      label: "Operator",
+      detail: "Admin workspace tracks audit events, release ledger, security review, Connect controls, and pilot acceptance exports."
+    }
+  ];
   const selectedPortalSteps =
     portal === "corporate"
       ? [
@@ -4482,18 +4508,22 @@ function PublicSite({
         <div className="pricing-grid">
           {pricing.map((plan) => (
             <article className="pricing-card" key={plan.name}>
-              <strong>{plan.name}</strong>
+              <div className="pricing-card-top">
+                <strong>{plan.name}</strong>
+                <small>{plan.buyer}</small>
+              </div>
               <span>{plan.price}</span>
+              <small className="pricing-cadence">{plan.cadence}</small>
               <p>{plan.detail}</p>
               {plan.points.map((point) => (
                 <small key={point}>{point}</small>
               ))}
               <button
                 className={plan.name === "Professional" ? "primary-action" : "secondary-action"}
-                onClick={() => openPortal(plan.name === "Professional" ? "professional" : "corporate")}
+                onClick={() => openPortal(plan.portal)}
                 type="button"
               >
-                {plan.name === "Professional" ? "Start Passport" : "Start Corporate"}
+                {plan.action}
               </button>
             </article>
           ))}
@@ -4501,6 +4531,24 @@ function PublicSite({
         <div className="pilot-signal-row">
           {pilotSignals.map((signal) => (
             <span key={signal}>{signal}</span>
+          ))}
+        </div>
+      </section>
+
+      <section className="public-section registration-section">
+        <div className="public-section-heading">
+          <span className="eyebrow">After registration</span>
+          <h2>Every portal connects to the live database foundation</h2>
+        </div>
+        <div className="registration-grid">
+          {registrationOutcomes.map((item) => (
+            <article key={item.label}>
+              <BadgeCheck size={18} />
+              <div>
+                <strong>{item.label}</strong>
+                <p>{item.detail}</p>
+              </div>
+            </article>
           ))}
         </div>
       </section>

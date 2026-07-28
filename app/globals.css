@@ -270,14 +270,69 @@ button {
   font-size: 44px;
 }
 
+.pricing-card-top {
+  display: grid;
+  gap: 4px;
+}
+
+.pricing-card-top small,
+.pricing-cadence {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.pricing-cadence {
+  margin-top: -10px;
+  font-weight: 850;
+}
+
 .pricing-card small {
   display: block;
   padding-top: 8px;
   border-top: 1px solid var(--line);
 }
 
+.pricing-card-top small,
+.pricing-cadence {
+  padding-top: 0;
+  border-top: 0;
+}
+
 .pricing-card button {
   margin-top: auto;
+}
+
+.registration-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.registration-grid article {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.registration-grid svg {
+  flex: 0 0 auto;
+  color: var(--teal);
+}
+
+.registration-grid strong,
+.registration-grid p {
+  display: block;
+}
+
+.registration-grid p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .public-auth-section {
@@ -3659,6 +3714,7 @@ p {
   .portal-grid,
   .workflow-grid,
   .pricing-grid,
+  .registration-grid,
   .directory-controls,
   .audit-controls,
   .audit-summary-grid,
