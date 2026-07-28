@@ -136,6 +136,8 @@ assertIncludesAny(bundleText, ["Evaluation role"], "signed-out evaluation role l
 assertIncludesAny(bundleText, ["Preview account context"], "signed-out account context label");
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");
 assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export control");
+assertIncludesAny(bundleText, ["Export launch packet"], "billing launch packet export control");
+assertIncludesAny(bundleText, ["Payment launch boundary"], "billing payment launch boundary");
 assertIncludesAny(bundleText, ["notes captured"], "pilot acceptance note capture");
 assertIncludesAny(bundleText, ["Export runbook"], "pilot acceptance markdown runbook export control");
 

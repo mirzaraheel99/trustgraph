@@ -3397,6 +3397,15 @@ function billingDecisionGatesToCsv(gates: Array<{ label: string; owner: string; 
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function billingLaunchReadinessToCsv(items: Array<{ label: string; status: string; detail: string }>) {
+  const rows = [
+    ["item", "status", "detail"],
+    ...items.map((item) => [item.label, item.status, item.detail])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function productionGatesToCsv(gates: Array<{ label: string; owner: string; status: string; evidence: string }>) {
   const rows = [
     ["gate", "owner", "status", "evidence_required"],
@@ -3692,11 +3701,19 @@ function BillingPanel({
     : 0;
   const exportName = `trustgraph-billing-ledger-${new Date().toISOString().slice(0, 10)}.csv`;
   const gateExportName = `trustgraph-billing-decision-gates-${new Date().toISOString().slice(0, 10)}.csv`;
+  const readinessExportName = `trustgraph-billing-launch-readiness-${new Date().toISOString().slice(0, 10)}.csv`;
   const billingGates = [
     { label: "Stripe product mapping", owner: "Business operations", status: "human decision required" },
     { label: "Checkout + customer portal", owner: "Engineering", status: "not connected for pilot" },
     { label: "Tax and invoice policy", owner: "Finance/legal", status: "human decision required" },
     { label: "Webhook reconciliation", owner: "Engineering/security", status: "blocked until Stripe decision" }
+  ];
+  const billingLaunchReadiness = [
+    { label: "Current billing mode", status: "pilot_ledger", detail: "Subscription activation writes Supabase ledger rows only." },
+    { label: "Stripe checkout", status: "not_connected", detail: "Connect only after product, price, and tax decisions are approved." },
+    { label: "Customer portal", status: "not_connected", detail: "Portal links stay disabled until Stripe customer lifecycle is approved." },
+    { label: "Invoice and refunds", status: "human_review", detail: "Finance/legal must approve invoice emails, refunds, dunning, and tax handling." },
+    { label: "Webhook reconciliation", status: "engineering_gate", detail: "Payment webhooks require idempotency, audit mapping, and failed-event recovery." }
   ];
 
   async function activate(planId: string) {
@@ -3771,13 +3788,36 @@ function BillingPanel({
           >
             Export gates
           </button>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(readinessExportName, billingLaunchReadinessToCsv(billingLaunchReadiness), "text/csv")}
+            type="button"
+          >
+            Export launch packet
+          </button>
         </div>
+      </div>
+      <div className="billing-decision-card">
+        <div>
+          <strong>Payment launch boundary</strong>
+          <small>TrustGraph can validate pricing, seats, subscription status, and audit history now. Checkout, invoices, refunds, dunning, and payment webhooks stay off until the Stripe production gate is approved.</small>
+        </div>
+        <span className="status-chip warning">Stripe gated</span>
       </div>
       <div className="billing-gate-grid">
         {billingGates.map((gate) => (
           <span key={gate.label}>
             <strong>{gate.label}</strong>
             <small>{gate.status}</small>
+          </span>
+        ))}
+      </div>
+      <div className="billing-gate-grid">
+        {billingLaunchReadiness.map((item) => (
+          <span key={item.label}>
+            <strong>{item.label}</strong>
+            <small>{item.status.replace(/_/g, " ")}</small>
+            <small>{item.detail}</small>
           </span>
         ))}
       </div>
