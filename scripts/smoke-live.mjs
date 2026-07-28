@@ -91,6 +91,7 @@ assertIncludesAny(bundleText, ["Requested Passport records"], "Professional miss
 assertIncludesAny(bundleText, ["Migrations through 029"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
 assertIncludesAny(bundleText, ["Preview role"], "signed-out preview role label");
+assertIncludesAny(bundleText, ["Preview account context"], "signed-out account context label");
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");
 assertIncludesAny(bundleText, ["notes captured"], "pilot acceptance note capture");
 

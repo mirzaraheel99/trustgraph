@@ -5079,7 +5079,7 @@ function App() {
     organizationDomain: string;
   } | null>(null);
   const [accountContext, setAccountContext] = useState<AccountContext | null>(null);
-  const [accountStatus, setAccountStatus] = useState("Demo account context");
+  const [accountStatus, setAccountStatus] = useState("Preview account context");
   const [subscriptionPlans, setSubscriptionPlans] = useState<DbSubscriptionPlan[]>([]);
   const [organizationSubscriptions, setOrganizationSubscriptions] = useState<DbOrganizationSubscription[]>([]);
   const [billingStatus, setBillingStatus] = useState("Sign in to manage billing plans");
@@ -5158,7 +5158,7 @@ function App() {
   useEffect(() => {
     if (!authSession) {
       setAccountContext(null);
-      setAccountStatus("Demo account context");
+      setAccountStatus("Preview account context");
       setSubscriptionPlans([]);
       setOrganizationSubscriptions([]);
       setBillingStatus("Sign in to manage billing plans");
