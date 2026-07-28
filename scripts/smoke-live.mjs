@@ -144,6 +144,9 @@ assertIncludesAny(bundleText, ["Reference database"], "structured reference sour
 assertIncludesAny(bundleText, ["Export references"], "structured reference export control");
 assertIncludesAny(bundleText, ["Issuer database"], "credential issuer source label");
 assertIncludesAny(bundleText, ["Export credentials"], "credential issuer export control");
+assertIncludesAny(bundleText, ["Connect database"], "Connect source label");
+assertIncludesAny(bundleText, ["Export clients"], "Connect client export control");
+assertIncludesAny(bundleText, ["Export webhooks"], "Connect webhook export control");
 assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
 assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact intake");

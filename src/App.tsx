@@ -2566,6 +2566,8 @@ function ConnectPanel({
   const activeClients = apiClients.filter((client) => client.status === "active").length;
   const activeWebhooks = webhooks.filter((webhook) => webhook.status === "active").length;
   const deliveryFailures = webhooks.reduce((sum, webhook) => sum + webhook.failure_count, 0);
+  const clientsExportName = `trustgraph-connect-clients-${new Date().toISOString().slice(0, 10)}.csv`;
+  const webhooksExportName = `trustgraph-connect-webhooks-${new Date().toISOString().slice(0, 10)}.csv`;
 
   useEffect(() => {
     setStatus(message);
@@ -2648,6 +2650,28 @@ function ConnectPanel({
         >
           Create pilot client
         </button>
+      </div>
+      <div className="connect-source-strip">
+        <span className="status-chip success">Connect database</span>
+        <small>Exports scoped API clients and webhook subscriptions with status, ownership, delivery failures, and last delivery timestamps.</small>
+        <div className="connect-export-actions">
+          <button
+            className="secondary-action"
+            disabled={!apiClients.length}
+            onClick={() => downloadTextFile(clientsExportName, apiClientsToCsv(apiClients), "text/csv")}
+            type="button"
+          >
+            Export clients
+          </button>
+          <button
+            className="secondary-action"
+            disabled={!webhooks.length}
+            onClick={() => downloadTextFile(webhooksExportName, webhookSubscriptionsToCsv(webhooks), "text/csv")}
+            type="button"
+          >
+            Export webhooks
+          </button>
+        </div>
       </div>
       <div className="connect-list">
         {apiClients.length ? (
@@ -3532,6 +3556,46 @@ function issuerCredentialsToCsv(credentials: DbIssuerCredential[]) {
       credential.expires_at ?? "",
       credential.created_at,
       credential.updated_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function apiClientsToCsv(clients: DbApiClient[]) {
+  const rows = [
+    ["client_id", "organization_id", "organization_name", "created_by_profile_id", "name", "status", "scopes", "last_used_at", "created_at", "updated_at"],
+    ...clients.map((client) => [
+      client.id,
+      client.organization_id,
+      client.organization?.name ?? "",
+      client.created_by_profile_id ?? "",
+      client.name,
+      client.status,
+      client.scopes.join(" "),
+      client.last_used_at ?? "",
+      client.created_at,
+      client.updated_at
+    ])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function webhookSubscriptionsToCsv(webhooks: DbWebhookSubscription[]) {
+  const rows = [
+    ["webhook_id", "api_client_id", "organization_id", "event_type", "target_url", "status", "failure_count", "last_delivered_at", "created_at", "updated_at"],
+    ...webhooks.map((webhook) => [
+      webhook.id,
+      webhook.api_client_id,
+      webhook.organization_id,
+      webhook.event_type,
+      webhook.target_url,
+      webhook.status,
+      String(webhook.failure_count),
+      webhook.last_delivered_at ?? "",
+      webhook.created_at,
+      webhook.updated_at
     ])
   ];
 

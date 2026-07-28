@@ -2895,6 +2895,33 @@ p {
   line-height: 1;
 }
 
+.connect-source-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(220px, auto);
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.connect-source-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.connect-export-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.connect-export-actions button {
+  min-height: 34px;
+  white-space: nowrap;
+}
+
 .connect-card {
   display: flex;
   justify-content: space-between;
@@ -4582,6 +4609,7 @@ p {
   .audit-controls,
   .audit-summary-grid,
   .connect-summary-grid,
+  .connect-source-strip,
   .consent-summary-grid,
   .evidence-controls,
   .evidence-summary-grid,
@@ -4642,6 +4670,7 @@ p {
   .grant-panel-top,
   .grant-card,
   .consent-card,
+  .connect-export-actions,
   .issuer-source-strip,
   .reference-card,
   .reference-source-strip,
