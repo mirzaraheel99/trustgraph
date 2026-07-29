@@ -5446,6 +5446,25 @@ function AuthPanel({
   const [busy, setBusy] = useState(false);
   const authRedirectUrl = hostedAuthRedirectUrl();
   const authPacketName = `trustgraph-auth-redirect-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const recoveryActions = [
+    "resend_signup_confirmation",
+    "request_password_recovery",
+    "repair_localhost_verification_link",
+    "accept_hosted_callback_session",
+    "update_password_after_recovery"
+  ];
+  const accountRecoveryReadiness = {
+    status: email ? "email_ready" : "email_required",
+    redirect_url: authRedirectUrl,
+    email_rate_limit_notice: "Supabase built-in email allows 2 emails per hour project-wide unless custom SMTP is configured.",
+    support_actions: recoveryActions,
+    operator_next_steps: [
+      "Copy the hosted redirect URL into Supabase Auth allowed redirects.",
+      "Use Resend verify only after the rate-limit window clears or SMTP is configured.",
+      "Use Reset password from the hosted app so recovery returns to TrustGraph instead of localhost."
+    ],
+    signed_in_recovery_control: session ? "password_update_available" : "password_update_requires_recovery_session"
+  };
   const authRedirectPacket = {
     generated_at: new Date().toISOString(),
     configured: isSupabaseConfigured(),
@@ -5467,7 +5486,8 @@ function AuthPanel({
     ],
     email_rate_limit: "Supabase built-in email allows 2 emails per hour project-wide unless custom SMTP is configured.",
     session_state: session ? "signed_in" : "signed_out",
-    account_status: accountStatus
+    account_status: accountStatus,
+    account_recovery_readiness: accountRecoveryReadiness
   };
   const authPaths = [
     {
@@ -5653,6 +5673,13 @@ function AuthPanel({
             <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
               Copy URL
             </button>
+          </div>
+          <div className="auth-recovery-note">
+            <div>
+              <strong>Account recovery readiness</strong>
+              <small>Exports resend verification, reset password, repaired-link, callback, and password-update readiness for support review.</small>
+            </div>
+            <span className="micro-pill">{email ? "email ready" : "email needed"}</span>
           </div>
           <div className="auth-readiness-packet">
             <div>
