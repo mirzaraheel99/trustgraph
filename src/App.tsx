@@ -3331,6 +3331,94 @@ function ReleaseLedgerPanel({
   );
 }
 
+function VpsLaunchPanel() {
+  const targetHost = "5-75-224-11.sslip.io";
+  const protectedVfixHost = "5-75-224-110.sslip.io";
+  const checkoutPath = "/opt/trustgraph";
+  const workflowName = "Deploy TrustGraph to VPS";
+  const launchItems = [
+    {
+      label: "TrustGraph host",
+      status: "configured",
+      detail: `Server target is https://${targetHost}, separate from the existing VFIX host.`
+    },
+    {
+      label: "Source of truth",
+      status: "configured",
+      detail: "GitHub main remains primary; the server updates from the TrustGraph repository only."
+    },
+    {
+      label: "Server checkout",
+      status: "guarded",
+      detail: `${checkoutPath} is the only approved server path for TrustGraph bootstrap and deploy.`
+    },
+    {
+      label: "VFIX protection",
+      status: "guarded",
+      detail: `Deploy workflow and bootstrap script refuse ${protectedVfixHost} and existing VFIX application paths.`
+    },
+    {
+      label: "HTTPS edge",
+      status: "configured",
+      detail: "Caddy serves the static Next export over sslip.io HTTPS for the TrustGraph host."
+    },
+    {
+      label: "Database phase",
+      status: "provisioned",
+      detail: "VPS Postgres is provisioned for the server phase; app auth/RLS/storage remain Supabase-backed until migration is approved."
+    }
+  ];
+  const packetName = `trustgraph-vps-launch-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const packet = {
+    generated_at: new Date().toISOString(),
+    trustgraph_target_url: `https://${targetHost}`,
+    protected_vfix_host: protectedVfixHost,
+    checkout_path: checkoutPath,
+    github_workflow: workflowName,
+    source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
+    launch_items: launchItems,
+    stop_conditions: [
+      "Do not deploy to 5.75.224.110 or 5-75-224-110.sslip.io.",
+      "Do not use existing VFIX application directories or routes.",
+      "Do not migrate Supabase auth/RLS/storage into VPS Postgres without a reviewed server-side migration plan."
+    ]
+  };
+
+  return (
+    <section className="vps-launch-panel">
+      <div className="mini-heading">
+        <Network size={16} />
+        <strong>TrustGraph VPS launch guard</strong>
+      </div>
+      <div className="vps-launch-topline">
+        <div>
+          <span>Server target</span>
+          <strong>https://{targetHost}</strong>
+          <small>GitHub remains primary source; VFIX stays isolated at {protectedVfixHost}.</small>
+        </div>
+        <button className="secondary-action" onClick={() => downloadTextFile(packetName, JSON.stringify(packet, null, 2), "application/json")} type="button">
+          Export VPS packet
+        </button>
+      </div>
+      <div className="vps-guard-strip">
+        <span className="status-chip success">TrustGraph-only path</span>
+        <small>Bootstrap and workflow guards refuse the existing VFIX host and application paths.</small>
+      </div>
+      <div className="vps-launch-grid">
+        {launchItems.map((item) => (
+          <article key={item.label}>
+            <span className={`status-dot ${item.status === "configured" || item.status === "guarded" ? "on" : ""}`} />
+            <div>
+              <strong>{item.label}</strong>
+              <small>{item.detail}</small>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function SecurityReviewPanel({
   apiClients,
   auditEvents,
@@ -8169,6 +8257,7 @@ function App() {
                 />
                 <AuditTrailPanel events={auditEvents} message={auditStatus} />
                 <ReleaseLedgerPanel message={releaseStatus} migrations={schemaMigrationRuns} />
+                <VpsLaunchPanel />
                 <WorkflowQaPanel
                   accessGrants={accessGrants}
                   apiClients={apiClients}

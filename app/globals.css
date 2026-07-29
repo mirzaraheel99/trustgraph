@@ -3407,6 +3407,7 @@ p {
 .operations-panel,
 .audit-panel,
 .release-panel,
+.vps-launch-panel,
 .qa-panel,
 .security-review-panel,
 .plan-panel {
@@ -3753,6 +3754,98 @@ p {
 
 .release-card.empty {
   border-style: dashed;
+}
+
+.vps-launch-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.065), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.vps-launch-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.vps-launch-topline span,
+.vps-launch-topline strong,
+.vps-launch-topline small {
+  display: block;
+}
+
+.vps-launch-topline span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.vps-launch-topline strong {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  font-size: 18px;
+}
+
+.vps-launch-topline small {
+  margin-top: 4px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.vps-guard-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.045);
+}
+
+.vps-guard-strip small {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.vps-launch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vps-launch-grid article {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.vps-launch-grid strong,
+.vps-launch-grid small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.vps-launch-grid small {
+  margin-top: 3px;
+  line-height: 1.4;
 }
 
 .qa-panel {
@@ -4959,6 +5052,8 @@ p {
   .release-source-strip,
   .scope-area-grid,
   .security-review-grid,
+  .vps-guard-strip,
+  .vps-launch-grid,
   .rls-coverage-strip,
   .security-review-topline,
   .human-decision-list,
@@ -5006,6 +5101,7 @@ p {
   .reference-source-strip,
   .release-card,
   .release-source-strip,
+  .vps-launch-topline,
   .connect-card,
   .missing-card,
   .issuer-card,

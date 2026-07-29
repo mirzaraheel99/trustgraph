@@ -14,6 +14,7 @@ This repository contains the first React + TypeScript application foundation for
 - Private Supabase Storage evidence uploads
 - Structured references, issuer credentials, missing-record requests, Connect controls, and source-grounded advisory summaries
 - Public website, Professional and Corporate portal entry, pricing tiers, subscription activation, team invitations, and corporate member-management foundation
+- Guarded TrustGraph-only VPS launch packet in Admin so server deployment stays separate from the existing VFIX app
 
 ## Tech Stack
 
@@ -154,12 +155,13 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 9. Professionals review and resolve Corporate missing-record requests from Passport.
 10. Upload private evidence files to Supabase Storage and link them to Passport records.
 11. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
-12. Manage Connect API clients and webhook subscriptions from Admin.
-13. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
-14. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
-15. Admin audit trail shows recent material workflow events.
-16. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
-17. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
+12. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
+13. Manage Connect API clients and webhook subscriptions from Admin.
+14. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
+15. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
+16. Admin audit trail shows recent material workflow events.
+17. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
+18. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
 
 ## Live Database Status
 
