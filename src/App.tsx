@@ -5360,7 +5360,7 @@ function authFailureMessage(error: unknown, redirectUrl: string, fallback = "Aut
   }
 
   if (normalized.includes("redirect") || normalized.includes("localhost")) {
-    return `Auth redirect needs the hosted GitHub Pages URL in Supabase settings: ${redirectUrl}`;
+    return `Auth redirect needs the hosted TrustGraph URL in Supabase settings: ${redirectUrl}`;
   }
 
   if (normalized.includes("email not confirmed")) {
@@ -5422,6 +5422,7 @@ function AuthPanel({
     mode: authModeLabel(),
     active_redirect_url: authRedirectUrl,
     required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
+    allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://5-75-224-11.sslip.io", "https://5-75-224-11.sslip.io/"],
     trustgraph_vps_target: "https://5-75-224-11.sslip.io",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     current_browser_host:
@@ -6550,6 +6551,7 @@ function PublicSite({
     configured: authReady,
     active_redirect_url: authRedirectUrl,
     required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
+    allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://5-75-224-11.sslip.io", "https://5-75-224-11.sslip.io/"],
     trustgraph_vps_target: "https://5-75-224-11.sslip.io",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     current_browser_host:
