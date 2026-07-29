@@ -3803,6 +3803,15 @@ function billingLaunchReadinessToCsv(items: Array<{ label: string; status: strin
   return rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
+function productionReadinessToCsv(checks: Array<{ label: string; ok: boolean; detail: string }>) {
+  const rows = [
+    ["check", "status", "detail"],
+    ...checks.map((check) => [check.label, check.ok ? "ready" : "needs_live_data", check.detail])
+  ];
+
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
 function productionGatesToCsv(gates: Array<{ label: string; owner: string; status: string; evidence: string }>) {
   const rows = [
     ["gate", "owner", "status", "evidence_required"],
@@ -4887,6 +4896,7 @@ function ProductionReadinessPanel({
   ];
   const readyCount = checks.filter((check) => check.ok).length;
   const readinessScore = Math.round((readyCount / checks.length) * 100);
+  const exportName = `trustgraph-live-database-readiness-${new Date().toISOString().slice(0, 10)}.csv`;
   const nextActions = [
     teamManagementReady ? "Corporate member database active" : "Load a corporate account context",
     authSession ? "Live portal session connected" : "Sign in to connect live data",
@@ -4909,6 +4919,9 @@ function ProductionReadinessPanel({
           {teamManagementReady ? "database live" : "login needed"}
         </span>
       </div>
+      <button className="secondary-action" onClick={() => downloadTextFile(exportName, productionReadinessToCsv(checks), "text/csv")} type="button">
+        Export live readiness
+      </button>
       <div className="readiness-list">
         {checks.map((check) => (
           <article className="readiness-row" key={check.label}>
