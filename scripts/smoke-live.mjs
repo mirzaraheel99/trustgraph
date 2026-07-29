@@ -38,10 +38,11 @@ function assertIncludesAny(source, expectedValues, label) {
 }
 
 async function assertRepoReadinessArtifacts() {
-  const [migrationFiles, readiness, runbook] = await Promise.all([
+  const [migrationFiles, readiness, runbook, evidenceMap] = await Promise.all([
     readdir(new URL("../supabase/migrations/", import.meta.url)),
     readFile(new URL("../V1_READINESS_CHECKLIST.md", import.meta.url), "utf8"),
-    readFile(new URL("../PILOT_RUNBOOK.md", import.meta.url), "utf8")
+    readFile(new URL("../PILOT_RUNBOOK.md", import.meta.url), "utf8"),
+    readFile(new URL("../docs/current-implementation-evidence-map.md", import.meta.url), "utf8")
   ]);
   const sqlMigrations = migrationFiles.filter((file) => file.endsWith(".sql")).sort();
 
@@ -52,6 +53,9 @@ async function assertRepoReadinessArtifacts() {
   assert(readiness.includes("Stop Conditions"), "Expected v1 readiness checklist to include production stop conditions");
   assert(runbook.includes("Live Workflow Acceptance"), "Expected pilot runbook to include live workflow acceptance");
   assert(runbook.includes("Human Decisions Still Required"), "Expected pilot runbook to include human decision gates");
+  assert(evidenceMap.includes("13-Track Evidence Map"), "Expected implementation evidence map to include 13-track coverage");
+  assert(evidenceMap.includes("Live Database Proof Artifacts"), "Expected implementation evidence map to include live database proof artifacts");
+  assert(evidenceMap.includes("Remaining Human Gates"), "Expected implementation evidence map to include human gates");
 }
 
 const pageUrl = `${targetUrl}?smoke=live-script`;

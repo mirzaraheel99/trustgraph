@@ -185,6 +185,7 @@ The `docs/` folder contains the planning documents used to shape this foundation
 - `01` through `13`: product scope, roles, journeys, trust rules, business rules, privacy, legal, IA, screen inventory, UX, data model, and state model.
 - `14` through `23`: notifications, security, technical architecture, APIs, AI governance, MVP, roadmap, quality, deployment readiness, and pilot plan.
 - `24` through `28`: master requirements index, traceability matrix, module dependency map, release backlog, and Codex build instructions.
+- `current-implementation-evidence-map.md`: source-to-implementation map for the 13-track build, live database proof artifacts, verification commands, and human gates.
 - `PILOT_RUNBOOK.md`: short v1 operator checklist for release gates, workflow acceptance, security boundary, and human decisions.
 - `V1_READINESS_CHECKLIST.md`: 13-track implementation coverage, verification loop, and production stop conditions.
 - `UI_COPY_HANDOFF.md`: premium SaaS UI/copy brief for design-agent or contractor polish without breaking v1 workflows.
