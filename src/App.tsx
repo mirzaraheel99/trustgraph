@@ -7657,6 +7657,7 @@ function App() {
   const [workspaceId, setWorkspaceId] = useState<WorkspaceId>("passport");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("identity");
+  const [setupView, setSetupView] = useState<"account" | "corporate" | "team" | "billing" | "readiness">("account");
   const [activeMembershipId, setActiveMembershipId] = useState(sessionUser.activeMembershipId);
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
   const [showPublicSite, setShowPublicSite] = useState(true);
@@ -9024,6 +9025,13 @@ function App() {
 
   const authorizedReportName = `trustgraph-authorized-workspace-${workspace.id}-${new Date().toISOString().slice(0, 10)}.json`;
   const queuedNotificationCount = notificationEvents.filter((event) => event.status === "queued").length;
+  const setupTabs = [
+    { id: "account", label: "Account", detail: authSession ? "Live session" : "Login and recovery", count: authSession ? 1 : 0 },
+    { id: "corporate", label: "Corporate", detail: "Workspace and RBAC", count: accountUser.memberships.length },
+    { id: "team", label: "Team", detail: "Invites and seats", count: teamInvitations.length + teamMembers.length + myInvitations.length },
+    { id: "billing", label: "Billing", detail: "Pilot ledger", count: organizationSubscriptions.length },
+    { id: "readiness", label: "Readiness", detail: "Launch checks", count: queuedNotificationCount }
+  ] as const;
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -9066,16 +9074,21 @@ function App() {
 
   function openNotifications() {
     if (typeof document === "undefined") return;
-    document.getElementById("workflow-notifications")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setSetupView("readiness");
+    window.setTimeout(() => {
+      document.getElementById("workflow-notifications")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   }
 
   function openAuthControls() {
     if (typeof document === "undefined") return;
+    setSetupView("account");
     document.getElementById("live-auth-controls")?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   function openCorporateControls() {
     if (typeof document === "undefined") return;
+    setSetupView("corporate");
     document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -9268,87 +9281,129 @@ function App() {
                 <h2>Account, corporate access, and rollout controls</h2>
                 <p>Use this area for login, corporate workspace creation, team access, billing, and production readiness without crowding the daily workspace.</p>
               </div>
-              <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
-              <AccountPanel
-                accountUser={accountUser}
-                activeMembership={activeMembership}
-                authSession={authSession}
-                authStatus={authStatus}
-                organizationList={organizationList}
-                onAssignRole={assignLiveCorporateRole}
-                onCreateCorporateAccount={createLiveCorporateAccount}
-                onCreateOperationsRole={createLiveOperationsRole}
-                onSwitch={switchMembership}
-              />
-              <LiveDataModePanel
-                accountContext={accountContext}
-                activeMembership={activeMembership}
-                activeOrganization={activeOrganization}
-                activeRoleLabel={activeRole.label}
-                authSession={authSession}
-                workspaceLabel={workspace.label}
-              />
-              <ProductionReadinessPanel
-                accountContext={accountContext}
-                activeOrganizationName={activeOrganization.name}
-                authSession={authSession}
-                teamManagementReady={teamManagementReady}
-              />
-              <MyInvitationsPanel
-                disabled={!authSession || !accountContext}
-                invitations={myInvitations}
-                message={myInvitationStatus}
-                onAccept={acceptLiveTeamInvitation}
-              />
-              <BillingPanel
-                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-                message={billingStatus}
-                onActivate={activateLiveSubscription}
-                plans={subscriptionPlans}
-                subscriptions={organizationSubscriptions}
-              />
-              <TeamInvitationsPanel
-                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-                invitations={teamInvitations}
-                message={teamStatus}
-                onCreate={createLiveTeamInvitation}
-                onStatus={updateLiveTeamInvitationStatus}
-              />
-              <TeamMembersPanel
-                currentProfileId={accountContext?.profile.id ?? null}
-                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-                members={teamMembers}
-                message={memberStatus}
-                onStatus={updateLiveTeamMemberStatus}
-              />
-              <OnboardingChecklistPanel
-                accessGrants={accessGrants}
-                accountContext={accountContext}
-                authSession={authSession}
-                consentAuthorizations={consentAuthorizations}
-                evidenceDocuments={evidenceDocuments}
-                livePassportRecords={livePassportRecords}
-                organizationSubscriptions={organizationSubscriptions}
-                teamInvitations={teamInvitations}
-                teamMembers={teamMembers}
-                onOpenHostedRegistration={() => setShowPublicSite(true)}
-                onOpenWorkspace={changeWorkspace}
-                onSeedPilotWorkspace={seedLivePilotWorkspace}
-              />
-              <PilotAcceptancePanel
-                accessGrants={accessGrants}
-                apiClients={apiClients}
-                auditEvents={auditEvents}
-                consentAuthorizations={consentAuthorizations}
-                evidenceDocuments={evidenceDocuments}
-                livePassportRecords={livePassportRecords}
-                schemaMigrationRuns={schemaMigrationRuns}
-                sharedVerifyRecords={sharedVerifyRecords}
-                subscriptions={organizationSubscriptions}
-                teamInvitations={teamInvitations}
-                teamMembers={teamMembers}
-              />
-              <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
+              <div className="setup-tabs" role="tablist" aria-label="Setup center sections">
+                {setupTabs.map((tab) => (
+                  <button
+                    aria-selected={setupView === tab.id}
+                    className={setupView === tab.id ? "active" : ""}
+                    key={tab.id}
+                    onClick={() => setSetupView(tab.id)}
+                    role="tab"
+                    type="button"
+                  >
+                    <span>{tab.label}</span>
+                    <small>{tab.detail}</small>
+                    {tab.count ? <strong>{tab.count}</strong> : null}
+                  </button>
+                ))}
+              </div>
+              <div className="setup-panel-grid">
+                {setupView === "account" ? (
+                  <>
+                    <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
+                    <LiveDataModePanel
+                      accountContext={accountContext}
+                      activeMembership={activeMembership}
+                      activeOrganization={activeOrganization}
+                      activeRoleLabel={activeRole.label}
+                      authSession={authSession}
+                      workspaceLabel={workspace.label}
+                    />
+                  </>
+                ) : null}
+                {setupView === "corporate" ? (
+                  <>
+                    <AccountPanel
+                      accountUser={accountUser}
+                      activeMembership={activeMembership}
+                      authSession={authSession}
+                      authStatus={authStatus}
+                      organizationList={organizationList}
+                      onAssignRole={assignLiveCorporateRole}
+                      onCreateCorporateAccount={createLiveCorporateAccount}
+                      onCreateOperationsRole={createLiveOperationsRole}
+                      onSwitch={switchMembership}
+                    />
+                    <MyInvitationsPanel
+                      disabled={!authSession || !accountContext}
+                      invitations={myInvitations}
+                      message={myInvitationStatus}
+                      onAccept={acceptLiveTeamInvitation}
+                    />
+                  </>
+                ) : null}
+                {setupView === "team" ? (
+                  <>
+                    <TeamInvitationsPanel
+                      disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                      invitations={teamInvitations}
+                      message={teamStatus}
+                      onCreate={createLiveTeamInvitation}
+                      onStatus={updateLiveTeamInvitationStatus}
+                    />
+                    <TeamMembersPanel
+                      currentProfileId={accountContext?.profile.id ?? null}
+                      disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                      members={teamMembers}
+                      message={memberStatus}
+                      onStatus={updateLiveTeamMemberStatus}
+                    />
+                    <MyInvitationsPanel
+                      disabled={!authSession || !accountContext}
+                      invitations={myInvitations}
+                      message={myInvitationStatus}
+                      onAccept={acceptLiveTeamInvitation}
+                    />
+                  </>
+                ) : null}
+                {setupView === "billing" ? (
+                  <BillingPanel
+                    disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                    message={billingStatus}
+                    onActivate={activateLiveSubscription}
+                    plans={subscriptionPlans}
+                    subscriptions={organizationSubscriptions}
+                  />
+                ) : null}
+                {setupView === "readiness" ? (
+                  <>
+                    <ProductionReadinessPanel
+                      accountContext={accountContext}
+                      activeOrganizationName={activeOrganization.name}
+                      authSession={authSession}
+                      teamManagementReady={teamManagementReady}
+                    />
+                    <OnboardingChecklistPanel
+                      accessGrants={accessGrants}
+                      accountContext={accountContext}
+                      authSession={authSession}
+                      consentAuthorizations={consentAuthorizations}
+                      evidenceDocuments={evidenceDocuments}
+                      livePassportRecords={livePassportRecords}
+                      organizationSubscriptions={organizationSubscriptions}
+                      teamInvitations={teamInvitations}
+                      teamMembers={teamMembers}
+                      onOpenHostedRegistration={() => setShowPublicSite(true)}
+                      onOpenWorkspace={changeWorkspace}
+                      onSeedPilotWorkspace={seedLivePilotWorkspace}
+                    />
+                    <PilotAcceptancePanel
+                      accessGrants={accessGrants}
+                      apiClients={apiClients}
+                      auditEvents={auditEvents}
+                      consentAuthorizations={consentAuthorizations}
+                      evidenceDocuments={evidenceDocuments}
+                      livePassportRecords={livePassportRecords}
+                      schemaMigrationRuns={schemaMigrationRuns}
+                      sharedVerifyRecords={sharedVerifyRecords}
+                      subscriptions={organizationSubscriptions}
+                      teamInvitations={teamInvitations}
+                      teamMembers={teamMembers}
+                    />
+                    <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
+                  </>
+                ) : null}
+              </div>
             </section>
 
         <section className="work-grid">

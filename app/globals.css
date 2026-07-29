@@ -2671,7 +2671,7 @@ p {
 
 .workspace-admin-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   align-items: start;
   gap: 14px;
   max-width: 1480px;
@@ -2713,6 +2713,72 @@ p {
 .setup-center-header p {
   max-width: 860px;
   color: var(--muted);
+}
+
+.setup-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.setup-tabs button {
+  position: relative;
+  min-height: 70px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 12px;
+  text-align: left;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.setup-tabs button.active {
+  color: var(--text);
+  border-color: rgba(82, 214, 196, 0.42);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.12), transparent 70%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.setup-tabs span,
+.setup-tabs small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.setup-tabs span {
+  font-weight: 950;
+}
+
+.setup-tabs strong {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  min-width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: #06110f;
+  border-radius: 999px;
+  background: var(--teal);
+  font-size: 11px;
+}
+
+.setup-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px;
+}
+
+.setup-panel-grid > section {
+  min-width: 0;
+  box-shadow: none;
 }
 
 .topbar-session-card span,
@@ -5619,6 +5685,10 @@ p {
     max-width: 100%;
   }
 
+  .setup-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .topbar {
     grid-template-columns: 1fr;
   }
@@ -5817,6 +5887,7 @@ p {
   .auth-actions,
   .password-update-form,
   .workspace-admin-grid,
+  .setup-panel-grid,
   .public-portal-rail,
   .live-data-grid,
   .live-data-footer,
@@ -5830,6 +5901,10 @@ p {
   .directory-metrics,
   .membership-list,
   .permission-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-tabs {
     grid-template-columns: 1fr;
   }
 
