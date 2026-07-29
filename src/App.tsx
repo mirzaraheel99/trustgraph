@@ -7400,6 +7400,47 @@ function App() {
     setConnectStatus(`Webhook moved to ${updated.status}`);
   }
 
+  const authorizedReportName = `trustgraph-authorized-workspace-${workspace.id}-${new Date().toISOString().slice(0, 10)}.json`;
+  const authorizedReport = {
+    generated_at: new Date().toISOString(),
+    workspace: {
+      id: workspace.id,
+      label: workspace.label,
+      title: workspace.title
+    },
+    account: {
+      mode: authSession ? "live_supabase" : "guided_preview",
+      profile_id: accountContext?.profile.id ?? null,
+      email: accountUser?.email ?? accountContext?.profile.email ?? null,
+      active_role: activeMembership.role,
+      active_role_label: activeRole.label,
+      organization_id: activeOrganization.id,
+      organization_name: activeOrganization.name,
+      organization_type: activeOrganization.type
+    },
+    authorized_counts: {
+      passport_records: livePassportRecords.length,
+      evidence_documents: evidenceDocuments.length,
+      shared_verify_records: sharedVerifyRecords.length,
+      access_grants: accessGrants.length,
+      consent_authorizations: consentAuthorizations.length,
+      team_members: teamMembers.length,
+      team_invitations: teamInvitations.length,
+      personal_pending_invitations: myInvitations.length,
+      audit_events: auditEvents.length,
+      notification_events: notificationEvents.length,
+      verification_cases: operationsCases.length,
+      release_ledger_rows: schemaMigrationRuns.length,
+      production_gate_decisions: productionGateDecisions.length
+    },
+    production_boundary: {
+      payments: "pilot_ledger_only",
+      automated_hiring_decisions: "not_enabled",
+      production_traffic: "human_approval_required",
+      gate_records_loaded: productionGateDecisions.length
+    }
+  };
+
   if (showPublicSite) {
     return (
       <PublicSite
@@ -7565,7 +7606,11 @@ function App() {
             <button aria-label="View notifications">
               <Bell size={18} />
             </button>
-            <button aria-label="Export authorized report">
+            <button
+              aria-label="Export authorized report"
+              onClick={() => downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json")}
+              type="button"
+            >
               <Download size={18} />
             </button>
           </div>
