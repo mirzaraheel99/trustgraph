@@ -44,6 +44,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Portal access packet: signed-in profile, active membership, organization, role, workspace route, and hosted redirect.
 - Corporate provisioning packet: created organization, membership, role, and database write evidence.
 - Corporate user database packet: filtered professional access rows, shared record scope, source counts, and missing-record gap focus visible to the active Verify workspace.
+- Pricing structure packet: configured plans, selected-seat projections, active pilot ledger subscriptions, and payment launch gates.
 - Working-data packet: currently loaded Passport, Access Grant, consent, subscription, team member, and invitation counts.
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC.
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.

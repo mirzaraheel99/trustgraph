@@ -4336,6 +4336,7 @@ function BillingPanel({
   const exportName = `trustgraph-billing-ledger-${new Date().toISOString().slice(0, 10)}.csv`;
   const gateExportName = `trustgraph-billing-decision-gates-${new Date().toISOString().slice(0, 10)}.csv`;
   const readinessExportName = `trustgraph-billing-launch-readiness-${new Date().toISOString().slice(0, 10)}.csv`;
+  const pricingPacketName = `trustgraph-pricing-structure-${new Date().toISOString().slice(0, 10)}.json`;
   const billingGates = [
     { label: "Stripe product mapping", owner: "Business operations", status: "human decision required" },
     { label: "Checkout + customer portal", owner: "Engineering", status: "not connected for pilot" },
@@ -4349,6 +4350,42 @@ function BillingPanel({
     { label: "Invoice and refunds", status: "human_review", detail: "Finance/legal must approve invoice emails, refunds, dunning, and tax handling." },
     { label: "Webhook reconciliation", status: "engineering_gate", detail: "Payment webhooks require idempotency, audit mapping, and failed-event recovery." }
   ];
+  const projectedPlans = plans.map((plan) => {
+    const extraSeats = Math.max(0, seats - plan.included_seats);
+    return {
+      plan_id: plan.id,
+      name: plan.name,
+      audience: plan.audience,
+      included_seats: plan.included_seats,
+      selected_seats: seats,
+      extra_seats: extraSeats,
+      base_monthly_usd: plan.monthly_price_usd,
+      projected_monthly_usd: plan.monthly_price_usd + extraSeats * 19,
+      annual_price_usd: plan.annual_price_usd,
+      features: plan.features,
+      active: activePlanIds.has(plan.id)
+    };
+  });
+  const pricingStructurePacket = {
+    generated_at: new Date().toISOString(),
+    mode: "pilot_subscription_ledger",
+    selected_seats: seats,
+    active_subscription_count: activeSubscriptions.length,
+    active_subscriptions: activeSubscriptions.map((subscription) => ({
+      subscription_id: subscription.id,
+      organization_id: subscription.organization_id,
+      plan_id: subscription.plan_id,
+      plan_name: subscription.plan?.name ?? "",
+      status: subscription.status,
+      seats: subscription.seats,
+      renews_at: subscription.renews_at,
+      created_at: subscription.created_at
+    })),
+    projected_plans: projectedPlans,
+    billing_launch_readiness: billingLaunchReadiness,
+    billing_gates: billingGates,
+    payment_boundary: "No checkout, invoice, refund, dunning, tax, or payment webhook flow is live until the Stripe production gate is approved."
+  };
 
   async function activate(planId: string) {
     setBusyPlanId(planId);
@@ -4429,7 +4466,19 @@ function BillingPanel({
           >
             Export launch packet
           </button>
+          <button
+            className="secondary-action"
+            disabled={!plans.length}
+            onClick={() => downloadTextFile(pricingPacketName, JSON.stringify(pricingStructurePacket, null, 2), "application/json")}
+            type="button"
+          >
+            Export pricing packet
+          </button>
         </div>
+      </div>
+      <div className="billing-pricing-packet">
+        <strong>Pricing structure packet</strong>
+        <small>Exports active ledger subscriptions, projected plan pricing for {seats} seats, configured plan features, and the payment launch gate.</small>
       </div>
       <div className="billing-decision-card">
         <div>

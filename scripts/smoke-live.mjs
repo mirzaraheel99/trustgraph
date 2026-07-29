@@ -203,6 +203,8 @@ assertIncludesAny(bundleText, ["Preview shared access"], "workspace context navi
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");
 assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export control");
 assertIncludesAny(bundleText, ["Export launch packet"], "billing launch packet export control");
+assertIncludesAny(bundleText, ["Pricing structure packet"], "pricing structure packet label");
+assertIncludesAny(bundleText, ["Export pricing packet"], "pricing structure packet export control");
 assertIncludesAny(bundleText, ["Payment launch boundary"], "billing payment launch boundary");
 assertIncludesAny(bundleText, ["notes captured"], "pilot acceptance note capture");
 assertIncludesAny(bundleText, ["Export runbook"], "pilot acceptance markdown runbook export control");

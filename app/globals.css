@@ -990,6 +990,31 @@ p,
   font-size: 12px;
 }
 
+.billing-pricing-packet {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.billing-pricing-packet strong,
+.billing-pricing-packet small {
+  display: block;
+}
+
+.billing-pricing-packet strong {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.billing-pricing-packet small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .billing-gate-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
