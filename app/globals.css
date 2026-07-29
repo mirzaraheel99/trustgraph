@@ -4478,6 +4478,41 @@ p {
   gap: 8px;
 }
 
+.v1-completion-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.22);
+  border-radius: 8px;
+  background: rgba(82, 214, 196, 0.06);
+}
+
+.v1-completion-card > div {
+  min-width: 0;
+}
+
+.v1-completion-card strong,
+.v1-completion-card small {
+  display: block;
+}
+
+.v1-completion-card strong {
+  margin-top: 0;
+  font-size: 13px;
+}
+
+.v1-completion-card small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.v1-completion-card .status-chip {
+  flex: 0 0 auto;
+}
+
 .production-gate-register {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

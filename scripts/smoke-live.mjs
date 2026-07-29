@@ -137,6 +137,9 @@ assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment regi
 assertIncludesAny(bundleText, ["Human decision gates"], "production decision gate register");
 assertIncludesAny(bundleText, ["Production gate decisions"], "production gate database source label");
 assertIncludesAny(bundleText, ["Export production gates"], "production gate export control");
+assertIncludesAny(bundleText, ["V1 completion audit packet"], "v1 completion audit packet label");
+assertIncludesAny(bundleText, ["Export v1 completion packet"], "v1 completion audit export control");
+assertIncludesAny(bundleText, ["pilot_ready_with_human_gates"], "v1 completion pilot mode");
 assertIncludesAny(bundleText, ["Export launch gate packet"], "combined launch gate packet export control");
 assertIncludesAny(bundleText, ["Record gate decision"], "production gate decision intake control");
 assertIncludesAny(bundleText, ["Approved for production"], "production gate approved status option");

@@ -35,7 +35,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Admin operations | Operations queue, audit exports, release ledger, security runbook, production gates, pilot contacts | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
 | Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet | `supabase/migrations/012`, `016` |
-| Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
+| Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, v1 completion audit packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
 
 ## Live Database Proof Artifacts
 
@@ -45,6 +45,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Corporate provisioning packet: created organization, membership, role, and database write evidence.
 - Corporate user database packet: filtered professional access rows, shared record scope, source counts, and missing-record gap focus visible to the active Verify workspace.
 - Pricing structure packet: configured plans, selected-seat projections, active pilot ledger subscriptions, and payment launch gates.
+- V1 completion audit packet: 13-track status, locked profile scope, evidence exports, verification gates, TrustGraph VPS target, and remaining human decisions.
 - Auth redirect readiness packet: active hosted redirect URL, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.
 - Registration auth readiness packet: selected portal, pending corporate setup state, repaired email-link readiness, and Supabase Auth redirect action items.
 - Working-data packet: currently loaded Passport, Access Grant, consent, subscription, team member, and invitation counts.

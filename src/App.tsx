@@ -2946,6 +2946,72 @@ function PlanAlignmentPanel({
     : fallbackPilotContacts;
   const pilotContactsExportName = `trustgraph-pilot-launch-contacts-${new Date().toISOString().slice(0, 10)}.csv`;
   const launchGatePacketName = `trustgraph-launch-gate-packet-${new Date().toISOString().slice(0, 10)}.json`;
+  const v1CompletionPacketName = `trustgraph-v1-completion-audit-${new Date().toISOString().slice(0, 10)}.json`;
+  const v1CompletionPacket = {
+    generated_at: new Date().toISOString(),
+    source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
+    hosted_review_url: "https://mirzaraheel99.github.io/trustgraph/",
+    trustgraph_vps_target: "https://5-75-224-11.sslip.io",
+    protected_vfix_host: "https://5-75-224-110.sslip.io",
+    completion_mode: openProductionGateCount ? "pilot_ready_with_human_gates" : "production_gate_records_approved",
+    track_counts: {
+      total_tracks: foundationTracks.length,
+      deployed: deployedCount,
+      foundation: foundationCount,
+      planned: plannedCount
+    },
+    profile_scope_counts: {
+      total_locked_areas: lockedProfileAreas.length,
+      covered: coveredProfileAreas,
+      planned: plannedProfileAreas
+    },
+    evidence_exports: [
+      "portal_access_packet",
+      "corporate_provisioning_packet",
+      "corporate_user_database_packet",
+      "pricing_structure_packet",
+      "auth_redirect_readiness_packet",
+      "registration_auth_readiness_packet",
+      "working_database_packet",
+      "seed_reconciliation",
+      "security_runbook",
+      "vps_launch_packet"
+    ],
+    verification_gates: [
+      "npm run typecheck",
+      "npm run check:claims",
+      "npm run check:rls",
+      "npm run check:responsive",
+      "npm run build",
+      "GitHub Pages hosted smoke"
+    ],
+    remaining_human_decisions: productionGates
+      .filter((gate) => gate.status !== "approved for production")
+      .map((gate) => ({
+        label: gate.label,
+        owner: gate.owner,
+        status: gate.status,
+        evidence_required: gate.evidence
+      })),
+    pilot_contacts: pilotContacts,
+    tracks: foundationTracks.map((track) => ({
+      id: track.id,
+      label: track.label,
+      plan_step: track.planStep,
+      status: track.status,
+      evidence: track.detail
+    })),
+    locked_profile_scope: lockedProfileAreas.map((area) => ({
+      id: area.id,
+      label: area.label,
+      product_area: area.productArea,
+      status: area.status,
+      evidence: area.evidence
+    })),
+    stop_conditions: openProductionGateCount
+      ? "Continue pilot validation only. Human decisions still gate live payments, regulated employment traffic, external security sign-off, and named pilot operations ownership."
+      : "All visible production gate records show production approval."
+  };
   const launchGatePacket = {
     generated_at: new Date().toISOString(),
     allowed_mode: openProductionGateCount ? "pilot_only" : "production_allowed_by_recorded_gates",
@@ -3064,10 +3130,22 @@ function PlanAlignmentPanel({
             <button className="secondary-action" onClick={() => downloadTextFile(gateExportName, productionGatesToCsv(productionGates), "text/csv")} type="button">
               Export production gates
             </button>
+            <button className="secondary-action" onClick={() => downloadTextFile(v1CompletionPacketName, JSON.stringify(v1CompletionPacket, null, 2), "application/json")} type="button">
+              Export v1 completion packet
+            </button>
             <button className="secondary-action" onClick={() => downloadTextFile(launchGatePacketName, JSON.stringify(launchGatePacket, null, 2), "application/json")} type="button">
               Export launch gate packet
             </button>
           </div>
+        </div>
+        <div className="v1-completion-card">
+          <div>
+            <strong>V1 completion audit packet</strong>
+            <small>Exports 13-track status, locked profile scope, evidence exports, verification gates, TrustGraph VPS target, and remaining human decisions.</small>
+          </div>
+          <span className={`status-chip ${openProductionGateCount ? "warning" : "success"}`}>
+            {openProductionGateCount ? "human gates open" : "production gates approved"}
+          </span>
         </div>
         <div className="production-gate-register">
           <span className="eyebrow">Production gate register</span>
