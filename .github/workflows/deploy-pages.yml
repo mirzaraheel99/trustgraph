@@ -48,6 +48,9 @@ jobs:
       - name: Verify responsive coverage
         run: pnpm check:responsive
 
+      - name: Verify server env validator
+        run: pnpm check:server-env
+
       - name: Build
         run: pnpm build
         env:
