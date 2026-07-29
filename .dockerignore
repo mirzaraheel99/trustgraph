@@ -1,0 +1,13 @@
+.git
+.github
+.next
+out
+node_modules
+npm-debug.log
+pnpm-debug.log
+package-lock.json
+tsconfig.tsbuildinfo
+.env
+.env.*
+!.env.example
+!.env.server.example

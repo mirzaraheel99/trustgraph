@@ -1,0 +1,41 @@
+services:
+  trustgraph-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+    restart: unless-stopped
+    environment:
+      TRUSTGRAPH_HOST: ${TRUSTGRAPH_HOST:-5-75-224-11.sslip.io}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - trustgraph-postgres
+
+  trustgraph-postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-trustgraph}
+      POSTGRES_USER: ${POSTGRES_USER:-trustgraph}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.server}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - trustgraph_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-trustgraph} -d ${POSTGRES_DB:-trustgraph}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  caddy_data:
+  caddy_config:
+  trustgraph_postgres_data:
