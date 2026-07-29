@@ -17,19 +17,20 @@ Use this runbook for v1 pilot verification before inviting real employers, staff
 2. Sign up or sign in with Supabase Auth from the Professional or Corporate portal.
 3. For Corporate signup, enter organization name, domain, and type before creating the account, then return after email verification and login in the same browser.
 4. If Supabase reports an email rate limit, wait at least 60 minutes or use custom SMTP before continuing account creation tests.
-5. Confirm Professional account context is created and create at least one Passport record.
-6. Attach evidence metadata and one private evidence file.
-7. Create a Corporate workspace.
-8. Activate a pilot subscription ledger entry.
-9. Invite or activate a corporate team member.
-10. Sign in as the invited reviewer, confirm the pending invitation is visible, accept it, and export the personal invitation handoff CSV.
-11. Request a Passport Access Grant from Verify.
-12. Approve the Access Grant from Passport and sync shared records.
-13. Create or revoke a consent authorization for sensitive scope.
-14. Open Verify and confirm approved shared records are visible.
-15. Open Admin and review operations, Connect, audit, workflow QA, release ledger, and security panels.
-16. Export audit CSV, team invitation CSV, and security runbook CSV.
-17. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
+5. Export the hosted login/database handoff packet from the Launch checklist and confirm it shows the hosted return URL, not `localhost`.
+6. Confirm Professional account context is created and create at least one Passport record.
+7. Attach evidence metadata and one private evidence file.
+8. Create a Corporate workspace.
+9. Activate a pilot subscription ledger entry.
+10. Invite or activate a corporate team member.
+11. Sign in as the invited reviewer, confirm the pending invitation is visible, accept it, and export the personal invitation handoff CSV.
+12. Request a Passport Access Grant from Verify.
+13. Approve the Access Grant from Passport and sync shared records.
+14. Create or revoke a consent authorization for sensitive scope.
+15. Open Verify and confirm approved shared records are visible.
+16. Open Admin and review operations, Connect, audit, workflow QA, release ledger, and security panels.
+17. Export audit CSV, team invitation CSV, security runbook CSV, working-data packet, and hosted login/database handoff packet.
+18. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
 
 ## Security Review Boundary
 

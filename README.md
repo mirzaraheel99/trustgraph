@@ -65,7 +65,8 @@ Use the hosted URL for account creation and login. The local development URL is 
 3. For Corporate signup, enter organization name, domain, and organization type before creating the user account.
 4. Confirm the Supabase email verification link. It must return to `https://mirzaraheel99.github.io/trustgraph/`, not `localhost`.
 5. Login from the hosted page after verification. Corporate workspace details saved in the same browser are then provisioned into Supabase.
-6. Use the Launch checklist only when pilot operators need database-backed validation rows for workflow acceptance.
+6. Open the Launch checklist and export the hosted login/database handoff packet before recording pilot evidence.
+7. Use the Launch checklist only when pilot operators need database-backed validation rows for workflow acceptance.
 
 ## Supabase Auth
 
@@ -80,6 +81,8 @@ In Supabase Auth URL settings, set the Site URL to the active hosted TrustGraph 
 Until those variables are present, the app stays in product preview mode and keeps a local RBAC account context available.
 
 Supabase built-in email is limited to 2 messages per hour project-wide. If signup, resend verification, or recovery returns an email rate-limit error, wait at least 60 minutes or configure custom SMTP before heavier testing.
+
+The hosted login/database handoff packet records the active Supabase return URL, current login state, live database acceptance requirements, TrustGraph VPS target, and VFIX isolation guard. Export it whenever account verification or database proof is being checked.
 
 For database migrations, add these GitHub repository secrets and run the `Apply Supabase Migrations` workflow manually:
 

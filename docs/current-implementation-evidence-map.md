@@ -52,6 +52,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - V1 completion audit packet: 13-track status, locked profile scope, evidence exports, verification gates, TrustGraph VPS target, and remaining human decisions.
 - Auth redirect readiness packet: active hosted redirect URL, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.
 - Registration auth readiness packet: selected portal, pending corporate setup state, repaired email-link readiness, and Supabase Auth redirect action items.
+- Hosted login/database handoff packet: active Supabase return URL, current login state, live database acceptance requirements, TrustGraph VPS target, and VFIX isolation guard.
 - Working-data packet: currently loaded Passport, Access Grant, consent, subscription, team member, and invitation counts.
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC.
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.

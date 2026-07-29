@@ -86,8 +86,10 @@ assertIncludes(readiness, "Verification Loop", "v1 readiness checklist");
 assertIncludes(readiness, "Do not move from pilot to real production traffic", "v1 readiness checklist");
 assertIncludes(runbook, "Live Workflow Acceptance", "pilot runbook");
 assertIncludes(runbook, "Human Decisions Still Required", "pilot runbook");
+assertIncludes(runbook, "hosted login/database handoff packet", "pilot runbook");
 assertIncludes(evidenceMap, "Live Database Proof Artifacts", "implementation evidence map");
 assertIncludes(evidenceMap, "Remaining Human Gates", "implementation evidence map");
+assertIncludes(evidenceMap, "Hosted login/database handoff packet", "implementation evidence map");
 
 console.log(
   `TrustGraph pilot acceptance check passed: ${acceptanceChecks.length} workflow groups, ${migrations.length} migrations, readiness artifacts verified.`
