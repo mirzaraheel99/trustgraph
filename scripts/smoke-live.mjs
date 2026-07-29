@@ -167,7 +167,7 @@ assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact in
 assertIncludesAny(bundleText, ["Stop conditions"], "production stop condition summary");
 assertIncludesAny(bundleText, ["Allowed mode"], "production allowed-mode summary");
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
-assertIncludesAny(bundleText, ["Evaluation role"], "signed-out evaluation role label");
+assertIncludesAny(bundleText, ["Product preview role"], "signed-out preview role label");
 assertIncludesAny(bundleText, ["Preview account context"], "signed-out account context label");
 assertIncludesAny(bundleText, ["Preview shared access"], "workspace context navigation action");
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");

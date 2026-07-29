@@ -4960,8 +4960,8 @@ function LiveDataModePanel({
   const membershipCount = accountContext?.memberships.length ?? 0;
   const rows = [
     { label: "Profile", value: profileLabel },
-    { label: "Organization", value: isLive ? activeOrganization.name : "Evaluation organization" },
-    { label: "Role", value: isLive ? activeRoleLabel : "Evaluation role" },
+    { label: "Organization", value: isLive ? activeOrganization.name : "Product preview organization" },
+    { label: "Role", value: isLive ? activeRoleLabel : "Product preview role" },
     { label: "Workspace", value: workspaceLabel }
   ];
 
@@ -5483,14 +5483,14 @@ function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; work
 
 function PublicSite({
   onCorporateSession,
-  onOpenGuidedEvaluation,
+  onOpenProductPreview,
   onSession
 }: {
   onCorporateSession: (
     session: AuthSession,
     input: { organizationName: string; organizationType: "employer" | "staffing_agency"; organizationDomain: string }
   ) => void;
-  onOpenGuidedEvaluation: () => void;
+  onOpenProductPreview: () => void;
   onSession: (session: AuthSession) => void;
 }) {
   const [portal, setPortal] = useState<"professional" | "corporate">("professional");
@@ -5765,7 +5765,7 @@ function PublicSite({
           </div>
         </div>
         <div className="public-nav-actions">
-          <button className="secondary-action" onClick={onOpenGuidedEvaluation}>
+          <button className="secondary-action" onClick={onOpenProductPreview}>
             Open product
           </button>
           <button className="primary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView()}>
@@ -6063,7 +6063,7 @@ function PublicSite({
           >
             {mode === "signin" ? "Login" : "Create account"}
           </button>
-          <button className="secondary-action" onClick={onOpenGuidedEvaluation} type="button">
+          <button className="secondary-action" onClick={onOpenProductPreview} type="button">
             Open product preview
           </button>
           <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
@@ -7454,7 +7454,7 @@ function App() {
       title: workspace.title
     },
     account: {
-      mode: authSession ? "live_supabase" : "guided_preview",
+      mode: authSession ? "live_supabase" : "product_preview",
       profile_id: accountContext?.profile.id ?? null,
       email: accountUser?.email ?? accountContext?.profile.email ?? null,
       active_role: activeMembership.role,
@@ -7499,7 +7499,7 @@ function App() {
           setAuthSession(session);
           setShowPublicSite(false);
         }}
-        onOpenGuidedEvaluation={() => setShowPublicSite(false)}
+        onOpenProductPreview={() => setShowPublicSite(false)}
         onSession={(session) => {
           setAuthSession(session);
           setShowPublicSite(false);
