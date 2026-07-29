@@ -3828,6 +3828,7 @@ function VpsLaunchPanel() {
   const protectedVfixHost = "5-75-224-110.sslip.io";
   const checkoutPath = "/opt/trustgraph";
   const workflowName = "Deploy TrustGraph to VPS";
+  const publicUrl = `https://${targetHost}`;
   const launchItems = [
     {
       label: "TrustGraph host",
@@ -3863,7 +3864,12 @@ function VpsLaunchPanel() {
   const packetName = `trustgraph-vps-launch-readiness-${new Date().toISOString().slice(0, 10)}.json`;
   const packet = {
     generated_at: new Date().toISOString(),
-    trustgraph_target_url: `https://${targetHost}`,
+    trustgraph_target_url: publicUrl,
+    github_workflow_inputs: {
+      target_host: "5.75.224.11",
+      public_url: publicUrl,
+      remote_path: checkoutPath
+    },
     protected_vfix_host: protectedVfixHost,
     checkout_path: checkoutPath,
     github_workflow: workflowName,
@@ -3892,7 +3898,7 @@ function VpsLaunchPanel() {
       <div className="vps-launch-topline">
         <div>
           <span>Server target</span>
-          <strong>https://{targetHost}</strong>
+          <strong>{publicUrl}</strong>
           <small>GitHub remains primary source; VFIX stays isolated at {protectedVfixHost}.</small>
         </div>
         <button className="secondary-action" onClick={() => downloadTextFile(packetName, JSON.stringify(packet, null, 2), "application/json")} type="button">

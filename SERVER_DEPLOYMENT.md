@@ -161,10 +161,11 @@ Use these workflow inputs:
 
 ```text
 target_host=5.75.224.11
+public_url=https://5-75-224-11.sslip.io
 remote_path=/opt/trustgraph
 ```
 
-The workflow is manual-only. It pulls `origin/main` inside `/opt/trustgraph`, runs `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`, and smoke-checks the validated TrustGraph host from the workflow input.
+The workflow is manual-only. It connects to the VPS by `target_host`, pulls `origin/main` inside `/opt/trustgraph`, runs `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`, and smoke-checks the validated `public_url`.
 
 The workflow runs `tools/preflight-vps.sh` before pulling or rebuilding.
 
@@ -173,6 +174,8 @@ It will refuse:
 ```text
 target_host=5.75.224.110
 target_host=5-75-224-110.sslip.io
+public_url=https://5-75-224-110.sslip.io
+public_url=https://5-75-224-110.sslip.io/CRM-client-demo/login
 ```
 
 ## 8. Supabase Auth Redirect

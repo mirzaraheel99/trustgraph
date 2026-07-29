@@ -7,6 +7,10 @@ on:
         description: VPS host or IP for TrustGraph
         required: true
         default: 5.75.224.11
+      public_url:
+        description: Public HTTPS URL to smoke-check after deploy
+        required: true
+        default: https://5-75-224-11.sslip.io
       remote_path:
         description: Existing TrustGraph checkout path on the VPS
         required: true
@@ -26,6 +30,7 @@ jobs:
       VPS_HOST: ${{ inputs.target_host }}
       VPS_USER: ${{ secrets.TRUSTGRAPH_VPS_USER }}
       VPS_SSH_KEY: ${{ secrets.TRUSTGRAPH_VPS_SSH_KEY }}
+      PUBLIC_URL: ${{ inputs.public_url }}
       REMOTE_PATH: ${{ inputs.remote_path }}
     steps:
       - name: Validate target
@@ -33,10 +38,23 @@ jobs:
           test -n "$VPS_HOST"
           test -n "$VPS_USER"
           test -n "$VPS_SSH_KEY"
+          test -n "$PUBLIC_URL"
           test "$REMOTE_PATH" = "/opt/trustgraph"
           case "$VPS_HOST" in
             5.75.224.110|5-75-224-110.sslip.io)
               echo "Refusing to deploy TrustGraph to the VFIX host." >&2
+              exit 1
+              ;;
+          esac
+          case "$PUBLIC_URL" in
+            https://5-75-224-110.sslip.io*|*CRM-client-demo*)
+              echo "Refusing to smoke-check the VFIX host or CRM-client-demo route." >&2
+              exit 1
+              ;;
+            https://5-75-224-11.sslip.io|https://5-75-224-11.sslip.io/)
+              ;;
+            *)
+              echo "Public URL must be the approved TrustGraph sslip.io host." >&2
               exit 1
               ;;
           esac
@@ -57,6 +75,7 @@ jobs:
           test "$(pwd)" = "/opt/trustgraph"
           test -f docker-compose.server.yml
           test -f .env.server
+          export TRUSTGRAPH_HOST=5-75-224-11.sslip.io
           bash tools/preflight-vps.sh
           git fetch origin main
           git pull --ff-only origin main
@@ -66,5 +85,5 @@ jobs:
 
       - name: Smoke-check VPS
         run: |
-          curl --fail --location --silent --show-error "https://$VPS_HOST" >/tmp/trustgraph-vps.html
+          curl --fail --location --silent --show-error "$PUBLIC_URL" >/tmp/trustgraph-vps.html
           grep -q "TrustGraph" /tmp/trustgraph-vps.html
