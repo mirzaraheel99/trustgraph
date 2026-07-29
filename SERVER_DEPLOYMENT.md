@@ -18,6 +18,8 @@ https://5-75-224-110.sslip.io/CRM-client-demo/login
 
 This runbook uses `/opt/trustgraph`, the `5-75-224-11.sslip.io` hostname, and TrustGraph-specific Docker service names only.
 
+The GitHub Actions VPS workflow also refuses the VFIX host `5.75.224.110`.
+
 ## 1. Prepare Server
 
 Run these from the SSH session on `5.75.224.11`:
@@ -101,7 +103,34 @@ curl -L https://5-75-224-11.sslip.io | head
 docker compose --env-file .env.server -f docker-compose.server.yml exec trustgraph-postgres pg_isready -U trustgraph -d trustgraph
 ```
 
-## 7. Supabase Auth Redirect
+## 7. Optional GitHub VPS Deploy Button
+
+After the first manual server setup works, add these GitHub repository secrets:
+
+```text
+TRUSTGRAPH_VPS_USER=
+TRUSTGRAPH_VPS_SSH_KEY=
+```
+
+Then run **Deploy TrustGraph to VPS** from GitHub Actions.
+
+Use these workflow inputs:
+
+```text
+target_host=5.75.224.11
+remote_path=/opt/trustgraph
+```
+
+The workflow is manual-only. It pulls `origin/main` inside `/opt/trustgraph`, runs `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`, and smoke-checks `https://5-75-224-11.sslip.io`.
+
+It will refuse:
+
+```text
+target_host=5.75.224.110
+target_host=5-75-224-110.sslip.io
+```
+
+## 8. Supabase Auth Redirect
 
 If using the VPS URL for login tests, add this to Supabase Authentication URL settings:
 
@@ -115,7 +144,7 @@ Keep the GitHub Pages URL too:
 https://mirzaraheel99.github.io/trustgraph/
 ```
 
-## 8. Production Notes
+## 9. Production Notes
 
 - GitHub remains the source repo.
 - Server updates should be `git pull --ff-only origin main` followed by Docker Compose rebuild.
