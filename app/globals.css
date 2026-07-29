@@ -4042,6 +4042,13 @@ p {
   font-size: 12px;
 }
 
+.button-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .production-gate-register {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

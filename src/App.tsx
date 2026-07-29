@@ -2869,6 +2869,27 @@ function PlanAlignmentPanel({
       }))
     : fallbackPilotContacts;
   const pilotContactsExportName = `trustgraph-pilot-launch-contacts-${new Date().toISOString().slice(0, 10)}.csv`;
+  const launchGatePacketName = `trustgraph-launch-gate-packet-${new Date().toISOString().slice(0, 10)}.json`;
+  const launchGatePacket = {
+    generated_at: new Date().toISOString(),
+    allowed_mode: openProductionGateCount ? "pilot_only" : "production_allowed_by_recorded_gates",
+    source: {
+      production_gates: productionGateDecisions.length ? "supabase" : "fallback_plan_copy",
+      pilot_contacts: pilotLaunchContacts.length ? "supabase" : "fallback_plan_copy"
+    },
+    counts: {
+      production_gates: productionGates.length,
+      approved_production_gates: approvedProductionGateCount,
+      open_production_gates: openProductionGateCount,
+      pilot_contacts: pilotContacts.length,
+      confirmed_pilot_contacts: pilotContacts.filter((contact) => contact.status === "confirmed").length
+    },
+    stop_conditions: openProductionGateCount
+      ? "Human gates still prevent live payments, regulated employment decisions, and unrestricted production traffic."
+      : "All visible production gates are recorded as approved for production.",
+    production_gates: productionGates,
+    pilot_contacts: pilotContacts
+  };
 
   async function submitGateDecision(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -2963,9 +2984,14 @@ function PlanAlignmentPanel({
             <small>These approvals remain outside the automated build loop and must be resolved before live payments or regulated employment workflows.</small>
             <small>{productionGateDecisions.length ? "Production gate decisions loaded from Supabase" : "Production gate decisions use fallback plan copy until migration 030 is applied."}</small>
           </div>
-          <button className="secondary-action" onClick={() => downloadTextFile(gateExportName, productionGatesToCsv(productionGates), "text/csv")} type="button">
-            Export production gates
-          </button>
+          <div className="button-cluster">
+            <button className="secondary-action" onClick={() => downloadTextFile(gateExportName, productionGatesToCsv(productionGates), "text/csv")} type="button">
+              Export production gates
+            </button>
+            <button className="secondary-action" onClick={() => downloadTextFile(launchGatePacketName, JSON.stringify(launchGatePacket, null, 2), "application/json")} type="button">
+              Export launch gate packet
+            </button>
+          </div>
         </div>
         <div className="production-gate-register">
           <span className="eyebrow">Production gate register</span>
