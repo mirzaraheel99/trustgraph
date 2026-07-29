@@ -4669,6 +4669,24 @@ function hostedAuthRedirectUrl() {
   return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? hostedUrl : currentUrl;
 }
 
+function repairHostedAuthLink(input: string, hostedUrl: string) {
+  const trimmed = input.trim();
+  if (!trimmed) return "";
+
+  try {
+    const sourceUrl = new URL(trimmed);
+    return `${hostedUrl}${sourceUrl.search}${sourceUrl.hash}`;
+  } catch {
+    const hashStart = trimmed.indexOf("#");
+    if (hashStart >= 0) return `${hostedUrl}${trimmed.slice(hashStart)}`;
+
+    const queryStart = trimmed.indexOf("?");
+    if (queryStart >= 0) return `${hostedUrl}${trimmed.slice(queryStart)}`;
+
+    return "";
+  }
+}
+
 function AuthPanel({
   session,
   accountStatus,
@@ -5528,10 +5546,13 @@ function PublicSite({
   const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
   const [message, setMessage] = useState("Create an account. Email verification may be required; Supabase built-in email allows 2 messages per hour.");
   const [hasPendingCorporateRegistration, setHasPendingCorporateRegistration] = useState(false);
+  const [verificationLinkInput, setVerificationLinkInput] = useState("");
+  const [verificationLinkMessage, setVerificationLinkMessage] = useState("Paste a localhost verification or recovery link to convert it for this hosted app.");
   const [busy, setBusy] = useState(false);
   const authReady = isSupabaseConfigured();
   const authRedirectUrl = hostedAuthRedirectUrl();
   const pendingCorporateRegistrationKey = "trustgraph.pendingCorporateRegistration";
+  const repairedVerificationUrl = repairHostedAuthLink(verificationLinkInput, authRedirectUrl);
 
   function pendingCorporateRegistration() {
     return {
@@ -5672,6 +5693,20 @@ function PublicSite({
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not request password recovery."));
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function copyRepairedVerificationLink() {
+    if (!repairedVerificationUrl) {
+      setVerificationLinkMessage("Paste the full email link first. It should include a token after # or ?.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(repairedVerificationUrl);
+      setVerificationLinkMessage("Hosted verification link copied. Open it in this browser, then login again.");
+    } catch {
+      setVerificationLinkMessage("Copy blocked by the browser. Select the hosted link below and open it manually.");
     }
   }
 
@@ -6098,6 +6133,21 @@ function PublicSite({
           <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
             Reset password
           </button>
+          <div className="auth-link-repair">
+            <div>
+              <strong>Fix localhost email link</strong>
+              <small>{verificationLinkMessage}</small>
+            </div>
+            <textarea
+              onChange={(event) => setVerificationLinkInput(event.target.value)}
+              placeholder="Paste Supabase email link that starts with http://localhost:3000/..."
+              value={verificationLinkInput}
+            />
+            {repairedVerificationUrl ? <input aria-label="Hosted verification link" readOnly value={repairedVerificationUrl} /> : null}
+            <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
+              Copy hosted link
+            </button>
+          </div>
           <small>{message}</small>
           <small>
             {authReady
