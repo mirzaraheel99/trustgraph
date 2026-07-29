@@ -10,8 +10,8 @@ services:
     environment:
       TRUSTGRAPH_HOST: ${TRUSTGRAPH_HOST:-5-75-224-11.sslip.io}
     ports:
-      - "80:80"
-      - "443:443"
+      - "${TRUSTGRAPH_HTTP_BIND:-0.0.0.0}:${TRUSTGRAPH_HTTP_PORT:-80}:80"
+      - "${TRUSTGRAPH_HTTPS_BIND:-0.0.0.0}:${TRUSTGRAPH_HTTPS_PORT:-443}:443"
     volumes:
       - caddy_data:/data
       - caddy_config:/config

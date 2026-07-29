@@ -31,6 +31,8 @@ bash /tmp/trustgraph-bootstrap-vps.sh
 
 The bootstrap script installs Docker if needed, opens ports 80/443, clones or updates `/opt/trustgraph`, creates `.env.server` from the example if missing, and starts the TrustGraph Compose stack. It refuses the VFIX host and any target path outside `/opt/trustgraph`.
 
+If another service already owns public ports 80/443, edit `/opt/trustgraph/.env.server` before the first start and set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` to unused local ports. Then point the existing reverse proxy at those TrustGraph ports. This keeps VFIX or any shared HTTPS edge in control of its current routes.
+
 If you prefer manual setup, use the commands below.
 
 ```bash
@@ -82,6 +84,24 @@ nano .env.server
 
 Set a long random `POSTGRES_PASSWORD`.
 
+Leave these defaults only when TrustGraph should own ports 80/443 directly:
+
+```text
+TRUSTGRAPH_HTTP_BIND=0.0.0.0
+TRUSTGRAPH_HTTP_PORT=80
+TRUSTGRAPH_HTTPS_BIND=0.0.0.0
+TRUSTGRAPH_HTTPS_PORT=443
+```
+
+For a shared server or existing reverse proxy, use unused internal ports instead:
+
+```text
+TRUSTGRAPH_HTTP_BIND=127.0.0.1
+TRUSTGRAPH_HTTP_PORT=4180
+TRUSTGRAPH_HTTPS_BIND=127.0.0.1
+TRUSTGRAPH_HTTPS_PORT=4443
+```
+
 Set these to the hosted Supabase values while Supabase remains the live auth/database backend. They are passed as Docker build arguments because the current app is a static Next.js export:
 
 ```text
@@ -98,7 +118,7 @@ docker compose --env-file .env.server -f docker-compose.server.yml up -d --build
 docker compose --env-file .env.server -f docker-compose.server.yml ps
 ```
 
-Caddy will request HTTPS certificates automatically for:
+Caddy will request HTTPS certificates automatically for this host when TrustGraph owns public 80/443:
 
 ```text
 https://5-75-224-11.sslip.io
@@ -110,6 +130,12 @@ https://5-75-224-11.sslip.io
 curl -I https://5-75-224-11.sslip.io
 curl -L https://5-75-224-11.sslip.io | head
 docker compose --env-file .env.server -f docker-compose.server.yml exec trustgraph-postgres pg_isready -U trustgraph -d trustgraph
+```
+
+If running behind an existing reverse proxy, smoke-check the configured internal port from the server first:
+
+```bash
+curl -I http://127.0.0.1:4180
 ```
 
 ## 7. Optional GitHub VPS Deploy Button

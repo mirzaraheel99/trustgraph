@@ -4,6 +4,8 @@ set -euo pipefail
 TRUSTGRAPH_REPO_URL="${TRUSTGRAPH_REPO_URL:-https://github.com/mirzaraheel99/trustgraph.git}"
 TRUSTGRAPH_REMOTE_PATH="${TRUSTGRAPH_REMOTE_PATH:-/opt/trustgraph}"
 TRUSTGRAPH_HOST="${TRUSTGRAPH_HOST:-5-75-224-11.sslip.io}"
+TRUSTGRAPH_HTTP_PORT="${TRUSTGRAPH_HTTP_PORT:-80}"
+TRUSTGRAPH_HTTPS_PORT="${TRUSTGRAPH_HTTPS_PORT:-443}"
 
 if [[ "$TRUSTGRAPH_REMOTE_PATH" != "/opt/trustgraph" ]]; then
   echo "Refusing to deploy outside /opt/trustgraph: $TRUSTGRAPH_REMOTE_PATH" >&2
@@ -20,6 +22,27 @@ esac
 if [[ -d /opt/CRM-client-demo || -d /var/www/CRM-client-demo ]]; then
   echo "Detected VFIX app directory. Continuing only because TrustGraph target is /opt/trustgraph." >&2
 fi
+
+warn_if_public_ports_are_busy() {
+  local configured_http_port="$TRUSTGRAPH_HTTP_PORT"
+  local configured_https_port="$TRUSTGRAPH_HTTPS_PORT"
+
+  if [[ -f .env.server ]]; then
+    configured_http_port="$(awk -F= '$1 == "TRUSTGRAPH_HTTP_PORT" { print $2 }' .env.server | tail -n 1)"
+    configured_https_port="$(awk -F= '$1 == "TRUSTGRAPH_HTTPS_PORT" { print $2 }' .env.server | tail -n 1)"
+    configured_http_port="${configured_http_port:-$TRUSTGRAPH_HTTP_PORT}"
+    configured_https_port="${configured_https_port:-$TRUSTGRAPH_HTTPS_PORT}"
+  fi
+
+  if [[ "$configured_http_port" != "80" && "$configured_https_port" != "443" ]]; then
+    return
+  fi
+
+  if command -v ss >/dev/null 2>&1 && ss -ltn "( sport = :80 or sport = :443 )" | awk 'NR > 1 { found = 1 } END { exit found ? 0 : 1 }'; then
+    echo "Detected an existing listener on port 80 or 443." >&2
+    echo "If that listener belongs to VFIX or a shared reverse proxy, set TRUSTGRAPH_HTTP_PORT and TRUSTGRAPH_HTTPS_PORT in .env.server before starting TrustGraph." >&2
+  fi
+}
 
 install_docker() {
   if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
@@ -88,6 +111,7 @@ prepare_env() {
 }
 
 start_stack() {
+  warn_if_public_ports_are_busy
   docker compose --env-file .env.server -f docker-compose.server.yml up -d --build
   docker compose --env-file .env.server -f docker-compose.server.yml ps
 }

@@ -3852,7 +3852,7 @@ function VpsLaunchPanel() {
     {
       label: "HTTPS edge",
       status: "configured",
-      detail: "Caddy serves the static Next export over sslip.io HTTPS for the TrustGraph host."
+      detail: "Caddy serves the static Next export over sslip.io HTTPS, with configurable bind ports for shared-server reverse proxy setups."
     },
     {
       label: "Database phase",
@@ -3868,10 +3868,16 @@ function VpsLaunchPanel() {
     checkout_path: checkoutPath,
     github_workflow: workflowName,
     source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
+    web_port_strategy: {
+      default_http: 80,
+      default_https: 443,
+      shared_server_option: "Set TRUSTGRAPH_HTTP_PORT and TRUSTGRAPH_HTTPS_PORT in .env.server if another service already owns 80/443."
+    },
     launch_items: launchItems,
     stop_conditions: [
       "Do not deploy to 5.75.224.110 or 5-75-224-110.sslip.io.",
       "Do not use existing VFIX application directories or routes.",
+      "Do not bind TrustGraph to public 80/443 if those ports already serve VFIX or an existing reverse proxy.",
       "Do not migrate Supabase auth/RLS/storage into VPS Postgres without a reviewed server-side migration plan."
     ]
   };
@@ -3894,7 +3900,7 @@ function VpsLaunchPanel() {
       </div>
       <div className="vps-guard-strip">
         <span className="status-chip success">TrustGraph-only path</span>
-        <small>Bootstrap and workflow guards refuse the existing VFIX host and application paths.</small>
+        <small>Bootstrap and workflow guards refuse the existing VFIX host and application paths; web ports can be changed before first start.</small>
       </div>
       <div className="vps-launch-grid">
         {launchItems.map((item) => (
