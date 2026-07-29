@@ -165,7 +165,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 19. Export the v1 completion audit packet from Admin to review all 13 tracks, locked profile scope, evidence exports, verification gates, and remaining human decisions.
 20. Export the auth redirect readiness packet before invite testing to prove hosted redirect settings, email limits, TrustGraph VPS target, and VFIX isolation.
 21. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
-22. Admin audit trail shows recent material workflow events.
+22. Admin audit trail shows recent material workflow events and exports the full audit and verification history packet.
 23. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
 24. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
 25. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.

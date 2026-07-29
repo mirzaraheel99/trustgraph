@@ -3759,6 +3759,30 @@ p {
   color-scheme: dark;
 }
 
+.audit-coverage-note {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: 8px;
+  background: rgba(134, 174, 246, 0.055);
+}
+
+.audit-coverage-note strong,
+.audit-coverage-note small {
+  display: block;
+}
+
+.audit-coverage-note strong {
+  font-size: 13px;
+}
+
+.audit-coverage-note small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .audit-card {
   display: flex;
   justify-content: space-between;

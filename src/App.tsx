@@ -2677,10 +2677,17 @@ function OperationsQueuePanel({
 
 function AuditTrailPanel({
   events,
+  evidenceDocuments,
   message
+  ,
+  operationsCases,
+  schemaMigrationRuns
 }: {
   events: DbAuditEvent[];
+  evidenceDocuments: DbEvidenceDocument[];
   message: string;
+  operationsCases: DbVerificationCase[];
+  schemaMigrationRuns: DbSchemaMigrationRun[];
 }) {
   const [auditQuery, setAuditQuery] = useState("");
   const [actionFilter, setActionFilter] = useState<
@@ -2733,6 +2740,57 @@ function AuditTrailPanel({
   const highSignalCount = filteredEvents.filter((event) => classifySignal(event) === "high").length;
   const exportName = `trustgraph-audit-${new Date().toISOString().slice(0, 10)}.csv`;
   const exportJsonName = `trustgraph-audit-evidence-${new Date().toISOString().slice(0, 10)}.json`;
+  const coveragePacketName = `trustgraph-audit-coverage-${new Date().toISOString().slice(0, 10)}.json`;
+  const auditCoveragePacket = {
+    generated_at: new Date().toISOString(),
+    mode: "filtered_audit_and_verification_history",
+    filters: {
+      action: actionFilter,
+      target: targetFilter,
+      actor: actorFilter,
+      time: timeFilter,
+      signal: signalFilter,
+      query: auditQuery.trim()
+    },
+    counts: {
+      loaded_audit_events: events.length,
+      filtered_audit_events: filteredEvents.length,
+      actors: actorCount,
+      guardrail_events: guardrailCount,
+      high_signal_events: highSignalCount,
+      verification_cases: operationsCases.length,
+      evidence_documents: evidenceDocuments.length,
+      release_ledger_records: schemaMigrationRuns.length
+    },
+    latest_event: latestEvent ?? null,
+    target_tables: targetTables,
+    verification_cases: operationsCases.map((item) => ({
+      case_id: item.id,
+      case_type: item.case_type,
+      status: item.status,
+      priority: item.priority,
+      title: item.title,
+      trust_record_id: item.trust_record_id,
+      created_at: item.created_at,
+      updated_at: item.updated_at
+    })),
+    evidence_documents: evidenceDocuments.map((document) => ({
+      document_id: document.id,
+      trust_record_id: document.trust_record_id,
+      title: document.title,
+      status: document.status,
+      file_attached: Boolean(document.storage_path),
+      created_at: document.created_at
+    })),
+    release_ledger: schemaMigrationRuns.map((run) => ({
+      migration_path: run.migration_path,
+      status: run.status,
+      workflow_run_id: run.workflow_run_id,
+      commit_sha: run.commit_sha,
+      applied_at: run.applied_at
+    })),
+    events: filteredEvents
+  };
 
   return (
     <section className="audit-panel">
@@ -2827,6 +2885,17 @@ function AuditTrailPanel({
         >
           Export JSON
         </button>
+        <button
+          className="secondary-action"
+          onClick={() => downloadTextFile(coveragePacketName, JSON.stringify(auditCoveragePacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export audit coverage packet
+        </button>
+      </div>
+      <div className="audit-coverage-note">
+        <strong>Full audit and verification history packet</strong>
+        <small>Exports filtered audit events with verification cases, evidence document coverage, and release ledger records for the active Admin view.</small>
       </div>
       <div className="audit-list">
         {filteredEvents.length ? (
@@ -8822,7 +8891,13 @@ function App() {
                   onWebhookStatus={updateLiveWebhookStatus}
                   webhooks={webhookSubscriptions}
                 />
-                <AuditTrailPanel events={auditEvents} message={auditStatus} />
+                <AuditTrailPanel
+                  events={auditEvents}
+                  evidenceDocuments={evidenceDocuments}
+                  message={auditStatus}
+                  operationsCases={operationsCases}
+                  schemaMigrationRuns={schemaMigrationRuns}
+                />
                 <ReleaseLedgerPanel message={releaseStatus} migrations={schemaMigrationRuns} />
                 <VpsLaunchPanel />
                 <WorkflowQaPanel

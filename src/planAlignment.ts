@@ -285,9 +285,9 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     id: "audit-history",
     label: "Full audit and verification history",
     productArea: "Audit",
-    status: "foundation",
-    evidence: "Audit events are created for material workflows and visible in Admin.",
-    tone: "info"
+    status: "deployed",
+    evidence: "Admin exports a full audit and verification history packet with filtered events, verification cases, evidence coverage, and release ledger context.",
+    tone: "success"
   }
 ];
 
