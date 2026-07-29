@@ -124,6 +124,9 @@ assertIncludesAny(bundleText, ["renewal_window_days"], "credential renewal packe
 assertIncludesAny(bundleText, ["Confidentiality review packet"], "performance/reference confidentiality review panel");
 assertIncludesAny(bundleText, ["Export confidentiality packet"], "confidentiality packet export control");
 assertIncludesAny(bundleText, ["visible_scope_only"], "confidentiality packet scoped mode");
+assertIncludesAny(bundleText, ["Skills evidence packet"], "skills evidence packet panel");
+assertIncludesAny(bundleText, ["Export skills packet"], "skills evidence packet export control");
+assertIncludesAny(bundleText, ["visible_skill_evidence"], "skills evidence packet scoped mode");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Portal access evidence"], "portal access evidence packet label");
 assertIncludesAny(bundleText, ["Export portal packet"], "portal access packet export control");

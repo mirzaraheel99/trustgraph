@@ -213,9 +213,9 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     id: "skills",
     label: "Skills",
     productArea: "Passport",
-    status: "foundation",
-    evidence: "Skill evidence is a first-class Passport and Verify missing-record type.",
-    tone: "info"
+    status: "deployed",
+    evidence: "Visible Passport and Verify records export a skills evidence packet with source records, responsibilities, and Access Grant scope.",
+    tone: "success"
   },
   {
     id: "performance",

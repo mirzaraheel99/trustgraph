@@ -1039,6 +1039,74 @@ function ConfidentialityReviewPanel({
   );
 }
 
+function SkillsEvidencePanel({
+  records,
+  workspaceLabel
+}: {
+  records: RecordItem[];
+  workspaceLabel: string;
+}) {
+  const recordsWithSkills = records.filter((record) => record.skills?.length);
+  const skillCounts = recordsWithSkills.reduce<Record<string, number>>((counts, record) => {
+    for (const skill of record.skills ?? []) {
+      counts[skill] = (counts[skill] ?? 0) + 1;
+    }
+    return counts;
+  }, {});
+  const skills = Object.entries(skillCounts)
+    .map(([skill, count]) => ({ skill, count }))
+    .sort((left, right) => right.count - left.count || left.skill.localeCompare(right.skill));
+  const packetName = `trustgraph-skills-evidence-${workspaceLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${new Date().toISOString().slice(0, 10)}.json`;
+  const skillsPacket = {
+    generated_at: new Date().toISOString(),
+    workspace: workspaceLabel,
+    mode: "visible_skill_evidence",
+    counts: {
+      visible_records: records.length,
+      records_with_skills: recordsWithSkills.length,
+      unique_skills: skills.length
+    },
+    skills,
+    source_records: recordsWithSkills.map((record) => ({
+      record_id: record.id,
+      section: record.section,
+      title: record.title,
+      source: record.source,
+      status: record.status,
+      skills: record.skills ?? [],
+      responsibilities: record.responsibilities ?? [],
+      access_scope: record.access
+    }))
+  };
+
+  return (
+    <section className="skills-evidence-panel">
+      <div className="mini-heading">
+        <Sparkles size={16} />
+        <strong>Skills evidence packet</strong>
+      </div>
+      <div className="skills-summary-grid">
+        <div>
+          <span>Skills</span>
+          <strong>{skills.length}</strong>
+        </div>
+        <div>
+          <span>Records</span>
+          <strong>{recordsWithSkills.length}</strong>
+        </div>
+        <div>
+          <span>Visible</span>
+          <strong>{records.length}</strong>
+        </div>
+      </div>
+      <small>Exports visible skill claims with source records, responsibilities, status, and Access Grant scope.</small>
+      <button className="secondary-action" onClick={() => downloadTextFile(packetName, JSON.stringify(skillsPacket, null, 2), "application/json")} type="button">
+        Export skills packet
+      </button>
+    </section>
+  );
+}
+
 function AccessGrantsPanel({
   disabled,
   grants,
@@ -8802,6 +8870,7 @@ function App() {
             </div>
             <RenewalReadinessPanel records={records} workspaceLabel={workspace.label} />
             <ConfidentialityReviewPanel records={records} workspaceLabel={workspace.label} />
+            <SkillsEvidencePanel records={records} workspaceLabel={workspace.label} />
 
             {workspace.id === "passport" ? (
               <>
