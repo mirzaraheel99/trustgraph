@@ -113,6 +113,8 @@ assertIncludesAny(bundleText, ["https://mirzaraheel99.github.io/trustgraph/"], "
 assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signed URL label");
 assertIncludesAny(bundleText, ["Export evidence manifest"], "evidence manifest export control");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
+assertIncludesAny(bundleText, ["Portal access evidence"], "portal access evidence packet label");
+assertIncludesAny(bundleText, ["Export portal packet"], "portal access packet export control");
 assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed database evidence");
 assertIncludesAny(bundleText, ["Export live readiness"], "live database readiness export");
 assertIncludesAny(bundleText, ["Product preview mode"], "preview mode indicator");

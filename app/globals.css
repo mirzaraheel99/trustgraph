@@ -1414,6 +1414,41 @@ p,
   text-align: right;
 }
 
+.portal-access-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.055);
+}
+
+.portal-access-proof strong,
+.portal-access-proof small {
+  display: block;
+}
+
+.portal-access-proof strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.portal-access-proof small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.portal-access-proof .secondary-action {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
 .onboarding-panel {
   display: grid;
   gap: 10px;
@@ -4952,6 +4987,7 @@ p {
   .public-portal-rail,
   .live-data-grid,
   .live-data-footer,
+  .portal-access-proof,
   .timeline-item,
   .detail-grid,
   .record-edit-grid,

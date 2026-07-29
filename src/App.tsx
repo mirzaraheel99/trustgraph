@@ -5065,12 +5065,14 @@ function ProductionReadinessPanel({
 
 function LiveDataModePanel({
   accountContext,
+  activeMembership,
   activeOrganization,
   activeRoleLabel,
   authSession,
   workspaceLabel
 }: {
   accountContext: AccountContext | null;
+  activeMembership: Membership;
   activeOrganization: Organization;
   activeRoleLabel: string;
   authSession: AuthSession | null;
@@ -5079,11 +5081,63 @@ function LiveDataModePanel({
   const isLive = Boolean(authSession && accountContext);
   const profileLabel = authSession?.user.email ?? "Not signed in";
   const membershipCount = accountContext?.memberships.length ?? 0;
+  const activeMembershipRow = accountContext?.memberships.find((membership) => membership.id === activeMembership.id);
+  const portalAccessPacketName = `trustgraph-portal-access-${workspaceLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${new Date().toISOString().slice(0, 10)}.json`;
+  const portalAccessPacket = {
+    generated_at: new Date().toISOString(),
+    mode: isLive ? "live_supabase" : "product_preview",
+    portal: {
+      workspace: workspaceLabel,
+      role: activeRoleLabel,
+      writes_enabled: isLive,
+      rbac_memberships_loaded: membershipCount
+    },
+    profile: accountContext
+      ? {
+          id: accountContext.profile.id,
+          email: accountContext.profile.email,
+          full_name: accountContext.profile.full_name,
+          status: "profile_loaded"
+        }
+      : {
+          id: authSession?.user.id ?? null,
+          email: profileLabel,
+          full_name: authSession?.user.email ?? null,
+          status: authSession ? "auth_session_only" : "not_signed_in"
+        },
+    active_membership: activeMembershipRow
+      ? {
+          id: activeMembershipRow.id,
+          organization_id: activeMembershipRow.organization_id,
+          role: activeMembershipRow.role,
+          status: activeMembershipRow.status
+        }
+      : {
+          id: activeMembership.id,
+          organization_id: activeMembership.organizationId,
+          role: activeMembership.role,
+          status: activeMembership.status
+        },
+    organization: {
+      id: activeOrganization.id,
+      name: activeOrganization.name,
+      type: activeOrganization.type,
+      status: activeOrganization.status,
+      domain: activeOrganization.domain ?? null
+    },
+    evidence: {
+      auth_session: Boolean(authSession),
+      account_context: Boolean(accountContext),
+      active_membership_loaded_from_database: Boolean(activeMembershipRow),
+      hosted_redirect: hostedAuthRedirectUrl()
+    }
+  };
   const rows = [
     { label: "Profile", value: profileLabel },
     { label: "Organization", value: isLive ? activeOrganization.name : "Product preview organization" },
     { label: "Role", value: isLive ? activeRoleLabel : "Product preview role" },
-    { label: "Workspace", value: workspaceLabel }
+    { label: "Workspace", value: workspaceLabel },
+    { label: "Membership", value: isLive ? activeMembership.id : "Preview membership" }
   ];
 
   return (
@@ -5108,6 +5162,23 @@ function LiveDataModePanel({
       <div className="live-data-footer">
         <span className={`status-chip ${isLive ? "success" : "warning"}`}>{isLive ? "writes enabled" : "evaluation only"}</span>
         <small>{isLive ? `${membershipCount} RBAC memberships loaded` : "Supabase keys are configured; login unlocks live rows."}</small>
+      </div>
+      <div className="portal-access-proof">
+        <div>
+          <strong>Portal access evidence</strong>
+          <small>
+            {isLive
+              ? "Export the signed-in profile, active membership, organization, and portal route used for RBAC acceptance."
+              : "Login first to export live database portal evidence for the current account."}
+          </small>
+        </div>
+        <button
+          className="secondary-action"
+          onClick={() => downloadTextFile(portalAccessPacketName, JSON.stringify(portalAccessPacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export portal packet
+        </button>
       </div>
     </section>
   );
@@ -7774,6 +7845,7 @@ function App() {
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
         <LiveDataModePanel
           accountContext={accountContext}
+          activeMembership={activeMembership}
           activeOrganization={activeOrganization}
           activeRoleLabel={activeRole.label}
           authSession={authSession}
