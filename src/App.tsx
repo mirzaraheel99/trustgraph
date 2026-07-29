@@ -6142,6 +6142,7 @@ function OnboardingChecklistPanel({
   const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
   const workingDataRows = [
     { label: "Passport records", count: livePassportRecords.length },
+    { label: "Evidence documents", count: evidenceDocuments.length },
     { label: "Access Grants", count: accessGrants.length },
     { label: "Consent authorizations", count: consentAuthorizations.length },
     { label: "Subscriptions", count: organizationSubscriptions.length },
@@ -6149,6 +6150,46 @@ function OnboardingChecklistPanel({
     { label: "Team invitations", count: teamInvitations.length }
   ];
   const workingDataTotal = workingDataRows.reduce((total, row) => total + row.count, 0);
+  const liveDatabaseAcceptanceRows = [
+    {
+      label: "Professional Passport database",
+      required: "At least one live Passport record",
+      ok: livePassportRecords.length > 0,
+      evidence: `${livePassportRecords.length} Passport records loaded`
+    },
+    {
+      label: "Evidence database",
+      required: "At least one evidence metadata row",
+      ok: evidenceDocuments.length > 0,
+      evidence: `${evidenceDocuments.length} evidence documents loaded`
+    },
+    {
+      label: "Corporate access database",
+      required: "At least one Access Grant row",
+      ok: accessGrants.length > 0,
+      evidence: `${accessGrants.length} Access Grants loaded`
+    },
+    {
+      label: "Consent database",
+      required: "Sensitive sharing consent row loaded or created",
+      ok: consentAuthorizations.length > 0,
+      evidence: `${consentAuthorizations.length} consent authorizations loaded`
+    },
+    {
+      label: "Corporate account database",
+      required: "Team member or invitation row loaded",
+      ok: teamMembers.length > 0 || teamInvitations.length > 0,
+      evidence: `${teamMembers.length} members and ${teamInvitations.length} invitations loaded`
+    },
+    {
+      label: "Billing ledger database",
+      required: "Pilot subscription ledger row loaded",
+      ok: organizationSubscriptions.length > 0,
+      evidence: `${organizationSubscriptions.length} subscriptions loaded`
+    }
+  ];
+  const liveDatabaseAcceptancePassing = liveDatabaseAcceptanceRows.filter((row) => row.ok).length;
+  const liveDatabaseAcceptanceComplete = Boolean(authSession && accountContext) && liveDatabaseAcceptancePassing === liveDatabaseAcceptanceRows.length;
   const seededAccessGrantId = visibleSeedEvidence?.access_grant_id ?? "";
   const seededConsentAuthorizationId = visibleSeedEvidence?.consent_authorization_id ?? "";
   const seededSubscriptionId = visibleSeedEvidence?.subscription_id ?? "";
@@ -6245,6 +6286,13 @@ function OnboardingChecklistPanel({
     account_context_loaded: Boolean(accountContext),
     live_rows_currently_loaded: workingDataRows,
     live_row_total: workingDataTotal,
+    live_database_acceptance: {
+      passing: liveDatabaseAcceptancePassing,
+      total: liveDatabaseAcceptanceRows.length,
+      complete: liveDatabaseAcceptanceComplete,
+      rows: liveDatabaseAcceptanceRows,
+      unmet_requirements: liveDatabaseAcceptanceRows.filter((row) => !row.ok).map((row) => row.required)
+    },
     checklist_completed: completed,
     checklist_total: checklist.length,
     seed_evidence: visibleSeedEvidence,
@@ -6393,6 +6441,26 @@ function OnboardingChecklistPanel({
           <span className={`status-chip ${authSession && accountContext ? "success" : "warning"}`}>
             {authSession && accountContext ? "live rows loaded" : "login needed"}
           </span>
+        </div>
+        <div className="seed-reconciliation-top">
+          <div>
+            <strong>Real database acceptance matrix</strong>
+            <small>Shows which required v1 row groups are loaded from Supabase and which are still missing before pilot acceptance.</small>
+          </div>
+          <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : "warning"}`}>
+            {liveDatabaseAcceptancePassing}/{liveDatabaseAcceptanceRows.length} database groups ready
+          </span>
+        </div>
+        <div className="seed-reconciliation-grid">
+          {liveDatabaseAcceptanceRows.map((row) => (
+            <article className={row.ok ? "matched" : ""} key={row.label}>
+              <span className={`status-dot ${row.ok ? "on" : ""}`} />
+              <div>
+                <strong>{row.label}</strong>
+                <small>{row.evidence}</small>
+              </div>
+            </article>
+          ))}
         </div>
         <div className="working-database-grid">
           {workingDataRows.map((row) => (
