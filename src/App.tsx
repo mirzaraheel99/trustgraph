@@ -4968,6 +4968,29 @@ function AuthPanel({
   const [message, setMessage] = useState(authModeLabel());
   const [busy, setBusy] = useState(false);
   const authRedirectUrl = hostedAuthRedirectUrl();
+  const authPacketName = `trustgraph-auth-redirect-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const authRedirectPacket = {
+    generated_at: new Date().toISOString(),
+    configured: isSupabaseConfigured(),
+    mode: authModeLabel(),
+    active_redirect_url: authRedirectUrl,
+    required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
+    trustgraph_vps_target: "https://5-75-224-11.sslip.io",
+    protected_vfix_host: "https://5-75-224-110.sslip.io",
+    current_browser_host:
+      typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,
+    current_browser_is_localhost:
+      typeof window === "undefined" ? false : window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
+    supabase_auth_settings_needed: [
+      "Set Site URL to the hosted TrustGraph URL used by pilot users.",
+      "Add the GitHub Pages URL as an allowed redirect URL.",
+      "Add the TrustGraph VPS URL before sending production verification emails from the server host.",
+      "Keep localhost only for local developer testing."
+    ],
+    email_rate_limit: "Supabase built-in email allows 2 emails per hour project-wide unless custom SMTP is configured.",
+    session_state: session ? "signed_in" : "signed_out",
+    account_status: accountStatus
+  };
   const authPaths = [
     {
       label: "Professional",
@@ -5151,6 +5174,19 @@ function AuthPanel({
             </div>
             <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
               Copy URL
+            </button>
+          </div>
+          <div className="auth-readiness-packet">
+            <div>
+              <strong>Auth redirect readiness packet</strong>
+              <small>Exports the active hosted redirect, Supabase config mode, email limit note, TrustGraph VPS target, and VFIX isolation guard.</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(authPacketName, JSON.stringify(authRedirectPacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export auth packet
             </button>
           </div>
           <div className="auth-support-grid">
@@ -6059,6 +6095,35 @@ function PublicSite({
   const authRedirectUrl = hostedAuthRedirectUrl();
   const pendingCorporateRegistrationKey = "trustgraph.pendingCorporateRegistration";
   const repairedVerificationUrl = repairHostedAuthLink(verificationLinkInput, authRedirectUrl);
+  const registrationPacketName = `trustgraph-registration-auth-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const registrationAuthPacket = {
+    generated_at: new Date().toISOString(),
+    selected_portal: portal,
+    selected_mode: mode,
+    configured: authReady,
+    active_redirect_url: authRedirectUrl,
+    required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
+    trustgraph_vps_target: "https://5-75-224-11.sslip.io",
+    protected_vfix_host: "https://5-75-224-110.sslip.io",
+    current_browser_host:
+      typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,
+    current_browser_is_localhost:
+      typeof window === "undefined" ? false : window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
+    pending_corporate_workspace: {
+      saved_in_browser: hasPendingCorporateRegistration,
+      organization_name_present: Boolean(organizationName.trim()),
+      organization_domain_present: Boolean(organizationDomain.trim()),
+      organization_type: organizationType
+    },
+    repaired_link_ready: Boolean(repairedVerificationUrl),
+    supabase_auth_settings_needed: [
+      "Set Supabase Auth Site URL to the hosted TrustGraph app before inviting pilot users.",
+      "Add GitHub Pages and TrustGraph VPS URLs to Supabase allowed redirect URLs.",
+      "Regenerate verification or recovery emails after changing redirect settings.",
+      "Keep VFIX host isolated from TrustGraph redirect and deployment settings."
+    ],
+    email_rate_limit: "Supabase built-in email allows 2 emails per hour project-wide; wait 60+ minutes after rate-limit errors or configure custom SMTP."
+  };
 
   function pendingCorporateRegistration() {
     return {
@@ -6652,6 +6717,19 @@ function PublicSite({
             {repairedVerificationUrl ? <input aria-label="Hosted verification link" readOnly value={repairedVerificationUrl} /> : null}
             <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
               Copy hosted link
+            </button>
+          </div>
+          <div className="auth-readiness-packet">
+            <div>
+              <strong>Registration auth readiness packet</strong>
+              <small>Exports hosted redirect status, selected portal, pending corporate setup, repaired-link readiness, and Supabase Auth action items.</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(registrationPacketName, JSON.stringify(registrationAuthPacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export registration auth packet
             </button>
           </div>
           <small>{message}</small>

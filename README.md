@@ -160,11 +160,12 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 14. Manage Connect API clients and webhook subscriptions from Admin.
 15. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
 16. Export the pricing structure packet to prove configured plans, selected-seat projections, active ledger subscriptions, and Stripe launch gates.
-17. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
-18. Admin audit trail shows recent material workflow events.
-19. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
-20. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
-21. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
+17. Export the auth redirect readiness packet before invite testing to prove hosted redirect settings, email limits, TrustGraph VPS target, and VFIX isolation.
+18. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
+19. Admin audit trail shows recent material workflow events.
+20. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
+21. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
+22. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
 
 ## Live Database Status
 

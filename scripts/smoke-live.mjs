@@ -190,6 +190,12 @@ assertIncludesAny(bundleText, ["5-75-224-11.sslip.io"], "TrustGraph VPS target h
 assertIncludesAny(bundleText, ["5-75-224-110.sslip.io"], "VFIX protected host copy");
 assertIncludesAny(bundleText, ["Supabase email rate limit is active"], "auth rate-limit recovery guidance");
 assertIncludesAny(bundleText, ["Auth redirect needs the hosted GitHub Pages URL"], "hosted auth redirect repair guidance");
+assertIncludesAny(bundleText, ["Auth redirect readiness packet"], "auth redirect readiness packet label");
+assertIncludesAny(bundleText, ["Export auth packet"], "auth redirect readiness export control");
+assertIncludesAny(bundleText, ["Registration auth readiness packet"], "registration auth readiness packet label");
+assertIncludesAny(bundleText, ["Export registration auth packet"], "registration auth readiness export control");
+assertIncludesAny(bundleText, ["protected_vfix_host"], "auth packet VFIX isolation field");
+assertIncludesAny(bundleText, ["trustgraph_vps_target"], "auth packet TrustGraph VPS field");
 assertIncludesAny(bundleText, ["Reset password"], "public portal password recovery control");
 assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
