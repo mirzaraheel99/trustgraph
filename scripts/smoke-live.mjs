@@ -49,9 +49,12 @@ async function assertRepoReadinessArtifacts() {
   const packageJson = JSON.parse(packageText);
   const sqlMigrations = migrationFiles.filter((file) => file.endsWith(".sql")).sort();
 
-  assert(sqlMigrations.length >= 33, `Expected at least 33 Supabase migrations, found ${sqlMigrations.length}`);
+  assert(sqlMigrations.length >= 34, `Expected at least 34 Supabase migrations, found ${sqlMigrations.length}`);
   assert(sqlMigrations[0]?.startsWith("001_"), "Expected migration sequence to start at 001");
-  assert(sqlMigrations.at(-1)?.startsWith("033_"), "Expected migration sequence to include 033 pilot launch contacts");
+  assert(
+    sqlMigrations.some((file) => file.startsWith("034_fix_organization_policy_recursion")),
+    "Expected migration sequence to include 034 organization policy recursion fix"
+  );
   assert(packageJson.scripts?.["check:pilot-acceptance"] === "node scripts/check-pilot-acceptance.mjs", "Expected package scripts to expose pilot acceptance check");
   assert(pagesWorkflow.includes("pnpm check:pilot-acceptance"), "Expected Pages CI to run pilot acceptance check");
   assert(readiness.includes("13-Track Product Coverage"), "Expected v1 readiness checklist to include 13-track coverage");

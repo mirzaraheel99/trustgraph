@@ -27,6 +27,7 @@
 
 body {
   margin: 0;
+  overflow-x: hidden;
   color: var(--text);
   background:
     radial-gradient(circle at 30% -20%, rgba(82, 214, 196, 0.12), transparent 28%),
@@ -54,7 +55,10 @@ button {
 .app {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 304px minmax(0, 1fr);
+  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .public-site {
@@ -818,6 +822,7 @@ button {
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 22px;
   border-right: 1px solid var(--line);
   background:
@@ -827,6 +832,10 @@ button {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.sidebar > * {
+  min-width: 0;
 }
 
 .brand {
@@ -2173,7 +2182,7 @@ p,
 }
 
 .password-update-form {
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 1fr;
 }
 
 .password-update-form input {
@@ -2216,7 +2225,7 @@ p,
 
 .account-admin-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -2444,6 +2453,8 @@ p,
 .workspace {
   padding: 28px clamp(22px, 3vw, 38px);
   min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -2470,10 +2481,10 @@ p {
 }
 
 h1 {
-  max-width: 1000px;
+  max-width: 13ch;
   margin-bottom: 10px;
-  font-size: clamp(34px, 4.4vw, 68px);
-  line-height: 0.94;
+  font-size: clamp(34px, 4vw, 64px);
+  line-height: 1;
 }
 
 h2 {
@@ -2503,6 +2514,38 @@ p {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 10px;
+  min-width: min(360px, 100%);
+}
+
+.topbar-session-card {
+  width: min(340px, 100%);
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.topbar-session-card span,
+.topbar-session-card small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-session-card span {
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.topbar-session-card .secondary-action {
+  justify-content: center;
+  min-height: 34px;
 }
 
 .topbar-actions button:not(.secondary-action):not(.primary-action) {
@@ -2522,10 +2565,11 @@ p {
 .work-grid {
   display: grid;
   gap: 16px;
+  min-width: 0;
 }
 
 .hero {
-  grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.92fr) minmax(280px, 0.7fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-bottom: 18px;
 }
 
@@ -2761,7 +2805,7 @@ p {
 }
 
 .work-grid {
-  grid-template-columns: minmax(0, 1.35fr) minmax(380px, 0.65fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
   align-items: start;
 }
 

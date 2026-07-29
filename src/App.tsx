@@ -19,6 +19,7 @@ import {
   Fingerprint,
   KeyRound,
   LogIn,
+  LogOut,
   LockKeyhole,
   Network,
   ShieldAlert,
@@ -5612,7 +5613,7 @@ function authFailureMessage(error: unknown, redirectUrl: string, fallback = "Aut
 }
 
 function hostedAuthRedirectUrl() {
-  const hostedUrl = "https://mirzaraheel99.github.io/trustgraph/";
+  const hostedUrl = "https://trustgraph.5-75-224-110.sslip.io/";
   if (typeof window === "undefined") return hostedUrl;
 
   const currentUrl = `${window.location.origin}${window.location.pathname}`;
@@ -5685,7 +5686,7 @@ function AuthPanel({
     configured: isSupabaseConfigured(),
     mode: authModeLabel(),
     active_redirect_url: authRedirectUrl,
-    required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
+    required_hosted_redirect: "https://trustgraph.5-75-224-110.sslip.io/",
     allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
     trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
@@ -5806,7 +5807,7 @@ function AuthPanel({
   }
 
   return (
-    <section className="auth-panel">
+    <section className="auth-panel" id="live-auth-controls">
       <div className="mini-heading">
         <KeyRound size={16} />
         <strong>Live auth</strong>
@@ -9035,6 +9036,19 @@ function App() {
     document.getElementById("workflow-notifications")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  function openAuthControls() {
+    if (typeof document === "undefined") return;
+    document.getElementById("live-auth-controls")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function handleSignOut() {
+    signOut();
+    setAuthSession(null);
+    setAccountContext(null);
+    setAccountStatus("Signed out. Use live auth to reconnect.");
+    setShowPublicSite(true);
+  }
+
   if (showPublicSite) {
     return (
       <PublicSite
@@ -9196,6 +9210,20 @@ function App() {
             </div>
           </div>
           <div className="topbar-actions">
+            {authSession ? (
+              <div className="topbar-session-card">
+                <span>{authSession.user.email}</span>
+                <small>{activeRole.label} - {activeOrganization.name}</small>
+                <button className="secondary-action" onClick={openAuthControls} type="button">
+                  <KeyRound size={16} />
+                  Account
+                </button>
+                <button className="secondary-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Sign out
+                </button>
+              </div>
+            ) : null}
             <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
               Public site
             </button>
