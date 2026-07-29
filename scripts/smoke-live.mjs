@@ -111,7 +111,7 @@ assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signe
 assertIncludesAny(bundleText, ["Export evidence manifest"], "evidence manifest export control");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed database evidence");
-assertIncludesAny(bundleText, ["Guided evaluation mode"], "evaluation mode indicator");
+assertIncludesAny(bundleText, ["Product preview mode"], "preview mode indicator");
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
 assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
 assertIncludesAny(bundleText, ["All signal levels"], "audit signal filter");

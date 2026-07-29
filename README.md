@@ -62,7 +62,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
 In Supabase Auth URL settings, set the Site URL to `https://mirzaraheel99.github.io/trustgraph/` and add the same URL under Redirect URLs. If Site URL remains `localhost`, verification emails will open a localhost link instead of the hosted app.
-Until those variables are present, the app stays in guided preview mode and keeps a local RBAC account context available.
+Until those variables are present, the app stays in product preview mode and keeps a local RBAC account context available.
 
 Supabase built-in email is limited to 2 messages per hour project-wide. If signup, resend verification, or recovery returns an email rate-limit error, wait at least 60 minutes or configure custom SMTP before heavier testing.
 

@@ -4949,12 +4949,12 @@ function LiveDataModePanel({
     <section className={`live-data-panel ${isLive ? "live" : "preview"}`}>
       <div className="mini-heading">
         <Database size={16} />
-        <strong>{isLive ? "Live Supabase database mode" : "Guided evaluation mode"}</strong>
+        <strong>{isLive ? "Live Supabase database mode" : "Product preview mode"}</strong>
       </div>
       <p>
         {isLive
           ? "This portal is reading and writing hosted Supabase data with account RBAC enforced."
-          : "This portal is showing guided evaluation data only. Register or login before relying on saved records."}
+          : "This portal is showing product preview data only. Register or login before relying on saved records."}
       </p>
       <div className="live-data-grid">
         {rows.map((row) => (
@@ -6045,7 +6045,7 @@ function PublicSite({
             {mode === "signin" ? "Login" : "Create account"}
           </button>
           <button className="secondary-action" onClick={onOpenGuidedEvaluation} type="button">
-            Open guided evaluation
+            Open product preview
           </button>
           <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
             Resend verification
@@ -7627,7 +7627,7 @@ function App() {
               <span className={`status-chip ${toneClass(activeRole.risk)}`}>{activeRole.label}</span>
               <span className="status-chip neutral">{activeOrganization.name}</span>
               <span className="status-chip neutral">{activeOrganization.type.replace("_", " ")}</span>
-              <span className="status-chip neutral">{authSession ? "live auth" : "guided preview"}</span>
+              <span className="status-chip neutral">{authSession ? "live auth" : "product preview"}</span>
             </div>
           </div>
           <div className="topbar-actions">
