@@ -33,16 +33,16 @@ postgres_password="$(read_env POSTGRES_PASSWORD)"
 supabase_url="$(read_env NEXT_PUBLIC_SUPABASE_URL)"
 supabase_key="$(read_env NEXT_PUBLIC_SUPABASE_ANON_KEY)"
 
-trustgraph_host="${trustgraph_host:-5-75-224-11.sslip.io}"
+trustgraph_host="${trustgraph_host:-trustgraph.5-75-224-110.sslip.io}"
 
 case "$trustgraph_host" in
-  5-75-224-11.sslip.io)
+  trustgraph.5-75-224-110.sslip.io)
     ;;
   5-75-224-110.sslip.io|5.75.224.110|*/CRM-client-demo*)
     fail "TRUSTGRAPH_HOST points at protected VFIX target: $trustgraph_host"
     ;;
   *)
-    fail "TRUSTGRAPH_HOST must be 5-75-224-11.sslip.io for this VPS launch, got $trustgraph_host"
+    fail "TRUSTGRAPH_HOST must be trustgraph.5-75-224-110.sslip.io for this VPS launch, got $trustgraph_host"
     ;;
 esac
 

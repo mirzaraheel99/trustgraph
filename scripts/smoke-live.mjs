@@ -243,7 +243,7 @@ assertIncludesAny(bundleText, ["tools/preflight-vps.sh"], "VPS preflight command
 assertIncludesAny(bundleText, ["tools/validate-server-env.sh"], "VPS env validation command");
 assertIncludesAny(bundleText, ["github_workflow_inputs"], "VPS deploy workflow input packet");
 assertIncludesAny(bundleText, ["public_url"], "VPS deploy public URL input");
-assertIncludesAny(bundleText, ["5-75-224-11.sslip.io"], "TrustGraph VPS target host");
+assertIncludesAny(bundleText, ["trustgraph.5-75-224-110.sslip.io"], "TrustGraph VPS target host");
 assertIncludesAny(bundleText, ["5-75-224-110.sslip.io"], "VFIX protected host copy");
 assertIncludesAny(bundleText, ["Supabase email rate limit is active"], "auth rate-limit recovery guidance");
 assertIncludesAny(bundleText, ["Auth redirect needs the hosted TrustGraph URL"], "hosted auth redirect repair guidance");

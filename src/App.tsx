@@ -3488,7 +3488,7 @@ function PlanAlignmentPanel({
     generated_at: new Date().toISOString(),
     source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
     hosted_review_url: "https://mirzaraheel99.github.io/trustgraph/",
-    trustgraph_vps_target: "https://5-75-224-11.sslip.io",
+    trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     completion_mode: openProductionGateCount ? "pilot_ready_with_human_gates" : "production_gate_records_approved",
     track_counts: {
@@ -4010,7 +4010,7 @@ function ReleaseLedgerPanel({
 }
 
 function VpsLaunchPanel() {
-  const targetHost = "5-75-224-11.sslip.io";
+  const targetHost = "trustgraph.5-75-224-110.sslip.io";
   const protectedVfixHost = "5-75-224-110.sslip.io";
   const checkoutPath = "/opt/trustgraph";
   const workflowName = "Deploy TrustGraph to VPS";
@@ -4052,7 +4052,7 @@ function VpsLaunchPanel() {
     generated_at: new Date().toISOString(),
     trustgraph_target_url: publicUrl,
     github_workflow_inputs: {
-      target_host: "5.75.224.11",
+      target_host: "5.75.224.110",
       public_url: publicUrl,
       remote_path: checkoutPath
     },
@@ -5686,8 +5686,8 @@ function AuthPanel({
     mode: authModeLabel(),
     active_redirect_url: authRedirectUrl,
     required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
-    allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://5-75-224-11.sslip.io", "https://5-75-224-11.sslip.io/"],
-    trustgraph_vps_target: "https://5-75-224-11.sslip.io",
+    allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
+    trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     current_browser_host:
       typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,
@@ -6408,7 +6408,7 @@ function OnboardingChecklistPanel({
     database_acceptance_requires_live_login: true,
     vps_deployment_requires_human_access: true,
     protected_vfix_host: "https://5-75-224-110.sslip.io",
-    trustgraph_vps_target: "https://5-75-224-11.sslip.io",
+    trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
     session_state: authSession ? "signed_in" : "signed_out",
     profile_email: authSession?.user.email ?? null,
     account_context_loaded: Boolean(accountContext),
@@ -6958,8 +6958,8 @@ function PublicSite({
     configured: authReady,
     active_redirect_url: authRedirectUrl,
     required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
-    allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://5-75-224-11.sslip.io", "https://5-75-224-11.sslip.io/"],
-    trustgraph_vps_target: "https://5-75-224-11.sslip.io",
+    allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
+    trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     current_browser_host:
       typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,

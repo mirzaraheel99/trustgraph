@@ -9,4 +9,4 @@ max_rows = 1000
 [auth]
 enabled = true
 site_url = "https://mirzaraheel99.github.io/trustgraph/"
-additional_redirect_urls = ["https://mirzaraheel99.github.io/trustgraph/", "https://5-75-224-11.sslip.io", "https://5-75-224-11.sslip.io/"]
+additional_redirect_urls = ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"]

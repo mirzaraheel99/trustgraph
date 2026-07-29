@@ -5,10 +5,10 @@ GitHub remains the primary source of truth. The server should pull from `mirzara
 Target host:
 
 ```text
-https://5-75-224-11.sslip.io
+https://trustgraph.5-75-224-110.sslip.io
 ```
 
-`sslip.io` resolves the hostname to `5.75.224.11`, so no DNS account is required for the first production VPS test.
+`sslip.io` resolves the hostname to `5.75.224.110`, so no DNS account is required for the first production VPS test.
 
 Do not deploy TrustGraph over the existing VFIX app. VFIX is separate and should remain on:
 
@@ -16,13 +16,13 @@ Do not deploy TrustGraph over the existing VFIX app. VFIX is separate and should
 https://5-75-224-110.sslip.io/CRM-client-demo/login
 ```
 
-This runbook uses `/opt/trustgraph`, the `5-75-224-11.sslip.io` hostname, and TrustGraph-specific Docker service names only.
+This runbook uses `/opt/trustgraph`, the `trustgraph.5-75-224-110.sslip.io` hostname, and TrustGraph-specific Docker service names only.
 
 The GitHub Actions VPS workflow also refuses the VFIX host `5.75.224.110`.
 
 ## 1. Prepare Server
 
-Run these from the SSH session on `5.75.224.11`:
+Run these from the SSH session on `5.75.224.110`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/mirzaraheel99/trustgraph/main/tools/bootstrap-vps.sh -o /tmp/trustgraph-bootstrap-vps.sh
@@ -143,14 +143,14 @@ docker compose --env-file .env.server -f docker-compose.server.yml ps
 Caddy will request HTTPS certificates automatically for this host when TrustGraph owns public 80/443:
 
 ```text
-https://5-75-224-11.sslip.io
+https://trustgraph.5-75-224-110.sslip.io
 ```
 
 ## 6. Verify
 
 ```bash
-curl -I https://5-75-224-11.sslip.io
-curl -L https://5-75-224-11.sslip.io | head
+curl -I https://trustgraph.5-75-224-110.sslip.io
+curl -L https://trustgraph.5-75-224-110.sslip.io | head
 docker compose --env-file .env.server -f docker-compose.server.yml exec trustgraph-postgres pg_isready -U trustgraph -d trustgraph
 ```
 
@@ -160,7 +160,7 @@ If running behind an existing reverse proxy, smoke-check the configured internal
 curl -I http://127.0.0.1:4180
 ```
 
-If `curl -I https://5-75-224-11.sslip.io` reports a certificate hostname mismatch, another HTTPS service is answering for the host. Keep VFIX running, set TrustGraph to internal ports in `.env.server`, and add a route for `5-75-224-11.sslip.io` in the existing reverse proxy.
+If `curl -I https://trustgraph.5-75-224-110.sslip.io` reports a certificate hostname mismatch, another HTTPS service is answering for the host. Keep VFIX running, set TrustGraph to internal ports in `.env.server`, and add a route for `trustgraph.5-75-224-110.sslip.io` in the existing reverse proxy.
 
 ## 7. Optional GitHub VPS Deploy Button
 
@@ -176,8 +176,8 @@ Then run **Deploy TrustGraph to VPS** from GitHub Actions.
 Use these workflow inputs:
 
 ```text
-target_host=5.75.224.11
-public_url=https://5-75-224-11.sslip.io
+target_host=5.75.224.110
+public_url=https://trustgraph.5-75-224-110.sslip.io
 remote_path=/opt/trustgraph
 ```
 
@@ -199,7 +199,7 @@ public_url=https://5-75-224-110.sslip.io/CRM-client-demo/login
 If using the VPS URL for login tests, add this to Supabase Authentication URL settings:
 
 ```text
-https://5-75-224-11.sslip.io
+https://trustgraph.5-75-224-110.sslip.io
 ```
 
 Keep the GitHub Pages URL too:

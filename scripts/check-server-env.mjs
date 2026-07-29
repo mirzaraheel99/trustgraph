@@ -24,7 +24,7 @@ for (const rawLine of fs.readFileSync(envFile, "utf8").split(/\r?\n/)) {
   entries.set(line.slice(0, equalsIndex), line.slice(equalsIndex + 1));
 }
 
-const trustgraphHost = entries.get("TRUSTGRAPH_HOST") || "5-75-224-11.sslip.io";
+const trustgraphHost = entries.get("TRUSTGRAPH_HOST") || "trustgraph.5-75-224-110.sslip.io";
 const postgresPassword = entries.get("POSTGRES_PASSWORD") || "";
 const supabaseUrl = entries.get("NEXT_PUBLIC_SUPABASE_URL") || "";
 const supabaseKey = entries.get("NEXT_PUBLIC_SUPABASE_ANON_KEY") || "";
@@ -33,8 +33,8 @@ if (trustgraphHost === "5-75-224-110.sslip.io" || trustgraphHost === "5.75.224.1
   fail(`TRUSTGRAPH_HOST points at protected VFIX target: ${trustgraphHost}`);
 }
 
-if (trustgraphHost !== "5-75-224-11.sslip.io") {
-  fail(`TRUSTGRAPH_HOST must be 5-75-224-11.sslip.io for this VPS launch, got ${trustgraphHost}`);
+if (trustgraphHost !== "trustgraph.5-75-224-110.sslip.io") {
+  fail(`TRUSTGRAPH_HOST must be trustgraph.5-75-224-110.sslip.io for this VPS launch, got ${trustgraphHost}`);
 }
 
 if (!postgresPassword) fail("POSTGRES_PASSWORD is required");

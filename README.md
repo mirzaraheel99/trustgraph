@@ -45,7 +45,7 @@ https://mirzaraheel99.github.io/trustgraph/
 VPS deployment target:
 
 ```text
-https://5-75-224-11.sslip.io
+https://trustgraph.5-75-224-110.sslip.io
 ```
 
 Use `SERVER_DEPLOYMENT.md` to install Docker, pull the GitHub repo, start Caddy HTTPS, and provision the VPS Postgres service. GitHub remains the primary source of truth; the server should update with `git pull --ff-only origin main` and `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`.
@@ -77,7 +77,7 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-In Supabase Auth URL settings, set the Site URL to the active hosted TrustGraph URL and add `https://mirzaraheel99.github.io/trustgraph/`, `https://5-75-224-11.sslip.io`, and `https://5-75-224-11.sslip.io/` under Redirect URLs before VPS login tests. If Site URL remains `localhost`, verification emails will open a localhost link instead of the hosted app.
+In Supabase Auth URL settings, set the Site URL to the active hosted TrustGraph URL and add `https://mirzaraheel99.github.io/trustgraph/`, `https://trustgraph.5-75-224-110.sslip.io`, and `https://trustgraph.5-75-224-110.sslip.io/` under Redirect URLs before VPS login tests. If Site URL remains `localhost`, verification emails will open a localhost link instead of the hosted app.
 Until those variables are present, the app stays in product preview mode and keeps a local RBAC account context available.
 
 Supabase built-in email is limited to 2 messages per hour project-wide. If signup, resend verification, or recovery returns an email rate-limit error, wait at least 60 minutes or configure custom SMTP before heavier testing.

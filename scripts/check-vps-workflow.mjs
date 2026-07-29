@@ -10,11 +10,11 @@ const envValidator = fs.readFileSync("tools/validate-server-env.sh", "utf8");
 
 const requiredSnippets = [
   {
-    snippet: "default: 5.75.224.11",
+    snippet: "default: 5.75.224.110",
     label: "SSH target defaults to the TrustGraph VPS IP"
   },
   {
-    snippet: "default: https://5-75-224-11.sslip.io",
+    snippet: "default: https://trustgraph.5-75-224-110.sslip.io",
     label: "public smoke URL defaults to the TrustGraph sslip host"
   },
   {
@@ -22,8 +22,8 @@ const requiredSnippets = [
     label: "remote path is locked to /opt/trustgraph"
   },
   {
-    snippet: "5.75.224.110|5-75-224-110.sslip.io",
-    label: "VFIX SSH target is refused"
+    snippet: "Use the VPS IP for SSH, not the protected VFIX public hostname.",
+    label: "VFIX public hostname is refused for SSH target"
   },
   {
     snippet: "https://5-75-224-110.sslip.io*|*CRM-client-demo*",
@@ -34,7 +34,7 @@ const requiredSnippets = [
     label: "unapproved public URLs are refused"
   },
   {
-    snippet: "export TRUSTGRAPH_HOST=5-75-224-11.sslip.io",
+    snippet: "export TRUSTGRAPH_HOST=trustgraph.5-75-224-110.sslip.io",
     label: "remote preflight uses the TrustGraph host"
   },
   {
@@ -81,8 +81,8 @@ const runtimeSnippets = [
   {
     source: caddyfile,
     path: "Caddyfile",
-    snippet: "{$TRUSTGRAPH_HOST:5-75-224-11.sslip.io}",
-    label: "Caddy defaults to the TrustGraph sslip host"
+    snippet: ":80 {",
+    label: "Caddy serves HTTP-only behind the shared nginx edge"
   },
   {
     source: preflight,
@@ -93,7 +93,7 @@ const runtimeSnippets = [
   {
     source: envValidator,
     path: "tools/validate-server-env.sh",
-    snippet: "TRUSTGRAPH_HOST must be 5-75-224-11.sslip.io",
+    snippet: "TRUSTGRAPH_HOST must be trustgraph.5-75-224-110.sslip.io",
     label: "server env validator locks the TrustGraph host"
   }
 ];
