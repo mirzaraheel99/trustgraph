@@ -144,6 +144,7 @@ assertIncludesAny(bundleText, ["Export invites"], "Corporate team invitation exp
 assertIncludesAny(bundleText, ["Invitation handoff"], "personal invitation handoff source label");
 assertIncludesAny(bundleText, ["Export my invites"], "personal invitation export control");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
+assertIncludesAny(bundleText, ["workflow-notifications"], "topbar notification target");
 assertIncludesAny(bundleText, ["Reference database"], "structured reference source label");
 assertIncludesAny(bundleText, ["Export references"], "structured reference export control");
 assertIncludesAny(bundleText, ["Issuer database"], "credential issuer source label");

@@ -5360,7 +5360,7 @@ function NotificationPanel({
   }
 
   return (
-    <section className="notification-panel">
+    <section className="notification-panel" id="workflow-notifications">
       <div className="mini-heading">
         <Bell size={16} />
         <strong>Notifications</strong>
@@ -7426,6 +7426,7 @@ function App() {
   }
 
   const authorizedReportName = `trustgraph-authorized-workspace-${workspace.id}-${new Date().toISOString().slice(0, 10)}.json`;
+  const queuedNotificationCount = notificationEvents.filter((event) => event.status === "queued").length;
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -7465,6 +7466,11 @@ function App() {
       gate_records_loaded: productionGateDecisions.length
     }
   };
+
+  function openNotifications() {
+    if (typeof document === "undefined") return;
+    document.getElementById("workflow-notifications")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   if (showPublicSite) {
     return (
@@ -7628,8 +7634,9 @@ function App() {
             <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
               Public site
             </button>
-            <button aria-label="View notifications">
+            <button aria-label="View notifications" onClick={openNotifications} type="button">
               <Bell size={18} />
+              {queuedNotificationCount ? <span>{queuedNotificationCount}</span> : null}
             </button>
             <button
               aria-label="Export authorized report"
