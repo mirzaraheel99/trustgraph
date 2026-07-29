@@ -194,6 +194,11 @@ assertIncludesAny(bundleText, ["Live rows currently loaded"], "working database 
 assertIncludesAny(bundleText, ["Real database acceptance matrix"], "real database acceptance matrix label");
 assertIncludesAny(bundleText, ["live_database_acceptance"], "real database acceptance packet field");
 assertIncludesAny(bundleText, ["unmet_requirements"], "real database unmet requirements packet field");
+assertIncludesAny(bundleText, ["Hosted login and database handoff"], "hosted login database handoff label");
+assertIncludesAny(bundleText, ["Export login handoff"], "hosted login database handoff export");
+assertIncludesAny(bundleText, ["hosted_login_database_handoff"], "hosted login database handoff packet field");
+assertIncludesAny(bundleText, ["database_acceptance_requires_live_login"], "hosted login database live-login requirement");
+assertIncludesAny(bundleText, ["vps_deployment_requires_human_access"], "hosted login VPS human-access requirement");
 assertIncludesAny(bundleText, ["Corporate provisioning evidence"], "Corporate account provisioning proof");
 assertIncludesAny(bundleText, ["Export provisioning packet"], "Corporate provisioning export control");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");

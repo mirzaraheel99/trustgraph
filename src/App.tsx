@@ -6187,6 +6187,7 @@ function OnboardingChecklistPanel({
   const wizardExportName = `trustgraph-guided-onboarding-wizard-${new Date().toISOString().slice(0, 10)}.json`;
   const seedEvidenceExportName = `trustgraph-live-pilot-seed-evidence-${new Date().toISOString().slice(0, 10)}.json`;
   const workingDataExportName = `trustgraph-working-database-proof-${new Date().toISOString().slice(0, 10)}.json`;
+  const hostedLoginHandoffExportName = `trustgraph-hosted-login-database-handoff-${new Date().toISOString().slice(0, 10)}.json`;
   const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
   const workingDataRows = [
     { label: "Passport records", count: livePassportRecords.length },
@@ -6238,6 +6239,7 @@ function OnboardingChecklistPanel({
   ];
   const liveDatabaseAcceptancePassing = liveDatabaseAcceptanceRows.filter((row) => row.ok).length;
   const liveDatabaseAcceptanceComplete = Boolean(authSession && accountContext) && liveDatabaseAcceptancePassing === liveDatabaseAcceptanceRows.length;
+  const hostedLoginDatabaseReady = Boolean(authSession && accountContext && liveDatabaseAcceptanceComplete);
   const seededAccessGrantId = visibleSeedEvidence?.access_grant_id ?? "";
   const seededConsentAuthorizationId = visibleSeedEvidence?.consent_authorization_id ?? "";
   const seededSubscriptionId = visibleSeedEvidence?.subscription_id ?? "";
@@ -6354,6 +6356,29 @@ function OnboardingChecklistPanel({
       authSession && accountContext
         ? "Counts reflect rows loaded through the live Supabase repositories for this signed-in account and RBAC context."
         : "Login is required before this packet proves live database state."
+  };
+  const hostedLoginDatabaseHandoff = {
+    generated_at: new Date().toISOString(),
+    mode: "hosted_login_database_handoff",
+    hosted_app_url: "https://mirzaraheel99.github.io/trustgraph/",
+    supabase_email_verification_return_url: hostedAuthRedirectUrl(),
+    database_acceptance_requires_live_login: true,
+    vps_deployment_requires_human_access: true,
+    protected_vfix_host: "https://5-75-224-110.sslip.io",
+    trustgraph_vps_target: "https://5-75-224-11.sslip.io",
+    session_state: authSession ? "signed_in" : "signed_out",
+    profile_email: authSession?.user.email ?? null,
+    account_context_loaded: Boolean(accountContext),
+    hosted_login_database_ready: hostedLoginDatabaseReady,
+    live_database_acceptance: workingDatabaseProof.live_database_acceptance,
+    seed_reconciliation_complete: seedReconciliationComplete,
+    next_operator_steps: [
+      "Open the hosted GitHub Pages URL before signup, login, or password recovery.",
+      "Set Supabase Auth Site URL and allowed redirects to the hosted TrustGraph URL.",
+      "Confirm the email link returns to the hosted app, then sign in and prepare the live pilot workspace.",
+      "Export the working-data packet after live Supabase rows load for the signed-in account.",
+      "Run the TrustGraph VPS workflow only against the TrustGraph host and keep the VFIX host isolated."
+    ]
   };
   const guidedOnboardingWizard = {
     generated_at: new Date().toISOString(),
@@ -6523,6 +6548,21 @@ function OnboardingChecklistPanel({
           <button className="secondary-action" onClick={() => downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json")} type="button">
             Export working-data packet
           </button>
+        </div>
+        <div className="seed-evidence-card">
+          <span className={`status-chip ${hostedLoginDatabaseReady ? "success" : "warning"}`}>
+            {hostedLoginDatabaseReady ? "hosted login verified" : "hosted login handoff"}
+          </span>
+          <strong>Hosted login and database handoff</strong>
+          <small>
+            Exports the hosted Supabase return URL, login state, database acceptance requirements, TrustGraph VPS target, and VFIX isolation guard.
+          </small>
+          <div className="seed-evidence-actions">
+            <small>{hostedLoginDatabaseReady ? "Hosted login and live database acceptance are ready for pilot evidence review." : "Hosted email verification and live database rows still need signed-in proof."}</small>
+            <button className="secondary-action" onClick={() => downloadTextFile(hostedLoginHandoffExportName, JSON.stringify(hostedLoginDatabaseHandoff, null, 2), "application/json")} type="button">
+              Export login handoff
+            </button>
+          </div>
         </div>
       </div>
       <div className="onboarding-list">
