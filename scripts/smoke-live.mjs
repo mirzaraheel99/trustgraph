@@ -159,6 +159,8 @@ assertIncludesAny(bundleText, ["Live database view"], "Corporate user database s
 assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
 assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");
+assertIncludesAny(bundleText, ["Corporate user database packet"], "Corporate user database packet label");
+assertIncludesAny(bundleText, ["Export user packet"], "Corporate user database packet export");
 assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");
 assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soon queue signal");
 assertIncludesAny(bundleText, ["Membership database"], "Corporate team member source label");

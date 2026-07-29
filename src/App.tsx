@@ -1701,8 +1701,48 @@ function CorporateDirectoryPanel({
     return matchesStatus && haystack.includes(directoryQuery.trim().toLowerCase());
   });
   const exportName = `trustgraph-corporate-directory-${new Date().toISOString().slice(0, 10)}.csv`;
+  const packetName = `trustgraph-corporate-user-database-${new Date().toISOString().slice(0, 10)}.json`;
   const uniqueProfessionalCount = new Set(requests.map((request) => request.subject_profile_id)).size;
   const approvedAccessCount = requests.filter((request) => request.status === "approved").length;
+  const corporateUserDatabasePacket = {
+    generated_at: new Date().toISOString(),
+    mode: "live_supabase_visibility",
+    filters: {
+      status: statusFilter,
+      query: directoryQuery.trim()
+    },
+    source_counts: {
+      access_grants: requests.length,
+      filtered_professionals: filteredRows.length,
+      unique_professionals: uniqueProfessionalCount,
+      approved_access_grants: approvedAccessCount,
+      shared_passport_records: sharedRecords.length,
+      missing_record_requests: missingRecordRequests.length,
+      open_gap_requests: missingRecordRequests.filter((request) => request.status !== "fulfilled").length
+    },
+    professionals: filteredRows.map((row) => ({
+      access_grant_id: row.id,
+      subject_profile_id: row.subjectProfileId,
+      professional_name: row.name,
+      professional_email: row.detail,
+      grant_status: row.rawStatus,
+      purpose: row.signal,
+      shared_record_count: row.sharedRecordCount,
+      open_gap_count: row.openGapCount,
+      gap_focus: row.gapTitles
+    })),
+    shared_record_scope: sharedRecords.map((record) => ({
+      record_id: record.id,
+      section: record.section,
+      title: record.title,
+      status: record.status,
+      source: record.source,
+      sensitivity: record.sensitivity ?? "standard",
+      consent_required: Boolean(record.consentRequired),
+      access: record.access
+    })),
+    note: "Corporate Verify can only export professional rows and shared Passport records visible through approved role, organization, Access Grant, and consent scope."
+  };
 
   return (
     <section className="corporate-directory-panel">
@@ -1732,6 +1772,14 @@ function CorporateDirectoryPanel({
         >
           Export CSV
         </button>
+        <button
+          className="secondary-action"
+          disabled={!filteredRows.length && !sharedRecords.length}
+          onClick={() => downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export user packet
+        </button>
       </div>
       <div className="directory-metrics">
         <div>
@@ -1755,6 +1803,10 @@ function CorporateDirectoryPanel({
         <span>Rows: {requests.length} Access Grants</span>
         <span>{sharedRecords.length} shared Passport records</span>
         <span>{missingRecordRequests.length} gap requests</span>
+      </div>
+      <div className="directory-packet-note">
+        <strong>Corporate user database packet</strong>
+        <small>Exports filtered professional access rows, shared record scope, source counts, and gap focus for the active Verify workspace.</small>
       </div>
       <div className="directory-list">
         {filteredRows.length ? (

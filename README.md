@@ -154,15 +154,16 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 8. Request structured references, missing records, or issuer-created credentials as needed.
 9. Professionals review and resolve Corporate missing-record requests from Passport.
 10. Upload private evidence files to Supabase Storage and link them to Passport records.
-11. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
-12. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
-13. Manage Connect API clients and webhook subscriptions from Admin.
-14. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
-15. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
-16. Admin audit trail shows recent material workflow events.
-17. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
-18. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
-19. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
+11. Export the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, and gap focus.
+12. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
+13. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
+14. Manage Connect API clients and webhook subscriptions from Admin.
+15. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
+16. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
+17. Admin audit trail shows recent material workflow events.
+18. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
+19. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
+20. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
 
 ## Live Database Status
 

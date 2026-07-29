@@ -43,6 +43,7 @@ The app exposes these operator exports to prove live database state after sign-i
 
 - Portal access packet: signed-in profile, active membership, organization, role, workspace route, and hosted redirect.
 - Corporate provisioning packet: created organization, membership, role, and database write evidence.
+- Corporate user database packet: filtered professional access rows, shared record scope, source counts, and missing-record gap focus visible to the active Verify workspace.
 - Working-data packet: currently loaded Passport, Access Grant, consent, subscription, team member, and invitation counts.
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC.
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.
@@ -75,4 +76,3 @@ These are not engineering-complete until a human decision is recorded:
 - Legal review for background-check-adjacent records, adverse-action boundaries, and regulated employment decision language.
 - Named pilot customers, onboarding owner, support owner, and incident response owner.
 - VPS bootstrap/secrets for `5-75-224-11.sslip.io`; do not touch the VFIX host.
-
