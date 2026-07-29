@@ -987,6 +987,18 @@ p,
     rgba(255, 255, 255, 0.035);
 }
 
+.corporate-command-panel {
+  align-content: start;
+  gap: 14px;
+}
+
+.panel-intro {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .auth-panel {
   display: grid;
   gap: 10px;
@@ -2195,13 +2207,75 @@ p,
   background: rgba(255, 255, 255, 0.035);
 }
 
-.account-admin-form {
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 .account-admin-form.compact {
   gap: 9px;
+}
+
+.admin-disclosure {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.024);
+  overflow: hidden;
+}
+
+.admin-disclosure[open] {
+  border-color: rgba(82, 214, 196, 0.24);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.055), transparent 70%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.admin-disclosure summary {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.admin-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-disclosure summary span {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 950;
+}
+
+.admin-disclosure summary small {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+
+.admin-disclosure .account-admin-form {
+  padding: 0 12px 12px;
+}
+
+.primary-inline-action {
+  justify-content: center;
+  color: #04110f;
+  border-color: rgba(82, 214, 196, 0.42);
+  background: linear-gradient(135deg, var(--teal), #8de0c9);
+}
+
+.operator-status {
+  display: block;
+  padding: 10px;
+  color: var(--text);
+  border: 1px solid rgba(225, 184, 102, 0.24);
+  border-radius: var(--radius);
+  background: rgba(225, 184, 102, 0.07);
+  overflow-wrap: anywhere;
+  line-height: 1.45;
 }
 
 .corporate-provisioning-card {
@@ -2236,6 +2310,7 @@ p,
   min-height: 38px;
   padding: 0 10px;
   outline: 0;
+  min-width: 0;
 }
 
 .auth-actions {
@@ -2373,10 +2448,12 @@ p,
 
 .membership-list {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 8px;
 }
 
 .membership-button {
+  min-width: 0;
   min-height: 54px;
   padding: 10px;
   text-align: left;
@@ -2393,8 +2470,21 @@ p,
 }
 
 .membership-button span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 13px;
   font-weight: 850;
+}
+
+.membership-button small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rbac-summary {

@@ -4726,6 +4726,28 @@ function pilotAcceptanceToMarkdown(steps: Array<{ label: string; detail: string;
   return `# TrustGraph Pilot Acceptance Runbook\n\nDate: ${today}\nStatus: ${completed}/${steps.length} checks passing\n\n## Workflow Checks\n\n${rows}\n\n## Required Human Gates\n\n- Stripe products, tax, invoices, refunds, dunning, and webhook reconciliation are not production-approved.\n- External RLS/security and evidence-storage review must sign off before regulated traffic.\n- Legal review is required before background-check-adjacent or adverse-action workflows.\n- Pilot customer list, onboarding owner, support path, and incident owner must be named before launch.\n`;
 }
 
+function operatorErrorMessage(error: unknown, fallback: string) {
+  const message = error instanceof Error ? error.message : fallback;
+
+  if (message.includes("42P17") || message.includes("infinite recursion")) {
+    return "Database policy needs migration 034. Apply the organization RLS recursion fix, then refresh this workspace.";
+  }
+
+  if (message.includes("JWT") || message.includes("expired")) {
+    return "Your secure session expired. Sign out, sign back in, then try again.";
+  }
+
+  if (message.includes("not configured")) {
+    return "Live database is not configured for this deployment.";
+  }
+
+  if (message.startsWith("Supabase request failed")) {
+    return "Live database request failed. Check Supabase migrations and role access before retrying.";
+  }
+
+  return message;
+}
+
 function AccountPanel({
   accountUser,
   activeMembership,
@@ -4784,7 +4806,7 @@ function AccountPanel({
       setOrganizationDomain("");
       setPanelStatus("Corporate account created with live Supabase membership evidence.");
     } catch (error) {
-      setPanelStatus(error instanceof Error ? error.message : "Could not create corporate account");
+      setPanelStatus(operatorErrorMessage(error, "Could not create corporate account"));
     } finally {
       setBusy(false);
     }
@@ -4811,7 +4833,7 @@ function AccountPanel({
       await onAssignRole(activeOrg.id, targetRole);
       setPanelStatus("Role activated for current profile");
     } catch (error) {
-      setPanelStatus(error instanceof Error ? error.message : "Could not activate role");
+      setPanelStatus(operatorErrorMessage(error, "Could not activate role"));
     } finally {
       setBusy(false);
     }
@@ -4824,18 +4846,19 @@ function AccountPanel({
       await onCreateOperationsRole();
       setPanelStatus("TrustGraph Verifier role created");
     } catch (error) {
-      setPanelStatus(error instanceof Error ? error.message : "Could not create operations role");
+      setPanelStatus(operatorErrorMessage(error, "Could not create operations role"));
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <section className="account-panel">
+    <section className="account-panel corporate-command-panel">
       <div className="mini-heading">
         <LockKeyhole size={16} />
         <strong>Corporate account and RBAC</strong>
       </div>
+      <p className="panel-intro">Create an employer or staffing workspace, switch roles, and repair access from one place.</p>
       <div className="account-user">
         <span>{accountUser.name}</span>
         <small>{authSession ? `Live profile ${authSession.user.id.slice(0, 8)}` : accountUser.email}</small>
@@ -4861,38 +4884,43 @@ function AccountPanel({
         <small>{activeOrg.status.replace("_", " ")} organization context</small>
         <small>{authStatus}</small>
       </div>
-      <form className="account-admin-form" onSubmit={submitCorporateAccount}>
-        <div className="mini-heading">
-          <UserPlus size={16} />
-          <strong>Create corporate account</strong>
-        </div>
-        <input
-          disabled={!authSession || busy}
-          onChange={(event) => setOrganizationName(event.target.value)}
-          placeholder="Organization name"
-          required
-          value={organizationName}
-        />
-        <div className="account-admin-row">
-          <select
-            disabled={!authSession || busy}
-            onChange={(event) => setOrganizationType(event.target.value as "employer" | "staffing_agency")}
-            value={organizationType}
-          >
-            <option value="employer">Employer</option>
-            <option value="staffing_agency">Staffing agency</option>
-          </select>
+      <details className="admin-disclosure" open={!authSession || accountUser.memberships.length < 2}>
+        <summary>
+          <span>
+            <UserPlus size={16} />
+            Create corporate account
+          </span>
+          <small>Employer or staffing workspace</small>
+        </summary>
+        <form className="account-admin-form" onSubmit={submitCorporateAccount}>
           <input
             disabled={!authSession || busy}
-            onChange={(event) => setOrganizationDomain(event.target.value)}
-            placeholder="company.com"
-            value={organizationDomain}
+            onChange={(event) => setOrganizationName(event.target.value)}
+            placeholder="Organization name"
+            required
+            value={organizationName}
           />
-        </div>
-        <button className="secondary-action" disabled={!authSession || busy} type="submit">
-          Create admin org
-        </button>
-      </form>
+          <div className="account-admin-row">
+            <select
+              disabled={!authSession || busy}
+              onChange={(event) => setOrganizationType(event.target.value as "employer" | "staffing_agency")}
+              value={organizationType}
+            >
+              <option value="employer">Employer</option>
+              <option value="staffing_agency">Staffing agency</option>
+            </select>
+            <input
+              disabled={!authSession || busy}
+              onChange={(event) => setOrganizationDomain(event.target.value)}
+              placeholder="company.com"
+              value={organizationDomain}
+            />
+          </div>
+          <button className="secondary-action primary-inline-action" disabled={!authSession || busy} type="submit">
+            Create admin org
+          </button>
+        </form>
+      </details>
       {provisioningPacket ? (
         <div className="corporate-provisioning-card">
           <span className="status-chip success">Corporate provisioning evidence</span>
@@ -4902,48 +4930,53 @@ function AccountPanel({
           </button>
         </div>
       ) : null}
-      <form className="account-admin-form compact" onSubmit={submitRoleActivation}>
-        <div className="mini-heading">
-          <KeyRound size={16} />
-          <strong>RBAC role admin</strong>
-        </div>
-        <div className="account-admin-row">
-          <select
-            disabled={!authSession || !canManageActiveOrg || busy}
-            onChange={(event) => setTargetRole(event.target.value as RoleKey)}
-            value={targetRole}
-          >
-            {roleOptions.map((role) => (
-              <option key={role} value={role}>
-                {getRole(role).label}
-              </option>
-            ))}
-          </select>
-          <button className="secondary-action" disabled={!authSession || !canManageActiveOrg || busy} type="submit">
-            Activate
+      <details className="admin-disclosure">
+        <summary>
+          <span>
+            <KeyRound size={16} />
+            Role access
+          </span>
+          <small>{canManageActiveOrg ? "Admin controls" : "Needs admin role"}</small>
+        </summary>
+        <form className="account-admin-form compact" onSubmit={submitRoleActivation}>
+          <div className="account-admin-row">
+            <select
+              disabled={!authSession || !canManageActiveOrg || busy}
+              onChange={(event) => setTargetRole(event.target.value as RoleKey)}
+              value={targetRole}
+            >
+              {roleOptions.map((role) => (
+                <option key={role} value={role}>
+                  {getRole(role).label}
+                </option>
+              ))}
+            </select>
+            <button className="secondary-action" disabled={!authSession || !canManageActiveOrg || busy} type="submit">
+              Activate
+            </button>
+          </div>
+          <small>{canManageActiveOrg ? "Admin can activate scoped roles for this profile." : "Switch to a corporate admin role to manage RBAC."}</small>
+          <div className="role-preview-card">
+            <div>
+              <span className={`status-chip ${toneClass(selectedRole.risk)}`}>{selectedRole.label}</span>
+              <small>{selectedRole.description}</small>
+            </div>
+            <div className="role-preview-meta">
+              <span>{workspaces.find((workspace) => workspace.id === selectedRole.portal)?.label ?? selectedRole.portal}</span>
+              <span>{selectedRole.permissions.length} permissions</span>
+            </div>
+            <div className="role-permission-list">
+              {selectedRole.permissions.map((permission) => (
+                <span key={permission}>{permissionLabel(permission)}</span>
+              ))}
+            </div>
+          </div>
+          <button className="secondary-action" disabled={!authSession || busy} onClick={() => void createOperationsRole()} type="button">
+            Add operations role
           </button>
-        </div>
-        <small>{canManageActiveOrg ? "Admin can activate scoped roles for this profile." : "Switch to a corporate admin role to manage RBAC."}</small>
-        <div className="role-preview-card">
-          <div>
-            <span className={`status-chip ${toneClass(selectedRole.risk)}`}>{selectedRole.label}</span>
-            <small>{selectedRole.description}</small>
-          </div>
-          <div className="role-preview-meta">
-            <span>{workspaces.find((workspace) => workspace.id === selectedRole.portal)?.label ?? selectedRole.portal}</span>
-            <span>{selectedRole.permissions.length} permissions</span>
-          </div>
-          <div className="role-permission-list">
-            {selectedRole.permissions.map((permission) => (
-              <span key={permission}>{permissionLabel(permission)}</span>
-            ))}
-          </div>
-        </div>
-        <button className="secondary-action" disabled={!authSession || busy} onClick={() => void createOperationsRole()} type="button">
-          Add operations role
-        </button>
-      </form>
-      {panelStatus ? <small>{panelStatus}</small> : null}
+        </form>
+      </details>
+      {panelStatus ? <small className="operator-status">{panelStatus}</small> : null}
     </section>
   );
 }
