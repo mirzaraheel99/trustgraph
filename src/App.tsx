@@ -9129,49 +9129,15 @@ function App() {
         </div>
 
         <div className="sidebar-section-label">Account</div>
-        <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
-        <LiveDataModePanel
-          accountContext={accountContext}
-          activeMembership={activeMembership}
-          activeOrganization={activeOrganization}
-          activeRoleLabel={activeRole.label}
-          authSession={authSession}
-          workspaceLabel={workspace.label}
-        />
-        <ProductionReadinessPanel
-          accountContext={accountContext}
-          activeOrganizationName={activeOrganization.name}
-          authSession={authSession}
-          teamManagementReady={teamManagementReady}
-        />
-        <OnboardingChecklistPanel
-          accessGrants={accessGrants}
-          accountContext={accountContext}
-          authSession={authSession}
-          consentAuthorizations={consentAuthorizations}
-          evidenceDocuments={evidenceDocuments}
-          livePassportRecords={livePassportRecords}
-          organizationSubscriptions={organizationSubscriptions}
-          teamInvitations={teamInvitations}
-          teamMembers={teamMembers}
-          onOpenHostedRegistration={() => setShowPublicSite(true)}
-          onOpenWorkspace={changeWorkspace}
-          onSeedPilotWorkspace={seedLivePilotWorkspace}
-        />
-        <PilotAcceptancePanel
-          accessGrants={accessGrants}
-          apiClients={apiClients}
-          auditEvents={auditEvents}
-          consentAuthorizations={consentAuthorizations}
-          evidenceDocuments={evidenceDocuments}
-          livePassportRecords={livePassportRecords}
-          schemaMigrationRuns={schemaMigrationRuns}
-          sharedVerifyRecords={sharedVerifyRecords}
-          subscriptions={organizationSubscriptions}
-          teamInvitations={teamInvitations}
-          teamMembers={teamMembers}
-        />
-        <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
+        <div className="sidebar-account-card">
+          <span className={`status-chip ${authSession ? "success" : "neutral"}`}>{authSession ? "Signed in" : "Preview mode"}</span>
+          <strong>{authSession?.user.email ?? "Product preview"}</strong>
+          <small>{authSession ? `${activeRole.label} at ${activeOrganization.name}` : "Open Account in the top bar to connect Supabase."}</small>
+          <button className="secondary-action" onClick={openAuthControls} type="button">
+            <KeyRound size={16} />
+            Account settings
+          </button>
+        </div>
 
         <div className="sidebar-section-label">Current workspace</div>
         <nav className="module-nav" aria-label="Workspace modules">
@@ -9248,47 +9214,6 @@ function App() {
           <PermissionGate roleLabel={activeRole.label} workspaceLabel={workspace.label} />
         ) : (
           <>
-            <section className="workspace-admin-grid" id="corporate-account-controls">
-              <AccountPanel
-                accountUser={accountUser}
-                activeMembership={activeMembership}
-                authSession={authSession}
-                authStatus={authStatus}
-                organizationList={organizationList}
-                onAssignRole={assignLiveCorporateRole}
-                onCreateCorporateAccount={createLiveCorporateAccount}
-                onCreateOperationsRole={createLiveOperationsRole}
-                onSwitch={switchMembership}
-              />
-              <MyInvitationsPanel
-                disabled={!authSession || !accountContext}
-                invitations={myInvitations}
-                message={myInvitationStatus}
-                onAccept={acceptLiveTeamInvitation}
-              />
-              <BillingPanel
-                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-                message={billingStatus}
-                onActivate={activateLiveSubscription}
-                plans={subscriptionPlans}
-                subscriptions={organizationSubscriptions}
-              />
-              <TeamInvitationsPanel
-                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-                invitations={teamInvitations}
-                message={teamStatus}
-                onCreate={createLiveTeamInvitation}
-                onStatus={updateLiveTeamInvitationStatus}
-              />
-              <TeamMembersPanel
-                currentProfileId={accountContext?.profile.id ?? null}
-                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-                members={teamMembers}
-                message={memberStatus}
-                onStatus={updateLiveTeamMemberStatus}
-              />
-            </section>
-
         <section className="hero">
           <div className="hero-card primary">
             <div className="hero-card-top">
@@ -9336,6 +9261,95 @@ function App() {
             <MetricCard key={metric.label} {...metric} />
           ))}
         </section>
+
+            <section className="workspace-admin-grid" id="corporate-account-controls">
+              <div className="setup-center-header">
+                <span className="eyebrow">Setup center</span>
+                <h2>Account, corporate access, and rollout controls</h2>
+                <p>Use this area for login, corporate workspace creation, team access, billing, and production readiness without crowding the daily workspace.</p>
+              </div>
+              <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
+              <AccountPanel
+                accountUser={accountUser}
+                activeMembership={activeMembership}
+                authSession={authSession}
+                authStatus={authStatus}
+                organizationList={organizationList}
+                onAssignRole={assignLiveCorporateRole}
+                onCreateCorporateAccount={createLiveCorporateAccount}
+                onCreateOperationsRole={createLiveOperationsRole}
+                onSwitch={switchMembership}
+              />
+              <LiveDataModePanel
+                accountContext={accountContext}
+                activeMembership={activeMembership}
+                activeOrganization={activeOrganization}
+                activeRoleLabel={activeRole.label}
+                authSession={authSession}
+                workspaceLabel={workspace.label}
+              />
+              <ProductionReadinessPanel
+                accountContext={accountContext}
+                activeOrganizationName={activeOrganization.name}
+                authSession={authSession}
+                teamManagementReady={teamManagementReady}
+              />
+              <MyInvitationsPanel
+                disabled={!authSession || !accountContext}
+                invitations={myInvitations}
+                message={myInvitationStatus}
+                onAccept={acceptLiveTeamInvitation}
+              />
+              <BillingPanel
+                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                message={billingStatus}
+                onActivate={activateLiveSubscription}
+                plans={subscriptionPlans}
+                subscriptions={organizationSubscriptions}
+              />
+              <TeamInvitationsPanel
+                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                invitations={teamInvitations}
+                message={teamStatus}
+                onCreate={createLiveTeamInvitation}
+                onStatus={updateLiveTeamInvitationStatus}
+              />
+              <TeamMembersPanel
+                currentProfileId={accountContext?.profile.id ?? null}
+                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                members={teamMembers}
+                message={memberStatus}
+                onStatus={updateLiveTeamMemberStatus}
+              />
+              <OnboardingChecklistPanel
+                accessGrants={accessGrants}
+                accountContext={accountContext}
+                authSession={authSession}
+                consentAuthorizations={consentAuthorizations}
+                evidenceDocuments={evidenceDocuments}
+                livePassportRecords={livePassportRecords}
+                organizationSubscriptions={organizationSubscriptions}
+                teamInvitations={teamInvitations}
+                teamMembers={teamMembers}
+                onOpenHostedRegistration={() => setShowPublicSite(true)}
+                onOpenWorkspace={changeWorkspace}
+                onSeedPilotWorkspace={seedLivePilotWorkspace}
+              />
+              <PilotAcceptancePanel
+                accessGrants={accessGrants}
+                apiClients={apiClients}
+                auditEvents={auditEvents}
+                consentAuthorizations={consentAuthorizations}
+                evidenceDocuments={evidenceDocuments}
+                livePassportRecords={livePassportRecords}
+                schemaMigrationRuns={schemaMigrationRuns}
+                sharedVerifyRecords={sharedVerifyRecords}
+                subscriptions={organizationSubscriptions}
+                teamInvitations={teamInvitations}
+                teamMembers={teamMembers}
+              />
+              <NotificationPanel events={notificationEvents} message={notificationStatus} onStatus={updateLiveNotificationStatus} />
+            </section>
 
         <section className="work-grid">
           <div className="records-panel">
