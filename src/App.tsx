@@ -1672,20 +1672,36 @@ function CorporateDirectoryPanel({
 }) {
   const [directoryQuery, setDirectoryQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "approved" | "declined" | "revoked">("all");
+  const openGapCountsByProfile = missingRecordRequests.reduce<Record<string, number>>((counts, request) => {
+    if (request.status === "fulfilled") return counts;
+    counts[request.subject_profile_id] = (counts[request.subject_profile_id] ?? 0) + 1;
+    return counts;
+  }, {});
+  const gapTitlesByProfile = missingRecordRequests.reduce<Record<string, string[]>>((titles, request) => {
+    if (request.status === "fulfilled") return titles;
+    titles[request.subject_profile_id] = [...(titles[request.subject_profile_id] ?? []), request.title];
+    return titles;
+  }, {});
   const candidateRows = requests.map((request) => ({
     id: request.id,
+    subjectProfileId: request.subject_profile_id,
     name: request.subject_profile.full_name,
     detail: request.subject_profile.email,
     rawStatus: request.status,
     status: request.status.replace(/_/g, " "),
-    signal: request.purpose
+    signal: request.purpose,
+    sharedRecordCount: request.status === "approved" ? sharedRecords.length : 0,
+    openGapCount: openGapCountsByProfile[request.subject_profile_id] ?? 0,
+    gapTitles: gapTitlesByProfile[request.subject_profile_id] ?? []
   }));
   const filteredRows = candidateRows.filter((row) => {
     const matchesStatus = statusFilter === "all" || row.rawStatus === statusFilter;
-    const haystack = `${row.name} ${row.detail} ${row.signal}`.toLowerCase();
+    const haystack = `${row.name} ${row.detail} ${row.signal} ${row.gapTitles.join(" ")}`.toLowerCase();
     return matchesStatus && haystack.includes(directoryQuery.trim().toLowerCase());
   });
   const exportName = `trustgraph-corporate-directory-${new Date().toISOString().slice(0, 10)}.csv`;
+  const uniqueProfessionalCount = new Set(requests.map((request) => request.subject_profile_id)).size;
+  const approvedAccessCount = requests.filter((request) => request.status === "approved").length;
 
   return (
     <section className="corporate-directory-panel">
@@ -1718,12 +1734,12 @@ function CorporateDirectoryPanel({
       </div>
       <div className="directory-metrics">
         <div>
-          <strong>{requests.length}</strong>
-          <small>Access records</small>
+          <strong>{uniqueProfessionalCount}</strong>
+          <small>Professionals in view</small>
         </div>
         <div>
-          <strong>{sharedRecords.length}</strong>
-          <small>Shared Passport records</small>
+          <strong>{approvedAccessCount}</strong>
+          <small>Approved Access Grants</small>
         </div>
         <div>
           <strong>{missingRecordRequests.filter((request) => request.status !== "fulfilled").length}</strong>
@@ -1734,6 +1750,11 @@ function CorporateDirectoryPanel({
         <span className="status-chip success">Live database view</span>
         <small>Reads corporate visibility from Supabase Access Grants, shared Passport records, professional profiles, and missing-record requests.</small>
       </div>
+      <div className="directory-source-detail">
+        <span>Rows: {requests.length} Access Grants</span>
+        <span>{sharedRecords.length} shared Passport records</span>
+        <span>{missingRecordRequests.length} gap requests</span>
+      </div>
       <div className="directory-list">
         {filteredRows.length ? (
           filteredRows.slice(0, 8).map((row) => (
@@ -1742,6 +1763,8 @@ function CorporateDirectoryPanel({
                 <strong>{row.name}</strong>
                 <p>{row.signal}</p>
                 <small>{row.detail}</small>
+                <small>{row.sharedRecordCount} shared records · {row.openGapCount} open gaps</small>
+                {row.gapTitles.length ? <small>Gap focus: {row.gapTitles.slice(0, 2).join(", ")}</small> : null}
               </div>
               <span className="status-chip neutral">{row.status}</span>
             </article>
@@ -3568,11 +3591,22 @@ function evidenceDocumentsToCsv(documents: DbEvidenceDocument[]) {
 }
 
 function corporateDirectoryToCsv(
-  rows: Array<{ id: string; name: string; detail: string; rawStatus: string; status: string; signal: string }>
+  rows: Array<{
+    id: string;
+    subjectProfileId: string;
+    name: string;
+    detail: string;
+    rawStatus: string;
+    status: string;
+    signal: string;
+    sharedRecordCount: number;
+    openGapCount: number;
+    gapTitles: string[];
+  }>
 ) {
   const csvRows = [
-    ["access_grant_id", "professional_name", "professional_email", "status", "purpose"],
-    ...rows.map((row) => [row.id, row.name, row.detail, row.status, row.signal])
+    ["access_grant_id", "subject_profile_id", "professional_name", "professional_email", "status", "purpose", "shared_record_count", "open_gap_count", "gap_focus"],
+    ...rows.map((row) => [row.id, row.subjectProfileId, row.name, row.detail, row.status, row.signal, String(row.sharedRecordCount), String(row.openGapCount), row.gapTitles.join("; ")])
   ];
 
   return csvRows.map((row) => row.map(csvCell).join(",")).join("\n");

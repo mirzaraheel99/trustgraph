@@ -143,6 +143,9 @@ assertIncludesAny(bundleText, ["Export seed evidence"], "pilot seed evidence exp
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
 assertIncludesAny(bundleText, ["Live database view"], "Corporate user database source label");
+assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
+assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
+assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");
 assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");
 assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soon queue signal");
 assertIncludesAny(bundleText, ["Membership database"], "Corporate team member source label");
