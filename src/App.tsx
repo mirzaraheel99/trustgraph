@@ -9041,6 +9041,11 @@ function App() {
     document.getElementById("live-auth-controls")?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
+  function openCorporateControls() {
+    if (typeof document === "undefined") return;
+    document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   function handleSignOut() {
     signOut();
     setAuthSession(null);
@@ -9091,45 +9096,6 @@ function App() {
         </div>
 
         <div className="sidebar-section-label">Account</div>
-        <AccountPanel
-          accountUser={accountUser}
-          activeMembership={activeMembership}
-          authSession={authSession}
-          authStatus={authStatus}
-          organizationList={organizationList}
-          onAssignRole={assignLiveCorporateRole}
-          onCreateCorporateAccount={createLiveCorporateAccount}
-          onCreateOperationsRole={createLiveOperationsRole}
-          onSwitch={switchMembership}
-        />
-        <BillingPanel
-          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-          message={billingStatus}
-          onActivate={activateLiveSubscription}
-          plans={subscriptionPlans}
-          subscriptions={organizationSubscriptions}
-        />
-        <TeamInvitationsPanel
-          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-          invitations={teamInvitations}
-          message={teamStatus}
-          onCreate={createLiveTeamInvitation}
-          onStatus={updateLiveTeamInvitationStatus}
-        />
-        <TeamMembersPanel
-          currentProfileId={accountContext?.profile.id ?? null}
-          disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
-          members={teamMembers}
-          message={memberStatus}
-          onStatus={updateLiveTeamMemberStatus}
-        />
-        <MyInvitationsPanel
-          disabled={!authSession || !accountContext}
-          invitations={myInvitations}
-          message={myInvitationStatus}
-          onAccept={acceptLiveTeamInvitation}
-        />
-
         <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
         <LiveDataModePanel
           accountContext={accountContext}
@@ -9218,6 +9184,10 @@ function App() {
                   <KeyRound size={16} />
                   Account
                 </button>
+                <button className="secondary-action" onClick={openCorporateControls} type="button">
+                  <BriefcaseBusiness size={16} />
+                  Corporate
+                </button>
                 <button className="secondary-action" onClick={handleSignOut} type="button">
                   <LogOut size={16} />
                   Sign out
@@ -9245,6 +9215,47 @@ function App() {
           <PermissionGate roleLabel={activeRole.label} workspaceLabel={workspace.label} />
         ) : (
           <>
+            <section className="workspace-admin-grid" id="corporate-account-controls">
+              <AccountPanel
+                accountUser={accountUser}
+                activeMembership={activeMembership}
+                authSession={authSession}
+                authStatus={authStatus}
+                organizationList={organizationList}
+                onAssignRole={assignLiveCorporateRole}
+                onCreateCorporateAccount={createLiveCorporateAccount}
+                onCreateOperationsRole={createLiveOperationsRole}
+                onSwitch={switchMembership}
+              />
+              <MyInvitationsPanel
+                disabled={!authSession || !accountContext}
+                invitations={myInvitations}
+                message={myInvitationStatus}
+                onAccept={acceptLiveTeamInvitation}
+              />
+              <BillingPanel
+                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                message={billingStatus}
+                onActivate={activateLiveSubscription}
+                plans={subscriptionPlans}
+                subscriptions={organizationSubscriptions}
+              />
+              <TeamInvitationsPanel
+                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                invitations={teamInvitations}
+                message={teamStatus}
+                onCreate={createLiveTeamInvitation}
+                onStatus={updateLiveTeamInvitationStatus}
+              />
+              <TeamMembersPanel
+                currentProfileId={accountContext?.profile.id ?? null}
+                disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
+                members={teamMembers}
+                message={memberStatus}
+                onStatus={updateLiveTeamMemberStatus}
+              />
+            </section>
+
         <section className="hero">
           <div className="hero-card primary">
             <div className="hero-card-top">
