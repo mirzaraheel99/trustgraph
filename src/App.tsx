@@ -1969,6 +1969,11 @@ function CorporateDirectoryPanel({
     titles[request.subject_profile_id] = [...(titles[request.subject_profile_id] ?? []), request.title];
     return titles;
   }, {});
+  const sharedRecordsByProfile = sharedRecords.reduce<Record<string, RecordItem[]>>((recordsByProfile, record) => {
+    if (!record.ownerProfileId) return recordsByProfile;
+    recordsByProfile[record.ownerProfileId] = [...(recordsByProfile[record.ownerProfileId] ?? []), record];
+    return recordsByProfile;
+  }, {});
   const candidateRows = requests.map((request) => ({
     id: request.id,
     subjectProfileId: request.subject_profile_id,
@@ -1977,9 +1982,10 @@ function CorporateDirectoryPanel({
     rawStatus: request.status,
     status: request.status.replace(/_/g, " "),
     signal: request.purpose,
-    sharedRecordCount: request.status === "approved" ? sharedRecords.length : 0,
+    sharedRecordCount: request.status === "approved" ? (sharedRecordsByProfile[request.subject_profile_id]?.length ?? 0) : 0,
     openGapCount: openGapCountsByProfile[request.subject_profile_id] ?? 0,
-    gapTitles: gapTitlesByProfile[request.subject_profile_id] ?? []
+    gapTitles: gapTitlesByProfile[request.subject_profile_id] ?? [],
+    sharedRecordTitles: (sharedRecordsByProfile[request.subject_profile_id] ?? []).map((record) => record.title)
   }));
   const sharedResponsibilityCount = sharedRecords.reduce((count, record) => count + (record.responsibilities?.length ?? 0), 0);
   const sharedSkillCount = sharedRecords.reduce((count, record) => count + (record.skills?.length ?? 0), 0);
@@ -2018,11 +2024,19 @@ function CorporateDirectoryPanel({
       grant_status: row.rawStatus,
       purpose: row.signal,
       shared_record_count: row.sharedRecordCount,
+      shared_record_titles: row.sharedRecordTitles,
       open_gap_count: row.openGapCount,
       gap_focus: row.gapTitles
     })),
+    per_professional_shared_record_scope: Object.entries(sharedRecordsByProfile).map(([profileId, records]) => ({
+      subject_profile_id: profileId,
+      shared_record_count: records.length,
+      shared_record_ids: records.map((record) => record.id),
+      shared_record_titles: records.map((record) => record.title)
+    })),
     shared_record_scope: sharedRecords.map((record) => ({
       record_id: record.id,
+      owner_profile_id: record.ownerProfileId ?? null,
       section: record.section,
       title: record.title,
       status: record.status,
@@ -2098,7 +2112,7 @@ function CorporateDirectoryPanel({
       </div>
       <div className="directory-packet-note">
         <strong>Corporate user database packet</strong>
-        <small>Exports filtered professional access rows, shared record scope, structured responsibilities, skills, source counts, and gap focus for the active Verify workspace.</small>
+        <small>Exports filtered professional access rows, per-professional shared records, structured responsibilities, skills, source counts, and gap focus for the active Verify workspace.</small>
         <small>{sharedResponsibilityCount} shared responsibilities and {sharedSkillCount} shared skills visible through approved scope.</small>
       </div>
       <div className="directory-list">
@@ -4195,13 +4209,14 @@ function corporateDirectoryToCsv(
     status: string;
     signal: string;
     sharedRecordCount: number;
+    sharedRecordTitles: string[];
     openGapCount: number;
     gapTitles: string[];
   }>
 ) {
   const csvRows = [
-    ["access_grant_id", "subject_profile_id", "professional_name", "professional_email", "status", "purpose", "shared_record_count", "open_gap_count", "gap_focus"],
-    ...rows.map((row) => [row.id, row.subjectProfileId, row.name, row.detail, row.status, row.signal, String(row.sharedRecordCount), String(row.openGapCount), row.gapTitles.join("; ")])
+    ["access_grant_id", "subject_profile_id", "professional_name", "professional_email", "status", "purpose", "shared_record_count", "shared_record_titles", "open_gap_count", "gap_focus"],
+    ...rows.map((row) => [row.id, row.subjectProfileId, row.name, row.detail, row.status, row.signal, String(row.sharedRecordCount), row.sharedRecordTitles.join("; "), String(row.openGapCount), row.gapTitles.join("; ")])
   ];
 
   return csvRows.map((row) => row.map(csvCell).join(",")).join("\n");

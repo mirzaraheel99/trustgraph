@@ -68,6 +68,7 @@ export function trustRecordToRecordItem(record: DbTrustRecord): RecordItem {
 
   return {
     id: record.id,
+    ownerProfileId: record.owner_profile_id,
     section: recordTypeLabels[record.type],
     title: record.title,
     subtitle: structuredSummary,

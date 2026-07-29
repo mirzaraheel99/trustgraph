@@ -38,6 +38,7 @@ export interface ActionItem {
 
 export interface RecordItem {
   id: string;
+  ownerProfileId?: string;
   section: string;
   title: string;
   subtitle: string;

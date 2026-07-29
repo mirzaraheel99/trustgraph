@@ -182,6 +182,8 @@ assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user databa
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");
 assertIncludesAny(bundleText, ["shared responsibilities"], "Corporate user database structured responsibility proof");
 assertIncludesAny(bundleText, ["Corporate user database packet"], "Corporate user database packet label");
+assertIncludesAny(bundleText, ["per-professional shared records"], "Corporate user database per-professional shared record proof");
+assertIncludesAny(bundleText, ["per_professional_shared_record_scope"], "Corporate user database per-professional packet field");
 assertIncludesAny(bundleText, ["Export user packet"], "Corporate user database packet export");
 assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");
 assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soon queue signal");
