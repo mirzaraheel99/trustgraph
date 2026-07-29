@@ -3874,6 +3874,7 @@ function VpsLaunchPanel() {
     checkout_path: checkoutPath,
     github_workflow: workflowName,
     preflight_command: "cd /opt/trustgraph && bash tools/preflight-vps.sh",
+    env_validation_command: "cd /opt/trustgraph && bash tools/validate-server-env.sh .env.server",
     source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
     web_port_strategy: {
       default_http: 80,

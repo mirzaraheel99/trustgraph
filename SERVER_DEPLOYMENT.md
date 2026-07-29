@@ -37,6 +37,7 @@ After the first checkout exists, run the read-only preflight before any update:
 
 ```bash
 cd /opt/trustgraph
+bash tools/validate-server-env.sh .env.server
 bash tools/preflight-vps.sh
 ```
 
@@ -78,6 +79,7 @@ For later updates:
 
 ```bash
 cd /opt/trustgraph
+bash tools/validate-server-env.sh .env.server
 bash tools/preflight-vps.sh
 git pull --ff-only origin main
 docker compose --env-file .env.server -f docker-compose.server.yml up -d --build
@@ -115,6 +117,12 @@ Set these to the hosted Supabase values while Supabase remains the live auth/dat
 ```text
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Validate the environment before the first build:
+
+```bash
+bash tools/validate-server-env.sh .env.server
 ```
 
 The bundled Postgres service is installed for the VPS database phase. Do not move production data from Supabase into this Postgres container until the app has a server-side API and migration plan for auth, RLS, storage, and backups.
@@ -167,7 +175,7 @@ remote_path=/opt/trustgraph
 
 The workflow is manual-only. It connects to the VPS by `target_host`, pulls `origin/main` inside `/opt/trustgraph`, runs `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`, and smoke-checks the validated `public_url`.
 
-The workflow runs `tools/preflight-vps.sh` before pulling or rebuilding.
+The workflow runs `tools/validate-server-env.sh` through `tools/preflight-vps.sh` before pulling or rebuilding.
 
 It will refuse:
 

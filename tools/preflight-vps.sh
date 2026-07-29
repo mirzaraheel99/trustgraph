@@ -30,6 +30,7 @@ cd "$TRUSTGRAPH_REMOTE_PATH"
 [[ -f docker-compose.server.yml ]] || fail "missing docker-compose.server.yml"
 [[ -f Caddyfile ]] || fail "missing Caddyfile"
 [[ -f .env.server ]] || fail "missing .env.server"
+[[ -f tools/validate-server-env.sh ]] || fail "missing tools/validate-server-env.sh"
 
 origin="$(git remote get-url origin)"
 [[ "$origin" == "https://github.com/mirzaraheel99/trustgraph.git" || "$origin" == "git@github.com:mirzaraheel99/trustgraph.git" ]] || fail "unexpected Git origin: $origin"
@@ -37,10 +38,26 @@ origin="$(git remote get-url origin)"
 command -v docker >/dev/null 2>&1 || fail "Docker is not installed"
 docker compose version >/dev/null 2>&1 || fail "Docker Compose plugin is not available"
 
-http_port="$(awk -F= '$1 == "TRUSTGRAPH_HTTP_PORT" { print $2 }' .env.server | tail -n 1)"
-https_port="$(awk -F= '$1 == "TRUSTGRAPH_HTTPS_PORT" { print $2 }' .env.server | tail -n 1)"
-http_bind="$(awk -F= '$1 == "TRUSTGRAPH_HTTP_BIND" { print $2 }' .env.server | tail -n 1)"
-https_bind="$(awk -F= '$1 == "TRUSTGRAPH_HTTPS_BIND" { print $2 }' .env.server | tail -n 1)"
+bash tools/validate-server-env.sh .env.server
+
+read_env() {
+  local key="$1"
+  local line=""
+  local value=""
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    case "$line" in
+      "$key="*)
+        value="${line#*=}"
+        ;;
+    esac
+  done < .env.server
+  printf '%s' "$value"
+}
+
+http_port="$(read_env TRUSTGRAPH_HTTP_PORT)"
+https_port="$(read_env TRUSTGRAPH_HTTPS_PORT)"
+http_bind="$(read_env TRUSTGRAPH_HTTP_BIND)"
+https_bind="$(read_env TRUSTGRAPH_HTTPS_BIND)"
 
 http_port="${http_port:-80}"
 https_port="${https_port:-443}"
@@ -53,8 +70,8 @@ if [[ "$http_port" == "80" || "$https_port" == "443" ]]; then
   fi
 fi
 
-grep -q '^NEXT_PUBLIC_SUPABASE_URL=.' .env.server || warn "NEXT_PUBLIC_SUPABASE_URL is empty; auth will run in preview/local adapter mode"
-grep -q '^NEXT_PUBLIC_SUPABASE_ANON_KEY=.' .env.server || warn "NEXT_PUBLIC_SUPABASE_ANON_KEY is empty; auth will run in preview/local adapter mode"
+[[ -n "$(read_env NEXT_PUBLIC_SUPABASE_URL)" ]] || warn "NEXT_PUBLIC_SUPABASE_URL is empty; auth will run in preview/local adapter mode"
+[[ -n "$(read_env NEXT_PUBLIC_SUPABASE_ANON_KEY)" ]] || warn "NEXT_PUBLIC_SUPABASE_ANON_KEY is empty; auth will run in preview/local adapter mode"
 
 echo "TrustGraph VPS preflight passed"
 echo "Host: $TRUSTGRAPH_HOST"

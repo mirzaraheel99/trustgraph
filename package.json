@@ -10,6 +10,7 @@
     "check:claims": "node scripts/check-claims.mjs",
     "check:responsive": "node scripts/check-responsive.mjs",
     "check:rls": "node scripts/check-rls.mjs",
+    "check:server-env": "node scripts/check-server-env.mjs tools/test-server-env.example",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {

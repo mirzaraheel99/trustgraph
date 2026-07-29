@@ -104,6 +104,14 @@ npm run smoke:live
 
 Set `TRUSTGRAPH_SMOKE_URL` to smoke-check a different hosted URL.
 
+## Server Env Check
+
+```bash
+npm run check:server-env
+```
+
+This validates the non-secret fixture. On the VPS, run `bash tools/validate-server-env.sh .env.server` before the first Docker build.
+
 ## Database Foundation
 
 Supabase-ready migrations live in `supabase/migrations/`:

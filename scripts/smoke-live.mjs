@@ -206,6 +206,7 @@ assertIncludesAny(bundleText, ["Export releases"], "release ledger export contro
 assertIncludesAny(bundleText, ["TrustGraph VPS launch guard"], "TrustGraph-only VPS launch guard panel");
 assertIncludesAny(bundleText, ["Export VPS packet"], "VPS launch packet export");
 assertIncludesAny(bundleText, ["tools/preflight-vps.sh"], "VPS preflight command");
+assertIncludesAny(bundleText, ["tools/validate-server-env.sh"], "VPS env validation command");
 assertIncludesAny(bundleText, ["github_workflow_inputs"], "VPS deploy workflow input packet");
 assertIncludesAny(bundleText, ["public_url"], "VPS deploy public URL input");
 assertIncludesAny(bundleText, ["5-75-224-11.sslip.io"], "TrustGraph VPS target host");
