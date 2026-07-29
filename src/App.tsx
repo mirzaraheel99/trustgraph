@@ -3447,6 +3447,43 @@ function PlanAlignmentPanel({
   const pilotContactsExportName = `trustgraph-pilot-launch-contacts-${new Date().toISOString().slice(0, 10)}.csv`;
   const launchGatePacketName = `trustgraph-launch-gate-packet-${new Date().toISOString().slice(0, 10)}.json`;
   const v1CompletionPacketName = `trustgraph-v1-completion-audit-${new Date().toISOString().slice(0, 10)}.json`;
+  const completionAuditRequirements = [
+    {
+      label: "GitHub Pages hosted application",
+      status: "shipped_and_smoke_checked",
+      evidence: "Deploy TrustGraph to GitHub Pages workflow builds, deploys, and smoke-checks the hosted app."
+    },
+    {
+      label: "Professional and Corporate portals",
+      status: "implemented",
+      evidence: "Public portal registration, Professional Passport access, Corporate portal access, RBAC workspace routing, and pricing structure are present in the app."
+    },
+    {
+      label: "Live Supabase database foundation",
+      status: "implemented_with_runtime_login_required",
+      evidence: "Repositories, migrations, RLS checks, seed reconciliation, and real database acceptance matrix are implemented; live rows prove only after hosted Supabase login."
+    },
+    {
+      label: "TrustGraph VPS deployment",
+      status: "prepared_human_access_required",
+      evidence: "Docker, Caddy, compose, preflight, env validation, and GitHub workflow guardrails are ready; actual server deploy requires SSH session or GitHub VPS secrets."
+    },
+    {
+      label: "VFIX isolation",
+      status: "guarded",
+      evidence: "Workflow, bootstrap, preflight, and server env validators refuse the protected VFIX host and CRM client route."
+    },
+    {
+      label: "Production payments and regulated traffic",
+      status: openProductionGateCount ? "human_gated" : "recorded_gates_approved",
+      evidence: openProductionGateCount
+        ? "Stripe, external security, legal language, and pilot operations ownership are not approved for unrestricted production."
+        : "Visible production gate records are approved for production."
+    }
+  ];
+  const completionAuditOpenItems = completionAuditRequirements.filter((item) =>
+    ["prepared_human_access_required", "human_gated", "implemented_with_runtime_login_required"].includes(item.status)
+  );
   const v1CompletionPacket = {
     generated_at: new Date().toISOString(),
     source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
@@ -3465,6 +3502,8 @@ function PlanAlignmentPanel({
       covered: coveredProfileAreas,
       planned: plannedProfileAreas
     },
+    completion_audit_requirements: completionAuditRequirements,
+    completion_audit_open_items: completionAuditOpenItems,
     evidence_exports: [
       "portal_access_packet",
       "corporate_provisioning_packet",
@@ -3645,6 +3684,15 @@ function PlanAlignmentPanel({
           </div>
           <span className={`status-chip ${openProductionGateCount ? "warning" : "success"}`}>
             {openProductionGateCount ? "human gates open" : "production gates approved"}
+          </span>
+        </div>
+        <div className="v1-completion-card">
+          <div>
+            <strong>Completion audit open items</strong>
+            <small>Separates shipped GitHub Pages work from runtime login proof, VPS deployment execution, and production decisions that still require human access or sign-off.</small>
+          </div>
+          <span className={`status-chip ${completionAuditOpenItems.length ? "warning" : "success"}`}>
+            {completionAuditOpenItems.length} open
           </span>
         </div>
         <div className="production-gate-register">
