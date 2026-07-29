@@ -144,7 +144,11 @@ assertIncludesAny(bundleText, ["Product preview mode"], "preview mode indicator"
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
 assertIncludesAny(bundleText, ["Last 7 days"], "audit timeframe filter");
 assertIncludesAny(bundleText, ["All signal levels"], "audit signal filter");
+assertIncludesAny(bundleText, ["Clear filters"], "audit clear filters control");
 assertIncludesAny(bundleText, ["Export JSON"], "audit JSON export control");
+assertIncludesAny(bundleText, ["Admin export readiness"], "admin export readiness packet label");
+assertIncludesAny(bundleText, ["Export admin readiness"], "admin export readiness export control");
+assertIncludesAny(bundleText, ["admin_audit_export_readiness"], "admin export readiness packet mode");
 assertIncludesAny(bundleText, ["Full audit and verification history packet"], "audit coverage packet label");
 assertIncludesAny(bundleText, ["Export audit coverage packet"], "audit coverage packet export control");
 assertIncludesAny(bundleText, ["filtered_audit_and_verification_history"], "audit coverage packet mode");

@@ -2878,6 +2878,49 @@ function AuditTrailPanel({
   const exportName = `trustgraph-audit-${new Date().toISOString().slice(0, 10)}.csv`;
   const exportJsonName = `trustgraph-audit-evidence-${new Date().toISOString().slice(0, 10)}.json`;
   const coveragePacketName = `trustgraph-audit-coverage-${new Date().toISOString().slice(0, 10)}.json`;
+  const exportReadinessName = `trustgraph-admin-export-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const activeFilterLabels = [
+    actionFilter !== "all" ? `action:${actionFilter}` : null,
+    targetFilter !== "all" ? `target:${targetFilter}` : null,
+    actorFilter !== "all" ? `actor:${actorFilter.slice(0, 8)}` : null,
+    timeFilter !== "all" ? `time:${timeFilter}` : null,
+    signalFilter !== "all" ? `signal:${signalFilter}` : null,
+    auditQuery.trim() ? `query:${auditQuery.trim()}` : null
+  ].filter((label): label is string => Boolean(label));
+  const adminExportReadinessPacket = {
+    generated_at: new Date().toISOString(),
+    packet_mode: "admin_audit_export_readiness",
+    export_formats: ["csv_filtered_audit_events", "json_filtered_audit_events", "json_full_coverage_packet"],
+    active_filters: {
+      action: actionFilter,
+      target: targetFilter,
+      actor: actorFilter,
+      time: timeFilter,
+      signal: signalFilter,
+      query: auditQuery.trim(),
+      labels: activeFilterLabels
+    },
+    export_policy: {
+      filtered_exports_only: true,
+      includes_verification_case_context: true,
+      includes_evidence_document_metadata: true,
+      includes_release_ledger_context: true,
+      raw_private_evidence_files_excluded: true,
+      reviewer_note: "Use this packet before sharing Admin exports outside the operating team."
+    },
+    counts: {
+      loaded_audit_events: events.length,
+      filtered_audit_events: filteredEvents.length,
+      target_tables: targetTables.length,
+      actors: actors.length,
+      selected_view_actors: actorCount,
+      guardrail_events: guardrailCount,
+      high_signal_events: highSignalCount,
+      verification_cases: operationsCases.length,
+      evidence_documents: evidenceDocuments.length,
+      release_ledger_records: schemaMigrationRuns.length
+    }
+  };
   const auditCoveragePacket = {
     generated_at: new Date().toISOString(),
     mode: "filtered_audit_and_verification_history",
@@ -3008,6 +3051,21 @@ function AuditTrailPanel({
         </select>
         <button
           className="secondary-action"
+          disabled={!activeFilterLabels.length}
+          onClick={() => {
+            setAuditQuery("");
+            setActionFilter("all");
+            setTargetFilter("all");
+            setActorFilter("all");
+            setTimeFilter("all");
+            setSignalFilter("all");
+          }}
+          type="button"
+        >
+          Clear filters
+        </button>
+        <button
+          className="secondary-action"
           disabled={!filteredEvents.length}
           onClick={() => downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv")}
           type="button"
@@ -3028,6 +3086,17 @@ function AuditTrailPanel({
           type="button"
         >
           Export audit coverage packet
+        </button>
+      </div>
+      <div className="audit-coverage-note">
+        <strong>Admin export readiness</strong>
+        <small>Packages active filters, actor and target scope, export formats, release ledger context, and raw evidence exclusion rules before audit data leaves Admin.</small>
+        <button
+          className="secondary-action"
+          onClick={() => downloadTextFile(exportReadinessName, JSON.stringify(adminExportReadinessPacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export admin readiness
         </button>
       </div>
       <div className="audit-coverage-note">
