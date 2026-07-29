@@ -7600,7 +7600,7 @@ function App() {
           {workspace.nav.map((item) => {
             const Icon = item.icon;
             return (
-              <button key={item.label}>
+              <button key={item.label} onClick={() => setQuery(item.label)} type="button">
                 <Icon size={17} />
                 <span>{item.label}</span>
               </button>
@@ -7676,11 +7676,15 @@ function App() {
             <h2>{activeOrganization.name}</h2>
             <p>All views, exports, and evidence access are filtered through role, organization, consent, and Access Grant scope.</p>
             <div className="context-actions">
-              <button className="primary-action">
+              <button
+                className="primary-action"
+                onClick={() => changeWorkspace(hasPermission(activeMembership.role, "passport:view_shared") ? "verify" : "passport")}
+                type="button"
+              >
                 <Eye size={16} />
                 {hasPermission(activeMembership.role, "passport:view_shared") ? "Preview shared access" : "Preview Passport"}
               </button>
-              <button className="secondary-action">
+              <button className="secondary-action" onClick={() => changeWorkspace("passport")} type="button">
                 <KeyRound size={16} />
                 Grants
               </button>
@@ -7718,10 +7722,10 @@ function App() {
                 <Filter size={14} />
                 Smart filters
               </span>
-              <button>Verified</button>
-              <button>Expiring</button>
-              <button>Restricted</button>
-              <button>Disputed</button>
+              <button onClick={() => setQuery("verified")} type="button">Verified</button>
+              <button onClick={() => setQuery("expiring")} type="button">Expiring</button>
+              <button onClick={() => setQuery("restricted")} type="button">Restricted</button>
+              <button onClick={() => setQuery("disputed")} type="button">Disputed</button>
             </div>
 
             <div className="records-list">

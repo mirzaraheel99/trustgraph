@@ -167,6 +167,7 @@ assertIncludesAny(bundleText, ["Allowed mode"], "production allowed-mode summary
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
 assertIncludesAny(bundleText, ["Evaluation role"], "signed-out evaluation role label");
 assertIncludesAny(bundleText, ["Preview account context"], "signed-out account context label");
+assertIncludesAny(bundleText, ["Preview shared access"], "workspace context navigation action");
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");
 assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export control");
 assertIncludesAny(bundleText, ["Export launch packet"], "billing launch packet export control");
