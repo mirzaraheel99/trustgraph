@@ -357,6 +357,48 @@ function RecordDetail({
     return matchesStatus && haystack.includes(evidenceQuery.trim().toLowerCase());
   });
   const evidenceManifestName = `trustgraph-evidence-manifest-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.csv`;
+  const evidenceAccessPacketName = `trustgraph-evidence-access-packet-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`;
+  const evidenceAccessPacket = {
+    generated_at: new Date().toISOString(),
+    packet_mode: "selected_record_evidence_preview_download",
+    record: {
+      id: record.id,
+      title: record.title,
+      section: record.section,
+      status: record.status,
+      trust_label: record.trust,
+      sensitivity: record.sensitivity ?? "standard",
+      consent_required: Boolean(record.consentRequired),
+      access_scope: record.access
+    },
+    evidence_policy: {
+      storage: "private_supabase_storage",
+      preview_link_expiry_seconds: 300,
+      download_link_expiry_seconds: 120,
+      metadata_only_items_open_without_file_exposure: true,
+      raw_file_access: "short_lived_signed_url_only",
+      download_audit_expectation: "material preview, download, export, and sensitive evidence access should produce Audit Events"
+    },
+    filtered_view: {
+      status_filter: evidenceStatusFilter,
+      query: evidenceQuery,
+      visible_documents: filteredEvidenceDocuments.length,
+      file_backed_documents: filteredEvidenceDocuments.filter((document) => document.storage_path).length,
+      metadata_only_documents: filteredEvidenceDocuments.filter((document) => !document.storage_path).length
+    },
+    documents: filteredEvidenceDocuments.map((document) => ({
+      id: document.id,
+      title: document.title,
+      document_type: document.document_type,
+      source_name: document.source_name,
+      status: document.status,
+      file_attached: Boolean(document.storage_path),
+      preview_allowed: Boolean(document.storage_path),
+      download_allowed: Boolean(document.storage_path),
+      created_at: document.created_at,
+      evidence_summary: document.evidence_summary ?? ""
+    }))
+  };
 
   useEffect(() => {
     setTitle(record.title);
@@ -532,7 +574,11 @@ function RecordDetail({
             </div>
             <div className="evidence-source-strip">
               <span className="status-chip success">Signed evidence links</span>
-              <small>Private files stay in Supabase Storage and open through short-lived preview or download URLs; metadata-only evidence remains visible without exposing files.</small>
+              <small>Private files stay in Supabase Storage and open through short-lived preview or download URLs; preview links expire in 5 minutes and download links expire in 2 minutes.</small>
+            </div>
+            <div className="evidence-source-strip">
+              <span className="status-chip neutral">Evidence preview/download proof</span>
+              <small>Metadata-only evidence stays visible without exposing raw files; file-backed evidence opens only through signed preview/download controls.</small>
             </div>
           </>
         ) : null}
@@ -561,6 +607,14 @@ function RecordDetail({
               >
                 Export evidence manifest
               </button>
+              <button
+                className="secondary-action"
+                disabled={!filteredEvidenceDocuments.length}
+                onClick={() => downloadTextFile(evidenceAccessPacketName, JSON.stringify(evidenceAccessPacket, null, 2), "application/json")}
+                type="button"
+              >
+                Export access packet
+              </button>
             </div>
             <div className="evidence-document-list">
               {filteredEvidenceDocuments.length ? (
@@ -576,6 +630,7 @@ function RecordDetail({
                     </div>
                     <div className="evidence-document-actions">
                       <span className="status-chip neutral">{document.status}</span>
+                      <span className="micro-pill">{document.storage_path ? "signed links only" : "metadata only"}</span>
                       <button
                         className="secondary-action"
                         disabled={!document.storage_path || openingEvidenceId === document.id}
