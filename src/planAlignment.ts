@@ -253,9 +253,9 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     id: "expirations",
     label: "Credential expiration dates",
     productArea: "Credentials",
-    status: "foundation",
-    evidence: "Record expiration and renewal visibility are present in Passport and Verify.",
-    tone: "info"
+    status: "deployed",
+    evidence: "Passport and Verify expose a credential renewal readiness panel and export packet from visible record expiration dates.",
+    tone: "success"
   },
   {
     id: "verification-timestamps",

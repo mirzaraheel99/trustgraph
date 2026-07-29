@@ -118,6 +118,9 @@ assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signe
 assertIncludesAny(bundleText, ["Export evidence manifest"], "evidence manifest export control");
 assertIncludesAny(bundleText, ["Responsibilities and skills"], "structured responsibilities detail section");
 assertIncludesAny(bundleText, ["Responsibilities, separated by commas"], "structured responsibilities intake");
+assertIncludesAny(bundleText, ["Credential renewal readiness"], "credential renewal readiness panel");
+assertIncludesAny(bundleText, ["Export renewal packet"], "credential renewal packet export");
+assertIncludesAny(bundleText, ["renewal_window_days"], "credential renewal packet window field");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Portal access evidence"], "portal access evidence packet label");
 assertIncludesAny(bundleText, ["Export portal packet"], "portal access packet export control");

@@ -884,6 +884,89 @@ function PassportRecordForm({
   );
 }
 
+function daysUntil(value: string | null | undefined) {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
+  return Math.ceil((date.getTime() - today.getTime()) / 86_400_000);
+}
+
+function RenewalReadinessPanel({
+  records,
+  workspaceLabel
+}: {
+  records: RecordItem[];
+  workspaceLabel: string;
+}) {
+  const datedRecords = records
+    .map((record) => ({ record, days: daysUntil(record.expiresAt) }))
+    .filter((item): item is { record: RecordItem; days: number } => item.days !== null);
+  const expiredRecords = datedRecords.filter((item) => item.days < 0);
+  const dueSoonRecords = datedRecords.filter((item) => item.days >= 0 && item.days <= 45);
+  const noDateRecords = records.filter((record) => !record.expiresAt && !record.expires.toLowerCase().includes("no expiration"));
+  const packetName = `trustgraph-renewal-readiness-${workspaceLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${new Date().toISOString().slice(0, 10)}.json`;
+  const renewalPacket = {
+    generated_at: new Date().toISOString(),
+    workspace: workspaceLabel,
+    counts: {
+      visible_records: records.length,
+      dated_records: datedRecords.length,
+      expired_records: expiredRecords.length,
+      due_soon_records: dueSoonRecords.length,
+      missing_expiration_review: noDateRecords.length
+    },
+    renewal_window_days: 45,
+    records: datedRecords.map(({ record, days }) => ({
+      record_id: record.id,
+      section: record.section,
+      title: record.title,
+      source: record.source,
+      status: record.status,
+      expires_at: record.expiresAt,
+      days_until_expiration: days,
+      renewal_status: days < 0 ? "expired" : days <= 45 ? "due_soon" : "current",
+      access_scope: record.access
+    })),
+    missing_expiration_review: noDateRecords.map((record) => ({
+      record_id: record.id,
+      section: record.section,
+      title: record.title,
+      source: record.source,
+      visible_expiration_label: record.expires
+    }))
+  };
+
+  return (
+    <section className="renewal-readiness-panel">
+      <div className="mini-heading">
+        <CalendarClock size={16} />
+        <strong>Credential renewal readiness</strong>
+      </div>
+      <div className="renewal-summary-grid">
+        <div>
+          <span>Due soon</span>
+          <strong>{dueSoonRecords.length}</strong>
+        </div>
+        <div>
+          <span>Expired</span>
+          <strong>{expiredRecords.length}</strong>
+        </div>
+        <div>
+          <span>Dated</span>
+          <strong>{datedRecords.length}</strong>
+        </div>
+      </div>
+      <small>Uses visible Passport and Verify records with expiration dates to build a 45-day renewal queue.</small>
+      <button className="secondary-action" onClick={() => downloadTextFile(packetName, JSON.stringify(renewalPacket, null, 2), "application/json")} type="button">
+        Export renewal packet
+      </button>
+    </section>
+  );
+}
+
 function AccessGrantsPanel({
   disabled,
   grants,
@@ -8576,6 +8659,7 @@ function App() {
                 />
               ))}
             </div>
+            <RenewalReadinessPanel records={records} workspaceLabel={workspace.label} />
 
             {workspace.id === "passport" ? (
               <>

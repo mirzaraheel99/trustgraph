@@ -77,6 +77,7 @@ export function trustRecordToRecordItem(record: DbTrustRecord): RecordItem {
     owner: "Professional-controlled record",
     updated: `Created ${createdDate}`,
     expires: record.expires_at ? dateLabel(record.expires_at) : "No expiration",
+    expiresAt: record.expires_at,
     access: "Private until shared through an Access Grant",
     evidence: record.evidence_summary || "Evidence details pending",
     responsibilities,

@@ -47,6 +47,7 @@ export interface RecordItem {
   owner: string;
   updated: string;
   expires: string;
+  expiresAt?: string | null;
   access: string;
   evidence: string;
   responsibilities?: string[];
