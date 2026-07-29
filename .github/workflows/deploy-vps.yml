@@ -57,6 +57,7 @@ jobs:
           test "$(pwd)" = "/opt/trustgraph"
           test -f docker-compose.server.yml
           test -f .env.server
+          bash tools/preflight-vps.sh
           git fetch origin main
           git pull --ff-only origin main
           docker compose --env-file .env.server -f docker-compose.server.yml up -d --build

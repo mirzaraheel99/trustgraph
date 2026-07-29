@@ -3842,7 +3842,7 @@ function VpsLaunchPanel() {
     {
       label: "Server checkout",
       status: "guarded",
-      detail: `${checkoutPath} is the only approved server path for TrustGraph bootstrap and deploy.`
+      detail: `${checkoutPath} is the only approved server path for TrustGraph bootstrap, preflight, and deploy.`
     },
     {
       label: "VFIX protection",
@@ -3867,6 +3867,7 @@ function VpsLaunchPanel() {
     protected_vfix_host: protectedVfixHost,
     checkout_path: checkoutPath,
     github_workflow: workflowName,
+    preflight_command: "cd /opt/trustgraph && bash tools/preflight-vps.sh",
     source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
     web_port_strategy: {
       default_http: 80,

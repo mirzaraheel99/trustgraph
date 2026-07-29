@@ -33,6 +33,13 @@ The bootstrap script installs Docker if needed, opens ports 80/443, clones or up
 
 If another service already owns public ports 80/443, edit `/opt/trustgraph/.env.server` before the first start and set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` to unused local ports. Then point the existing reverse proxy at those TrustGraph ports. This keeps VFIX or any shared HTTPS edge in control of its current routes.
 
+After the first checkout exists, run the read-only preflight before any update:
+
+```bash
+cd /opt/trustgraph
+bash tools/preflight-vps.sh
+```
+
 If you prefer manual setup, use the commands below.
 
 ```bash
@@ -71,6 +78,7 @@ For later updates:
 
 ```bash
 cd /opt/trustgraph
+bash tools/preflight-vps.sh
 git pull --ff-only origin main
 docker compose --env-file .env.server -f docker-compose.server.yml up -d --build
 ```
@@ -157,6 +165,8 @@ remote_path=/opt/trustgraph
 ```
 
 The workflow is manual-only. It pulls `origin/main` inside `/opt/trustgraph`, runs `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`, and smoke-checks the validated TrustGraph host from the workflow input.
+
+The workflow runs `tools/preflight-vps.sh` before pulling or rebuilding.
 
 It will refuse:
 
