@@ -5608,6 +5608,28 @@ function PublicSite({
     }
   }
 
+  async function recoverPassword() {
+    if (!authReady) {
+      setMessage("Hosted auth is not configured.");
+      return;
+    }
+    if (!email) {
+      setMessage("Enter your email first.");
+      return;
+    }
+
+    setBusy(true);
+    setMessage("Sending password recovery email...");
+    try {
+      await requestPasswordRecovery(email, authRedirectUrl);
+      setMessage("Password recovery email requested. Use the inbox link to return to this hosted GitHub Pages app; wait 60+ minutes if Supabase email is rate-limited.");
+    } catch (error) {
+      setMessage(authFailureMessage(error, authRedirectUrl, "Could not request password recovery."));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const pricing = [
     {
       name: "Professional",
@@ -6027,6 +6049,9 @@ function PublicSite({
           </button>
           <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
             Resend verification
+          </button>
+          <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+            Reset password
           </button>
           <small>{message}</small>
           <small>

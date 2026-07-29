@@ -157,6 +157,7 @@ assertIncludesAny(bundleText, ["Release database"], "release ledger source label
 assertIncludesAny(bundleText, ["Export releases"], "release ledger export control");
 assertIncludesAny(bundleText, ["Supabase email rate limit is active"], "auth rate-limit recovery guidance");
 assertIncludesAny(bundleText, ["Auth redirect needs the hosted GitHub Pages URL"], "hosted auth redirect repair guidance");
+assertIncludesAny(bundleText, ["Reset password"], "public portal password recovery control");
 assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
 assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact intake");
