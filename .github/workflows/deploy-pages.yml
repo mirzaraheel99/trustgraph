@@ -51,6 +51,9 @@ jobs:
       - name: Verify server env validator
         run: pnpm check:server-env
 
+      - name: Verify VPS workflow guardrails
+        run: pnpm check:vps-workflow
+
       - name: Build
         run: pnpm build
         env:

@@ -108,9 +108,10 @@ Set `TRUSTGRAPH_SMOKE_URL` to smoke-check a different hosted URL.
 
 ```bash
 npm run check:server-env
+npm run check:vps-workflow
 ```
 
-This validates the non-secret fixture. On the VPS, run `bash tools/validate-server-env.sh .env.server` before the first Docker build.
+These validate the non-secret fixture and guarded VPS workflow. On the VPS, run `bash tools/validate-server-env.sh .env.server` before the first Docker build.
 
 ## Database Foundation
 
