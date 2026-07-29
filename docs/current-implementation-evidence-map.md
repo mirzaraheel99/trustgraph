@@ -49,6 +49,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Skills evidence packet: visible skill claims with source records, responsibilities, statuses, and Access Grant scope from Passport or Verify.
 - Full audit and verification history packet: filtered audit events with verification cases, evidence document coverage, and release ledger context from Admin.
 - Pricing structure packet: configured plans, selected-seat projections, active pilot ledger subscriptions, and payment launch gates.
+- Billing architecture decision packet: v1 ledger-now decision, disabled Stripe payment flows, launch requirements, and human decision gates.
 - V1 completion audit packet: 13-track status, locked profile scope, evidence exports, verification gates, TrustGraph VPS target, and remaining human decisions.
 - Auth redirect readiness packet: active hosted redirect URL, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.
 - Registration auth readiness packet: selected portal, pending corporate setup state, repaired email-link readiness, and Supabase Auth redirect action items.

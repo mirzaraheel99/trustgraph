@@ -268,6 +268,11 @@ assertIncludesAny(bundleText, ["Export launch packet"], "billing launch packet e
 assertIncludesAny(bundleText, ["Pricing structure packet"], "pricing structure packet label");
 assertIncludesAny(bundleText, ["Export pricing packet"], "pricing structure packet export control");
 assertIncludesAny(bundleText, ["Payment launch boundary"], "billing payment launch boundary");
+assertIncludesAny(bundleText, ["Billing architecture decision packet"], "billing architecture decision packet label");
+assertIncludesAny(bundleText, ["Export payment decision"], "billing architecture decision export control");
+assertIncludesAny(bundleText, ["billing_architecture_decision"], "billing architecture packet mode");
+assertIncludesAny(bundleText, ["supabase_subscription_ledger"], "billing architecture current system");
+assertIncludesAny(bundleText, ["intentionally_disabled_until_human_gate"], "billing architecture disabled payment flows");
 assertIncludesAny(bundleText, ["notes captured"], "pilot acceptance note capture");
 assertIncludesAny(bundleText, ["Export runbook"], "pilot acceptance markdown runbook export control");
 

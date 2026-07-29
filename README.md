@@ -176,7 +176,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 16. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
 17. Manage Connect API clients and webhook subscriptions from Admin.
 18. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
-19. Export the pricing structure packet to prove configured plans, selected-seat projections, active ledger subscriptions, and Stripe launch gates.
+19. Export the pricing structure packet and billing architecture decision packet to prove configured plans, selected-seat projections, active ledger subscriptions, and Stripe launch gates.
 20. Export the v1 completion audit packet from Admin to review all 13 tracks, locked profile scope, evidence exports, verification gates, and remaining human decisions.
 21. Export the auth redirect readiness packet before invite testing to prove hosted redirect settings, email limits, TrustGraph VPS target, and VFIX isolation.
 22. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
@@ -197,7 +197,7 @@ Unauthenticated visitors land on a public TrustGraph website with portal entry p
 - Corporate Verify: `$149/month` pilot tier for corporate RBAC, shared Passport review, missing-record requests, and audit.
 - TrustGraph Scale: custom/enterprise tier for issuer workflows, Connect API clients, webhooks, and compliance operations.
 
-Corporate registration collects organization name, domain, and type, then provisions an employer or staffing agency portal after Supabase account creation and verified hosted login. Pricing cards now show the database path for each portal so buyers can see what is written immediately and what remains human-gated.
+Corporate registration collects organization name, domain, and type, then provisions an employer or staffing agency portal after Supabase account creation and verified hosted login. Pricing cards now show the database path for each portal so buyers can see what is written immediately and what remains human-gated. The billing architecture decision packet records the v1 choice to keep Supabase subscription ledger activation live while Stripe Checkout, customer portal, invoices, refunds, dunning, taxes, and payment webhooks wait for human approval.
 
 ## Product Planning
 

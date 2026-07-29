@@ -4978,6 +4978,7 @@ function BillingPanel({
   const gateExportName = `trustgraph-billing-decision-gates-${new Date().toISOString().slice(0, 10)}.csv`;
   const readinessExportName = `trustgraph-billing-launch-readiness-${new Date().toISOString().slice(0, 10)}.csv`;
   const pricingPacketName = `trustgraph-pricing-structure-${new Date().toISOString().slice(0, 10)}.json`;
+  const paymentArchitecturePacketName = `trustgraph-payment-architecture-decision-${new Date().toISOString().slice(0, 10)}.json`;
   const billingGates = [
     { label: "Stripe product mapping", owner: "Business operations", status: "human decision required" },
     { label: "Checkout + customer portal", owner: "Engineering", status: "not connected for pilot" },
@@ -5026,6 +5027,32 @@ function BillingPanel({
     billing_launch_readiness: billingLaunchReadiness,
     billing_gates: billingGates,
     payment_boundary: "No checkout, invoice, refund, dunning, tax, or payment webhook flow is live until the Stripe production gate is approved."
+  };
+  const paymentArchitectureDecision = {
+    generated_at: new Date().toISOString(),
+    mode: "billing_architecture_decision",
+    current_billing_system: "supabase_subscription_ledger",
+    live_capabilities: [
+      "Configured Professional, Corporate Verify, and Scale pricing plans",
+      "Organization subscription activation through Supabase RPC",
+      "Seat count projection and active subscription ledger",
+      "Audit-ready billing exports for pilot operations"
+    ],
+    intentionally_disabled_until_human_gate: [
+      "Stripe Checkout",
+      "Stripe customer portal",
+      "Tax calculation",
+      "Invoice email delivery",
+      "Refund handling",
+      "Dunning and failed-payment recovery",
+      "Payment webhook reconciliation"
+    ],
+    stripe_launch_requirements: billingLaunchReadiness,
+    human_decision_gates: billingGates,
+    recommended_v1_path:
+      "Keep the pilot subscription ledger live for account packaging and pricing validation. Connect Stripe only after product, price, tax, invoice, refund, dunning, webhook, and security decisions are recorded.",
+    active_subscription_count: activeSubscriptions.length,
+    projected_plans: projectedPlans
   };
 
   async function activate(planId: string) {
@@ -5127,6 +5154,22 @@ function BillingPanel({
           <small>TrustGraph can validate pricing, seats, subscription status, and audit history now. Checkout, invoices, refunds, dunning, and payment webhooks stay off until the Stripe production gate is approved.</small>
         </div>
         <span className="status-chip warning">Stripe gated</span>
+      </div>
+      <div className="billing-decision-card">
+        <div>
+          <strong>Billing architecture decision packet</strong>
+          <small>Documents the v1 decision to use a live Supabase subscription ledger now, with Stripe Checkout, invoices, refunds, dunning, taxes, and webhooks gated for human approval.</small>
+        </div>
+        <div className="billing-decision-actions">
+          <span className="status-chip info">ledger now</span>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(paymentArchitecturePacketName, JSON.stringify(paymentArchitectureDecision, null, 2), "application/json")}
+            type="button"
+          >
+            Export payment decision
+          </button>
+        </div>
       </div>
       <div className="billing-gate-grid">
         {billingGates.map((gate) => (

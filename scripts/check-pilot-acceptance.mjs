@@ -31,7 +31,7 @@ const acceptanceChecks = [
     id: "public_site_and_pricing",
     label: "Public website, portal entry, registration, and pricing",
     source: appSource,
-    required: ["Pricing structure packet", "Professional Passport access", "Corporate portal access", "$149"]
+    required: ["Pricing structure packet", "Billing architecture decision packet", "Professional Passport access", "Corporate portal access", "$149"]
   },
   {
     id: "professional_passport",
