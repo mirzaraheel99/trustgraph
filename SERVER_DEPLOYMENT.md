@@ -25,6 +25,15 @@ The GitHub Actions VPS workflow also refuses the VFIX host `5.75.224.110`.
 Run these from the SSH session on `5.75.224.11`:
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/mirzaraheel99/trustgraph/main/tools/bootstrap-vps.sh -o /tmp/trustgraph-bootstrap-vps.sh
+bash /tmp/trustgraph-bootstrap-vps.sh
+```
+
+The bootstrap script installs Docker if needed, opens ports 80/443, clones or updates `/opt/trustgraph`, creates `.env.server` from the example if missing, and starts the TrustGraph Compose stack. It refuses the VFIX host and any target path outside `/opt/trustgraph`.
+
+If you prefer manual setup, use the commands below.
+
+```bash
 sudo apt update
 sudo apt install -y ca-certificates curl git ufw
 sudo install -m 0755 -d /etc/apt/keyrings

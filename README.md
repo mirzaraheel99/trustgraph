@@ -49,6 +49,8 @@ https://5-75-224-11.sslip.io
 
 Use `SERVER_DEPLOYMENT.md` to install Docker, pull the GitHub repo, start Caddy HTTPS, and provision the VPS Postgres service. GitHub remains the primary source of truth; the server should update with `git pull --ff-only origin main` and `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`.
 
+For first server setup, `tools/bootstrap-vps.sh` performs the guarded `/opt/trustgraph` install and refuses the VFIX host/path.
+
 After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`.
 
 ## Hosted Registration Checklist
