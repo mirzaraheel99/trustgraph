@@ -146,7 +146,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 1. Sign up or sign in with Supabase Auth.
 2. TrustGraph creates a Professional account automatically.
-3. Add live Passport records.
+3. Add live Passport records with evidence summaries, structured responsibilities, and skills.
 4. Create a corporate account or accept an invitation into one.
 5. Corporate users invite team members, activate subscriptions, and request Access Grants from professionals by email.
 6. Export the portal access packet to prove the signed-in profile, active membership, organization, and workspace route used for RBAC acceptance.
@@ -154,7 +154,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 8. Request structured references, missing records, or issuer-created credentials as needed.
 9. Professionals review and resolve Corporate missing-record requests from Passport.
 10. Upload private evidence files to Supabase Storage and link them to Passport records.
-11. Export the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, and gap focus.
+11. Export the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, structured responsibilities, skills, and gap focus.
 12. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
 13. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
 14. Manage Connect API clients and webhook subscriptions from Admin.

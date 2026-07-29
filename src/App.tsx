@@ -5,6 +5,7 @@ import {
   Activity,
   BadgeCheck,
   Bell,
+  BriefcaseBusiness,
   CalendarClock,
   ChevronRight,
   Clock3,
@@ -317,15 +318,20 @@ function RecordDetail({
     title: string;
     sourceName: string;
     evidenceSummary: string;
+    responsibilities: string;
+    skills: string;
     expiresAt: string;
     status: RecordStatus;
     sensitivity: TrustRecordSensitivity;
     consentRequired: boolean;
+    metadata?: Record<string, unknown>;
   }) => Promise<void>;
 }) {
   const [title, setTitle] = useState(record.title);
   const [sourceName, setSourceName] = useState(record.source);
   const [evidenceSummary, setEvidenceSummary] = useState(record.evidence === "Evidence details pending" ? "" : record.evidence);
+  const [responsibilities, setResponsibilities] = useState((record.responsibilities ?? []).join(", "));
+  const [skills, setSkills] = useState((record.skills ?? []).join(", "));
   const [expiresAt, setExpiresAt] = useState("");
   const [status, setStatus] = useState<RecordStatus>("draft");
   const [sensitivity, setSensitivity] = useState<TrustRecordSensitivity>("standard");
@@ -356,6 +362,8 @@ function RecordDetail({
     setTitle(record.title);
     setSourceName(record.source);
     setEvidenceSummary(record.evidence === "Evidence details pending" ? "" : record.evidence);
+    setResponsibilities((record.responsibilities ?? []).join(", "));
+    setSkills((record.skills ?? []).join(", "));
     setExpiresAt("");
     setStatus(record.status === "pending verification" ? "pending_verification" : "draft");
     setSensitivity((record.sensitivity as TrustRecordSensitivity | undefined) ?? "standard");
@@ -381,10 +389,13 @@ function RecordDetail({
         title,
         sourceName,
         evidenceSummary,
+        responsibilities,
+        skills,
         expiresAt,
         status,
         sensitivity,
-        consentRequired
+        consentRequired,
+        metadata: record.metadata
       });
       setMessage("Record updated");
     } catch (error) {
@@ -467,6 +478,30 @@ function RecordDetail({
           <strong>{record.consentRequired ? "Required" : "Standard sharing"}</strong>
         </div>
       </div>
+      {(record.responsibilities?.length || record.skills?.length) ? (
+        <section className="responsibility-box">
+          <div className="mini-heading">
+            <BriefcaseBusiness size={16} />
+            <strong>Responsibilities and skills</strong>
+          </div>
+          {record.responsibilities?.length ? (
+            <div>
+              <span>Responsibilities</span>
+              {record.responsibilities.map((item) => (
+                <small key={item}>{item}</small>
+              ))}
+            </div>
+          ) : null}
+          {record.skills?.length ? (
+            <div>
+              <span>Skills</span>
+              {record.skills.map((item) => (
+                <small key={item}>{item}</small>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
 
       <section className="evidence-box">
         <div className="mini-heading">
@@ -587,6 +622,16 @@ function RecordDetail({
               onChange={(event) => setEvidenceSummary(event.target.value)}
               placeholder="Evidence summary"
             />
+            <input
+              value={responsibilities}
+              onChange={(event) => setResponsibilities(event.target.value)}
+              placeholder="Responsibilities, separated by commas"
+            />
+            <input
+              value={skills}
+              onChange={(event) => setSkills(event.target.value)}
+              placeholder="Skills or tools, separated by commas"
+            />
             <div className="record-edit-grid">
               <input value={expiresAt} onChange={(event) => setExpiresAt(event.target.value)} type="date" />
               <select value={status} onChange={(event) => setStatus(event.target.value as RecordStatus)}>
@@ -683,6 +728,8 @@ function PassportRecordForm({
     title: string;
     sourceName: string;
     evidenceSummary: string;
+    responsibilities: string;
+    skills: string;
     issuedAt: string;
     expiresAt: string;
     sensitivity: TrustRecordSensitivity;
@@ -693,6 +740,8 @@ function PassportRecordForm({
   const [title, setTitle] = useState("");
   const [sourceName, setSourceName] = useState("");
   const [evidenceSummary, setEvidenceSummary] = useState("");
+  const [responsibilities, setResponsibilities] = useState("");
+  const [skills, setSkills] = useState("");
   const [issuedAt, setIssuedAt] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [sensitivity, setSensitivity] = useState<TrustRecordSensitivity>("standard");
@@ -724,10 +773,12 @@ function PassportRecordForm({
     setStatus("Saving live Passport record...");
 
     try {
-      await onCreate({ type, title, sourceName, evidenceSummary, issuedAt, expiresAt, sensitivity, consentRequired });
+      await onCreate({ type, title, sourceName, evidenceSummary, responsibilities, skills, issuedAt, expiresAt, sensitivity, consentRequired });
       setTitle("");
       setSourceName("");
       setEvidenceSummary("");
+      setResponsibilities("");
+      setSkills("");
       setIssuedAt("");
       setExpiresAt("");
       setSensitivity("standard");
@@ -791,6 +842,18 @@ function PassportRecordForm({
           value={evidenceSummary}
           onChange={(event) => setEvidenceSummary(event.target.value)}
           placeholder="Evidence summary"
+          disabled={disabled || busy}
+        />
+        <input
+          value={responsibilities}
+          onChange={(event) => setResponsibilities(event.target.value)}
+          placeholder="Responsibilities, separated by commas"
+          disabled={disabled || busy}
+        />
+        <input
+          value={skills}
+          onChange={(event) => setSkills(event.target.value)}
+          placeholder="Skills or tools, separated by commas"
           disabled={disabled || busy}
         />
         <select value={sensitivity} onChange={(event) => setSensitivity(event.target.value as TrustRecordSensitivity)} disabled={disabled || busy}>
@@ -1695,6 +1758,8 @@ function CorporateDirectoryPanel({
     openGapCount: openGapCountsByProfile[request.subject_profile_id] ?? 0,
     gapTitles: gapTitlesByProfile[request.subject_profile_id] ?? []
   }));
+  const sharedResponsibilityCount = sharedRecords.reduce((count, record) => count + (record.responsibilities?.length ?? 0), 0);
+  const sharedSkillCount = sharedRecords.reduce((count, record) => count + (record.skills?.length ?? 0), 0);
   const filteredRows = candidateRows.filter((row) => {
     const matchesStatus = statusFilter === "all" || row.rawStatus === statusFilter;
     const haystack = `${row.name} ${row.detail} ${row.signal} ${row.gapTitles.join(" ")}`.toLowerCase();
@@ -1717,6 +1782,8 @@ function CorporateDirectoryPanel({
       unique_professionals: uniqueProfessionalCount,
       approved_access_grants: approvedAccessCount,
       shared_passport_records: sharedRecords.length,
+      shared_responsibilities: sharedResponsibilityCount,
+      shared_skills: sharedSkillCount,
       missing_record_requests: missingRecordRequests.length,
       open_gap_requests: missingRecordRequests.filter((request) => request.status !== "fulfilled").length
     },
@@ -1739,6 +1806,8 @@ function CorporateDirectoryPanel({
       source: record.source,
       sensitivity: record.sensitivity ?? "standard",
       consent_required: Boolean(record.consentRequired),
+      responsibilities: record.responsibilities ?? [],
+      skills: record.skills ?? [],
       access: record.access
     })),
     note: "Corporate Verify can only export professional rows and shared Passport records visible through approved role, organization, Access Grant, and consent scope."
@@ -1806,7 +1875,8 @@ function CorporateDirectoryPanel({
       </div>
       <div className="directory-packet-note">
         <strong>Corporate user database packet</strong>
-        <small>Exports filtered professional access rows, shared record scope, source counts, and gap focus for the active Verify workspace.</small>
+        <small>Exports filtered professional access rows, shared record scope, structured responsibilities, skills, source counts, and gap focus for the active Verify workspace.</small>
+        <small>{sharedResponsibilityCount} shared responsibilities and {sharedSkillCount} shared skills visible through approved scope.</small>
       </div>
       <div className="directory-list">
         {filteredRows.length ? (
@@ -7415,6 +7485,8 @@ function App() {
     title: string;
     sourceName: string;
     evidenceSummary: string;
+    responsibilities: string;
+    skills: string;
     issuedAt: string;
     expiresAt: string;
     sensitivity: TrustRecordSensitivity;
@@ -7439,10 +7511,13 @@ function App() {
     title: string;
     sourceName: string;
     evidenceSummary: string;
+    responsibilities: string;
+    skills: string;
     expiresAt: string;
     status: RecordStatus;
     sensitivity: TrustRecordSensitivity;
     consentRequired: boolean;
+    metadata?: Record<string, unknown>;
   }) {
     if (!authSession) {
       throw new Error("Sign in before updating live Passport records.");
@@ -7454,11 +7529,14 @@ function App() {
       title: input.title,
       sourceName: input.sourceName,
       evidenceSummary: input.evidenceSummary,
+      responsibilities: input.responsibilities,
+      skills: input.skills,
       issuedAt: "",
       expiresAt: input.expiresAt,
       status: input.status,
       sensitivity: input.sensitivity,
-      consentRequired: input.consentRequired
+      consentRequired: input.consentRequired,
+      metadata: input.metadata
     });
 
     setLivePassportRecords((current) => current.map((record) => (record.id === updated.id ? updated : record)));

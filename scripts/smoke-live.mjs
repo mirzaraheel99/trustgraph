@@ -116,6 +116,8 @@ assertIncludesAny(bundleText, ["not localhost"], "hosted auth redirect localhost
 assertIncludesAny(bundleText, ["https://mirzaraheel99.github.io/trustgraph/"], "hosted auth redirect URL");
 assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signed URL label");
 assertIncludesAny(bundleText, ["Export evidence manifest"], "evidence manifest export control");
+assertIncludesAny(bundleText, ["Responsibilities and skills"], "structured responsibilities detail section");
+assertIncludesAny(bundleText, ["Responsibilities, separated by commas"], "structured responsibilities intake");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Portal access evidence"], "portal access evidence packet label");
 assertIncludesAny(bundleText, ["Export portal packet"], "portal access packet export control");
@@ -162,6 +164,7 @@ assertIncludesAny(bundleText, ["Live database view"], "Corporate user database s
 assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
 assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");
+assertIncludesAny(bundleText, ["shared responsibilities"], "Corporate user database structured responsibility proof");
 assertIncludesAny(bundleText, ["Corporate user database packet"], "Corporate user database packet label");
 assertIncludesAny(bundleText, ["Export user packet"], "Corporate user database packet export");
 assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");

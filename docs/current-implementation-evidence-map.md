@@ -24,7 +24,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Track | Current implementation evidence | Verification evidence |
 | --- | --- | --- |
 | Product foundation | `src/App.tsx`, `app/page.tsx`, `app/globals.css`, `README.md` public website, portal registration, pricing, hosted auth guidance, and auth readiness packets | GitHub Pages workflow, `scripts/smoke-live.mjs` |
-| Professional Passport | `src/recordRepository.ts`, `src/evidenceRepository.ts`, Passport record forms, evidence metadata, signed preview/download controls | `supabase/migrations/001`, `012`, `017`, smoke evidence checks |
+| Professional Passport | `src/recordRepository.ts`, `src/evidenceRepository.ts`, Passport record forms, structured responsibility/skill metadata, evidence metadata, signed preview/download controls | `supabase/migrations/001`, `012`, `017`, smoke evidence checks |
 | Corporate account | `src/accountRepository.ts`, Account panel, Corporate provisioning packet, team panels, member roster proof | `supabase/migrations/009`, `020`, `021`, `022`, smoke corporate checks |
 | RBAC | `src/rbac.ts`, workspace gating, role preview, portal access packet | `scripts/check-claims.mjs`, portal access export |
 | Access Grants | `src/grantRepository.ts`, Passport approval/decline/revoke, Verify requests, shared record sync | `supabase/migrations/003`, `006`, `008`, `023` |
@@ -43,7 +43,7 @@ The app exposes these operator exports to prove live database state after sign-i
 
 - Portal access packet: signed-in profile, active membership, organization, role, workspace route, and hosted redirect.
 - Corporate provisioning packet: created organization, membership, role, and database write evidence.
-- Corporate user database packet: filtered professional access rows, shared record scope, source counts, and missing-record gap focus visible to the active Verify workspace.
+- Corporate user database packet: filtered professional access rows, shared record scope, structured responsibilities, skills, source counts, and missing-record gap focus visible to the active Verify workspace.
 - Pricing structure packet: configured plans, selected-seat projections, active pilot ledger subscriptions, and payment launch gates.
 - V1 completion audit packet: 13-track status, locked profile scope, evidence exports, verification gates, TrustGraph VPS target, and remaining human decisions.
 - Auth redirect readiness packet: active hosted redirect URL, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.

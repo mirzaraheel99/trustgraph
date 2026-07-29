@@ -42,15 +42,35 @@ function dateLabel(value: string | null) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value));
 }
 
+function metadataList(metadata: Record<string, unknown>, key: string) {
+  const value = metadata[key];
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
+  }
+  if (typeof value === "string" && value.trim()) {
+    return value.split(",").map((item) => item.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function parseList(value?: string) {
+  return (value ?? "").split(/\n|,/).map((item) => item.trim()).filter(Boolean);
+}
+
 export function trustRecordToRecordItem(record: DbTrustRecord): RecordItem {
   const createdDate = dateLabel(record.created_at);
   const issuedDate = record.issued_at ? dateLabel(record.issued_at) : createdDate;
+  const responsibilities = metadataList(record.metadata, "responsibilities");
+  const skills = metadataList(record.metadata, "skills");
+  const structuredSummary = responsibilities.length
+    ? `${record.evidence_summary || `${recordTypeLabels[record.type]} record from ${record.source_name}`} Responsibilities: ${responsibilities.slice(0, 3).join("; ")}`
+    : record.evidence_summary || `${recordTypeLabels[record.type]} record from ${record.source_name}`;
 
   return {
     id: record.id,
     section: recordTypeLabels[record.type],
     title: record.title,
-    subtitle: record.evidence_summary || `${recordTypeLabels[record.type]} record from ${record.source_name}`,
+    subtitle: structuredSummary,
     status: statusLabel(record.status),
     trust: record.status === "verified" ? "Self-entered verified status" : "Self-entered",
     source: record.source_name,
@@ -59,6 +79,9 @@ export function trustRecordToRecordItem(record: DbTrustRecord): RecordItem {
     expires: record.expires_at ? dateLabel(record.expires_at) : "No expiration",
     access: "Private until shared through an Access Grant",
     evidence: record.evidence_summary || "Evidence details pending",
+    responsibilities,
+    skills,
+    metadata: record.metadata,
     sensitivity: sensitivityLabel(record.sensitivity ?? "standard"),
     consentRequired: Boolean(record.consent_required),
     tone: statusTone[record.status],
@@ -124,7 +147,16 @@ export async function createPassportRecord(input: {
   expiresAt?: string;
   sensitivity: TrustRecordSensitivity;
   consentRequired: boolean;
+  responsibilities?: string;
+  skills?: string;
+  metadata?: Record<string, unknown>;
 }): Promise<RecordItem> {
+  const metadata = {
+    ...(input.metadata ?? {}),
+    responsibilities: parseList(input.responsibilities),
+    skills: parseList(input.skills),
+    structured_scope: "job_responsibilities_and_skills"
+  };
   const [record] = await supabaseRest<DbTrustRecord[]>("trust_records", {
     method: "POST",
     accessToken: input.accessToken,
@@ -138,7 +170,8 @@ export async function createPassportRecord(input: {
       sensitivity: input.sensitivity,
       consent_required: input.consentRequired,
       issued_at: input.issuedAt || null,
-      expires_at: input.expiresAt || null
+      expires_at: input.expiresAt || null,
+      metadata
     })
   });
 
@@ -156,7 +189,16 @@ export async function updatePassportRecord(input: {
   status: RecordStatus;
   sensitivity: TrustRecordSensitivity;
   consentRequired: boolean;
+  responsibilities?: string;
+  skills?: string;
+  metadata?: Record<string, unknown>;
 }): Promise<RecordItem> {
+  const metadata = {
+    ...(input.metadata ?? {}),
+    responsibilities: parseList(input.responsibilities),
+    skills: parseList(input.skills),
+    structured_scope: "job_responsibilities_and_skills"
+  };
   const [record] = await supabaseRest<DbTrustRecord[]>(`trust_records?id=eq.${encodeURIComponent(input.recordId)}`, {
     method: "PATCH",
     accessToken: input.accessToken,
@@ -168,7 +210,8 @@ export async function updatePassportRecord(input: {
       expires_at: input.expiresAt || null,
       status: input.status,
       sensitivity: input.sensitivity,
-      consent_required: input.consentRequired
+      consent_required: input.consentRequired,
+      metadata
     })
   });
 

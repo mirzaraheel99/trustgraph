@@ -49,6 +49,9 @@ export interface RecordItem {
   expires: string;
   access: string;
   evidence: string;
+  responsibilities?: string[];
+  skills?: string[];
+  metadata?: Record<string, unknown>;
   sensitivity?: string;
   consentRequired?: boolean;
   tone: Tone;

@@ -165,9 +165,9 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     id: "responsibilities",
     label: "Job titles and responsibilities",
     productArea: "Work Record",
-    status: "foundation",
-    evidence: "Record title/source/evidence summary capture role claims; structured responsibility fields remain planned.",
-    tone: "info"
+    status: "deployed",
+    evidence: "Passport records capture structured responsibilities and skills in metadata, then expose them in Passport detail and Corporate Verify packets.",
+    tone: "success"
   },
   {
     id: "licenses",

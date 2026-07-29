@@ -4968,7 +4968,8 @@ p {
 }
 
 .detail-grid div,
-.evidence-box {
+.evidence-box,
+.responsibility-box {
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -4992,6 +4993,34 @@ p {
 
 .evidence-box {
   margin-bottom: 18px;
+}
+
+.responsibility-box {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+  border-color: rgba(82, 214, 196, 0.18);
+  background: rgba(82, 214, 196, 0.045);
+}
+
+.responsibility-box > div:not(.mini-heading) {
+  display: grid;
+  gap: 6px;
+}
+
+.responsibility-box span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.responsibility-box small {
+  padding: 7px 9px;
+  border: 1px solid rgba(82, 214, 196, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+  line-height: 1.35;
 }
 
 .evidence-box p {
