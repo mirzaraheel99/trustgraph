@@ -4626,6 +4626,14 @@ function authFailureMessage(error: unknown, redirectUrl: string, fallback = "Aut
   return message;
 }
 
+function hostedAuthRedirectUrl() {
+  const hostedUrl = "https://mirzaraheel99.github.io/trustgraph/";
+  if (typeof window === "undefined") return hostedUrl;
+
+  const currentUrl = `${window.location.origin}${window.location.pathname}`;
+  return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? hostedUrl : currentUrl;
+}
+
 function AuthPanel({
   session,
   accountStatus,
@@ -4640,8 +4648,7 @@ function AuthPanel({
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState(authModeLabel());
   const [busy, setBusy] = useState(false);
-  const authRedirectUrl =
-    typeof window === "undefined" ? "https://mirzaraheel99.github.io/trustgraph/" : `${window.location.origin}${window.location.pathname}`;
+  const authRedirectUrl = hostedAuthRedirectUrl();
   const authPaths = [
     {
       label: "Professional",
@@ -5484,8 +5491,7 @@ function PublicSite({
   const [hasPendingCorporateRegistration, setHasPendingCorporateRegistration] = useState(false);
   const [busy, setBusy] = useState(false);
   const authReady = isSupabaseConfigured();
-  const authRedirectUrl =
-    typeof window === "undefined" ? "https://mirzaraheel99.github.io/trustgraph/" : `${window.location.origin}${window.location.pathname}`;
+  const authRedirectUrl = hostedAuthRedirectUrl();
   const pendingCorporateRegistrationKey = "trustgraph.pendingCorporateRegistration";
 
   function pendingCorporateRegistration() {

@@ -107,6 +107,7 @@ assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect
 assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");
 assertIncludesAny(bundleText, ["2 emails per hour"], "Supabase built-in email rate limit guidance");
 assertIncludesAny(bundleText, ["not localhost"], "hosted auth redirect localhost warning");
+assertIncludesAny(bundleText, ["https://mirzaraheel99.github.io/trustgraph/"], "hosted auth redirect URL");
 assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signed URL label");
 assertIncludesAny(bundleText, ["Export evidence manifest"], "evidence manifest export control");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
