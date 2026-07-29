@@ -3789,13 +3789,15 @@ function notificationEventsToCsv(events: DbNotificationEvent[]) {
 
 function teamMembersToCsv(members: OrganizationMemberView[]) {
   const rows = [
-    ["membership_id", "profile_id", "member_name", "member_email", "role", "status", "created_at", "updated_at"],
+    ["membership_id", "organization_id", "profile_id", "member_name", "member_email", "role", "role_family", "status", "created_at", "updated_at"],
     ...members.map((member) => [
       member.id,
+      member.organization_id,
       member.profile_id,
       member.profile?.full_name ?? "",
       member.profile?.email ?? "",
       member.role,
+      ["employer_admin", "staffing_agency_admin"].includes(member.role) ? "admin" : "reviewer",
       member.status,
       member.created_at,
       member.updated_at
@@ -4595,6 +4597,8 @@ function TeamMembersPanel({
   const [memberStatusFilter, setMemberStatusFilter] = useState<"all" | "active" | "suspended" | "invited">("all");
   const activeCount = members.filter((member) => member.status === "active").length;
   const suspendedCount = members.filter((member) => member.status === "suspended").length;
+  const adminRoleCount = members.filter((member) => ["employer_admin", "staffing_agency_admin"].includes(member.role)).length;
+  const reviewerRoleCount = members.filter((member) => ["employer_reviewer", "recruiter"].includes(member.role)).length;
   const filteredMembers = members.filter((member) => {
     const matchesStatus = memberStatusFilter === "all" || member.status === memberStatusFilter;
     const haystack = `${member.profile?.full_name ?? ""} ${member.profile?.email ?? ""} ${member.role} ${member.status}`.toLowerCase();
@@ -4627,10 +4631,23 @@ function TeamMembersPanel({
           <span>Suspended</span>
           <strong>{suspendedCount}</strong>
         </div>
+        <div>
+          <span>Admins</span>
+          <strong>{adminRoleCount}</strong>
+        </div>
+        <div>
+          <span>Reviewers</span>
+          <strong>{reviewerRoleCount}</strong>
+        </div>
       </div>
       <div className="team-source-strip">
         <span className="status-chip success">Membership database</span>
         <small>Reads live organization memberships and profile rows from Supabase. Current signed-in users cannot suspend their own active seat.</small>
+      </div>
+      <div className="team-roster-detail">
+        <span>{members.length} membership rows</span>
+        <span>{new Set(members.map((member) => member.profile_id)).size} profiles</span>
+        <span>{filteredMembers.length} filtered rows</span>
       </div>
       <div className="team-controls">
         <input
@@ -4664,6 +4681,7 @@ function TeamMembersPanel({
                   <small>
                     {member.role.replace(/_/g, " ")} - {member.status}
                   </small>
+                  <small>Membership {member.id.slice(0, 8)} · Profile {member.profile_id.slice(0, 8)}</small>
                 </div>
                 <div className="grant-actions">
                   <button

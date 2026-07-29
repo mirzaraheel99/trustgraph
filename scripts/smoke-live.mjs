@@ -151,6 +151,9 @@ assertIncludesAny(bundleText, ["shared records"], "Corporate user database share
 assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");
 assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soon queue signal");
 assertIncludesAny(bundleText, ["Membership database"], "Corporate team member source label");
+assertIncludesAny(bundleText, ["Admins"], "Corporate member roster admin count");
+assertIncludesAny(bundleText, ["membership rows"], "Corporate member roster row count");
+assertIncludesAny(bundleText, ["Profile"], "Corporate member roster profile id detail");
 assertIncludesAny(bundleText, ["Invitation database"], "Corporate team invitation source label");
 assertIncludesAny(bundleText, ["Export invites"], "Corporate team invitation export control");
 assertIncludesAny(bundleText, ["Invitation handoff"], "personal invitation handoff source label");
