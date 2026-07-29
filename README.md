@@ -161,7 +161,8 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 15. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
 16. Admin audit trail shows recent material workflow events.
 17. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
-18. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
+18. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
+19. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
 
 ## Live Database Status
 

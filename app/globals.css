@@ -1682,6 +1682,77 @@ p,
   font-size: 11px;
 }
 
+.seed-reconciliation-card {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.045);
+}
+
+.seed-reconciliation-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.seed-reconciliation-top strong,
+.seed-reconciliation-top small {
+  display: block;
+}
+
+.seed-reconciliation-top strong {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.seed-reconciliation-top small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.seed-reconciliation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.seed-reconciliation-grid article {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.seed-reconciliation-grid article.matched {
+  border-color: rgba(82, 214, 196, 0.2);
+  background: rgba(82, 214, 196, 0.04);
+}
+
+.seed-reconciliation-grid strong,
+.seed-reconciliation-grid small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.seed-reconciliation-grid strong {
+  font-size: 12px;
+}
+
+.seed-reconciliation-grid small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .working-database-proof {
   display: grid;
   gap: 10px;
@@ -5059,6 +5130,7 @@ p {
   .human-decision-list,
   .onboarding-current-step,
   .seed-result-grid,
+  .seed-reconciliation-grid,
   .working-database-grid,
   .team-controls,
   .team-summary-grid,
@@ -5084,6 +5156,7 @@ p {
   .panel-heading,
   .record-row-main,
   .onboarding-item,
+  .seed-reconciliation-top,
   .auth-recovery-note,
   .directory-source-strip,
   .evidence-source-strip,

@@ -5277,6 +5277,7 @@ function OnboardingChecklistPanel({
   accountContext,
   authSession,
   consentAuthorizations,
+  evidenceDocuments,
   livePassportRecords,
   organizationSubscriptions,
   teamInvitations,
@@ -5289,6 +5290,7 @@ function OnboardingChecklistPanel({
   accountContext: AccountContext | null;
   authSession: AuthSession | null;
   consentAuthorizations: DbConsentAuthorization[];
+  evidenceDocuments: DbEvidenceDocument[];
   livePassportRecords: RecordItem[];
   organizationSubscriptions: DbOrganizationSubscription[];
   teamInvitations: DbOrganizationInvitation[];
@@ -5370,6 +5372,7 @@ function OnboardingChecklistPanel({
   const checklistExportName = `trustgraph-guided-setup-${new Date().toISOString().slice(0, 10)}.csv`;
   const seedEvidenceExportName = `trustgraph-live-pilot-seed-evidence-${new Date().toISOString().slice(0, 10)}.json`;
   const workingDataExportName = `trustgraph-working-database-proof-${new Date().toISOString().slice(0, 10)}.json`;
+  const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
   const workingDataRows = [
     { label: "Passport records", count: livePassportRecords.length },
     { label: "Access Grants", count: accessGrants.length },
@@ -5379,6 +5382,50 @@ function OnboardingChecklistPanel({
     { label: "Team invitations", count: teamInvitations.length }
   ];
   const workingDataTotal = workingDataRows.reduce((total, row) => total + row.count, 0);
+  const seededAccessGrantId = visibleSeedEvidence?.access_grant_id ?? "";
+  const seededConsentAuthorizationId = visibleSeedEvidence?.consent_authorization_id ?? "";
+  const seededSubscriptionId = visibleSeedEvidence?.subscription_id ?? "";
+  const seededMembershipId = visibleSeedEvidence?.membership_id ?? "";
+  const seedReconciliationRows = [
+    {
+      label: "Passport records",
+      expected: visibleSeedEvidence?.passport_records ?? 0,
+      actual: livePassportRecords.length,
+      ok: Boolean(visibleSeedEvidence) && livePassportRecords.length >= (visibleSeedEvidence?.passport_records ?? 0)
+    },
+    {
+      label: "Evidence documents",
+      expected: visibleSeedEvidence?.evidence_documents ?? 0,
+      actual: evidenceDocuments.length,
+      ok: Boolean(visibleSeedEvidence) && evidenceDocuments.length >= (visibleSeedEvidence?.evidence_documents ?? 0)
+    },
+    {
+      label: "Access Grants",
+      expected: visibleSeedEvidence ? 1 : 0,
+      actual: accessGrants.length,
+      ok: Boolean(seededAccessGrantId) && accessGrants.some((grant) => grant.id === seededAccessGrantId)
+    },
+    {
+      label: "Consent",
+      expected: visibleSeedEvidence ? 1 : 0,
+      actual: consentAuthorizations.length,
+      ok: Boolean(seededConsentAuthorizationId) && consentAuthorizations.some((authorization) => authorization.id === seededConsentAuthorizationId)
+    },
+    {
+      label: "Subscription",
+      expected: visibleSeedEvidence ? 1 : 0,
+      actual: organizationSubscriptions.length,
+      ok: Boolean(seededSubscriptionId) && organizationSubscriptions.some((subscription) => subscription.id === seededSubscriptionId)
+    },
+    {
+      label: "Corporate members",
+      expected: visibleSeedEvidence ? 1 : 0,
+      actual: teamMembers.length,
+      ok: Boolean(seededMembershipId) && teamMembers.some((member) => member.id === seededMembershipId)
+    }
+  ];
+  const seedReconciliationPassing = seedReconciliationRows.filter((row) => row.ok).length;
+  const seedReconciliationComplete = Boolean(visibleSeedEvidence) && seedReconciliationPassing === seedReconciliationRows.length;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -5424,7 +5471,6 @@ function OnboardingChecklistPanel({
     setSeedStatus("Last browser seed evidence cleared. Live database rows will reload after login.");
   }
 
-  const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
   const workingDatabaseProof = {
     generated_at: new Date().toISOString(),
     mode: authSession && accountContext ? "live_supabase" : "product_preview",
@@ -5435,6 +5481,12 @@ function OnboardingChecklistPanel({
     checklist_completed: completed,
     checklist_total: checklist.length,
     seed_evidence: visibleSeedEvidence,
+    seed_reconciliation: {
+      passing: seedReconciliationPassing,
+      total: seedReconciliationRows.length,
+      complete: seedReconciliationComplete,
+      rows: seedReconciliationRows
+    },
     note:
       authSession && accountContext
         ? "Counts reflect rows loaded through the live Supabase repositories for this signed-in account and RBAC context."
@@ -5513,6 +5565,28 @@ function OnboardingChecklistPanel({
               <button className="secondary-action" onClick={clearSeedEvidence} type="button">
                 Clear seed evidence
               </button>
+            </div>
+          </div>
+          <div className="seed-reconciliation-card">
+            <div className="seed-reconciliation-top">
+              <div>
+                <strong>Seed reconciliation</strong>
+                <small>Compares the latest seed IDs and counts with rows currently loaded from the live repositories.</small>
+              </div>
+              <span className={`status-chip ${seedReconciliationComplete ? "success" : "warning"}`}>
+                {seedReconciliationPassing}/{seedReconciliationRows.length} matched
+              </span>
+            </div>
+            <div className="seed-reconciliation-grid">
+              {seedReconciliationRows.map((row) => (
+                <article className={row.ok ? "matched" : ""} key={row.label}>
+                  <span className={`status-dot ${row.ok ? "on" : ""}`} />
+                  <div>
+                    <strong>{row.label}</strong>
+                    <small>Expected {row.expected}; loaded {row.actual}</small>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </>
@@ -8000,6 +8074,7 @@ function App() {
           accountContext={accountContext}
           authSession={authSession}
           consentAuthorizations={consentAuthorizations}
+          evidenceDocuments={evidenceDocuments}
           livePassportRecords={livePassportRecords}
           organizationSubscriptions={organizationSubscriptions}
           teamInvitations={teamInvitations}

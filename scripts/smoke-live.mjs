@@ -142,6 +142,8 @@ assertIncludesAny(bundleText, ["Export setup evidence"], "guided onboarding expo
 assertIncludesAny(bundleText, ["Prepare live pilot workspace"], "guided onboarding live workspace control");
 assertIncludesAny(bundleText, ["Last browser seed evidence"], "persisted pilot seed evidence label");
 assertIncludesAny(bundleText, ["Export seed evidence"], "pilot seed evidence export control");
+assertIncludesAny(bundleText, ["Seed reconciliation"], "pilot seed reconciliation panel");
+assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched count");
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
 assertIncludesAny(bundleText, ["Export working-data packet"], "working database proof export");
 assertIncludesAny(bundleText, ["Live rows currently loaded"], "working database live-count copy");
