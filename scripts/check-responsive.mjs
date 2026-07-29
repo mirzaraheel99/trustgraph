@@ -32,8 +32,16 @@ if (!css.includes(".evidence-controls") || !css.includes("grid-template-columns:
   throw new Error("Responsive check failed: evidence controls must support search, filter, manifest export, and access packet export.");
 }
 
+if (!css.includes(".trust-network-visual") || !css.includes("min-height: 268px") || !css.includes(".trust-network-node")) {
+  throw new Error("Responsive check failed: premium TrustGraph record graph needs stable desktop dimensions.");
+}
+
 if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("flex-direction: column")) {
   throw new Error("Responsive check failed: missing 760px flex stacking rule.");
+}
+
+if (!flexStackCss.includes(".trust-network-visual") || !flexStackCss.includes("min-height: 316px")) {
+  throw new Error("Responsive check failed: premium TrustGraph record graph needs stable mobile dimensions.");
 }
 
 if (!flexStackCss.includes(".audit-controls button") || !flexStackCss.includes("min-height: 42px")) {

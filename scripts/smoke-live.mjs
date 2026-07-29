@@ -106,6 +106,8 @@ assertIncludesAny(bundleText, ["Professional Passport access"], "Professional po
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
 assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command center hero");
+assertIncludesAny(bundleText, ["Verified TrustGraph record graph"], "premium TrustGraph record graph visual");
+assertIncludesAny(bundleText, ["Professional", "Passport", "Evidence", "Consent"], "TrustGraph visual record nodes");
 assertIncludesAny(bundleText, ["Organization name"], "Corporate registration organization field");
 assertIncludesAny(bundleText, ["Pending corporate workspace"], "pending Corporate setup continuation card");
 assertIncludesAny(bundleText, ["Clear saved setup"], "pending Corporate setup reset control");

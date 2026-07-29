@@ -7322,6 +7322,24 @@ function PublicSite({
             <strong>Signed preview and download</strong>
             <small>Private Supabase Storage links with audit context.</small>
           </div>
+          <div className="trust-network-visual" aria-label="Verified TrustGraph record graph">
+            <div className="trust-network-node primary">
+              <span>Professional</span>
+              <strong>Passport</strong>
+            </div>
+            <div className="trust-network-node evidence">
+              <span>Evidence</span>
+              <strong>Signed</strong>
+            </div>
+            <div className="trust-network-node consent">
+              <span>Consent</span>
+              <strong>Scoped</strong>
+            </div>
+            <div className="trust-network-node verify">
+              <span>Corporate</span>
+              <strong>Verify</strong>
+            </div>
+          </div>
           <div className="command-center-footer">
             <span>Auth</span>
             <span>Database</span>
