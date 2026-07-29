@@ -1888,6 +1888,25 @@ p,
   gap: 9px;
 }
 
+.corporate-provisioning-card {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.05);
+}
+
+.corporate-provisioning-card small {
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+
+.corporate-provisioning-card .secondary-action {
+  justify-content: center;
+  min-height: 32px;
+}
+
 .account-admin-row {
   display: grid;
   grid-template-columns: 1fr 1fr;

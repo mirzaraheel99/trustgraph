@@ -36,6 +36,7 @@ import type {
   DbIssuerCredential,
   DbMissingRecordRequest,
   DbNotificationEvent,
+  DbOrganizationMembership,
   DbOrganizationInvitation,
   DbOrganizationSubscription,
   DbPilotLaunchContact,
@@ -3961,7 +3962,7 @@ function AccountPanel({
     organizationName: string;
     organizationType: "employer" | "staffing_agency";
     organizationDomain: string;
-  }) => Promise<void>;
+  }) => Promise<DbOrganizationMembership>;
   onCreateOperationsRole: () => Promise<void>;
   onAssignRole: (organizationId: string, role: RoleKey) => Promise<void>;
   onSwitch: (membershipId: string) => void;
@@ -3974,6 +3975,7 @@ function AccountPanel({
   const [targetRole, setTargetRole] = useState<RoleKey>(
     activeOrg.type === "staffing_agency" ? "recruiter" : "employer_reviewer"
   );
+  const [provisionedMembership, setProvisionedMembership] = useState<DbOrganizationMembership | null>(null);
   const [busy, setBusy] = useState(false);
   const [panelStatus, setPanelStatus] = useState("");
   const canManageActiveOrg = hasPermission(activeMembership.role, "organization:manage");
@@ -3992,16 +3994,30 @@ function AccountPanel({
     setBusy(true);
     setPanelStatus("Creating corporate account...");
     try {
-      await onCreateCorporateAccount({ organizationName, organizationType, organizationDomain });
+      const membership = await onCreateCorporateAccount({ organizationName, organizationType, organizationDomain });
+      setProvisionedMembership(membership);
       setOrganizationName("");
       setOrganizationDomain("");
-      setPanelStatus("Corporate account created");
+      setPanelStatus("Corporate account created with live Supabase membership evidence.");
     } catch (error) {
       setPanelStatus(error instanceof Error ? error.message : "Could not create corporate account");
     } finally {
       setBusy(false);
     }
   }
+
+  const provisioningPacketName = `trustgraph-corporate-provisioning-${new Date().toISOString().slice(0, 10)}.json`;
+  const provisioningPacket = provisionedMembership
+    ? {
+        generated_at: new Date().toISOString(),
+        profile_id: provisionedMembership.profile_id,
+        organization_id: provisionedMembership.organization_id,
+        membership_id: provisionedMembership.id,
+        role: provisionedMembership.role,
+        status: provisionedMembership.status,
+        source: "create_corporate_account_rpc"
+      }
+    : null;
 
   async function submitRoleActivation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -4093,6 +4109,15 @@ function AccountPanel({
           Create admin org
         </button>
       </form>
+      {provisioningPacket ? (
+        <div className="corporate-provisioning-card">
+          <span className="status-chip success">Corporate provisioning evidence</span>
+          <small>Live Supabase membership {provisioningPacket.membership_id.slice(0, 8)} created for organization {provisioningPacket.organization_id.slice(0, 8)} with role {provisioningPacket.role.replace(/_/g, " ")}.</small>
+          <button className="secondary-action" onClick={() => downloadTextFile(provisioningPacketName, JSON.stringify(provisioningPacket, null, 2), "application/json")} type="button">
+            Export provisioning packet
+          </button>
+        </div>
+      ) : null}
       <form className="account-admin-form compact" onSubmit={submitRoleActivation}>
         <div className="mini-heading">
           <KeyRound size={16} />
@@ -7247,6 +7272,7 @@ function App() {
     setActiveMembershipId(membership.id);
     setWorkspaceId("verify");
     setAccountStatus("Corporate account created");
+    return membership;
   }
 
   async function seedLivePilotWorkspace() {

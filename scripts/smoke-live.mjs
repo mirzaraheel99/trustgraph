@@ -140,6 +140,8 @@ assertIncludesAny(bundleText, ["Export setup evidence"], "guided onboarding expo
 assertIncludesAny(bundleText, ["Prepare live pilot workspace"], "guided onboarding live workspace control");
 assertIncludesAny(bundleText, ["Last browser seed evidence"], "persisted pilot seed evidence label");
 assertIncludesAny(bundleText, ["Export seed evidence"], "pilot seed evidence export control");
+assertIncludesAny(bundleText, ["Corporate provisioning evidence"], "Corporate account provisioning proof");
+assertIncludesAny(bundleText, ["Export provisioning packet"], "Corporate provisioning export control");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
 assertIncludesAny(bundleText, ["Live database view"], "Corporate user database source label");
