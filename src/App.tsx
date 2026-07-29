@@ -5061,9 +5061,13 @@ function OnboardingChecklistPanel({
   onOpenWorkspace: (workspaceId: WorkspaceId) => void;
   onSeedPilotWorkspace: () => Promise<Awaited<ReturnType<typeof seedPilotWorkspace>>>;
 }) {
+  type PilotSeedResult = Awaited<ReturnType<typeof seedPilotWorkspace>>;
+  type SavedPilotSeedEvidence = PilotSeedResult & { saved_at: string };
   const [seedStatus, setSeedStatus] = useState("Create live pilot rows after signing in.");
-  const [seedResult, setSeedResult] = useState<Awaited<ReturnType<typeof seedPilotWorkspace>> | null>(null);
+  const [seedResult, setSeedResult] = useState<PilotSeedResult | null>(null);
+  const [savedSeedEvidence, setSavedSeedEvidence] = useState<SavedPilotSeedEvidence | null>(null);
   const [seedBusy, setSeedBusy] = useState(false);
+  const pilotSeedEvidenceKey = "trustgraph.lastPilotSeedEvidence";
   const hasCorporateContext = Boolean(
     accountContext?.memberships.some((membership) =>
       ["employer_admin", "employer_reviewer", "staffing_agency_admin", "recruiter"].includes(membership.role)
@@ -5128,13 +5132,35 @@ function OnboardingChecklistPanel({
   const completed = checklist.filter((item) => item.done).length;
   const nextItem = checklist.find((item) => !item.done) ?? checklist[checklist.length - 1];
   const checklistExportName = `trustgraph-guided-setup-${new Date().toISOString().slice(0, 10)}.csv`;
+  const seedEvidenceExportName = `trustgraph-live-pilot-seed-evidence-${new Date().toISOString().slice(0, 10)}.json`;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const stored = window.localStorage.getItem(pilotSeedEvidenceKey);
+    if (!stored) return;
+
+    try {
+      const parsed = JSON.parse(stored) as SavedPilotSeedEvidence;
+      if (!parsed.subscription_id || !parsed.access_grant_id || !parsed.corporate_organization_id) return;
+      setSavedSeedEvidence(parsed);
+      setSeedStatus(`Last browser seed evidence saved ${new Date(parsed.saved_at).toLocaleString()}. Live rows still load from Supabase after login.`);
+    } catch {
+      window.localStorage.removeItem(pilotSeedEvidenceKey);
+    }
+  }, []);
 
   async function seedLiveData() {
     setSeedBusy(true);
     setSeedStatus("Creating live pilot rows in Supabase...");
     try {
       const result = await onSeedPilotWorkspace();
+      const savedEvidence = { ...result, saved_at: new Date().toISOString() };
       setSeedResult(result);
+      setSavedSeedEvidence(savedEvidence);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(pilotSeedEvidenceKey, JSON.stringify(savedEvidence));
+      }
       setSeedStatus("Live pilot workspace seeded and portal data refreshed.");
     } catch (error) {
       setSeedStatus(error instanceof Error ? error.message : "Could not seed live pilot workspace");
@@ -5142,6 +5168,17 @@ function OnboardingChecklistPanel({
       setSeedBusy(false);
     }
   }
+
+  function clearSeedEvidence() {
+    setSeedResult(null);
+    setSavedSeedEvidence(null);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(pilotSeedEvidenceKey);
+    }
+    setSeedStatus("Last browser seed evidence cleared. Live database rows will reload after login.");
+  }
+
+  const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
 
   return (
     <section className="onboarding-panel">
@@ -5174,40 +5211,48 @@ function OnboardingChecklistPanel({
           Prepare live pilot workspace
         </button>
       </div>
-      {seedResult ? (
+      {visibleSeedEvidence ? (
         <>
           <div className="seed-result-grid">
             <div>
               <span>Passport</span>
-              <strong>{seedResult.passport_records}</strong>
+              <strong>{visibleSeedEvidence.passport_records}</strong>
             </div>
             <div>
               <span>Evidence</span>
-              <strong>{seedResult.evidence_documents}</strong>
+              <strong>{visibleSeedEvidence.evidence_documents}</strong>
             </div>
             <div>
               <span>Subscription</span>
-              <strong>{seedResult.subscription_id.slice(0, 8)}</strong>
+              <strong>{visibleSeedEvidence.subscription_id.slice(0, 8)}</strong>
             </div>
             <div>
               <span>Access Grant</span>
-              <strong>{seedResult.access_grant_id.slice(0, 8)}</strong>
+              <strong>{visibleSeedEvidence.access_grant_id.slice(0, 8)}</strong>
             </div>
             <div>
               <span>Consent</span>
-              <strong>{seedResult.consent_authorization_id.slice(0, 8)}</strong>
+              <strong>{visibleSeedEvidence.consent_authorization_id.slice(0, 8)}</strong>
             </div>
             <div>
               <span>Corporate org</span>
-              <strong>{seedResult.corporate_organization_id.slice(0, 8)}</strong>
+              <strong>{visibleSeedEvidence.corporate_organization_id.slice(0, 8)}</strong>
             </div>
           </div>
           <div className="seed-evidence-card">
-            <span className="status-chip success">Supabase rows written</span>
+            <span className="status-chip success">{seedResult ? "Supabase rows written" : "Last browser seed evidence"}</span>
             <small>
-              Live pilot database evidence: subscription {seedResult.subscription_id}, Access Grant {seedResult.access_grant_id},
-              consent authorization {seedResult.consent_authorization_id}, corporate organization {seedResult.corporate_organization_id}.
+              Live pilot database evidence: subscription {visibleSeedEvidence.subscription_id}, Access Grant {visibleSeedEvidence.access_grant_id},
+              consent authorization {visibleSeedEvidence.consent_authorization_id}, corporate organization {visibleSeedEvidence.corporate_organization_id}.
             </small>
+            <div className="seed-evidence-actions">
+              <button className="secondary-action" onClick={() => downloadTextFile(seedEvidenceExportName, JSON.stringify(visibleSeedEvidence, null, 2), "application/json")} type="button">
+                Export seed evidence
+              </button>
+              <button className="secondary-action" onClick={clearSeedEvidence} type="button">
+                Clear seed evidence
+              </button>
+            </div>
           </div>
         </>
       ) : null}

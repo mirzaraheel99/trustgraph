@@ -1619,6 +1619,18 @@ p,
   line-height: 1.45;
 }
 
+.seed-evidence-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.seed-evidence-actions .secondary-action {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+
 .readiness-score-card div > span {
   color: var(--muted);
   font-size: 11px;
