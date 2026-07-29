@@ -5970,6 +5970,7 @@ function OnboardingChecklistPanel({
   const completed = checklist.filter((item) => item.done).length;
   const nextItem = checklist.find((item) => !item.done) ?? checklist[checklist.length - 1];
   const checklistExportName = `trustgraph-guided-setup-${new Date().toISOString().slice(0, 10)}.csv`;
+  const wizardExportName = `trustgraph-guided-onboarding-wizard-${new Date().toISOString().slice(0, 10)}.json`;
   const seedEvidenceExportName = `trustgraph-live-pilot-seed-evidence-${new Date().toISOString().slice(0, 10)}.json`;
   const workingDataExportName = `trustgraph-working-database-proof-${new Date().toISOString().slice(0, 10)}.json`;
   const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
@@ -6092,6 +6093,28 @@ function OnboardingChecklistPanel({
         ? "Counts reflect rows loaded through the live Supabase repositories for this signed-in account and RBAC context."
         : "Login is required before this packet proves live database state."
   };
+  const guidedOnboardingWizard = {
+    generated_at: new Date().toISOString(),
+    mode: authSession && accountContext ? "live_supabase" : "product_preview",
+    title: "Guided onboarding wizard",
+    completed_steps: completed,
+    total_steps: checklist.length,
+    current_step: {
+      label: nextItem.label,
+      status: nextItem.done ? "ready" : "needs_action",
+      detail: nextItem.detail,
+      action: nextItem.done ? "Review" : nextItem.actionLabel
+    },
+    steps: checklist.map((item, index) => ({
+      order: index + 1,
+      label: item.label,
+      status: item.done ? "ready" : "needs_action",
+      detail: item.detail,
+      action: item.done ? "Review" : item.actionLabel
+    })),
+    live_database_proof: workingDatabaseProof,
+    seed_reconciliation_complete: seedReconciliationComplete
+  };
 
   return (
     <section className="onboarding-panel">
@@ -6101,6 +6124,7 @@ function OnboardingChecklistPanel({
       </div>
       <div className="onboarding-score">
         <div>
+          <strong>Guided onboarding wizard</strong>
           <span>{completed}/{checklist.length}</span>
           <small>{nextItem.done ? "Core launch path complete" : nextItem.detail}</small>
         </div>
@@ -6110,6 +6134,9 @@ function OnboardingChecklistPanel({
           </span>
           <button className="secondary-action" onClick={() => downloadTextFile(checklistExportName, onboardingChecklistToCsv(checklist), "text/csv")} type="button">
             Export setup evidence
+          </button>
+          <button className="secondary-action" onClick={() => downloadTextFile(wizardExportName, JSON.stringify(guidedOnboardingWizard, null, 2), "application/json")} type="button">
+            Export wizard packet
           </button>
         </div>
       </div>

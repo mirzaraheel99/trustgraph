@@ -161,7 +161,9 @@ assertIncludesAny(bundleText, ["Record gate decision"], "production gate decisio
 assertIncludesAny(bundleText, ["Approved for production"], "production gate approved status option");
 assertIncludesAny(bundleText, ["external sign-off required"], "external security gate status");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
+assertIncludesAny(bundleText, ["Guided onboarding wizard"], "guided onboarding wizard label");
 assertIncludesAny(bundleText, ["Export setup evidence"], "guided onboarding export control");
+assertIncludesAny(bundleText, ["Export wizard packet"], "guided onboarding wizard packet export");
 assertIncludesAny(bundleText, ["Prepare live pilot workspace"], "guided onboarding live workspace control");
 assertIncludesAny(bundleText, ["Last browser seed evidence"], "persisted pilot seed evidence label");
 assertIncludesAny(bundleText, ["Export seed evidence"], "pilot seed evidence export control");
