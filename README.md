@@ -148,26 +148,27 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 2. TrustGraph creates a Professional account automatically.
 3. Add live Passport records with evidence summaries, structured responsibilities, and skills.
 4. Export the renewal readiness packet to review expired and 45-day due-soon records from the visible Passport or Verify scope.
-5. Create a corporate account or accept an invitation into one.
-6. Corporate users invite team members, activate subscriptions, and request Access Grants from professionals by email.
-7. Export the portal access packet to prove the signed-in profile, active membership, organization, and workspace route used for RBAC acceptance.
-8. Switch to Verify to review approved shared records.
-9. Request structured references, missing records, or issuer-created credentials as needed.
-10. Professionals review and resolve Corporate missing-record requests from Passport.
-11. Upload private evidence files to Supabase Storage and link them to Passport records.
-12. Export the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, structured responsibilities, skills, and gap focus.
-13. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
-14. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
-15. Manage Connect API clients and webhook subscriptions from Admin.
-16. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
-17. Export the pricing structure packet to prove configured plans, selected-seat projections, active ledger subscriptions, and Stripe launch gates.
-18. Export the v1 completion audit packet from Admin to review all 13 tracks, locked profile scope, evidence exports, verification gates, and remaining human decisions.
-19. Export the auth redirect readiness packet before invite testing to prove hosted redirect settings, email limits, TrustGraph VPS target, and VFIX isolation.
-20. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
-21. Admin audit trail shows recent material workflow events.
-22. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
-23. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
-24. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
+5. Export the confidentiality review packet to inspect performance reviews, references, restricted records, and explicit-consent records inside the visible scope.
+6. Create a corporate account or accept an invitation into one.
+7. Corporate users invite team members, activate subscriptions, and request Access Grants from professionals by email.
+8. Export the portal access packet to prove the signed-in profile, active membership, organization, and workspace route used for RBAC acceptance.
+9. Switch to Verify to review approved shared records.
+10. Request structured references, missing records, or issuer-created credentials as needed.
+11. Professionals review and resolve Corporate missing-record requests from Passport.
+12. Upload private evidence files to Supabase Storage and link them to Passport records.
+13. Export the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, structured responsibilities, skills, and gap focus.
+14. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
+15. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
+16. Manage Connect API clients and webhook subscriptions from Admin.
+17. Manage corporate team invitations, accepted members, and subscription plans from the authenticated sidebar.
+18. Export the pricing structure packet to prove configured plans, selected-seat projections, active ledger subscriptions, and Stripe launch gates.
+19. Export the v1 completion audit packet from Admin to review all 13 tracks, locked profile scope, evidence exports, verification gates, and remaining human decisions.
+20. Export the auth redirect readiness packet before invite testing to prove hosted redirect settings, email limits, TrustGraph VPS target, and VFIX isolation.
+21. Use the source-grounded advisory card to review deterministic next actions from authorized records and workflow queues.
+22. Admin audit trail shows recent material workflow events.
+23. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
+24. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
+25. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
 
 ## Live Database Status
 

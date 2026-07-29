@@ -121,6 +121,9 @@ assertIncludesAny(bundleText, ["Responsibilities, separated by commas"], "struct
 assertIncludesAny(bundleText, ["Credential renewal readiness"], "credential renewal readiness panel");
 assertIncludesAny(bundleText, ["Export renewal packet"], "credential renewal packet export");
 assertIncludesAny(bundleText, ["renewal_window_days"], "credential renewal packet window field");
+assertIncludesAny(bundleText, ["Confidentiality review packet"], "performance/reference confidentiality review panel");
+assertIncludesAny(bundleText, ["Export confidentiality packet"], "confidentiality packet export control");
+assertIncludesAny(bundleText, ["visible_scope_only"], "confidentiality packet scoped mode");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Portal access evidence"], "portal access evidence packet label");
 assertIncludesAny(bundleText, ["Export portal packet"], "portal access packet export control");

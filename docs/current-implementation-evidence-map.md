@@ -28,7 +28,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Corporate account | `src/accountRepository.ts`, Account panel, Corporate provisioning packet, team panels, member roster proof | `supabase/migrations/009`, `020`, `021`, `022`, smoke corporate checks |
 | RBAC | `src/rbac.ts`, workspace gating, role preview, portal access packet | `scripts/check-claims.mjs`, portal access export |
 | Access Grants | `src/grantRepository.ts`, Passport approval/decline/revoke, Verify requests, shared record sync | `supabase/migrations/003`, `006`, `008`, `023` |
-| Consent controls | `src/consentRepository.ts`, consent authorization and revoke UI, sensitive record controls | `supabase/migrations/025`, `026`, RLS guard |
+| Consent controls | `src/consentRepository.ts`, consent authorization and revoke UI, sensitive record controls, confidentiality review packet | `supabase/migrations/025`, `026`, RLS guard |
 | References and missing records | `src/referenceRepository.ts`, `src/missingRecordRepository.ts`, request status controls and exports | `supabase/migrations/013`, `015` |
 | Issuer workflow | `src/credentialRepository.ts`, issuer role activation and credential issue workflow | `supabase/migrations/014` |
 | Evidence preview/download | Private Supabase Storage upload, metadata listing, manifest export, signed preview/download buttons | `supabase/migrations/017`, smoke evidence assertions |
@@ -45,6 +45,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Corporate provisioning packet: created organization, membership, role, and database write evidence.
 - Corporate user database packet: filtered professional access rows, shared record scope, structured responsibilities, skills, source counts, and missing-record gap focus visible to the active Verify workspace.
 - Renewal readiness packet: visible Passport or Verify records grouped by expired, 45-day due-soon, dated, and missing-expiration review states.
+- Confidentiality review packet: visible performance reviews, references, restricted records, and explicit-consent records scoped to the active Passport or Verify view.
 - Pricing structure packet: configured plans, selected-seat projections, active pilot ledger subscriptions, and payment launch gates.
 - V1 completion audit packet: 13-track status, locked profile scope, evidence exports, verification gates, TrustGraph VPS target, and remaining human decisions.
 - Auth redirect readiness packet: active hosted redirect URL, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.

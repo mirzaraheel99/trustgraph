@@ -967,6 +967,78 @@ function RenewalReadinessPanel({
   );
 }
 
+function ConfidentialityReviewPanel({
+  records,
+  workspaceLabel
+}: {
+  records: RecordItem[];
+  workspaceLabel: string;
+}) {
+  const confidentialRecords = records.filter(
+    (record) =>
+      record.section === "Performance Review" ||
+      record.section === "References" ||
+      record.sensitivity === "restricted" ||
+      record.consentRequired
+  );
+  const explicitConsentCount = confidentialRecords.filter((record) => record.consentRequired).length;
+  const restrictedCount = confidentialRecords.filter((record) => record.sensitivity === "restricted").length;
+  const packetName = `trustgraph-confidentiality-review-${workspaceLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${new Date().toISOString().slice(0, 10)}.json`;
+  const confidentialityPacket = {
+    generated_at: new Date().toISOString(),
+    workspace: workspaceLabel,
+    mode: "visible_scope_only",
+    counts: {
+      visible_records: records.length,
+      confidentiality_review_records: confidentialRecords.length,
+      explicit_consent_required: explicitConsentCount,
+      restricted_records: restrictedCount
+    },
+    review_policy: [
+      "Performance reviews and references remain scoped to approved Access Grants.",
+      "Restricted records require explicit consent before sensitive evidence is shared.",
+      "Corporate Verify exports include visibility metadata only for records visible to the active role and organization."
+    ],
+    records: confidentialRecords.map((record) => ({
+      record_id: record.id,
+      section: record.section,
+      title: record.title,
+      source: record.source,
+      status: record.status,
+      sensitivity: record.sensitivity ?? "standard",
+      explicit_consent_required: Boolean(record.consentRequired),
+      access_scope: record.access
+    }))
+  };
+
+  return (
+    <section className="confidentiality-review-panel">
+      <div className="mini-heading">
+        <ShieldAlert size={16} />
+        <strong>Confidentiality review packet</strong>
+      </div>
+      <div className="confidentiality-summary-grid">
+        <div>
+          <span>Reviewed</span>
+          <strong>{confidentialRecords.length}</strong>
+        </div>
+        <div>
+          <span>Consent</span>
+          <strong>{explicitConsentCount}</strong>
+        </div>
+        <div>
+          <span>Restricted</span>
+          <strong>{restrictedCount}</strong>
+        </div>
+      </div>
+      <small>Flags visible performance reviews, references, restricted records, and explicit-consent records for scoped reviewer handoff.</small>
+      <button className="secondary-action" onClick={() => downloadTextFile(packetName, JSON.stringify(confidentialityPacket, null, 2), "application/json")} type="button">
+        Export confidentiality packet
+      </button>
+    </section>
+  );
+}
+
 function AccessGrantsPanel({
   disabled,
   grants,
@@ -8660,6 +8732,7 @@ function App() {
               ))}
             </div>
             <RenewalReadinessPanel records={records} workspaceLabel={workspace.label} />
+            <ConfidentialityReviewPanel records={records} workspaceLabel={workspace.label} />
 
             {workspace.id === "passport" ? (
               <>

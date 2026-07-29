@@ -4859,7 +4859,8 @@ p {
   border-color: rgba(82, 214, 196, 0.2);
 }
 
-.renewal-readiness-panel {
+.renewal-readiness-panel,
+.confidentiality-review-panel {
   display: grid;
   gap: 10px;
   margin-top: 14px;
@@ -4869,13 +4870,20 @@ p {
   background: rgba(210, 176, 95, 0.055);
 }
 
-.renewal-summary-grid {
+.confidentiality-review-panel {
+  border-color: rgba(255, 111, 145, 0.22);
+  background: rgba(255, 111, 145, 0.05);
+}
+
+.renewal-summary-grid,
+.confidentiality-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
-.renewal-summary-grid div {
+.renewal-summary-grid div,
+.confidentiality-summary-grid div {
   display: grid;
   gap: 4px;
   min-width: 0;
@@ -4885,23 +4893,31 @@ p {
   background: rgba(0, 0, 0, 0.12);
 }
 
-.renewal-summary-grid span {
+.confidentiality-summary-grid div {
+  border-color: rgba(255, 111, 145, 0.18);
+}
+
+.renewal-summary-grid span,
+.confidentiality-summary-grid span {
   color: var(--muted);
   font-size: 11px;
   font-weight: 850;
   text-transform: uppercase;
 }
 
-.renewal-summary-grid strong {
+.renewal-summary-grid strong,
+.confidentiality-summary-grid strong {
   font-size: 18px;
 }
 
-.renewal-readiness-panel > small {
+.renewal-readiness-panel > small,
+.confidentiality-review-panel > small {
   color: var(--muted);
   line-height: 1.4;
 }
 
-.renewal-readiness-panel .secondary-action {
+.renewal-readiness-panel .secondary-action,
+.confidentiality-review-panel .secondary-action {
   justify-content: center;
 }
 

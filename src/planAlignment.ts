@@ -221,9 +221,9 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     id: "performance",
     label: "Performance reviews",
     productArea: "References",
-    status: "foundation",
-    evidence: "Performance review is a first-class scoped record type; confidentiality workflow remains next.",
-    tone: "info"
+    status: "deployed",
+    evidence: "Performance review is a first-class scoped record type with restricted sensitivity defaults, explicit consent controls, and a confidentiality review export.",
+    tone: "success"
   },
   {
     id: "continuing-education",
