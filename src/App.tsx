@@ -5389,6 +5389,14 @@ function hostedAuthRedirectUrl() {
   return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? hostedUrl : currentUrl;
 }
 
+function hasHostedAuthCallbackUrl() {
+  if (typeof window === "undefined") return false;
+
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const queryParams = new URLSearchParams(window.location.search);
+  return Boolean(hashParams.get("access_token") || queryParams.get("access_token"));
+}
+
 function repairHostedAuthLink(input: string, hostedUrl: string) {
   const trimmed = input.trim();
   if (!trimmed) return "";
@@ -7270,6 +7278,7 @@ function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const hadHostedAuthCallback = hasHostedAuthCallbackUrl();
 
     Promise.resolve()
       .then(() => readSessionFromUrl())
@@ -7279,7 +7288,7 @@ function App() {
         setAuthSession(storedSession);
         if (storedSession) {
           setShowPublicSite(false);
-          setAccountStatus("Live session connected");
+          setAccountStatus(hadHostedAuthCallback ? "Hosted email verification accepted; live session connected" : "Live session connected");
         }
       })
       .catch((error) => {
