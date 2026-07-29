@@ -65,5 +65,5 @@ jobs:
 
       - name: Smoke-check VPS
         run: |
-          curl --fail --location --silent --show-error "https://5-75-224-11.sslip.io" >/tmp/trustgraph-vps.html
+          curl --fail --location --silent --show-error "https://$VPS_HOST" >/tmp/trustgraph-vps.html
           grep -q "TrustGraph" /tmp/trustgraph-vps.html

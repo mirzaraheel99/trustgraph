@@ -130,7 +130,7 @@ target_host=5.75.224.11
 remote_path=/opt/trustgraph
 ```
 
-The workflow is manual-only. It pulls `origin/main` inside `/opt/trustgraph`, runs `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`, and smoke-checks `https://5-75-224-11.sslip.io`.
+The workflow is manual-only. It pulls `origin/main` inside `/opt/trustgraph`, runs `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`, and smoke-checks the validated TrustGraph host from the workflow input.
 
 It will refuse:
 
