@@ -5176,7 +5176,7 @@ p {
 
 .evidence-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 128px 184px;
+  grid-template-columns: minmax(0, 1fr) 128px 184px 172px;
   gap: 8px;
   margin-top: 12px;
 }
@@ -5478,9 +5478,37 @@ p {
   .public-nav-actions button,
   .public-hero-actions button,
   .portal-tabs button,
+  .audit-controls button,
+  .evidence-controls button,
+  .topbar-actions .secondary-action,
+  .topbar-actions .primary-action,
   .notification-actions button,
   .readiness-action-row span {
     flex: 1 1 140px;
+  }
+
+  .audit-controls button,
+  .evidence-controls button,
+  .directory-controls button,
+  .missing-controls button,
+  .operations-controls button,
+  .team-controls button {
+    min-height: 42px;
+  }
+
+  .audit-controls input,
+  .audit-controls select,
+  .evidence-controls input,
+  .evidence-controls select,
+  .directory-controls input,
+  .directory-controls select,
+  .missing-controls input,
+  .missing-controls select,
+  .operations-controls input,
+  .operations-controls select,
+  .team-controls input,
+  .team-controls select {
+    min-height: 42px;
   }
 
   .public-hero {

@@ -28,8 +28,16 @@ if (!gridStackCss.includes(".record-form-grid") || !gridStackCss.includes("grid-
   throw new Error("Responsive check failed: missing 1240px grid stacking rule.");
 }
 
+if (!css.includes(".evidence-controls") || !css.includes("grid-template-columns: minmax(0, 1fr) 128px 184px 172px")) {
+  throw new Error("Responsive check failed: evidence controls must support search, filter, manifest export, and access packet export.");
+}
+
 if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("flex-direction: column")) {
   throw new Error("Responsive check failed: missing 760px flex stacking rule.");
+}
+
+if (!flexStackCss.includes(".audit-controls button") || !flexStackCss.includes("min-height: 42px")) {
+  throw new Error("Responsive check failed: dense mobile controls need stable touch targets.");
 }
 
 const missing = requiredMobileStacks.filter((selector) => !gridStackCss.includes(selector) && !flexStackCss.includes(selector));
