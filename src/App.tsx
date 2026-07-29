@@ -5281,6 +5281,16 @@ function OnboardingChecklistPanel({
   const nextItem = checklist.find((item) => !item.done) ?? checklist[checklist.length - 1];
   const checklistExportName = `trustgraph-guided-setup-${new Date().toISOString().slice(0, 10)}.csv`;
   const seedEvidenceExportName = `trustgraph-live-pilot-seed-evidence-${new Date().toISOString().slice(0, 10)}.json`;
+  const workingDataExportName = `trustgraph-working-database-proof-${new Date().toISOString().slice(0, 10)}.json`;
+  const workingDataRows = [
+    { label: "Passport records", count: livePassportRecords.length },
+    { label: "Access Grants", count: accessGrants.length },
+    { label: "Consent authorizations", count: consentAuthorizations.length },
+    { label: "Subscriptions", count: organizationSubscriptions.length },
+    { label: "Team members", count: teamMembers.length },
+    { label: "Team invitations", count: teamInvitations.length }
+  ];
+  const workingDataTotal = workingDataRows.reduce((total, row) => total + row.count, 0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -5327,6 +5337,21 @@ function OnboardingChecklistPanel({
   }
 
   const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
+  const workingDatabaseProof = {
+    generated_at: new Date().toISOString(),
+    mode: authSession && accountContext ? "live_supabase" : "product_preview",
+    profile_email: authSession?.user.email ?? null,
+    account_context_loaded: Boolean(accountContext),
+    live_rows_currently_loaded: workingDataRows,
+    live_row_total: workingDataTotal,
+    checklist_completed: completed,
+    checklist_total: checklist.length,
+    seed_evidence: visibleSeedEvidence,
+    note:
+      authSession && accountContext
+        ? "Counts reflect rows loaded through the live Supabase repositories for this signed-in account and RBAC context."
+        : "Login is required before this packet proves live database state."
+  };
 
   return (
     <section className="onboarding-panel">
@@ -5404,6 +5429,31 @@ function OnboardingChecklistPanel({
           </div>
         </>
       ) : null}
+      <div className="working-database-proof">
+        <div className="working-database-proof-top">
+          <div>
+            <strong>Working database proof</strong>
+            <small>{authSession && accountContext ? "Live rows currently loaded from Supabase for this account." : "Login first to replace preview counts with live database evidence."}</small>
+          </div>
+          <span className={`status-chip ${authSession && accountContext ? "success" : "warning"}`}>
+            {authSession && accountContext ? "live rows loaded" : "login needed"}
+          </span>
+        </div>
+        <div className="working-database-grid">
+          {workingDataRows.map((row) => (
+            <div key={row.label}>
+              <span>{row.label}</span>
+              <strong>{row.count}</strong>
+            </div>
+          ))}
+        </div>
+        <div className="seed-evidence-actions">
+          <small>Live rows currently loaded: {workingDataTotal}. Seed evidence {visibleSeedEvidence ? "is attached to this packet." : "will attach after preparing the live pilot workspace."}</small>
+          <button className="secondary-action" onClick={() => downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json")} type="button">
+            Export working-data packet
+          </button>
+        </div>
+      </div>
       <div className="onboarding-list">
         {checklist.map((item, index) => (
           <article className={item.done ? "onboarding-item done" : "onboarding-item"} key={item.label}>

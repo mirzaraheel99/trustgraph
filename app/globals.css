@@ -1682,6 +1682,69 @@ p,
   font-size: 11px;
 }
 
+.working-database-proof {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.working-database-proof-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.working-database-proof strong,
+.working-database-proof small {
+  display: block;
+}
+
+.working-database-proof-top > div {
+  min-width: 0;
+}
+
+.working-database-proof-top strong {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.working-database-proof small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.working-database-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.working-database-grid div {
+  display: grid;
+  gap: 4px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.working-database-grid span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.working-database-grid strong {
+  font-size: 14px;
+  font-weight: 900;
+}
+
 .readiness-score-card div > span {
   color: var(--muted);
   font-size: 11px;
@@ -4901,6 +4964,7 @@ p {
   .human-decision-list,
   .onboarding-current-step,
   .seed-result-grid,
+  .working-database-grid,
   .team-controls,
   .team-summary-grid,
   .verify-summary-grid,
@@ -4935,6 +4999,7 @@ p {
   .grant-panel-top,
   .grant-card,
   .consent-card,
+  .working-database-proof-top,
   .connect-export-actions,
   .issuer-source-strip,
   .reference-card,
