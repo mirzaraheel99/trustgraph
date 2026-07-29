@@ -38,17 +38,22 @@ function assertIncludesAny(source, expectedValues, label) {
 }
 
 async function assertRepoReadinessArtifacts() {
-  const [migrationFiles, readiness, runbook, evidenceMap] = await Promise.all([
+  const [migrationFiles, readiness, runbook, evidenceMap, packageText, pagesWorkflow] = await Promise.all([
     readdir(new URL("../supabase/migrations/", import.meta.url)),
     readFile(new URL("../V1_READINESS_CHECKLIST.md", import.meta.url), "utf8"),
     readFile(new URL("../PILOT_RUNBOOK.md", import.meta.url), "utf8"),
-    readFile(new URL("../docs/current-implementation-evidence-map.md", import.meta.url), "utf8")
+    readFile(new URL("../docs/current-implementation-evidence-map.md", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
+    readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8")
   ]);
+  const packageJson = JSON.parse(packageText);
   const sqlMigrations = migrationFiles.filter((file) => file.endsWith(".sql")).sort();
 
   assert(sqlMigrations.length >= 33, `Expected at least 33 Supabase migrations, found ${sqlMigrations.length}`);
   assert(sqlMigrations[0]?.startsWith("001_"), "Expected migration sequence to start at 001");
   assert(sqlMigrations.at(-1)?.startsWith("033_"), "Expected migration sequence to include 033 pilot launch contacts");
+  assert(packageJson.scripts?.["check:pilot-acceptance"] === "node scripts/check-pilot-acceptance.mjs", "Expected package scripts to expose pilot acceptance check");
+  assert(pagesWorkflow.includes("pnpm check:pilot-acceptance"), "Expected Pages CI to run pilot acceptance check");
   assert(readiness.includes("13-Track Product Coverage"), "Expected v1 readiness checklist to include 13-track coverage");
   assert(readiness.includes("Stop Conditions"), "Expected v1 readiness checklist to include production stop conditions");
   assert(runbook.includes("Live Workflow Acceptance"), "Expected pilot runbook to include live workflow acceptance");
@@ -157,6 +162,7 @@ assertIncludesAny(bundleText, ["Export notifications"], "notification export con
 assertIncludesAny(bundleText, ["Export advisory packet"], "advisory packet export control");
 assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
 assertIncludesAny(bundleText, ["human_decision_gate"], "security runbook human decision export rows");
+assertIncludesAny(bundleText, ["Security review checklist"], "security review checklist label");
 assertIncludesAny(bundleText, ["protected tables"], "RLS protected table coverage summary");
 assertIncludesAny(bundleText, ["rls_protected_table"], "security runbook RLS table export rows");
 assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment register");

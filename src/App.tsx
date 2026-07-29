@@ -4167,7 +4167,7 @@ function SecurityReviewPanel({
     <section className="security-review-panel">
       <div className="mini-heading">
         <ShieldAlert size={16} />
-        <strong>Security/RLS review v1</strong>
+        <strong>Security review checklist</strong>
       </div>
       <div className="security-review-topline">
         <div>
