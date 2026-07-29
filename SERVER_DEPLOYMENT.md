@@ -94,6 +94,12 @@ nano .env.server
 
 Set a long random `POSTGRES_PASSWORD`.
 
+TrustGraph's bundled Postgres is exposed only on localhost for maintenance. It defaults to `15432` so it does not collide with an existing VPS Postgres on `5432`:
+
+```text
+POSTGRES_HOST_PORT=15432
+```
+
 Leave these defaults only when TrustGraph should own ports 80/443 directly:
 
 ```text
@@ -153,6 +159,8 @@ If running behind an existing reverse proxy, smoke-check the configured internal
 ```bash
 curl -I http://127.0.0.1:4180
 ```
+
+If `curl -I https://5-75-224-11.sslip.io` reports a certificate hostname mismatch, another HTTPS service is answering for the host. Keep VFIX running, set TrustGraph to internal ports in `.env.server`, and add a route for `5-75-224-11.sslip.io` in the existing reverse proxy.
 
 ## 7. Optional GitHub VPS Deploy Button
 
