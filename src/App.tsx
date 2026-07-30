@@ -8566,6 +8566,23 @@ function PublicSite({
       detail: portal === "corporate" ? "Open Corporate Verify, team, billing, and access requests." : "Open Passport records, evidence, consent, and sharing."
     }
   ];
+  const authRecoveryDecisionPath = [
+    {
+      label: "New account verification",
+      action: "Resend verification",
+      detail: "Use when signup succeeded but the email has not arrived or still points to an old redirect."
+    },
+    {
+      label: "Existing account recovery",
+      action: "Reset password",
+      detail: "Use when the user already exists, forgot the password, or cannot complete login."
+    },
+    {
+      label: "Localhost link repair",
+      action: "Copy hosted link",
+      detail: "Paste Supabase links that point to localhost and convert them to the hosted TrustGraph URL."
+    }
+  ];
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
@@ -8604,6 +8621,7 @@ function PublicSite({
       organization_type: organizationType
     },
     portal_login_switchboard: portalLoginSwitchboard,
+    auth_recovery_decision_path: authRecoveryDecisionPath,
     repaired_link_ready: Boolean(repairedVerificationUrl),
     portal_auth_outcome_summary: authOutcomePacket,
     pricing_decision_strip: pricingDecisionStrip,
@@ -9423,6 +9441,22 @@ function PublicSite({
             <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
               Reset password
             </button>
+          </div>
+          <div className="auth-recovery-decision" aria-label="Auth recovery decision path">
+            <div>
+              <span className="status-chip neutral">Auth recovery decision path</span>
+              <strong>Pick the recovery action by what happened</strong>
+              <small>Keep the email field filled before using verification or password recovery actions.</small>
+            </div>
+            <div className="auth-recovery-decision-grid">
+              {authRecoveryDecisionPath.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.action}</strong>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="auth-link-repair">
             <div>

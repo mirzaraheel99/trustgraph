@@ -1127,6 +1127,68 @@ button {
   min-height: 42px;
 }
 
+.auth-recovery-decision {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.auth-recovery-decision > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.auth-recovery-decision strong,
+.auth-recovery-decision small,
+.auth-recovery-decision span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.auth-recovery-decision > div:first-child > strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.auth-recovery-decision small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.auth-recovery-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auth-recovery-decision-grid article {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.auth-recovery-decision-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.auth-recovery-decision-grid strong {
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 12px;
+}
+
 .public-auth-card select {
   color-scheme: dark;
 }
@@ -8360,6 +8422,7 @@ p {
   .public-session-handoff,
   .auth-choice-summary,
   .auth-support-actions,
+  .auth-recovery-decision-grid,
   .auth-operator-path,
   .account-operator-path,
   .portal-entry-path,
