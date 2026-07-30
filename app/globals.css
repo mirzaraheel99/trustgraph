@@ -5622,6 +5622,44 @@ p {
     rgba(255, 255, 255, 0.025);
 }
 
+.passport-record-create-path {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.passport-record-create-path span {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(82, 214, 196, 0.052), rgba(82, 214, 196, 0.018)),
+    rgba(0, 0, 0, 0.12);
+}
+
+.passport-record-create-path strong,
+.passport-record-create-path small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.passport-record-create-path strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.passport-record-create-path small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .grants-panel {
   display: grid;
   gap: 10px;
@@ -9062,6 +9100,7 @@ p {
   .operations-controls,
   .operations-summary-grid,
   .operations-source-strip,
+  .passport-record-create-path,
   .plan-summary-grid,
   .policy-grid,
   .policy-summary-grid,

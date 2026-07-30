@@ -39,6 +39,7 @@ const requiredMobileStacks = [
   ".missing-source-strip",
   ".notification-source-strip",
   ".operations-source-strip",
+  ".passport-record-create-path",
   ".portal-access-steps",
   ".portal-entry-path",
   ".portal-handoff-checklist",

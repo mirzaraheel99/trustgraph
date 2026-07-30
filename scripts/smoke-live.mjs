@@ -204,6 +204,9 @@ assertIncludesAny(bundleText, ["allowed_production_redirects"], "hosted auth pro
 assertIncludesAny(bundleText, ["Hosted email verification accepted"], "hosted auth callback success status");
 assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signed URL label");
 assertIncludesAny(bundleText, ["Export evidence manifest"], "evidence manifest export control");
+assertIncludesAny(bundleText, ["Passport record creation path"], "Passport record creation path label");
+assertIncludesAny(bundleText, ["Save live row"], "Passport record creation save step");
+assertIncludesAny(bundleText, ["Set sharing rules"], "Passport record creation sharing step");
 assertIncludesAny(bundleText, ["Evidence preview/download proof"], "evidence preview/download proof label");
 assertIncludesAny(bundleText, ["Evidence preview/download ledger"], "evidence preview/download ledger label");
 assertIncludesAny(bundleText, ["evidence_preview_download_ledger"], "evidence preview/download ledger packet field");

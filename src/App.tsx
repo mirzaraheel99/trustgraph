@@ -907,6 +907,25 @@ function PassportRecordForm({
     setStatus(message);
   }, [message]);
 
+  const recordCreationPath = [
+    {
+      label: "1. Pick record type",
+      detail: "Employment, license, certification, training, reference, identity, or custom."
+    },
+    {
+      label: "2. Add source proof",
+      detail: "Use issuer, employer, provider, or reviewer name plus evidence summary."
+    },
+    {
+      label: "3. Set sharing rules",
+      detail: "Sensitive and restricted rows can require explicit consent before corporate access."
+    },
+    {
+      label: "4. Save live row",
+      detail: "The record writes to Supabase and becomes available for Passport, evidence, and Access Grants."
+    }
+  ];
+
   async function submitRecord(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
@@ -936,6 +955,14 @@ function PassportRecordForm({
       <div className="mini-heading">
         <FileText size={16} />
         <strong>Add live Passport record</strong>
+      </div>
+      <div className="passport-record-create-path" aria-label="Passport record creation path">
+        {recordCreationPath.map((step) => (
+          <span key={step.label}>
+            <strong>{step.label}</strong>
+            <small>{step.detail}</small>
+          </span>
+        ))}
       </div>
       <div className="record-form-grid">
         <select value={type} onChange={(event) => updateType(event.target.value as RecordType)} disabled={disabled || busy}>
