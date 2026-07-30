@@ -7679,7 +7679,7 @@ function AuthPanel({
     {
       label: "Hosted redirect",
       detail: authRedirectUrl.includes("localhost")
-        ? "Open the GitHub Pages app before requesting new verification links."
+        ? "Open the hosted TrustGraph app before requesting new verification or recovery links."
         : "Verification and recovery emails should return to this hosted app."
     },
     {
@@ -7695,7 +7695,7 @@ function AuthPanel({
     {
       step: "1",
       label: "Login or sign up",
-      detail: "Use GitHub Pages or the VPS TrustGraph URL before requesting emails."
+      detail: `Use the hosted TrustGraph URL before requesting emails: ${authRedirectUrl}`
     },
     {
       step: "2",
@@ -9785,7 +9785,7 @@ function PublicSite({
     setMessage("Sending password recovery email...");
     try {
       await requestPasswordRecovery(email, authRedirectUrl);
-      setMessage("Password recovery email requested. Use the inbox link to return to this hosted GitHub Pages app; wait 60+ minutes if Supabase email is rate-limited.");
+      setMessage("Password recovery email requested. Use the inbox link to return to this hosted TrustGraph app; wait 60+ minutes if Supabase email is rate-limited.");
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not request password recovery."));
     } finally {
