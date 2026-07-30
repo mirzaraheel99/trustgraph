@@ -250,6 +250,7 @@ assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mo
 assertIncludesAny(bundleText, ["Portal access evidence"], "portal access evidence packet label");
 assertIncludesAny(bundleText, ["Export portal packet"], "portal access packet export control");
 assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed database evidence");
+assertIncludesAny(bundleText, ["corporate_access_review_id"], "live pilot seed corporate review evidence");
 assertIncludesAny(bundleText, ["Export live readiness"], "live database readiness export");
 assertIncludesAny(bundleText, ["Product preview mode"], "preview mode indicator");
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");
@@ -324,6 +325,7 @@ assertIncludesAny(bundleText, ["Run seed, reload rows, export proof"], "working 
 assertIncludesAny(bundleText, ["working_database_test_runbook"], "working database test runbook packet field");
 assertIncludesAny(bundleText, ["not static preview data"], "working database test runbook real-data guard");
 assertIncludesAny(bundleText, ["Export working-data packet"], "working database proof export");
+assertIncludesAny(bundleText, ["Corporate review attestations"], "working database review attestation row");
 assertIncludesAny(bundleText, ["Live rows currently loaded"], "working database live-count copy");
 assertIncludesAny(bundleText, ["Live database connected"], "database status strip live label");
 assertIncludesAny(bundleText, ["Preview data only"], "database status strip preview label");

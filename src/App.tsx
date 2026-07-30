@@ -8299,6 +8299,7 @@ function OnboardingChecklistPanel({
   accountContext,
   authSession,
   consentAuthorizations,
+  corporateAccessReviews,
   evidenceDocuments,
   livePassportRecords,
   organizationSubscriptions,
@@ -8313,6 +8314,7 @@ function OnboardingChecklistPanel({
   accountContext: AccountContext | null;
   authSession: AuthSession | null;
   consentAuthorizations: DbConsentAuthorization[];
+  corporateAccessReviews: DbCorporateAccessReview[];
   evidenceDocuments: DbEvidenceDocument[];
   livePassportRecords: RecordItem[];
   organizationSubscriptions: DbOrganizationSubscription[];
@@ -8403,6 +8405,7 @@ function OnboardingChecklistPanel({
     { label: "Passport records", count: livePassportRecords.length },
     { label: "Evidence documents", count: evidenceDocuments.length },
     { label: "Access Grants", count: accessGrants.length },
+    { label: "Corporate review attestations", count: corporateAccessReviews.length },
     { label: "Consent authorizations", count: consentAuthorizations.length },
     { label: "Subscriptions", count: organizationSubscriptions.length },
     { label: "Team members", count: teamMembers.length },
@@ -11744,6 +11747,16 @@ function App() {
     }
 
     const seeded = await seedPilotWorkspace(authSession.accessToken);
+    const seededReview = await recordCorporateAccessReview({
+      accessGrantId: seeded.access_grant_id,
+      status: "reviewed",
+      note: "Pilot seed confirmed Corporate Verify can review approved user database rows.",
+      accessToken: authSession.accessToken
+    });
+    const seededWithReview = {
+      ...seeded,
+      corporate_access_review_id: seededReview.id
+    };
     const [
       context,
       records,
@@ -11754,6 +11767,7 @@ function App() {
       members,
       verifyRequests,
       sharedRecords,
+      reviews,
       notifications,
       dataRightsRows,
       events
@@ -11767,6 +11781,7 @@ function App() {
       loadOrganizationMembers(seeded.corporate_organization_id, authSession.accessToken),
       loadVerifyAccessGrants(seeded.corporate_organization_id, authSession.accessToken),
       loadSharedVerifyRecords(authSession.accessToken),
+      loadCorporateAccessReviews(seeded.corporate_organization_id, authSession.accessToken),
       loadNotificationEvents(authSession.accessToken),
       loadDataRightsRequests(authSession.accessToken).catch(() => dataRightsRequests),
       loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
@@ -11783,6 +11798,7 @@ function App() {
     setTeamMembers(members);
     setVerifyRequests(verifyRequests);
     setSharedVerifyRecords(sharedRecords);
+    setCorporateAccessReviews(reviews);
     setNotificationEvents(notifications);
     setDataRightsRequests(dataRightsRows);
     setAuditEvents(events);
@@ -11794,13 +11810,16 @@ function App() {
     setTeamStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
     setVerifyStatus(
       verifyRequests.length || sharedRecords.length
-        ? `Live Supabase Verify data: ${verifyRequests.length} requests, ${sharedRecords.length} shared records`
+        ? `Live Supabase Verify data: ${verifyRequests.length} requests, ${sharedRecords.length} shared records, ${reviews.length} review attestations`
         : "No Verify requests yet"
     );
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
     setDataRightsStatus(dataRightsRows.length ? `Data-rights requests: ${dataRightsRows.length}` : "No data-rights requests yet");
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
-    return seeded;
+    return {
+      ...seededWithReview,
+      corporate_access_reviews: reviews.length
+    };
   }
 
   async function activateLiveSubscription(planId: string, seats: number) {
@@ -12956,6 +12975,7 @@ function App() {
                       accountContext={accountContext}
                       authSession={authSession}
                       consentAuthorizations={consentAuthorizations}
+                      corporateAccessReviews={corporateAccessReviews}
                       evidenceDocuments={evidenceDocuments}
                       livePassportRecords={livePassportRecords}
                       organizationSubscriptions={organizationSubscriptions}

@@ -153,6 +153,8 @@ export async function seedPilotWorkspace(accessToken: string) {
     membership_id: string;
     subscription_id: string;
     access_grant_id: string;
+    corporate_access_review_id?: string;
+    corporate_access_reviews?: number;
     consent_authorization_id: string;
     passport_records: number;
     evidence_documents: number;
