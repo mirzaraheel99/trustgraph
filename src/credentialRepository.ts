@@ -60,3 +60,20 @@ export async function revokeIssuerCredential(input: {
     { accessToken: input.accessToken }
   );
 }
+
+export async function updateIssuerCredentialExpiry(input: {
+  accessToken: string;
+  credentialId: string;
+  expiresAt?: string;
+  reason?: string;
+}): Promise<DbIssuerCredential> {
+  return supabaseRpc<DbIssuerCredential>(
+    "update_issuer_credential_expiry",
+    {
+      credential_id: input.credentialId,
+      expires_at: input.expiresAt || null,
+      update_reason: input.reason || null
+    },
+    { accessToken: input.accessToken }
+  );
+}

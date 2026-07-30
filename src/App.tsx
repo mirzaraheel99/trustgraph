@@ -90,7 +90,8 @@ import {
   ensureCredentialIssuerMembership,
   issueCredentialRecord,
   loadIssuerCredentials,
-  revokeIssuerCredential
+  revokeIssuerCredential,
+  updateIssuerCredentialExpiry
 } from "./credentialRepository";
 import {
   createPilotApiClient,
@@ -1726,6 +1727,7 @@ function VerifyRequestsPanel({
   onCreateMissingRecordRequest,
   onIssueCredential,
   onRevokeCredential,
+  onUpdateCredentialExpiry,
   onMissingRecordStatus,
   onCreateReviewerRole
 }: {
@@ -1755,6 +1757,7 @@ function VerifyRequestsPanel({
     expiresAt: string;
   }) => Promise<void>;
   onRevokeCredential: (credentialId: string, reason: string) => Promise<void>;
+  onUpdateCredentialExpiry: (credentialId: string, expiresAt: string, reason: string) => Promise<void>;
   onCreateMissingRecordRequest: (input: {
     subjectEmail: string;
     subjectFullName: string;
@@ -2265,6 +2268,7 @@ function VerifyRequestsPanel({
         onCreateIssuerRole={onCreateIssuerRole}
         onIssueCredential={onIssueCredential}
         onRevokeCredential={onRevokeCredential}
+        onUpdateCredentialExpiry={onUpdateCredentialExpiry}
       />
       <MissingRecordRequestsPanel
         disabled={disabled}
@@ -3470,7 +3474,8 @@ function IssuerCredentialsPanel({
   message,
   onCreateIssuerRole,
   onIssueCredential,
-  onRevokeCredential
+  onRevokeCredential,
+  onUpdateCredentialExpiry
 }: {
   credentials: DbIssuerCredential[];
   disabled: boolean;
@@ -3486,6 +3491,7 @@ function IssuerCredentialsPanel({
     expiresAt: string;
   }) => Promise<void>;
   onRevokeCredential: (credentialId: string, reason: string) => Promise<void>;
+  onUpdateCredentialExpiry: (credentialId: string, expiresAt: string, reason: string) => Promise<void>;
 }) {
   const [subjectEmail, setSubjectEmail] = useState("");
   const [subjectFullName, setSubjectFullName] = useState("");
@@ -3497,6 +3503,8 @@ function IssuerCredentialsPanel({
   const [busyRole, setBusyRole] = useState(false);
   const [busyIssue, setBusyIssue] = useState(false);
   const [busyRevokeId, setBusyRevokeId] = useState("");
+  const [busyUpdateId, setBusyUpdateId] = useState("");
+  const [expiryUpdateById, setExpiryUpdateById] = useState<Record<string, string>>({});
   const [revokeReasonById, setRevokeReasonById] = useState<Record<string, string>>({});
   const [status, setStatus] = useState(message);
   const expiringCredentials = credentials.filter((credential) => credential.expires_at).length;
@@ -3510,6 +3518,7 @@ function IssuerCredentialsPanel({
     issued_credentials: credentials.length,
     revoked_credentials: revokedCredentials,
     active_credentials: credentials.filter((credential) => credential.status !== "revoked").length,
+    update_workflow: "update_issuer_credential_expiry RPC writes credential.updated audit event and queues professional notification",
     revocation_workflow: "revoke_issuer_credential RPC writes credential.revoked audit event and queues professional notification",
     records: credentials.map((credential) => ({
       id: credential.id,
@@ -3520,6 +3529,8 @@ function IssuerCredentialsPanel({
       type: credential.type,
       status: credential.status,
       expires_at: credential.expires_at,
+      corrected_at: typeof credential.metadata?.corrected_at === "string" ? credential.metadata.corrected_at : null,
+      correction_reason: typeof credential.metadata?.correction_reason === "string" ? credential.metadata.correction_reason : null,
       revoked_at: typeof credential.metadata?.revoked_at === "string" ? credential.metadata.revoked_at : null,
       revocation_reason: typeof credential.metadata?.revocation_reason === "string" ? credential.metadata.revocation_reason : null
     }))
@@ -3570,6 +3581,21 @@ function IssuerCredentialsPanel({
       setStatus(error instanceof Error ? error.message : "Could not revoke credential");
     } finally {
       setBusyRevokeId("");
+    }
+  }
+
+  async function updateCredentialExpiry(credentialId: string) {
+    setBusyUpdateId(credentialId);
+    setStatus("Updating issuer credential expiration...");
+
+    try {
+      await onUpdateCredentialExpiry(credentialId, expiryUpdateById[credentialId] ?? "", revokeReasonById[credentialId] ?? "");
+      setExpiryUpdateById((current) => ({ ...current, [credentialId]: "" }));
+      setStatus("Credential expiration corrected with audit and notification evidence");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not update credential expiration");
+    } finally {
+      setBusyUpdateId("");
     }
   }
 
@@ -3673,9 +3699,23 @@ function IssuerCredentialsPanel({
                 <input
                   disabled={disabled || busyRevokeId === credential.id || credential.status === "revoked"}
                   onChange={(event) => setRevokeReasonById((current) => ({ ...current, [credential.id]: event.target.value }))}
-                  placeholder="Revocation reason"
+                  placeholder="Correction or revocation reason"
                   value={revokeReasonById[credential.id] ?? ""}
                 />
+                <input
+                  disabled={disabled || busyUpdateId === credential.id || credential.status === "revoked"}
+                  onChange={(event) => setExpiryUpdateById((current) => ({ ...current, [credential.id]: event.target.value }))}
+                  type="date"
+                  value={expiryUpdateById[credential.id] ?? ""}
+                />
+                <button
+                  className="secondary-action"
+                  disabled={disabled || busyUpdateId === credential.id || credential.status === "revoked" || !expiryUpdateById[credential.id]}
+                  onClick={() => void updateCredentialExpiry(credential.id)}
+                  type="button"
+                >
+                  Update expiry
+                </button>
                 <button
                   className="secondary-action"
                   disabled={disabled || busyRevokeId === credential.id || credential.status === "revoked"}
@@ -4735,7 +4775,7 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 035 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, the organization RLS recursion repair, and issuer credential revocation lifecycle.</small>
+          <small>Migrations through 036 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, the organization RLS recursion repair, and issuer credential update/revocation lifecycle.</small>
         </div>
         <span className="status-chip success">034 RLS repair expected</span>
       </article>
@@ -10857,6 +10897,32 @@ function App() {
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
+  async function updateLiveIssuerCredentialExpiry(credentialId: string, expiresAt: string, reason: string) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before updating issuer credentials.");
+    }
+
+    const credential = await updateIssuerCredentialExpiry({
+      accessToken: authSession.accessToken,
+      credentialId,
+      expiresAt,
+      reason
+    });
+    const [credentials, sharedRecords, notifications, events] = await Promise.all([
+      loadIssuerCredentials(activeMembership.organizationId, authSession.accessToken),
+      loadSharedVerifyRecords(authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setIssuerCredentials(credentials);
+    setSharedVerifyRecords(sharedRecords);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setIssuerStatus(`Credential expiry updated: ${credential.title}`);
+    setVerifyStatus(sharedRecords.length ? `Shared Verify records: ${sharedRecords.length}` : "No shared Verify records yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+  }
+
   async function createLiveMissingRecordRequest(input: {
     subjectEmail: string;
     subjectFullName: string;
@@ -12288,6 +12354,7 @@ function App() {
                 onCreateReviewerRole={createPilotReviewerRole}
                 onIssueCredential={issueLiveCredential}
                 onRevokeCredential={revokeLiveIssuerCredential}
+                onUpdateCredentialExpiry={updateLiveIssuerCredentialExpiry}
                 onMissingRecordStatus={updateLiveMissingRecordStatus}
                 requests={verifyRequests}
                 sharedRecords={sharedVerifyRecords}

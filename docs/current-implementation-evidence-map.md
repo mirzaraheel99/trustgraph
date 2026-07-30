@@ -30,7 +30,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Access Grants | `src/grantRepository.ts`, Passport approval/decline/revoke, Verify requests, shared record sync | `supabase/migrations/003`, `006`, `008`, `023` |
 | Consent controls | `src/consentRepository.ts`, consent authorization and revoke UI, sensitive record controls, confidentiality review packet | `supabase/migrations/025`, `026`, RLS guard |
 | References and missing records | `src/referenceRepository.ts`, `src/missingRecordRepository.ts`, request status controls and exports | `supabase/migrations/013`, `015` |
-| Issuer workflow | `src/credentialRepository.ts`, issuer role activation, credential issue workflow, and issuer-scoped revocation lifecycle | `supabase/migrations/014`, `024`, `035` |
+| Issuer workflow | `src/credentialRepository.ts`, issuer role activation, credential issue workflow, issuer-scoped expiration correction, and revocation lifecycle | `supabase/migrations/014`, `024`, `035`, `036` |
 | Evidence preview/download | Private Supabase Storage upload, metadata listing, manifest export, signed preview/download buttons | `supabase/migrations/017`, smoke evidence assertions |
 | Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts, organization RLS recursion repair | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
@@ -58,11 +58,11 @@ The app exposes these operator exports to prove live database state after sign-i
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC.
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.
 - Admin exports: operations cases, audit CSV/JSON, release ledger, security runbook, production gates, pilot launch contacts, Connect clients, and webhooks.
-- Issuer lifecycle packet: issued credential count, revoked credential count, issuer organization scope, revocation reason, and `credential.revoked` audit expectation.
+- Issuer lifecycle packet: issued credential count, active and revoked credential count, issuer organization scope, corrected expiration metadata, revocation reason, and `credential.updated` / `credential.revoked` audit expectation.
 
 ## Migration Coverage
 
-Live Supabase migrations currently run through `035_revoke_issuer_credentials.sql`. The RLS guard verifies protected-table enablement across 21 tables before every hosted deployment, and the app exposes a visible `034 RLS repair expected` marker so operators can distinguish code readiness from a Supabase project that still needs the organization recursion repair applied.
+Live Supabase migrations currently run through `036_update_issuer_credential_expiry.sql`. The RLS guard verifies protected-table enablement across 21 tables before every hosted deployment, and the app exposes a visible `034 RLS repair expected` marker so operators can distinguish code readiness from a Supabase project that still needs the organization recursion repair applied.
 
 ## Verification Commands
 

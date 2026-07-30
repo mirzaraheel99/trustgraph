@@ -49,7 +49,7 @@ async function assertRepoReadinessArtifacts() {
   const packageJson = JSON.parse(packageText);
   const sqlMigrations = migrationFiles.filter((file) => file.endsWith(".sql")).sort();
 
-  assert(sqlMigrations.length >= 35, `Expected at least 35 Supabase migrations, found ${sqlMigrations.length}`);
+  assert(sqlMigrations.length >= 36, `Expected at least 36 Supabase migrations, found ${sqlMigrations.length}`);
   assert(sqlMigrations[0]?.startsWith("001_"), "Expected migration sequence to start at 001");
   assert(
     sqlMigrations.some((file) => file.startsWith("034_fix_organization_policy_recursion")),
@@ -58,6 +58,10 @@ async function assertRepoReadinessArtifacts() {
   assert(
     sqlMigrations.some((file) => file.startsWith("035_revoke_issuer_credentials")),
     "Expected migration sequence to include 035 issuer credential revocation lifecycle"
+  );
+  assert(
+    sqlMigrations.some((file) => file.startsWith("036_update_issuer_credential_expiry")),
+    "Expected migration sequence to include 036 issuer credential update lifecycle"
   );
   assert(packageJson.scripts?.["check:pilot-acceptance"] === "node scripts/check-pilot-acceptance.mjs", "Expected package scripts to expose pilot acceptance check");
   assert(pagesWorkflow.includes("pnpm check:pilot-acceptance"), "Expected Pages CI to run pilot acceptance check");
@@ -417,6 +421,8 @@ assertIncludesAny(bundleText, ["Export registration auth packet"], "registration
 assertIncludesAny(bundleText, ["Export lifecycle packet"], "issuer credential lifecycle export");
 assertIncludesAny(bundleText, ["issuer_credential_lifecycle"], "issuer credential lifecycle packet mode");
 assertIncludesAny(bundleText, ["revoke_issuer_credential"], "issuer credential revoke RPC evidence");
+assertIncludesAny(bundleText, ["update_issuer_credential_expiry"], "issuer credential update RPC evidence");
+assertIncludesAny(bundleText, ["Update expiry"], "issuer credential expiry update control");
 assertIncludesAny(bundleText, ["Selected path"], "registration selected path proof");
 assertIncludesAny(bundleText, ["selected_registration_path"], "registration path packet field");
 assertIncludesAny(bundleText, ["protected_vfix_host"], "auth packet VFIX isolation field");
@@ -425,7 +431,7 @@ assertIncludesAny(bundleText, ["Reset password"], "public portal password recove
 assertIncludesAny(bundleText, ["Auth recovery decision path"], "public auth recovery decision panel");
 assertIncludesAny(bundleText, ["auth_recovery_decision_path"], "registration auth recovery packet field");
 assertIncludesAny(bundleText, ["New account verification"], "auth recovery verification guidance");
-assertIncludesAny(bundleText, ["Migrations through 035"], "current database migration coverage copy");
+assertIncludesAny(bundleText, ["Migrations through 036"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["034 RLS repair expected"], "organization RLS recursion repair marker");
 assertIncludesAny(bundleText, ["RLS repair"], "database strip RLS repair proof");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
