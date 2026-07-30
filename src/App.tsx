@@ -5046,6 +5046,18 @@ function BillingPanel({
   const primaryPlan = primarySubscription?.plan ?? plans.find((plan) => plan.id === primarySubscription?.plan_id) ?? null;
   const totalSeats = activeSubscriptions.reduce((sum, item) => sum + item.seats, 0);
   const monthlyTotal = activeSubscriptions.reduce((sum, item) => sum + (item.plan?.monthly_price_usd ?? 0), 0);
+  const billingLedgerEvidence = {
+    mode: activeSubscriptions.length ? "live_subscription_ledger" : "pricing_catalog_only",
+    ledger_ready: Boolean(activeSubscriptions.length),
+    plans_loaded: plans.length,
+    active_subscription_count: activeSubscriptions.length,
+    selected_seats: seats,
+    total_active_seats: totalSeats,
+    payment_collection_live: false,
+    stripe_gate_status: "human_gated",
+    operator_note:
+      "Billing evidence proves configured pricing, selected seats, live subscription rows when present, and the human-gated Stripe/payment boundary."
+  };
   const renewsAt = primarySubscription?.renews_at
     ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(primarySubscription.renews_at))
     : "Trial or manual renewal";
@@ -5101,6 +5113,7 @@ function BillingPanel({
       renews_at: subscription.renews_at,
       created_at: subscription.created_at
     })),
+    billing_ledger_evidence: billingLedgerEvidence,
     projected_plans: projectedPlans,
     billing_launch_readiness: billingLaunchReadiness,
     billing_gates: billingGates,
@@ -5130,6 +5143,7 @@ function BillingPanel({
     recommended_v1_path:
       "Keep the pilot subscription ledger live for account packaging and pricing validation. Connect Stripe only after product, price, tax, invoice, refund, dunning, webhook, and security decisions are recorded.",
     active_subscription_count: activeSubscriptions.length,
+    billing_ledger_evidence: billingLedgerEvidence,
     projected_plans: projectedPlans
   };
 
@@ -5220,6 +5234,32 @@ function BillingPanel({
           >
             Export pricing packet
           </button>
+        </div>
+      </div>
+      <div className="billing-ledger-acceptance">
+        <div>
+          <span className="eyebrow">Ledger proof</span>
+          <strong>Billing ledger acceptance</strong>
+          <small>
+            Proves plan catalog, selected seats, active subscription rows, and Stripe payment boundary in one operator packet.
+          </small>
+        </div>
+        <div className="billing-ledger-status">
+          <span className={`status-chip ${activeSubscriptions.length ? "success" : "neutral"}`}>
+            {activeSubscriptions.length ? "ledger active" : "choose plan"}
+          </span>
+          <span>
+            <strong>{plans.length}</strong>
+            <small>plans loaded</small>
+          </span>
+          <span>
+            <strong>{activeSubscriptions.length}</strong>
+            <small>active rows</small>
+          </span>
+          <span>
+            <strong>{totalSeats || seats}</strong>
+            <small>seats in scope</small>
+          </span>
         </div>
       </div>
       <div className="billing-pricing-packet">

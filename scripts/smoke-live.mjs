@@ -287,6 +287,9 @@ assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export co
 assertIncludesAny(bundleText, ["Export launch packet"], "billing launch packet export control");
 assertIncludesAny(bundleText, ["Pricing structure packet"], "pricing structure packet label");
 assertIncludesAny(bundleText, ["Export pricing packet"], "pricing structure packet export control");
+assertIncludesAny(bundleText, ["Billing ledger acceptance"], "billing ledger acceptance proof");
+assertIncludesAny(bundleText, ["billing_ledger_evidence"], "billing ledger acceptance packet field");
+assertIncludesAny(bundleText, ["live_subscription_ledger"], "live billing ledger mode");
 assertIncludesAny(bundleText, ["Payment launch boundary"], "billing payment launch boundary");
 assertIncludesAny(bundleText, ["Billing architecture decision packet"], "billing architecture decision packet label");
 assertIncludesAny(bundleText, ["Export payment decision"], "billing architecture decision export control");
