@@ -6163,6 +6163,73 @@ function LiveDataModePanel({
   );
 }
 
+function DatabaseStatusStrip({
+  accountContext,
+  authSession,
+  accessGrants,
+  consentAuthorizations,
+  evidenceDocuments,
+  livePassportRecords,
+  organizationSubscriptions,
+  teamInvitations,
+  teamMembers,
+  onOpenReadiness,
+  onOpenRegistration
+}: {
+  accountContext: AccountContext | null;
+  authSession: AuthSession | null;
+  accessGrants: AccessGrantView[];
+  consentAuthorizations: DbConsentAuthorization[];
+  evidenceDocuments: DbEvidenceDocument[];
+  livePassportRecords: RecordItem[];
+  organizationSubscriptions: DbOrganizationSubscription[];
+  teamInvitations: DbOrganizationInvitation[];
+  teamMembers: OrganizationMemberView[];
+  onOpenReadiness: () => void;
+  onOpenRegistration: () => void;
+}) {
+  const isLive = Boolean(authSession && accountContext);
+  const rowGroups = [
+    { label: "Passport", count: livePassportRecords.length },
+    { label: "Evidence", count: evidenceDocuments.length },
+    { label: "Grants", count: accessGrants.length },
+    { label: "Consent", count: consentAuthorizations.length },
+    { label: "Team", count: teamMembers.length + teamInvitations.length },
+    { label: "Billing", count: organizationSubscriptions.length }
+  ];
+  const readyGroups = rowGroups.filter((group) => group.count > 0).length;
+  const totalRows = rowGroups.reduce((total, group) => total + group.count, 0);
+
+  return (
+    <section className={`database-status-strip ${isLive ? "live" : "preview"}`}>
+      <div className="database-status-copy">
+        <span className={`status-chip ${isLive ? "success" : "warning"}`}>{isLive ? "Live database connected" : "Preview data only"}</span>
+        <div>
+          <strong>{isLive ? `${totalRows} live Supabase rows loaded` : "Login to prove real database data"}</strong>
+          <small>
+            {isLive
+              ? `${readyGroups}/${rowGroups.length} required row groups currently loaded for this account and role.`
+              : "The UI can be reviewed now, but corporate/user records are only evidence after hosted login and Supabase rows load."}
+          </small>
+        </div>
+      </div>
+      <div className="database-status-counts" aria-label="Live database row groups">
+        {rowGroups.map((group) => (
+          <span className={group.count ? "loaded" : ""} key={group.label}>
+            <strong>{group.count}</strong>
+            {group.label}
+          </span>
+        ))}
+      </div>
+      <div className="database-status-actions">
+        <button className="secondary-action" onClick={isLive ? onOpenReadiness : onOpenRegistration} type="button">
+          {isLive ? "Review database proof" : "Login or register"}
+        </button>
+      </div>
+    </section>
+  );
+}
+
 function OnboardingChecklistPanel({
   accessGrants,
   accountContext,
@@ -9274,6 +9341,20 @@ function App() {
             <MetricCard key={metric.label} {...metric} />
           ))}
         </section>
+
+        <DatabaseStatusStrip
+          accountContext={accountContext}
+          accessGrants={accessGrants}
+          authSession={authSession}
+          consentAuthorizations={consentAuthorizations}
+          evidenceDocuments={evidenceDocuments}
+          livePassportRecords={livePassportRecords}
+          organizationSubscriptions={organizationSubscriptions}
+          teamInvitations={teamInvitations}
+          teamMembers={teamMembers}
+          onOpenReadiness={() => setSetupView("readiness")}
+          onOpenRegistration={() => setShowPublicSite(true)}
+        />
 
             <section className="workspace-admin-grid" id="corporate-account-controls">
               <div className="setup-center-header">

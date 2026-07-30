@@ -196,6 +196,9 @@ assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched co
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
 assertIncludesAny(bundleText, ["Export working-data packet"], "working database proof export");
 assertIncludesAny(bundleText, ["Live rows currently loaded"], "working database live-count copy");
+assertIncludesAny(bundleText, ["Live database connected"], "database status strip live label");
+assertIncludesAny(bundleText, ["Preview data only"], "database status strip preview label");
+assertIncludesAny(bundleText, ["Review database proof"], "database status strip readiness action");
 assertIncludesAny(bundleText, ["Real database acceptance matrix"], "real database acceptance matrix label");
 assertIncludesAny(bundleText, ["live_database_acceptance"], "real database acceptance packet field");
 assertIncludesAny(bundleText, ["unmet_requirements"], "real database unmet requirements packet field");

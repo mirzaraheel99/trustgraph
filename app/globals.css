@@ -1638,6 +1638,91 @@ p,
   font-size: 12px;
 }
 
+.database-status-strip {
+  max-width: 1480px;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin: 0 auto 18px;
+  padding: 14px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 68%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.database-status-strip.preview {
+  border-color: rgba(225, 184, 102, 0.22);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.075), transparent 68%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.database-status-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.database-status-copy strong,
+.database-status-copy small {
+  display: block;
+}
+
+.database-status-copy strong {
+  font-size: 14px;
+}
+
+.database-status-copy small {
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.database-status-counts {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.database-status-counts span {
+  min-height: 48px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 8px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+  font-size: 11px;
+  font-weight: 850;
+  text-align: center;
+}
+
+.database-status-counts span.loaded {
+  color: var(--text);
+  border-color: rgba(82, 214, 196, 0.22);
+  background: rgba(82, 214, 196, 0.055);
+}
+
+.database-status-counts strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.database-status-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.database-status-actions .secondary-action {
+  min-height: 38px;
+  white-space: nowrap;
+}
+
 .onboarding-panel {
   display: grid;
   gap: 10px;
@@ -5681,8 +5766,17 @@ p {
 
   .topbar,
   .hero,
+  .database-status-strip,
   .workspace-admin-grid {
     max-width: 100%;
+  }
+
+  .database-status-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .database-status-actions {
+    justify-content: flex-start;
   }
 
   .setup-tabs {
@@ -5886,6 +5980,7 @@ p {
   .module-nav,
   .auth-actions,
   .password-update-form,
+  .database-status-counts,
   .workspace-admin-grid,
   .setup-panel-grid,
   .public-portal-rail,
