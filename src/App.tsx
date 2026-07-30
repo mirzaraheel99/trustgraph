@@ -8950,6 +8950,14 @@ function OnboardingChecklistPanel({
     ready_groups: liveDatabaseAcceptancePassing,
     total_groups: liveDatabaseAcceptanceRows.length,
     seed_reconciliation: seedReconciliationComplete ? "matched" : visibleSeedEvidence ? "needs_reload_or_repair" : "not_run",
+    seed_login_handoff: {
+      label: "Hosted login before seed",
+      status: authSession ? "signed_in" : "login_required",
+      action: authSession ? "Prepare live pilot workspace" : "Login or register first",
+      detail: authSession
+        ? "Seed can write live pilot rows for the signed-in Supabase user."
+        : "Open hosted registration, verify email if needed, then return to run the live pilot seed."
+    },
     packet_export_required: true,
     accepted_source: "signed_in_supabase_repository_rows"
   };
@@ -9082,6 +9090,7 @@ function OnboardingChecklistPanel({
       detail: item.detail,
       action: item.done ? "Review" : item.actionLabel
     })),
+    seed_login_handoff: workingDatabaseCommandCenter.seed_login_handoff,
     live_database_proof: workingDatabaseProof,
     seed_reconciliation_complete: seedReconciliationComplete
   };
@@ -9131,7 +9140,15 @@ function OnboardingChecklistPanel({
         </div>
       </div>
       <div className="onboarding-seed-row">
-        <small>{seedStatus}</small>
+        <div>
+          <strong>{authSession ? "Live pilot seed ready" : "Login before live pilot seed"}</strong>
+          <small>{seedStatus}</small>
+        </div>
+        {!authSession ? (
+          <button className="primary-action" onClick={onOpenHostedRegistration} type="button">
+            Login or register first
+          </button>
+        ) : null}
         <button className="secondary-action" disabled={!authSession || seedBusy} onClick={() => void seedLiveData()} type="button">
           Prepare live pilot workspace
         </button>

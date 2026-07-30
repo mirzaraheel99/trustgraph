@@ -3705,9 +3705,9 @@ p,
 }
 
 .onboarding-seed-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(2, minmax(136px, auto));
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   padding: 10px;
   border: 1px solid rgba(82, 214, 196, 0.18);
@@ -3715,9 +3715,23 @@ p,
   background: rgba(82, 214, 196, 0.045);
 }
 
+.onboarding-seed-row > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.onboarding-seed-row strong,
 .onboarding-seed-row small {
+  display: block;
   min-width: 0;
   line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.onboarding-seed-row button {
+  min-height: 38px;
+  justify-content: center;
 }
 
 .seed-result-grid {

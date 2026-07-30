@@ -327,6 +327,8 @@ assertIncludesAny(bundleText, ["Guided onboarding wizard"], "guided onboarding w
 assertIncludesAny(bundleText, ["Export setup evidence"], "guided onboarding export control");
 assertIncludesAny(bundleText, ["Export wizard packet"], "guided onboarding wizard packet export");
 assertIncludesAny(bundleText, ["Prepare live pilot workspace"], "guided onboarding live workspace control");
+assertIncludesAny(bundleText, ["Login before live pilot seed"], "guided onboarding seed login handoff");
+assertIncludesAny(bundleText, ["seed_login_handoff"], "guided onboarding seed login packet field");
 assertIncludesAny(bundleText, ["Last browser seed evidence"], "persisted pilot seed evidence label");
 assertIncludesAny(bundleText, ["Export seed evidence"], "pilot seed evidence export control");
 assertIncludesAny(bundleText, ["Seed reconciliation"], "pilot seed reconciliation panel");
