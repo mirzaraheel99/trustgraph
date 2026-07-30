@@ -71,6 +71,9 @@ const flowChecks = [
     required: [
       "Session command bar",
       "Corporate setup",
+      "Corporate setup route",
+      "Account first",
+      "Verify users",
       "Public site",
       "Sign out",
       "Workspace picker"

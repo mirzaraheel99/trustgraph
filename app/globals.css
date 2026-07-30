@@ -11040,6 +11040,58 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 390px), 1fr));
 }
 
+.setup-route-deck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 10px;
+}
+
+.setup-route-deck button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 10px;
+  align-items: start;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(201, 214, 207, 0.14);
+  border-radius: 8px;
+  color: var(--text);
+  text-align: left;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.016)),
+    rgba(255, 255, 255, 0.024);
+}
+
+.setup-route-deck button.active {
+  border-color: rgba(95, 240, 201, 0.36);
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.11), rgba(255, 255, 255, 0.025)),
+    rgba(255, 255, 255, 0.032);
+}
+
+.setup-route-deck button > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 999px;
+  color: #9bfbe3;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.setup-route-deck strong,
+.setup-route-deck small {
+  grid-column: 2;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.setup-route-deck strong {
+  font-size: 15px;
+}
+
 .setup-panel-grid > section,
 .workspace-admin-grid > section,
 .records-panel,

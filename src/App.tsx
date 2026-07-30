@@ -13420,6 +13420,23 @@ function App() {
                   </button>
                 </div>
               </div>
+              <div className="setup-route-deck" aria-label="Corporate setup route">
+                <button className={setupView === "account" ? "active" : ""} onClick={() => setSetupView("account")} type="button">
+                  <span>1</span>
+                  <strong>Account first</strong>
+                  <small>Login, logout, recovery, and hosted email link repair live here.</small>
+                </button>
+                <button className={setupView === "corporate" || setupView === "team" || setupView === "billing" ? "active" : ""} onClick={() => setSetupView("corporate")} type="button">
+                  <span>2</span>
+                  <strong>Build company workspace</strong>
+                  <small>Create the organization, activate RBAC, invite reviewers, and select the pilot ledger.</small>
+                </button>
+                <button className={workspace.id === "verify" ? "active" : ""} onClick={() => openWorkspaceOrSetup("verify")} type="button">
+                  <span>3</span>
+                  <strong>Verify users</strong>
+                  <small>Request Passport access, review approved rows, and export scoped corporate proof.</small>
+                </button>
+              </div>
               <div className="corporate-setup-guide" aria-label="Corporate setup guide">
                 <div className="corporate-setup-summary">
                   <span className="eyebrow">Corporate launch path</span>
