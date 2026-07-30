@@ -369,6 +369,9 @@ assertIncludesAny(bundleText, ["database_acceptance_requires_live_login"], "host
 assertIncludesAny(bundleText, ["vps_deployment_requires_human_access"], "hosted login VPS human-access requirement");
 assertIncludesAny(bundleText, ["Corporate account setup path"], "corporate account setup path label");
 assertIncludesAny(bundleText, ["corporate_account_rbac_path"], "corporate account RBAC path packet field");
+assertIncludesAny(bundleText, ["Corporate launch command"], "corporate launch command surface");
+assertIncludesAny(bundleText, ["Finish these steps to unlock the corporate portal"], "corporate launch next-step guidance");
+assertIncludesAny(bundleText, ["live user database access"], "corporate launch database access guidance");
 assertIncludesAny(bundleText, ["Activate RBAC role"], "corporate account RBAC role step");
 assertIncludesAny(bundleText, ["Corporate provisioning evidence"], "Corporate account provisioning proof");
 assertIncludesAny(bundleText, ["Export provisioning packet"], "Corporate provisioning export control");

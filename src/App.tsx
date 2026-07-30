@@ -6565,6 +6565,42 @@ function AccountPanel({
       detail: "Invite reviewers, request Passport access, and export proof for the pilot run."
     }
   ];
+  const corporateLaunchActions = [
+    {
+      label: authSession ? "Account connected" : "Login first",
+      detail: authSession ? "Live Supabase auth is active for this operator." : "Use Account to login or create the corporate admin user.",
+      action: authSession ? "Connected" : "Open Account",
+      state: authSession ? "ready" : "next",
+      disabled: Boolean(authSession),
+      onClick: () => document.getElementById("live-auth-controls")?.scrollIntoView({ behavior: "smooth", block: "center" })
+    },
+    {
+      label: accountUser.memberships.length > 1 ? "Workspace ready" : "Create workspace",
+      detail: accountUser.memberships.length > 1 ? "Company context exists and can be selected below." : "Create the employer or staffing organization row.",
+      action: "Create company",
+      state: accountUser.memberships.length > 1 ? "ready" : authSession ? "next" : "locked",
+      disabled: !authSession,
+      onClick: () => document.getElementById("create-corporate-workspace")?.scrollIntoView({ behavior: "smooth", block: "center" })
+    },
+    {
+      label: canManageActiveOrg ? "RBAC active" : "Activate RBAC",
+      detail: canManageActiveOrg ? `${activeRole.label} can manage this workspace.` : "Switch to the company admin context, then activate the operating role.",
+      action: "Role access",
+      state: canManageActiveOrg ? "ready" : accountUser.memberships.length > 1 ? "next" : "locked",
+      disabled: !authSession,
+      onClick: () => document.getElementById("corporate-rbac-controls")?.scrollIntoView({ behavior: "smooth", block: "center" })
+    },
+    {
+      label: "Database proof",
+      detail: "Open Corporate Verify to request access, review visible users, and export database evidence.",
+      action: "Open Verify",
+      state: canManageActiveOrg ? "next" : "locked",
+      disabled: !canManageActiveOrg,
+      onClick: () => {
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  ];
 
   useEffect(() => {
     setTargetRole(activeOrg.type === "staffing_agency" ? "recruiter" : "employer_reviewer");
@@ -6635,6 +6671,24 @@ function AccountPanel({
         <strong>Corporate account and RBAC</strong>
       </div>
       <p className="panel-intro">Use this panel after login: create the live employer or staffing workspace first, switch into its admin role, then invite reviewers and activate billing from the setup guide.</p>
+      <div className="corporate-launch-command" aria-label="Corporate launch command">
+        <div>
+          <span className={`status-chip ${authSession ? "success" : "warning"}`}>Corporate launch command</span>
+          <strong>{canManageActiveOrg ? "Corporate portal is ready for team and database work" : "Finish these steps to unlock the corporate portal"}</strong>
+          <small>
+            This is the short path: login, create the company workspace, activate RBAC, then use Corporate Verify for live user database access and proof exports.
+          </small>
+        </div>
+        <div className="corporate-launch-actions">
+          {corporateLaunchActions.map((item) => (
+            <button className={item.state} disabled={item.disabled} key={item.label} onClick={item.onClick} type="button">
+              <span>{item.label}</span>
+              <strong>{item.action}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="corporate-account-rbac-path" aria-label="Corporate account setup path">
         {corporateAccountRbacPath.map((step, index) => (
           <article className={step.state} key={step.label}>
@@ -6680,7 +6734,7 @@ function AccountPanel({
         <small>{activeOrg.status.replace("_", " ")} organization context</small>
         <small>{authStatus}</small>
       </div>
-      <details className="admin-disclosure" open={!authSession || accountUser.memberships.length < 2}>
+      <details className="admin-disclosure" id="create-corporate-workspace" open={!authSession || accountUser.memberships.length < 2}>
         <summary>
           <span>
             <UserPlus size={16} />
@@ -6726,7 +6780,7 @@ function AccountPanel({
           </button>
         </div>
       ) : null}
-      <details className="admin-disclosure">
+      <details className="admin-disclosure" id="corporate-rbac-controls">
         <summary>
           <span>
             <KeyRound size={16} />

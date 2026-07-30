@@ -2165,6 +2165,95 @@ p,
   line-height: 1.45;
 }
 
+.corporate-launch-command {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 12px;
+  align-items: stretch;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.26);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.11), transparent 56%),
+    linear-gradient(160deg, rgba(134, 174, 246, 0.07), transparent 72%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.corporate-launch-command > div:first-child {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-launch-command strong,
+.corporate-launch-command small,
+.corporate-launch-command span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-launch-command > div:first-child > strong {
+  font-size: 17px;
+  line-height: 1.16;
+}
+
+.corporate-launch-command small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.corporate-launch-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-launch-actions button {
+  min-width: 0;
+  min-height: 106px;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 10px;
+  text-align: left;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.corporate-launch-actions button.ready {
+  color: var(--text);
+  border-color: rgba(112, 224, 178, 0.34);
+  background: rgba(112, 224, 178, 0.07);
+}
+
+.corporate-launch-actions button.next {
+  color: var(--text);
+  border-color: rgba(225, 184, 102, 0.36);
+  background: rgba(225, 184, 102, 0.075);
+}
+
+.corporate-launch-actions button.locked {
+  cursor: not-allowed;
+  opacity: 0.54;
+}
+
+.corporate-launch-actions button span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.corporate-launch-actions button strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 950;
+}
+
 .account-operator-path {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -9959,6 +10048,8 @@ p {
   .auth-support-actions,
   .auth-recovery-decision-grid,
   .auth-operator-path,
+  .corporate-launch-command,
+  .corporate-launch-actions,
   .corporate-account-rbac-path,
   .account-operator-path,
   .portal-entry-path,

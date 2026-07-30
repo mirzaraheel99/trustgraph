@@ -125,6 +125,10 @@ if (!css.includes(".portal-entry-path") || !css.includes(".auth-selected-route")
   throw new Error("Responsive check failed: portal login needs a compact entry path and selected route summary.");
 }
 
+if (!css.includes(".corporate-launch-command") || !css.includes("grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr)") || !css.includes(".corporate-launch-actions")) {
+  throw new Error("Responsive check failed: corporate portal setup needs a clear launch command surface.");
+}
+
 if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(260px, 340px)") || !css.includes("max-width: 340px") || !css.includes("scrollbar-width: thin")) {
   throw new Error("Responsive check failed: premium shell actions must stay compact and preserve workspace width.");
 }
