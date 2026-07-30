@@ -288,6 +288,8 @@ assertIncludesAny(bundleText, ["prepared_human_access_required"], "VPS deploymen
 assertIncludesAny(bundleText, ["Export launch gate packet"], "combined launch gate packet export control");
 assertIncludesAny(bundleText, ["Record gate decision"], "production gate decision intake control");
 assertIncludesAny(bundleText, ["Approved for production"], "production gate approved status option");
+assertIncludesAny(bundleText, ["TrustGraph VPS cutover"], "TrustGraph VPS cutover production gate");
+assertIncludesAny(bundleText, ["trustgraph_vps_cutover"], "TrustGraph VPS cutover gate key");
 assertIncludesAny(bundleText, ["external sign-off required"], "external security gate status");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 assertIncludesAny(bundleText, ["Guided onboarding wizard"], "guided onboarding wizard label");
@@ -451,7 +453,7 @@ assertIncludesAny(bundleText, ["Reset password"], "public portal password recove
 assertIncludesAny(bundleText, ["Auth recovery decision path"], "public auth recovery decision panel");
 assertIncludesAny(bundleText, ["auth_recovery_decision_path"], "registration auth recovery packet field");
 assertIncludesAny(bundleText, ["New account verification"], "auth recovery verification guidance");
-assertIncludesAny(bundleText, ["Migrations through 036"], "current database migration coverage copy");
+assertIncludesAny(bundleText, ["Migrations through 040"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["034 RLS repair expected"], "organization RLS recursion repair marker");
 assertIncludesAny(bundleText, ["RLS repair"], "database strip RLS repair proof");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");

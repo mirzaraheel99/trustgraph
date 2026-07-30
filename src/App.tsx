@@ -4859,6 +4859,12 @@ function PlanAlignmentPanel({
       owner: "Founder/operator",
       status: "pilot roster required",
       evidence: "Named pilot customers, onboarding owner, support path, and incident response owner documented."
+    },
+    {
+      label: "TrustGraph VPS cutover",
+      owner: "Infrastructure operator",
+      status: "external sign-off required",
+      evidence: "TrustGraph VPS host, TLS, environment secrets, Supabase redirect URLs, and VFIX isolation verified before production cutover."
     }
   ];
   const productionGates = productionGateDecisions.length
@@ -4910,8 +4916,10 @@ function PlanAlignmentPanel({
     },
     {
       label: "TrustGraph VPS deployment",
-      status: "prepared_human_access_required",
-      evidence: "Docker, Caddy, compose, preflight, env validation, and GitHub workflow guardrails are ready; actual server deploy requires SSH session or GitHub VPS secrets."
+      status: productionGates.some((gate) => gate.label === "TrustGraph VPS cutover" && gate.status === "approved for production")
+        ? "recorded_gate_approved"
+        : "prepared_human_access_required",
+      evidence: "Docker, Caddy, compose, preflight, env validation, GitHub workflow guardrails, and the TrustGraph VPS cutover gate are ready; production cutover still requires recorded infrastructure sign-off."
     },
     {
       label: "VFIX isolation",
@@ -5015,6 +5023,7 @@ function PlanAlignmentPanel({
       ? "Human gates still prevent live payments, regulated employment decisions, and unrestricted production traffic."
       : "All visible production gates are recorded as approved for production.",
     production_gates: productionGates,
+    required_cutover_gates: ["stripe_billing_launch", "external_rls_storage_review", "legal_employment_language", "pilot_operations_owner", "trustgraph_vps_cutover"],
     pilot_contacts: pilotContacts
   };
 
@@ -5082,7 +5091,7 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 036 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, the organization RLS recursion repair, and issuer credential update/revocation lifecycle.</small>
+          <small>Migrations through 040 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, the organization RLS recursion repair, issuer credential lifecycle, data-rights requests, and the TrustGraph VPS cutover gate.</small>
         </div>
         <span className="status-chip success">034 RLS repair expected</span>
       </article>
@@ -5166,6 +5175,7 @@ function PlanAlignmentPanel({
             <option value="external_rls_storage_review">External RLS and storage review</option>
             <option value="legal_employment_language">Legal and employment language</option>
             <option value="pilot_operations_owner">Pilot operations owner</option>
+            <option value="trustgraph_vps_cutover">TrustGraph VPS cutover</option>
           </select>
           <select disabled={disabled || gateBusy} onChange={(event) => setGateStatus(event.target.value as ProductionGateStatus)} value={gateStatus}>
             <option value="human_decision_required">Human decision required</option>

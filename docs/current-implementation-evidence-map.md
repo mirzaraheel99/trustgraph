@@ -33,7 +33,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | References and missing records | `src/referenceRepository.ts`, `src/missingRecordRepository.ts`, request status controls and exports | `supabase/migrations/013`, `015` |
 | Issuer workflow | `src/credentialRepository.ts`, issuer role activation, credential issue workflow, issuer-scoped expiration correction, and revocation lifecycle | `supabase/migrations/014`, `024`, `035`, `036` |
 | Evidence preview/download | Private Supabase Storage upload, metadata listing, manifest export, signed preview/download buttons | `supabase/migrations/017`, smoke evidence assertions |
-| Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts, organization RLS recursion repair | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034` |
+| Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts, organization RLS recursion repair, VPS cutover gate | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034`, `040` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
 | Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet, and review-only fraud signal packet with no automated hiring decisions | `supabase/migrations/010`, `012`, `016` |
 | Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, v1 completion audit packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
@@ -64,7 +64,7 @@ The app exposes these operator exports to prove live database state after sign-i
 
 ## Migration Coverage
 
-Live Supabase migrations currently run through `036_update_issuer_credential_expiry.sql`. The RLS guard verifies protected-table enablement across 21 tables before every hosted deployment, and the app exposes a visible `034 RLS repair expected` marker so operators can distinguish code readiness from a Supabase project that still needs the organization recursion repair applied.
+Live Supabase migrations currently run through `040_vps_cutover_production_gate.sql`. The RLS guard verifies protected-table enablement across 21 tables before every hosted deployment, and the app exposes a visible `034 RLS repair expected` marker so operators can distinguish code readiness from a Supabase project that still needs the organization recursion repair applied.
 
 ## Verification Commands
 
@@ -88,4 +88,4 @@ These are not engineering-complete until a human decision is recorded:
 - External RLS/security review and production evidence-storage review.
 - Legal review for background-check-adjacent records, adverse-action boundaries, and regulated employment decision language.
 - Named pilot customers, onboarding owner, support owner, and incident response owner.
-- VPS bootstrap/secrets for `5-75-224-11.sslip.io`; do not touch the VFIX host.
+- VPS bootstrap/secrets and recorded TrustGraph VPS cutover approval for `trustgraph.5-75-224-110.sslip.io`; do not touch the VFIX host.

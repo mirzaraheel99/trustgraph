@@ -190,7 +190,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `036_update_issuer_credential_expiry.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, the organization RLS recursion repair required for corporate account context, and issuer credential update/revocation lifecycle.
+Live Supabase migrations are applied through `040_vps_cutover_production_gate.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, the organization RLS recursion repair required for corporate account context, issuer credential update/revocation lifecycle, data export/account closure review, and the TrustGraph VPS cutover gate.
 
 ## Public Website and Pricing
 
