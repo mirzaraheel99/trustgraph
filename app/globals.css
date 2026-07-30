@@ -1666,6 +1666,53 @@ button {
   overflow-wrap: normal;
 }
 
+.sidebar button,
+.sidebar input,
+.sidebar select,
+.billing-panel,
+.team-panel,
+.onboarding-panel,
+.pilot-acceptance-panel,
+.notification-panel,
+.records-panel,
+.record-form,
+.consent-panel,
+.references-panel,
+.workspace-admin-grid section {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.billing-panel *,
+.team-panel *,
+.onboarding-panel *,
+.pilot-acceptance-panel *,
+.notification-panel *,
+.records-panel *,
+.consent-panel *,
+.references-panel * {
+  min-width: 0;
+}
+
+.billing-panel strong,
+.billing-panel small,
+.team-panel strong,
+.team-panel small,
+.onboarding-panel strong,
+.onboarding-panel small,
+.pilot-acceptance-panel strong,
+.pilot-acceptance-panel small,
+.notification-panel strong,
+.notification-panel small,
+.records-panel strong,
+.records-panel small,
+.consent-panel strong,
+.consent-panel small,
+.references-panel strong,
+.references-panel small {
+  overflow-wrap: anywhere;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -2310,7 +2357,7 @@ p,
 
 .billing-gate-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
   gap: 8px;
 }
 
@@ -2434,7 +2481,7 @@ p,
 
 .team-summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 96px), 1fr));
   gap: 8px;
 }
 
@@ -8846,7 +8893,7 @@ p {
 
 .record-form-grid {
   display: grid;
-  grid-template-columns: minmax(140px, 0.8fr) minmax(180px, 1.2fr) minmax(180px, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
   gap: 8px;
 }
 
@@ -8858,6 +8905,9 @@ p {
   width: 100%;
   padding: 0 10px;
   outline: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .record-form select,
