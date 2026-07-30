@@ -5464,6 +5464,26 @@ function MyInvitationsPanel({
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const exportName = `trustgraph-my-invitations-${new Date().toISOString().slice(0, 10)}.csv`;
+  const handoffPacketName = `trustgraph-invitation-handoff-${new Date().toISOString().slice(0, 10)}.json`;
+  const invitationHandoffPacket = {
+    generated_at: new Date().toISOString(),
+    mode: disabled ? "invitation_login_required" : "invitee_membership_handoff",
+    live_database_evidence: !disabled,
+    pending_invitation_count: invitations.filter((invitation) => invitation.status === "pending").length,
+    invitations: invitations.map((invitation) => ({
+      invitation_id: invitation.id,
+      organization_id: invitation.organization_id,
+      organization_name: invitation.organization?.name ?? "",
+      invited_email: invitation.invited_email,
+      role: invitation.role,
+      status: invitation.status,
+      invited_by_profile_id: invitation.invited_by_profile_id ?? null,
+      accepted_by_profile_id: invitation.accepted_by_profile_id ?? null,
+      expires_at: invitation.expires_at ?? null,
+      acceptance_writes_membership: invitation.status === "pending"
+    })),
+    operator_note: "Accepting a pending invitation calls the Supabase invitation handoff and creates an active organization membership for the signed-in invitee."
+  };
 
   async function accept(invitationId: string) {
     setBusyId(invitationId);
@@ -5495,6 +5515,18 @@ function MyInvitationsPanel({
           type="button"
         >
           Export my invites
+        </button>
+      </div>
+      <div className="invitation-handoff-packet">
+        <strong>Invitee handoff packet</strong>
+        <small>Exports pending invitee-owned invitation rows, expiry, role, accepted-by profile, and the membership write expected after acceptance.</small>
+        <button
+          className="secondary-action"
+          disabled={!invitations.length}
+          onClick={() => downloadTextFile(handoffPacketName, JSON.stringify(invitationHandoffPacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export handoff packet
         </button>
       </div>
       <div className="team-list">

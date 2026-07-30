@@ -3757,6 +3757,35 @@ p {
   min-height: 34px;
 }
 
+.invitation-handoff-packet {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.045);
+}
+
+.invitation-handoff-packet strong,
+.invitation-handoff-packet small {
+  display: block;
+}
+
+.invitation-handoff-packet strong {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.invitation-handoff-packet small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.invitation-handoff-packet .secondary-action {
+  justify-content: center;
+}
+
 .directory-metrics strong {
   font-size: 26px;
   line-height: 1;

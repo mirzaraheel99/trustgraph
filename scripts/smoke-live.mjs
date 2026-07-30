@@ -236,6 +236,9 @@ assertIncludesAny(bundleText, ["Invitation database"], "Corporate team invitatio
 assertIncludesAny(bundleText, ["Export invites"], "Corporate team invitation export control");
 assertIncludesAny(bundleText, ["Invitation handoff"], "personal invitation handoff source label");
 assertIncludesAny(bundleText, ["Export my invites"], "personal invitation export control");
+assertIncludesAny(bundleText, ["Invitee handoff packet"], "personal invitation handoff packet label");
+assertIncludesAny(bundleText, ["Export handoff packet"], "personal invitation handoff packet export");
+assertIncludesAny(bundleText, ["invitee_membership_handoff"], "personal invitation handoff packet mode");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
 assertIncludesAny(bundleText, ["workflow-notifications"], "topbar notification target");
 assertIncludesAny(bundleText, ["Reference database"], "structured reference source label");
