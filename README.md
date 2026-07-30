@@ -84,6 +84,8 @@ Supabase built-in email is limited to 2 messages per hour project-wide. If signu
 
 The hosted login/database handoff packet records the active Supabase return URL, current login state, live database acceptance requirements, TrustGraph VPS target, and VFIX isolation guard. Export it whenever account verification or database proof is being checked.
 
+The public auth surface is intentionally split into a contained professional/corporate access desk and a sticky login/register card. The signed-in dashboard intentionally uses the top command system instead of a fixed left rail, so workspace routing, account recovery, logout, and corporate setup stay visible without horizontal overflow.
+
 For database migrations, add these GitHub repository secrets and run the `Apply Supabase Migrations` workflow manually:
 
 ```text

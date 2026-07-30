@@ -38,11 +38,12 @@ function assertIncludesAny(source, expectedValues, label) {
 }
 
 async function assertRepoReadinessArtifacts() {
-  const [migrationFiles, readiness, runbook, evidenceMap, packageText, pagesWorkflow] = await Promise.all([
+  const [migrationFiles, readiness, runbook, evidenceMap, readme, packageText, pagesWorkflow] = await Promise.all([
     readdir(new URL("../supabase/migrations/", import.meta.url)),
     readFile(new URL("../V1_READINESS_CHECKLIST.md", import.meta.url), "utf8"),
     readFile(new URL("../PILOT_RUNBOOK.md", import.meta.url), "utf8"),
     readFile(new URL("../docs/current-implementation-evidence-map.md", import.meta.url), "utf8"),
+    readFile(new URL("../README.md", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8")
   ]);
@@ -77,6 +78,11 @@ async function assertRepoReadinessArtifacts() {
   assert(evidenceMap.includes("Remaining Human Gates"), "Expected implementation evidence map to include human gates");
   assert(evidenceMap.includes("https://trustgraph.5-75-224-110.sslip.io"), "Expected implementation evidence map to name the TrustGraph VPS pilot host");
   assert(evidenceMap.includes("https://5-75-224-110.sslip.io/CRM-client-demo/login"), "Expected implementation evidence map to preserve VFIX isolation");
+  assert(evidenceMap.includes("contained professional/corporate auth access desk"), "Expected implementation evidence map to record the contained public auth layout");
+  assert(evidenceMap.includes("no-rail dashboard command layout"), "Expected implementation evidence map to record the no-rail dashboard layout");
+  assert(evidenceMap.includes("UI layout proof"), "Expected implementation evidence map to include UI layout proof");
+  assert(readme.includes("contained professional/corporate access desk"), "Expected README to describe the contained public auth access desk");
+  assert(readme.includes("top command system instead of a fixed left rail"), "Expected README to describe the no-rail dashboard layout");
 }
 
 const pageUrl = `${targetUrl}?smoke=live-script`;
