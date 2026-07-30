@@ -5415,6 +5415,23 @@ function AccountPanel({
     activeOrg.type === "staffing_agency"
       ? (["staffing_agency_admin", "recruiter"] as RoleKey[])
       : (["employer_admin", "employer_reviewer"] as RoleKey[]);
+  const operatorPath = [
+    {
+      label: "Create workspace",
+      detail: authSession ? "Use organization name, type, and domain to create the live company record." : "Login first so the workspace writes to your account.",
+      ready: Boolean(authSession && accountUser.memberships.length > 1)
+    },
+    {
+      label: "Switch admin context",
+      detail: canManageActiveOrg ? `${activeOrg.name} is active with admin controls.` : "Switch into employer or staffing admin before managing roles.",
+      ready: canManageActiveOrg
+    },
+    {
+      label: "Assign operating role",
+      detail: `${selectedRole.label} routes this user to ${workspaces.find((workspace) => workspace.id === selectedRole.portal)?.label ?? selectedRole.portal}.`,
+      ready: canManageActiveOrg && activeMembership.role === targetRole
+    }
+  ];
 
   useEffect(() => {
     setTargetRole(activeOrg.type === "staffing_agency" ? "recruiter" : "employer_reviewer");
@@ -5484,6 +5501,17 @@ function AccountPanel({
         <strong>Corporate account and RBAC</strong>
       </div>
       <p className="panel-intro">Use this panel after login: create the live employer or staffing workspace first, switch into its admin role, then invite reviewers and activate billing from the setup guide.</p>
+      <div className="account-operator-path" aria-label="Corporate account operator path">
+        {operatorPath.map((item) => (
+          <article className={item.ready ? "ready" : ""} key={item.label}>
+            <span className={`status-dot ${item.ready ? "on" : ""}`} />
+            <div>
+              <strong>{item.label}</strong>
+              <small>{item.detail}</small>
+            </div>
+          </article>
+        ))}
+      </div>
       <div className="account-user">
         <span>{accountUser.name}</span>
         <small>{authSession ? `Live profile ${authSession.user.id.slice(0, 8)}` : accountUser.email}</small>

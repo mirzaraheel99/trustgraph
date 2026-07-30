@@ -134,6 +134,8 @@ assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup
 assertIncludesAny(bundleText, ["Setup command bar"], "logged-in setup command bar");
 assertIncludesAny(bundleText, ["Open next step"], "setup next step action");
 assertIncludesAny(bundleText, ["Public registration"], "setup public registration action");
+assertIncludesAny(bundleText, ["Corporate account operator path"], "corporate account operator path");
+assertIncludesAny(bundleText, ["Switch admin context"], "corporate account admin context step");
 assertIncludesAny(bundleText, ["Create workspace"], "corporate setup workspace step");
 assertIncludesAny(bundleText, ["Confirm RBAC"], "corporate setup RBAC step");
 assertIncludesAny(bundleText, ["Select plan"], "corporate setup billing step");

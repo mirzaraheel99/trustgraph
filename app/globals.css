@@ -1472,6 +1472,44 @@ p,
   line-height: 1.45;
 }
 
+.account-operator-path {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.account-operator-path article {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.account-operator-path article.ready {
+  border-color: rgba(112, 224, 178, 0.3);
+  background: rgba(112, 224, 178, 0.06);
+}
+
+.account-operator-path strong,
+.account-operator-path small {
+  display: block;
+}
+
+.account-operator-path strong {
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.account-operator-path small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .auth-panel {
   display: grid;
   gap: 10px;
@@ -7325,6 +7363,7 @@ p {
   .public-session-handoff,
   .auth-choice-summary,
   .auth-support-actions,
+  .account-operator-path,
   .portal-auth-summary-grid,
   .portal-access-steps,
   .portal-auth-outcome-grid,
