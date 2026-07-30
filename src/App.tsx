@@ -2346,6 +2346,11 @@ function CorporateDirectoryPanel({
     generated_at: new Date().toISOString(),
     mode: databaseMode,
     live_database_evidence: isLiveCorporateDatabase,
+    real_database_policy: {
+      accepted_source: "signed_in_supabase_rows_visible_to_active_corporate_rbac_context",
+      preview_or_seed_only: false,
+      proof_required: "Export after corporate login shows Access Grants, shared Passport records, profiles, and gap requests loaded from Supabase."
+    },
     filters: {
       status: statusFilter,
       query: directoryQuery.trim()
@@ -6899,6 +6904,23 @@ function OnboardingChecklistPanel({
     : authSession && accountContext
       ? "Live account context is connected, but at least one required row group is still missing."
       : "Login on the hosted app before this workspace can prove live database acceptance.";
+  const realDatabaseAcceptancePolicy = {
+    label: "Real database only acceptance",
+    accepted_source: "signed_in_supabase_repository_rows",
+    preview_data_accepted: false,
+    browser_seed_evidence_accepted_without_reconciliation: false,
+    current_status: liveDatabaseAcceptanceComplete
+      ? "real_database_accepted"
+      : authSession && accountContext
+        ? "live_rows_require_repair"
+        : "login_required",
+    required_proof: [
+      "Hosted Supabase login is active",
+      "Account context and RBAC membership loaded",
+      "Required Passport, evidence, Access Grant, consent, corporate account, and billing rows are loaded",
+      "Working-data packet exported after live rows load"
+    ]
+  };
   const seededAccessGrantId = visibleSeedEvidence?.access_grant_id ?? "";
   const seededConsentAuthorizationId = visibleSeedEvidence?.consent_authorization_id ?? "";
   const seededSubscriptionId = visibleSeedEvidence?.subscription_id ?? "";
@@ -7002,7 +7024,8 @@ function OnboardingChecklistPanel({
       complete: liveDatabaseAcceptanceComplete,
       rows: liveDatabaseAcceptanceRows,
       unmet_requirements: liveDatabaseAcceptanceRows.filter((row) => !row.ok).map((row) => row.required),
-      live_database_repair_queue: liveDatabaseRepairQueue
+      live_database_repair_queue: liveDatabaseRepairQueue,
+      real_database_acceptance_policy: realDatabaseAcceptancePolicy
     },
     checklist_completed: completed,
     checklist_total: checklist.length,
@@ -7193,6 +7216,27 @@ function OnboardingChecklistPanel({
           <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : authSession && accountContext ? "warning" : "neutral"}`}>
             {workingDatabaseAcceptanceStatus.replace(/_/g, " ")}
           </span>
+        </div>
+        <div className="real-database-policy-card">
+          <div>
+            <span className="status-chip neutral">Real data only</span>
+            <strong>Preview data is not accepted for v1 database proof</strong>
+            <small>TrustGraph accepts the working database only after signed-in Supabase repository rows are loaded and the working-data packet is exported.</small>
+          </div>
+          <div className="real-database-policy-grid">
+            <span>
+              <strong>{authSession ? "Signed in" : "Login required"}</strong>
+              <small>Hosted Supabase session</small>
+            </span>
+            <span>
+              <strong>{accountContext ? "RBAC loaded" : "Context needed"}</strong>
+              <small>Account and organization context</small>
+            </span>
+            <span>
+              <strong>{liveDatabaseAcceptanceComplete ? "Accepted" : "Not accepted"}</strong>
+              <small>{realDatabaseAcceptancePolicy.current_status.replace(/_/g, " ")}</small>
+            </span>
+          </div>
         </div>
         <div className="live-database-repair-queue">
           <div className="seed-reconciliation-top">

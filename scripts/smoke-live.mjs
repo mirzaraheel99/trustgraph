@@ -216,6 +216,10 @@ assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched co
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
 assertIncludesAny(bundleText, ["Working database acceptance"], "working database acceptance summary");
 assertIncludesAny(bundleText, ["working_database_accepted"], "working database acceptance packet status");
+assertIncludesAny(bundleText, ["Real database only acceptance"], "real database acceptance policy label");
+assertIncludesAny(bundleText, ["Preview data is not accepted for v1 database proof"], "real database acceptance visible guard");
+assertIncludesAny(bundleText, ["real_database_acceptance_policy"], "real database acceptance packet field");
+assertIncludesAny(bundleText, ["signed_in_supabase_repository_rows"], "real database accepted source field");
 assertIncludesAny(bundleText, ["Live database repair queue"], "working database repair queue");
 assertIncludesAny(bundleText, ["live_database_repair_queue"], "working database repair queue packet field");
 assertIncludesAny(bundleText, ["Export working-data packet"], "working database proof export");
@@ -240,6 +244,8 @@ assertIncludesAny(bundleText, ["Export reviewer packet"], "Corporate Verify revi
 assertIncludesAny(bundleText, ["live_verify_reviewer_flow"], "Corporate Verify reviewer live packet mode");
 assertIncludesAny(bundleText, ["Live corporate database"], "Corporate user database source label");
 assertIncludesAny(bundleText, ["live_database_evidence"], "Corporate user database evidence flag");
+assertIncludesAny(bundleText, ["real_database_policy"], "Corporate user database real data policy packet field");
+assertIncludesAny(bundleText, ["signed_in_supabase_rows_visible_to_active_corporate_rbac_context"], "Corporate user database accepted source");
 assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
 assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
 assertIncludesAny(bundleText, ["Ready to review"], "Corporate user database review-ready bucket");
