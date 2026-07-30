@@ -55,7 +55,7 @@ button {
 .app {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(224px, 252px) minmax(0, 1fr);
+  grid-template-columns: minmax(216px, 244px) minmax(0, 1fr);
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
@@ -1743,7 +1743,7 @@ button {
   gap: 10px;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  max-width: 252px;
+  max-width: 244px;
 }
 
 .sidebar > * {
@@ -4505,7 +4505,7 @@ p,
 }
 
 .workspace {
-  padding: 20px clamp(18px, 2.4vw, 40px) 56px;
+  padding: 20px clamp(16px, 2vw, 32px) 56px;
   min-width: 0;
   max-width: 100%;
   overflow-x: hidden;
@@ -4519,11 +4519,11 @@ p,
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(210px, 280px);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(196px, 260px);
+  gap: 14px;
   align-items: flex-start;
-  width: min(100%, 1320px);
-  margin: 0 auto 20px;
+  width: 100%;
+  margin: 0 0 18px;
 }
 
 .eyebrow {
@@ -4564,9 +4564,9 @@ p {
 }
 
 .topbar h1 {
-  max-width: 18ch;
-  font-size: clamp(32px, 5.5cqw, 46px);
-  line-height: 1.04;
+  max-width: 20ch;
+  font-size: clamp(30px, 4.6cqw, 42px);
+  line-height: 1.06;
 }
 
 .session-strip {
@@ -4733,11 +4733,11 @@ p {
 
 .workspace-command-strip {
   display: grid;
-  grid-template-columns: minmax(180px, 0.62fr) minmax(0, 1.38fr) minmax(132px, auto);
+  grid-template-columns: minmax(168px, 0.58fr) minmax(0, 1.42fr) minmax(132px, auto);
   align-items: center;
   gap: 10px;
-  width: min(100%, 1320px);
-  margin: 0 auto 12px;
+  width: 100%;
+  margin: 0 0 12px;
   padding: 12px;
   border: 1px solid rgba(134, 174, 246, 0.2);
   border-radius: var(--radius);
@@ -4805,8 +4805,8 @@ p {
 .signed-in-landing-actions {
   display: grid;
   gap: 12px;
-  width: min(100%, 1280px);
-  margin: 0 auto 14px;
+  width: 100%;
+  margin: 0 0 14px;
   padding: 12px;
   border: 1px solid rgba(134, 174, 246, 0.22);
   border-radius: var(--radius);
@@ -4907,8 +4907,8 @@ p {
 .proof-export-hub {
   display: grid;
   gap: 12px;
-  width: min(100%, 1280px);
-  margin: 0 auto 14px;
+  width: 100%;
+  margin: 0 0 14px;
   padding: 12px;
   border: 1px solid rgba(225, 184, 102, 0.22);
   border-radius: var(--radius);
@@ -4997,8 +4997,8 @@ p {
 .dashboard-start-map {
   display: grid;
   gap: 12px;
-  width: min(100%, 1280px);
-  margin: 0 auto 14px;
+  width: 100%;
+  margin: 0 0 14px;
   padding: 12px;
   border: 1px solid rgba(82, 214, 196, 0.2);
   border-radius: var(--radius);
@@ -5084,7 +5084,7 @@ p {
   justify-content: flex-end;
   gap: 8px;
   width: 100%;
-  max-width: 280px;
+  max-width: 260px;
   min-width: 0;
 }
 
@@ -5140,9 +5140,9 @@ p {
   grid-template-columns: 1fr;
   align-items: start;
   gap: 16px;
-  width: min(100%, 1280px);
-  max-width: 1280px;
-  margin: 20px auto;
+  width: 100%;
+  max-width: none;
+  margin: 20px 0;
   padding: 18px;
   border: 1px solid rgba(201, 214, 207, 0.12);
   border-radius: var(--radius);
@@ -5248,9 +5248,9 @@ p {
 .corporate-task-hub {
   display: grid;
   gap: 14px;
-  width: min(100%, 1280px);
-  max-width: 1280px;
-  margin: 20px auto;
+  width: 100%;
+  max-width: none;
+  margin: 20px 0;
   padding: 16px;
   border: 1px solid rgba(82, 214, 196, 0.22);
   border-radius: var(--radius);
@@ -5757,17 +5757,17 @@ p {
   display: grid;
   gap: 16px;
   min-width: 0;
-  width: min(100%, 1280px);
-  max-width: 1280px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .hero {
-  width: min(100%, 1280px);
-  margin-inline: auto;
+  width: 100%;
+  margin-inline: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(230px, 0.86fr) minmax(280px, 1.1fr) minmax(280px, 1fr);
   margin-bottom: 16px;
   gap: 14px;
 }
@@ -5787,6 +5787,7 @@ p {
   min-height: 132px;
   padding: clamp(13px, 1.2vw, 16px);
   overflow: hidden;
+  min-width: 0;
 }
 
 .hero-card.primary {
@@ -5860,7 +5861,7 @@ p {
 
 .hero-value {
   margin: 14px 0 10px;
-  font-size: clamp(38px, 4vw, 64px);
+  font-size: clamp(36px, 3.4vw, 56px);
   line-height: 0.95;
   font-weight: 950;
 }

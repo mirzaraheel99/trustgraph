@@ -112,7 +112,7 @@ if (!css.includes(".trust-network-visual") || !css.includes("min-height: 268px")
   throw new Error("Responsive check failed: premium TrustGraph record graph needs stable desktop dimensions.");
 }
 
-if (!css.includes("grid-template-columns: minmax(224px, 252px) minmax(0, 1fr)") || !css.includes("contain: inline-size") || !css.includes("max-width: 252px")) {
+if (!css.includes("grid-template-columns: minmax(216px, 244px) minmax(0, 1fr)") || !css.includes("contain: inline-size") || !css.includes("max-width: 244px")) {
   throw new Error("Responsive check failed: app shell must keep navigation compact and contain workspace overflow.");
 }
 
@@ -124,12 +124,12 @@ if (!css.includes(".portal-entry-path") || !css.includes(".auth-selected-route")
   throw new Error("Responsive check failed: portal login needs a compact entry path and selected route summary.");
 }
 
-if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(210px, 280px)") || !css.includes("max-width: 280px") || !css.includes("scrollbar-width: thin")) {
+if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(196px, 260px)") || !css.includes("max-width: 260px") || !css.includes("scrollbar-width: thin")) {
   throw new Error("Responsive check failed: premium shell actions must stay compact and preserve workspace width.");
 }
 
-if (!css.includes("width: min(100%, 1320px)") || !css.includes("grid-template-columns: repeat(3, minmax(0, 1fr))")) {
-  throw new Error("Responsive check failed: premium shell must bound desktop content and wrap session actions on tablet.");
+if (!css.includes("width: 100%") || !css.includes("margin: 0 0 18px") || !css.includes("grid-template-columns: minmax(230px, 0.86fr) minmax(280px, 1.1fr) minmax(280px, 1fr)")) {
+  throw new Error("Responsive check failed: premium shell must use the available console width without centered desktop drift.");
 }
 
 if (!css.includes(".workspace > *") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))")) {
@@ -140,7 +140,7 @@ if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 100%") 
   throw new Error("Responsive check failed: primary workspace route and portal path strips must stay compact.");
 }
 
-if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(180px, 0.62fr) minmax(0, 1.38fr) minmax(132px, auto)")) {
+if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(168px, 0.58fr) minmax(0, 1.42fr) minmax(132px, auto)")) {
   throw new Error("Responsive check failed: workspace command strip must summarize signed-in routing without overflow.");
 }
 
