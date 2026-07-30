@@ -41,6 +41,8 @@ const requiredMobileStacks = [
   ".portal-auth-summary-grid",
   ".portal-auth-outcome-grid",
   ".portal-login-switchboard-grid",
+  ".workspace-command-strip",
+  ".workspace-command-metrics",
   ".portal-decision-panel",
   ".portal-decision-grid",
   ".pricing-decision-strip",
@@ -102,6 +104,10 @@ if (!css.includes(".workspace > *") || !css.includes("grid-template-columns: rep
 
 if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 680px") || !css.includes(".workspace-flow-strip") || !css.includes("max-width: 760px")) {
   throw new Error("Responsive check failed: primary workspace route and portal path strips must stay compact.");
+}
+
+if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.35fr) auto")) {
+  throw new Error("Responsive check failed: workspace command strip must summarize signed-in routing without overflow.");
 }
 
 if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("flex-direction: column")) {

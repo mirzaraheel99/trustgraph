@@ -129,6 +129,9 @@ assertIncludesAny(bundleText, ["portal_auth_outcome_summary"], "portal auth outc
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
 assertIncludesAny(bundleText, ["Personal Passport", "Corporate Verify", "Company Admin"], "dashboard portal path strip");
+assertIncludesAny(bundleText, ["Workspace command strip"], "signed-in workspace command strip");
+assertIncludesAny(bundleText, ["Open next workspace"], "workspace command next action");
+assertIncludesAny(bundleText, ["workspace_command_strip"], "authorized report workspace command strip field");
 assertIncludesAny(bundleText, ["Dashboard start map"], "dashboard workspace start map");
 assertIncludesAny(bundleText, ["Choose the workspace by what you need to do now"], "dashboard start map guidance");
 assertIncludesAny(bundleText, ["dashboard_start_map"], "authorized report dashboard start map field");

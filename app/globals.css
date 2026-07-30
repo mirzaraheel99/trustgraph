@@ -4014,6 +4014,77 @@ p {
   line-height: 1.35;
 }
 
+.workspace-command-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.35fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 1280px);
+  margin: 0 auto 14px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.075), transparent 62%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.workspace-command-strip > div:first-child {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.workspace-command-strip strong,
+.workspace-command-strip small,
+.workspace-command-strip span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.workspace-command-strip > div:first-child > strong {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.workspace-command-strip small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.workspace-command-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.workspace-command-metrics span {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.workspace-command-metrics strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.workspace-command-actions {
+  display: grid;
+  gap: 8px;
+  min-width: 172px;
+}
+
+.workspace-command-actions button {
+  min-height: 38px;
+  justify-content: center;
+}
+
 .dashboard-start-map {
   display: grid;
   gap: 12px;
@@ -8234,6 +8305,8 @@ p {
   .portal-auth-outcome-grid,
   .portal-login-switchboard-grid,
   .dashboard-start-map-grid,
+  .workspace-command-strip,
+  .workspace-command-metrics,
   .portal-decision-panel,
   .portal-decision-grid,
   .auth-path-grid,

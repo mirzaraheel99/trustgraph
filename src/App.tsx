@@ -10904,6 +10904,37 @@ function App() {
       ready: hasLiveCorporateContext && canManageCorporateSetup
     }
   ];
+  const workspaceFlow = [
+    {
+      id: "passport" as const,
+      label: "1. Personal Passport",
+      detail: "User profile, records, evidence, consent, and recovery",
+      ready: Boolean(authSession && activeOrganization.type === "professional")
+    },
+    {
+      id: "verify" as const,
+      label: "2. Corporate Verify",
+      detail: "Request access by professional email and review shared rows",
+      ready: sharedVerifyRecords.length > 0 || verifyRequests.length > 0
+    },
+    {
+      id: "admin" as const,
+      label: "3. Company Admin",
+      detail: "RBAC, team, pricing ledger, exports, and launch checks",
+      ready: hasLiveCorporateContext && canManageCorporateSetup
+    }
+  ];
+  const currentWorkspaceStep = workspaceFlow.find((item) => item.id === workspace.id) ?? workspaceFlow[0];
+  const nextWorkspaceStep = workspaceFlow.find((item) => !item.ready) ?? currentWorkspaceStep;
+  const workspaceCommandStrip = {
+    mode: authSession ? "Live database session" : "Product preview mode",
+    current_portal: currentWorkspaceStep.label,
+    current_detail: currentWorkspaceStep.detail,
+    next_action: nextWorkspaceStep.ready ? "Continue current workspace" : nextWorkspaceStep.label,
+    next_detail: nextWorkspaceStep.ready ? workspace.subtitle : nextWorkspaceStep.detail,
+    role: activeRole.label,
+    organization: activeOrganization.name
+  };
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -10937,6 +10968,7 @@ function App() {
       production_gate_decisions: productionGateDecisions.length
     },
     dashboard_start_map: dashboardStartMap,
+    workspace_command_strip: workspaceCommandStrip,
     production_boundary: {
       payments: "pilot_ledger_only",
       automated_hiring_decisions: "not_enabled",
@@ -10973,26 +11005,6 @@ function App() {
     setShowPublicSite(true);
   }
 
-  const workspaceFlow = [
-    {
-      id: "passport" as const,
-      label: "1. Personal Passport",
-      detail: "User profile, records, evidence, consent, and recovery",
-      ready: Boolean(authSession && activeOrganization.type === "professional")
-    },
-    {
-      id: "verify" as const,
-      label: "2. Corporate Verify",
-      detail: "Request access by professional email and review shared rows",
-      ready: sharedVerifyRecords.length > 0 || verifyRequests.length > 0
-    },
-    {
-      id: "admin" as const,
-      label: "3. Company Admin",
-      detail: "RBAC, team, pricing ledger, exports, and launch checks",
-      ready: hasLiveCorporateContext && canManageCorporateSetup
-    }
-  ];
   const sessionSummary = authSession ? `${activeRole.label} at ${activeOrganization.name}` : "Preview mode";
 
   if (showPublicSite) {
@@ -11174,6 +11186,35 @@ function App() {
           <PermissionGate roleLabel={activeRole.label} workspaceLabel={workspace.label} />
         ) : (
           <>
+        <section className="workspace-command-strip" aria-label="Workspace command strip">
+          <div>
+            <span className={`status-chip ${authSession ? "success" : "neutral"}`}>Workspace command strip</span>
+            <strong>{workspaceCommandStrip.current_portal}</strong>
+            <small>{workspaceCommandStrip.current_detail}</small>
+          </div>
+          <div className="workspace-command-metrics">
+            <span>
+              <strong>{workspaceCommandStrip.mode}</strong>
+              <small>{workspaceCommandStrip.role}</small>
+            </span>
+            <span>
+              <strong>{workspaceCommandStrip.organization}</strong>
+              <small>{activeOrganization.type.replace("_", " ")}</small>
+            </span>
+            <span>
+              <strong>{workspaceCommandStrip.next_action}</strong>
+              <small>{workspaceCommandStrip.next_detail}</small>
+            </span>
+          </div>
+          <div className="workspace-command-actions">
+            <button className="primary-action" onClick={() => changeWorkspace(nextWorkspaceStep.id)} type="button">
+              Open next workspace
+            </button>
+            <button className="secondary-action" onClick={openAuthControls} type="button">
+              Account
+            </button>
+          </div>
+        </section>
         <section className="dashboard-start-map" aria-label="Dashboard start map">
           <div className="dashboard-start-map-header">
             <div>
