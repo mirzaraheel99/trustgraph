@@ -5918,6 +5918,16 @@ function TeamMembersPanel({
   const suspendedCount = members.filter((member) => member.status === "suspended").length;
   const adminRoleCount = members.filter((member) => ["employer_admin", "staffing_agency_admin"].includes(member.role)).length;
   const reviewerRoleCount = members.filter((member) => ["employer_reviewer", "recruiter"].includes(member.role)).length;
+  const currentUserProtectedCount = members.filter((member) => member.profile_id === currentProfileId && member.status === "active").length;
+  const teamNextAction = disabled
+    ? "Sign in with a corporate admin role to manage the roster."
+    : !members.length
+      ? "Create a workspace, then invite the first reviewer."
+      : !adminRoleCount
+        ? "Add at least one corporate admin seat."
+        : suspendedCount
+          ? "Review suspended seats before the next compliance export."
+          : "Roster is ready for reviewer access and evidence exports.";
   const filteredMembers = members.filter((member) => {
     const matchesStatus = memberStatusFilter === "all" || member.status === memberStatusFilter;
     const haystack = `${member.profile?.full_name ?? ""} ${member.profile?.email ?? ""} ${member.role} ${member.status}`.toLowerCase();
@@ -5936,7 +5946,16 @@ function TeamMembersPanel({
       active_members: activeCount,
       suspended_members: suspendedCount,
       admin_roles: adminRoleCount,
-      reviewer_roles: reviewerRoleCount
+      reviewer_roles: reviewerRoleCount,
+      current_user_protected_rows: currentUserProtectedCount
+    },
+    team_operations_cockpit: {
+      label: "Team operations cockpit",
+      next_action: teamNextAction,
+      admin_roles: adminRoleCount,
+      reviewer_roles: reviewerRoleCount,
+      current_user_protected_rows: currentUserProtectedCount,
+      filtered_rows_ready_for_export: filteredMembers.length
     },
     members: filteredMembers.map((member) => ({
       membership_id: member.id,
@@ -5992,6 +6011,27 @@ function TeamMembersPanel({
         <span className="status-chip success">Membership database</span>
         <small>Reads live organization memberships and profile rows from Supabase. Current signed-in users cannot suspend their own active seat.</small>
       </div>
+      <div className="team-operations-cockpit">
+        <div>
+          <span className="status-chip neutral">Team operations cockpit</span>
+          <strong>{teamNextAction}</strong>
+          <small>Use this queue to review corporate admins, reviewers, suspended seats, and exportable roster evidence.</small>
+        </div>
+        <div className="team-operations-grid">
+          <span>
+            <strong>{adminRoleCount}</strong>
+            Admin seats
+          </span>
+          <span>
+            <strong>{reviewerRoleCount}</strong>
+            Reviewer seats
+          </span>
+          <span>
+            <strong>{currentUserProtectedCount}</strong>
+            Current user protected
+          </span>
+        </div>
+      </div>
       <div className="team-roster-detail">
         <span>{members.length} membership rows</span>
         <span>{new Set(members.map((member) => member.profile_id)).size} profiles</span>
@@ -6041,7 +6081,7 @@ function TeamMembersPanel({
                   <small>
                     {member.role.replace(/_/g, " ")} - {member.status}
                   </small>
-                  <small>Membership {member.id.slice(0, 8)} · Profile {member.profile_id.slice(0, 8)}</small>
+                  <small>Membership {member.id.slice(0, 8)} / Profile {member.profile_id.slice(0, 8)}</small>
                 </div>
                 <div className="grant-actions">
                   <button

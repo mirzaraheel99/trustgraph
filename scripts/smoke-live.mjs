@@ -248,6 +248,9 @@ assertIncludesAny(bundleText, ["Profile"], "Corporate member roster profile id d
 assertIncludesAny(bundleText, ["Corporate roster packet"], "Corporate member roster packet label");
 assertIncludesAny(bundleText, ["Export roster packet"], "Corporate member roster packet export");
 assertIncludesAny(bundleText, ["live_membership_database"], "Corporate member roster packet mode");
+assertIncludesAny(bundleText, ["Team operations cockpit"], "Corporate member roster operations cockpit");
+assertIncludesAny(bundleText, ["Current user protected"], "Corporate member roster self-protection label");
+assertIncludesAny(bundleText, ["team_operations_cockpit"], "Corporate member roster operations packet field");
 assertIncludesAny(bundleText, ["Invitation database"], "Corporate team invitation source label");
 assertIncludesAny(bundleText, ["Export invites"], "Corporate team invitation export control");
 assertIncludesAny(bundleText, ["Invitation handoff"], "personal invitation handoff source label");

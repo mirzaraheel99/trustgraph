@@ -1548,6 +1548,66 @@ p,
   font-weight: 800;
 }
 
+.team-operations-cockpit {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.75fr);
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), rgba(82, 214, 196, 0.035)),
+    rgba(255, 255, 255, 0.03);
+}
+
+.team-operations-cockpit > div:first-child {
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.team-operations-cockpit strong,
+.team-operations-cockpit small {
+  display: block;
+}
+
+.team-operations-cockpit strong {
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.team-operations-cockpit small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.team-operations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.team-operations-grid span {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  min-height: 72px;
+  padding: 10px;
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.team-operations-grid strong {
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+}
+
 .team-roster-packet {
   display: grid;
   gap: 4px;
@@ -6500,6 +6560,8 @@ p {
   .seed-result-grid,
   .seed-reconciliation-grid,
   .working-database-grid,
+  .team-operations-cockpit,
+  .team-operations-grid,
   .team-controls,
   .team-summary-grid,
   .verify-summary-grid,
