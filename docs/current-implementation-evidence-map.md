@@ -24,7 +24,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Track | Current implementation evidence | Verification evidence |
 | --- | --- | --- |
 | Product foundation | `src/App.tsx`, `app/page.tsx`, `app/globals.css`, `README.md` public website, portal registration, pricing, hosted auth guidance, and auth readiness packets | GitHub Pages workflow, `scripts/smoke-live.mjs` |
-| Professional Passport | `src/recordRepository.ts`, `src/evidenceRepository.ts`, Passport record forms, structured responsibility/skill metadata, skills evidence packet, renewal readiness packet, evidence metadata, signed preview/download controls | `supabase/migrations/001`, `012`, `017`, smoke evidence checks |
+| Professional Passport | `src/recordRepository.ts`, `src/evidenceRepository.ts`, Passport record forms, structured responsibility/skill metadata, skills evidence packet, renewal readiness packet, dispute/correction workflow, evidence metadata, signed preview/download controls | `supabase/migrations/001`, `012`, `017`, `037`, smoke evidence checks |
 | Corporate account | `src/accountRepository.ts`, Account panel, Corporate provisioning packet, team panels, member roster proof | `supabase/migrations/009`, `020`, `021`, `022`, smoke corporate checks |
 | RBAC | `src/rbac.ts`, workspace gating, role preview, portal access packet | `scripts/check-claims.mjs`, portal access export |
 | Access Grants | `src/grantRepository.ts`, Passport approval/decline/revoke, Verify requests, shared record sync | `supabase/migrations/003`, `006`, `008`, `023` |

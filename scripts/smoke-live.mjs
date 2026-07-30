@@ -236,6 +236,11 @@ assertIncludesAny(bundleText, ["visible_scope_only"], "confidentiality packet sc
 assertIncludesAny(bundleText, ["Skills evidence packet"], "skills evidence packet panel");
 assertIncludesAny(bundleText, ["Export skills packet"], "skills evidence packet export control");
 assertIncludesAny(bundleText, ["visible_skill_evidence"], "skills evidence packet scoped mode");
+assertIncludesAny(bundleText, ["Record dispute and correction"], "professional dispute workflow panel");
+assertIncludesAny(bundleText, ["Open dispute"], "professional dispute workflow submit control");
+assertIncludesAny(bundleText, ["Export dispute packet"], "professional dispute packet export");
+assertIncludesAny(bundleText, ["professional_record_dispute"], "professional dispute workflow packet mode");
+assertIncludesAny(bundleText, ["record.dispute_opened"], "professional dispute audit event");
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Portal access evidence"], "portal access evidence packet label");
 assertIncludesAny(bundleText, ["Export portal packet"], "portal access packet export control");

@@ -20,6 +20,8 @@ const requiredMobileStacks = [
   ".corporate-data-access-path",
   ".corporate-access-review-grid",
   ".corporate-visibility-grid",
+  ".dispute-source-strip",
+  ".dispute-form-grid",
   ".corporate-live-retest-grid",
   ".corporate-operating-plan-grid",
   ".corporate-operating-plan-header",
@@ -130,6 +132,10 @@ if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-co
 
 if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("flex-direction: column")) {
   throw new Error("Responsive check failed: missing 760px flex stacking rule.");
+}
+
+if (!css.includes(".record-dispute-panel") || !css.includes(".dispute-actions") || !css.includes("grid-template-columns: repeat(2, minmax(0, auto))")) {
+  throw new Error("Responsive check failed: record dispute controls need compact desktop and mobile-safe action layout.");
 }
 
 if (!flexStackCss.includes(".trust-network-visual") || !flexStackCss.includes("min-height: 316px")) {

@@ -143,7 +143,7 @@ import {
   verificationCaseToRecordItem
 } from "./operationsRepository";
 import { consentPolicyAreas, foundationTracks, lockedProfileAreas } from "./planAlignment";
-import { createPassportRecord, loadPassportRecords, loadSharedVerifyRecords, updatePassportRecord } from "./recordRepository";
+import { createPassportRecord, loadPassportRecords, loadSharedVerifyRecords, openRecordDispute, updatePassportRecord } from "./recordRepository";
 import {
   canAccessWorkspace,
   getActiveMembership,
@@ -2402,6 +2402,123 @@ function CorporateControlCenter({
           <small>Use the panels below to complete the next workflow step against Supabase.</small>
         </article>
       </div>
+    </section>
+  );
+}
+
+function RecordDisputePanel({
+  disabled,
+  message,
+  record,
+  onOpenDispute
+}: {
+  disabled: boolean;
+  message: string;
+  record: RecordItem;
+  onOpenDispute: (input: { recordId: string; disputeReason: string; requestedCorrection: string }) => Promise<void>;
+}) {
+  const [disputeReason, setDisputeReason] = useState("");
+  const [requestedCorrection, setRequestedCorrection] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState(message);
+  const alreadyDisputed = record.status.toLowerCase().includes("disputed");
+  const packetName = `trustgraph-record-dispute-${new Date().toISOString().slice(0, 10)}.json`;
+  const disputePacket = {
+    packet_mode: "professional_record_dispute",
+    generated_at: new Date().toISOString(),
+    record: {
+      id: record.id,
+      title: record.title,
+      section: record.section,
+      source: record.source,
+      status: record.status,
+      sensitivity: record.sensitivity,
+      access_scope: record.access
+    },
+    workflow: {
+      allowed_actor: "record_owner_profile",
+      record_status_after_submission: "disputed",
+      operations_case_type: "dispute",
+      audit_event: "record.dispute_opened",
+      automated_hiring_decisions: "prohibited"
+    }
+  };
+
+  useEffect(() => {
+    setStatus(message);
+  }, [message]);
+
+  async function submitDispute(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setStatus("Opening dispute and marking record disputed...");
+
+    try {
+      await onOpenDispute({ recordId: record.id, disputeReason, requestedCorrection });
+      setDisputeReason("");
+      setRequestedCorrection("");
+      setStatus("Dispute opened; operations case and audit event created.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not open record dispute");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="record-dispute-panel">
+      <div className="mini-heading">
+        <ShieldAlert size={16} />
+        <strong>Record dispute and correction</strong>
+      </div>
+      <div className="dispute-source-strip">
+        <span>
+          <strong>{record.title}</strong>
+          <small>{record.section} - {record.status}</small>
+        </span>
+        <span>
+          <strong>Owner-controlled</strong>
+          <small>Creates operations case</small>
+        </span>
+        <span>
+          <strong>Audit event</strong>
+          <small>record.dispute_opened</small>
+        </span>
+      </div>
+      <form className="record-form" onSubmit={submitDispute}>
+        <div className="record-form-grid dispute-form-grid">
+          <input
+            value={disputeReason}
+            onChange={(event) => setDisputeReason(event.target.value)}
+            placeholder="What is incorrect or disputed?"
+            disabled={disabled || busy || alreadyDisputed}
+          />
+          <input
+            value={requestedCorrection}
+            onChange={(event) => setRequestedCorrection(event.target.value)}
+            placeholder="Requested correction"
+            disabled={disabled || busy || alreadyDisputed}
+          />
+        </div>
+        <small>
+          Verified rows stay visible with a disputed status while TrustGraph Operations reviews the source, correction request, and audit trail.
+        </small>
+        <div className="record-form-footer">
+          <small>{alreadyDisputed ? "This Passport record is already marked disputed." : status}</small>
+          <div className="dispute-actions">
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(packetName, JSON.stringify(disputePacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export dispute packet
+            </button>
+            <button className="primary-action" disabled={disabled || busy || alreadyDisputed || !disputeReason.trim()} type="submit">
+              Open dispute
+            </button>
+          </div>
+        </div>
+      </form>
     </section>
   );
 }
@@ -10649,6 +10766,32 @@ function App() {
     setRecordStatus("Live Supabase Passport records");
   }
 
+  async function openLiveRecordDispute(input: { recordId: string; disputeReason: string; requestedCorrection: string }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before opening a Passport record dispute.");
+    }
+
+    const caseRow = await openRecordDispute({
+      recordId: input.recordId,
+      disputeReason: input.disputeReason,
+      requestedCorrection: input.requestedCorrection,
+      accessToken: authSession.accessToken
+    });
+    const [records, notifications, cases, events] = await Promise.all([
+      loadPassportRecords(accountContext.profile.id, authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken).catch(() => notificationEvents),
+      loadVerificationCases(authSession.accessToken).catch(() => operationsCases),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setLivePassportRecords(records);
+    setNotificationEvents(notifications);
+    setOperationsCases(cases);
+    setAuditEvents(events);
+    setSelectedId(input.recordId);
+    setRecordStatus(`Dispute opened: ${caseRow.title}`);
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+  }
+
   async function createLiveEvidenceDocument(input: {
     recordId: string;
     title: string;
@@ -12351,6 +12494,12 @@ function App() {
                   disabled={!authSession || !accountContext}
                   message={recordStatus}
                   onCreate={createLivePassportRecord}
+                />
+                <RecordDisputePanel
+                  disabled={!authSession || !accountContext}
+                  message={recordStatus}
+                  record={selectedRecord}
+                  onOpenDispute={openLiveRecordDispute}
                 />
                 <AccessGrantsPanel
                   disabled={!authSession || !accountContext}

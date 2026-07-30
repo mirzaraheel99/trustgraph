@@ -1,6 +1,6 @@
 import type { RecordItem, Tone } from "./data";
-import type { DbAccessGrant, DbTrustRecord, RecordStatus, RecordType, TrustRecordSensitivity } from "./database";
-import { supabaseRest } from "./supabase";
+import type { DbAccessGrant, DbTrustRecord, DbVerificationCase, RecordStatus, RecordType, TrustRecordSensitivity } from "./database";
+import { supabaseRest, supabaseRpc } from "./supabase";
 
 const recordTypeLabels: Record<RecordType, string> = {
   identity: "Identity",
@@ -218,4 +218,21 @@ export async function updatePassportRecord(input: {
   });
 
   return trustRecordToRecordItem(record);
+}
+
+export async function openRecordDispute(input: {
+  recordId: string;
+  disputeReason: string;
+  requestedCorrection: string;
+  accessToken: string;
+}): Promise<DbVerificationCase> {
+  return supabaseRpc<DbVerificationCase>(
+    "open_record_dispute",
+    {
+      target_record_id: input.recordId,
+      dispute_reason: input.disputeReason,
+      requested_correction: input.requestedCorrection
+    },
+    { accessToken: input.accessToken }
+  );
 }
