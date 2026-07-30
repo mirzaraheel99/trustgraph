@@ -8507,6 +8507,20 @@ function PublicSite({
       next: "Provision the company first, then request scoped user database access."
     }
   ];
+  const portalEntryPath = [
+    {
+      label: "1. Pick portal",
+      detail: portal === "corporate" ? "Corporate creates a company workspace." : "Professional creates a private Passport."
+    },
+    {
+      label: "2. Register or login",
+      detail: mode === "signup" ? "Create the account, then verify email if required." : "Login with the verified account."
+    },
+    {
+      label: "3. Land in dashboard",
+      detail: portal === "corporate" ? "Open Corporate Verify, team, billing, and access requests." : "Open Passport records, evidence, consent, and sharing."
+    }
+  ];
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
@@ -8529,6 +8543,7 @@ function PublicSite({
       }
     },
     active_redirect_url: authRedirectUrl,
+    portal_entry_path: portalEntryPath,
     required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
     allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
     trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
@@ -9144,6 +9159,14 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className="portal-entry-path" aria-label="Portal entry path">
+            {portalEntryPath.map((step) => (
+              <span key={step.label}>
+                <strong>{step.label}</strong>
+                <small>{step.detail}</small>
+              </span>
+            ))}
+          </div>
           <div className="auth-choice-summary" aria-label="Selected portal login path">
             <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
               <span>Professional user</span>
@@ -9234,6 +9257,11 @@ function PublicSite({
                 ? "Company workspace creation starts after email verification and login."
                 : "Passport setup starts after email verification and login."}
             </small>
+          </div>
+          <div className="auth-selected-route">
+            <span>{portal === "corporate" ? "Corporate company" : "Professional user"}</span>
+            <strong>{mode === "signup" ? "Register" : "Login"}</strong>
+            <small>{selectedRegistrationPath.nextAction}</small>
           </div>
           <div className="portal-tabs">
             <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">

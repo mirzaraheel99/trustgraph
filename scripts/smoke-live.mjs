@@ -110,6 +110,10 @@ assertIncludesAny(bundleText, ["Corporate registration sequence"], "Corporate re
 assertIncludesAny(bundleText, ["Professional registration sequence"], "Professional registration guided sequence");
 assertIncludesAny(bundleText, ["Provision live workspace"], "Corporate registration provisioning step");
 assertIncludesAny(bundleText, ["Selected portal route"], "auth selected portal route summary");
+assertIncludesAny(bundleText, ["Portal entry path"], "portal compact entry path");
+assertIncludesAny(bundleText, ["1. Pick portal"], "portal first step copy");
+assertIncludesAny(bundleText, ["auth-selected-route"], "auth selected route summary class");
+assertIncludesAny(bundleText, ["portal_entry_path"], "registration packet portal entry field");
 assertIncludesAny(bundleText, ["First live database write"], "auth first database write summary");
 assertIncludesAny(bundleText, ["Portal decision matrix"], "portal registration decision matrix");
 assertIncludesAny(bundleText, ["One login system, two clean registration paths"], "portal registration decision copy");

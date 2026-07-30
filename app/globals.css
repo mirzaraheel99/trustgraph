@@ -840,6 +840,45 @@ button {
   line-height: 1.4;
 }
 
+.portal-entry-path {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 700px;
+  margin-top: 18px;
+  padding: 8px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.portal-entry-path span {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.portal-entry-path strong,
+.portal-entry-path small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.portal-entry-path strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.portal-entry-path small {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .portal-access-guide {
   display: grid;
   gap: 12px;
@@ -1011,6 +1050,42 @@ button {
 
 .auth-card-heading strong {
   font-size: 20px;
+}
+
+.auth-selected-route {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 68%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.auth-selected-route span,
+.auth-selected-route strong,
+.auth-selected-route small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.auth-selected-route span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.auth-selected-route strong {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.auth-selected-route small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .public-auth-card input,
@@ -8091,6 +8166,17 @@ p {
     padding-top: 20px;
   }
 
+  .sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+
+  .sidebar .brand,
+  .sidebar .security-card {
+    grid-column: 1 / -1;
+  }
+
   .database-status-strip {
     grid-template-columns: 1fr;
   }
@@ -8142,6 +8228,7 @@ p {
   .auth-support-actions,
   .auth-operator-path,
   .account-operator-path,
+  .portal-entry-path,
   .portal-auth-summary-grid,
   .portal-access-steps,
   .portal-auth-outcome-grid,
