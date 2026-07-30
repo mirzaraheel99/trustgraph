@@ -358,6 +358,7 @@ assertIncludesAny(bundleText, ["Preview account context"], "signed-out account c
 assertIncludesAny(bundleText, ["Preview shared access"], "workspace context navigation action");
 assertIncludesAny(bundleText, ["Public site"], "workspace public site return control");
 assertIncludesAny(bundleText, ["Sign out"], "workspace sign out control");
+assertIncludesAny(bundleText, ["Live database returned a policy or schema error"], "operator database error copy");
 assertIncludesAny(bundleText, ["Export ledger"], "billing ledger export control");
 assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export control");
 assertIncludesAny(bundleText, ["Export launch packet"], "billing launch packet export control");

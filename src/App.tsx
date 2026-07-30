@@ -5370,6 +5370,10 @@ function operatorErrorMessage(error: unknown, fallback: string) {
     return "Live database request failed. Check Supabase migrations and role access before retrying.";
   }
 
+  if (message.includes("{") && message.includes("}")) {
+    return "Live database returned a policy or schema error. Check migrations, RLS policy access, and the active role before retrying.";
+  }
+
   return message;
 }
 
@@ -9083,7 +9087,7 @@ function App() {
       })
       .catch((error) => {
         if (cancelled) return;
-        setAccountStatus(error instanceof Error ? error.message : "Login again to reconnect live database access.");
+        setAccountStatus(operatorErrorMessage(error, "Login again to reconnect live database access."));
       });
 
     return () => {
@@ -9125,7 +9129,7 @@ function App() {
       .catch((error) => {
         if (cancelled) return;
         setAccountContext(null);
-        setAccountStatus(error instanceof Error ? error.message : "Could not load live account context");
+        setAccountStatus(operatorErrorMessage(error, "Could not load live account context"));
       });
 
     return () => {
@@ -9165,9 +9169,9 @@ function App() {
         setOrganizationSubscriptions([]);
         setTeamInvitations([]);
         setTeamMembers([]);
-        setBillingStatus(error instanceof Error ? error.message : "Could not load billing plans");
-        setTeamStatus(error instanceof Error ? error.message : "Could not load team invitations");
-        setMemberStatus(error instanceof Error ? error.message : "Could not load team members");
+        setBillingStatus(operatorErrorMessage(error, "Could not load billing plans"));
+        setTeamStatus(operatorErrorMessage(error, "Could not load team invitations"));
+        setMemberStatus(operatorErrorMessage(error, "Could not load team members"));
       });
 
     return () => {
@@ -9194,7 +9198,7 @@ function App() {
       .catch((error) => {
         if (cancelled) return;
         setMyInvitations([]);
-        setMyInvitationStatus(error instanceof Error ? error.message : "Could not load pending invitations");
+        setMyInvitationStatus(operatorErrorMessage(error, "Could not load pending invitations"));
       });
 
     return () => {
@@ -9294,11 +9298,11 @@ function App() {
         setReferenceRequests([]);
         setConsentAuthorizations([]);
         setPassportMissingRecordRequests([]);
-        setRecordStatus(error instanceof Error ? error.message : "Could not load live Passport records");
-        setNotificationStatus(error instanceof Error ? error.message : "Could not load notifications");
-        setReferenceStatus(error instanceof Error ? error.message : "Could not load reference requests");
-        setConsentStatus(error instanceof Error ? error.message : "Could not load consent authorizations");
-        setPassportMissingRecordStatus(error instanceof Error ? error.message : "Could not load requested Passport records");
+        setRecordStatus(operatorErrorMessage(error, "Could not load live Passport records"));
+        setNotificationStatus(operatorErrorMessage(error, "Could not load notifications"));
+        setReferenceStatus(operatorErrorMessage(error, "Could not load reference requests"));
+        setConsentStatus(operatorErrorMessage(error, "Could not load consent authorizations"));
+        setPassportMissingRecordStatus(operatorErrorMessage(error, "Could not load requested Passport records"));
       });
 
     return () => {
@@ -9370,9 +9374,9 @@ function App() {
         setSharedVerifyRecords([]);
         setIssuerCredentials([]);
         setMissingRecordRequests([]);
-        setVerifyStatus(error instanceof Error ? error.message : "Could not load Verify requests");
-        setIssuerStatus(error instanceof Error ? error.message : "Could not load issued credentials");
-        setMissingRecordStatus(error instanceof Error ? error.message : "Could not load missing-record requests");
+        setVerifyStatus(operatorErrorMessage(error, "Could not load Verify requests"));
+        setIssuerStatus(operatorErrorMessage(error, "Could not load issued credentials"));
+        setMissingRecordStatus(operatorErrorMessage(error, "Could not load missing-record requests"));
       });
 
     return () => {
@@ -9399,7 +9403,7 @@ function App() {
       .catch((error) => {
         if (cancelled) return;
         setAccessGrants([]);
-        setGrantStatus(error instanceof Error ? error.message : "Could not load Access Grants");
+        setGrantStatus(operatorErrorMessage(error, "Could not load Access Grants"));
       });
 
     return () => {
@@ -9484,10 +9488,10 @@ function App() {
         setPilotLaunchContacts([]);
         setApiClients([]);
         setWebhookSubscriptions([]);
-        setOperationsStatus(error instanceof Error ? error.message : "Could not load operations queue");
-        setAuditStatus(error instanceof Error ? error.message : "Could not load audit events");
-        setReleaseStatus(error instanceof Error ? error.message : "Could not load release ledger");
-        setConnectStatus(error instanceof Error ? error.message : "Could not load Connect controls");
+        setOperationsStatus(operatorErrorMessage(error, "Could not load operations queue"));
+        setAuditStatus(operatorErrorMessage(error, "Could not load audit events"));
+        setReleaseStatus(operatorErrorMessage(error, "Could not load release ledger"));
+        setConnectStatus(operatorErrorMessage(error, "Could not load Connect controls"));
       });
 
     return () => {
