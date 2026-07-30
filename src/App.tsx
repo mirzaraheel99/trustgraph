@@ -1674,6 +1674,62 @@ function VerifyRequestsPanel({
     (record) => record.consentRequired || record.sensitivity === "sensitive" || record.sensitivity === "restricted"
   );
   const coveredConsentRecords = sharedRecordsNeedingConsent.filter((record) => activeConsentRecordIds.has(record.id)).length;
+  const pendingGapCount = missingRecordRequests.filter(
+    (request) => request.status === "requested" || request.status === "in_progress"
+  ).length;
+  const verifyFlowSteps = [
+    {
+      label: "Request access",
+      value: requestedCount ? `${requestedCount} waiting` : "Ready",
+      detail: "Send a scoped Passport request to the professional with a clear business purpose.",
+      done: requests.length > 0
+    },
+    {
+      label: "Review shared records",
+      value: `${sharedRecords.length} records`,
+      detail: "Approved grants sync only records visible through organization, role, grant, and consent scope.",
+      done: sharedRecords.length > 0
+    },
+    {
+      label: "Resolve gaps",
+      value: `${pendingGapCount} open`,
+      detail: "Request missing items when approved shared records are incomplete for the review.",
+      done: pendingGapCount === 0 && (requests.length > 0 || sharedRecords.length > 0)
+    },
+    {
+      label: "Consent coverage",
+      value: `${coveredConsentRecords}/${sharedRecordsNeedingConsent.length}`,
+      detail: "Restricted or sensitive records require active consent before they can support review.",
+      done: sharedRecordsNeedingConsent.length === 0 || coveredConsentRecords === sharedRecordsNeedingConsent.length
+    }
+  ];
+  const nextVerifyStep = verifyFlowSteps.find((step) => !step.done) ?? verifyFlowSteps[verifyFlowSteps.length - 1];
+  const verifyFlowPacketName = `trustgraph-verify-reviewer-flow-${new Date().toISOString().slice(0, 10)}.json`;
+  const verifyFlowPacket = {
+    generated_at: new Date().toISOString(),
+    mode: disabled ? "locked_verify_reviewer_flow" : "live_verify_reviewer_flow",
+    active_organization: {
+      id: activeOrganization.id,
+      name: activeOrganization.name,
+      type: activeOrganization.type
+    },
+    next_step: nextVerifyStep.label,
+    counts: {
+      requested_access_grants: requestedCount,
+      approved_access_grants: approvedCount,
+      inactive_access_grants: inactiveCount,
+      shared_records: sharedRecords.length,
+      sensitive_shared_records: sharedRecordsNeedingConsent.length,
+      covered_sensitive_records: coveredConsentRecords,
+      open_missing_record_requests: pendingGapCount
+    },
+    steps: verifyFlowSteps.map((step) => ({
+      label: step.label,
+      value: step.value,
+      detail: step.detail,
+      done: step.done
+    }))
+  };
 
   useEffect(() => {
     setRequestStatus(message);
@@ -1722,6 +1778,32 @@ function VerifyRequestsPanel({
         <div>
           <span>Inactive</span>
           <strong>{inactiveCount}</strong>
+        </div>
+      </div>
+      <div className="verify-reviewer-flow">
+        <div className="verify-reviewer-flow-header">
+          <div>
+            <span className="eyebrow">Reviewer workflow</span>
+            <strong>Next: {nextVerifyStep.label}</strong>
+            <small>Use this queue to request access, review shared records, close missing-record gaps, and prove consent coverage.</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(verifyFlowPacketName, JSON.stringify(verifyFlowPacket, null, 2), "application/json")}
+            type="button"
+          >
+            Export reviewer packet
+          </button>
+        </div>
+        <div className="verify-reviewer-step-grid">
+          {verifyFlowSteps.map((step) => (
+            <article className={step.done ? "complete" : step.label === nextVerifyStep.label ? "next" : ""} key={step.label}>
+              <span className={`status-chip ${step.done ? "success" : "neutral"}`}>{step.done ? "ready" : "next"}</span>
+              <strong>{step.label}</strong>
+              <small>{step.value}</small>
+              <p>{step.detail}</p>
+            </article>
+          ))}
         </div>
       </div>
       <form className="verify-request-form" onSubmit={submitAccessRequest}>

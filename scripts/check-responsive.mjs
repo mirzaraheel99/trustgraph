@@ -22,7 +22,8 @@ const requiredMobileStacks = [
   ".registration-path-grid",
   ".reference-source-strip",
   ".release-source-strip",
-  ".team-source-strip"
+  ".team-source-strip",
+  ".verify-reviewer-flow-header"
 ];
 
 const gridStart = css.indexOf("@media (max-width: 1240px)");

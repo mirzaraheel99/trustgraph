@@ -4307,6 +4307,89 @@ p {
   line-height: 1;
 }
 
+.verify-reviewer-flow {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.06), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.verify-reviewer-flow-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(168px, auto);
+  gap: 10px;
+  align-items: start;
+}
+
+.verify-reviewer-flow-header > div {
+  display: grid;
+  gap: 4px;
+}
+
+.verify-reviewer-flow-header strong,
+.verify-reviewer-flow-header small {
+  display: block;
+}
+
+.verify-reviewer-flow-header strong {
+  font-size: 18px;
+}
+
+.verify-reviewer-flow-header small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.verify-reviewer-flow-header .secondary-action {
+  justify-content: center;
+}
+
+.verify-reviewer-step-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 8px;
+}
+
+.verify-reviewer-step-grid article {
+  display: grid;
+  gap: 7px;
+  min-height: 150px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.verify-reviewer-step-grid article.complete {
+  border-color: rgba(112, 224, 178, 0.26);
+  background: rgba(112, 224, 178, 0.052);
+}
+
+.verify-reviewer-step-grid article.next {
+  border-color: rgba(225, 184, 102, 0.4);
+  background: rgba(225, 184, 102, 0.058);
+}
+
+.verify-reviewer-step-grid strong,
+.verify-reviewer-step-grid small {
+  display: block;
+}
+
+.verify-reviewer-step-grid strong {
+  font-size: 14px;
+}
+
+.verify-reviewer-step-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .verify-lifecycle-row {
   display: flex;
   flex-wrap: wrap;
@@ -6339,6 +6422,7 @@ p {
   .vps-launch-grid,
   .rls-coverage-strip,
   .security-review-topline,
+  .verify-reviewer-flow-header,
   .human-decision-list,
   .onboarding-current-step,
   .seed-result-grid,

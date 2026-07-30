@@ -223,6 +223,9 @@ assertIncludesAny(bundleText, ["Corporate provisioning evidence"], "Corporate ac
 assertIncludesAny(bundleText, ["Export provisioning packet"], "Corporate provisioning export control");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
+assertIncludesAny(bundleText, ["Reviewer workflow"], "Corporate Verify reviewer workflow guide");
+assertIncludesAny(bundleText, ["Export reviewer packet"], "Corporate Verify reviewer packet export");
+assertIncludesAny(bundleText, ["live_verify_reviewer_flow"], "Corporate Verify reviewer live packet mode");
 assertIncludesAny(bundleText, ["Live corporate database"], "Corporate user database source label");
 assertIncludesAny(bundleText, ["live_database_evidence"], "Corporate user database evidence flag");
 assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
