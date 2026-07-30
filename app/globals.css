@@ -1162,6 +1162,47 @@ button {
   line-height: 1.4;
 }
 
+.portal-handoff-checklist {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.portal-handoff-checklist span {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.012)),
+    rgba(0, 0, 0, 0.12);
+}
+
+.portal-handoff-checklist strong,
+.portal-handoff-checklist small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.portal-handoff-checklist strong {
+  margin: 4px 0;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.portal-handoff-checklist small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.portal-handoff-checklist span small:first-child {
+  color: var(--teal);
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
 .public-auth-card input,
 .public-auth-card select,
 .public-auth-card textarea,
@@ -8692,6 +8733,7 @@ p {
   .auth-operator-path,
   .account-operator-path,
   .portal-entry-path,
+  .portal-handoff-checklist,
   .portal-auth-summary-grid,
   .portal-access-steps,
   .portal-auth-outcome-grid,

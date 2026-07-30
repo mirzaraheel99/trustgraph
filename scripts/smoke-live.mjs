@@ -309,6 +309,9 @@ assertIncludesAny(bundleText, ["unmet_requirements"], "real database unmet requi
 assertIncludesAny(bundleText, ["Hosted login and database handoff"], "hosted login database handoff label");
 assertIncludesAny(bundleText, ["Export login handoff"], "hosted login database handoff export");
 assertIncludesAny(bundleText, ["hosted_login_database_handoff"], "hosted login database handoff packet field");
+assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");
+assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff checklist packet field");
+assertIncludesAny(bundleText, ["Provision workspace"], "corporate portal handoff provisioning step");
 assertIncludesAny(bundleText, ["database_acceptance_requires_live_login"], "hosted login database live-login requirement");
 assertIncludesAny(bundleText, ["vps_deployment_requires_human_access"], "hosted login VPS human-access requirement");
 assertIncludesAny(bundleText, ["Corporate provisioning evidence"], "Corporate account provisioning proof");

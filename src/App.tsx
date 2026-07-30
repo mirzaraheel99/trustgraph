@@ -8722,6 +8722,23 @@ function PublicSite({
       detail: portal === "corporate" ? "Open Corporate Verify, team, billing, and access requests." : "Open Passport records, evidence, consent, and sharing."
     }
   ];
+  const portalHandoffChecklist = [
+    {
+      label: portal === "corporate" ? "Company portal" : "Personal portal",
+      detail: portal === "corporate" ? "Corporate Verify creates company, RBAC, billing, team, and access request rows." : "Professional Passport creates profile, records, evidence, consent, and sharing rows.",
+      state: "Selected"
+    },
+    {
+      label: mode === "signup" ? "Register account" : "Login account",
+      detail: mode === "signup" ? "Use hosted verification email, then return here to login." : "Use the verified account; reset password if login fails.",
+      state: mode === "signup" ? "Signup" : "Login"
+    },
+    {
+      label: portal === "corporate" ? "Provision workspace" : "Open Passport",
+      detail: portal === "corporate" ? "After login, saved company details create the live corporate workspace." : "After login, open Passport and add real database records.",
+      state: portal === "corporate" ? "Corporate" : "Professional"
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -8762,6 +8779,7 @@ function PublicSite({
     },
     active_redirect_url: authRedirectUrl,
     portal_entry_path: portalEntryPath,
+    portal_handoff_checklist: portalHandoffChecklist,
     required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
     allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
     trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
@@ -9521,6 +9539,15 @@ function PublicSite({
             <span>{portal === "corporate" ? "Corporate company" : "Professional user"}</span>
             <strong>{mode === "signup" ? "Register" : "Login"}</strong>
             <small>{selectedRegistrationPath.nextAction}</small>
+          </div>
+          <div className="portal-handoff-checklist" aria-label="Portal handoff checklist">
+            {portalHandoffChecklist.map((item) => (
+              <span key={item.label}>
+                <small>{item.state}</small>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </span>
+            ))}
           </div>
           <div className="portal-tabs">
             <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
