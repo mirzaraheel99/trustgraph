@@ -55,7 +55,7 @@ button {
 .app {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(196px, 224px) minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 248px) minmax(0, 1fr);
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
@@ -1596,7 +1596,7 @@ button {
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 14px 10px;
+  padding: 16px 12px;
   border-right: 1px solid var(--line);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.026), transparent 32%),
@@ -1607,7 +1607,7 @@ button {
   gap: 10px;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  max-width: 224px;
+  max-width: 248px;
 }
 
 .sidebar > * {
@@ -4258,7 +4258,7 @@ p,
 }
 
 .workspace {
-  padding: 18px clamp(14px, 2vw, 26px) 44px;
+  padding: 18px clamp(16px, 2vw, 30px) 44px;
   min-width: 0;
   max-width: 100%;
   overflow-x: hidden;
@@ -4272,10 +4272,10 @@ p,
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(256px, 320px);
+  gap: 16px;
   align-items: flex-start;
-  width: min(100%, 1060px);
+  width: min(100%, 1160px);
   margin: 0 auto 16px;
 }
 
@@ -4295,10 +4295,10 @@ p {
 }
 
 h1 {
-  max-width: 24ch;
+  max-width: 28ch;
   margin-bottom: 10px;
-  font-size: clamp(24px, 1.45vw, 29px);
-  line-height: 1.06;
+  font-size: clamp(24px, 2.1vw, 38px);
+  line-height: 1.03;
 }
 
 h2 {
@@ -4311,9 +4311,9 @@ p {
 }
 
 .topbar p {
-  max-width: 720px;
+  max-width: 780px;
   margin-bottom: 0;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .session-strip {
@@ -4328,7 +4328,7 @@ p {
   overflow-x: auto;
   scrollbar-width: thin;
   gap: 8px;
-  max-width: 680px;
+  max-width: 780px;
   margin-top: 12px;
   padding-bottom: 3px;
 }
@@ -4385,7 +4385,7 @@ p {
   overflow-x: auto;
   scrollbar-width: thin;
   gap: 8px;
-  max-width: 760px;
+  max-width: 840px;
   margin-top: 10px;
   padding: 7px;
   border: 1px solid rgba(201, 214, 207, 0.12);
@@ -4445,10 +4445,10 @@ p {
 
 .workspace-command-strip {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) minmax(142px, auto);
+  grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1.22fr) minmax(132px, auto);
   align-items: center;
   gap: 10px;
-  width: min(100%, 1120px);
+  width: min(100%, 1160px);
   margin: 0 auto 12px;
   padding: 12px;
   border: 1px solid rgba(134, 174, 246, 0.2);
@@ -4517,7 +4517,7 @@ p {
 .signed-in-landing-actions {
   display: grid;
   gap: 12px;
-  width: min(100%, 1180px);
+  width: min(100%, 1160px);
   margin: 0 auto 14px;
   padding: 12px;
   border: 1px solid rgba(134, 174, 246, 0.22);
@@ -4569,7 +4569,7 @@ p {
 
 .signed-in-landing-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
   gap: 8px;
 }
 
@@ -4578,7 +4578,7 @@ p {
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 10px;
   min-width: 0;
-  min-height: 176px;
+  min-height: 150px;
   padding: 10px;
   border: 1px solid rgba(255, 255, 255, 0.085);
   border-radius: var(--radius);
@@ -4619,7 +4619,7 @@ p {
 .proof-export-hub {
   display: grid;
   gap: 12px;
-  width: min(100%, 1180px);
+  width: min(100%, 1160px);
   margin: 0 auto 14px;
   padding: 12px;
   border: 1px solid rgba(225, 184, 102, 0.22);
@@ -4666,7 +4666,7 @@ p {
 
 .proof-export-hub-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
   gap: 8px;
 }
 
@@ -4675,7 +4675,7 @@ p {
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 10px;
   min-width: 0;
-  min-height: 168px;
+  min-height: 146px;
   padding: 10px;
   border: 1px solid rgba(255, 255, 255, 0.085);
   border-radius: var(--radius);
@@ -4709,7 +4709,7 @@ p {
 .dashboard-start-map {
   display: grid;
   gap: 12px;
-  width: min(100%, 1180px);
+  width: min(100%, 1160px);
   margin: 0 auto 14px;
   padding: 12px;
   border: 1px solid rgba(82, 214, 196, 0.2);
@@ -4751,7 +4751,7 @@ p {
 
 .dashboard-start-map-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(190px, 1fr));
   gap: 8px;
 }
 
@@ -4795,7 +4795,7 @@ p {
   justify-content: flex-end;
   gap: 8px;
   width: 100%;
-  max-width: 360px;
+  max-width: 320px;
   min-width: 0;
 }
 
@@ -5480,8 +5480,12 @@ p {
 }
 
 .hero {
-  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1fr) minmax(0, 0.92fr);
+  width: min(100%, 1160px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(260px, 1fr) minmax(260px, 0.92fr);
   margin-bottom: 16px;
+  gap: 14px;
 }
 
 .hero-card,
@@ -5496,7 +5500,7 @@ p {
 }
 
 .hero-card {
-  min-height: 128px;
+  min-height: 132px;
   padding: clamp(13px, 1.2vw, 16px);
   overflow: hidden;
 }
@@ -5572,7 +5576,7 @@ p {
 
 .hero-value {
   margin: 14px 0 10px;
-  font-size: clamp(36px, 3vw, 50px);
+  font-size: clamp(38px, 4vw, 64px);
   line-height: 0.95;
   font-weight: 950;
 }
@@ -9332,7 +9336,7 @@ p {
   gap: 7px;
 }
 
-@media (max-width: 1380px) {
+@media (max-width: 1020px) {
   .app {
     display: block;
   }
@@ -9341,7 +9345,7 @@ p {
     position: static;
     height: auto;
     max-width: none;
-    max-height: 46vh;
+    max-height: none;
     border-right: 0;
     border-bottom: 1px solid var(--line);
     padding: 12px;
@@ -9360,7 +9364,7 @@ p {
 
   .sidebar {
     display: grid;
-    grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.2fr);
+    grid-template-columns: 1fr;
     align-items: start;
     gap: 10px;
   }
@@ -9369,11 +9373,9 @@ p {
     grid-column: 1 / -1;
   }
 
-  .sidebar .account-panel,
-  .sidebar .admin-disclosure,
-  .sidebar .account-operator-path,
-  .sidebar .corporate-account-rbac-path {
-    max-height: 280px;
+  .sidebar .workspace-stack,
+  .sidebar .module-nav {
+    max-height: 220px;
     overflow: auto;
   }
 
@@ -9409,13 +9411,13 @@ p {
 
   .topbar-session-card {
     max-width: 100%;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(96px, 1fr));
   }
 
   .workspace-stack,
   .module-nav,
   .membership-list {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .sidebar-section-label {
@@ -9562,11 +9564,11 @@ p {
   }
 
   .workspace-route-strip button {
-    flex-basis: min(180px, 32%);
+    flex-basis: min(180px, 48%);
   }
 
   .workspace-flow-strip button {
-    flex-basis: min(230px, 32%);
+    flex-basis: min(230px, 58%);
   }
 
   .setup-panel-grid {
@@ -9603,11 +9605,11 @@ p {
   }
 
   .workspace-route-strip button {
-    flex-basis: min(150px, 42%);
+    flex-basis: min(150px, 70%);
   }
 
   .workspace-flow-strip button {
-    flex-basis: min(180px, 56%);
+    flex-basis: min(180px, 78%);
   }
 
   .portal-launch-map-grid {
@@ -9792,7 +9794,7 @@ p {
 
   .workspace-route-strip,
   .workspace-flow-strip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
   }
 
   .topbar-actions {
