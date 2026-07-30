@@ -8420,6 +8420,27 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className="portal-auth-summary-panel">
+            <div>
+              <span className="status-chip success">Selected portal route</span>
+              <strong>{selectedRegistrationPath.portal}</strong>
+              <small>{selectedRegistrationPath.plan}</small>
+            </div>
+            <div className="portal-auth-summary-grid">
+              <span>
+                <strong>{selectedRegistrationPath.primaryWrite}</strong>
+                <small>First live database write</small>
+              </span>
+              <span>
+                <strong>{selectedRegistrationPath.databaseWrites.length} tables</strong>
+                <small>{selectedRegistrationPath.databaseWrites.join(", ")}</small>
+              </span>
+              <span>
+                <strong>{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</strong>
+                <small>{selectedRegistrationPath.nextAction}</small>
+              </span>
+            </div>
+          </div>
           <div className="portal-access-guide">
             <div>
               <span className="eyebrow">{portal === "corporate" ? "Corporate registration sequence" : "Professional registration sequence"}</span>

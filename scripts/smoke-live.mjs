@@ -109,6 +109,8 @@ assertIncludesAny(bundleText, ["Professional Passport access"], "Professional po
 assertIncludesAny(bundleText, ["Corporate registration sequence"], "Corporate registration guided sequence");
 assertIncludesAny(bundleText, ["Professional registration sequence"], "Professional registration guided sequence");
 assertIncludesAny(bundleText, ["Provision live workspace"], "Corporate registration provisioning step");
+assertIncludesAny(bundleText, ["Selected portal route"], "auth selected portal route summary");
+assertIncludesAny(bundleText, ["First live database write"], "auth first database write summary");
 assertIncludesAny(bundleText, ["Portal decision matrix"], "portal registration decision matrix");
 assertIncludesAny(bundleText, ["One login system, two clean registration paths"], "portal registration decision copy");
 assertIncludesAny(bundleText, ["portal_decision_matrix"], "portal registration decision packet field");

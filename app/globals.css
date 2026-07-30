@@ -756,6 +756,57 @@ button {
     rgba(255, 255, 255, 0.026);
 }
 
+.portal-auth-summary-panel {
+  display: grid;
+  gap: 12px;
+  max-width: 700px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid rgba(134, 174, 246, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.09), transparent 64%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.portal-auth-summary-panel > div:first-child {
+  display: grid;
+  gap: 6px;
+}
+
+.portal-auth-summary-panel strong,
+.portal-auth-summary-panel small {
+  display: block;
+}
+
+.portal-auth-summary-panel > div:first-child strong {
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.portal-auth-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.portal-auth-summary-grid span {
+  display: grid;
+  gap: 5px;
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.portal-auth-summary-grid strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1.25;
+}
+
 .portal-access-guide > div:first-child {
   display: grid;
   gap: 5px;
@@ -774,6 +825,12 @@ button {
 .portal-access-guide > div:first-child small {
   color: var(--muted);
   line-height: 1.45;
+}
+
+.portal-auth-summary-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .portal-access-steps {
@@ -6890,6 +6947,7 @@ p {
   .public-auth-section,
   .public-portal-rail,
   .public-session-handoff,
+  .portal-auth-summary-grid,
   .portal-access-steps,
   .portal-auth-outcome-grid,
   .portal-decision-panel,
