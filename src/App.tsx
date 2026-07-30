@@ -7643,6 +7643,48 @@ function PublicSite({
               : "Login to load Passport records, evidence, references, Access Grants, and consent panels.",
           paymentStatus: "No payment collection for the professional pilot plan."
         };
+  const authOutcomeSteps =
+    portal === "corporate"
+      ? [
+          {
+            label: "Login",
+            detail: "Verified admin user signs in on the hosted TrustGraph URL."
+          },
+          {
+            label: "Company",
+            detail: "Employer or staffing organization, admin membership, and Corporate Verify setup are created."
+          },
+          {
+            label: "Pricing",
+            detail: "Corporate Verify pilot plan writes to the Supabase subscription ledger; Stripe stays human-gated."
+          }
+        ]
+      : [
+          {
+            label: "Login",
+            detail: "Verified professional signs in on the hosted TrustGraph URL."
+          },
+          {
+            label: "Passport",
+            detail: "Private Passport workspace opens for records, evidence, references, consent, and Access Grants."
+          },
+          {
+            label: "Sharing",
+            detail: "Corporate teams see only records approved through scoped Access Grants and consent."
+          }
+        ];
+  const authOutcomePacket = {
+    mode: "portal_auth_outcome_summary",
+    selected_portal: portal,
+    selected_mode: mode,
+    hosted_redirect_url: authRedirectUrl,
+    outcome_steps: authOutcomeSteps,
+    live_database_target:
+      portal === "corporate"
+        ? "corporate_organization_membership_subscription_verify_database"
+        : "professional_passport_records_evidence_grants_database",
+    human_gates: portal === "corporate" ? ["stripe_checkout_before_paid_launch"] : []
+  };
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
@@ -7680,6 +7722,7 @@ function PublicSite({
       organization_type: organizationType
     },
     repaired_link_ready: Boolean(repairedVerificationUrl),
+    portal_auth_outcome_summary: authOutcomePacket,
     supabase_auth_settings_needed: [
       "Set Supabase Auth Site URL to the hosted TrustGraph app before inviting pilot users.",
       "Add GitHub Pages and TrustGraph VPS URLs to Supabase allowed redirect URLs.",
@@ -8364,6 +8407,21 @@ function PublicSite({
               </select>
             </>
           ) : null}
+          <div className="portal-auth-outcome-card">
+            <div>
+              <span className="status-chip success">Live database handoff</span>
+              <strong>{portal === "corporate" ? "Corporate account path" : "Professional Passport path"}</strong>
+              <small>{portal === "corporate" ? "Register, verify, login, then provision the company workspace." : "Register, verify, login, then build the private Passport."}</small>
+            </div>
+            <div className="portal-auth-outcome-grid">
+              {authOutcomeSteps.map((step) => (
+                <span key={step.label}>
+                  <strong>{step.label}</strong>
+                  <small>{step.detail}</small>
+                </span>
+              ))}
+            </div>
+          </div>
           <div className="registration-path-card">
             <div>
               <span className="status-chip success">Selected path</span>

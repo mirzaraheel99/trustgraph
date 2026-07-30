@@ -112,6 +112,10 @@ assertIncludesAny(bundleText, ["Provision live workspace"], "Corporate registrat
 assertIncludesAny(bundleText, ["Portal decision matrix"], "portal registration decision matrix");
 assertIncludesAny(bundleText, ["One login system, two clean registration paths"], "portal registration decision copy");
 assertIncludesAny(bundleText, ["portal_decision_matrix"], "portal registration decision packet field");
+assertIncludesAny(bundleText, ["Live database handoff"], "portal auth live database handoff card");
+assertIncludesAny(bundleText, ["Corporate account path"], "corporate auth outcome path");
+assertIncludesAny(bundleText, ["Professional Passport path"], "professional auth outcome path");
+assertIncludesAny(bundleText, ["portal_auth_outcome_summary"], "portal auth outcome packet field");
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
 assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command center hero");

@@ -955,6 +955,60 @@ button {
     rgba(255, 255, 255, 0.03);
 }
 
+.portal-auth-outcome-card {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.26);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.095), transparent 62%),
+    linear-gradient(160deg, rgba(134, 174, 246, 0.06), transparent 72%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.portal-auth-outcome-card > div:first-child {
+  display: grid;
+  gap: 6px;
+}
+
+.portal-auth-outcome-card strong,
+.portal-auth-outcome-card small {
+  display: block;
+}
+
+.portal-auth-outcome-card > div:first-child > strong {
+  font-size: 15px;
+  font-weight: 950;
+}
+
+.portal-auth-outcome-card small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.portal-auth-outcome-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.portal-auth-outcome-grid span {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.portal-auth-outcome-grid strong {
+  margin-bottom: 4px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 950;
+}
+
 .registration-path-card > div:first-child {
   display: grid;
   gap: 6px;
@@ -6675,6 +6729,7 @@ p {
   .public-portal-rail,
   .public-session-handoff,
   .portal-access-steps,
+  .portal-auth-outcome-grid,
   .portal-decision-panel,
   .portal-decision-grid,
   .auth-path-grid,
