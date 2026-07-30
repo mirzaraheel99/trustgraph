@@ -8355,6 +8355,24 @@ function PublicSite({
       detail: "Real payment collection waits for product, tax, invoice, refund, dunning, and webhook decisions."
     }
   ];
+  const portalLoginSwitchboard = [
+    {
+      label: "Professional user login",
+      portal: "professional" as const,
+      start: "Register or login to Professional Passport",
+      dashboard: "Personal Passport dashboard",
+      writes: "profiles, personal organization, membership, Passport records, evidence, consent, Access Grants",
+      next: "Build records first, then approve each corporate request."
+    },
+    {
+      label: "Corporate company login",
+      portal: "corporate" as const,
+      start: "Register or login to Corporate Verify",
+      dashboard: "Corporate Verify and Company Admin dashboards",
+      writes: "company organization, admin membership, subscription ledger, team invitations, Verify requests",
+      next: "Provision the company first, then request scoped user database access."
+    }
+  ];
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
@@ -8391,6 +8409,7 @@ function PublicSite({
       organization_domain_present: Boolean(organizationDomain.trim()),
       organization_type: organizationType
     },
+    portal_login_switchboard: portalLoginSwitchboard,
     repaired_link_ready: Boolean(repairedVerificationUrl),
     portal_auth_outcome_summary: authOutcomePacket,
     pricing_decision_strip: pricingDecisionStrip,
@@ -9037,6 +9056,32 @@ function PublicSite({
                   <small>{step.title}</small>
                   <small>{step.detail}</small>
                 </span>
+              ))}
+            </div>
+          </div>
+          <div className="portal-login-switchboard" aria-label="Portal login switchboard">
+            <div>
+              <span className="status-chip success">Portal login switchboard</span>
+              <strong>Personal and corporate users start from one login, then route by account type</strong>
+              <small>Use this map before registering so the correct live database rows and dashboard are created.</small>
+            </div>
+            <div className="portal-login-switchboard-grid">
+              {portalLoginSwitchboard.map((route) => (
+                <button
+                  className={portal === route.portal ? "active" : ""}
+                  key={route.label}
+                  onClick={() => {
+                    setPortal(route.portal);
+                    setMode("signup");
+                  }}
+                  type="button"
+                >
+                  <strong>{route.label}</strong>
+                  <small>{route.start}</small>
+                  <span>{route.dashboard}</span>
+                  <small>{route.writes}</small>
+                  <small>{route.next}</small>
+                </button>
               ))}
             </div>
           </div>

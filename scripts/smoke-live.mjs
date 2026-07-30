@@ -114,6 +114,10 @@ assertIncludesAny(bundleText, ["First live database write"], "auth first databas
 assertIncludesAny(bundleText, ["Portal decision matrix"], "portal registration decision matrix");
 assertIncludesAny(bundleText, ["One login system, two clean registration paths"], "portal registration decision copy");
 assertIncludesAny(bundleText, ["portal_decision_matrix"], "portal registration decision packet field");
+assertIncludesAny(bundleText, ["Portal login switchboard"], "portal login switchboard panel");
+assertIncludesAny(bundleText, ["Professional user login"], "professional login switchboard route");
+assertIncludesAny(bundleText, ["Corporate company login"], "corporate login switchboard route");
+assertIncludesAny(bundleText, ["portal_login_switchboard"], "portal login switchboard packet field");
 assertIncludesAny(bundleText, ["Live database handoff"], "portal auth live database handoff card");
 assertIncludesAny(bundleText, ["Corporate account path"], "corporate auth outcome path");
 assertIncludesAny(bundleText, ["Professional Passport path"], "professional auth outcome path");
