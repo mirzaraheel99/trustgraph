@@ -5,6 +5,9 @@ const files = (await readdir(migrationsDir)).filter((file) => file.endsWith(".sq
 const sql = (
   await Promise.all(files.map((file) => readFile(new URL(file, migrationsDir), "utf8")))
 ).join("\n").toLowerCase();
+const latestSqlByFile = Object.fromEntries(
+  await Promise.all(files.map(async (file) => [file, (await readFile(new URL(file, migrationsDir), "utf8")).toLowerCase()]))
+);
 
 const requiredRlsTables = [
   "organizations",
@@ -37,6 +40,16 @@ const missingTables = requiredRlsTables.filter(
 
 if (missingTables.length) {
   throw new Error(`Missing RLS enable statements for: ${missingTables.join(", ")}`);
+}
+
+const latestOperatorPolicyFix = latestSqlByFile["042_fix_operator_policy_self_reference.sql"] ?? "";
+if (!latestOperatorPolicyFix.includes("create or replace function public.is_trustgraph_operator()")) {
+  throw new Error("Missing non-recursive TrustGraph operator policy repair migration.");
+}
+
+const operatorFunctionBody = latestOperatorPolicyFix.split("create or replace function public.is_trustgraph_operator()")[1] ?? "";
+if (operatorFunctionBody.includes("from public.organizations") || operatorFunctionBody.includes("join public.organizations")) {
+  throw new Error("RLS check failed: is_trustgraph_operator must not query organizations from an organizations policy.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);
