@@ -10309,6 +10309,27 @@ function App() {
     setShowPublicSite(true);
   }
 
+  const workspaceFlow = [
+    {
+      id: "passport" as const,
+      label: "1. Personal Passport",
+      detail: "User profile, records, evidence, consent, and recovery",
+      ready: Boolean(authSession && activeOrganization.type === "professional")
+    },
+    {
+      id: "verify" as const,
+      label: "2. Corporate Verify",
+      detail: "Request access by professional email and review shared rows",
+      ready: sharedVerifyRecords.length > 0 || verifyRequests.length > 0
+    },
+    {
+      id: "admin" as const,
+      label: "3. Company Admin",
+      detail: "RBAC, team, pricing ledger, exports, and launch checks",
+      ready: hasLiveCorporateContext && canManageCorporateSetup
+    }
+  ];
+
   if (showPublicSite) {
     return (
       <PublicSite
@@ -10420,6 +10441,23 @@ function App() {
                   >
                     <span>{item.label}</span>
                     <small>{allowed ? item.role : "Role required"}</small>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="workspace-flow-strip" aria-label="Today's portal path">
+              {workspaceFlow.map((item) => {
+                const allowed = canAccessWorkspace(activeMembership.role, item.id);
+                return (
+                  <button
+                    className={`${item.id === workspace.id ? "active" : ""} ${item.ready ? "ready" : ""}`}
+                    disabled={!allowed}
+                    key={item.id}
+                    onClick={() => changeWorkspace(item.id)}
+                    type="button"
+                  >
+                    <span>{item.label}</span>
+                    <small>{item.detail}</small>
                   </button>
                 );
               })}

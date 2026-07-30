@@ -37,6 +37,7 @@ const requiredMobileStacks = [
   ".team-operations-grid",
   ".team-source-strip",
   ".verify-reviewer-flow-header",
+  ".workspace-flow-strip",
   ".workspace-route-strip"
 ];
 
@@ -69,8 +70,8 @@ if (!css.includes(".workspace > *") || !css.includes("grid-template-columns: rep
   throw new Error("Responsive check failed: workspace children and corporate plan cards must not force horizontal overflow.");
 }
 
-if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 720px")) {
-  throw new Error("Responsive check failed: primary workspace route strip must stay compact.");
+if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 720px") || !css.includes(".workspace-flow-strip") || !css.includes("max-width: 840px")) {
+  throw new Error("Responsive check failed: primary workspace route and portal path strips must stay compact.");
 }
 
 if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("flex-direction: column")) {

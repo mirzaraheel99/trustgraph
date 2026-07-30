@@ -3381,6 +3381,67 @@ p {
   font-size: 11px;
 }
 
+.workspace-flow-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 840px;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.workspace-flow-strip button {
+  min-height: 62px;
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 10px;
+  text-align: left;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.workspace-flow-strip button.active {
+  color: var(--text);
+  border-color: rgba(82, 214, 196, 0.5);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.14), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.workspace-flow-strip button.ready:not(.active) {
+  border-color: rgba(104, 243, 186, 0.3);
+}
+
+.workspace-flow-strip button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.workspace-flow-strip span,
+.workspace-flow-strip small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workspace-flow-strip span {
+  font-size: 12px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.workspace-flow-strip small {
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .topbar-actions {
   display: flex;
   flex-wrap: wrap;
@@ -3394,7 +3455,7 @@ p {
 .topbar-session-card {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(96px, auto) minmax(112px, auto);
+  grid-template-columns: minmax(0, 1fr) repeat(3, minmax(88px, auto));
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
@@ -3403,6 +3464,19 @@ p {
   background:
     linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 62%),
     rgba(255, 255, 255, 0.035);
+}
+
+.topbar-session-card > span,
+.topbar-session-card > small {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-session-card > small {
+  color: var(--muted);
 }
 
 .workspace-admin-grid {
@@ -7088,6 +7162,7 @@ p {
   .team-controls,
   .team-summary-grid,
   .verify-summary-grid,
+  .workspace-flow-strip,
   .record-form-grid {
     grid-template-columns: 1fr;
   }

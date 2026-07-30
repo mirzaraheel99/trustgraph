@@ -120,6 +120,8 @@ assertIncludesAny(bundleText, ["Professional Passport path"], "professional auth
 assertIncludesAny(bundleText, ["portal_auth_outcome_summary"], "portal auth outcome packet field");
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
+assertIncludesAny(bundleText, ["Personal Passport", "Corporate Verify", "Company Admin"], "dashboard portal path strip");
+assertIncludesAny(bundleText, ["Request access by professional email and review shared rows"], "corporate Verify path guidance");
 assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command center hero");
 assertIncludesAny(bundleText, ["Verified TrustGraph record graph"], "premium TrustGraph record graph visual");
 assertIncludesAny(bundleText, ["Professional", "Passport", "Evidence", "Consent"], "TrustGraph visual record nodes");
