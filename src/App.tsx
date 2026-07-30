@@ -2176,6 +2176,37 @@ function CorporateDailyTaskHub({
   ];
   const completed = hubItems.filter((item) => item.done).length;
   const nextItem = hubItems.find((item) => !item.done) ?? hubItems[hubItems.length - 1];
+  const corporateOperatingPlan = [
+    {
+      label: "1. Prove company context",
+      detail: isCorporateContext
+        ? `${activeOrganization.name} is loaded through the active RBAC membership.`
+        : "Create or switch into the employer or staffing workspace before using Verify.",
+      ready: isCorporateContext
+    },
+    {
+      label: "2. Load reviewer access",
+      detail: activeMembers > 0
+        ? `${activeMembers} active reviewer/member row${activeMembers === 1 ? "" : "s"} visible.`
+        : "Invite or activate at least one reviewer so Corporate Verify can be operated by a real team.",
+      ready: activeMembers > 0
+    },
+    {
+      label: "3. Request and review Passports",
+      detail: sharedVerifyRecords.length
+        ? `${sharedVerifyRecords.length} shared Passport record${sharedVerifyRecords.length === 1 ? "" : "s"} visible for review.`
+        : "Create Access Grant requests, wait for professional consent, then review only shared records.",
+      ready: verifyRequests.length > 0 || sharedVerifyRecords.length > 0
+    },
+    {
+      label: "4. Accept real database proof",
+      detail: activeSubscriptions.length && accessGrants.length
+        ? "Billing ledger and Access Grant rows are loaded; export task and working-data packets for pilot review."
+        : "Activate the pilot plan and load Access Grant rows before treating the corporate portal as real database proof.",
+      ready: activeSubscriptions.length > 0 && accessGrants.length > 0
+    }
+  ];
+  const operatingReady = corporateOperatingPlan.filter((item) => item.ready).length;
   const exportName = `trustgraph-corporate-daily-task-hub-${new Date().toISOString().slice(0, 10)}.json`;
   const packet = {
     generated_at: new Date().toISOString(),
@@ -2190,6 +2221,13 @@ function CorporateDailyTaskHub({
     completed_steps: completed,
     total_steps: hubItems.length,
     next_action: nextItem.label,
+    corporate_operating_plan: {
+      ready_steps: operatingReady,
+      total_steps: corporateOperatingPlan.length,
+      next_step: corporateOperatingPlan.find((item) => !item.ready)?.label ?? "Corporate operating plan ready",
+      real_database_policy: "Only signed-in Supabase rows visible to the active corporate RBAC context count as operating proof.",
+      steps: corporateOperatingPlan
+    },
     live_counts: {
       active_members: activeMembers,
       pending_invitations: pendingInvites,
@@ -2226,6 +2264,29 @@ function CorporateDailyTaskHub({
           >
             Export task packet
           </button>
+        </div>
+      </div>
+      <div className="corporate-operating-plan" aria-label="Corporate operating plan">
+        <div className="corporate-operating-plan-header">
+          <div>
+            <span className="status-chip neutral">Corporate operating plan</span>
+            <strong>{operatingReady}/{corporateOperatingPlan.length} live operating steps ready</strong>
+            <small>Only signed-in Supabase rows visible to this corporate RBAC context count as operating proof.</small>
+          </div>
+          <button className="secondary-action" onClick={nextItem.onAction} type="button">
+            {nextItem.action}
+          </button>
+        </div>
+        <div className="corporate-operating-plan-grid">
+          {corporateOperatingPlan.map((item) => (
+            <article className={item.ready ? "ready" : ""} key={item.label}>
+              <span className={`status-dot ${item.ready ? "on" : ""}`} />
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
       <div className="corporate-task-grid">
