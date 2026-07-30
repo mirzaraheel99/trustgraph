@@ -16,6 +16,7 @@ const requiredMobileStacks = [
   ".connect-source-strip",
   ".connect-export-actions",
   ".corporate-data-access-path",
+  ".corporate-access-review-grid",
   ".corporate-live-retest-grid",
   ".corporate-operating-plan-grid",
   ".corporate-operating-plan-header",

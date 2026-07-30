@@ -2643,6 +2643,23 @@ function CorporateDirectoryPanel({
       focus: candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").slice(0, 3)
     }
   ];
+  const corporateAccessReviewQueue = filteredRows.slice(0, 6).map((row) => ({
+    professional_name: row.name,
+    professional_email: row.detail,
+    readiness: row.readiness,
+    shared_record_count: row.sharedRecordCount,
+    visible_records: row.sharedRecordTitles.slice(0, 4),
+    open_gap_count: row.openGapCount,
+    gap_focus: row.gapTitles.slice(0, 3),
+    next_action:
+      row.readiness === "review_ready"
+        ? "Review shared Passport rows"
+        : row.readiness === "needs_gap_follow_up"
+          ? "Request missing records"
+          : row.readiness === "waiting_for_consent"
+            ? "Wait for professional approval"
+            : "Create or reopen an Access Grant"
+  }));
   const isLiveCorporateDatabase = databaseMode === "live_supabase_visibility";
   const databaseModeLabel = isLiveCorporateDatabase ? "Live corporate database" : "Corporate database locked";
   const databaseModeDetail = isLiveCorporateDatabase
@@ -2688,6 +2705,7 @@ function CorporateDirectoryPanel({
         open_gap_count: row.openGapCount
       }))
     })),
+    corporate_access_review_queue: corporateAccessReviewQueue,
     professionals: filteredRows.map((row) => ({
       access_grant_id: row.id,
       subject_profile_id: row.subjectProfileId,
@@ -2815,6 +2833,39 @@ function CorporateDirectoryPanel({
             </div>
           </article>
         ))}
+      </div>
+      <div className="corporate-access-review-queue" aria-label="Corporate access review queue">
+        <div className="directory-source-strip">
+          <span className="status-chip neutral">Corporate access review queue</span>
+          <small>Shows the exact professional rows this corporate workspace can act on after Access Grant and consent scope are applied.</small>
+        </div>
+        <div className="corporate-access-review-grid">
+          {corporateAccessReviewQueue.length ? (
+            corporateAccessReviewQueue.map((row) => (
+              <article className={row.readiness === "review_ready" ? "ready" : ""} key={`${row.professional_email}-${row.readiness}`}>
+                <div>
+                  <strong>{row.professional_name}</strong>
+                  <small>{row.professional_email}</small>
+                  <span>{row.next_action}</span>
+                </div>
+                <div>
+                  <small>{row.shared_record_count} visible records</small>
+                  <small>{row.open_gap_count} open gaps</small>
+                  <small>{row.visible_records.length ? `Records: ${row.visible_records.join(", ")}` : "No shared records visible yet"}</small>
+                  {row.gap_focus.length ? <small>Gaps: {row.gap_focus.join(", ")}</small> : null}
+                </div>
+              </article>
+            ))
+          ) : (
+            <article>
+              <div>
+                <strong>No corporate access rows yet</strong>
+                <small>Request access by professional email, then this queue will show consent, shared records, and gap follow-up.</small>
+                <span>Request access by professional email</span>
+              </div>
+            </article>
+          )}
+        </div>
       </div>
       <div className="directory-source-strip">
         <span className={`status-chip ${isLiveCorporateDatabase ? "success" : "warning"}`}>{databaseModeLabel}</span>

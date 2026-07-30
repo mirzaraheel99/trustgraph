@@ -303,6 +303,9 @@ assertIncludesAny(bundleText, ["Waiting for consent"], "Corporate user database 
 assertIncludesAny(bundleText, ["Request access"], "corporate data access path request step");
 assertIncludesAny(bundleText, ["Professional approval"], "corporate data access path approval step");
 assertIncludesAny(bundleText, ["corporate_data_access_path"], "corporate data access path packet field");
+assertIncludesAny(bundleText, ["Corporate access review queue"], "corporate access review queue panel");
+assertIncludesAny(bundleText, ["corporate_access_review_queue"], "corporate access review queue packet field");
+assertIncludesAny(bundleText, ["Request access by professional email"], "corporate access review queue empty action");
 assertIncludesAny(bundleText, ["reviewer_scan_board"], "Corporate user database scan board packet field");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");
 assertIncludesAny(bundleText, ["shared responsibilities"], "Corporate user database structured responsibility proof");

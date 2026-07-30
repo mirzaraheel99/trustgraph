@@ -5610,6 +5610,69 @@ p {
   font-size: 11px;
 }
 
+.corporate-access-review-queue {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-access-review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-access-review-grid article {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.corporate-access-review-grid article.ready {
+  border-color: rgba(82, 214, 196, 0.3);
+  background: rgba(82, 214, 196, 0.06);
+}
+
+.corporate-access-review-grid article > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.corporate-access-review-grid strong,
+.corporate-access-review-grid small,
+.corporate-access-review-grid span {
+  display: block;
+  min-width: 0;
+}
+
+.corporate-access-review-grid strong {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.corporate-access-review-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.corporate-access-review-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 900;
+}
+
 .directory-list {
   display: grid;
   gap: 8px;
@@ -7993,6 +8056,7 @@ p {
   .corporate-live-retest-grid,
   .corporate-operating-plan-grid,
   .corporate-data-access-path,
+  .corporate-access-review-grid,
   .metrics-grid,
   .work-grid,
   .portal-grid,
