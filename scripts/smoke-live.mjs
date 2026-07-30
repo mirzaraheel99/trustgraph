@@ -53,7 +53,7 @@ async function assertRepoReadinessArtifacts() {
   assert(sqlMigrations.length >= 36, `Expected at least 36 Supabase migrations, found ${sqlMigrations.length}`);
   assert(sqlMigrations[0]?.startsWith("001_"), "Expected migration sequence to start at 001");
   assert(
-    sqlMigrations.some((file) => file.startsWith("034_fix_organization_policy_recursion")),
+    sqlMigrations.some((file) => file.startsWith("042_fix_operator_policy_self_reference")),
     "Expected migration sequence to include 034 organization policy recursion fix"
   );
   assert(
@@ -353,7 +353,7 @@ assertIncludesAny(bundleText, ["organization_rls_repair_evidence"], "working dat
 assertIncludesAny(bundleText, ["Database policy repair guidance"], "working database policy repair guidance card");
 assertIncludesAny(bundleText, ["database_policy_repair_guidance"], "working database policy repair guidance packet field");
 assertIncludesAny(bundleText, ["42P17"], "working database policy recursion symptom");
-assertIncludesAny(bundleText, ["034_fix_organization_policy_recursion.sql"], "working database required RLS repair migration");
+assertIncludesAny(bundleText, ["042_fix_operator_policy_self_reference.sql"], "working database required RLS repair migration");
 assertIncludesAny(bundleText, ["Live database repair queue"], "working database repair queue");
 assertIncludesAny(bundleText, ["live_database_repair_queue"], "working database repair queue packet field");
 assertIncludesAny(bundleText, ["Working database test runbook"], "working database test runbook panel");

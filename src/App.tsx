@@ -2576,7 +2576,7 @@ function CorporateDailyTaskHub({
   const approvedVerifyRequests = verifyRequests.filter((request) => request.status === "approved").length;
   const requestedVerifyRequests = verifyRequests.filter((request) => request.status === "requested").length;
   const organizationRlsRepairApplied = schemaMigrationRuns.some(
-    (run) => run.migration_path.includes("034_fix_organization_policy_recursion.sql") && run.status === "applied"
+    (run) => run.migration_path.includes("042_fix_operator_policy_self_reference.sql") && run.status === "applied"
   );
   const hubItems = [
     {
@@ -2659,10 +2659,10 @@ function CorporateDailyTaskHub({
   const operatingReady = corporateOperatingPlan.filter((item) => item.ready).length;
   const corporateLiveRetestChecklist = [
     {
-      label: "034 organization RLS repair",
+      label: "042 organization RLS repair",
       detail: organizationRlsRepairApplied
-        ? "Release ledger shows migration 034 applied for corporate account context."
-        : "Apply or load release ledger proof for migration 034 before accepting corporate context.",
+        ? "Release ledger shows migration 042 applied for corporate account context."
+        : "Apply or load release ledger proof for migration 042 before accepting corporate context.",
       ready: organizationRlsRepairApplied
     },
     {
@@ -2820,12 +2820,12 @@ function CorporateDailyTaskHub({
           ))}
         </div>
       </div>
-      <div className="corporate-live-retest" aria-label="Post 034 corporate live retest">
+      <div className="corporate-live-retest" aria-label="Post 042 corporate live retest">
         <div className="corporate-operating-plan-header">
           <div>
-            <span className="status-chip neutral">Post-034 live retest</span>
+            <span className="status-chip neutral">Post-042 live retest</span>
             <strong>{corporateLiveRetestReady}/{corporateLiveRetestChecklist.length} corporate database checks ready</strong>
-            <small>Use this after migration 034 to prove Corporate Verify can load real user Passport rows through the active RBAC context.</small>
+            <small>Use this after migration 042 to prove Corporate Verify can load real user Passport rows through the active RBAC context.</small>
           </div>
           <button className="secondary-action" onClick={() => onOpenSetup("readiness")} type="button">
             Review proof
@@ -6503,7 +6503,7 @@ function operatorErrorMessage(error: unknown, fallback: string) {
   const message = error instanceof Error ? error.message : fallback;
 
   if (message.includes("42P17") || message.includes("infinite recursion")) {
-    return "Database policy needs migration 034. Apply the organization RLS recursion fix, then refresh this workspace.";
+    return "Database policy needs migration 042. Apply the organization RLS self-reference fix, then refresh this workspace.";
   }
 
   if (message.includes("JWT") || message.includes("expired")) {
@@ -8693,29 +8693,29 @@ function OnboardingChecklistPanel({
   ];
   const workingDataTotal = workingDataRows.reduce((total, row) => total + row.count, 0);
   const organizationRlsRepairRun = schemaMigrationRuns.find((run) =>
-    run.migration_path.includes("034_fix_organization_policy_recursion.sql")
+    run.migration_path.includes("042_fix_operator_policy_self_reference.sql")
   );
   const organizationRlsRepairEvidence = {
     label: "Organization RLS recursion repair",
-    required_migration_path: "supabase/migrations/034_fix_organization_policy_recursion.sql",
+    required_migration_path: "supabase/migrations/042_fix_operator_policy_self_reference.sql",
     ledger_status: organizationRlsRepairRun?.status ?? "release_ledger_not_loaded_for_this_role",
     applied: organizationRlsRepairRun?.status === "applied",
     workflow_run_id: organizationRlsRepairRun?.workflow_run_id ?? null,
     commit_sha: organizationRlsRepairRun?.commit_sha ?? null,
     applied_at: organizationRlsRepairRun?.applied_at ?? null,
     operator_note: organizationRlsRepairRun
-      ? "Migration 034 is recorded in the release ledger for this database."
-      : "Migration 034 is required for corporate account context. Open Admin release ledger or GitHub Actions to prove the run."
+      ? "Migration 042 is recorded in the release ledger for this database."
+      : "Migration 042 is required for corporate account context. Open Admin release ledger or GitHub Actions to prove the run."
   };
   const databasePolicyRepairGuidance = {
     label: "Database policy repair guidance",
     symptom: "Supabase 42P17 infinite recursion or corporate organizations policy failure",
-    blocking_result: "Corporate account context and live user database proof cannot be accepted until migration 034 is applied and visible in the release ledger.",
+    blocking_result: "Corporate account context and live user database proof cannot be accepted until migration 042 is applied and visible in the release ledger.",
     required_migration_path: organizationRlsRepairEvidence.required_migration_path,
     current_ledger_status: organizationRlsRepairEvidence.ledger_status,
     operator_actions: [
-      "Run Apply Supabase Migrations for migration 034 if the project still reports policy recursion.",
-      "Open Admin release ledger after login and confirm 034_fix_organization_policy_recursion.sql is recorded as applied.",
+      "Confirm automatic Supabase migration workflow applied migration 042 if the project still reports policy recursion.",
+      "Open Admin release ledger after login and confirm 042_fix_operator_policy_self_reference.sql is recorded as applied.",
       "Refresh TrustGraph, reload account context, then export the working-data packet again."
     ],
     accepted_when: "organization_rls_repair_evidence.applied_is_true_and_corporate_account_context_loads_without_policy_recursion"
@@ -8820,7 +8820,7 @@ function OnboardingChecklistPanel({
         : "login_required",
     required_proof: [
       "Hosted Supabase login is active",
-      "Organization RLS recursion repair migration 034 is applied",
+      "Organization RLS recursion repair migration 042 is applied",
       "Account context and RBAC membership loaded",
       "Required Passport, evidence, Access Grant, consent, corporate account, and billing rows are loaded",
       "Working-data packet exported after live rows load"
@@ -9346,7 +9346,7 @@ function OnboardingChecklistPanel({
           <div className="database-policy-repair-guidance">
             <div>
               <span className="status-chip warning">Database policy repair guidance</span>
-              <strong>Corporate database access needs migration 034 proof</strong>
+              <strong>Corporate database access needs migration 042 proof</strong>
               <small>{databasePolicyRepairGuidance.blocking_result}</small>
             </div>
             <div className="real-database-policy-grid">

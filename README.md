@@ -162,7 +162,8 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `031_production_gate_status_constraints.sql`: constrained production gate statuses and stricter audited sign-off RPC validation.
 - `032_operator_named_pilot_rpcs.sql`: operator-named pilot RPC aliases so the app uses live workflow language instead of sample function names.
 - `033_pilot_launch_contacts.sql`: protected pilot launch contact register for customer roster, onboarding owner, support owner, and incident owner evidence.
-- `034_fix_organization_policy_recursion.sql`: organization RLS recursion repair so corporate account context can load without Supabase `42P17` policy recursion failures.
+- `034_fix_organization_policy_recursion.sql`: first organization RLS recursion repair attempt for corporate account context.
+- `042_fix_operator_policy_self_reference.sql`: final organization policy self-reference repair so corporate account context can load without Supabase `42P17` policy recursion failures.
 - `035_revoke_issuer_credentials.sql`: issuer-scoped credential revocation RPC with audit event and professional notification evidence.
 - `036_update_issuer_credential_expiry.sql`: issuer-scoped expiration correction RPC with audit event and professional notification evidence.
 - `041_corporate_access_review_attestations.sql`: corporate reviewer attestations for scoped user-database review, with RLS, audit events, and professional notifications.
