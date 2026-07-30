@@ -1807,28 +1807,49 @@ function VerifyRequestsPanel({
         </div>
       </div>
       <form className="verify-request-form" onSubmit={submitAccessRequest}>
-        <div className="record-form-grid">
-          <input
-            disabled={disabled || requestBusy}
-            onChange={(event) => setSubjectEmail(event.target.value)}
-            placeholder="professional@email.com"
-            type="email"
-            value={subjectEmail}
-          />
-          <input
-            disabled={disabled || requestBusy}
-            onChange={(event) => setPurpose(event.target.value)}
-            placeholder="Business reason for requesting Passport access"
-            value={purpose}
-          />
-          <input
-            disabled={disabled || requestBusy}
-            max={90}
-            min={1}
-            onChange={(event) => setExpiresInDays(Number(event.target.value))}
-            type="number"
-            value={expiresInDays}
-          />
+        <div className="verify-request-header">
+          <div>
+            <span className="status-chip neutral">Corporate user-data request</span>
+            <strong>Request Passport access from one professional</strong>
+            <small>Enter the professional email, explain the review purpose, then wait for consent before any user records appear.</small>
+          </div>
+          <div className="verify-request-mini-steps">
+            <span>1. Email</span>
+            <span>2. Consent</span>
+            <span>3. Review</span>
+          </div>
+        </div>
+        <div className="record-form-grid verify-request-fields">
+          <label>
+            <span>Professional email</span>
+            <input
+              disabled={disabled || requestBusy}
+              onChange={(event) => setSubjectEmail(event.target.value)}
+              placeholder="professional@email.com"
+              type="email"
+              value={subjectEmail}
+            />
+          </label>
+          <label>
+            <span>Business purpose</span>
+            <input
+              disabled={disabled || requestBusy}
+              onChange={(event) => setPurpose(event.target.value)}
+              placeholder="Business reason for requesting Passport access"
+              value={purpose}
+            />
+          </label>
+          <label>
+            <span>Review window</span>
+            <input
+              disabled={disabled || requestBusy}
+              max={90}
+              min={1}
+              onChange={(event) => setExpiresInDays(Number(event.target.value))}
+              type="number"
+              value={expiresInDays}
+            />
+          </label>
         </div>
         <div className="record-form-footer">
           <small>{requestStatus}</small>

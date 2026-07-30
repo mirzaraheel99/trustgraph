@@ -5123,6 +5123,60 @@ p {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.verify-request-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, 0.42fr);
+  gap: 12px;
+  align-items: start;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.verify-request-header > div:first-child,
+.verify-request-fields label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.verify-request-header strong,
+.verify-request-header small,
+.verify-request-fields span {
+  display: block;
+}
+
+.verify-request-header strong {
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.verify-request-mini-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.verify-request-mini-steps span {
+  min-height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0 8px;
+  color: var(--teal);
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background: rgba(82, 214, 196, 0.055);
+  font-size: 11px;
+  font-weight: 950;
+  text-align: center;
+}
+
+.verify-request-fields label span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
 .verify-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -7295,6 +7349,7 @@ p {
   .team-operations-grid,
   .team-controls,
   .team-summary-grid,
+  .verify-request-header,
   .verify-summary-grid,
   .workspace-flow-strip,
   .record-form-grid {
