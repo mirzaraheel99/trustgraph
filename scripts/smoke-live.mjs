@@ -158,8 +158,8 @@ assertIncludesAny(bundleText, ["workspace_command_strip"], "authorized report wo
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
 assertIncludesAny(bundleText, ["Corporate setup"], "dashboard corporate setup action");
 assertIncludesAny(bundleText, ["Sign out"], "dashboard sign out action");
-assertIncludesAny(bundleText, ["Dashboard start map"], "dashboard workspace start map");
-assertIncludesAny(bundleText, ["Choose the workspace by what you need to do now"], "dashboard start map guidance");
+assertIncludesAny(bundleText, ["Workspace picker"], "dashboard workspace start map");
+assertIncludesAny(bundleText, ["Pick the right workspace for the job"], "dashboard start map guidance");
 assertIncludesAny(bundleText, ["dashboard_start_map"], "authorized report dashboard start map field");
 assertIncludesAny(bundleText, ["Request access by professional email and review shared rows"], "corporate Verify path guidance");
 assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command center hero");
@@ -372,10 +372,10 @@ assertIncludesAny(bundleText, ["unmet_requirements"], "real database unmet requi
 assertIncludesAny(bundleText, ["Hosted login and database handoff"], "hosted login database handoff label");
 assertIncludesAny(bundleText, ["Export login handoff"], "hosted login database handoff export");
 assertIncludesAny(bundleText, ["hosted_login_database_handoff"], "hosted login database handoff packet field");
-assertIncludesAny(bundleText, ["Role-aware dashboard"], "signed-in role-aware dashboard label");
+assertIncludesAny(bundleText, ["Operator home"], "signed-in role-aware dashboard label");
 assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");
-assertIncludesAny(bundleText, ["Proof & exports hub", "Proof &amp; exports hub"], "proof and exports hub label");
+assertIncludesAny(bundleText, ["Proof & exports", "Proof &amp; exports"], "proof and exports hub label");
 assertIncludesAny(bundleText, ["proof_export_hub"], "proof and exports hub packet field");
 assertIncludesAny(bundleText, ["Authorized workspace report"], "authorized workspace report export card");
 assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");

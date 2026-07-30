@@ -73,7 +73,7 @@ const flowChecks = [
       "Corporate setup",
       "Public site",
       "Sign out",
-      "Dashboard start map"
+      "Workspace picker"
     ]
   },
   {

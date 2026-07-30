@@ -12645,7 +12645,7 @@ function App() {
   const dashboardStartMap = [
     {
       label: "Personal Passport",
-      detail: "Create records, upload evidence metadata, control consent, and approve Access Grants.",
+      detail: "Use this for your own identity, work history, credentials, evidence, and consent approvals.",
       status: livePassportRecords.length ? `${livePassportRecords.length} records loaded` : "Start with your first record",
       action: "Open Passport",
       target: "passport" as const,
@@ -12653,7 +12653,7 @@ function App() {
     },
     {
       label: "Corporate Verify",
-      detail: "Request user database access by professional email and review only approved shared rows.",
+      detail: "Use this for employer or staffing review after the professional grants scoped access.",
       status: sharedVerifyRecords.length || accessGrants.length ? `${sharedVerifyRecords.length} shared rows, ${accessGrants.length} grants` : "Create or approve an Access Grant",
       action: "Open Verify",
       target: "verify" as const,
@@ -12661,7 +12661,7 @@ function App() {
     },
     {
       label: "Company Admin",
-      detail: "Manage corporate workspace, RBAC roles, team seats, pricing ledger, exports, and launch gates.",
+      detail: "Use this for company setup, RBAC roles, reviewers, pricing, launch gates, and exports.",
       status: hasLiveCorporateContext ? nextCorporateSetupStep.detail : "Create a corporate workspace first",
       action: "Open Admin",
       target: "admin" as const,
@@ -12702,7 +12702,7 @@ function App() {
   const signedInLandingActions = [
     {
       label: "Personal Passport",
-      detail: "Manage your profile, records, evidence, consent, and corporate access approvals.",
+      detail: "Your personal records, evidence, consent, and employer access approvals.",
       status: livePassportRecords.length ? `${livePassportRecords.length} live record rows` : "Add first live record",
       action: "Open Passport",
       target: "passport" as const,
@@ -12710,7 +12710,7 @@ function App() {
     },
     {
       label: "Corporate Verify",
-      detail: "Request scoped user database access and review only approved shared Passport rows.",
+      detail: "Request access by professional email, then review only approved shared rows.",
       status: hasLiveCorporateContext ? `${sharedVerifyRecords.length} shared rows visible` : "Create company workspace first",
       action: "Open Verify",
       target: "verify" as const,
@@ -12718,7 +12718,7 @@ function App() {
     },
     {
       label: "Company Admin",
-      detail: "Create company context, assign RBAC, invite team members, and manage pricing ledger.",
+      detail: "Create the company workspace, assign roles, invite reviewers, and activate the pilot ledger.",
       status: hasLiveCorporateContext ? nextCorporateSetupStep.label : "Corporate setup needed",
       action: "Open Admin",
       target: "admin" as const,
@@ -12726,7 +12726,7 @@ function App() {
     },
     {
       label: "Account and recovery",
-      detail: "Open login, recovery, password, hosted redirect, and session controls.",
+      detail: "Login, logout, password reset, hosted redirect status, and session repair.",
       status: authSession ? "Live session" : "Login required",
       action: "Open Account",
       target: "account" as const,
@@ -13116,12 +13116,12 @@ function App() {
           <div className="signed-in-landing-header">
             <div>
               <span className={`status-chip ${authSession ? "success" : "warning"}`}>
-                {authSession ? "Role-aware dashboard" : "Login to activate"}
+                {authSession ? "Operator home" : "Login to activate"}
               </span>
-              <strong>{authSession ? `Signed in as ${activeRole.label}` : "Choose a portal, then login or register"}</strong>
+              <strong>{authSession ? `Start here as ${activeRole.label}` : "Choose a portal, then login or register"}</strong>
               <small>
                 {authSession
-                  ? "Use these actions for Passport, Corporate Verify, Company Admin, account recovery, and logout."
+                  ? "Open the one area you need now. Account includes logout, password reset, and hosted link repair."
                   : "Preview mode shows the product path; live database rows require hosted login."}
               </small>
             </div>
@@ -13162,9 +13162,9 @@ function App() {
         <section className="dashboard-start-map" aria-label="Dashboard start map">
           <div className="dashboard-start-map-header">
             <div>
-              <span className="status-chip success">Dashboard start map</span>
-              <strong>Choose the workspace by what you need to do now</strong>
-              <small>Personal users manage Passports. Corporate users request scoped database access. Admins manage RBAC, pricing, team, and launch readiness.</small>
+              <span className="status-chip success">Workspace picker</span>
+              <strong>Pick the right workspace for the job</strong>
+              <small>Passport is personal. Verify is for scoped corporate review. Admin is for company setup, roles, team, billing, and launch readiness.</small>
             </div>
             <span className={`status-chip ${authSession ? "success" : "warning"}`}>
               {authSession ? "live database session" : "login required"}
@@ -13192,9 +13192,9 @@ function App() {
         <section className="proof-export-hub" aria-label="Proof and exports hub">
           <div className="proof-export-hub-header">
             <div>
-              <span className="status-chip neutral">Proof &amp; exports hub</span>
-              <strong>Find the right proof packet without digging through every panel</strong>
-              <small>Use this hub when the dashboard feels dense: database proof, Corporate Verify proof, user database packets, and scoped workspace exports stay one click away.</small>
+              <span className="status-chip neutral">Proof &amp; exports</span>
+              <strong>Download the evidence packet you need</strong>
+              <small>Use this when you need database proof, Corporate Verify proof, user database packets, or the scoped workspace report.</small>
             </div>
             <span className={`status-chip ${authSession ? "success" : "warning"}`}>{authSession ? "scope enforced" : "preview only"}</span>
           </div>
