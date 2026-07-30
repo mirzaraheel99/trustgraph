@@ -107,6 +107,14 @@ npm run smoke:live
 
 Set `TRUSTGRAPH_SMOKE_URL` to smoke-check a different hosted URL.
 
+## V1 Demo Flow Check
+
+```bash
+npm run check:v1-demo-flow
+```
+
+This validates the end-to-end v1 demo path from public portal selection through registration, dashboard actions, professional records, Corporate Verify user database access, working database proof, billing boundary, and launch gates.
+
 ## Server Env Check
 
 ```bash

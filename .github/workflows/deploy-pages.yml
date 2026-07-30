@@ -48,6 +48,9 @@ jobs:
       - name: Verify pilot acceptance path
         run: pnpm check:pilot-acceptance
 
+      - name: Verify v1 demo flow
+        run: pnpm check:v1-demo-flow
+
       - name: Verify responsive coverage
         run: pnpm check:responsive
 

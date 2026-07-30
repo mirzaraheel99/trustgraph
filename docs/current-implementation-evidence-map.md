@@ -23,7 +23,7 @@ GitHub Pages remains the verified static review target, while the guarded TrustG
 
 | Track | Current implementation evidence | Verification evidence |
 | --- | --- | --- |
-| Product foundation | `src/App.tsx`, `app/page.tsx`, `app/globals.css`, `README.md` public website, portal registration, selected portal command strip, collapsible auth operator panels, dashboard session command bar, pricing, hosted auth guidance, and auth readiness packets | GitHub Pages workflow, `scripts/smoke-live.mjs`, `scripts/check-responsive.mjs` |
+| Product foundation | `src/App.tsx`, `app/page.tsx`, `app/globals.css`, `README.md` public website, portal registration, selected portal command strip, collapsible auth operator panels, dashboard session command bar, pricing, hosted auth guidance, and auth readiness packets | GitHub Pages workflow, `scripts/smoke-live.mjs`, `scripts/check-responsive.mjs`, `scripts/check-v1-demo-flow.mjs` |
 | Account data rights | Signed-in Account panel for data export and closure requests, admin status controls, data-rights packets, audit and notification evidence | `supabase/migrations/038`, `supabase/migrations/039`, `src/dataRightsRepository.ts`, smoke account/admin checks |
 | Professional Passport | `src/recordRepository.ts`, `src/evidenceRepository.ts`, Passport record forms, structured responsibility/skill metadata, skills evidence packet, renewal readiness packet, dispute/correction workflow, evidence metadata, signed preview/download controls | `supabase/migrations/001`, `012`, `017`, `037`, smoke evidence checks |
 | Corporate account | `src/accountRepository.ts`, Account panel, Corporate provisioning packet, team panels, member roster proof | `supabase/migrations/009`, `020`, `021`, `022`, smoke corporate checks |
@@ -36,7 +36,7 @@ GitHub Pages remains the verified static review target, while the guarded TrustG
 | Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts, organization RLS recursion repair, database policy repair guidance, VPS cutover gate | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034`, `040` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
 | Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet, and review-only fraud signal packet with no automated hiring decisions | `supabase/migrations/010`, `012`, `016` |
-| Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, v1 completion audit packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
+| Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, v1 completion audit packet, end-to-end demo-flow gate, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md`, `scripts/check-v1-demo-flow.mjs` |
 
 ## Live Database Proof Artifacts
 
