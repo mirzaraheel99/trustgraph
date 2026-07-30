@@ -23,7 +23,7 @@ GitHub Pages remains the verified static review target, while the guarded TrustG
 
 | Track | Current implementation evidence | Verification evidence |
 | --- | --- | --- |
-| Product foundation | `src/App.tsx`, `app/page.tsx`, `app/globals.css`, `README.md` public website, portal registration, pricing, hosted auth guidance, and auth readiness packets | GitHub Pages workflow, `scripts/smoke-live.mjs` |
+| Product foundation | `src/App.tsx`, `app/page.tsx`, `app/globals.css`, `README.md` public website, portal registration, selected portal command strip, pricing, hosted auth guidance, and auth readiness packets | GitHub Pages workflow, `scripts/smoke-live.mjs` |
 | Account data rights | Signed-in Account panel for data export and closure requests, admin status controls, data-rights packets, audit and notification evidence | `supabase/migrations/038`, `supabase/migrations/039`, `src/dataRightsRepository.ts`, smoke account/admin checks |
 | Professional Passport | `src/recordRepository.ts`, `src/evidenceRepository.ts`, Passport record forms, structured responsibility/skill metadata, skills evidence packet, renewal readiness packet, dispute/correction workflow, evidence metadata, signed preview/download controls | `supabase/migrations/001`, `012`, `017`, `037`, smoke evidence checks |
 | Corporate account | `src/accountRepository.ts`, Account panel, Corporate provisioning packet, team panels, member roster proof | `supabase/migrations/009`, `020`, `021`, `022`, smoke corporate checks |
@@ -33,7 +33,7 @@ GitHub Pages remains the verified static review target, while the guarded TrustG
 | References and missing records | `src/referenceRepository.ts`, `src/missingRecordRepository.ts`, request status controls and exports | `supabase/migrations/013`, `015` |
 | Issuer workflow | `src/credentialRepository.ts`, issuer role activation, credential issue workflow, issuer-scoped expiration correction, and revocation lifecycle | `supabase/migrations/014`, `024`, `035`, `036` |
 | Evidence preview/download | Private Supabase Storage upload, metadata listing, manifest export, signed preview/download buttons | `supabase/migrations/017`, smoke evidence assertions |
-| Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts, organization RLS recursion repair, VPS cutover gate | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034`, `040` |
+| Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts, organization RLS recursion repair, database policy repair guidance, VPS cutover gate | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034`, `040` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
 | Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet, and review-only fraud signal packet with no automated hiring decisions | `supabase/migrations/010`, `012`, `016` |
 | Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, v1 completion audit packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
@@ -52,10 +52,10 @@ The app exposes these operator exports to prove live database state after sign-i
 - Pricing structure packet: configured plans, selected-seat projections, active pilot ledger subscriptions, and payment launch gates.
 - Billing architecture decision packet: v1 ledger-now decision, disabled Stripe payment flows, launch requirements, and human decision gates.
 - V1 completion audit packet: 13-track status, locked profile scope, evidence exports, verification gates, TrustGraph VPS target, and remaining human decisions.
-- Auth redirect readiness packet: active hosted redirect URL, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.
-- Registration auth readiness packet: selected portal, pending corporate setup state, repaired email-link readiness, and Supabase Auth redirect action items.
+- Auth redirect readiness packet: active hosted redirect URL, recovery session readiness, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.
+- Registration auth readiness packet: selected portal, selected portal command, pending corporate setup state, repaired email-link readiness, and Supabase Auth redirect action items.
 - Hosted login/database handoff packet: active Supabase return URL, current login state, live database acceptance requirements, TrustGraph VPS target, and VFIX isolation guard.
-- Working-data packet: currently loaded Passport, Access Grant, corporate review attestation, consent, subscription, team member, and invitation counts plus the live database repair queue for missing required row groups.
+- Working-data packet: currently loaded Passport, Access Grant, corporate review attestation, consent, subscription, team member, and invitation counts plus the live database repair queue and database policy repair guidance for missing required row groups or migration 034 proof.
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC, including the corporate review attestation created from the approved Access Grant.
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.
 - Admin exports: operations cases, audit CSV/JSON, release ledger, security runbook, production gates, pilot launch contacts, Connect clients, and webhooks.
