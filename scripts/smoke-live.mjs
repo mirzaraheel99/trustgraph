@@ -249,6 +249,8 @@ assertIncludesAny(bundleText, ["Seed reconciliation"], "pilot seed reconciliatio
 assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched count");
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
 assertIncludesAny(bundleText, ["Working database acceptance"], "working database acceptance summary");
+assertIncludesAny(bundleText, ["Live Data Verdict"], "live data verdict panel");
+assertIncludesAny(bundleText, ["Required row groups"], "live data verdict row-group metric");
 assertIncludesAny(bundleText, ["working_database_accepted"], "working database acceptance packet status");
 assertIncludesAny(bundleText, ["Real database only acceptance"], "real database acceptance policy label");
 assertIncludesAny(bundleText, ["Preview data is not accepted for v1 database proof"], "real database acceptance visible guard");

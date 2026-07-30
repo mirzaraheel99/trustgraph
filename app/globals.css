@@ -2572,6 +2572,84 @@ p,
   line-height: 1.35;
 }
 
+.live-data-verdict {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr);
+  align-items: stretch;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.042), transparent 70%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.live-data-verdict.success {
+  border-color: rgba(112, 224, 178, 0.28);
+  background:
+    linear-gradient(135deg, rgba(112, 224, 178, 0.095), transparent 68%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.live-data-verdict.warning {
+  border-color: rgba(225, 184, 102, 0.34);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.085), transparent 68%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.live-data-verdict > div:first-child,
+.live-data-verdict-grid span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.live-data-verdict strong,
+.live-data-verdict small {
+  display: block;
+  min-width: 0;
+}
+
+.live-data-verdict > div:first-child > strong {
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.live-data-verdict > div:first-child > small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.live-data-verdict-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.live-data-verdict-grid span {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.live-data-verdict-grid span.ready {
+  border-color: rgba(112, 224, 178, 0.24);
+  background: rgba(112, 224, 178, 0.05);
+}
+
+.live-data-verdict-grid strong {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.live-data-verdict-grid small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .readiness-score-card span,
 .readiness-score-card strong,
 .readiness-score-card small,
@@ -7688,6 +7766,8 @@ p {
   .seed-reconciliation-grid,
   .live-database-repair-grid,
   .live-database-repair-grid article,
+  .live-data-verdict,
+  .live-data-verdict-grid,
   .working-database-grid,
   .team-operations-cockpit,
   .team-operations-grid,

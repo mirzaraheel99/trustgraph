@@ -7326,6 +7326,23 @@ function OnboardingChecklistPanel({
     : authSession && accountContext
       ? "live_rows_incomplete"
       : "login_required";
+  const liveDataVerdict = liveDatabaseAcceptanceComplete
+    ? {
+        label: "Real database accepted",
+        detail: "Signed-in Supabase rows cover Passport, evidence, grants, consent, corporate account, and billing.",
+        tone: "success"
+      }
+    : authSession && accountContext
+      ? {
+          label: "Live database needs repair",
+          detail: `${liveDatabaseAcceptanceRows.length - liveDatabaseAcceptancePassing} required row group${liveDatabaseAcceptanceRows.length - liveDatabaseAcceptancePassing === 1 ? "" : "s"} missing before v1 acceptance.`,
+          tone: "warning"
+        }
+      : {
+          label: "Login required",
+          detail: "Preview data is not accepted. Sign in on the hosted app to load real Supabase rows.",
+          tone: "neutral"
+        };
   const workingDatabaseAcceptanceDetail = liveDatabaseAcceptanceComplete
     ? "All required v1 row groups are loaded from Supabase for this signed-in account."
     : authSession && accountContext
@@ -7394,6 +7411,28 @@ function OnboardingChecklistPanel({
   ];
   const seedReconciliationPassing = seedReconciliationRows.filter((row) => row.ok).length;
   const seedReconciliationComplete = Boolean(visibleSeedEvidence) && seedReconciliationPassing === seedReconciliationRows.length;
+  const liveDataVerdictRows = [
+    {
+      label: "Hosted login",
+      value: authSession ? "Connected" : "Required",
+      ready: Boolean(authSession)
+    },
+    {
+      label: "RBAC context",
+      value: accountContext ? "Loaded" : "Required",
+      ready: Boolean(accountContext)
+    },
+    {
+      label: "Required row groups",
+      value: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length}`,
+      ready: liveDatabaseAcceptanceComplete
+    },
+    {
+      label: "Seed reconciliation",
+      value: seedReconciliationComplete ? "Matched" : visibleSeedEvidence ? `${seedReconciliationPassing}/${seedReconciliationRows.length}` : "Not run",
+      ready: seedReconciliationComplete
+    }
+  ];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -7545,6 +7584,21 @@ function OnboardingChecklistPanel({
         <span className="status-chip neutral">current step</span>
         <strong>{nextItem.label}</strong>
         <small>{nextItem.done ? "Review live account, records, corporate access, team, and sharing evidence before production gates." : nextItem.detail}</small>
+      </div>
+      <div className={`live-data-verdict ${liveDataVerdict.tone}`} aria-label="Live data verdict">
+        <div>
+          <span className={`status-chip ${liveDataVerdict.tone}`}>Live Data Verdict</span>
+          <strong>{liveDataVerdict.label}</strong>
+          <small>{liveDataVerdict.detail}</small>
+        </div>
+        <div className="live-data-verdict-grid">
+          {liveDataVerdictRows.map((row) => (
+            <span className={row.ready ? "ready" : ""} key={row.label}>
+              <strong>{row.value}</strong>
+              <small>{row.label}</small>
+            </span>
+          ))}
+        </div>
       </div>
       <div className="onboarding-seed-row">
         <small>{seedStatus}</small>
