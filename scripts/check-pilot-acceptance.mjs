@@ -43,7 +43,7 @@ const acceptanceChecks = [
     id: "corporate_database",
     label: "Corporate user database and shared records",
     source: appSource,
-    required: ["Corporate user database packet", "per-professional shared records", "Live database view", "Export user packet"]
+    required: ["Corporate user database packet", "per-professional shared records", "Live corporate database", "live_database_evidence", "Export user packet"]
   },
   {
     id: "auth_recovery",

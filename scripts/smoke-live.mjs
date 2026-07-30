@@ -211,7 +211,8 @@ assertIncludesAny(bundleText, ["Corporate provisioning evidence"], "Corporate ac
 assertIncludesAny(bundleText, ["Export provisioning packet"], "Corporate provisioning export control");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
-assertIncludesAny(bundleText, ["Live database view"], "Corporate user database source label");
+assertIncludesAny(bundleText, ["Live corporate database"], "Corporate user database source label");
+assertIncludesAny(bundleText, ["live_database_evidence"], "Corporate user database evidence flag");
 assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
 assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");

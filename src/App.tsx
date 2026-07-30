@@ -1859,7 +1859,12 @@ function VerifyRequestsPanel({
           </article>
         )}
       </div>
-      <CorporateDirectoryPanel missingRecordRequests={missingRecordRequests} requests={requests} sharedRecords={sharedRecords} />
+      <CorporateDirectoryPanel
+        databaseMode={disabled ? "locked_corporate_context" : "live_supabase_visibility"}
+        missingRecordRequests={missingRecordRequests}
+        requests={requests}
+        sharedRecords={sharedRecords}
+      />
       {disabled ? <small>Switch to an employer or staffing reviewer role to use live Verify data.</small> : null}
       <IssuerCredentialsPanel
         credentials={issuerCredentials}
@@ -2005,10 +2010,12 @@ function CorporateControlCenter({
 }
 
 function CorporateDirectoryPanel({
+  databaseMode,
   missingRecordRequests,
   requests,
   sharedRecords
 }: {
+  databaseMode: "live_supabase_visibility" | "locked_corporate_context";
   missingRecordRequests: DbMissingRecordRequest[];
   requests: VerifyAccessGrantView[];
   sharedRecords: RecordItem[];
@@ -2072,9 +2079,15 @@ function CorporateDirectoryPanel({
   const reviewReadyCount = candidateRows.filter((row) => row.readiness === "review_ready").length;
   const waitingForConsentCount = candidateRows.filter((row) => row.readiness === "waiting_for_consent").length;
   const needsGapFollowUpCount = candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").length;
+  const isLiveCorporateDatabase = databaseMode === "live_supabase_visibility";
+  const databaseModeLabel = isLiveCorporateDatabase ? "Live corporate database" : "Corporate database locked";
+  const databaseModeDetail = isLiveCorporateDatabase
+    ? "Reads corporate visibility from Supabase Access Grants, shared Passport records, professional profiles, and missing-record requests."
+    : "Login with a corporate reviewer role or create a corporate workspace before treating this panel as live database evidence.";
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
-    mode: "live_supabase_visibility",
+    mode: databaseMode,
+    live_database_evidence: isLiveCorporateDatabase,
     filters: {
       status: statusFilter,
       query: directoryQuery.trim()
@@ -2184,8 +2197,8 @@ function CorporateDirectoryPanel({
         </div>
       </div>
       <div className="directory-source-strip">
-        <span className="status-chip success">Live database view</span>
-        <small>Reads corporate visibility from Supabase Access Grants, shared Passport records, professional profiles, and missing-record requests.</small>
+        <span className={`status-chip ${isLiveCorporateDatabase ? "success" : "warning"}`}>{databaseModeLabel}</span>
+        <small>{databaseModeDetail}</small>
       </div>
       <div className="directory-source-detail">
         <span>Rows: {requests.length} Access Grants</span>
