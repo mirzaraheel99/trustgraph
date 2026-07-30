@@ -1598,6 +1598,76 @@ button {
   overflow-wrap: anywhere;
 }
 
+.auth-operator-details {
+  display: grid;
+  gap: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.095);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.055), transparent 64%),
+    rgba(255, 255, 255, 0.022);
+  overflow: hidden;
+}
+
+.auth-operator-details + .auth-operator-details {
+  margin-top: 2px;
+}
+
+.auth-operator-details summary {
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+}
+
+.auth-operator-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.auth-operator-details summary::after {
+  content: "+";
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--teal);
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: 999px;
+  background: rgba(82, 214, 196, 0.08);
+  font-weight: 950;
+}
+
+.auth-operator-details[open] summary::after {
+  content: "-";
+}
+
+.auth-operator-details summary span,
+.auth-operator-details summary small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.auth-operator-details summary span {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.auth-operator-details summary small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.auth-operator-details > div {
+  margin: 0 10px 10px;
+}
+
 .auth-link-repair,
 .auth-readiness-packet {
   display: grid;
@@ -9741,6 +9811,7 @@ p {
   .public-portal-rail,
   .public-session-handoff,
   .auth-choice-summary,
+  .auth-operator-details,
   .auth-support-actions,
   .auth-recovery-decision-grid,
   .auth-operator-path,

@@ -10611,40 +10611,6 @@ function PublicSite({
               </select>
             </>
           ) : null}
-          <div className="portal-auth-outcome-card">
-            <div>
-              <span className="status-chip success">Live database handoff</span>
-              <strong>{portal === "corporate" ? "Corporate account path" : "Professional Passport path"}</strong>
-              <small>{portal === "corporate" ? "Register, verify, login, then provision the company workspace." : "Register, verify, login, then build the private Passport."}</small>
-            </div>
-            <div className="portal-auth-outcome-grid">
-              {authOutcomeSteps.map((step) => (
-                <span key={step.label}>
-                  <strong>{step.label}</strong>
-                  <small>{step.detail}</small>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="registration-path-card">
-            <div>
-              <span className="status-chip success">Selected path</span>
-              <strong>{selectedRegistrationPath.portal}</strong>
-              <small>{selectedRegistrationPath.plan}</small>
-            </div>
-            <div className="registration-path-grid">
-              <span>
-                <strong>{selectedRegistrationPath.primaryWrite}</strong>
-                <small>Primary database write</small>
-              </span>
-              <span>
-                <strong>{selectedRegistrationPath.databaseWrites.length} tables</strong>
-                <small>{selectedRegistrationPath.databaseWrites.join(", ")}</small>
-              </span>
-            </div>
-            <small>{selectedRegistrationPath.nextAction}</small>
-            <small>{selectedRegistrationPath.paymentStatus}</small>
-          </div>
           <button
             className="primary-action"
             disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}
@@ -10652,6 +10618,46 @@ function PublicSite({
           >
             {mode === "signin" ? "Login" : "Create account"}
           </button>
+          <details className="auth-operator-details">
+            <summary>
+              <span>Live database handoff proof</span>
+              <small>{selectedRegistrationPath.primaryWrite} then {portal === "corporate" ? "company workspace" : "Passport setup"}</small>
+            </summary>
+            <div className="portal-auth-outcome-card">
+              <div>
+                <span className="status-chip success">Live database handoff</span>
+                <strong>{portal === "corporate" ? "Corporate account path" : "Professional Passport path"}</strong>
+                <small>{portal === "corporate" ? "Register, verify, login, then provision the company workspace." : "Register, verify, login, then build the private Passport."}</small>
+              </div>
+              <div className="portal-auth-outcome-grid">
+                {authOutcomeSteps.map((step) => (
+                  <span key={step.label}>
+                    <strong>{step.label}</strong>
+                    <small>{step.detail}</small>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="registration-path-card">
+              <div>
+                <span className="status-chip success">Selected path</span>
+                <strong>{selectedRegistrationPath.portal}</strong>
+                <small>{selectedRegistrationPath.plan}</small>
+              </div>
+              <div className="registration-path-grid">
+                <span>
+                  <strong>{selectedRegistrationPath.primaryWrite}</strong>
+                  <small>Primary database write</small>
+                </span>
+                <span>
+                  <strong>{selectedRegistrationPath.databaseWrites.length} tables</strong>
+                  <small>{selectedRegistrationPath.databaseWrites.join(", ")}</small>
+                </span>
+              </div>
+              <small>{selectedRegistrationPath.nextAction}</small>
+              <small>{selectedRegistrationPath.paymentStatus}</small>
+            </div>
+          </details>
           <div className="auth-support-actions" aria-label="Account help actions">
             <button className="secondary-action" onClick={onOpenProductPreview} type="button">
               Open product preview
@@ -10663,50 +10669,56 @@ function PublicSite({
               Reset password
             </button>
           </div>
-          <div className="auth-recovery-decision" aria-label="Auth recovery decision path">
-            <div>
-              <span className="status-chip neutral">Auth recovery decision path</span>
-              <strong>Pick the recovery action by what happened</strong>
-              <small>Keep the email field filled before using verification or password recovery actions.</small>
+          <details className="auth-operator-details">
+            <summary>
+              <span>Verification, recovery, and link repair</span>
+              <small>Use after rate limits, localhost links, or password recovery issues</small>
+            </summary>
+            <div className="auth-recovery-decision" aria-label="Auth recovery decision path">
+              <div>
+                <span className="status-chip neutral">Auth recovery decision path</span>
+                <strong>Pick the recovery action by what happened</strong>
+                <small>Keep the email field filled before using verification or password recovery actions.</small>
+              </div>
+              <div className="auth-recovery-decision-grid">
+                {authRecoveryDecisionPath.map((item) => (
+                  <article key={item.label}>
+                    <span>{item.label}</span>
+                    <strong>{item.action}</strong>
+                    <small>{item.detail}</small>
+                  </article>
+                ))}
+              </div>
             </div>
-            <div className="auth-recovery-decision-grid">
-              {authRecoveryDecisionPath.map((item) => (
-                <article key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.action}</strong>
-                  <small>{item.detail}</small>
-                </article>
-              ))}
+            <div className="auth-link-repair">
+              <div>
+                <strong>Fix localhost email link</strong>
+                <small>{verificationLinkMessage}</small>
+              </div>
+              <textarea
+                onChange={(event) => setVerificationLinkInput(event.target.value)}
+                placeholder="Paste Supabase email link that starts with http://localhost:3000/..."
+                value={verificationLinkInput}
+              />
+              {repairedVerificationUrl ? <input aria-label="Hosted verification link" readOnly value={repairedVerificationUrl} /> : null}
+              <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
+                Copy hosted link
+              </button>
             </div>
-          </div>
-          <div className="auth-link-repair">
-            <div>
-              <strong>Fix localhost email link</strong>
-              <small>{verificationLinkMessage}</small>
+            <div className="auth-readiness-packet">
+              <div>
+                <strong>Registration auth readiness packet</strong>
+                <small>Exports hosted redirect status, selected portal, pending corporate setup, repaired-link readiness, and Supabase Auth action items.</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() => downloadTextFile(registrationPacketName, JSON.stringify(registrationAuthPacket, null, 2), "application/json")}
+                type="button"
+              >
+                Export registration auth packet
+              </button>
             </div>
-            <textarea
-              onChange={(event) => setVerificationLinkInput(event.target.value)}
-              placeholder="Paste Supabase email link that starts with http://localhost:3000/..."
-              value={verificationLinkInput}
-            />
-            {repairedVerificationUrl ? <input aria-label="Hosted verification link" readOnly value={repairedVerificationUrl} /> : null}
-            <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
-              Copy hosted link
-            </button>
-          </div>
-          <div className="auth-readiness-packet">
-            <div>
-              <strong>Registration auth readiness packet</strong>
-              <small>Exports hosted redirect status, selected portal, pending corporate setup, repaired-link readiness, and Supabase Auth action items.</small>
-            </div>
-            <button
-              className="secondary-action"
-              onClick={() => downloadTextFile(registrationPacketName, JSON.stringify(registrationAuthPacket, null, 2), "application/json")}
-              type="button"
-            >
-              Export registration auth packet
-            </button>
-          </div>
+          </details>
           <small>{message}</small>
           <small>
             {authReady
