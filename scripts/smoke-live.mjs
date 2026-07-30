@@ -482,7 +482,7 @@ assertIncludesAny(bundleText, ["5-75-224-110.sslip.io"], "VFIX protected host co
 assertIncludesAny(bundleText, ["Supabase email rate limit is active"], "auth rate-limit recovery guidance");
 assertIncludesAny(bundleText, ["Auth redirect needs the hosted TrustGraph URL"], "hosted auth redirect repair guidance");
 assertIncludesAny(bundleText, ["Hosted Supabase Auth is configured"], "hosted Supabase Auth configured status");
-assertIncludesAny(bundleText, ["Session controls"], "persistent session controls");
+assertIncludesAny(bundleText, ["Session command bar"], "persistent session controls");
 assertIncludesAny(bundleText, ["Primary workspace routes"], "primary workspace route strip");
 assertIncludesAny(bundleText, ["Guided access setup"], "permission gate guided setup state");
 assertIncludesAny(bundleText, ["Open corporate setup"], "permission gate corporate setup action");
