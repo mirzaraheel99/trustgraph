@@ -2359,6 +2359,64 @@ p,
     rgba(255, 255, 255, 0.028);
 }
 
+.auth-access-command {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.09), transparent 64%),
+    rgba(0, 0, 0, 0.13);
+}
+
+.auth-access-command > div:first-child,
+.auth-access-command-grid article {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.auth-access-command strong,
+.auth-access-command small,
+.auth-access-command span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.auth-access-command > div:first-child > strong {
+  font-size: 16px;
+  line-height: 1.18;
+}
+
+.auth-access-command small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.auth-access-command-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auth-access-command-grid article {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.auth-access-command-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+}
+
 .data-rights-panel {
   display: grid;
   gap: 10px;
@@ -10067,6 +10125,8 @@ p {
   .portal-decision-grid,
   .portal-support-details,
   .auth-path-grid,
+  .auth-access-command,
+  .auth-access-command-grid,
   .billing-estimate-card,
   .billing-decision-card,
   .billing-ledger-acceptance,

@@ -129,6 +129,10 @@ if (!css.includes(".corporate-launch-command") || !css.includes("grid-template-c
   throw new Error("Responsive check failed: corporate portal setup needs a clear launch command surface.");
 }
 
+if (!css.includes(".auth-access-command") || !css.includes("grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr)") || !css.includes(".auth-access-command-grid")) {
+  throw new Error("Responsive check failed: auth panel needs a clear professional/corporate access command surface.");
+}
+
 if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(260px, 340px)") || !css.includes("max-width: 340px") || !css.includes("scrollbar-width: thin")) {
   throw new Error("Responsive check failed: premium shell actions must stay compact and preserve workspace width.");
 }

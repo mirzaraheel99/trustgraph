@@ -7839,11 +7839,15 @@ function AuthPanel({
   const authPaths = [
     {
       label: "Professional",
-      detail: "Create a Passport, add records, upload evidence, approve Access Grants."
+      detail: "Create a Passport, add records, upload evidence, approve Access Grants.",
+      route: "Personal Passport after login",
+      database: "Writes profile, personal organization, Passport records, evidence, grants, and consent rows."
     },
     {
       label: "Corporate",
-      detail: "Create employer or staffing workspace from Corporate account and RBAC."
+      detail: "Create employer or staffing workspace from Corporate account and RBAC.",
+      route: "Company Admin then Corporate Verify",
+      database: "Writes organization, admin membership, reviewer roles, access requests, review attestations, and billing ledger rows."
     }
   ];
   const authChecks = [
@@ -8101,6 +8105,24 @@ function AuthPanel({
         </div>
       ) : (
         <form className="auth-form" onSubmit={(event) => handleAuth(event, "signin")}>
+          <div className="auth-access-command" aria-label="Portal access command">
+            <div>
+              <span className="status-chip success">Portal access command</span>
+              <strong>One secure login, two clear portal paths</strong>
+              <small>
+                Use the same verified account system for professionals and corporate teams. The role and workspace you create after login decide what database rows you can see.
+              </small>
+            </div>
+            <div className="auth-access-command-grid">
+              {authPaths.map((path) => (
+                <article key={path.label}>
+                  <span>{path.label}</span>
+                  <strong>{path.route}</strong>
+                  <small>{path.database}</small>
+                </article>
+              ))}
+            </div>
+          </div>
           <div className="auth-path-grid">
             {authPaths.map((path) => (
               <article key={path.label}>
