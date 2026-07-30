@@ -3972,7 +3972,7 @@ p,
 
 .account-admin-row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
   gap: 8px;
 }
 
@@ -3984,11 +3984,13 @@ p,
   padding: 0 10px;
   outline: 0;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .auth-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
   gap: 8px;
 }
 
@@ -5684,10 +5686,14 @@ p {
 .secondary-action {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   min-height: 40px;
   padding: 0 12px;
+  text-align: center;
   font-weight: 850;
+  line-height: 1.2;
+  white-space: normal;
 }
 
 .primary-action {
