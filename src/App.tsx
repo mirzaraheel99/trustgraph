@@ -12674,6 +12674,36 @@ function App() {
               <span className="status-chip neutral">{activeOrganization.type.replace("_", " ")}</span>
               <span className="status-chip neutral">{authSession ? "live auth" : "product preview"}</span>
             </div>
+            <div className="session-command-bar" aria-label="Session command bar">
+              {authSession ? (
+                <>
+                  <button className="secondary-action" onClick={openAuthControls} type="button">
+                    <KeyRound size={16} />
+                    Account
+                  </button>
+                  <button className="secondary-action" onClick={openCorporateControls} type="button">
+                    <BriefcaseBusiness size={16} />
+                    Corporate setup
+                  </button>
+                  <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+                    Public site
+                  </button>
+                  <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                    <LogOut size={16} />
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="primary-action" onClick={openAuthControls} type="button">
+                    Login or register
+                  </button>
+                  <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+                    Public site
+                  </button>
+                </>
+              )}
+            </div>
             <div className="workspace-route-strip" aria-label="Primary workspace routes">
               {workspaces.map((item) => {
                 const allowed = canAccessWorkspace(activeMembership.role, item.id);

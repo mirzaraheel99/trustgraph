@@ -70,6 +70,7 @@ const requiredMobileStacks = [
   ".selected-portal-command",
   ".reference-source-strip",
   ".release-source-strip",
+  ".session-command-bar",
   ".setup-command-bar",
   ".setup-command-metrics",
   ".signed-in-landing-grid",

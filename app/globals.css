@@ -4576,6 +4576,36 @@ p {
   margin-top: 12px;
 }
 
+.session-command-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+  margin-top: 12px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.session-command-bar button {
+  min-height: 38px;
+  justify-content: center;
+}
+
+.danger-action {
+  color: #ffd6cc;
+  border-color: rgba(255, 119, 94, 0.28);
+  background:
+    linear-gradient(135deg, rgba(255, 119, 94, 0.08), transparent 68%),
+    rgba(255, 255, 255, 0.02);
+}
+
+.danger-action:hover {
+  color: #fff2ee;
+  border-color: rgba(255, 119, 94, 0.46);
+}
+
 .workspace-route-strip {
   display: flex;
   flex-wrap: wrap;
@@ -9904,6 +9934,7 @@ p {
   .reference-source-strip,
   .release-summary-grid,
   .release-source-strip,
+  .session-command-bar,
   .scope-area-grid,
   .security-review-grid,
   .vps-guard-strip,
