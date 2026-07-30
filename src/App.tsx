@@ -89,7 +89,8 @@ import {
 import {
   ensureCredentialIssuerMembership,
   issueCredentialRecord,
-  loadIssuerCredentials
+  loadIssuerCredentials,
+  revokeIssuerCredential
 } from "./credentialRepository";
 import {
   createPilotApiClient,
@@ -1724,6 +1725,7 @@ function VerifyRequestsPanel({
   onCreateIssuerRole,
   onCreateMissingRecordRequest,
   onIssueCredential,
+  onRevokeCredential,
   onMissingRecordStatus,
   onCreateReviewerRole
 }: {
@@ -1752,6 +1754,7 @@ function VerifyRequestsPanel({
     issuedAt: string;
     expiresAt: string;
   }) => Promise<void>;
+  onRevokeCredential: (credentialId: string, reason: string) => Promise<void>;
   onCreateMissingRecordRequest: (input: {
     subjectEmail: string;
     subjectFullName: string;
@@ -2261,6 +2264,7 @@ function VerifyRequestsPanel({
         message={issuerMessage}
         onCreateIssuerRole={onCreateIssuerRole}
         onIssueCredential={onIssueCredential}
+        onRevokeCredential={onRevokeCredential}
       />
       <MissingRecordRequestsPanel
         disabled={disabled}
@@ -3465,7 +3469,8 @@ function IssuerCredentialsPanel({
   disabled,
   message,
   onCreateIssuerRole,
-  onIssueCredential
+  onIssueCredential,
+  onRevokeCredential
 }: {
   credentials: DbIssuerCredential[];
   disabled: boolean;
@@ -3480,6 +3485,7 @@ function IssuerCredentialsPanel({
     issuedAt: string;
     expiresAt: string;
   }) => Promise<void>;
+  onRevokeCredential: (credentialId: string, reason: string) => Promise<void>;
 }) {
   const [subjectEmail, setSubjectEmail] = useState("");
   const [subjectFullName, setSubjectFullName] = useState("");
@@ -3490,10 +3496,34 @@ function IssuerCredentialsPanel({
   const [expiresAt, setExpiresAt] = useState("");
   const [busyRole, setBusyRole] = useState(false);
   const [busyIssue, setBusyIssue] = useState(false);
+  const [busyRevokeId, setBusyRevokeId] = useState("");
+  const [revokeReasonById, setRevokeReasonById] = useState<Record<string, string>>({});
   const [status, setStatus] = useState(message);
   const expiringCredentials = credentials.filter((credential) => credential.expires_at).length;
+  const revokedCredentials = credentials.filter((credential) => credential.status === "revoked").length;
   const noExpiryCredentials = credentials.length - expiringCredentials;
   const exportName = `trustgraph-issued-credentials-${new Date().toISOString().slice(0, 10)}.csv`;
+  const lifecyclePacketName = `trustgraph-issuer-lifecycle-${new Date().toISOString().slice(0, 10)}.json`;
+  const issuerLifecyclePacket = {
+    generated_at: new Date().toISOString(),
+    packet_mode: "issuer_credential_lifecycle",
+    issued_credentials: credentials.length,
+    revoked_credentials: revokedCredentials,
+    active_credentials: credentials.filter((credential) => credential.status !== "revoked").length,
+    revocation_workflow: "revoke_issuer_credential RPC writes credential.revoked audit event and queues professional notification",
+    records: credentials.map((credential) => ({
+      id: credential.id,
+      owner_profile_id: credential.owner_profile_id,
+      owner_email: credential.owner_profile?.email ?? null,
+      issuer_organization_id: credential.issuer_organization_id,
+      title: credential.title,
+      type: credential.type,
+      status: credential.status,
+      expires_at: credential.expires_at,
+      revoked_at: typeof credential.metadata?.revoked_at === "string" ? credential.metadata.revoked_at : null,
+      revocation_reason: typeof credential.metadata?.revocation_reason === "string" ? credential.metadata.revocation_reason : null
+    }))
+  };
 
   useEffect(() => {
     setStatus(message);
@@ -3528,6 +3558,21 @@ function IssuerCredentialsPanel({
     }
   }
 
+  async function revokeCredential(credentialId: string) {
+    setBusyRevokeId(credentialId);
+    setStatus("Revoking issuer credential...");
+
+    try {
+      await onRevokeCredential(credentialId, revokeReasonById[credentialId] ?? "");
+      setRevokeReasonById((current) => ({ ...current, [credentialId]: "" }));
+      setStatus("Credential revoked with audit and notification evidence");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not revoke credential");
+    } finally {
+      setBusyRevokeId("");
+    }
+  }
+
   return (
     <section className="issuer-panel">
       <div className="mini-heading">
@@ -3546,6 +3591,10 @@ function IssuerCredentialsPanel({
         <div>
           <span>No expiry</span>
           <strong>{noExpiryCredentials}</strong>
+        </div>
+        <div>
+          <span>Revoked</span>
+          <strong>{revokedCredentials}</strong>
         </div>
       </div>
       <div className="grant-panel-top test-tool-strip">
@@ -3575,6 +3624,14 @@ function IssuerCredentialsPanel({
           type="button"
         >
           Export credentials
+        </button>
+        <button
+          className="secondary-action"
+          disabled={!credentials.length}
+          onClick={() => downloadTextFile(lifecyclePacketName, JSON.stringify(issuerLifecyclePacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export lifecycle packet
         </button>
       </div>
       <form className="issuer-form" onSubmit={submitCredential}>
@@ -3611,7 +3668,23 @@ function IssuerCredentialsPanel({
                 <p>{credential.owner_profile?.full_name ?? credential.owner_profile?.email ?? "Professional profile"}</p>
                 <small>{credential.evidence_summary ?? credential.source_name}</small>
               </div>
-              <span className="status-chip success">{credential.status.replace(/_/g, " ")}</span>
+              <div className="issuer-card-actions">
+                <span className={`status-chip ${credential.status === "revoked" ? "danger" : "success"}`}>{credential.status.replace(/_/g, " ")}</span>
+                <input
+                  disabled={disabled || busyRevokeId === credential.id || credential.status === "revoked"}
+                  onChange={(event) => setRevokeReasonById((current) => ({ ...current, [credential.id]: event.target.value }))}
+                  placeholder="Revocation reason"
+                  value={revokeReasonById[credential.id] ?? ""}
+                />
+                <button
+                  className="secondary-action"
+                  disabled={disabled || busyRevokeId === credential.id || credential.status === "revoked"}
+                  onClick={() => void revokeCredential(credential.id)}
+                  type="button"
+                >
+                  Revoke
+                </button>
+              </div>
             </article>
           ))
         ) : (
@@ -4662,7 +4735,7 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 034 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate decision tracking, gate status constraints, operator-named pilot workflow RPCs, pilot launch contact tracking, and the organization RLS recursion repair.</small>
+          <small>Migrations through 035 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, the organization RLS recursion repair, and issuer credential revocation lifecycle.</small>
         </div>
         <span className="status-chip success">034 RLS repair expected</span>
       </article>
@@ -10759,6 +10832,31 @@ function App() {
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
+  async function revokeLiveIssuerCredential(credentialId: string, reason: string) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before revoking credentials.");
+    }
+
+    const credential = await revokeIssuerCredential({
+      accessToken: authSession.accessToken,
+      credentialId,
+      reason
+    });
+    const [credentials, sharedRecords, notifications, events] = await Promise.all([
+      loadIssuerCredentials(activeMembership.organizationId, authSession.accessToken),
+      loadSharedVerifyRecords(authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setIssuerCredentials(credentials);
+    setSharedVerifyRecords(sharedRecords);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setIssuerStatus(`Credential revoked: ${credential.title}`);
+    setVerifyStatus(sharedRecords.length ? `Shared Verify records: ${sharedRecords.length}` : "No shared Verify records yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+  }
+
   async function createLiveMissingRecordRequest(input: {
     subjectEmail: string;
     subjectFullName: string;
@@ -12189,6 +12287,7 @@ function App() {
                 onCreateIssuerRole={createLiveCredentialIssuerRole}
                 onCreateReviewerRole={createPilotReviewerRole}
                 onIssueCredential={issueLiveCredential}
+                onRevokeCredential={revokeLiveIssuerCredential}
                 onMissingRecordStatus={updateLiveMissingRecordStatus}
                 requests={verifyRequests}
                 sharedRecords={sharedVerifyRecords}

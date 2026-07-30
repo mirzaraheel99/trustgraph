@@ -45,3 +45,18 @@ export async function issueCredentialRecord(input: {
     { accessToken: input.accessToken }
   );
 }
+
+export async function revokeIssuerCredential(input: {
+  accessToken: string;
+  credentialId: string;
+  reason?: string;
+}): Promise<DbIssuerCredential> {
+  return supabaseRpc<DbIssuerCredential>(
+    "revoke_issuer_credential",
+    {
+      credential_id: input.credentialId,
+      revoke_reason: input.reason || null
+    },
+    { accessToken: input.accessToken }
+  );
+}

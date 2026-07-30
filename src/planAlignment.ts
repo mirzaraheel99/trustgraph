@@ -115,7 +115,7 @@ export const foundationTracks: FoundationTrack[] = [
     label: "Credentials",
     planStep: "Phase 2",
     status: "deployed",
-    detail: "Credential issuer role, verified issue workflow, audit, and notifications are live.",
+    detail: "Credential issuer role, verified issue/revoke workflow, audit, and notifications are live.",
     tone: "success"
   },
   {
@@ -238,7 +238,7 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     label: "Digital credentials",
     productArea: "Credentials",
     status: "foundation",
-    evidence: "Issuer role can create credential records with lifecycle state.",
+    evidence: "Issuer role can create and revoke credential records with lifecycle state.",
     tone: "info"
   },
   {
