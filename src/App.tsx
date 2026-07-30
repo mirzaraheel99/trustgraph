@@ -10440,6 +10440,26 @@ function App() {
   ];
   const corporateSetupComplete = corporateSetupSteps.filter((step) => step.done).length;
   const nextCorporateSetupStep = corporateSetupSteps.find((step) => !step.done) ?? corporateSetupSteps[corporateSetupSteps.length - 1];
+  const corporateOperatorStatus = [
+    {
+      label: "Current state",
+      value: authSession ? "Live database" : "Preview",
+      detail: authSession ? "Supabase session is connected." : "Login before creating live corporate rows.",
+      tone: authSession ? "success" : "neutral"
+    },
+    {
+      label: "Workspace access",
+      value: hasLiveCorporateContext ? "Corporate active" : "Create workspace",
+      detail: hasLiveCorporateContext ? activeOrganization.name : "Employer or staffing organization is still needed.",
+      tone: hasLiveCorporateContext ? "success" : "warning"
+    },
+    {
+      label: "Next operator action",
+      value: nextCorporateSetupStep.label,
+      detail: nextCorporateSetupStep.detail,
+      tone: nextCorporateSetupStep.done ? "success" : "warning"
+    }
+  ];
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -10795,6 +10815,15 @@ function App() {
                 <span className="eyebrow">Setup center</span>
                 <h2>Account, corporate access, and rollout controls</h2>
                 <p>Follow the corporate setup path in order: login, workspace, RBAC, team, billing, then readiness. Each action opens the exact panel needed for the next live database step.</p>
+              </div>
+              <div className="corporate-operator-strip" aria-label="Corporate operator status">
+                {corporateOperatorStatus.map((item) => (
+                  <article className={item.tone} key={item.label}>
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                    <small>{item.detail}</small>
+                  </article>
+                ))}
               </div>
               <div className="setup-command-bar" aria-label="Setup command bar">
                 <div>

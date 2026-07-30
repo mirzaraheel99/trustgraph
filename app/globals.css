@@ -3770,6 +3770,57 @@ p {
     rgba(255, 255, 255, 0.028);
 }
 
+.corporate-operator-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.corporate-operator-strip article {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.corporate-operator-strip article.success {
+  border-color: rgba(112, 224, 178, 0.26);
+  background: rgba(112, 224, 178, 0.055);
+}
+
+.corporate-operator-strip article.warning {
+  border-color: rgba(225, 184, 102, 0.32);
+  background: rgba(225, 184, 102, 0.06);
+}
+
+.corporate-operator-strip span,
+.corporate-operator-strip strong,
+.corporate-operator-strip small {
+  display: block;
+  min-width: 0;
+}
+
+.corporate-operator-strip span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-operator-strip strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.corporate-operator-strip small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .corporate-task-hub {
   display: grid;
   gap: 14px;
@@ -7505,6 +7556,7 @@ p {
   .billing-ledger-acceptance,
   .billing-operator-path,
   .billing-gate-grid,
+  .corporate-operator-strip,
   .corporate-task-hub-header,
   .corporate-setup-guide,
   .setup-command-bar,

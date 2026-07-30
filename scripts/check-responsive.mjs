@@ -16,6 +16,7 @@ const requiredMobileStacks = [
   ".corporate-live-retest-grid",
   ".corporate-operating-plan-grid",
   ".corporate-operating-plan-header",
+  ".corporate-operator-strip",
   ".corporate-task-hub-header",
   ".corporate-setup-guide",
   ".directory-source-strip",

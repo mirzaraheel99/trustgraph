@@ -131,6 +131,8 @@ assertIncludesAny(bundleText, ["Organization name"], "Corporate registration org
 assertIncludesAny(bundleText, ["Selected portal login path"], "public auth portal choice switchboard");
 assertIncludesAny(bundleText, ["Corporate company", "Professional user"], "public auth professional and corporate selectors");
 assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup path");
+assertIncludesAny(bundleText, ["Corporate operator status"], "corporate setup operator status band");
+assertIncludesAny(bundleText, ["Next operator action"], "corporate setup next operator action");
 assertIncludesAny(bundleText, ["Setup command bar"], "logged-in setup command bar");
 assertIncludesAny(bundleText, ["Open next step"], "setup next step action");
 assertIncludesAny(bundleText, ["Public registration"], "setup public registration action");
