@@ -211,6 +211,8 @@ assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched co
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
 assertIncludesAny(bundleText, ["Working database acceptance"], "working database acceptance summary");
 assertIncludesAny(bundleText, ["working_database_accepted"], "working database acceptance packet status");
+assertIncludesAny(bundleText, ["Live database repair queue"], "working database repair queue");
+assertIncludesAny(bundleText, ["live_database_repair_queue"], "working database repair queue packet field");
 assertIncludesAny(bundleText, ["Export working-data packet"], "working database proof export");
 assertIncludesAny(bundleText, ["Live rows currently loaded"], "working database live-count copy");
 assertIncludesAny(bundleText, ["Live database connected"], "database status strip live label");

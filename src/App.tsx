@@ -6876,6 +6876,17 @@ function OnboardingChecklistPanel({
   ];
   const liveDatabaseAcceptancePassing = liveDatabaseAcceptanceRows.filter((row) => row.ok).length;
   const liveDatabaseAcceptanceComplete = Boolean(authSession && accountContext) && liveDatabaseAcceptancePassing === liveDatabaseAcceptanceRows.length;
+  const liveDatabaseRepairQueue = liveDatabaseAcceptanceRows
+    .filter((row) => !row.ok)
+    .map((row) => ({
+      label: row.label,
+      required: row.required,
+      evidence: row.evidence,
+      action:
+        row.label === "Corporate account database" || row.label === "Billing ledger database" || row.label === "Corporate access database"
+          ? "Open Corporate Verify"
+          : "Open Professional Passport"
+    }));
   const hostedLoginDatabaseReady = Boolean(authSession && accountContext && liveDatabaseAcceptanceComplete);
   const workingDatabaseAcceptanceStatus = liveDatabaseAcceptanceComplete
     ? "working_database_accepted"
@@ -6989,7 +7000,8 @@ function OnboardingChecklistPanel({
       total: liveDatabaseAcceptanceRows.length,
       complete: liveDatabaseAcceptanceComplete,
       rows: liveDatabaseAcceptanceRows,
-      unmet_requirements: liveDatabaseAcceptanceRows.filter((row) => !row.ok).map((row) => row.required)
+      unmet_requirements: liveDatabaseAcceptanceRows.filter((row) => !row.ok).map((row) => row.required),
+      live_database_repair_queue: liveDatabaseRepairQueue
     },
     checklist_completed: completed,
     checklist_total: checklist.length,
@@ -7180,6 +7192,41 @@ function OnboardingChecklistPanel({
           <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : authSession && accountContext ? "warning" : "neutral"}`}>
             {workingDatabaseAcceptanceStatus.replace(/_/g, " ")}
           </span>
+        </div>
+        <div className="live-database-repair-queue">
+          <div className="seed-reconciliation-top">
+            <div>
+              <strong>Live database repair queue</strong>
+              <small>{liveDatabaseRepairQueue.length ? "Create or load these live Supabase row groups before marking the working database accepted." : "All required live database row groups are loaded for this signed-in context."}</small>
+            </div>
+            <span className={`status-chip ${liveDatabaseRepairQueue.length ? "warning" : "success"}`}>
+              {liveDatabaseRepairQueue.length ? `${liveDatabaseRepairQueue.length} open` : "clear"}
+            </span>
+          </div>
+          <div className="live-database-repair-grid">
+            {liveDatabaseRepairQueue.length ? (
+              liveDatabaseRepairQueue.map((item) => (
+                <article key={item.label}>
+                  <div>
+                    <strong>{item.label}</strong>
+                    <small>{item.required}</small>
+                    <small>{item.evidence}</small>
+                  </div>
+                  <button className="secondary-action" onClick={() => onOpenWorkspace(item.action === "Open Corporate Verify" ? "verify" : "passport")} type="button">
+                    {item.action}
+                  </button>
+                </article>
+              ))
+            ) : (
+              <article className="matched">
+                <div>
+                  <strong>Working database accepted</strong>
+                  <small>Passport, evidence, Access Grants, consent, corporate account, and billing ledger rows are loaded.</small>
+                </div>
+                <span className="status-chip success">ready</span>
+              </article>
+            )}
+          </div>
         </div>
         <div className="seed-reconciliation-grid">
           {liveDatabaseAcceptanceRows.map((row) => (

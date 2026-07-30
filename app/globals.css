@@ -2440,6 +2440,46 @@ p,
   line-height: 1.45;
 }
 
+.live-database-repair-queue {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid rgba(225, 184, 102, 0.2);
+  border-radius: var(--radius);
+  background: rgba(225, 184, 102, 0.055);
+}
+
+.live-database-repair-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.live-database-repair-grid article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(126px, auto);
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.live-database-repair-grid article.matched {
+  border-color: rgba(82, 214, 196, 0.18);
+  background: rgba(82, 214, 196, 0.045);
+}
+
+.live-database-repair-grid article > div {
+  min-width: 0;
+}
+
+.live-database-repair-grid button {
+  justify-content: center;
+  min-height: 34px;
+}
+
 .working-database-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -6676,6 +6716,8 @@ p {
   .onboarding-current-step,
   .seed-result-grid,
   .seed-reconciliation-grid,
+  .live-database-repair-grid,
+  .live-database-repair-grid article,
   .working-database-grid,
   .team-operations-cockpit,
   .team-operations-grid,

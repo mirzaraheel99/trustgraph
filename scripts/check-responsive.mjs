@@ -16,6 +16,7 @@ const requiredMobileStacks = [
   ".evidence-source-strip",
   ".issuer-source-strip",
   ".invitation-handoff-strip",
+  ".live-database-repair-grid",
   ".missing-source-strip",
   ".notification-source-strip",
   ".operations-source-strip",
