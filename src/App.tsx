@@ -2976,6 +2976,40 @@ function CorporateDirectoryPanel({
   const sensitiveSharedRecordCount = sharedRecords.filter((record) => record.sensitivity && record.sensitivity !== "standard").length;
   const consentRequiredSharedRecordCount = sharedRecords.filter((record) => record.consentRequired).length;
   const unavailableRequestCount = requests.filter((request) => request.status !== "approved").length;
+  const isLiveCorporateDatabase = databaseMode === "live_supabase_visibility";
+  const corporateDirectoryAcceptanceChecks = [
+    {
+      label: "Live RBAC database",
+      ok: isLiveCorporateDatabase,
+      value: isLiveCorporateDatabase ? "Supabase rows" : "Locked",
+      detail: "Accepted only when the active corporate role reads scoped rows from Supabase."
+    },
+    {
+      label: "Access Grant rows",
+      ok: requests.length > 0,
+      value: `${requests.length}`,
+      detail: "Corporate portal must load request rows before user visibility can be accepted."
+    },
+    {
+      label: "Shared user Passport rows",
+      ok: sharedRecords.length > 0,
+      value: `${sharedRecords.length}`,
+      detail: "Professional records must be visible through approved grant and consent scope."
+    },
+    {
+      label: "Review-ready people",
+      ok: reviewReadyCount > 0 || needsGapFollowUpCount > 0,
+      value: `${reviewReadyCount}`,
+      detail: "At least one professional should be review-ready or have an explicit gap follow-up path."
+    },
+    {
+      label: "Review attestation",
+      ok: reviews.length > 0,
+      value: `${reviews.length}`,
+      detail: "Corporate reviewer actions must write corporate_access_reviews rows for audit proof."
+    }
+  ];
+  const corporateDirectoryAccepted = corporateDirectoryAcceptanceChecks.every((check) => check.ok);
   const corporateAccessPath = [
     {
       label: "Request access",
@@ -3099,7 +3133,6 @@ function CorporateDirectoryPanel({
       tone: openGapRequestCount ? "warning" : "ready"
     }
   ];
-  const isLiveCorporateDatabase = databaseMode === "live_supabase_visibility";
   const databaseModeLabel = isLiveCorporateDatabase ? "Live corporate database" : "Corporate database locked";
   const databaseModeDetail = isLiveCorporateDatabase
     ? "Reads corporate visibility from Supabase Access Grants, shared Passport records, professional profiles, and missing-record requests."
@@ -3140,6 +3173,12 @@ function CorporateDirectoryPanel({
       rpc: "record_corporate_access_review",
       audit_event: "corporate_access.review_recorded",
       notification_event_type: "corporate_access_review"
+    },
+    corporate_directory_acceptance: {
+      accepted: corporateDirectoryAccepted,
+      accepted_only_when: "live_corporate_rbac_context_loads_access_grants_shared_passport_rows_review_ready_people_and_review_attestations",
+      preview_data_accepted: false,
+      checks: corporateDirectoryAcceptanceChecks
     },
     corporate_data_access_path: corporateAccessPath,
     corporate_review_attestation_ledger: corporateReviewAttestationLedger,
@@ -3293,6 +3332,21 @@ function CorporateDirectoryPanel({
         <div className="corporate-visibility-grid">
           {corporateVisibilityLedger.map((item) => (
             <article className={item.tone} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="corporate-directory-acceptance" aria-label="Corporate directory acceptance">
+        <div className="directory-source-strip">
+          <span className={`status-chip ${corporateDirectoryAccepted ? "success" : "warning"}`}>Corporate directory acceptance</span>
+          <small>{corporateDirectoryAccepted ? "Corporate user database proof is accepted for this live RBAC context." : "Not accepted for v1 until live rows, shared Passport data, review readiness, and review attestations are present."}</small>
+        </div>
+        <div className="corporate-visibility-grid">
+          {corporateDirectoryAcceptanceChecks.map((item) => (
+            <article className={item.ok ? "ready" : "warning"} key={item.label}>
               <span>{item.label}</span>
               <strong>{item.value}</strong>
               <small>{item.detail}</small>

@@ -188,6 +188,9 @@ assertIncludesAny(bundleText, ["Corporate user-data request"], "corporate Verify
 assertIncludesAny(bundleText, ["Professional email"], "corporate Verify professional email field label");
 assertIncludesAny(bundleText, ["Corporate user data proof"], "corporate Verify user data proof summary");
 assertIncludesAny(bundleText, ["user_data_proof"], "corporate Verify user data proof packet field");
+assertIncludesAny(bundleText, ["Corporate directory acceptance"], "corporate user database acceptance ledger");
+assertIncludesAny(bundleText, ["corporate_directory_acceptance"], "corporate user database acceptance packet field");
+assertIncludesAny(bundleText, ["live_corporate_rbac_context_loads_access_grants_shared_passport_rows_review_ready_people_and_review_attestations"], "corporate directory real database acceptance rule");
 assertIncludesAny(bundleText, ["Corporate access blocker map"], "corporate Verify access blocker map");
 assertIncludesAny(bundleText, ["corporate_access_blocker_map"], "corporate Verify blocker map packet field");
 assertIncludesAny(bundleText, ["visibility blocked"], "corporate Verify blocked visibility state");
