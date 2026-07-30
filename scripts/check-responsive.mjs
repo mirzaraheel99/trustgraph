@@ -34,7 +34,8 @@ const requiredMobileStacks = [
   ".team-operations-cockpit",
   ".team-operations-grid",
   ".team-source-strip",
-  ".verify-reviewer-flow-header"
+  ".verify-reviewer-flow-header",
+  ".workspace-route-strip"
 ];
 
 const gridStart = css.indexOf("@media (max-width: 1240px)");
@@ -64,6 +65,10 @@ if (!css.includes("width: min(100%, 1280px)") || !css.includes("grid-template-co
 
 if (!css.includes(".workspace > *") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(190px, 1fr))")) {
   throw new Error("Responsive check failed: workspace children and corporate plan cards must not force horizontal overflow.");
+}
+
+if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 720px")) {
+  throw new Error("Responsive check failed: primary workspace route strip must stay compact.");
 }
 
 if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("flex-direction: column")) {

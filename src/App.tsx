@@ -10206,6 +10206,24 @@ function App() {
               <span className="status-chip neutral">{activeOrganization.type.replace("_", " ")}</span>
               <span className="status-chip neutral">{authSession ? "live auth" : "product preview"}</span>
             </div>
+            <div className="workspace-route-strip" aria-label="Primary workspace routes">
+              {workspaces.map((item) => {
+                const allowed = canAccessWorkspace(activeMembership.role, item.id);
+                return (
+                  <button
+                    className={item.id === workspace.id ? "active" : ""}
+                    disabled={!allowed}
+                    key={item.id}
+                    onClick={() => changeWorkspace(item.id)}
+                    title={allowed ? `Open ${item.label}` : `${item.label} requires a different RBAC role`}
+                    type="button"
+                  >
+                    <span>{item.label}</span>
+                    <small>{allowed ? item.role : "Role required"}</small>
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div className="topbar-actions">
             {authSession ? (

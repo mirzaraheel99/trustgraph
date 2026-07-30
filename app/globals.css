@@ -3253,6 +3253,60 @@ p {
   margin-top: 16px;
 }
 
+.workspace-route-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 720px;
+  margin-top: 14px;
+}
+
+.workspace-route-strip button {
+  min-height: 54px;
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  padding: 10px 12px;
+  text-align: left;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.018)),
+    rgba(255, 255, 255, 0.018);
+}
+
+.workspace-route-strip button.active {
+  color: var(--text);
+  border-color: rgba(82, 214, 196, 0.46);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.14), rgba(134, 174, 246, 0.045)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.workspace-route-strip button:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+}
+
+.workspace-route-strip span,
+.workspace-route-strip small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-route-strip span {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.workspace-route-strip small {
+  font-size: 11px;
+}
+
 .topbar-actions {
   display: flex;
   flex-wrap: wrap;
@@ -7028,6 +7082,7 @@ p {
   }
 
   .workspace-stack,
+  .workspace-route-strip,
   .module-nav,
   .auth-actions,
   .password-update-form,
