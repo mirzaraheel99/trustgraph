@@ -15,6 +15,7 @@
     "check:pilot-acceptance": "node scripts/check-pilot-acceptance.mjs",
     "check:v1-demo-flow": "node scripts/check-v1-demo-flow.mjs",
     "check:vps-workflow": "node scripts/check-vps-workflow.mjs",
+    "check:premium-layout": "node scripts/check-premium-layout.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {

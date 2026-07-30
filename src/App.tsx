@@ -12873,69 +12873,6 @@ function App() {
 
   return (
     <div className="app">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-symbol">TG</div>
-          <div>
-            <strong>TrustGraph</strong>
-            <span>Verified workforce record</span>
-          </div>
-        </div>
-
-        <div className="sidebar-section-label">Workspaces</div>
-        <div className="workspace-stack">
-          {workspaces.map((item) => (
-            <WorkspaceButton
-              key={item.id}
-              workspace={item}
-              active={item.id === workspace.id}
-              allowed={canAccessWorkspace(activeMembership.role, item.id)}
-              onClick={() => changeWorkspace(item.id)}
-            />
-          ))}
-        </div>
-
-        <div className="sidebar-section-label">Account</div>
-        <div className="sidebar-account-card">
-          <span className={`status-chip ${authSession ? "success" : "neutral"}`}>{authSession ? "Signed in" : "Preview mode"}</span>
-          <strong>{authSession?.user.email ?? "Product preview"}</strong>
-          <small>{authSession ? sessionSummary : "Open Account to connect Supabase."}</small>
-          <div className="sidebar-session-actions" aria-label="Session controls">
-            <button className="secondary-action" onClick={openAuthControls} type="button">
-              <KeyRound size={16} />
-              Account
-            </button>
-            {authSession ? (
-              <button className="secondary-action" onClick={handleSignOut} type="button">
-                <LogOut size={16} />
-                Sign out
-              </button>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="sidebar-section-label">Current workspace</div>
-        <nav className="module-nav" aria-label="Workspace modules">
-          {workspace.nav.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button key={item.label} onClick={() => setQuery(item.label)} type="button">
-                <Icon size={17} />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
-
-        <div className="security-card">
-          <ShieldCheck size={18} />
-          <div>
-            <strong>Evidence-first trust</strong>
-            <span>No universal Trust Score. Every claim keeps source, status, and audit context.</span>
-          </div>
-        </div>
-      </aside>
-
       <main className="workspace">
         <header className="topbar">
           <div>

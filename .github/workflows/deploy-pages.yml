@@ -54,6 +54,9 @@ jobs:
       - name: Verify responsive coverage
         run: pnpm check:responsive
 
+      - name: Verify premium layout shell
+        run: pnpm check:premium-layout
+
       - name: Verify Supabase migration workflow
         run: pnpm check:migrations-workflow
 
