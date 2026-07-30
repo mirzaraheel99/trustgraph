@@ -8447,6 +8447,12 @@ function OnboardingChecklistPanel({
       evidence: `${accessGrants.length} Access Grants loaded`
     },
     {
+      label: "Corporate review database",
+      required: "At least one corporate review attestation row",
+      ok: corporateAccessReviews.length > 0,
+      evidence: `${corporateAccessReviews.length} corporate review attestations loaded`
+    },
+    {
       label: "Consent database",
       required: "Sensitive sharing consent row loaded or created",
       ok: consentAuthorizations.length > 0,
@@ -8474,7 +8480,10 @@ function OnboardingChecklistPanel({
       required: row.required,
       evidence: row.evidence,
       action:
-        row.label === "Corporate account database" || row.label === "Billing ledger database" || row.label === "Corporate access database"
+        row.label === "Corporate account database" ||
+        row.label === "Billing ledger database" ||
+        row.label === "Corporate access database" ||
+        row.label === "Corporate review database"
           ? "Open Corporate Verify"
           : "Open Professional Passport"
     }));
