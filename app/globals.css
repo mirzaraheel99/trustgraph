@@ -2909,6 +2909,17 @@ p,
     rgba(255, 255, 255, 0.025);
 }
 
+.working-database-test-runbook {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 64%),
+    rgba(255, 255, 255, 0.025);
+}
+
 .real-database-policy-card > div:first-child {
   display: grid;
   gap: 6px;
@@ -2933,6 +2944,29 @@ p,
   background: rgba(0, 0, 0, 0.12);
 }
 
+.working-database-runbook-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.working-database-runbook-grid article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.working-database-runbook-grid article.matched {
+  border-color: rgba(82, 214, 196, 0.28);
+  background: rgba(82, 214, 196, 0.07);
+}
+
 .working-database-proof strong,
 .working-database-proof small {
   display: block;
@@ -2940,6 +2974,7 @@ p,
 
 .working-database-proof-top > div,
 .working-database-acceptance-card > div,
+.working-database-runbook-grid div,
 .migration-repair-card > div {
   min-width: 0;
 }
@@ -7853,6 +7888,7 @@ p {
   .live-database-repair-grid article,
   .live-data-verdict,
   .live-data-verdict-grid,
+  .working-database-runbook-grid,
   .working-database-grid,
   .team-operations-cockpit,
   .team-operations-grid,

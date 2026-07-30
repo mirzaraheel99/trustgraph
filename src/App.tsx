@@ -7473,6 +7473,38 @@ function OnboardingChecklistPanel({
       ready: seedReconciliationComplete
     }
   ];
+  const workingDatabaseRunbookSteps = [
+    {
+      label: "1. Sign in on hosted TrustGraph",
+      proof: authSession ? authSession.user.email : "Hosted Supabase session required",
+      ready: Boolean(authSession)
+    },
+    {
+      label: "2. Load RBAC account context",
+      proof: accountContext ? "Professional and organization context loaded" : "Create or accept a corporate account",
+      ready: Boolean(accountContext)
+    },
+    {
+      label: "3. Run seed, reload rows, export proof",
+      proof: visibleSeedEvidence
+        ? `Seed evidence captured for org ${visibleSeedEvidence.corporate_organization_id.slice(0, 8)}`
+        : "Use Prepare live pilot workspace after login",
+      ready: Boolean(visibleSeedEvidence)
+    },
+    {
+      label: "4. Reconcile required live row groups",
+      proof: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length} v1 database groups ready`,
+      ready: liveDatabaseAcceptanceComplete
+    },
+    {
+      label: "5. Corporate Verify reviews shared rows",
+      proof: accessGrants.some((grant) => grant.status === "approved")
+        ? "Approved Access Grant available for reviewer workflow"
+        : "Approve or create an Access Grant before pilot sign-off",
+      ready: accessGrants.some((grant) => grant.status === "approved")
+    }
+  ];
+  const workingDatabaseRunbookReady = workingDatabaseRunbookSteps.filter((step) => step.ready).length;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -7544,6 +7576,14 @@ function OnboardingChecklistPanel({
       total: seedReconciliationRows.length,
       complete: seedReconciliationComplete,
       rows: seedReconciliationRows
+    },
+    working_database_test_runbook: {
+      label: "Working database test runbook",
+      accepted_source: "not static preview data",
+      status: liveDatabaseAcceptanceComplete ? "ready_for_pilot_database_review" : "operator_steps_open",
+      ready_steps: workingDatabaseRunbookReady,
+      total_steps: workingDatabaseRunbookSteps.length,
+      steps: workingDatabaseRunbookSteps
     },
     note:
       authSession && accountContext
@@ -7760,6 +7800,28 @@ function OnboardingChecklistPanel({
               <strong>{liveDatabaseAcceptanceComplete ? "Accepted" : "Not accepted"}</strong>
               <small>{realDatabaseAcceptancePolicy.current_status.replace(/_/g, " ")}</small>
             </span>
+          </div>
+        </div>
+        <div className="working-database-test-runbook">
+          <div className="seed-reconciliation-top">
+            <div>
+              <strong>Working database test runbook</strong>
+              <small>Run seed, reload rows, export proof, then let Corporate Verify review shared records. This is the v1 path for proving live Supabase rows, not static preview data.</small>
+            </div>
+            <span className={`status-chip ${workingDatabaseRunbookReady === workingDatabaseRunbookSteps.length ? "success" : "warning"}`}>
+              {workingDatabaseRunbookReady}/{workingDatabaseRunbookSteps.length} ready
+            </span>
+          </div>
+          <div className="working-database-runbook-grid">
+            {workingDatabaseRunbookSteps.map((step) => (
+              <article className={step.ready ? "matched" : ""} key={step.label}>
+                <span className={`status-dot ${step.ready ? "on" : ""}`} />
+                <div>
+                  <strong>{step.label}</strong>
+                  <small>{step.proof}</small>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
         <div className="migration-repair-card">

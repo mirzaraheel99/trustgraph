@@ -52,6 +52,7 @@ const requiredMobileStacks = [
   ".verify-request-header",
   ".verify-reviewer-flow-header",
   ".verify-user-data-proof-grid",
+  ".working-database-runbook-grid",
   ".workspace-flow-strip",
   ".workspace-route-strip"
 ];

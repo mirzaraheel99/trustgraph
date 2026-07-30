@@ -261,6 +261,10 @@ assertIncludesAny(bundleText, ["organization_rls_repair_evidence"], "working dat
 assertIncludesAny(bundleText, ["034_fix_organization_policy_recursion.sql"], "working database required RLS repair migration");
 assertIncludesAny(bundleText, ["Live database repair queue"], "working database repair queue");
 assertIncludesAny(bundleText, ["live_database_repair_queue"], "working database repair queue packet field");
+assertIncludesAny(bundleText, ["Working database test runbook"], "working database test runbook panel");
+assertIncludesAny(bundleText, ["Run seed, reload rows, export proof"], "working database test runbook operator path");
+assertIncludesAny(bundleText, ["working_database_test_runbook"], "working database test runbook packet field");
+assertIncludesAny(bundleText, ["not static preview data"], "working database test runbook real-data guard");
 assertIncludesAny(bundleText, ["Export working-data packet"], "working database proof export");
 assertIncludesAny(bundleText, ["Live rows currently loaded"], "working database live-count copy");
 assertIncludesAny(bundleText, ["Live database connected"], "database status strip live label");
