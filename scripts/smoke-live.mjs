@@ -178,6 +178,9 @@ assertIncludesAny(bundleText, ["Corporate user-data request"], "corporate Verify
 assertIncludesAny(bundleText, ["Professional email"], "corporate Verify professional email field label");
 assertIncludesAny(bundleText, ["Corporate user data proof"], "corporate Verify user data proof summary");
 assertIncludesAny(bundleText, ["user_data_proof"], "corporate Verify user data proof packet field");
+assertIncludesAny(bundleText, ["Corporate access blocker map"], "corporate Verify access blocker map");
+assertIncludesAny(bundleText, ["corporate_access_blocker_map"], "corporate Verify blocker map packet field");
+assertIncludesAny(bundleText, ["visibility blocked"], "corporate Verify blocked visibility state");
 assertIncludesAny(bundleText, ["Visible user rows"], "corporate Verify visible user rows proof");
 assertIncludesAny(bundleText, ["Request by professional email"], "corporate Verify professional email request step");
 assertIncludesAny(bundleText, ["Shared user Passport rows"], "corporate Verify shared user Passport rows step");

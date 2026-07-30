@@ -1822,6 +1822,40 @@ function VerifyRequestsPanel({
     }
   ];
   const nextVerifyStep = verifyFlowSteps.find((step) => !step.done) ?? verifyFlowSteps[verifyFlowSteps.length - 1];
+  const corporateAccessBlockerMap = [
+    {
+      label: "Company context",
+      value: disabled ? "Locked" : activeOrganization.name,
+      detail: disabled ? "Login with a corporate reviewer role before requesting user data." : "Corporate RBAC context is available for Verify requests.",
+      state: disabled ? "blocked" : "ready"
+    },
+    {
+      label: "Access request",
+      value: requests.length ? `${requests.length} sent` : "Needed",
+      detail: requests.length ? "Requests are tracked for this company workspace." : "Send a request to the professional email before records can appear.",
+      state: requests.length ? "ready" : "next"
+    },
+    {
+      label: "Professional consent",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: approvedCount ? "At least one Access Grant can expose scoped Passport rows." : "The professional must approve access before user rows are visible.",
+      state: approvedCount ? "ready" : requests.length ? "next" : "blocked"
+    },
+    {
+      label: "Visible records",
+      value: sharedRecords.length ? `${sharedRecords.length} rows` : "No rows",
+      detail: sharedRecords.length ? "Shared rows are loaded from the live database for this reviewer." : "No Passport rows are visible until grant and consent scope are satisfied.",
+      state: sharedRecords.length ? "ready" : approvedCount ? "next" : "blocked"
+    },
+    {
+      label: "Review blockers",
+      value: pendingGapCount ? `${pendingGapCount} gaps` : "Clear",
+      detail: pendingGapCount ? "Resolve missing-record requests before accepting the corporate review." : "No missing-record gaps are blocking review acceptance.",
+      state: pendingGapCount ? "next" : "ready"
+    }
+  ];
+  const accessBlockedCount = corporateAccessBlockerMap.filter((item) => item.state === "blocked").length;
+  const accessNextCount = corporateAccessBlockerMap.filter((item) => item.state === "next").length;
   const verifyFlowPacketName = `trustgraph-verify-reviewer-flow-${new Date().toISOString().slice(0, 10)}.json`;
   const verifyFlowPacket = {
     generated_at: new Date().toISOString(),
@@ -1847,6 +1881,7 @@ function VerifyRequestsPanel({
       detail: item.detail,
       ready: item.ready
     })),
+    corporate_access_blocker_map: corporateAccessBlockerMap,
     steps: verifyFlowSteps.map((step) => ({
       label: step.label,
       value: step.value,
@@ -1926,6 +1961,33 @@ function VerifyRequestsPanel({
               <strong>{step.label}</strong>
               <small>{step.value}</small>
               <p>{step.detail}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="corporate-access-blocker-map" aria-label="Corporate access blocker map">
+        <div className="verify-reviewer-flow-header">
+          <div>
+            <span className="eyebrow">Corporate access blocker map</span>
+            <strong>
+              {accessBlockedCount
+                ? `${accessBlockedCount} blocker${accessBlockedCount === 1 ? "" : "s"} before user rows are visible`
+                : accessNextCount
+                  ? `${accessNextCount} next step${accessNextCount === 1 ? "" : "s"} before review is ready`
+                  : "Corporate user access is ready to review"}
+            </strong>
+            <small>Diagnoses why the corporate portal can or cannot see professional Passport rows from the live database.</small>
+          </div>
+          <span className={`status-chip ${accessBlockedCount ? "warning" : "success"}`}>
+            {accessBlockedCount ? "visibility blocked" : "visibility path clear"}
+          </span>
+        </div>
+        <div className="corporate-access-blocker-grid">
+          {corporateAccessBlockerMap.map((item) => (
+            <article className={item.state} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
             </article>
           ))}
         </div>
