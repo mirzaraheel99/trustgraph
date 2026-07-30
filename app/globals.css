@@ -4075,9 +4075,9 @@ p {
 
 .setup-command-bar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr) minmax(240px, 0.38fr);
+  grid-template-columns: minmax(0, 1fr) minmax(310px, 0.46fr);
   gap: 12px;
-  align-items: stretch;
+  align-items: center;
   padding: 14px;
   border: 1px solid rgba(82, 214, 196, 0.24);
   border-radius: var(--radius);
@@ -4094,6 +4094,10 @@ p {
   min-width: 0;
 }
 
+.setup-command-bar > div:first-child {
+  align-content: center;
+}
+
 .setup-command-bar strong,
 .setup-command-bar small {
   display: block;
@@ -4107,8 +4111,9 @@ p {
 
 .setup-command-metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(84px, 1fr));
   gap: 8px;
+  grid-column: 1 / -1;
 }
 
 .setup-command-metrics span {
@@ -4129,7 +4134,10 @@ p {
 }
 
 .setup-command-actions {
-  display: grid;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -4137,6 +4145,8 @@ p {
 .setup-command-actions .secondary-action {
   justify-content: center;
   min-height: 38px;
+  white-space: nowrap;
+  flex: 0 1 auto;
 }
 
 .corporate-setup-summary strong,
@@ -7651,6 +7661,15 @@ p {
   .workspace,
   .sidebar {
     padding: 16px;
+  }
+
+  .setup-command-actions {
+    justify-content: stretch;
+  }
+
+  .setup-command-actions .primary-action,
+  .setup-command-actions .secondary-action {
+    flex: 1 1 100%;
   }
 
   .workspace-route-strip,
