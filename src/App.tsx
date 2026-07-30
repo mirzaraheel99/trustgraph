@@ -8538,6 +8538,7 @@ function OnboardingChecklistPanel({
   };
   const seededAccessGrantId = visibleSeedEvidence?.access_grant_id ?? "";
   const seededConsentAuthorizationId = visibleSeedEvidence?.consent_authorization_id ?? "";
+  const seededCorporateAccessReviewId = visibleSeedEvidence?.corporate_access_review_id ?? "";
   const seededSubscriptionId = visibleSeedEvidence?.subscription_id ?? "";
   const seededMembershipId = visibleSeedEvidence?.membership_id ?? "";
   const seedReconciliationRows = [
@@ -8564,6 +8565,12 @@ function OnboardingChecklistPanel({
       expected: visibleSeedEvidence ? 1 : 0,
       actual: consentAuthorizations.length,
       ok: Boolean(seededConsentAuthorizationId) && consentAuthorizations.some((authorization) => authorization.id === seededConsentAuthorizationId)
+    },
+    {
+      label: "Corporate review attestation",
+      expected: visibleSeedEvidence ? 1 : 0,
+      actual: corporateAccessReviews.length,
+      ok: Boolean(seededCorporateAccessReviewId) && corporateAccessReviews.some((review) => review.id === seededCorporateAccessReviewId)
     },
     {
       label: "Subscription",

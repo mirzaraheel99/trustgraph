@@ -308,6 +308,7 @@ assertIncludesAny(bundleText, ["Last browser seed evidence"], "persisted pilot s
 assertIncludesAny(bundleText, ["Export seed evidence"], "pilot seed evidence export control");
 assertIncludesAny(bundleText, ["Seed reconciliation"], "pilot seed reconciliation panel");
 assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched count");
+assertIncludesAny(bundleText, ["Corporate review attestation"], "pilot seed review attestation reconciliation row");
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
 assertIncludesAny(bundleText, ["Working database command center"], "working database command center panel");
 assertIncludesAny(bundleText, ["working_database_command_center"], "working database command center packet field");
