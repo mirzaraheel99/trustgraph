@@ -2030,19 +2030,34 @@ function CorporateDirectoryPanel({
     recordsByProfile[record.ownerProfileId] = [...(recordsByProfile[record.ownerProfileId] ?? []), record];
     return recordsByProfile;
   }, {});
-  const candidateRows = requests.map((request) => ({
-    id: request.id,
-    subjectProfileId: request.subject_profile_id,
-    name: request.subject_profile.full_name,
-    detail: request.subject_profile.email,
-    rawStatus: request.status,
-    status: request.status.replace(/_/g, " "),
-    signal: request.purpose,
-    sharedRecordCount: request.status === "approved" ? (sharedRecordsByProfile[request.subject_profile_id]?.length ?? 0) : 0,
-    openGapCount: openGapCountsByProfile[request.subject_profile_id] ?? 0,
-    gapTitles: gapTitlesByProfile[request.subject_profile_id] ?? [],
-    sharedRecordTitles: (sharedRecordsByProfile[request.subject_profile_id] ?? []).map((record) => record.title)
-  }));
+  const candidateRows = requests.map((request) => {
+    const sharedRecordCount = request.status === "approved" ? (sharedRecordsByProfile[request.subject_profile_id]?.length ?? 0) : 0;
+    const openGapCount = openGapCountsByProfile[request.subject_profile_id] ?? 0;
+    const readiness =
+      request.status === "approved" && sharedRecordCount > 0 && openGapCount === 0
+        ? "review_ready"
+        : request.status === "approved" && sharedRecordCount > 0
+          ? "needs_gap_follow_up"
+          : request.status === "requested"
+            ? "waiting_for_consent"
+            : "not_available";
+
+    return {
+      id: request.id,
+      subjectProfileId: request.subject_profile_id,
+      name: request.subject_profile.full_name,
+      detail: request.subject_profile.email,
+      rawStatus: request.status,
+      status: request.status.replace(/_/g, " "),
+      signal: request.purpose,
+      sharedRecordCount,
+      openGapCount,
+      readiness,
+      readinessLabel: readiness.replace(/_/g, " "),
+      gapTitles: gapTitlesByProfile[request.subject_profile_id] ?? [],
+      sharedRecordTitles: (sharedRecordsByProfile[request.subject_profile_id] ?? []).map((record) => record.title)
+    };
+  });
   const sharedResponsibilityCount = sharedRecords.reduce((count, record) => count + (record.responsibilities?.length ?? 0), 0);
   const sharedSkillCount = sharedRecords.reduce((count, record) => count + (record.skills?.length ?? 0), 0);
   const filteredRows = candidateRows.filter((row) => {
@@ -2054,6 +2069,9 @@ function CorporateDirectoryPanel({
   const packetName = `trustgraph-corporate-user-database-${new Date().toISOString().slice(0, 10)}.json`;
   const uniqueProfessionalCount = new Set(requests.map((request) => request.subject_profile_id)).size;
   const approvedAccessCount = requests.filter((request) => request.status === "approved").length;
+  const reviewReadyCount = candidateRows.filter((row) => row.readiness === "review_ready").length;
+  const waitingForConsentCount = candidateRows.filter((row) => row.readiness === "waiting_for_consent").length;
+  const needsGapFollowUpCount = candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").length;
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: "live_supabase_visibility",
@@ -2066,6 +2084,9 @@ function CorporateDirectoryPanel({
       filtered_professionals: filteredRows.length,
       unique_professionals: uniqueProfessionalCount,
       approved_access_grants: approvedAccessCount,
+      review_ready_professionals: reviewReadyCount,
+      waiting_for_consent_professionals: waitingForConsentCount,
+      needs_gap_follow_up_professionals: needsGapFollowUpCount,
       shared_passport_records: sharedRecords.length,
       shared_responsibilities: sharedResponsibilityCount,
       shared_skills: sharedSkillCount,
@@ -2079,6 +2100,7 @@ function CorporateDirectoryPanel({
       professional_email: row.detail,
       grant_status: row.rawStatus,
       purpose: row.signal,
+      readiness: row.readiness,
       shared_record_count: row.sharedRecordCount,
       shared_record_titles: row.sharedRecordTitles,
       open_gap_count: row.openGapCount,
@@ -2156,6 +2178,10 @@ function CorporateDirectoryPanel({
           <strong>{missingRecordRequests.filter((request) => request.status !== "fulfilled").length}</strong>
           <small>Open gaps</small>
         </div>
+        <div>
+          <strong>{reviewReadyCount}</strong>
+          <small>Review-ready people</small>
+        </div>
       </div>
       <div className="directory-source-strip">
         <span className="status-chip success">Live database view</span>
@@ -2179,10 +2205,15 @@ function CorporateDirectoryPanel({
                 <strong>{row.name}</strong>
                 <p>{row.signal}</p>
                 <small>{row.detail}</small>
-                <small>{row.sharedRecordCount} shared records · {row.openGapCount} open gaps</small>
+                <small>{row.sharedRecordCount} shared records - {row.openGapCount} open gaps</small>
                 {row.gapTitles.length ? <small>Gap focus: {row.gapTitles.slice(0, 2).join(", ")}</small> : null}
               </div>
-              <span className="status-chip neutral">{row.status}</span>
+              <div className="directory-card-status">
+                <span className={`status-chip ${row.readiness === "review_ready" ? "success" : row.readiness === "waiting_for_consent" ? "warning" : "neutral"}`}>
+                  {row.readinessLabel}
+                </span>
+                <span className="status-chip neutral">{row.status}</span>
+              </div>
             </article>
           ))
         ) : (
