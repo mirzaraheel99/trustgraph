@@ -2317,6 +2317,26 @@ function CorporateDirectoryPanel({
   const reviewReadyCount = candidateRows.filter((row) => row.readiness === "review_ready").length;
   const waitingForConsentCount = candidateRows.filter((row) => row.readiness === "waiting_for_consent").length;
   const needsGapFollowUpCount = candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").length;
+  const directoryReviewBoard = [
+    {
+      label: "Ready to review",
+      count: reviewReadyCount,
+      detail: "Approved grants with shared records and no open gaps.",
+      focus: candidateRows.filter((row) => row.readiness === "review_ready").slice(0, 3)
+    },
+    {
+      label: "Waiting for consent",
+      count: waitingForConsentCount,
+      detail: "Requests sent but professional approval has not synced records yet.",
+      focus: candidateRows.filter((row) => row.readiness === "waiting_for_consent").slice(0, 3)
+    },
+    {
+      label: "Needs gap follow-up",
+      count: needsGapFollowUpCount,
+      detail: "Approved shares with records, but missing-record requests remain open.",
+      focus: candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").slice(0, 3)
+    }
+  ];
   const isLiveCorporateDatabase = databaseMode === "live_supabase_visibility";
   const databaseModeLabel = isLiveCorporateDatabase ? "Live corporate database" : "Corporate database locked";
   const databaseModeDetail = isLiveCorporateDatabase
@@ -2344,6 +2364,18 @@ function CorporateDirectoryPanel({
       missing_record_requests: missingRecordRequests.length,
       open_gap_requests: missingRecordRequests.filter((request) => request.status !== "fulfilled").length
     },
+    reviewer_scan_board: directoryReviewBoard.map((bucket) => ({
+      label: bucket.label,
+      count: bucket.count,
+      detail: bucket.detail,
+      professionals: bucket.focus.map((row) => ({
+        professional_name: row.name,
+        professional_email: row.detail,
+        readiness: row.readiness,
+        shared_record_count: row.sharedRecordCount,
+        open_gap_count: row.openGapCount
+      }))
+    })),
     professionals: filteredRows.map((row) => ({
       access_grant_id: row.id,
       subject_profile_id: row.subjectProfileId,
@@ -2433,6 +2465,32 @@ function CorporateDirectoryPanel({
           <strong>{reviewReadyCount}</strong>
           <small>Review-ready people</small>
         </div>
+      </div>
+      <div className="directory-review-board">
+        {directoryReviewBoard.map((bucket) => (
+          <article key={bucket.label}>
+            <div>
+              <span>{bucket.label}</span>
+              <strong>{bucket.count}</strong>
+              <small>{bucket.detail}</small>
+            </div>
+            <div className="directory-review-focus">
+              {bucket.focus.length ? (
+                bucket.focus.map((row) => (
+                  <span key={row.id}>
+                    <strong>{row.name}</strong>
+                    <small>{row.sharedRecordCount} shared / {row.openGapCount} gaps</small>
+                  </span>
+                ))
+              ) : (
+                <span>
+                  <strong>No rows</strong>
+                  <small>Bucket is clear for the current filter.</small>
+                </span>
+              )}
+            </div>
+          </article>
+        ))}
       </div>
       <div className="directory-source-strip">
         <span className={`status-chip ${isLiveCorporateDatabase ? "success" : "warning"}`}>{databaseModeLabel}</span>

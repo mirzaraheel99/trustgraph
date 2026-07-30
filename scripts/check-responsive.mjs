@@ -12,6 +12,7 @@ const requiredMobileStacks = [
   ".corporate-task-hub-header",
   ".corporate-setup-guide",
   ".directory-source-strip",
+  ".directory-review-board",
   ".evidence-source-strip",
   ".issuer-source-strip",
   ".invitation-handoff-strip",

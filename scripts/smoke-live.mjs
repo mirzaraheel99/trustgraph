@@ -230,6 +230,9 @@ assertIncludesAny(bundleText, ["Live corporate database"], "Corporate user datab
 assertIncludesAny(bundleText, ["live_database_evidence"], "Corporate user database evidence flag");
 assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
 assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
+assertIncludesAny(bundleText, ["Ready to review"], "Corporate user database review-ready bucket");
+assertIncludesAny(bundleText, ["Waiting for consent"], "Corporate user database waiting bucket");
+assertIncludesAny(bundleText, ["reviewer_scan_board"], "Corporate user database scan board packet field");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");
 assertIncludesAny(bundleText, ["shared responsibilities"], "Corporate user database structured responsibility proof");
 assertIncludesAny(bundleText, ["Corporate user database packet"], "Corporate user database packet label");
