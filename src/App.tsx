@@ -8276,6 +8276,23 @@ function PublicSite({
         : "professional_passport_records_evidence_grants_database",
     human_gates: portal === "corporate" ? ["stripe_checkout_before_paid_launch"] : []
   };
+  const pricingDecisionStrip = [
+    {
+      label: "Live now",
+      value: "Supabase ledger",
+      detail: "Corporate Verify pilot activation writes organization_subscriptions rows with audit history."
+    },
+    {
+      label: "Corporate pilot",
+      value: "$149 monthly",
+      detail: "Used for plan selection, seat planning, readiness checks, and pilot acceptance evidence."
+    },
+    {
+      label: "Human gate",
+      value: "Stripe checkout",
+      detail: "Real payment collection waits for product, tax, invoice, refund, dunning, and webhook decisions."
+    }
+  ];
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
@@ -8314,6 +8331,7 @@ function PublicSite({
     },
     repaired_link_ready: Boolean(repairedVerificationUrl),
     portal_auth_outcome_summary: authOutcomePacket,
+    pricing_decision_strip: pricingDecisionStrip,
     supabase_auth_settings_needed: [
       "Set Supabase Auth Site URL to the hosted TrustGraph app before inviting pilot users.",
       "Add GitHub Pages and TrustGraph VPS URLs to Supabase allowed redirect URLs.",
@@ -8818,6 +8836,15 @@ function PublicSite({
               >
                 {plan.action}
               </button>
+            </article>
+          ))}
+        </div>
+        <div className="pricing-decision-strip" aria-label="Pricing decision strip">
+          {pricingDecisionStrip.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
             </article>
           ))}
         </div>

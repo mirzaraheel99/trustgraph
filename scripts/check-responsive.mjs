@@ -37,6 +37,7 @@ const requiredMobileStacks = [
   ".portal-auth-outcome-grid",
   ".portal-decision-panel",
   ".portal-decision-grid",
+  ".pricing-decision-strip",
   ".public-session-handoff",
   ".real-database-policy-grid",
   ".registration-path-grid",

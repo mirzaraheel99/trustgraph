@@ -697,6 +697,50 @@ button {
   margin-top: auto;
 }
 
+.pricing-decision-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.pricing-decision-strip article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(225, 184, 102, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.07), transparent 68%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.pricing-decision-strip span,
+.pricing-decision-strip strong,
+.pricing-decision-strip small {
+  display: block;
+  min-width: 0;
+}
+
+.pricing-decision-strip span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.pricing-decision-strip strong {
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.pricing-decision-strip small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .registration-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -7759,6 +7803,7 @@ p {
   .portal-route-grid,
   .workflow-grid,
   .pricing-grid,
+  .pricing-decision-strip,
   .pending-registration-grid,
   .registration-grid,
   .directory-controls,
