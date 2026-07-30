@@ -5237,8 +5237,8 @@ p {
 .setup-center-header {
   grid-column: 1 / -1;
   display: grid;
-  gap: 6px;
-  padding: 4px 2px 8px;
+  gap: 5px;
+  padding: 2px 2px 4px;
 }
 
 .setup-center-header h2,
@@ -5247,19 +5247,21 @@ p {
 }
 
 .setup-center-header h2 {
-  font-size: clamp(24px, 2vw, 32px);
+  font-size: clamp(22px, 1.8vw, 28px);
 }
 
 .setup-center-header p {
   max-width: 860px;
   color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .corporate-setup-guide {
   display: grid;
-  grid-template-columns: minmax(220px, 0.34fr) minmax(0, 1fr);
-  gap: 14px;
-  padding: 16px;
+  grid-template-columns: minmax(190px, 0.28fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
   border: 1px solid rgba(82, 214, 196, 0.22);
   border-radius: var(--radius);
   background:
@@ -5573,9 +5575,9 @@ p {
 .setup-command-bar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(220px, 0.3fr);
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  padding: 14px;
+  padding: 12px;
   border: 1px solid rgba(82, 214, 196, 0.24);
   border-radius: var(--radius);
   background:
@@ -5602,7 +5604,7 @@ p {
 }
 
 .setup-command-bar > div:first-child > strong {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.1;
 }
 
@@ -5651,23 +5653,23 @@ p {
 }
 
 .corporate-setup-summary strong {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.15;
 }
 
 .corporate-setup-steps {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 7px;
 }
 
 .corporate-setup-steps button {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-columns: 26px minmax(0, 1fr);
   gap: 4px 8px;
   align-items: center;
-  min-height: 68px;
-  padding: 10px;
+  min-height: 58px;
+  padding: 8px;
   text-align: left;
   color: var(--muted);
   border: 1px solid var(--line);
@@ -5677,8 +5679,8 @@ p {
 
 .corporate-setup-steps button span {
   grid-row: span 2;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   display: grid;
   place-items: center;
   color: var(--muted);
@@ -5718,18 +5720,23 @@ p {
 }
 
 .setup-tabs {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 .setup-tabs button {
   position: relative;
-  min-height: 70px;
+  flex: 1 1 136px;
+  min-height: 46px;
   display: grid;
   align-content: center;
-  gap: 4px;
-  padding: 12px;
+  gap: 2px;
+  padding: 8px 32px 8px 10px;
   text-align: left;
   color: var(--muted);
   border: 1px solid var(--line);
@@ -5759,16 +5766,17 @@ p {
 
 .setup-tabs strong {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  min-width: 24px;
-  height: 24px;
+  top: 50%;
+  right: 8px;
+  min-width: 22px;
+  height: 22px;
   display: grid;
   place-items: center;
   color: #06110f;
   border-radius: 999px;
   background: var(--teal);
   font-size: 11px;
+  transform: translateY(-50%);
 }
 
 .setup-panel-grid {
