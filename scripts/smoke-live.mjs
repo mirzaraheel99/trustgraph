@@ -204,10 +204,12 @@ assertIncludesAny(bundleText, ["Copy hosted link"], "hosted auth link copy contr
 assertIncludesAny(bundleText, ["Every portal connects to the live database foundation"], "live database registration outcome copy");
 assertIncludesAny(bundleText, ["After registration"], "registration outcome section");
 assertIncludesAny(bundleText, ["Set new password"], "password recovery update control");
+assertIncludesAny(bundleText, ["Password recovery session ready"], "password recovery session ready state");
 assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
 assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");
 assertIncludesAny(bundleText, ["Account recovery readiness"], "account recovery readiness label");
 assertIncludesAny(bundleText, ["account_recovery_readiness"], "account recovery readiness packet field");
+assertIncludesAny(bundleText, ["recovery_session_ready"], "account recovery packet session state");
 assertIncludesAny(bundleText, ["Data export and closure"], "account data-rights panel");
 assertIncludesAny(bundleText, ["Request data export"], "data export request control");
 assertIncludesAny(bundleText, ["Request account closure"], "account closure request control");
@@ -326,6 +328,9 @@ assertIncludesAny(bundleText, ["real_database_acceptance_policy"], "real databas
 assertIncludesAny(bundleText, ["signed_in_supabase_repository_rows"], "real database accepted source field");
 assertIncludesAny(bundleText, ["Organization RLS recursion repair"], "working database RLS repair proof card");
 assertIncludesAny(bundleText, ["organization_rls_repair_evidence"], "working database RLS repair packet field");
+assertIncludesAny(bundleText, ["Database policy repair guidance"], "working database policy repair guidance card");
+assertIncludesAny(bundleText, ["database_policy_repair_guidance"], "working database policy repair guidance packet field");
+assertIncludesAny(bundleText, ["42P17"], "working database policy recursion symptom");
 assertIncludesAny(bundleText, ["034_fix_organization_policy_recursion.sql"], "working database required RLS repair migration");
 assertIncludesAny(bundleText, ["Live database repair queue"], "working database repair queue");
 assertIncludesAny(bundleText, ["live_database_repair_queue"], "working database repair queue packet field");

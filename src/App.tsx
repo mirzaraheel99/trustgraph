@@ -8496,6 +8496,19 @@ function OnboardingChecklistPanel({
       ? "Migration 034 is recorded in the release ledger for this database."
       : "Migration 034 is required for corporate account context. Open Admin release ledger or GitHub Actions to prove the run."
   };
+  const databasePolicyRepairGuidance = {
+    label: "Database policy repair guidance",
+    symptom: "Supabase 42P17 infinite recursion or corporate organizations policy failure",
+    blocking_result: "Corporate account context and live user database proof cannot be accepted until migration 034 is applied and visible in the release ledger.",
+    required_migration_path: organizationRlsRepairEvidence.required_migration_path,
+    current_ledger_status: organizationRlsRepairEvidence.ledger_status,
+    operator_actions: [
+      "Run Apply Supabase Migrations for migration 034 if the project still reports policy recursion.",
+      "Open Admin release ledger after login and confirm 034_fix_organization_policy_recursion.sql is recorded as applied.",
+      "Refresh TrustGraph, reload account context, then export the working-data packet again."
+    ],
+    accepted_when: "organization_rls_repair_evidence.applied_is_true_and_corporate_account_context_loads_without_policy_recursion"
+  };
   const liveDatabaseAcceptanceRows = [
     {
       label: "Professional Passport database",
@@ -8792,7 +8805,8 @@ function OnboardingChecklistPanel({
       unmet_requirements: liveDatabaseAcceptanceRows.filter((row) => !row.ok).map((row) => row.required),
       live_database_repair_queue: liveDatabaseRepairQueue,
       real_database_acceptance_policy: realDatabaseAcceptancePolicy,
-      organization_rls_repair_evidence: organizationRlsRepairEvidence
+      organization_rls_repair_evidence: organizationRlsRepairEvidence,
+      database_policy_repair_guidance: databasePolicyRepairGuidance
     },
     checklist_completed: completed,
     checklist_total: checklist.length,
@@ -9100,6 +9114,34 @@ function OnboardingChecklistPanel({
             </span>
           </div>
         </div>
+        {!organizationRlsRepairEvidence.applied ? (
+          <div className="database-policy-repair-guidance">
+            <div>
+              <span className="status-chip warning">Database policy repair guidance</span>
+              <strong>Corporate database access needs migration 034 proof</strong>
+              <small>{databasePolicyRepairGuidance.blocking_result}</small>
+            </div>
+            <div className="real-database-policy-grid">
+              <span>
+                <strong>42P17</strong>
+                <small>Policy recursion symptom</small>
+              </span>
+              <span>
+                <strong>{databasePolicyRepairGuidance.required_migration_path}</strong>
+                <small>Required migration</small>
+              </span>
+              <span>
+                <strong>{databasePolicyRepairGuidance.current_ledger_status.replace(/_/g, " ")}</strong>
+                <small>Current proof state</small>
+              </span>
+            </div>
+            <div className="policy-repair-actions">
+              {databasePolicyRepairGuidance.operator_actions.map((action) => (
+                <span key={action}>{action}</span>
+              ))}
+            </div>
+          </div>
+        ) : null}
         <div className="live-database-repair-queue">
           <div className="seed-reconciliation-top">
             <div>
