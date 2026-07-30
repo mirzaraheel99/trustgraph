@@ -480,7 +480,8 @@ assertIncludesAny(bundleText, ["Auth redirect needs the hosted TrustGraph URL"],
 assertIncludesAny(bundleText, ["Hosted Supabase Auth is configured"], "hosted Supabase Auth configured status");
 assertIncludesAny(bundleText, ["Session controls"], "persistent session controls");
 assertIncludesAny(bundleText, ["Primary workspace routes"], "primary workspace route strip");
-assertIncludesAny(bundleText, ["Role required"], "workspace route disabled-state copy");
+assertIncludesAny(bundleText, ["Guided access setup"], "permission gate guided setup state");
+assertIncludesAny(bundleText, ["Open corporate setup"], "permission gate corporate setup action");
 assertIncludesAny(bundleText, ["Auth redirect readiness packet"], "auth redirect readiness packet label");
 assertIncludesAny(bundleText, ["Export auth packet"], "auth redirect readiness export control");
 assertIncludesAny(bundleText, ["Registration auth readiness packet"], "registration auth readiness packet label");

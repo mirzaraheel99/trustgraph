@@ -197,9 +197,9 @@ function WorkspaceButton({
   onClick: () => void;
 }) {
   return (
-    <button className={`workspace-button ${active ? "active" : ""}`} disabled={!allowed} onClick={onClick}>
+    <button aria-disabled={!allowed} className={`workspace-button ${active ? "active" : ""} ${allowed ? "" : "locked"}`} onClick={onClick}>
       <span>{workspace.label}</span>
-      <small>{allowed ? workspace.role : "Role required"}</small>
+      <small>{allowed ? workspace.role : "Set up access"}</small>
     </button>
   );
 }
@@ -9726,17 +9726,37 @@ function NotificationPanel({
   );
 }
 
-function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; workspaceLabel: string }) {
+function PermissionGate({
+  roleLabel,
+  workspaceLabel,
+  onOpenAccount,
+  onOpenCorporateSetup
+}: {
+  roleLabel: string;
+  workspaceLabel: string;
+  onOpenAccount: () => void;
+  onOpenCorporateSetup: () => void;
+}) {
   return (
     <section className="permission-panel">
       <ShieldAlert size={34} />
       <div>
-        <span className="eyebrow">Permission denied state</span>
+        <span className="eyebrow">Guided access setup</span>
         <h2>{roleLabel} cannot open {workspaceLabel}</h2>
         <p>
-          TrustGraph blocks portal access unless the active Organization Membership grants the matching role. Switch
-          account context to continue.
+          TrustGraph keeps RBAC enforced, but locked routes now take you to the exact setup path. Login, create or
+          switch the corporate workspace, then assign the matching reviewer or admin role.
         </p>
+        <div className="permission-actions">
+          <button className="primary-action" onClick={onOpenAccount} type="button">
+            <KeyRound size={16} />
+            Open account setup
+          </button>
+          <button className="secondary-action" onClick={onOpenCorporateSetup} type="button">
+            <BriefcaseBusiness size={16} />
+            Open corporate setup
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -13019,7 +13039,12 @@ function App() {
         </header>
 
         {!workspaceAllowed ? (
-          <PermissionGate roleLabel={activeRole.label} workspaceLabel={workspace.label} />
+          <PermissionGate
+            roleLabel={activeRole.label}
+            workspaceLabel={workspace.label}
+            onOpenAccount={openAuthControls}
+            onOpenCorporateSetup={openCorporateControls}
+          />
         ) : (
           <>
         <section className="workspace-command-strip" aria-label="Workspace command strip">

@@ -54,6 +54,7 @@ const requiredMobileStacks = [
   ".portal-access-steps",
   ".portal-entry-path",
   ".portal-handoff-checklist",
+  ".permission-actions",
   ".portal-launch-map-grid",
   ".portal-auth-summary-grid",
   ".portal-auth-outcome-grid",

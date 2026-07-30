@@ -2084,11 +2084,12 @@ p,
   border-color: var(--line-strong);
 }
 
-.workspace-button:disabled {
-  cursor: not-allowed;
-  color: var(--faint);
-  border-color: rgba(201, 214, 207, 0.08);
-  background: rgba(255, 255, 255, 0.015);
+.workspace-button.locked {
+  color: var(--muted);
+  border-color: rgba(225, 184, 102, 0.24);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.07), transparent 68%),
+    rgba(255, 255, 255, 0.018);
 }
 
 .module-nav {
@@ -6275,6 +6276,13 @@ p {
   line-height: 1.05;
 }
 
+.permission-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
 .context-actions {
   justify-content: flex-start;
   flex-wrap: wrap;
@@ -10222,6 +10230,7 @@ p {
   .auth-support-actions,
   .auth-recovery-decision-grid,
   .auth-operator-path,
+  .permission-actions,
   .corporate-launch-command,
   .corporate-launch-actions,
   .corporate-account-rbac-path,
