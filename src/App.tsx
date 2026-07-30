@@ -10463,48 +10463,60 @@ function PublicSite({
               </span>
             </div>
           </div>
-          <div className="portal-access-guide">
-            <div>
-              <span className="eyebrow">{portal === "corporate" ? "Corporate registration sequence" : "Professional registration sequence"}</span>
-              <strong>{selectedRegistrationPath.portal}</strong>
+          <details className="portal-support-details">
+            <summary>
+              <span>{portal === "corporate" ? "Corporate setup steps" : "Professional setup steps"}</span>
               <small>{selectedRegistrationPath.nextAction}</small>
+            </summary>
+            <div className="portal-access-guide">
+              <div>
+                <span className="eyebrow">{portal === "corporate" ? "Corporate registration sequence" : "Professional registration sequence"}</span>
+                <strong>{selectedRegistrationPath.portal}</strong>
+                <small>{selectedRegistrationPath.nextAction}</small>
+              </div>
+              <div className="portal-access-steps">
+                {selectedPortalGuide.map((step) => (
+                  <span key={step.title}>
+                    <strong>{step.label}</strong>
+                    <small>{step.title}</small>
+                    <small>{step.detail}</small>
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="portal-access-steps">
-              {selectedPortalGuide.map((step) => (
-                <span key={step.title}>
-                  <strong>{step.label}</strong>
-                  <small>{step.title}</small>
-                  <small>{step.detail}</small>
-                </span>
-              ))}
+          </details>
+          <details className="portal-support-details">
+            <summary>
+              <span>Portal login switchboard</span>
+              <small>Compare personal and corporate routes before creating database rows.</small>
+            </summary>
+            <div className="portal-login-switchboard" aria-label="Portal login switchboard">
+              <div>
+                <span className="status-chip success">Portal login switchboard</span>
+                <strong>Personal and corporate users start from one login, then route by account type</strong>
+                <small>Use this map before registering so the correct live database rows and dashboard are created.</small>
+              </div>
+              <div className="portal-login-switchboard-grid">
+                {portalLoginSwitchboard.map((route) => (
+                  <button
+                    className={portal === route.portal ? "active" : ""}
+                    key={route.label}
+                    onClick={() => {
+                      setPortal(route.portal);
+                      setMode("signup");
+                    }}
+                    type="button"
+                  >
+                    <strong>{route.label}</strong>
+                    <small>{route.start}</small>
+                    <span>{route.dashboard}</span>
+                    <small>{route.writes}</small>
+                    <small>{route.next}</small>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="portal-login-switchboard" aria-label="Portal login switchboard">
-            <div>
-              <span className="status-chip success">Portal login switchboard</span>
-              <strong>Personal and corporate users start from one login, then route by account type</strong>
-              <small>Use this map before registering so the correct live database rows and dashboard are created.</small>
-            </div>
-            <div className="portal-login-switchboard-grid">
-              {portalLoginSwitchboard.map((route) => (
-                <button
-                  className={portal === route.portal ? "active" : ""}
-                  key={route.label}
-                  onClick={() => {
-                    setPortal(route.portal);
-                    setMode("signup");
-                  }}
-                  type="button"
-                >
-                  <strong>{route.label}</strong>
-                  <small>{route.start}</small>
-                  <span>{route.dashboard}</span>
-                  <small>{route.writes}</small>
-                  <small>{route.next}</small>
-                </button>
-              ))}
-            </div>
-          </div>
+          </details>
           <div className="portal-outcome-list">
             {selectedPortalSteps.map((step) => (
               <span key={step}>{step}</span>

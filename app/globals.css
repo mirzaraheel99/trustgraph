@@ -858,9 +858,16 @@ button {
 
 .public-auth-section {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 520px);
-  gap: clamp(22px, 5vw, 64px);
+  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 500px);
+  gap: clamp(22px, 4vw, 52px);
   align-items: start;
+}
+
+.public-auth-section > div:first-child {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
 }
 
 .portal-outcome-list {
@@ -875,7 +882,7 @@ button {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   max-width: 700px;
-  margin-top: 18px;
+  margin-top: 0;
 }
 
 .auth-choice-summary button {
@@ -928,7 +935,7 @@ button {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   max-width: 700px;
-  margin-top: 18px;
+  margin-top: 0;
   padding: 8px;
   border: 1px solid rgba(82, 214, 196, 0.18);
   border-radius: var(--radius);
@@ -965,8 +972,8 @@ button {
 .portal-access-guide {
   display: grid;
   gap: 12px;
-  max-width: 700px;
-  margin-top: 18px;
+  max-width: none;
+  margin-top: 0;
   padding: 14px;
   border: 1px solid rgba(82, 214, 196, 0.2);
   border-radius: var(--radius);
@@ -979,7 +986,7 @@ button {
   display: grid;
   gap: 12px;
   max-width: 700px;
-  margin-top: 18px;
+  margin-top: 0;
   padding: 14px;
   border: 1px solid rgba(134, 174, 246, 0.24);
   border-radius: var(--radius);
@@ -1391,6 +1398,72 @@ button {
   background:
     linear-gradient(135deg, rgba(134, 174, 246, 0.085), transparent 62%),
     rgba(255, 255, 255, 0.03);
+}
+
+.portal-support-details {
+  display: grid;
+  max-width: 700px;
+  border: 1px solid rgba(255, 255, 255, 0.095);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.055), transparent 64%),
+    rgba(255, 255, 255, 0.022);
+  overflow: hidden;
+}
+
+.portal-support-details summary {
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+}
+
+.portal-support-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.portal-support-details summary::after {
+  content: "+";
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--teal);
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: 999px;
+  background: rgba(82, 214, 196, 0.08);
+  font-weight: 950;
+}
+
+.portal-support-details[open] summary::after {
+  content: "-";
+}
+
+.portal-support-details summary span,
+.portal-support-details summary small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.portal-support-details summary span {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.portal-support-details summary small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.portal-support-details > div {
+  margin: 0 10px 10px;
 }
 
 .portal-login-switchboard > div:first-child {
@@ -9861,6 +9934,7 @@ p {
   .workspace-command-metrics,
   .portal-decision-panel,
   .portal-decision-grid,
+  .portal-support-details,
   .auth-path-grid,
   .billing-estimate-card,
   .billing-decision-card,

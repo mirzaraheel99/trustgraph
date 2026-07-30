@@ -58,6 +58,7 @@ const requiredMobileStacks = [
   ".portal-auth-summary-grid",
   ".portal-auth-outcome-grid",
   ".portal-login-switchboard-grid",
+  ".portal-support-details",
   ".proof-export-hub-grid",
   ".workspace-command-strip",
   ".workspace-command-metrics",
@@ -120,7 +121,7 @@ if (!css.includes(".sidebar .account-admin-row") || !css.includes(".sidebar .acc
   throw new Error("Responsive check failed: sidebar account controls must stack without overflowing the narrow rail.");
 }
 
-if (!css.includes(".portal-entry-path") || !css.includes(".auth-selected-route")) {
+if (!css.includes(".portal-entry-path") || !css.includes(".auth-selected-route") || !css.includes(".portal-support-details summary::after")) {
   throw new Error("Responsive check failed: portal login needs a compact entry path and selected route summary.");
 }
 
