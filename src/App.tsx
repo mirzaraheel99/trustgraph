@@ -360,6 +360,32 @@ function RecordDetail({
   });
   const evidenceManifestName = `trustgraph-evidence-manifest-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.csv`;
   const evidenceAccessPacketName = `trustgraph-evidence-access-packet-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`;
+  const evidenceAccessChain = [
+    {
+      label: "Metadata row",
+      value: evidenceDocuments.length ? `${evidenceDocuments.length} linked` : "Needed",
+      detail: "Evidence metadata is visible without exposing private files.",
+      ready: evidenceDocuments.length > 0
+    },
+    {
+      label: "Private file",
+      value: evidenceDocuments.some((document) => document.storage_path) ? "Attached" : "Metadata only",
+      detail: "Raw files stay in private Supabase Storage.",
+      ready: evidenceDocuments.some((document) => document.storage_path)
+    },
+    {
+      label: "Signed preview/download",
+      value: "Short-lived URLs",
+      detail: "Preview expires in 5 minutes; download expires in 2 minutes.",
+      ready: evidenceDocuments.some((document) => document.storage_path)
+    },
+    {
+      label: "Audit expectation",
+      value: "Access logged",
+      detail: "Preview, download, export, and sensitive access are expected to create audit evidence.",
+      ready: true
+    }
+  ];
   const evidenceAccessPacket = {
     generated_at: new Date().toISOString(),
     packet_mode: "selected_record_evidence_preview_download",
@@ -388,6 +414,7 @@ function RecordDetail({
       file_backed_documents: filteredEvidenceDocuments.filter((document) => document.storage_path).length,
       metadata_only_documents: filteredEvidenceDocuments.filter((document) => !document.storage_path).length
     },
+    evidence_access_chain: evidenceAccessChain,
     documents: filteredEvidenceDocuments.map((document) => ({
       id: document.id,
       title: document.title,
@@ -581,6 +608,18 @@ function RecordDetail({
             <div className="evidence-source-strip">
               <span className="status-chip neutral">Evidence preview/download proof</span>
               <small>Metadata-only evidence stays visible without exposing raw files; file-backed evidence opens only through signed preview/download controls.</small>
+            </div>
+            <div className="evidence-access-chain" aria-label="Evidence access chain">
+              {evidenceAccessChain.map((item) => (
+                <article className={item.ready ? "ready" : ""} key={item.label}>
+                  <span className={`status-dot ${item.ready ? "on" : ""}`} />
+                  <div>
+                    <strong>{item.label}</strong>
+                    <small>{item.value}</small>
+                    <small>{item.detail}</small>
+                  </div>
+                </article>
+              ))}
             </div>
           </>
         ) : null}

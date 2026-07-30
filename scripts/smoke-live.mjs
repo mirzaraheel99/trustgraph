@@ -191,6 +191,9 @@ assertIncludesAny(bundleText, ["Hosted email verification accepted"], "hosted au
 assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signed URL label");
 assertIncludesAny(bundleText, ["Export evidence manifest"], "evidence manifest export control");
 assertIncludesAny(bundleText, ["Evidence preview/download proof"], "evidence preview/download proof label");
+assertIncludesAny(bundleText, ["Evidence access chain"], "evidence access chain panel");
+assertIncludesAny(bundleText, ["evidence_access_chain"], "evidence access chain packet field");
+assertIncludesAny(bundleText, ["Audit expectation"], "evidence audit expectation step");
 assertIncludesAny(bundleText, ["Export access packet"], "evidence access packet export control");
 assertIncludesAny(bundleText, ["selected_record_evidence_preview_download"], "evidence access packet mode");
 assertIncludesAny(bundleText, ["short_lived_signed_url_only"], "evidence signed URL policy");
