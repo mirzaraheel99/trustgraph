@@ -99,6 +99,10 @@ if (!flexStackCss.includes(".workspace-route-strip") || !flexStackCss.includes("
   throw new Error("Responsive check failed: mobile workspace routing must stay compact.");
 }
 
+if (!flexStackCss.includes(".hero-value") || !flexStackCss.includes("font-size: 52px")) {
+  throw new Error("Responsive check failed: mobile hero cards must use app-scale type.");
+}
+
 const missing = requiredMobileStacks.filter((selector) => !gridStackCss.includes(selector) && !flexStackCss.includes(selector));
 
 if (missing.length) {

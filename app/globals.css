@@ -7683,6 +7683,29 @@ p {
 
   .hero-card {
     min-height: auto;
+    padding: 12px;
+  }
+
+  .hero {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .hero-value {
+    margin: 14px 0 8px;
+    font-size: 52px;
+  }
+
+  .hero-card p {
+    margin-bottom: 0;
+    line-height: 1.45;
+  }
+
+  .advisory-signals,
+  .advisory-source-grid,
+  .advisory-actions {
+    gap: 6px;
+    margin-top: 9px;
   }
 
   .qa-score-card,
@@ -7889,6 +7912,6 @@ p {
   }
 
   .hero-value {
-    font-size: 64px;
+    font-size: 52px;
   }
 }
