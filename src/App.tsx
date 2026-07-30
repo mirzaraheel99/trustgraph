@@ -5556,6 +5556,35 @@ function TeamMembersPanel({
     return matchesStatus && haystack.includes(memberQuery.trim().toLowerCase());
   });
   const exportName = `trustgraph-team-members-${new Date().toISOString().slice(0, 10)}.csv`;
+  const rosterPacketName = `trustgraph-corporate-roster-packet-${new Date().toISOString().slice(0, 10)}.json`;
+  const corporateRosterPacket = {
+    generated_at: new Date().toISOString(),
+    mode: disabled ? "locked_corporate_roster" : "live_membership_database",
+    live_database_evidence: !disabled,
+    source_counts: {
+      membership_rows: members.length,
+      filtered_members: filteredMembers.length,
+      unique_profiles: new Set(members.map((member) => member.profile_id)).size,
+      active_members: activeCount,
+      suspended_members: suspendedCount,
+      admin_roles: adminRoleCount,
+      reviewer_roles: reviewerRoleCount
+    },
+    members: filteredMembers.map((member) => ({
+      membership_id: member.id,
+      organization_id: member.organization_id,
+      profile_id: member.profile_id,
+      member_name: member.profile?.full_name ?? "",
+      member_email: member.profile?.email ?? "",
+      role: member.role,
+      role_family: ["employer_admin", "staffing_agency_admin"].includes(member.role) ? "admin" : "reviewer",
+      status: member.status,
+      is_current_profile: member.profile_id === currentProfileId,
+      created_at: member.created_at,
+      updated_at: member.updated_at
+    })),
+    operator_note: "Corporate roster packet proves which organization membership rows and profile rows are visible to the current signed-in corporate context."
+  };
 
   async function updateStatus(membershipId: string, status: "active" | "suspended") {
     setBusyId(membershipId);
@@ -5620,6 +5649,18 @@ function TeamMembersPanel({
         >
           Export CSV
         </button>
+        <button
+          className="secondary-action"
+          disabled={!members.length}
+          onClick={() => downloadTextFile(rosterPacketName, JSON.stringify(corporateRosterPacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export roster packet
+        </button>
+      </div>
+      <div className="team-roster-packet">
+        <strong>Corporate roster packet</strong>
+        <small>Exports live membership rows, linked profile rows, role family, current-user protection, status, and counts for the active corporate workspace.</small>
       </div>
       <div className="team-list">
         {filteredMembers.length ? (
