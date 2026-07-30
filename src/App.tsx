@@ -7513,6 +7513,14 @@ function TeamMembersPanel({
   );
 }
 
+const TRUSTGRAPH_VPS_URL = "https://trustgraph.5-75-224-110.sslip.io/";
+const TRUSTGRAPH_GITHUB_PAGES_URL = "https://mirzaraheel99.github.io/trustgraph/";
+const TRUSTGRAPH_ALLOWED_REDIRECTS = [
+  TRUSTGRAPH_GITHUB_PAGES_URL,
+  TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
+  TRUSTGRAPH_VPS_URL
+];
+
 function authFailureMessage(error: unknown, redirectUrl: string, fallback = "Authentication failed.") {
   const message = error instanceof Error ? error.message : fallback;
   const normalized = message.toLowerCase();
@@ -7537,11 +7545,10 @@ function authFailureMessage(error: unknown, redirectUrl: string, fallback = "Aut
 }
 
 function hostedAuthRedirectUrl() {
-  const hostedUrl = "https://trustgraph.5-75-224-110.sslip.io/";
-  if (typeof window === "undefined") return hostedUrl;
+  if (typeof window === "undefined") return TRUSTGRAPH_VPS_URL;
 
   const currentUrl = `${window.location.origin}${window.location.pathname}`;
-  return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? hostedUrl : currentUrl;
+  return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? TRUSTGRAPH_VPS_URL : currentUrl;
 }
 
 function hasHostedAuthCallbackUrl() {
@@ -7620,9 +7627,10 @@ function AuthPanel({
     configured: isSupabaseConfigured(),
     mode: authModeLabel(),
     active_redirect_url: authRedirectUrl,
-    required_hosted_redirect: "https://trustgraph.5-75-224-110.sslip.io/",
-    allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
-    trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
+    required_hosted_redirect: TRUSTGRAPH_VPS_URL,
+    github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
+    allowed_production_redirects: TRUSTGRAPH_ALLOWED_REDIRECTS,
+    trustgraph_vps_target: TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     current_browser_host:
       typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,
@@ -7630,7 +7638,7 @@ function AuthPanel({
       typeof window === "undefined" ? false : window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
     supabase_auth_settings_needed: [
       "Set Site URL to the hosted TrustGraph URL used by pilot users.",
-      "Add the GitHub Pages URL as an allowed redirect URL.",
+      "Add both GitHub Pages and VPS sslip.io URLs as allowed redirect URLs.",
       "Add the TrustGraph VPS URL before sending production verification emails from the server host.",
       "Keep localhost only for local developer testing."
     ],
@@ -7669,17 +7677,17 @@ function AuthPanel({
     {
       step: "1",
       label: "Login or sign up",
-      detail: "Use the hosted TrustGraph app before requesting emails."
+      detail: "Use GitHub Pages or the VPS TrustGraph URL before requesting emails."
     },
     {
       step: "2",
       label: "Verify email",
-      detail: "Open the newest Supabase link; repair it here if it points to localhost."
+      detail: "Open the newest Supabase link; repair it here if it still points to localhost."
     },
     {
       step: "3",
       label: "Create workspace",
-      detail: "After login, open Corporate setup or Professional Passport."
+      detail: "After login, choose Corporate setup for company access or Professional Passport for personal records."
     }
   ];
   const dataRightsPacketName = `trustgraph-data-rights-${new Date().toISOString().slice(0, 10)}.json`;
@@ -7951,7 +7959,7 @@ function AuthPanel({
           <div className="auth-recovery-note">
             <div>
               <strong>Recovery redirect</strong>
-              <small>Add this hosted URL in Supabase Auth redirect settings so emails do not return to localhost: {authRedirectUrl}</small>
+              <small>Add this active hosted URL in Supabase Auth redirects so emails do not return to localhost: {authRedirectUrl}</small>
             </div>
             <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
               Copy URL
@@ -7967,7 +7975,7 @@ function AuthPanel({
           <div className="auth-readiness-packet">
             <div>
               <strong>Auth redirect readiness packet</strong>
-              <small>Exports the active hosted redirect, Supabase config mode, email limit note, TrustGraph VPS target, and VFIX isolation guard.</small>
+              <small>Exports the active hosted redirect, GitHub Pages redirect, VPS redirect, email limit note, and VFIX isolation guard.</small>
             </div>
             <button
               className="secondary-action"
@@ -9584,9 +9592,10 @@ function PublicSite({
     active_redirect_url: authRedirectUrl,
     portal_entry_path: portalEntryPath,
     portal_handoff_checklist: portalHandoffChecklist,
-    required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
-    allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
-    trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
+    required_hosted_redirect: TRUSTGRAPH_VPS_URL,
+    github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
+    allowed_production_redirects: TRUSTGRAPH_ALLOWED_REDIRECTS,
+    trustgraph_vps_target: TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     current_browser_host:
       typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,
@@ -10516,7 +10525,7 @@ function PublicSite({
           <small>{message}</small>
           <small>
             {authReady
-              ? `Hosted Supabase Auth is configured. Allowed redirect URL must include this GitHub Pages URL, not localhost: ${authRedirectUrl}`
+              ? `Hosted Supabase Auth is configured. Allowed redirect URLs must include GitHub Pages and the VPS TrustGraph URL, not localhost. Active redirect: ${authRedirectUrl}`
               : "Hosted build is missing public Supabase Auth configuration."}
           </small>
           <small>Supabase built-in email is limited to 2 emails per hour project-wide; custom SMTP is needed for heavier testing.</small>

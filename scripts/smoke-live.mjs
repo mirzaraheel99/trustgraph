@@ -454,6 +454,8 @@ assertIncludesAny(bundleText, ["Selected path"], "registration selected path pro
 assertIncludesAny(bundleText, ["selected_registration_path"], "registration path packet field");
 assertIncludesAny(bundleText, ["protected_vfix_host"], "auth packet VFIX isolation field");
 assertIncludesAny(bundleText, ["trustgraph_vps_target"], "auth packet TrustGraph VPS field");
+assertIncludesAny(bundleText, ["github_pages_redirect"], "auth packet GitHub Pages redirect field");
+assertIncludesAny(bundleText, ["Allowed redirect URLs must include GitHub Pages and the VPS TrustGraph URL"], "hosted auth redirect guidance");
 assertIncludesAny(bundleText, ["Reset password"], "public portal password recovery control");
 assertIncludesAny(bundleText, ["Auth recovery decision path"], "public auth recovery decision panel");
 assertIncludesAny(bundleText, ["auth_recovery_decision_path"], "registration auth recovery packet field");
