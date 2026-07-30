@@ -353,6 +353,8 @@ function RecordDetail({
   const linkedEvidenceCount = evidenceDocuments.filter((document) => document.status === "linked").length;
   const uploadedEvidenceCount = evidenceDocuments.filter((document) => document.status === "uploaded").length;
   const flaggedEvidenceCount = evidenceDocuments.filter((document) => document.status === "restricted" || document.status === "rejected").length;
+  const fileBackedEvidenceCount = evidenceDocuments.filter((document) => document.storage_path).length;
+  const metadataOnlyEvidenceCount = evidenceDocuments.length - fileBackedEvidenceCount;
   const filteredEvidenceDocuments = evidenceDocuments.filter((document) => {
     const matchesStatus = evidenceStatusFilter === "all" || document.status === evidenceStatusFilter;
     const haystack = `${document.title} ${document.document_type} ${document.source_name} ${document.status}`.toLowerCase();
@@ -360,6 +362,32 @@ function RecordDetail({
   });
   const evidenceManifestName = `trustgraph-evidence-manifest-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.csv`;
   const evidenceAccessPacketName = `trustgraph-evidence-access-packet-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`;
+  const evidencePreviewDownloadLedger = [
+    {
+      label: "Signed preview ready",
+      value: fileBackedEvidenceCount,
+      detail: "File-backed items can open a short-lived preview URL.",
+      ready: fileBackedEvidenceCount > 0
+    },
+    {
+      label: "Download governed",
+      value: fileBackedEvidenceCount,
+      detail: "Downloads use a shorter signed URL and remain scoped to this record.",
+      ready: fileBackedEvidenceCount > 0
+    },
+    {
+      label: "Metadata only",
+      value: metadataOnlyEvidenceCount,
+      detail: "Visible evidence rows with no raw file attached yet.",
+      ready: metadataOnlyEvidenceCount > 0
+    },
+    {
+      label: "Needs review",
+      value: flaggedEvidenceCount,
+      detail: "Restricted or rejected evidence should be reviewed before sharing.",
+      ready: flaggedEvidenceCount === 0
+    }
+  ];
   const evidenceAccessChain = [
     {
       label: "Metadata row",
@@ -369,15 +397,15 @@ function RecordDetail({
     },
     {
       label: "Private file",
-      value: evidenceDocuments.some((document) => document.storage_path) ? "Attached" : "Metadata only",
+      value: fileBackedEvidenceCount ? "Attached" : "Metadata only",
       detail: "Raw files stay in private Supabase Storage.",
-      ready: evidenceDocuments.some((document) => document.storage_path)
+      ready: fileBackedEvidenceCount > 0
     },
     {
       label: "Signed preview/download",
       value: "Short-lived URLs",
       detail: "Preview expires in 5 minutes; download expires in 2 minutes.",
-      ready: evidenceDocuments.some((document) => document.storage_path)
+      ready: fileBackedEvidenceCount > 0
     },
     {
       label: "Audit expectation",
@@ -414,6 +442,7 @@ function RecordDetail({
       file_backed_documents: filteredEvidenceDocuments.filter((document) => document.storage_path).length,
       metadata_only_documents: filteredEvidenceDocuments.filter((document) => !document.storage_path).length
     },
+    evidence_preview_download_ledger: evidencePreviewDownloadLedger,
     evidence_access_chain: evidenceAccessChain,
     documents: filteredEvidenceDocuments.map((document) => ({
       id: document.id,
@@ -598,7 +627,22 @@ function RecordDetail({
               </div>
               <div>
                 <span>Files</span>
-                <strong>{evidenceDocuments.filter((document) => document.storage_path).length}</strong>
+                <strong>{fileBackedEvidenceCount}</strong>
+              </div>
+            </div>
+            <div className="evidence-preview-download-ledger" aria-label="Evidence preview and download ledger">
+              <div className="mini-heading">
+                <Download size={15} />
+                <strong>Evidence preview/download ledger</strong>
+              </div>
+              <div className="evidence-preview-download-grid">
+                {evidencePreviewDownloadLedger.map((item) => (
+                  <article className={item.ready ? "ready" : "attention"} key={item.label}>
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                    <small>{item.detail}</small>
+                  </article>
+                ))}
               </div>
             </div>
             <div className="evidence-source-strip">
