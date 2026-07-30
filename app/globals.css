@@ -3496,7 +3496,7 @@ p,
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
   gap: 16px;
   align-items: flex-start;
   width: min(100%, 1280px);
@@ -3668,14 +3668,14 @@ p {
   justify-content: flex-end;
   gap: 8px;
   width: 100%;
-  max-width: 360px;
+  max-width: 420px;
   min-width: 0;
 }
 
 .topbar-session-card {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) repeat(3, auto);
   align-items: center;
   gap: 8px;
   padding: 9px;
@@ -3688,11 +3688,14 @@ p {
 
 .topbar-session-card > span,
 .topbar-session-card > small {
-  grid-column: 1 / -1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.topbar-session-card > span {
+  grid-column: 1;
 }
 
 .topbar-session-card > small {
@@ -4301,10 +4304,15 @@ p {
   font-weight: 900;
 }
 
+.topbar-session-card > small {
+  display: none;
+}
+
 .topbar-session-card .secondary-action {
   justify-content: center;
   min-height: 34px;
   padding: 0 10px;
+  white-space: nowrap;
 }
 
 .topbar-session-card .secondary-action {
