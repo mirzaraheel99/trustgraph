@@ -151,6 +151,9 @@ assertIncludesAny(bundleText, ["Corporate Verify live access test"], "corporate 
 assertIncludesAny(bundleText, ["corporate_verify_live_access_test"], "corporate Verify live access packet field");
 assertIncludesAny(bundleText, ["Corporate user-data request"], "corporate Verify guided request form");
 assertIncludesAny(bundleText, ["Professional email"], "corporate Verify professional email field label");
+assertIncludesAny(bundleText, ["Corporate user data proof"], "corporate Verify user data proof summary");
+assertIncludesAny(bundleText, ["user_data_proof"], "corporate Verify user data proof packet field");
+assertIncludesAny(bundleText, ["Visible user rows"], "corporate Verify visible user rows proof");
 assertIncludesAny(bundleText, ["Request by professional email"], "corporate Verify professional email request step");
 assertIncludesAny(bundleText, ["Shared user Passport rows"], "corporate Verify shared user Passport rows step");
 assertIncludesAny(bundleText, ["Pending corporate workspace"], "pending Corporate setup continuation card");

@@ -1677,6 +1677,41 @@ function VerifyRequestsPanel({
   const pendingGapCount = missingRecordRequests.filter(
     (request) => request.status === "requested" || request.status === "in_progress"
   ).length;
+  const userDataProofItems = [
+    {
+      label: "Approved grant",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: approvedCount
+        ? "At least one professional has approved scoped corporate review access."
+        : "Professional consent is required before user Passport rows appear.",
+      ready: approvedCount > 0
+    },
+    {
+      label: "Visible user rows",
+      value: `${sharedRecords.length} rows`,
+      detail: sharedRecords.length
+        ? "Corporate Verify can read shared Passport rows through the active organization and RBAC scope."
+        : "No user Passport rows are visible yet for this corporate reviewer.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Consent coverage",
+      value: `${coveredConsentRecords}/${sharedRecordsNeedingConsent.length}`,
+      detail:
+        sharedRecordsNeedingConsent.length === 0
+          ? "No sensitive shared records currently require explicit consent evidence."
+          : "Sensitive or restricted rows need active consent before review acceptance.",
+      ready: sharedRecordsNeedingConsent.length === 0 || coveredConsentRecords === sharedRecordsNeedingConsent.length
+    },
+    {
+      label: "Open gaps",
+      value: `${pendingGapCount} open`,
+      detail: pendingGapCount
+        ? "Missing-record requests still need professional or provider follow-up."
+        : "No missing-record follow-ups are blocking this review.",
+      ready: pendingGapCount === 0
+    }
+  ];
   const verifyFlowSteps = [
     {
       label: "Request access",
@@ -1723,6 +1758,12 @@ function VerifyRequestsPanel({
       covered_sensitive_records: coveredConsentRecords,
       open_missing_record_requests: pendingGapCount
     },
+    user_data_proof: userDataProofItems.map((item) => ({
+      label: item.label,
+      value: item.value,
+      detail: item.detail,
+      ready: item.ready
+    })),
     steps: verifyFlowSteps.map((step) => ({
       label: step.label,
       value: step.value,
@@ -1900,6 +1941,30 @@ function VerifyRequestsPanel({
             </div>
           </article>
         )}
+      </div>
+      <div className="verify-user-data-proof" aria-label="Corporate user data proof">
+        <div className="verify-reviewer-flow-header">
+          <div>
+            <span className="eyebrow">Corporate user data proof</span>
+            <strong>{sharedRecords.length ? "Shared Passport data is visible" : "Waiting for approved shared Passport data"}</strong>
+            <small>Use this before accepting a corporate review: approved grant, visible user rows, consent coverage, and open gaps must all be understandable.</small>
+          </div>
+          <span className={`status-chip ${sharedRecords.length && approvedCount ? "success" : "neutral"}`}>
+            {sharedRecords.length && approvedCount ? "proof ready" : "proof pending"}
+          </span>
+        </div>
+        <div className="verify-user-data-proof-grid">
+          {userDataProofItems.map((item) => (
+            <article className={item.ready ? "ready" : ""} key={item.label}>
+              <span className={`status-dot ${item.ready ? "on" : ""}`} />
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.value}</small>
+                <p>{item.detail}</p>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
       <div className="mini-heading verify-shared-heading">
         <FileCheck2 size={16} />

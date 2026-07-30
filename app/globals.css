@@ -5215,6 +5215,60 @@ p {
     rgba(255, 255, 255, 0.026);
 }
 
+.verify-user-data-proof {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.075), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.verify-user-data-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+}
+
+.verify-user-data-proof-grid article {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.verify-user-data-proof-grid article.ready {
+  border-color: rgba(112, 224, 178, 0.3);
+  background: rgba(112, 224, 178, 0.065);
+}
+
+.verify-user-data-proof-grid strong,
+.verify-user-data-proof-grid small,
+.verify-user-data-proof-grid p {
+  display: block;
+}
+
+.verify-user-data-proof-grid strong {
+  font-size: 13px;
+}
+
+.verify-user-data-proof-grid small {
+  color: var(--text);
+  font-weight: 950;
+}
+
+.verify-user-data-proof-grid p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .verify-reviewer-flow-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(168px, auto);
@@ -7351,6 +7405,7 @@ p {
   .team-summary-grid,
   .verify-request-header,
   .verify-summary-grid,
+  .verify-user-data-proof-grid,
   .workspace-flow-strip,
   .record-form-grid {
     grid-template-columns: 1fr;
