@@ -7376,48 +7376,71 @@ p {
     rgba(255, 255, 255, 0.03);
 }
 
+.data-rights-review-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 0.48fr) 168px;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.075), transparent 68%),
+    rgba(255, 255, 255, 0.03);
+}
+
 .fraud-review-strip > div:first-child,
-.fraud-review-metrics span {
+.fraud-review-metrics span,
+.data-rights-review-strip > div:first-child,
+.data-rights-review-metrics span {
   min-width: 0;
 }
 
 .fraud-review-strip strong,
-.fraud-review-strip small {
+.fraud-review-strip small,
+.data-rights-review-strip strong,
+.data-rights-review-strip small {
   display: block;
 }
 
-.fraud-review-strip > div:first-child > strong {
+.fraud-review-strip > div:first-child > strong,
+.data-rights-review-strip > div:first-child > strong {
   margin-top: 8px;
   font-size: 15px;
   line-height: 1.2;
 }
 
-.fraud-review-strip > div:first-child > small {
+.fraud-review-strip > div:first-child > small,
+.data-rights-review-strip > div:first-child > small {
   margin-top: 5px;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
 }
 
-.fraud-review-metrics {
+.fraud-review-metrics,
+.data-rights-review-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
-.fraud-review-metrics span {
+.fraud-review-metrics span,
+.data-rights-review-metrics span {
   padding: 9px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.03);
 }
 
-.fraud-review-metrics strong {
+.fraud-review-metrics strong,
+.data-rights-review-metrics strong {
   font-size: 22px;
   line-height: 1;
 }
 
-.fraud-review-metrics small {
+.fraud-review-metrics small,
+.data-rights-review-metrics small {
   margin-top: 4px;
   color: var(--muted);
   font-size: 11px;
@@ -7425,7 +7448,8 @@ p {
   text-transform: uppercase;
 }
 
-.fraud-review-strip .secondary-action {
+.fraud-review-strip .secondary-action,
+.data-rights-review-strip .secondary-action {
   justify-content: center;
   min-height: 36px;
 }
@@ -7439,6 +7463,10 @@ p {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.03);
+}
+
+.data-rights-case-card {
+  border-color: rgba(134, 174, 246, 0.18);
 }
 
 .operations-case-card,
@@ -9410,6 +9438,8 @@ p {
   .evidence-summary-grid,
   .fraud-review-strip,
   .fraud-review-metrics,
+  .data-rights-review-strip,
+  .data-rights-review-metrics,
   .grant-controls,
   .grant-summary-grid,
   .issuer-summary-grid,

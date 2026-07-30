@@ -38,6 +38,8 @@ const requiredMobileStacks = [
   ".evidence-preview-download-grid",
   ".fraud-review-strip",
   ".fraud-review-metrics",
+  ".data-rights-review-strip",
+  ".data-rights-review-metrics",
   ".issuer-source-strip",
   ".invitation-handoff-strip",
   ".live-database-repair-grid",
@@ -146,6 +148,10 @@ if (!css.includes(".record-dispute-panel") || !css.includes(".dispute-actions") 
 
 if (!css.includes(".data-rights-panel") || !css.includes(".data-rights-actions") || !css.includes(".data-rights-request-list")) {
   throw new Error("Responsive check failed: data export and closure controls must stay contained.");
+}
+
+if (!css.includes(".data-rights-review-strip") || !css.includes(".data-rights-review-metrics") || !css.includes(".data-rights-case-card")) {
+  throw new Error("Responsive check failed: admin data-rights review must stay contained.");
 }
 
 if (!flexStackCss.includes(".trust-network-visual") || !flexStackCss.includes("min-height: 316px")) {

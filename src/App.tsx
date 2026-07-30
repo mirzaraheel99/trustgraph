@@ -3862,12 +3862,14 @@ function IssuerCredentialsPanel({
 
 function OperationsQueuePanel({
   cases,
+  dataRightsRequests,
   disabled,
   message,
   onCreatePilotCases,
   onDecision
 }: {
   cases: DbVerificationCase[];
+  dataRightsRequests: DbDataRightsRequest[];
   disabled: boolean;
   message: string;
   onCreatePilotCases: () => Promise<void>;
@@ -3879,6 +3881,7 @@ function OperationsQueuePanel({
   const [caseStatusFilter, setCaseStatusFilter] = useState<"all" | VerificationCaseStatus>("all");
   const [priorityFilter, setPriorityFilter] = useState<"all" | "low" | "medium" | "high" | "critical">("all");
   const openCaseCount = cases.filter((item) => item.status === "open" || item.status === "in_review").length;
+  const openDataRightsCount = dataRightsRequests.filter((item) => item.status === "requested" || item.status === "in_review").length;
   const restrictedCaseCount = cases.filter((item) => item.status === "restricted").length;
   const criticalCaseCount = cases.filter((item) => item.priority === "critical" || item.priority === "high").length;
   const fraudSignalCases = cases.filter((item) => item.case_type === "fraud_signal");
@@ -3892,6 +3895,7 @@ function OperationsQueuePanel({
   });
   const exportName = `trustgraph-operations-cases-${new Date().toISOString().slice(0, 10)}.csv`;
   const fraudPacketName = `trustgraph-fraud-signal-review-${new Date().toISOString().slice(0, 10)}.json`;
+  const dataRightsPacketName = `trustgraph-admin-data-rights-${new Date().toISOString().slice(0, 10)}.json`;
   const fraudReviewPacket = {
     generated_at: new Date().toISOString(),
     packet_mode: "fraud_signal_review_only",
@@ -3914,6 +3918,29 @@ function OperationsQueuePanel({
       metadata: item.metadata
     }))
   };
+  const dataRightsReviewPacket = {
+    generated_at: new Date().toISOString(),
+    packet_mode: "admin_data_rights_review",
+    source_table: "data_rights_requests",
+    automatic_deletion_enabled: false,
+    human_review_required: true,
+    review_boundaries: ["retention_policy", "legal_hold", "active_access_grants", "unresolved_disputes", "audit_retention"],
+    counts: {
+      total_requests: dataRightsRequests.length,
+      open_requests: openDataRightsCount,
+      export_requests: dataRightsRequests.filter((item) => item.request_type === "data_export").length,
+      closure_requests: dataRightsRequests.filter((item) => item.request_type === "account_closure").length
+    },
+    requests: dataRightsRequests.map((request) => ({
+      id: request.id,
+      profile_id: request.profile_id,
+      request_type: request.request_type,
+      status: request.status,
+      requested_scope: request.requested_scope,
+      due_at: request.due_at,
+      metadata: request.metadata
+    }))
+  };
 
   async function decide(caseId: string, status: VerificationCaseStatus) {
     setBusyId(caseId);
@@ -3933,11 +3960,15 @@ function OperationsQueuePanel({
       <div className="operations-summary-grid">
         <div>
           <span>Open</span>
-          <strong>{openCaseCount}</strong>
+          <strong>{openCaseCount + openDataRightsCount}</strong>
         </div>
         <div>
           <span>Restricted</span>
           <strong>{restrictedCaseCount}</strong>
+        </div>
+        <div>
+          <span>Data rights</span>
+          <strong>{openDataRightsCount}</strong>
         </div>
         <div>
           <span>High risk</span>
@@ -4002,6 +4033,35 @@ function OperationsQueuePanel({
           Export fraud packet
         </button>
       </div>
+      <div className="data-rights-review-strip" aria-label="Admin data rights review packet">
+        <div>
+          <span className="status-chip info">Data rights review</span>
+          <strong>Export and closure requests require policy review</strong>
+          <small>Admin operators can inspect live data-rights rows before export packaging or account closure. Closure stays review-gated and never performs automatic deletion.</small>
+        </div>
+        <div className="data-rights-review-metrics">
+          <span>
+            <strong>{dataRightsRequests.filter((item) => item.request_type === "data_export").length}</strong>
+            <small>Exports</small>
+          </span>
+          <span>
+            <strong>{dataRightsRequests.filter((item) => item.request_type === "account_closure").length}</strong>
+            <small>Closures</small>
+          </span>
+          <span>
+            <strong>{openDataRightsCount}</strong>
+            <small>Open</small>
+          </span>
+        </div>
+        <button
+          className="secondary-action"
+          disabled={!dataRightsRequests.length}
+          onClick={() => downloadTextFile(dataRightsPacketName, JSON.stringify(dataRightsReviewPacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export data-rights review
+        </button>
+      </div>
       <div className="operations-controls">
         <input
           onChange={(event) => setCaseQuery(event.target.value)}
@@ -4025,6 +4085,22 @@ function OperationsQueuePanel({
         </select>
       </div>
       <div className="operations-case-list">
+        {dataRightsRequests.slice(0, 4).map((request) => (
+          <article className="operations-case-card data-rights-case-card" key={request.id}>
+            <div>
+              <div className="record-row-main">
+                <span className="record-section">data rights</span>
+                <strong>{request.request_type.replace("_", " ")}</strong>
+                <small>{request.requested_scope.replace(/_/g, " ")} request from profile {request.profile_id}</small>
+              </div>
+              <div className="record-row-meta">
+                <span className="status-chip info">{request.status.replace("_", " ")}</span>
+                <span className="status-chip neutral">{request.due_at ? `Due ${new Date(request.due_at).toLocaleDateString()}` : "No due date"}</span>
+                <span className="status-chip warning">manual review</span>
+              </div>
+            </div>
+          </article>
+        ))}
         {filteredCases.length ? (
           filteredCases.slice(0, 10).map((item) => (
             <article className="operations-case-card" key={item.id}>
@@ -12731,6 +12807,7 @@ function App() {
               <>
                 <OperationsQueuePanel
                   cases={operationsCases}
+                  dataRightsRequests={dataRightsRequests}
                   disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
                   message={operationsStatus}
                   onCreatePilotCases={createLiveOperationsPilotCases}
