@@ -83,10 +83,14 @@ assertMigration(migrations, "033_", "pilot launch contacts");
 
 assertIncludes(readiness, "13-Track Product Coverage", "v1 readiness checklist");
 assertIncludes(readiness, "Verification Loop", "v1 readiness checklist");
+assertIncludes(readiness, "Corporate directory acceptance ledger", "v1 readiness checklist");
+assertIncludes(readiness, "live corporate RBAC context loads Access Grants, shared Passport rows, review-ready people, and review attestations", "v1 readiness checklist");
 assertIncludes(readiness, "Do not move from pilot to real production traffic", "v1 readiness checklist");
 assertIncludes(runbook, "Live Workflow Acceptance", "pilot runbook");
 assertIncludes(runbook, "Human Decisions Still Required", "pilot runbook");
 assertIncludes(runbook, "hosted login/database handoff packet", "pilot runbook");
+assertIncludes(runbook, "Corporate directory acceptance ledger", "pilot runbook");
+assertIncludes(runbook, "corporate_directory_acceptance", "pilot runbook");
 assertIncludes(evidenceMap, "Live Database Proof Artifacts", "implementation evidence map");
 assertIncludes(evidenceMap, "Remaining Human Gates", "implementation evidence map");
 assertIncludes(evidenceMap, "Hosted login/database handoff packet", "implementation evidence map");

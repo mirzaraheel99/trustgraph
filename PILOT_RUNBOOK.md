@@ -28,9 +28,11 @@ Use this runbook for v1 pilot verification before inviting real employers, staff
 13. Approve the Access Grant from Passport and sync shared records.
 14. Create or revoke a consent authorization for sensitive scope.
 15. Open Verify and confirm approved shared records are visible.
-16. Open Admin and review operations, Connect, audit, workflow QA, release ledger, and security panels.
-17. Export audit CSV, team invitation CSV, security runbook CSV, working-data packet, and hosted login/database handoff packet.
-18. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
+16. Open the Corporate directory acceptance ledger and confirm it is accepted only when live corporate RBAC context loads Access Grants, shared Passport rows, review-ready people, and review attestations.
+17. Export the corporate user database packet and confirm `corporate_directory_acceptance` records the same accepted-only rule before pilot sign-off.
+18. Open Admin and review operations, Connect, audit, workflow QA, release ledger, and security panels.
+19. Export audit CSV, team invitation CSV, security runbook CSV, working-data packet, and hosted login/database handoff packet.
+20. Mark the matching items in `V1_READINESS_CHECKLIST.md` as verified in the pilot notes.
 
 ## Security Review Boundary
 
