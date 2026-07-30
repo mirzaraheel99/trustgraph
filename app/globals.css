@@ -1612,6 +1612,39 @@ button {
   min-width: 0;
 }
 
+.sidebar .account-panel,
+.sidebar .admin-disclosure,
+.sidebar .account-admin-form,
+.sidebar .account-admin-row {
+  width: 100%;
+  min-width: 0;
+}
+
+.sidebar .account-admin-row,
+.sidebar .membership-list,
+.sidebar .account-operator-path,
+.sidebar .corporate-account-rbac-path {
+  grid-template-columns: 1fr;
+}
+
+.sidebar .admin-disclosure summary {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.sidebar .admin-disclosure summary small {
+  text-align: left;
+}
+
+.sidebar .account-admin-form input,
+.sidebar .account-admin-form select,
+.sidebar .account-admin-form button,
+.sidebar .secondary-action,
+.sidebar .primary-inline-action {
+  width: 100%;
+  max-width: 100%;
+}
+
 .app *,
 .public-site * {
   min-width: 0;

@@ -98,6 +98,10 @@ if (!css.includes("grid-template-columns: minmax(212px, 244px) minmax(0, 1fr)") 
   throw new Error("Responsive check failed: app shell must keep the sidebar narrow and contain workspace overflow.");
 }
 
+if (!css.includes(".sidebar .account-admin-row") || !css.includes(".sidebar .account-admin-form button") || !css.includes("width: 100%")) {
+  throw new Error("Responsive check failed: sidebar account controls must stack without overflowing the narrow rail.");
+}
+
 if (!css.includes(".portal-entry-path") || !css.includes(".auth-selected-route")) {
   throw new Error("Responsive check failed: portal login needs a compact entry path and selected route summary.");
 }
