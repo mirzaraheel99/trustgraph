@@ -12372,125 +12372,6 @@ function App() {
             </button>
           </div>
         </section>
-        <section className="signed-in-landing-actions" aria-label="Signed-in landing actions">
-          <div className="signed-in-landing-header">
-            <div>
-              <span className={`status-chip ${authSession ? "success" : "warning"}`}>
-                {authSession ? "Role-aware dashboard" : "Login to activate"}
-              </span>
-              <strong>{authSession ? `Signed in as ${activeRole.label}` : "Choose a portal, then login or register"}</strong>
-              <small>
-                {authSession
-                  ? "Use these first-screen actions for Passport, Corporate Verify, Company Admin, account recovery, and logout."
-                  : "Preview mode shows the product path; live database rows require hosted login."}
-              </small>
-            </div>
-            <button className="secondary-action" onClick={authSession ? handleSignOut : openAuthControls} type="button">
-              {authSession ? "Logout" : "Login or register"}
-            </button>
-          </div>
-          <div className="signed-in-landing-grid">
-            {signedInLandingActions.map((item) => {
-              const allowed = item.kind === "workspace" ? canAccessWorkspace(activeMembership.role, item.target as WorkspaceId) : true;
-              const active = item.kind === "workspace" && item.target === workspace.id;
-
-              return (
-                <article className={active ? "active" : ""} key={item.label}>
-                  <div>
-                    <strong>{item.label}</strong>
-                    <small>{item.detail}</small>
-                    <span>{item.status}</span>
-                  </div>
-                  <button
-                    className={active ? "primary-action" : "secondary-action"}
-                    disabled={!allowed}
-                    onClick={() => {
-                      if (item.kind === "account") {
-                        openAuthControls();
-                        return;
-                      }
-                      changeWorkspace(item.target as WorkspaceId);
-                    }}
-                    type="button"
-                  >
-                    {allowed ? item.action : "Role required"}
-                  </button>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-        <section className="proof-export-hub" aria-label="Proof and exports hub">
-          <div className="proof-export-hub-header">
-            <div>
-              <span className="status-chip neutral">Proof &amp; exports hub</span>
-              <strong>Find the right proof packet without digging through every panel</strong>
-              <small>Use this hub when the dashboard feels dense: database proof, Corporate Verify proof, user database packets, and scoped workspace exports stay one click away.</small>
-            </div>
-            <span className={`status-chip ${authSession ? "success" : "warning"}`}>{authSession ? "scope enforced" : "preview only"}</span>
-          </div>
-          <div className="proof-export-hub-grid">
-            {proofExportHub.map((item) => (
-              <article key={item.label}>
-                <div>
-                  <strong>{item.label}</strong>
-                  <small>{item.detail}</small>
-                  <span>{item.status}</span>
-                </div>
-                <button
-                  className={item.target === "export" ? "primary-action" : "secondary-action"}
-                  onClick={() => {
-                    if (item.target === "export") {
-                      downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json");
-                      return;
-                    }
-                    if (item.target === "account") {
-                      openAuthControls();
-                      window.setTimeout(() => {
-                        document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                      }, 50);
-                      return;
-                    }
-                    changeWorkspace(item.target);
-                  }}
-                  type="button"
-                >
-                  {item.action}
-                </button>
-              </article>
-            ))}
-          </div>
-        </section>
-        <section className="dashboard-start-map" aria-label="Dashboard start map">
-          <div className="dashboard-start-map-header">
-            <div>
-              <span className="status-chip success">Dashboard start map</span>
-              <strong>Choose the workspace by what you need to do now</strong>
-              <small>Personal users manage Passports. Corporate users request scoped database access. Admins manage RBAC, pricing, team, and launch readiness.</small>
-            </div>
-            <span className={`status-chip ${authSession ? "success" : "warning"}`}>
-              {authSession ? "live database session" : "login required"}
-            </span>
-          </div>
-          <div className="dashboard-start-map-grid">
-            {dashboardStartMap.map((item) => {
-              const allowed = canAccessWorkspace(activeMembership.role, item.target);
-
-              return (
-                <article className={item.ready ? "ready" : ""} key={item.label}>
-                  <div>
-                    <strong>{item.label}</strong>
-                    <small>{item.detail}</small>
-                    <span>{item.status}</span>
-                  </div>
-                  <button className={item.target === workspace.id ? "primary-action" : "secondary-action"} disabled={!allowed} onClick={() => changeWorkspace(item.target)} type="button">
-                    {allowed ? item.action : "Role required"}
-                  </button>
-                </article>
-              );
-            })}
-          </div>
-        </section>
         <section className="hero">
           <div className="hero-card primary">
             <div className="hero-card-top">
@@ -12571,6 +12452,126 @@ function App() {
           }}
           onOpenWorkspace={changeWorkspace}
         />
+
+        <section className="signed-in-landing-actions" aria-label="Signed-in landing actions">
+          <div className="signed-in-landing-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>
+                {authSession ? "Role-aware dashboard" : "Login to activate"}
+              </span>
+              <strong>{authSession ? `Signed in as ${activeRole.label}` : "Choose a portal, then login or register"}</strong>
+              <small>
+                {authSession
+                  ? "Use these actions for Passport, Corporate Verify, Company Admin, account recovery, and logout."
+                  : "Preview mode shows the product path; live database rows require hosted login."}
+              </small>
+            </div>
+            <button className="secondary-action" onClick={authSession ? handleSignOut : openAuthControls} type="button">
+              {authSession ? "Logout" : "Login or register"}
+            </button>
+          </div>
+          <div className="signed-in-landing-grid">
+            {signedInLandingActions.map((item) => {
+              const allowed = item.kind === "workspace" ? canAccessWorkspace(activeMembership.role, item.target as WorkspaceId) : true;
+              const active = item.kind === "workspace" && item.target === workspace.id;
+
+              return (
+                <article className={active ? "active" : ""} key={item.label}>
+                  <div>
+                    <strong>{item.label}</strong>
+                    <small>{item.detail}</small>
+                    <span>{item.status}</span>
+                  </div>
+                  <button
+                    className={active ? "primary-action" : "secondary-action"}
+                    disabled={!allowed}
+                    onClick={() => {
+                      if (item.kind === "account") {
+                        openAuthControls();
+                        return;
+                      }
+                      changeWorkspace(item.target as WorkspaceId);
+                    }}
+                    type="button"
+                  >
+                    {allowed ? item.action : "Role required"}
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+        <section className="dashboard-start-map" aria-label="Dashboard start map">
+          <div className="dashboard-start-map-header">
+            <div>
+              <span className="status-chip success">Dashboard start map</span>
+              <strong>Choose the workspace by what you need to do now</strong>
+              <small>Personal users manage Passports. Corporate users request scoped database access. Admins manage RBAC, pricing, team, and launch readiness.</small>
+            </div>
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>
+              {authSession ? "live database session" : "login required"}
+            </span>
+          </div>
+          <div className="dashboard-start-map-grid">
+            {dashboardStartMap.map((item) => {
+              const allowed = canAccessWorkspace(activeMembership.role, item.target);
+
+              return (
+                <article className={item.ready ? "ready" : ""} key={item.label}>
+                  <div>
+                    <strong>{item.label}</strong>
+                    <small>{item.detail}</small>
+                    <span>{item.status}</span>
+                  </div>
+                  <button className={item.target === workspace.id ? "primary-action" : "secondary-action"} disabled={!allowed} onClick={() => changeWorkspace(item.target)} type="button">
+                    {allowed ? item.action : "Role required"}
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+        <section className="proof-export-hub" aria-label="Proof and exports hub">
+          <div className="proof-export-hub-header">
+            <div>
+              <span className="status-chip neutral">Proof &amp; exports hub</span>
+              <strong>Find the right proof packet without digging through every panel</strong>
+              <small>Use this hub when the dashboard feels dense: database proof, Corporate Verify proof, user database packets, and scoped workspace exports stay one click away.</small>
+            </div>
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>{authSession ? "scope enforced" : "preview only"}</span>
+          </div>
+          <div className="proof-export-hub-grid">
+            {proofExportHub.map((item) => (
+              <article key={item.label}>
+                <div>
+                  <strong>{item.label}</strong>
+                  <small>{item.detail}</small>
+                  <span>{item.status}</span>
+                </div>
+                <button
+                  className={item.target === "export" ? "primary-action" : "secondary-action"}
+                  onClick={() => {
+                    if (item.target === "export") {
+                      downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json");
+                      return;
+                    }
+                    if (item.target === "account") {
+                      openAuthControls();
+                      window.setTimeout(() => {
+                        document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }, 50);
+                      return;
+                    }
+                    changeWorkspace(item.target);
+                  }}
+                  type="button"
+                >
+                  {item.action}
+                </button>
+              </article>
+            ))}
+          </div>
+        </section>
 
             <section className="workspace-admin-grid" id="corporate-account-controls">
               <div className="setup-center-header">
