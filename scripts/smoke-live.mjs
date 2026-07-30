@@ -194,6 +194,7 @@ assertIncludesAny(bundleText, ["Export v1 completion packet"], "v1 completion au
 assertIncludesAny(bundleText, ["pilot_ready_with_human_gates"], "v1 completion pilot mode");
 assertIncludesAny(bundleText, ["Completion audit open items"], "v1 completion open item summary");
 assertIncludesAny(bundleText, ["completion_audit_requirements"], "v1 completion requirements packet field");
+assertIncludesAny(bundleText, ["live_database_repair_queue"], "v1 completion evidence export repair queue field");
 assertIncludesAny(bundleText, ["prepared_human_access_required"], "VPS deployment human access status");
 assertIncludesAny(bundleText, ["Export launch gate packet"], "combined launch gate packet export control");
 assertIncludesAny(bundleText, ["Record gate decision"], "production gate decision intake control");

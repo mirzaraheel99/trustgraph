@@ -66,7 +66,7 @@ Use the hosted URL for account creation and login. The local development URL is 
 4. Confirm the Supabase email verification link. It must return to `https://mirzaraheel99.github.io/trustgraph/`, not `localhost`.
 5. Login from the hosted page after verification. Corporate workspace details saved in the same browser are then provisioned into Supabase.
 6. Open the Launch checklist and export the hosted login/database handoff packet before recording pilot evidence.
-7. Use the Launch checklist only when pilot operators need database-backed validation rows for workflow acceptance.
+7. Review the live database repair queue to see which Passport, evidence, Access Grant, consent, corporate account, or billing row groups still need real Supabase rows.
 
 ## Supabase Auth
 
@@ -183,7 +183,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 23. Admin audit trail shows recent material workflow events and exports the full audit and verification history packet.
 24. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
 25. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, consent, subscription, and corporate member rows match the live repository loads.
-26. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows.
+26. Export the working-data packet to prove the currently loaded Passport, Access Grant, consent, subscription, team, and invitation rows plus the live database repair queue.
 
 ## Live Database Status
 

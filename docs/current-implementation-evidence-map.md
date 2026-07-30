@@ -35,7 +35,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
 | Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet | `supabase/migrations/012`, `016` |
-| Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, v1 completion audit packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
+| Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, v1 completion audit packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
 
 ## Live Database Proof Artifacts
 
@@ -54,7 +54,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Auth redirect readiness packet: active hosted redirect URL, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.
 - Registration auth readiness packet: selected portal, pending corporate setup state, repaired email-link readiness, and Supabase Auth redirect action items.
 - Hosted login/database handoff packet: active Supabase return URL, current login state, live database acceptance requirements, TrustGraph VPS target, and VFIX isolation guard.
-- Working-data packet: currently loaded Passport, Access Grant, consent, subscription, team member, and invitation counts.
+- Working-data packet: currently loaded Passport, Access Grant, consent, subscription, team member, and invitation counts plus the live database repair queue for missing required row groups.
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC.
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.
 - Admin exports: operations cases, audit CSV/JSON, release ledger, security runbook, production gates, pilot launch contacts, Connect clients, and webhooks.

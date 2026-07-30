@@ -3853,6 +3853,7 @@ function PlanAlignmentPanel({
       "auth_redirect_readiness_packet",
       "registration_auth_readiness_packet",
       "working_database_packet",
+      "live_database_repair_queue",
       "seed_reconciliation",
       "security_runbook",
       "vps_launch_packet"
