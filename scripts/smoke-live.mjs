@@ -72,6 +72,8 @@ async function assertRepoReadinessArtifacts() {
   assert(evidenceMap.includes("13-Track Evidence Map"), "Expected implementation evidence map to include 13-track coverage");
   assert(evidenceMap.includes("Live Database Proof Artifacts"), "Expected implementation evidence map to include live database proof artifacts");
   assert(evidenceMap.includes("Remaining Human Gates"), "Expected implementation evidence map to include human gates");
+  assert(evidenceMap.includes("https://trustgraph.5-75-224-110.sslip.io"), "Expected implementation evidence map to name the TrustGraph VPS pilot host");
+  assert(evidenceMap.includes("https://5-75-224-110.sslip.io/CRM-client-demo/login"), "Expected implementation evidence map to preserve VFIX isolation");
 }
 
 const pageUrl = `${targetUrl}?smoke=live-script`;

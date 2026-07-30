@@ -14,10 +14,10 @@ This document maps the approved TrustGraph planning set to the current GitHub im
 
 - Primary repo: `https://github.com/mirzaraheel99/trustgraph`
 - Hosted review app: `https://mirzaraheel99.github.io/trustgraph/`
-- TrustGraph VPS target: `https://5-75-224-11.sslip.io`
+- TrustGraph VPS pilot host: `https://trustgraph.5-75-224-110.sslip.io`
 - Protected VFIX app: `https://5-75-224-110.sslip.io/CRM-client-demo/login`
 
-GitHub Pages remains the verified review target until the guarded VPS bootstrap and secrets are completed.
+GitHub Pages remains the verified static review target, while the guarded TrustGraph VPS host is the pilot server target. GitHub stays the source of truth, and VFIX remains isolated on its existing path.
 
 ## 13-Track Evidence Map
 
