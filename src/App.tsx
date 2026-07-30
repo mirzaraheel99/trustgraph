@@ -4367,6 +4367,7 @@ function OperationsQueuePanel({
 
 function AuditTrailPanel({
   events,
+  corporateAccessReviews,
   evidenceDocuments,
   message
   ,
@@ -4374,6 +4375,7 @@ function AuditTrailPanel({
   schemaMigrationRuns
 }: {
   events: DbAuditEvent[];
+  corporateAccessReviews: DbCorporateAccessReview[];
   evidenceDocuments: DbEvidenceDocument[];
   message: string;
   operationsCases: DbVerificationCase[];
@@ -4381,7 +4383,7 @@ function AuditTrailPanel({
 }) {
   const [auditQuery, setAuditQuery] = useState("");
   const [actionFilter, setActionFilter] = useState<
-    "all" | "access" | "organization" | "record" | "connect" | "verification" | "evidence" | "schema"
+    "all" | "access" | "organization" | "record" | "connect" | "verification" | "evidence" | "schema" | "review"
   >("all");
   const [targetFilter, setTargetFilter] = useState("all");
   const [actorFilter, setActorFilter] = useState("all");
@@ -4455,7 +4457,7 @@ function AuditTrailPanel({
     },
     {
       label: "Coverage packet",
-      source: `${operationsCases.length} cases, ${evidenceDocuments.length} evidence rows, ${schemaMigrationRuns.length} release rows`,
+      source: `${operationsCases.length} cases, ${evidenceDocuments.length} evidence rows, ${corporateAccessReviews.length} review attestations, ${schemaMigrationRuns.length} release rows`,
       proves: "Audit trail context without exposing private evidence file contents.",
       action: "Export audit coverage packet"
     },
@@ -4497,6 +4499,7 @@ function AuditTrailPanel({
       high_signal_events: highSignalCount,
       verification_cases: operationsCases.length,
       evidence_documents: evidenceDocuments.length,
+      corporate_access_reviews: corporateAccessReviews.length,
       release_ledger_records: schemaMigrationRuns.length
     },
     admin_audit_export_matrix: auditExportMatrix
@@ -4520,6 +4523,7 @@ function AuditTrailPanel({
       high_signal_events: highSignalCount,
       verification_cases: operationsCases.length,
       evidence_documents: evidenceDocuments.length,
+      corporate_access_reviews: corporateAccessReviews.length,
       release_ledger_records: schemaMigrationRuns.length
     },
     latest_event: latestEvent ?? null,
@@ -4541,6 +4545,18 @@ function AuditTrailPanel({
       status: document.status,
       file_attached: Boolean(document.storage_path),
       created_at: document.created_at
+    })),
+    corporate_access_reviews: corporateAccessReviews.map((review) => ({
+      review_id: review.id,
+      access_grant_id: review.access_grant_id,
+      requester_organization_id: review.requester_organization_id,
+      subject_profile_id: review.subject_profile_id,
+      reviewer_profile_id: review.reviewer_profile_id,
+      review_status: review.review_status,
+      shared_record_count: review.shared_record_count,
+      open_gap_count: review.open_gap_count,
+      reviewer_note: review.reviewer_note,
+      created_at: review.created_at
     })),
     release_ledger: schemaMigrationRuns.map((run) => ({
       migration_path: run.migration_path,
@@ -4601,6 +4617,7 @@ function AuditTrailPanel({
           <option value="verification">Verification</option>
           <option value="evidence">Evidence</option>
           <option value="schema">Schema</option>
+          <option value="review">Review attestations</option>
         </select>
         <select onChange={(event) => setTargetFilter(event.target.value)} value={targetFilter}>
           <option value="all">All targets</option>
@@ -4671,7 +4688,7 @@ function AuditTrailPanel({
       </div>
       <div className="audit-coverage-note">
         <strong>Admin export readiness</strong>
-        <small>Packages active filters, actor and target scope, export formats, release ledger context, and raw evidence exclusion rules before audit data leaves Admin.</small>
+        <small>Packages active filters, actor and target scope, corporate review attestations, release ledger context, and raw evidence exclusion rules before audit data leaves Admin.</small>
         <button
           className="secondary-action"
           onClick={() => downloadTextFile(exportReadinessName, JSON.stringify(adminExportReadinessPacket, null, 2), "application/json")}
@@ -4698,7 +4715,7 @@ function AuditTrailPanel({
       </div>
       <div className="audit-coverage-note">
         <strong>Full audit and verification history packet</strong>
-        <small>Exports filtered audit events with verification cases, evidence document coverage, and release ledger records for the active Admin view.</small>
+        <small>Exports filtered audit events with verification cases, evidence document coverage, corporate review attestations, and release ledger records for the active Admin view.</small>
       </div>
       <div className="audit-list">
         {filteredEvents.length ? (
@@ -5759,7 +5776,8 @@ function SecurityReviewPanel({
     "consent_authorizations",
     "schema_migration_runs",
     "production_gate_decisions",
-    "pilot_launch_contacts"
+    "pilot_launch_contacts",
+    "corporate_access_reviews"
   ];
   const checks = [
     {
@@ -13110,6 +13128,7 @@ function App() {
                   webhooks={webhookSubscriptions}
                 />
                 <AuditTrailPanel
+                  corporateAccessReviews={corporateAccessReviews}
                   events={auditEvents}
                   evidenceDocuments={evidenceDocuments}
                   message={auditStatus}

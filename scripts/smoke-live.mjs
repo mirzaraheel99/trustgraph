@@ -263,6 +263,8 @@ assertIncludesAny(bundleText, ["admin_audit_export_readiness"], "admin export re
 assertIncludesAny(bundleText, ["Admin audit export matrix"], "admin audit export matrix label");
 assertIncludesAny(bundleText, ["admin_audit_export_matrix"], "admin audit export matrix packet field");
 assertIncludesAny(bundleText, ["Choose the right proof packet before sharing audit data"], "admin audit export matrix guidance");
+assertIncludesAny(bundleText, ["Review attestations"], "admin audit review attestation filter");
+assertIncludesAny(bundleText, ["corporate_access_reviews"], "admin audit and security corporate review table coverage");
 assertIncludesAny(bundleText, ["Full audit and verification history packet"], "audit coverage packet label");
 assertIncludesAny(bundleText, ["Export audit coverage packet"], "audit coverage packet export control");
 assertIncludesAny(bundleText, ["filtered_audit_and_verification_history"], "audit coverage packet mode");
