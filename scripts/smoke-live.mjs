@@ -226,6 +226,9 @@ assertIncludesAny(bundleText, ["Real database only acceptance"], "real database 
 assertIncludesAny(bundleText, ["Preview data is not accepted for v1 database proof"], "real database acceptance visible guard");
 assertIncludesAny(bundleText, ["real_database_acceptance_policy"], "real database acceptance packet field");
 assertIncludesAny(bundleText, ["signed_in_supabase_repository_rows"], "real database accepted source field");
+assertIncludesAny(bundleText, ["Organization RLS recursion repair"], "working database RLS repair proof card");
+assertIncludesAny(bundleText, ["organization_rls_repair_evidence"], "working database RLS repair packet field");
+assertIncludesAny(bundleText, ["034_fix_organization_policy_recursion.sql"], "working database required RLS repair migration");
 assertIncludesAny(bundleText, ["Live database repair queue"], "working database repair queue");
 assertIncludesAny(bundleText, ["live_database_repair_queue"], "working database repair queue packet field");
 assertIncludesAny(bundleText, ["Export working-data packet"], "working database proof export");

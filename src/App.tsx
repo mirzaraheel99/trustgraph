@@ -6802,6 +6802,7 @@ function OnboardingChecklistPanel({
   evidenceDocuments,
   livePassportRecords,
   organizationSubscriptions,
+  schemaMigrationRuns,
   teamInvitations,
   teamMembers,
   onOpenHostedRegistration,
@@ -6815,6 +6816,7 @@ function OnboardingChecklistPanel({
   evidenceDocuments: DbEvidenceDocument[];
   livePassportRecords: RecordItem[];
   organizationSubscriptions: DbOrganizationSubscription[];
+  schemaMigrationRuns: DbSchemaMigrationRun[];
   teamInvitations: DbOrganizationInvitation[];
   teamMembers: OrganizationMemberView[];
   onOpenHostedRegistration: () => void;
@@ -6907,6 +6909,21 @@ function OnboardingChecklistPanel({
     { label: "Team invitations", count: teamInvitations.length }
   ];
   const workingDataTotal = workingDataRows.reduce((total, row) => total + row.count, 0);
+  const organizationRlsRepairRun = schemaMigrationRuns.find((run) =>
+    run.migration_path.includes("034_fix_organization_policy_recursion.sql")
+  );
+  const organizationRlsRepairEvidence = {
+    label: "Organization RLS recursion repair",
+    required_migration_path: "supabase/migrations/034_fix_organization_policy_recursion.sql",
+    ledger_status: organizationRlsRepairRun?.status ?? "release_ledger_not_loaded_for_this_role",
+    applied: organizationRlsRepairRun?.status === "applied",
+    workflow_run_id: organizationRlsRepairRun?.workflow_run_id ?? null,
+    commit_sha: organizationRlsRepairRun?.commit_sha ?? null,
+    applied_at: organizationRlsRepairRun?.applied_at ?? null,
+    operator_note: organizationRlsRepairRun
+      ? "Migration 034 is recorded in the release ledger for this database."
+      : "Migration 034 is required for corporate account context. Open Admin release ledger or GitHub Actions to prove the run."
+  };
   const liveDatabaseAcceptanceRows = [
     {
       label: "Professional Passport database",
@@ -6981,10 +6998,12 @@ function OnboardingChecklistPanel({
         : "login_required",
     required_proof: [
       "Hosted Supabase login is active",
+      "Organization RLS recursion repair migration 034 is applied",
       "Account context and RBAC membership loaded",
       "Required Passport, evidence, Access Grant, consent, corporate account, and billing rows are loaded",
       "Working-data packet exported after live rows load"
-    ]
+    ],
+    migration_repair_evidence: organizationRlsRepairEvidence
   };
   const seededAccessGrantId = visibleSeedEvidence?.access_grant_id ?? "";
   const seededConsentAuthorizationId = visibleSeedEvidence?.consent_authorization_id ?? "";
@@ -7082,7 +7101,7 @@ function OnboardingChecklistPanel({
     account_context_loaded: Boolean(accountContext),
     live_rows_currently_loaded: workingDataRows,
     live_row_total: workingDataTotal,
-    live_database_acceptance: {
+      live_database_acceptance: {
       status: workingDatabaseAcceptanceStatus,
       passing: liveDatabaseAcceptancePassing,
       total: liveDatabaseAcceptanceRows.length,
@@ -7090,7 +7109,8 @@ function OnboardingChecklistPanel({
       rows: liveDatabaseAcceptanceRows,
       unmet_requirements: liveDatabaseAcceptanceRows.filter((row) => !row.ok).map((row) => row.required),
       live_database_repair_queue: liveDatabaseRepairQueue,
-      real_database_acceptance_policy: realDatabaseAcceptancePolicy
+      real_database_acceptance_policy: realDatabaseAcceptancePolicy,
+      organization_rls_repair_evidence: organizationRlsRepairEvidence
     },
     checklist_completed: completed,
     checklist_total: checklist.length,
@@ -7300,6 +7320,29 @@ function OnboardingChecklistPanel({
             <span>
               <strong>{liveDatabaseAcceptanceComplete ? "Accepted" : "Not accepted"}</strong>
               <small>{realDatabaseAcceptancePolicy.current_status.replace(/_/g, " ")}</small>
+            </span>
+          </div>
+        </div>
+        <div className="migration-repair-card">
+          <div>
+            <span className={`status-chip ${organizationRlsRepairEvidence.applied ? "success" : "warning"}`}>
+              {organizationRlsRepairEvidence.applied ? "034 ledger verified" : "034 proof needed"}
+            </span>
+            <strong>Organization RLS recursion repair</strong>
+            <small>{organizationRlsRepairEvidence.operator_note}</small>
+          </div>
+          <div className="real-database-policy-grid">
+            <span>
+              <strong>{organizationRlsRepairEvidence.ledger_status.replace(/_/g, " ")}</strong>
+              <small>Release ledger status</small>
+            </span>
+            <span>
+              <strong>{organizationRlsRepairEvidence.workflow_run_id ?? "Admin ledger"}</strong>
+              <small>Workflow run proof</small>
+            </span>
+            <span>
+              <strong>034</strong>
+              <small>Required before corporate account context acceptance</small>
             </span>
           </div>
         </div>
@@ -10497,6 +10540,7 @@ function App() {
                       evidenceDocuments={evidenceDocuments}
                       livePassportRecords={livePassportRecords}
                       organizationSubscriptions={organizationSubscriptions}
+                      schemaMigrationRuns={schemaMigrationRuns}
                       teamInvitations={teamInvitations}
                       teamMembers={teamMembers}
                       onOpenHostedRegistration={() => setShowPublicSite(true)}
