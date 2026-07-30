@@ -112,6 +112,10 @@ assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command cent
 assertIncludesAny(bundleText, ["Verified TrustGraph record graph"], "premium TrustGraph record graph visual");
 assertIncludesAny(bundleText, ["Professional", "Passport", "Evidence", "Consent"], "TrustGraph visual record nodes");
 assertIncludesAny(bundleText, ["Organization name"], "Corporate registration organization field");
+assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup path");
+assertIncludesAny(bundleText, ["Create workspace"], "corporate setup workspace step");
+assertIncludesAny(bundleText, ["Confirm RBAC"], "corporate setup RBAC step");
+assertIncludesAny(bundleText, ["Select plan"], "corporate setup billing step");
 assertIncludesAny(bundleText, ["Pending corporate workspace"], "pending Corporate setup continuation card");
 assertIncludesAny(bundleText, ["Clear saved setup"], "pending Corporate setup reset control");
 assertIncludesAny(bundleText, ["Fix localhost email link"], "hosted auth link repair control");

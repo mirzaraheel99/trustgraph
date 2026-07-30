@@ -9,6 +9,7 @@ const requiredMobileStacks = [
   ".database-status-strip",
   ".connect-source-strip",
   ".connect-export-actions",
+  ".corporate-setup-guide",
   ".directory-source-strip",
   ".evidence-source-strip",
   ".issuer-source-strip",

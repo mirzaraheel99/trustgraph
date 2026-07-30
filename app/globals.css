@@ -2932,6 +2932,96 @@ p {
   color: var(--muted);
 }
 
+.corporate-setup-guide {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.55fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(82, 214, 196, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 58%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.corporate-setup-summary {
+  display: grid;
+  gap: 5px;
+  align-content: start;
+}
+
+.corporate-setup-summary strong,
+.corporate-setup-summary small {
+  display: block;
+}
+
+.corporate-setup-summary strong {
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.corporate-setup-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+  gap: 8px;
+}
+
+.corporate-setup-steps button {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 4px 8px;
+  align-items: center;
+  min-height: 68px;
+  padding: 10px;
+  text-align: left;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.corporate-setup-steps button span {
+  grid-row: span 2;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.corporate-setup-steps button strong,
+.corporate-setup-steps button small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.corporate-setup-steps button strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.corporate-setup-steps button.complete {
+  border-color: rgba(112, 224, 178, 0.3);
+  background: rgba(112, 224, 178, 0.07);
+}
+
+.corporate-setup-steps button.complete span {
+  color: #04110f;
+  border-color: transparent;
+  background: var(--teal);
+}
+
+.corporate-setup-steps button.next {
+  border-color: rgba(225, 184, 102, 0.44);
+  background: rgba(225, 184, 102, 0.07);
+}
+
 .setup-tabs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(164px, 1fr));
@@ -5999,6 +6089,7 @@ p {
   .billing-decision-card,
   .billing-ledger-acceptance,
   .billing-gate-grid,
+  .corporate-setup-guide,
   .control-center-body,
   .control-center-header,
   .control-center-metrics,

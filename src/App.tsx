@@ -4902,7 +4902,7 @@ function AccountPanel({
         <LockKeyhole size={16} />
         <strong>Corporate account and RBAC</strong>
       </div>
-      <p className="panel-intro">Create an employer or staffing workspace, switch roles, and repair access from one place.</p>
+      <p className="panel-intro">Use this panel after login: create the live employer or staffing workspace first, switch into its admin role, then invite reviewers and activate billing from the setup guide.</p>
       <div className="account-user">
         <span>{accountUser.name}</span>
         <small>{authSession ? `Live profile ${authSession.user.id.slice(0, 8)}` : accountUser.email}</small>
@@ -9320,6 +9320,65 @@ function App() {
     { id: "billing", label: "Billing", detail: "Pilot ledger", count: organizationSubscriptions.length },
     { id: "readiness", label: "Readiness", detail: "Launch checks", count: queuedNotificationCount }
   ] as const;
+  const hasLiveCorporateContext = Boolean(
+    authSession &&
+      accountContext &&
+      activeOrganization.type !== "professional" &&
+      accountUser.memberships.some((membership) => membership.organizationId === activeOrganization.id)
+  );
+  const canManageCorporateSetup = hasPermission(activeMembership.role, "organization:manage");
+  const corporateSetupSteps = [
+    {
+      id: "login",
+      label: "Sign in",
+      detail: authSession ? authSession.user.email : "Use the hosted login before creating a live corporate workspace.",
+      status: authSession ? "Complete" : "Needed",
+      done: Boolean(authSession),
+      target: "account" as const
+    },
+    {
+      id: "workspace",
+      label: "Create workspace",
+      detail: hasLiveCorporateContext
+        ? `${activeOrganization.name} is the active corporate database context.`
+        : "Create an employer or staffing account, then switch into its admin membership.",
+      status: hasLiveCorporateContext ? "Live" : "Needed",
+      done: hasLiveCorporateContext,
+      target: "corporate" as const
+    },
+    {
+      id: "roles",
+      label: "Confirm RBAC",
+      detail: canManageCorporateSetup
+        ? `${activeRole.label} can manage team, roles, and subscription setup.`
+        : "Activate an admin role before inviting reviewers or changing corporate access.",
+      status: canManageCorporateSetup ? "Ready" : "Needs admin",
+      done: canManageCorporateSetup,
+      target: "corporate" as const
+    },
+    {
+      id: "team",
+      label: "Invite team",
+      detail: teamMembers.length || teamInvitations.length
+        ? `${teamMembers.length} members and ${teamInvitations.length} invitations are visible.`
+        : "Invite reviewers, recruiters, or admins who need corporate portal access.",
+      status: teamMembers.length || teamInvitations.length ? "Started" : "Next",
+      done: Boolean(teamMembers.length || teamInvitations.length),
+      target: "team" as const
+    },
+    {
+      id: "billing",
+      label: "Select plan",
+      detail: organizationSubscriptions.length
+        ? `${organizationSubscriptions.length} live subscription ledger row${organizationSubscriptions.length === 1 ? "" : "s"} loaded.`
+        : "Activate a Corporate Verify pilot plan before treating pricing as accepted.",
+      status: organizationSubscriptions.length ? "Ledger live" : "Needed",
+      done: Boolean(organizationSubscriptions.length),
+      target: "billing" as const
+    }
+  ];
+  const corporateSetupComplete = corporateSetupSteps.filter((step) => step.done).length;
+  const nextCorporateSetupStep = corporateSetupSteps.find((step) => !step.done) ?? corporateSetupSteps[corporateSetupSteps.length - 1];
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -9589,7 +9648,28 @@ function App() {
               <div className="setup-center-header">
                 <span className="eyebrow">Setup center</span>
                 <h2>Account, corporate access, and rollout controls</h2>
-                <p>Use this area for login, corporate workspace creation, team access, billing, and production readiness without crowding the daily workspace.</p>
+                <p>Follow the corporate setup path in order: login, workspace, RBAC, team, billing, then readiness. Each action opens the exact panel needed for the next live database step.</p>
+              </div>
+              <div className="corporate-setup-guide" aria-label="Corporate setup guide">
+                <div className="corporate-setup-summary">
+                  <span className="eyebrow">Corporate launch path</span>
+                  <strong>{corporateSetupComplete}/{corporateSetupSteps.length} setup steps complete</strong>
+                  <small>Next: {nextCorporateSetupStep.label} - {nextCorporateSetupStep.detail}</small>
+                </div>
+                <div className="corporate-setup-steps">
+                  {corporateSetupSteps.map((step, index) => (
+                    <button
+                      className={step.done ? "complete" : step.id === nextCorporateSetupStep.id ? "next" : ""}
+                      key={step.id}
+                      onClick={() => setSetupView(step.target)}
+                      type="button"
+                    >
+                      <span>{index + 1}</span>
+                      <strong>{step.label}</strong>
+                      <small>{step.status}</small>
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="setup-tabs" role="tablist" aria-label="Setup center sections">
                 {setupTabs.map((tab) => (
