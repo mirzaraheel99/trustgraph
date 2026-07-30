@@ -74,8 +74,12 @@ if (!css.includes(".trust-network-visual") || !css.includes("min-height: 268px")
   throw new Error("Responsive check failed: premium TrustGraph record graph needs stable desktop dimensions.");
 }
 
-if (!css.includes("grid-template-columns: minmax(260px, 300px) minmax(0, 1fr)") || !css.includes("contain: inline-size")) {
+if (!css.includes("grid-template-columns: minmax(224px, 276px) minmax(0, 1fr)") || !css.includes("contain: inline-size")) {
   throw new Error("Responsive check failed: app shell must keep the sidebar narrow and contain workspace overflow.");
+}
+
+if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(260px, 360px)") || !css.includes("max-width: 360px") || !css.includes("scrollbar-width: thin")) {
+  throw new Error("Responsive check failed: premium shell actions must stay compact and preserve workspace width.");
 }
 
 if (!css.includes("width: min(100%, 1280px)") || !css.includes("grid-template-columns: repeat(3, minmax(0, 1fr))")) {
