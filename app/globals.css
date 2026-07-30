@@ -1799,27 +1799,7 @@ button {
 }
 
 .sidebar {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  height: auto;
-  max-height: 42vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 12px clamp(16px, 2vw, 32px);
-  border-right: 0;
-  border-bottom: 1px solid var(--line);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 140%),
-    rgba(8, 13, 15, 0.92);
-  backdrop-filter: blur(22px);
-  display: grid;
-  grid-template-columns: minmax(160px, 220px) minmax(0, 1.15fr) minmax(180px, 0.7fr) minmax(0, 0.95fr);
-  align-items: stretch;
-  gap: 10px;
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  max-width: none;
+  display: none;
 }
 
 .sidebar > * {
@@ -4810,9 +4790,9 @@ p,
 }
 
 .workspace {
-  width: min(100%, 1480px);
+  width: min(100%, 1360px);
   margin: 0 auto;
-  padding: 22px clamp(18px, 2.2vw, 36px) 56px;
+  padding: 28px clamp(18px, 3vw, 44px) 64px;
   min-width: 0;
   max-width: 100%;
   overflow-x: hidden;
@@ -4826,11 +4806,11 @@ p,
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  gap: 16px;
   align-items: flex-start;
   width: 100%;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(201, 214, 207, 0.1);
 }
@@ -4873,10 +4853,10 @@ p {
 }
 
 .topbar h1 {
-  max-width: 24ch;
+  max-width: 20ch;
   margin-bottom: 8px;
-  font-size: clamp(32px, 3.2cqw, 46px);
-  line-height: 1.02;
+  font-size: clamp(30px, 3cqw, 42px);
+  line-height: 1.05;
 }
 
 .session-strip {
@@ -4979,7 +4959,7 @@ p {
 
 .workspace-flow-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(156px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   overflow: visible;
   scrollbar-width: thin;
   gap: 7px;
@@ -5043,7 +5023,7 @@ p {
 
 .workspace-command-strip {
   display: grid;
-  grid-template-columns: minmax(180px, 0.5fr) minmax(0, 1.35fr) minmax(150px, 0.34fr);
+  grid-template-columns: minmax(190px, 0.64fr) minmax(0, 1.05fr) minmax(150px, 0.38fr);
   align-items: center;
   gap: 10px;
   width: 100%;
@@ -5394,14 +5374,14 @@ p {
   justify-content: flex-end;
   gap: 8px;
   width: 100%;
-  max-width: 340px;
+  max-width: 300px;
   min-width: 0;
 }
 
 .topbar-session-card {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, minmax(92px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
   gap: 8px;
   padding: 8px;
@@ -5435,6 +5415,10 @@ p {
   min-height: 38px;
   padding: 0 10px;
   font-size: 12px;
+}
+
+.topbar-session-card .secondary-action:last-child {
+  grid-column: 1 / -1;
 }
 
 .topbar-session-card .secondary-action {

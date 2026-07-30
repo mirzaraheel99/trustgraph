@@ -101,7 +101,7 @@ if (!gridStackCss.includes(".record-form-grid") || !gridStackCss.includes("grid-
   throw new Error("Responsive check failed: missing 1020px grid stacking rule.");
 }
 
-if (!premiumShellCss.includes(".app") || !premiumShellCss.includes("display: block") || !premiumShellCss.includes(".sidebar") || !premiumShellCss.includes("border-bottom: 1px solid var(--line)")) {
+if (!premiumShellCss.includes(".app") || !premiumShellCss.includes("display: block") || !premiumShellCss.includes(".workspace") || !premiumShellCss.includes("padding-top: 18px")) {
   throw new Error("Responsive check failed: dashboard shell must collapse before cramped desktop widths.");
 }
 
@@ -113,8 +113,8 @@ if (!css.includes(".trust-network-visual") || !css.includes("min-height: 268px")
   throw new Error("Responsive check failed: premium TrustGraph record graph needs stable desktop dimensions.");
 }
 
-if (!css.includes(".app") || !css.includes("display: block") || !css.includes("grid-template-columns: minmax(160px, 220px) minmax(0, 1.15fr) minmax(180px, 0.7fr) minmax(0, 0.95fr)") || !css.includes("max-height: 42vh")) {
-  throw new Error("Responsive check failed: app shell must use a compact top command band instead of a fragile fixed rail.");
+if (!css.includes(".sidebar") || !css.includes("display: none") || !css.includes(".session-command-bar") || !css.includes(".workspace-route-strip")) {
+  throw new Error("Responsive check failed: app shell must use the compact top command system instead of a fragile dashboard rail.");
 }
 
 if (!css.includes(".sidebar .account-admin-row") || !css.includes(".sidebar .account-admin-form button") || !css.includes("width: 100%")) {
@@ -141,11 +141,11 @@ if (!css.includes(".v1-audit-command") || !css.includes("grid-template-columns: 
   throw new Error("Responsive check failed: v1 completion panel needs a clear audit command surface.");
 }
 
-if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(260px, 340px)") || !css.includes("max-width: 340px") || !css.includes("scrollbar-width: thin")) {
+if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(220px, 300px)") || !css.includes("max-width: 300px") || !css.includes(".topbar-session-card .secondary-action:last-child")) {
   throw new Error("Responsive check failed: premium shell actions must stay compact and preserve workspace width.");
 }
 
-if (!css.includes("width: min(100%, 1480px)") || !css.includes("margin: 0 auto") || !css.includes("grid-template-columns: minmax(240px, 0.85fr) minmax(300px, 1.08fr) minmax(280px, 0.92fr)")) {
+if (!css.includes("width: min(100%, 1360px)") || !css.includes("margin: 0 auto") || !css.includes("grid-template-columns: minmax(240px, 0.85fr) minmax(300px, 1.08fr) minmax(280px, 0.92fr)")) {
   throw new Error("Responsive check failed: premium shell must use the available console width without centered desktop drift.");
 }
 
@@ -153,11 +153,11 @@ if (!css.includes(".workspace > *") || !css.includes("grid-template-columns: rep
   throw new Error("Responsive check failed: workspace children and corporate plan cards must not force horizontal overflow.");
 }
 
-if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 100%") || !css.includes(".workspace-flow-strip") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(156px, 1fr))")) {
+if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 100%") || !css.includes(".workspace-flow-strip") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(170px, 1fr))")) {
   throw new Error("Responsive check failed: primary workspace route and portal path strips must stay compact.");
 }
 
-if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(180px, 0.5fr) minmax(0, 1.35fr) minmax(150px, 0.34fr)")) {
+if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(190px, 0.64fr) minmax(0, 1.05fr) minmax(150px, 0.38fr)")) {
   throw new Error("Responsive check failed: workspace command strip must summarize signed-in routing without overflow.");
 }
 
