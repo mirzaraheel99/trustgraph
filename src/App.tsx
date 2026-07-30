@@ -5979,6 +5979,23 @@ function TeamInvitationsPanel({
   const [invitationStatusFilter, setInvitationStatusFilter] = useState<"all" | "pending" | "accepted" | "cancelled" | "expired">("all");
   const pendingCount = invitations.filter((invitation) => invitation.status === "pending").length;
   const acceptedCount = invitations.filter((invitation) => invitation.status === "accepted").length;
+  const inviteOperatorSteps = [
+    {
+      label: "Invite reviewer",
+      detail: disabled ? "Use a corporate admin role before inviting team members." : "Send a role-scoped invitation to the reviewer email.",
+      ready: !disabled
+    },
+    {
+      label: "Invitee accepts",
+      detail: pendingCount ? `${pendingCount} pending invitation${pendingCount === 1 ? "" : "s"} waiting for handoff.` : "Accepted invitations create live membership rows.",
+      ready: acceptedCount > 0
+    },
+    {
+      label: "Roster review",
+      detail: acceptedCount ? `${acceptedCount} accepted invitation${acceptedCount === 1 ? "" : "s"} ready for member review.` : "Accepted users appear in Team members.",
+      ready: acceptedCount > 0
+    }
+  ];
   const filteredInvitations = invitations.filter((invitation) => {
     const matchesStatus = invitationStatusFilter === "all" || invitation.status === invitationStatusFilter;
     const haystack = `${invitation.invited_email} ${invitation.role} ${invitation.status}`.toLowerCase();
@@ -6030,14 +6047,31 @@ function TeamInvitationsPanel({
           <strong>{acceptedCount}</strong>
         </div>
       </div>
+      <div className="team-invite-path" aria-label="Team invitation operator path">
+        {inviteOperatorSteps.map((step) => (
+          <article className={step.ready ? "ready" : ""} key={step.label}>
+            <span className={`status-dot ${step.ready ? "on" : ""}`} />
+            <div>
+              <strong>{step.label}</strong>
+              <small>{step.detail}</small>
+            </div>
+          </article>
+        ))}
+      </div>
       <form className="team-form" onSubmit={submit}>
-        <input disabled={disabled || busy} onChange={(event) => setEmail(event.target.value)} placeholder="reviewer@company.com" type="email" value={email} />
-        <select disabled={disabled || busy} onChange={(event) => setRole(event.target.value as typeof role)} value={role}>
-          <option value="employer_reviewer">Employer reviewer</option>
-          <option value="employer_admin">Employer admin</option>
-          <option value="recruiter">Recruiter</option>
-          <option value="staffing_agency_admin">Staffing admin</option>
-        </select>
+        <label>
+          <span>Invitee email</span>
+          <input disabled={disabled || busy} onChange={(event) => setEmail(event.target.value)} placeholder="reviewer@company.com" type="email" value={email} />
+        </label>
+        <label>
+          <span>Portal role</span>
+          <select disabled={disabled || busy} onChange={(event) => setRole(event.target.value as typeof role)} value={role}>
+            <option value="employer_reviewer">Employer reviewer</option>
+            <option value="employer_admin">Employer admin</option>
+            <option value="recruiter">Recruiter</option>
+            <option value="staffing_agency_admin">Staffing admin</option>
+          </select>
+        </label>
         <div className="record-form-footer">
           <small>{status}</small>
           <button className="secondary-action" disabled={disabled || busy || !email} type="submit">

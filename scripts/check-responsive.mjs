@@ -40,6 +40,7 @@ const requiredMobileStacks = [
   ".setup-command-metrics",
   ".team-operations-cockpit",
   ".team-operations-grid",
+  ".team-invite-path",
   ".team-source-strip",
   ".verify-request-header",
   ".verify-reviewer-flow-header",
