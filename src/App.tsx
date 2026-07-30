@@ -6923,6 +6923,28 @@ function BillingPanel({
       detail: "Checkout, invoices, tax, refunds, dunning, and webhooks stay gated until approval."
     }
   ];
+  const pricingLaunchCommand = [
+    {
+      label: "Live pricing catalog",
+      value: plans.length ? `${plans.length} plans loaded` : "Plans not loaded",
+      detail: "Professional, Corporate Verify, and Scale prices come from the Supabase pricing migration."
+    },
+    {
+      label: "Pilot subscription ledger",
+      value: activeSubscriptions.length ? `${activeSubscriptions.length} active` : "Not active",
+      detail: activeSubscriptions.length ? "Organization subscription rows are live database evidence." : "Select a plan to write a ledger row."
+    },
+    {
+      label: "Selected seats",
+      value: `${seats}`,
+      detail: estimatedSeatTotal ? `$${estimatedSeatTotal}/month projected from configured plans.` : "Load plans to calculate projected monthly pricing."
+    },
+    {
+      label: "Stripe launch gate",
+      value: "Human gated",
+      detail: "Checkout, invoices, tax, refunds, dunning, and payment webhooks remain disabled."
+    }
+  ];
   const pricingStructurePacket = {
     generated_at: new Date().toISOString(),
     mode: "pilot_subscription_ledger",
@@ -6990,6 +7012,24 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="pricing-launch-command" aria-label="Pricing launch command">
+        <div>
+          <span className="status-chip warning">Pricing launch command</span>
+          <strong>Use live pricing and ledger rows, keep payments gated</strong>
+          <small>
+            TrustGraph can prove plan catalog, selected seats, and organization subscription rows now. Real payment collection waits for the Stripe human gate.
+          </small>
+        </div>
+        <div className="pricing-launch-command-grid">
+          {pricingLaunchCommand.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+      </div>
       <div className="billing-operator-path" aria-label="Billing operator path">
         {billingOperatorSteps.map((step, index) => (
           <article className={step.status === "ready" ? "ready" : ""} key={step.label}>

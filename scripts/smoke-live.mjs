@@ -522,6 +522,9 @@ assertIncludesAny(bundleText, ["billing_operator_path"], "billing operator path 
 assertIncludesAny(bundleText, ["Billing ledger acceptance"], "billing ledger acceptance proof");
 assertIncludesAny(bundleText, ["billing_ledger_evidence"], "billing ledger acceptance packet field");
 assertIncludesAny(bundleText, ["live_subscription_ledger"], "live billing ledger mode");
+assertIncludesAny(bundleText, ["Pricing launch command"], "billing pricing launch command surface");
+assertIncludesAny(bundleText, ["Use live pricing and ledger rows, keep payments gated"], "billing pricing launch command headline");
+assertIncludesAny(bundleText, ["Real payment collection waits for the Stripe human gate"], "billing Stripe gate guidance");
 assertIncludesAny(bundleText, ["Payment launch boundary"], "billing payment launch boundary");
 assertIncludesAny(bundleText, ["Billing architecture decision packet"], "billing architecture decision packet label");
 assertIncludesAny(bundleText, ["Export payment decision"], "billing architecture decision export control");

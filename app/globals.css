@@ -2526,6 +2526,65 @@ p,
     rgba(255, 255, 255, 0.025);
 }
 
+.pricing-launch-command {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(225, 184, 102, 0.26);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.09), transparent 58%),
+    linear-gradient(160deg, rgba(82, 214, 196, 0.055), transparent 74%),
+    rgba(0, 0, 0, 0.13);
+}
+
+.pricing-launch-command > div:first-child,
+.pricing-launch-command-grid article {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.pricing-launch-command strong,
+.pricing-launch-command small,
+.pricing-launch-command span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pricing-launch-command > div:first-child > strong {
+  font-size: 16px;
+  line-height: 1.18;
+}
+
+.pricing-launch-command small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.pricing-launch-command-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pricing-launch-command-grid article {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.pricing-launch-command-grid span {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 950;
+}
+
 .billing-ledger-acceptance {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
@@ -10130,6 +10189,8 @@ p {
   .billing-estimate-card,
   .billing-decision-card,
   .billing-ledger-acceptance,
+  .pricing-launch-command,
+  .pricing-launch-command-grid,
   .billing-operator-path,
   .billing-gate-grid,
   .corporate-operator-strip,

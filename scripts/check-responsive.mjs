@@ -133,6 +133,10 @@ if (!css.includes(".auth-access-command") || !css.includes("grid-template-column
   throw new Error("Responsive check failed: auth panel needs a clear professional/corporate access command surface.");
 }
 
+if (!css.includes(".pricing-launch-command") || !css.includes("grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr)") || !css.includes(".pricing-launch-command-grid")) {
+  throw new Error("Responsive check failed: billing panel needs a clear pricing launch command surface.");
+}
+
 if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(260px, 340px)") || !css.includes("max-width: 340px") || !css.includes("scrollbar-width: thin")) {
   throw new Error("Responsive check failed: premium shell actions must stay compact and preserve workspace width.");
 }
