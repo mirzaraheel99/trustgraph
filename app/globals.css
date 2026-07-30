@@ -1541,6 +1541,63 @@ button {
   background: rgba(0, 0, 0, 0.12);
 }
 
+.selected-portal-command {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.28);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.09), transparent 68%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.selected-portal-command > div:first-child {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.selected-portal-command strong,
+.selected-portal-command small {
+  display: block;
+  min-width: 0;
+}
+
+.selected-portal-command strong {
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.selected-portal-command small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.selected-portal-command-fields {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.selected-portal-command-fields span {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  color: var(--text);
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: 999px;
+  background: rgba(82, 214, 196, 0.08);
+  font-size: 11px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
 .auth-link-repair,
 .auth-readiness-packet {
   display: grid;
@@ -9682,6 +9739,7 @@ p {
   .pricing-decision-strip,
   .pending-registration-grid,
   .registration-grid,
+  .selected-portal-command,
   .directory-controls,
   .directory-review-board,
   .admin-audit-export-grid,

@@ -470,6 +470,9 @@ assertIncludesAny(bundleText, ["update_issuer_credential_expiry"], "issuer crede
 assertIncludesAny(bundleText, ["Update expiry"], "issuer credential expiry update control");
 assertIncludesAny(bundleText, ["Selected path"], "registration selected path proof");
 assertIncludesAny(bundleText, ["selected_registration_path"], "registration path packet field");
+assertIncludesAny(bundleText, ["Selected portal command"], "registration selected portal command strip");
+assertIncludesAny(bundleText, ["selected_portal_command"], "registration selected portal command packet field");
+assertIncludesAny(bundleText, ["Create company admin account"], "corporate registration command headline");
 assertIncludesAny(bundleText, ["protected_vfix_host"], "auth packet VFIX isolation field");
 assertIncludesAny(bundleText, ["trustgraph_vps_target"], "auth packet TrustGraph VPS field");
 assertIncludesAny(bundleText, ["github_pages_redirect"], "auth packet GitHub Pages redirect field");

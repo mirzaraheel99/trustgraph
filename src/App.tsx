@@ -9621,11 +9621,36 @@ function PublicSite({
             detail: "Corporate teams see only records approved through scoped Access Grants and consent."
           }
         ];
+  const selectedPortalCommand = {
+    label: "Selected portal command",
+    headline:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create company admin account"
+          : "Login to Corporate Verify"
+        : mode === "signup"
+          ? "Create Professional Passport"
+          : "Login to Professional Passport",
+    next:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Enter email, password, organization name, domain, and company type."
+          : "Enter the verified admin email and password to open company setup."
+        : mode === "signup"
+          ? "Enter email and password. Passport setup starts after verification."
+          : "Enter the verified email and password to open personal records.",
+    required_fields:
+      portal === "corporate" && mode === "signup"
+        ? ["email", "password", "organization_name", "organization_domain", "organization_type"]
+        : ["email", "password"],
+    after_success: selectedRegistrationPath.nextAction
+  };
   const authOutcomePacket = {
     mode: "portal_auth_outcome_summary",
     selected_portal: portal,
     selected_mode: mode,
     hosted_redirect_url: authRedirectUrl,
+    selected_portal_command: selectedPortalCommand,
     outcome_steps: authOutcomeSteps,
     live_database_target:
       portal === "corporate"
@@ -10562,6 +10587,18 @@ function PublicSite({
               </button>
             </div>
           ) : null}
+          <div className="selected-portal-command" aria-label="Selected portal command">
+            <div>
+              <span className="status-chip success">{selectedPortalCommand.label}</span>
+              <strong>{selectedPortalCommand.headline}</strong>
+              <small>{selectedPortalCommand.next}</small>
+            </div>
+            <div className="selected-portal-command-fields">
+              {selectedPortalCommand.required_fields.map((field) => (
+                <span key={field}>{field.replace(/_/g, " ")}</span>
+              ))}
+            </div>
+          </div>
           <input onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
           <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
           {portal === "corporate" && mode === "signup" ? (
