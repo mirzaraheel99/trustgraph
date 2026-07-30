@@ -34,6 +34,7 @@ import type {
   DbAuditEvent,
   DbApiClient,
   DbConsentAuthorization,
+  DbCorporateAccessReview,
   DbDataRightsRequest,
   DbEvidenceDocument,
   DbIssuerCredential,
@@ -49,6 +50,7 @@ import type {
   DbSubscriptionPlan,
   DbVerificationCase,
   DbWebhookSubscription,
+  CorporateAccessReviewStatus,
   ProductionGateStatus,
   PilotLaunchContactStatus,
   DataRightsRequestType,
@@ -110,8 +112,10 @@ import {
   createAccessGrantRequest,
   decideAccessGrant,
   loadAccessGrants,
+  loadCorporateAccessReviews,
   loadVerifyAccessGrants,
   preparePilotAccessGrant,
+  recordCorporateAccessReview,
   syncAccessGrantRecords,
   type VerifyAccessGrantView,
   type AccessGrantView
@@ -1725,8 +1729,10 @@ function VerifyRequestsPanel({
   missingRecordMessage,
   missingRecordRequests,
   requests,
+  reviews,
   sharedRecords,
   onCreateAccessRequest,
+  onRecordAccessReview,
   onCreateIssuerRole,
   onCreateMissingRecordRequest,
   onIssueCredential,
@@ -1748,8 +1754,10 @@ function VerifyRequestsPanel({
   missingRecordMessage: string;
   missingRecordRequests: DbMissingRecordRequest[];
   requests: VerifyAccessGrantView[];
+  reviews: DbCorporateAccessReview[];
   sharedRecords: RecordItem[];
   onCreateAccessRequest: (input: { subjectEmail: string; purpose: string; expiresInDays: number }) => Promise<void>;
+  onRecordAccessReview: (input: { accessGrantId: string; status: CorporateAccessReviewStatus; note: string }) => Promise<void>;
   onCreateIssuerRole: () => Promise<void>;
   onIssueCredential: (input: {
     subjectEmail: string;
@@ -2261,7 +2269,9 @@ function VerifyRequestsPanel({
       <CorporateDirectoryPanel
         databaseMode={disabled ? "locked_corporate_context" : "live_supabase_visibility"}
         missingRecordRequests={missingRecordRequests}
+        onRecordAccessReview={onRecordAccessReview}
         requests={requests}
+        reviews={reviews}
         sharedRecords={sharedRecords}
       />
       {disabled ? <small>Switch to an employer or staffing reviewer role to use live Verify data.</small> : null}
@@ -2878,16 +2888,29 @@ function CorporateDailyTaskHub({
 function CorporateDirectoryPanel({
   databaseMode,
   missingRecordRequests,
+  onRecordAccessReview,
   requests,
+  reviews,
   sharedRecords
 }: {
   databaseMode: "live_supabase_visibility" | "locked_corporate_context";
   missingRecordRequests: DbMissingRecordRequest[];
+  onRecordAccessReview: (input: { accessGrantId: string; status: CorporateAccessReviewStatus; note: string }) => Promise<void>;
   requests: VerifyAccessGrantView[];
+  reviews: DbCorporateAccessReview[];
   sharedRecords: RecordItem[];
 }) {
   const [directoryQuery, setDirectoryQuery] = useState("");
+  const [reviewBusyId, setReviewBusyId] = useState("");
+  const [reviewNote, setReviewNote] = useState("Scoped corporate review completed against visible Passport rows and open gaps.");
+  const [reviewMessage, setReviewMessage] = useState("Record a live review attestation after checking visible user rows.");
   const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "approved" | "declined" | "revoked">("all");
+  const latestReviewByGrant = reviews.reduce<Record<string, DbCorporateAccessReview>>((latest, review) => {
+    if (!latest[review.access_grant_id]) {
+      latest[review.access_grant_id] = review;
+    }
+    return latest;
+  }, {});
   const openGapCountsByProfile = missingRecordRequests.reduce<Record<string, number>>((counts, request) => {
     if (request.status === "fulfilled") return counts;
     counts[request.subject_profile_id] = (counts[request.subject_profile_id] ?? 0) + 1;
@@ -2927,6 +2950,7 @@ function CorporateDirectoryPanel({
       openGapCount,
       readiness,
       readinessLabel: readiness.replace(/_/g, " "),
+      latestReview: latestReviewByGrant[request.id] ?? null,
       gapTitles: gapTitlesByProfile[request.subject_profile_id] ?? [],
       sharedRecordTitles: (sharedRecordsByProfile[request.subject_profile_id] ?? []).map((record) => record.title)
     };
@@ -2943,6 +2967,9 @@ function CorporateDirectoryPanel({
   const uniqueProfessionalCount = new Set(requests.map((request) => request.subject_profile_id)).size;
   const approvedAccessCount = requests.filter((request) => request.status === "approved").length;
   const reviewReadyCount = candidateRows.filter((row) => row.readiness === "review_ready").length;
+  const reviewedAccessCount = reviews.filter((review) => review.review_status === "reviewed").length;
+  const needsFollowUpReviewCount = reviews.filter((review) => review.review_status === "needs_follow_up").length;
+  const readyForHandoffReviewCount = reviews.filter((review) => review.review_status === "ready_for_handoff").length;
   const waitingForConsentCount = candidateRows.filter((row) => row.readiness === "waiting_for_consent").length;
   const needsGapFollowUpCount = candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").length;
   const openGapRequestCount = missingRecordRequests.filter((request) => request.status !== "fulfilled").length;
@@ -3003,15 +3030,49 @@ function CorporateDirectoryPanel({
     visible_records: row.sharedRecordTitles.slice(0, 4),
     open_gap_count: row.openGapCount,
     gap_focus: row.gapTitles.slice(0, 3),
+    latest_review_status: row.latestReview?.review_status ?? "not_recorded",
+    latest_review_note: row.latestReview?.reviewer_note ?? null,
     next_action:
-      row.readiness === "review_ready"
-        ? "Review shared Passport rows"
-        : row.readiness === "needs_gap_follow_up"
-          ? "Request missing records"
-          : row.readiness === "waiting_for_consent"
-            ? "Wait for professional approval"
-            : "Create or reopen an Access Grant"
+      row.latestReview?.review_status === "ready_for_handoff"
+        ? "Ready for corporate handoff"
+        : row.latestReview?.review_status === "needs_follow_up"
+          ? "Resolve reviewer follow-up"
+          : row.latestReview?.review_status === "reviewed"
+            ? "Review attestation recorded"
+            : row.readiness === "review_ready"
+              ? "Review shared Passport rows"
+              : row.readiness === "needs_gap_follow_up"
+                ? "Request missing records"
+                : row.readiness === "waiting_for_consent"
+                  ? "Wait for professional approval"
+                  : "Create or reopen an Access Grant"
   }));
+  const corporateReviewAttestationLedger = [
+    {
+      label: "Review attestations",
+      value: `${reviews.length}`,
+      detail: "Rows written by Corporate Verify reviewers through the live review RPC.",
+      tone: reviews.length ? "ready" : ""
+    },
+    {
+      label: "Reviewed",
+      value: `${reviewedAccessCount}`,
+      detail: "Corporate reviewer recorded that visible Passport rows were reviewed.",
+      tone: reviewedAccessCount ? "ready" : ""
+    },
+    {
+      label: "Needs follow-up",
+      value: `${needsFollowUpReviewCount}`,
+      detail: "Reviewer marked the user database review as needing more action.",
+      tone: needsFollowUpReviewCount ? "warning" : ""
+    },
+    {
+      label: "Ready handoff",
+      value: `${readyForHandoffReviewCount}`,
+      detail: "Reviewer marked shared rows ready for operational handoff.",
+      tone: readyForHandoffReviewCount ? "ready" : ""
+    }
+  ];
   const corporateVisibilityLedger = [
     {
       label: "Visible user records",
@@ -3064,13 +3125,35 @@ function CorporateDirectoryPanel({
       review_ready_professionals: reviewReadyCount,
       waiting_for_consent_professionals: waitingForConsentCount,
       needs_gap_follow_up_professionals: needsGapFollowUpCount,
+      corporate_access_reviews: reviews.length,
+      reviewed_access_grants: reviewedAccessCount,
+      needs_follow_up_reviews: needsFollowUpReviewCount,
+      ready_for_handoff_reviews: readyForHandoffReviewCount,
       shared_passport_records: sharedRecords.length,
       shared_responsibilities: sharedResponsibilityCount,
       shared_skills: sharedSkillCount,
       missing_record_requests: missingRecordRequests.length,
       open_gap_requests: missingRecordRequests.filter((request) => request.status !== "fulfilled").length
     },
+    review_attestation_workflow: {
+      table: "corporate_access_reviews",
+      rpc: "record_corporate_access_review",
+      audit_event: "corporate_access.review_recorded",
+      notification_event_type: "corporate_access_review"
+    },
     corporate_data_access_path: corporateAccessPath,
+    corporate_review_attestation_ledger: corporateReviewAttestationLedger,
+    corporate_review_attestations: reviews.map((review) => ({
+      review_id: review.id,
+      access_grant_id: review.access_grant_id,
+      subject_profile_id: review.subject_profile_id,
+      reviewer_profile_id: review.reviewer_profile_id,
+      review_status: review.review_status,
+      reviewer_note: review.reviewer_note,
+      shared_record_count: review.shared_record_count,
+      open_gap_count: review.open_gap_count,
+      created_at: review.created_at
+    })),
     corporate_visibility_ledger: corporateVisibilityLedger,
     reviewer_scan_board: directoryReviewBoard.map((bucket) => ({
       label: bucket.label,
@@ -3093,6 +3176,8 @@ function CorporateDirectoryPanel({
       grant_status: row.rawStatus,
       purpose: row.signal,
       readiness: row.readiness,
+      latest_review_status: row.latestReview?.review_status ?? "not_recorded",
+      latest_review_note: row.latestReview?.reviewer_note ?? null,
       shared_record_count: row.sharedRecordCount,
       shared_record_titles: row.sharedRecordTitles,
       open_gap_count: row.openGapCount,
@@ -3119,6 +3204,19 @@ function CorporateDirectoryPanel({
     })),
     note: "Corporate Verify can only export professional rows and shared Passport records visible through approved role, organization, Access Grant, and consent scope."
   };
+
+  async function recordReview(accessGrantId: string, status: CorporateAccessReviewStatus) {
+    setReviewBusyId(`${accessGrantId}-${status}`);
+    setReviewMessage("Recording corporate access review attestation...");
+    try {
+      await onRecordAccessReview({ accessGrantId, status, note: reviewNote });
+      setReviewMessage(`Corporate access review recorded: ${status.replace(/_/g, " ")}`);
+    } catch (error) {
+      setReviewMessage(error instanceof Error ? error.message : "Could not record corporate access review");
+    } finally {
+      setReviewBusyId("");
+    }
+  }
 
   return (
     <section className="corporate-directory-panel">
@@ -3202,6 +3300,29 @@ function CorporateDirectoryPanel({
           ))}
         </div>
       </div>
+      <div className="corporate-review-attestations" aria-label="Corporate review attestations">
+        <div className="directory-source-strip">
+          <span className="status-chip neutral">Corporate review attestations</span>
+          <small>{reviewMessage}</small>
+        </div>
+        <div className="corporate-visibility-grid">
+          {corporateReviewAttestationLedger.map((item) => (
+            <article className={item.tone} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <label className="corporate-review-note">
+          <span>Reviewer note</span>
+          <input
+            onChange={(event) => setReviewNote(event.target.value)}
+            placeholder="What did the reviewer check or need next?"
+            value={reviewNote}
+          />
+        </label>
+      </div>
       <div className="directory-review-board">
         {directoryReviewBoard.map((bucket) => (
           <article key={bucket.label}>
@@ -3235,21 +3356,52 @@ function CorporateDirectoryPanel({
         </div>
         <div className="corporate-access-review-grid">
           {corporateAccessReviewQueue.length ? (
-            corporateAccessReviewQueue.map((row) => (
+            corporateAccessReviewQueue.map((row) => {
+              const sourceRow = filteredRows.find((item) => item.detail === row.professional_email);
+              const canRecordReview = Boolean(sourceRow && sourceRow.rawStatus === "approved" && row.shared_record_count > 0);
+              return (
               <article className={row.readiness === "review_ready" ? "ready" : ""} key={`${row.professional_email}-${row.readiness}`}>
                 <div>
                   <strong>{row.professional_name}</strong>
                   <small>{row.professional_email}</small>
                   <span>{row.next_action}</span>
+                  <small>Latest review: {row.latest_review_status.replace(/_/g, " ")}</small>
                 </div>
                 <div>
                   <small>{row.shared_record_count} visible records</small>
                   <small>{row.open_gap_count} open gaps</small>
                   <small>{row.visible_records.length ? `Records: ${row.visible_records.join(", ")}` : "No shared records visible yet"}</small>
                   {row.gap_focus.length ? <small>Gaps: {row.gap_focus.join(", ")}</small> : null}
+                  <div className="corporate-review-actions">
+                    <button
+                      className="secondary-action"
+                      disabled={!canRecordReview || reviewBusyId === `${sourceRow?.id}-reviewed`}
+                      onClick={() => sourceRow ? void recordReview(sourceRow.id, "reviewed") : undefined}
+                      type="button"
+                    >
+                      Mark reviewed
+                    </button>
+                    <button
+                      className="secondary-action"
+                      disabled={!sourceRow || reviewBusyId === `${sourceRow.id}-needs_follow_up`}
+                      onClick={() => sourceRow ? void recordReview(sourceRow.id, "needs_follow_up") : undefined}
+                      type="button"
+                    >
+                      Needs follow-up
+                    </button>
+                    <button
+                      className="secondary-action"
+                      disabled={!canRecordReview || row.open_gap_count > 0 || reviewBusyId === `${sourceRow?.id}-ready_for_handoff`}
+                      onClick={() => sourceRow ? void recordReview(sourceRow.id, "ready_for_handoff") : undefined}
+                      type="button"
+                    >
+                      Ready handoff
+                    </button>
+                  </div>
                 </div>
               </article>
-            ))
+              );
+            })
           ) : (
             <article>
               <div>
@@ -5091,7 +5243,7 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 040 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, the organization RLS recursion repair, issuer credential lifecycle, data-rights requests, and the TrustGraph VPS cutover gate.</small>
+          <small>Migrations through 041 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, the organization RLS recursion repair, issuer credential lifecycle, data-rights requests, the TrustGraph VPS cutover gate, and corporate review attestations.</small>
         </div>
         <span className="status-chip success">034 RLS repair expected</span>
       </article>
@@ -10405,6 +10557,7 @@ function App() {
   const [consentAuthorizations, setConsentAuthorizations] = useState<DbConsentAuthorization[]>([]);
   const [consentStatus, setConsentStatus] = useState("Sign in to review consent authorizations");
   const [verifyRequests, setVerifyRequests] = useState<VerifyAccessGrantView[]>([]);
+  const [corporateAccessReviews, setCorporateAccessReviews] = useState<DbCorporateAccessReview[]>([]);
   const [sharedVerifyRecords, setSharedVerifyRecords] = useState<RecordItem[]>([]);
   const [verifyStatus, setVerifyStatus] = useState("Switch to Verify role for live requests");
   const [operationsCases, setOperationsCases] = useState<DbVerificationCase[]>([]);
@@ -10695,6 +10848,7 @@ function App() {
   useEffect(() => {
     if (!authSession || !accountContext || workspaceId !== "verify") {
       setVerifyRequests([]);
+      setCorporateAccessReviews([]);
       setSharedVerifyRecords([]);
       setIssuerCredentials([]);
       setMissingRecordRequests([]);
@@ -10706,6 +10860,7 @@ function App() {
 
     if (!canAccessWorkspace(activeMembership.role, "verify")) {
       setVerifyRequests([]);
+      setCorporateAccessReviews([]);
       setSharedVerifyRecords([]);
       setIssuerCredentials([]);
       setMissingRecordRequests([]);
@@ -10722,21 +10877,23 @@ function App() {
 
     Promise.all([
       loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken),
+      loadCorporateAccessReviews(activeMembership.organizationId, authSession.accessToken),
       loadSharedVerifyRecords(authSession.accessToken),
       hasPermission(activeMembership.role, "record:issue_credential")
         ? loadIssuerCredentials(activeMembership.organizationId, authSession.accessToken)
         : Promise.resolve([]),
       loadVerifyMissingRecordRequests(activeMembership.organizationId, authSession.accessToken)
     ])
-      .then(([items, sharedRecords, credentials, missingRecords]) => {
+      .then(([items, accessReviews, sharedRecords, credentials, missingRecords]) => {
         if (cancelled) return;
         setVerifyRequests(items);
+        setCorporateAccessReviews(accessReviews);
         setSharedVerifyRecords(sharedRecords);
         setIssuerCredentials(credentials);
         setMissingRecordRequests(missingRecords);
         setVerifyStatus(
           items.length || sharedRecords.length
-            ? `Live Supabase Verify data: ${items.length} requests, ${sharedRecords.length} shared records`
+            ? `Live Supabase Verify data: ${items.length} requests, ${sharedRecords.length} shared records, ${accessReviews.length} review attestations`
             : "No Verify requests yet"
         );
         setIssuerStatus(
@@ -10753,6 +10910,7 @@ function App() {
       .catch((error) => {
         if (cancelled) return;
         setVerifyRequests([]);
+        setCorporateAccessReviews([]);
         setSharedVerifyRecords([]);
         setIssuerCredentials([]);
         setMissingRecordRequests([]);
@@ -11278,6 +11436,32 @@ function App() {
     setAuditEvents(events);
     setNotificationEvents(notifications);
     setVerifyStatus(`Access request created for ${grant.subject_profile_id}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+  }
+
+  async function recordLiveCorporateAccessReview(input: {
+    accessGrantId: string;
+    status: CorporateAccessReviewStatus;
+    note: string;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in with a corporate role before recording a review attestation.");
+    }
+
+    const review = await recordCorporateAccessReview({
+      accessToken: authSession.accessToken,
+      ...input
+    });
+    const [reviews, events, notifications] = await Promise.all([
+      loadCorporateAccessReviews(activeMembership.organizationId, authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents),
+      loadNotificationEvents(authSession.accessToken).catch(() => notificationEvents)
+    ]);
+    setCorporateAccessReviews(reviews);
+    setAuditEvents(events);
+    setNotificationEvents(notifications);
+    setVerifyStatus(`Corporate access review recorded: ${review.review_status.replace(/_/g, " ")}`);
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
@@ -12877,11 +13061,13 @@ function App() {
                 message={verifyStatus}
                 missingRecordMessage={missingRecordStatus}
                 missingRecordRequests={missingRecordRequests}
+                reviews={corporateAccessReviews}
                 subscriptions={organizationSubscriptions}
                 teamInvitations={teamInvitations}
                 teamMembers={teamMembers}
                 onCreateAccessRequest={createLiveAccessGrantRequest}
                 onCreateMissingRecordRequest={createLiveMissingRecordRequest}
+                onRecordAccessReview={recordLiveCorporateAccessReview}
                 onCreateIssuerRole={createLiveCredentialIssuerRole}
                 onCreateReviewerRole={createPilotReviewerRole}
                 onIssueCredential={issueLiveCredential}

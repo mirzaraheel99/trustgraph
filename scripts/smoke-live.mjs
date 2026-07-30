@@ -369,6 +369,11 @@ assertIncludesAny(bundleText, ["Professional approval"], "corporate data access 
 assertIncludesAny(bundleText, ["corporate_data_access_path"], "corporate data access path packet field");
 assertIncludesAny(bundleText, ["Corporate access review queue"], "corporate access review queue panel");
 assertIncludesAny(bundleText, ["corporate_access_review_queue"], "corporate access review queue packet field");
+assertIncludesAny(bundleText, ["Corporate review attestations"], "corporate access review attestations panel");
+assertIncludesAny(bundleText, ["corporate_review_attestation_ledger"], "corporate access review attestation packet field");
+assertIncludesAny(bundleText, ["corporate_access.review_recorded"], "corporate access review audit event");
+assertIncludesAny(bundleText, ["Mark reviewed"], "corporate access reviewed action");
+assertIncludesAny(bundleText, ["Ready handoff"], "corporate access handoff action");
 assertIncludesAny(bundleText, ["Corporate visibility ledger"], "corporate visibility ledger panel");
 assertIncludesAny(bundleText, ["corporate_visibility_ledger"], "corporate visibility ledger packet field");
 assertIncludesAny(bundleText, ["Visible user records"], "corporate visibility visible records count");
@@ -453,7 +458,7 @@ assertIncludesAny(bundleText, ["Reset password"], "public portal password recove
 assertIncludesAny(bundleText, ["Auth recovery decision path"], "public auth recovery decision panel");
 assertIncludesAny(bundleText, ["auth_recovery_decision_path"], "registration auth recovery packet field");
 assertIncludesAny(bundleText, ["New account verification"], "auth recovery verification guidance");
-assertIncludesAny(bundleText, ["Migrations through 040"], "current database migration coverage copy");
+assertIncludesAny(bundleText, ["Migrations through 041"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["034 RLS repair expected"], "organization RLS recursion repair marker");
 assertIncludesAny(bundleText, ["RLS repair"], "database strip RLS repair proof");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");

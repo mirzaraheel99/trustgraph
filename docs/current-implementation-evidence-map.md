@@ -28,7 +28,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Professional Passport | `src/recordRepository.ts`, `src/evidenceRepository.ts`, Passport record forms, structured responsibility/skill metadata, skills evidence packet, renewal readiness packet, dispute/correction workflow, evidence metadata, signed preview/download controls | `supabase/migrations/001`, `012`, `017`, `037`, smoke evidence checks |
 | Corporate account | `src/accountRepository.ts`, Account panel, Corporate provisioning packet, team panels, member roster proof | `supabase/migrations/009`, `020`, `021`, `022`, smoke corporate checks |
 | RBAC | `src/rbac.ts`, workspace gating, role preview, portal access packet | `scripts/check-claims.mjs`, portal access export |
-| Access Grants | `src/grantRepository.ts`, Passport approval/decline/revoke, Verify requests, shared record sync | `supabase/migrations/003`, `006`, `008`, `023` |
+| Access Grants | `src/grantRepository.ts`, Passport approval/decline/revoke, Verify requests, shared record sync, corporate review attestations | `supabase/migrations/003`, `006`, `008`, `023`, `041` |
 | Consent controls | `src/consentRepository.ts`, consent authorization and revoke UI, sensitive record controls, confidentiality review packet | `supabase/migrations/025`, `026`, RLS guard |
 | References and missing records | `src/referenceRepository.ts`, `src/missingRecordRepository.ts`, request status controls and exports | `supabase/migrations/013`, `015` |
 | Issuer workflow | `src/credentialRepository.ts`, issuer role activation, credential issue workflow, issuer-scoped expiration correction, and revocation lifecycle | `supabase/migrations/014`, `024`, `035`, `036` |
@@ -44,7 +44,7 @@ The app exposes these operator exports to prove live database state after sign-i
 
 - Portal access packet: signed-in profile, active membership, organization, role, workspace route, and hosted redirect.
 - Corporate provisioning packet: created organization, membership, role, and database write evidence.
-- Corporate user database packet: filtered professional access rows, shared record scope, structured responsibilities, skills, source counts, and missing-record gap focus visible to the active Verify workspace.
+- Corporate user database packet: filtered professional access rows, shared record scope, structured responsibilities, skills, source counts, missing-record gap focus, review attestations, and `corporate_access.review_recorded` audit expectation visible to the active Verify workspace.
 - Renewal readiness packet: visible Passport or Verify records grouped by expired, 45-day due-soon, dated, and missing-expiration review states.
 - Confidentiality review packet: visible performance reviews, references, restricted records, and explicit-consent records scoped to the active Passport or Verify view.
 - Skills evidence packet: visible skill claims with source records, responsibilities, statuses, and Access Grant scope from Passport or Verify.
@@ -64,7 +64,7 @@ The app exposes these operator exports to prove live database state after sign-i
 
 ## Migration Coverage
 
-Live Supabase migrations currently run through `040_vps_cutover_production_gate.sql`. The RLS guard verifies protected-table enablement across 21 tables before every hosted deployment, and the app exposes a visible `034 RLS repair expected` marker so operators can distinguish code readiness from a Supabase project that still needs the organization recursion repair applied.
+Live Supabase migrations currently run through `041_corporate_access_review_attestations.sql`. The RLS guard verifies protected-table enablement across 22 tables before every hosted deployment, and the app exposes a visible `034 RLS repair expected` marker so operators can distinguish code readiness from a Supabase project that still needs the organization recursion repair applied.
 
 ## Verification Commands
 

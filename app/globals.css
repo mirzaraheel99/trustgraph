@@ -6429,7 +6429,8 @@ p {
   line-height: 1.35;
 }
 
-.corporate-visibility-ledger {
+.corporate-visibility-ledger,
+.corporate-review-attestations {
   display: grid;
   gap: 10px;
   padding: 10px;
@@ -6438,6 +6439,28 @@ p {
   background:
     linear-gradient(135deg, rgba(82, 214, 196, 0.06), transparent 62%),
     rgba(255, 255, 255, 0.026);
+}
+
+.corporate-review-note {
+  display: grid;
+  gap: 6px;
+}
+
+.corporate-review-note span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-review-note input {
+  min-height: 38px;
+  width: 100%;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .corporate-visibility-grid {
@@ -6624,6 +6647,21 @@ p {
   color: var(--blue);
   font-size: 11px;
   font-weight: 900;
+}
+
+.corporate-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.corporate-review-actions button {
+  flex: 1 1 108px;
+  min-height: 34px;
+  justify-content: center;
+  padding: 0 8px;
+  font-size: 11px;
 }
 
 .directory-list {

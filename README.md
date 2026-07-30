@@ -155,6 +155,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `034_fix_organization_policy_recursion.sql`: organization RLS recursion repair so corporate account context can load without Supabase `42P17` policy recursion failures.
 - `035_revoke_issuer_credentials.sql`: issuer-scoped credential revocation RPC with audit event and professional notification evidence.
 - `036_update_issuer_credential_expiry.sql`: issuer-scoped expiration correction RPC with audit event and professional notification evidence.
+- `041_corporate_access_review_attestations.sql`: corporate reviewer attestations for scoped user-database review, with RLS, audit events, and professional notifications.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -174,7 +175,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 11. Request structured references, missing records, or issuer-created credentials as needed.
 12. Professionals review and resolve Corporate missing-record requests from Passport.
 13. Upload private evidence files to Supabase Storage and link them to Passport records.
-14. Export the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, structured responsibilities, skills, and gap focus.
+14. Record corporate access review attestations and export the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, structured responsibilities, skills, gap focus, review status, and audit expectations.
 15. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
 16. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
 17. Manage Connect API clients and webhook subscriptions from Admin.
@@ -190,7 +191,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `040_vps_cutover_production_gate.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, the organization RLS recursion repair required for corporate account context, issuer credential update/revocation lifecycle, data export/account closure review, and the TrustGraph VPS cutover gate.
+Live Supabase migrations are applied through `041_corporate_access_review_attestations.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, the organization RLS recursion repair required for corporate account context, issuer credential update/revocation lifecycle, data export/account closure review, the TrustGraph VPS cutover gate, and corporate user-database review attestations.
 
 ## Public Website and Pricing
 

@@ -58,6 +58,7 @@ export type ProductionGateStatus =
 export type PilotLaunchContactStatus = "missing" | "identified" | "confirmed";
 export type DataRightsRequestType = "data_export" | "account_closure";
 export type DataRightsRequestStatus = "requested" | "in_review" | "ready" | "blocked" | "completed" | "cancelled";
+export type CorporateAccessReviewStatus = "reviewed" | "needs_follow_up" | "ready_for_handoff" | "closed";
 
 export interface DbOrganization {
   id: string;
@@ -122,6 +123,21 @@ export interface DbAccessGrant {
 export interface DbAccessGrantRecord {
   access_grant_id: string;
   trust_record_id: string;
+}
+
+export interface DbCorporateAccessReview {
+  id: string;
+  access_grant_id: string;
+  requester_organization_id: string;
+  subject_profile_id: string;
+  reviewer_profile_id: string | null;
+  review_status: CorporateAccessReviewStatus;
+  reviewer_note: string | null;
+  shared_record_count: number;
+  open_gap_count: number;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DbAuditEvent {

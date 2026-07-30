@@ -25,6 +25,7 @@ const requiredRlsTables = [
   "organization_subscriptions",
   "organization_invitations",
   "consent_authorizations",
+  "corporate_access_reviews",
   "schema_migration_runs",
   "production_gate_decisions",
   "pilot_launch_contacts"

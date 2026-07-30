@@ -1,4 +1,4 @@
-import type { DbAccessGrant, DbOrganization, DbProfile } from "./database";
+import type { CorporateAccessReviewStatus, DbAccessGrant, DbCorporateAccessReview, DbOrganization, DbProfile } from "./database";
 import { supabaseRest, supabaseRpc } from "./supabase";
 
 export interface AccessGrantView extends DbAccessGrant {
@@ -26,6 +26,18 @@ export async function loadVerifyAccessGrants(organizationId: string, accessToken
       `access_grants?requester_organization_id=eq.${encodeURIComponent(organizationId)}`,
       "select=*,subject_profile:profiles!access_grants_subject_profile_id_fkey(*)",
       "order=created_at.desc"
+    ].join("&"),
+    { accessToken }
+  );
+}
+
+export async function loadCorporateAccessReviews(organizationId: string, accessToken: string): Promise<DbCorporateAccessReview[]> {
+  return supabaseRest<DbCorporateAccessReview[]>(
+    [
+      `corporate_access_reviews?requester_organization_id=eq.${encodeURIComponent(organizationId)}`,
+      "select=*",
+      "order=created_at.desc",
+      "limit=24"
     ].join("&"),
     { accessToken }
   );
@@ -60,6 +72,23 @@ export async function createAccessGrantRequest(input: {
       target_subject_email: input.subjectEmail,
       request_purpose: input.purpose,
       expires_in_days: input.expiresInDays
+    },
+    { accessToken: input.accessToken }
+  );
+}
+
+export async function recordCorporateAccessReview(input: {
+  accessGrantId: string;
+  status: CorporateAccessReviewStatus;
+  note: string;
+  accessToken: string;
+}): Promise<DbCorporateAccessReview> {
+  return supabaseRpc<DbCorporateAccessReview>(
+    "record_corporate_access_review",
+    {
+      target_access_grant_id: input.accessGrantId,
+      next_review_status: input.status,
+      review_note: input.note
     },
     { accessToken: input.accessToken }
   );
