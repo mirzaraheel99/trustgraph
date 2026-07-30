@@ -35,6 +35,8 @@ const requiredMobileStacks = [
   ".registration-path-grid",
   ".reference-source-strip",
   ".release-source-strip",
+  ".setup-command-bar",
+  ".setup-command-metrics",
   ".team-operations-cockpit",
   ".team-operations-grid",
   ".team-source-strip",

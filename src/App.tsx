@@ -10604,6 +10604,38 @@ function App() {
                 <h2>Account, corporate access, and rollout controls</h2>
                 <p>Follow the corporate setup path in order: login, workspace, RBAC, team, billing, then readiness. Each action opens the exact panel needed for the next live database step.</p>
               </div>
+              <div className="setup-command-bar" aria-label="Setup command bar">
+                <div>
+                  <span className="status-chip success">Setup command bar</span>
+                  <strong>{setupTabs.find((tab) => tab.id === setupView)?.label ?? "Setup"}</strong>
+                  <small>Next action: {nextCorporateSetupStep.label} - {nextCorporateSetupStep.detail}</small>
+                </div>
+                <div className="setup-command-metrics">
+                  <span>
+                    <strong>{corporateSetupComplete}/{corporateSetupSteps.length}</strong>
+                    <small>Steps ready</small>
+                  </span>
+                  <span>
+                    <strong>{authSession ? "Live" : "Preview"}</strong>
+                    <small>Database mode</small>
+                  </span>
+                  <span>
+                    <strong>{activeRole.label}</strong>
+                    <small>Active RBAC role</small>
+                  </span>
+                </div>
+                <div className="setup-command-actions">
+                  <button className="primary-action" onClick={() => setSetupView(nextCorporateSetupStep.target)} type="button">
+                    Open next step
+                  </button>
+                  <button className="secondary-action" onClick={() => changeWorkspace("verify")} type="button">
+                    Open Verify
+                  </button>
+                  <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+                    Public registration
+                  </button>
+                </div>
+              </div>
               <div className="corporate-setup-guide" aria-label="Corporate setup guide">
                 <div className="corporate-setup-summary">
                   <span className="eyebrow">Corporate launch path</span>
