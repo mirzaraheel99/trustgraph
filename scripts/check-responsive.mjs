@@ -64,6 +64,7 @@ const requiredMobileStacks = [
   ".team-invite-path",
   ".team-source-strip",
   ".corporate-access-blocker-grid",
+  ".corporate-verify-access-lane-grid",
   ".verify-request-header",
   ".verify-reviewer-flow-header",
   ".verify-user-data-proof-grid",

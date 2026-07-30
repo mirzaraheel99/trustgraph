@@ -324,6 +324,9 @@ assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify re
 assertIncludesAny(bundleText, ["Reviewer workflow"], "Corporate Verify reviewer workflow guide");
 assertIncludesAny(bundleText, ["Export reviewer packet"], "Corporate Verify reviewer packet export");
 assertIncludesAny(bundleText, ["live_verify_reviewer_flow"], "Corporate Verify reviewer live packet mode");
+assertIncludesAny(bundleText, ["Corporate Verify access lane"], "Corporate Verify access lane label");
+assertIncludesAny(bundleText, ["corporate_verify_access_lane"], "Corporate Verify access lane packet field");
+assertIncludesAny(bundleText, ["Request access by email"], "Corporate Verify access lane request step");
 assertIncludesAny(bundleText, ["Live corporate database"], "Corporate user database source label");
 assertIncludesAny(bundleText, ["live_database_evidence"], "Corporate user database evidence flag");
 assertIncludesAny(bundleText, ["real_database_policy"], "Corporate user database real data policy packet field");

@@ -1822,6 +1822,32 @@ function VerifyRequestsPanel({
     }
   ];
   const nextVerifyStep = verifyFlowSteps.find((step) => !step.done) ?? verifyFlowSteps[verifyFlowSteps.length - 1];
+  const corporateVerifyAccessLane = [
+    {
+      label: "1. Request by email",
+      value: requests.length ? `${requests.length} request${requests.length === 1 ? "" : "s"}` : "Needed",
+      detail: "Corporate reviewer enters the professional email and a specific business purpose.",
+      state: requests.length ? "ready" : disabled ? "blocked" : "next"
+    },
+    {
+      label: "2. Professional approval",
+      value: approvedCount ? `${approvedCount} approved` : requestedCount ? `${requestedCount} pending` : "Waiting",
+      detail: "No user Passport rows are visible until the professional approves an Access Grant.",
+      state: approvedCount ? "ready" : requests.length ? "next" : "blocked"
+    },
+    {
+      label: "3. Shared rows visible",
+      value: `${sharedRecords.length} rows`,
+      detail: "Only approved, consent-scoped rows appear in Corporate Verify for this organization.",
+      state: sharedRecords.length ? "ready" : approvedCount ? "next" : "blocked"
+    },
+    {
+      label: "4. Review gaps",
+      value: pendingGapCount ? `${pendingGapCount} open` : "Clear",
+      detail: "Request missing items only after visible rows show what is incomplete.",
+      state: pendingGapCount ? "next" : sharedRecords.length ? "ready" : "blocked"
+    }
+  ];
   const corporateAccessBlockerMap = [
     {
       label: "Company context",
@@ -1881,6 +1907,7 @@ function VerifyRequestsPanel({
       detail: item.detail,
       ready: item.ready
     })),
+    corporate_verify_access_lane: corporateVerifyAccessLane,
     corporate_access_blocker_map: corporateAccessBlockerMap,
     steps: verifyFlowSteps.map((step) => ({
       label: step.label,
@@ -1961,6 +1988,27 @@ function VerifyRequestsPanel({
               <strong>{step.label}</strong>
               <small>{step.value}</small>
               <p>{step.detail}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="corporate-verify-access-lane" aria-label="Corporate Verify access lane">
+        <div className="verify-reviewer-flow-header">
+          <div>
+            <span className="eyebrow">Corporate Verify access lane</span>
+            <strong>Request access by email, wait for approval, then review shared user rows</strong>
+            <small>This is the v1 corporate path: no professional Passport database rows appear until grant, RBAC, and consent scope all pass.</small>
+          </div>
+          <span className={`status-chip ${sharedRecords.length && approvedCount ? "success" : "warning"}`}>
+            {sharedRecords.length && approvedCount ? "user rows visible" : "approval required"}
+          </span>
+        </div>
+        <div className="corporate-verify-access-lane-grid">
+          {corporateVerifyAccessLane.map((item) => (
+            <article className={item.state} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
             </article>
           ))}
         </div>
