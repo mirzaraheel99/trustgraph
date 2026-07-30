@@ -34,6 +34,7 @@ import type {
   DbAuditEvent,
   DbApiClient,
   DbConsentAuthorization,
+  DbDataRightsRequest,
   DbEvidenceDocument,
   DbIssuerCredential,
   DbMissingRecordRequest,
@@ -50,6 +51,7 @@ import type {
   DbWebhookSubscription,
   ProductionGateStatus,
   PilotLaunchContactStatus,
+  DataRightsRequestType,
   ReferenceRequestStatus,
   RecordStatus,
   RecordType,
@@ -102,6 +104,7 @@ import {
   markWebhookSubscriptionStatus
 } from "./connectRepository";
 import { createConsentAuthorization, loadConsentAuthorizations, revokeConsentAuthorization } from "./consentRepository";
+import { loadDataRightsRequests, requestDataRightsAction } from "./dataRightsRepository";
 import {
   createAccessGrantRequest,
   decideAccessGrant,
@@ -7276,16 +7279,26 @@ function repairHostedAuthLink(input: string, hostedUrl: string) {
 function AuthPanel({
   session,
   accountStatus,
+  dataRightsMessage,
+  dataRightsRequests,
+  onDataRightsRequest,
   onSession
 }: {
   session: AuthSession | null;
   accountStatus: string;
+  dataRightsMessage: string;
+  dataRightsRequests: DbDataRightsRequest[];
+  onDataRightsRequest: (input: { requestType: DataRightsRequestType; requestedScope: string; reason: string }) => Promise<void>;
   onSession: (session: AuthSession | null) => void;
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState(authModeLabel());
+  const [dataRightsType, setDataRightsType] = useState<DataRightsRequestType>("data_export");
+  const [dataRightsScope, setDataRightsScope] = useState("all_eligible_profile_data");
+  const [dataRightsReason, setDataRightsReason] = useState("");
+  const [dataRightsStatus, setDataRightsStatus] = useState(dataRightsMessage);
   const [busy, setBusy] = useState(false);
   const authRedirectUrl = hostedAuthRedirectUrl();
   const authPacketName = `trustgraph-auth-redirect-readiness-${new Date().toISOString().slice(0, 10)}.json`;
@@ -7375,6 +7388,27 @@ function AuthPanel({
       detail: "After login, open Corporate setup or Professional Passport."
     }
   ];
+  const dataRightsPacketName = `trustgraph-data-rights-${new Date().toISOString().slice(0, 10)}.json`;
+  const dataRightsPacket = {
+    packet_mode: "account_data_rights",
+    generated_at: new Date().toISOString(),
+    signed_in: Boolean(session),
+    active_email: session?.user.email ?? null,
+    supported_requests: ["data_export", "account_closure"],
+    automatic_deletion_enabled: false,
+    closure_review_required: ["retention_policy", "legal_hold", "active_access_grants", "unresolved_disputes"],
+    loaded_requests: dataRightsRequests.map((request) => ({
+      id: request.id,
+      request_type: request.request_type,
+      status: request.status,
+      requested_scope: request.requested_scope,
+      due_at: request.due_at
+    }))
+  };
+
+  useEffect(() => {
+    setDataRightsStatus(dataRightsMessage);
+  }, [dataRightsMessage]);
 
   async function handleAuth(event: FormEvent<HTMLFormElement>, mode: "signin" | "signup") {
     event.preventDefault();
@@ -7450,6 +7484,22 @@ function AuthPanel({
     }
   }
 
+  async function submitDataRightsRequest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setDataRightsStatus(dataRightsType === "account_closure" ? "Creating closure review request..." : "Creating data export request...");
+
+    try {
+      await onDataRightsRequest({ requestType: dataRightsType, requestedScope: dataRightsScope, reason: dataRightsReason });
+      setDataRightsReason("");
+      setDataRightsStatus(dataRightsType === "account_closure" ? "Closure request created for review." : "Data export request created.");
+    } catch (error) {
+      setDataRightsStatus(error instanceof Error ? error.message : "Could not create data rights request");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <section className="auth-panel" id="live-auth-controls">
       <div className="mini-heading">
@@ -7486,6 +7536,74 @@ function AuthPanel({
           >
             Sign out
           </button>
+          <div className="data-rights-panel">
+            <div className="mini-heading">
+              <Database size={16} />
+              <strong>Data export and closure</strong>
+            </div>
+            <div className="data-rights-summary-grid">
+              <span>
+                <strong>{dataRightsRequests.filter((request) => request.request_type === "data_export").length}</strong>
+                <small>Export requests</small>
+              </span>
+              <span>
+                <strong>{dataRightsRequests.filter((request) => request.request_type === "account_closure").length}</strong>
+                <small>Closure requests</small>
+              </span>
+              <span>
+                <strong>{dataRightsRequests.filter((request) => ["requested", "in_review"].includes(request.status)).length}</strong>
+                <small>Open reviews</small>
+              </span>
+            </div>
+            <form className="data-rights-form" onSubmit={submitDataRightsRequest}>
+              <select value={dataRightsType} onChange={(event) => setDataRightsType(event.target.value as DataRightsRequestType)} disabled={busy}>
+                <option value="data_export">Request data export</option>
+                <option value="account_closure">Request account closure</option>
+              </select>
+              <select value={dataRightsScope} onChange={(event) => setDataRightsScope(event.target.value)} disabled={busy}>
+                <option value="all_eligible_profile_data">All eligible profile data</option>
+                <option value="passport_records_and_evidence">Passport records and evidence</option>
+                <option value="access_grants_and_audit">Access grants and audit activity</option>
+              </select>
+              <input
+                value={dataRightsReason}
+                onChange={(event) => setDataRightsReason(event.target.value)}
+                placeholder="Optional request note"
+                disabled={busy}
+              />
+              <div className="data-rights-actions">
+                <button
+                  className="secondary-action"
+                  onClick={() => downloadTextFile(dataRightsPacketName, JSON.stringify(dataRightsPacket, null, 2), "application/json")}
+                  type="button"
+                >
+                  Export data-rights packet
+                </button>
+                <button className="primary-action" disabled={busy} type="submit">
+                  Submit request
+                </button>
+              </div>
+            </form>
+            <small>
+              Closure requests do not delete data automatically. TrustGraph reviews retention, legal hold, active grants, and open disputes before closure.
+            </small>
+            <div className="data-rights-request-list">
+              {dataRightsRequests.length ? (
+                dataRightsRequests.map((request) => (
+                  <article key={request.id}>
+                    <strong>{request.request_type.replace("_", " ")}</strong>
+                    <small>{request.status.replace("_", " ")} - {request.requested_scope.replace(/_/g, " ")}</small>
+                  </article>
+                ))
+              ) : (
+                <article>
+                  <strong>No data-rights requests yet</strong>
+                  <small>Submit an export or closure request to create a live Supabase row.</small>
+                </article>
+              )}
+            </div>
+            <small>{dataRightsStatus}</small>
+          </div>
         </div>
       ) : (
         <form className="auth-form" onSubmit={(event) => handleAuth(event, "signin")}>
@@ -10161,6 +10279,8 @@ function App() {
   const [evidenceDocuments, setEvidenceDocuments] = useState<DbEvidenceDocument[]>([]);
   const [notificationEvents, setNotificationEvents] = useState<DbNotificationEvent[]>([]);
   const [notificationStatus, setNotificationStatus] = useState("Sign in for live workflow notifications");
+  const [dataRightsRequests, setDataRightsRequests] = useState<DbDataRightsRequest[]>([]);
+  const [dataRightsStatus, setDataRightsStatus] = useState("Sign in to request data export or closure");
   const [referenceRequests, setReferenceRequests] = useState<DbReferenceRequest[]>([]);
   const [referenceStatus, setReferenceStatus] = useState("Sign in to manage live references");
   const [issuerCredentials, setIssuerCredentials] = useState<DbIssuerCredential[]>([]);
@@ -10357,6 +10477,8 @@ function App() {
       setEvidenceDocuments([]);
       setNotificationEvents([]);
       setNotificationStatus("Sign in for live workflow notifications");
+      setDataRightsRequests([]);
+      setDataRightsStatus("Sign in to request data export or closure");
       setReferenceRequests([]);
       setReferenceStatus("Sign in to manage live references");
       setConsentAuthorizations([]);
@@ -10369,6 +10491,7 @@ function App() {
     let cancelled = false;
     setRecordStatus("Loading live Passport records...");
     setNotificationStatus("Loading notifications...");
+    setDataRightsStatus("Loading data-rights requests...");
     setReferenceStatus("Loading reference requests...");
     setConsentStatus("Loading consent authorizations...");
     setPassportMissingRecordStatus("Loading requested Passport records...");
@@ -10377,15 +10500,17 @@ function App() {
       loadPassportRecords(accountContext.profile.id, authSession.accessToken),
       loadEvidenceDocuments(authSession.accessToken),
       loadNotificationEvents(authSession.accessToken),
+      loadDataRightsRequests(authSession.accessToken),
       loadReferenceRequests(authSession.accessToken),
       loadConsentAuthorizations(authSession.accessToken),
       loadPassportMissingRecordRequests(accountContext.profile.id, authSession.accessToken)
     ])
-      .then(([items, documents, notifications, references, consents, missingRecords]) => {
+      .then(([items, documents, notifications, dataRightsRows, references, consents, missingRecords]) => {
         if (cancelled) return;
         setLivePassportRecords(items);
         setEvidenceDocuments(documents);
         setNotificationEvents(notifications);
+        setDataRightsRequests(dataRightsRows);
         setReferenceRequests(references);
         setConsentAuthorizations(consents);
         setPassportMissingRecordRequests(missingRecords);
@@ -10393,6 +10518,7 @@ function App() {
         setNotificationStatus(
           notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet"
         );
+        setDataRightsStatus(dataRightsRows.length ? `Data-rights requests: ${dataRightsRows.length}` : "No data-rights requests yet");
         setReferenceStatus(references.length ? `Live reference requests: ${references.length}` : "No reference requests yet");
         setConsentStatus(consents.length ? `Live consent authorizations: ${consents.length}` : "No consent authorizations yet");
         setPassportMissingRecordStatus(
@@ -10407,11 +10533,13 @@ function App() {
         setLivePassportRecords([]);
         setEvidenceDocuments([]);
         setNotificationEvents([]);
+        setDataRightsRequests([]);
         setReferenceRequests([]);
         setConsentAuthorizations([]);
         setPassportMissingRecordRequests([]);
         setRecordStatus(operatorErrorMessage(error, "Could not load live Passport records"));
         setNotificationStatus(operatorErrorMessage(error, "Could not load notifications"));
+        setDataRightsStatus(operatorErrorMessage(error, "Could not load data-rights requests"));
         setReferenceStatus(operatorErrorMessage(error, "Could not load reference requests"));
         setConsentStatus(operatorErrorMessage(error, "Could not load consent authorizations"));
         setPassportMissingRecordStatus(operatorErrorMessage(error, "Could not load requested Passport records"));
@@ -11211,6 +11339,29 @@ function App() {
     return membership;
   }
 
+  async function createLiveDataRightsRequest(input: { requestType: DataRightsRequestType; requestedScope: string; reason: string }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before requesting data export or account closure.");
+    }
+
+    const request = await requestDataRightsAction({
+      accessToken: authSession.accessToken,
+      requestType: input.requestType,
+      requestedScope: input.requestedScope,
+      reason: input.reason
+    });
+    const [requests, notifications, events] = await Promise.all([
+      loadDataRightsRequests(authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken).catch(() => notificationEvents),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setDataRightsRequests(requests);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setDataRightsStatus(`Data-rights request created: ${request.request_type.replace("_", " ")}`);
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+  }
+
   async function seedLivePilotWorkspace() {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before seeding the live pilot workspace.");
@@ -11228,6 +11379,7 @@ function App() {
       verifyRequests,
       sharedRecords,
       notifications,
+      dataRightsRows,
       events
     ] = await Promise.all([
       loadAccountContext(accountContext.profile.id, authSession.accessToken),
@@ -11240,6 +11392,7 @@ function App() {
       loadVerifyAccessGrants(seeded.corporate_organization_id, authSession.accessToken),
       loadSharedVerifyRecords(authSession.accessToken),
       loadNotificationEvents(authSession.accessToken),
+      loadDataRightsRequests(authSession.accessToken).catch(() => dataRightsRequests),
       loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
     ]);
 
@@ -11255,6 +11408,7 @@ function App() {
     setVerifyRequests(verifyRequests);
     setSharedVerifyRecords(sharedRecords);
     setNotificationEvents(notifications);
+    setDataRightsRequests(dataRightsRows);
     setAuditEvents(events);
     setAccountStatus("Live pilot workspace seeded");
     setRecordStatus(`Pilot Passport loaded: ${seeded.passport_records} records`);
@@ -11268,6 +11422,7 @@ function App() {
         : "No Verify requests yet"
     );
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+    setDataRightsStatus(dataRightsRows.length ? `Data-rights requests: ${dataRightsRows.length}` : "No data-rights requests yet");
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
     return seeded;
   }
@@ -12339,7 +12494,14 @@ function App() {
               <div className="setup-panel-grid">
                 {setupView === "account" ? (
                   <>
-                    <AuthPanel accountStatus={accountStatus} session={authSession} onSession={setAuthSession} />
+                    <AuthPanel
+                      accountStatus={accountStatus}
+                      dataRightsMessage={dataRightsStatus}
+                      dataRightsRequests={dataRightsRequests}
+                      session={authSession}
+                      onDataRightsRequest={createLiveDataRightsRequest}
+                      onSession={setAuthSession}
+                    />
                     <LiveDataModePanel
                       accountContext={accountContext}
                       activeMembership={activeMembership}

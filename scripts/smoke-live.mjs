@@ -203,6 +203,11 @@ assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect
 assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");
 assertIncludesAny(bundleText, ["Account recovery readiness"], "account recovery readiness label");
 assertIncludesAny(bundleText, ["account_recovery_readiness"], "account recovery readiness packet field");
+assertIncludesAny(bundleText, ["Data export and closure"], "account data-rights panel");
+assertIncludesAny(bundleText, ["Request data export"], "data export request control");
+assertIncludesAny(bundleText, ["Request account closure"], "account closure request control");
+assertIncludesAny(bundleText, ["Export data-rights packet"], "data-rights packet export");
+assertIncludesAny(bundleText, ["account_data_rights"], "data-rights packet mode");
 assertIncludesAny(bundleText, ["Login or sign up"], "guided auth operator path");
 assertIncludesAny(bundleText, ["Create workspace"], "post-verification workspace action");
 assertIncludesAny(bundleText, ["2 emails per hour"], "Supabase built-in email rate limit guidance");

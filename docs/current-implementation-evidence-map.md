@@ -24,6 +24,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Track | Current implementation evidence | Verification evidence |
 | --- | --- | --- |
 | Product foundation | `src/App.tsx`, `app/page.tsx`, `app/globals.css`, `README.md` public website, portal registration, pricing, hosted auth guidance, and auth readiness packets | GitHub Pages workflow, `scripts/smoke-live.mjs` |
+| Account data rights | Signed-in Account panel for data export and closure requests, data-rights packets, audit and notification evidence | `supabase/migrations/038`, `src/dataRightsRepository.ts`, smoke account checks |
 | Professional Passport | `src/recordRepository.ts`, `src/evidenceRepository.ts`, Passport record forms, structured responsibility/skill metadata, skills evidence packet, renewal readiness packet, dispute/correction workflow, evidence metadata, signed preview/download controls | `supabase/migrations/001`, `012`, `017`, `037`, smoke evidence checks |
 | Corporate account | `src/accountRepository.ts`, Account panel, Corporate provisioning packet, team panels, member roster proof | `supabase/migrations/009`, `020`, `021`, `022`, smoke corporate checks |
 | RBAC | `src/rbac.ts`, workspace gating, role preview, portal access packet | `scripts/check-claims.mjs`, portal access export |

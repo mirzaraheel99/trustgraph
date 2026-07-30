@@ -1981,6 +1981,82 @@ p,
     rgba(255, 255, 255, 0.028);
 }
 
+.data-rights-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 60%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.data-rights-summary-grid,
+.data-rights-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.data-rights-summary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.data-rights-summary-grid span,
+.data-rights-request-list article {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.data-rights-summary-grid strong,
+.data-rights-summary-grid small,
+.data-rights-request-list strong,
+.data-rights-request-list small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.data-rights-summary-grid strong {
+  color: var(--text);
+  font-size: 20px;
+}
+
+.data-rights-summary-grid small,
+.data-rights-request-list small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.data-rights-form,
+.data-rights-request-list {
+  display: grid;
+  gap: 8px;
+}
+
+.data-rights-form input,
+.data-rights-form select {
+  min-height: 38px;
+  width: 100%;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.data-rights-form select {
+  color-scheme: dark;
+}
+
+.data-rights-actions {
+  grid-template-columns: repeat(2, minmax(0, auto));
+  justify-content: end;
+}
+
 .billing-panel {
   display: grid;
   gap: 10px;
@@ -9602,6 +9678,8 @@ p {
   .auth-actions,
   .password-update-form,
   .database-status-counts,
+  .data-rights-summary-grid,
+  .data-rights-actions,
   .workspace-admin-grid,
   .setup-panel-grid,
   .public-portal-rail,

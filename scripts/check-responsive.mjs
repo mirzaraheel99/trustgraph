@@ -14,6 +14,8 @@ const requiredMobileStacks = [
   ".billing-operator-path",
   ".database-status-counts",
   ".database-status-strip",
+  ".data-rights-summary-grid",
+  ".data-rights-actions",
   ".dashboard-start-map-grid",
   ".connect-source-strip",
   ".connect-export-actions",
@@ -140,6 +142,10 @@ if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("fle
 
 if (!css.includes(".record-dispute-panel") || !css.includes(".dispute-actions") || !css.includes("grid-template-columns: repeat(2, minmax(0, auto))")) {
   throw new Error("Responsive check failed: record dispute controls need compact desktop and mobile-safe action layout.");
+}
+
+if (!css.includes(".data-rights-panel") || !css.includes(".data-rights-actions") || !css.includes(".data-rights-request-list")) {
+  throw new Error("Responsive check failed: data export and closure controls must stay contained.");
 }
 
 if (!flexStackCss.includes(".trust-network-visual") || !flexStackCss.includes("min-height: 316px")) {

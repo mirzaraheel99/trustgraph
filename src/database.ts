@@ -56,6 +56,8 @@ export type ProductionGateStatus =
   | "approved_for_pilot"
   | "approved_for_production";
 export type PilotLaunchContactStatus = "missing" | "identified" | "confirmed";
+export type DataRightsRequestType = "data_export" | "account_closure";
+export type DataRightsRequestStatus = "requested" | "in_review" | "ready" | "blocked" | "completed" | "cancelled";
 
 export interface DbOrganization {
   id: string;
@@ -183,6 +185,22 @@ export interface DbNotificationEvent {
   target_table: string | null;
   target_id: string | null;
   metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbDataRightsRequest {
+  id: string;
+  profile_id: string;
+  request_type: DataRightsRequestType;
+  status: DataRightsRequestStatus;
+  requested_scope: string;
+  reason: string | null;
+  reviewer_note: string | null;
+  metadata: Record<string, unknown>;
+  requested_at: string;
+  due_at: string | null;
+  completed_at: string | null;
   created_at: string;
   updated_at: string;
 }
