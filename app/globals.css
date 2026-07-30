@@ -6461,6 +6461,77 @@ p {
   line-height: 1.4;
 }
 
+.admin-audit-export-matrix {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(94, 234, 212, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(94, 234, 212, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.admin-audit-export-matrix > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-audit-export-matrix strong,
+.admin-audit-export-matrix small,
+.admin-audit-export-matrix p {
+  overflow-wrap: anywhere;
+}
+
+.admin-audit-export-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.admin-audit-export-grid article {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(4, 12, 20, 0.4);
+}
+
+.admin-audit-export-grid span,
+.admin-audit-export-grid strong,
+.admin-audit-export-grid small {
+  display: block;
+}
+
+.admin-audit-export-grid span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.admin-audit-export-grid strong {
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.admin-audit-export-grid small {
+  margin-top: 6px;
+  color: var(--faint);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.admin-audit-export-grid p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .audit-card {
   display: flex;
   justify-content: space-between;
@@ -8108,6 +8179,7 @@ p {
   .registration-grid,
   .directory-controls,
   .directory-review-board,
+  .admin-audit-export-grid,
   .audit-controls,
   .audit-summary-grid,
   .connect-summary-grid,

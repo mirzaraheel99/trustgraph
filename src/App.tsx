@@ -3642,6 +3642,32 @@ function AuditTrailPanel({
     signalFilter !== "all" ? `signal:${signalFilter}` : null,
     auditQuery.trim() ? `query:${auditQuery.trim()}` : null
   ].filter((label): label is string => Boolean(label));
+  const auditExportMatrix = [
+    {
+      label: "Filtered audit CSV",
+      source: `${filteredEvents.length} matching audit events`,
+      proves: "Operator-ready timeline for the active actor, action, target, signal, and time filters.",
+      action: "Export CSV"
+    },
+    {
+      label: "Filtered audit JSON",
+      source: `${filteredEvents.length} raw event rows`,
+      proves: "Machine-readable event metadata for issue triage, security review, and support handoff.",
+      action: "Export JSON"
+    },
+    {
+      label: "Coverage packet",
+      source: `${operationsCases.length} cases, ${evidenceDocuments.length} evidence rows, ${schemaMigrationRuns.length} release rows`,
+      proves: "Audit trail context without exposing private evidence file contents.",
+      action: "Export audit coverage packet"
+    },
+    {
+      label: "Admin readiness packet",
+      source: activeFilterLabels.length ? activeFilterLabels.join(", ") : "No filters applied",
+      proves: "Confirms scope, export policy, excluded raw files, and review note before sharing.",
+      action: "Export admin readiness"
+    }
+  ];
   const adminExportReadinessPacket = {
     generated_at: new Date().toISOString(),
     packet_mode: "admin_audit_export_readiness",
@@ -3674,7 +3700,8 @@ function AuditTrailPanel({
       verification_cases: operationsCases.length,
       evidence_documents: evidenceDocuments.length,
       release_ledger_records: schemaMigrationRuns.length
-    }
+    },
+    admin_audit_export_matrix: auditExportMatrix
   };
   const auditCoveragePacket = {
     generated_at: new Date().toISOString(),
@@ -3724,6 +3751,7 @@ function AuditTrailPanel({
       commit_sha: run.commit_sha,
       applied_at: run.applied_at
     })),
+    admin_audit_export_matrix: auditExportMatrix,
     events: filteredEvents
   };
 
@@ -3853,6 +3881,22 @@ function AuditTrailPanel({
         >
           Export admin readiness
         </button>
+      </div>
+      <div className="admin-audit-export-matrix">
+        <div>
+          <span className="status-chip neutral">Admin audit export matrix</span>
+          <strong>Choose the right proof packet before sharing audit data.</strong>
+        </div>
+        <div className="admin-audit-export-grid">
+          {auditExportMatrix.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.action}</strong>
+              <small>{item.source}</small>
+              <p>{item.proves}</p>
+            </article>
+          ))}
+        </div>
       </div>
       <div className="audit-coverage-note">
         <strong>Full audit and verification history packet</strong>

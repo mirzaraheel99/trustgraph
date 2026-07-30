@@ -25,6 +25,7 @@ const requiredMobileStacks = [
   ".corporate-setup-guide",
   ".directory-source-strip",
   ".directory-review-board",
+  ".admin-audit-export-grid",
   ".evidence-source-strip",
   ".evidence-access-chain",
   ".issuer-source-strip",
