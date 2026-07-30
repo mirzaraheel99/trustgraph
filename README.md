@@ -183,7 +183,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 11. Request structured references, missing records, or issuer-created credentials as needed.
 12. Professionals review and resolve Corporate missing-record requests from Passport.
 13. Upload private evidence files to Supabase Storage and link them to Passport records.
-14. Record corporate access review attestations and export the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, structured responsibilities, skills, gap focus, review status, and audit expectations.
+14. Record corporate access review attestations and export the Corporate review queue CSV plus the Corporate user database packet from Verify to prove visible professional rows, grants, shared records, structured responsibilities, skills, gap focus, review status, next action, and audit expectations.
 15. Switch to Admin, create pilot operations cases only for validation workflows, and review/restrict/resolve cases.
 16. Export the VPS launch packet before server deployment to confirm the TrustGraph host, `/opt/trustgraph` path, GitHub source, and VFIX refusal guards.
 17. Manage Connect API clients and webhook subscriptions from Admin.
