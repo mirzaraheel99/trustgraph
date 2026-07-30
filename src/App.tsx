@@ -2747,10 +2747,10 @@ function CorporateDailyTaskHub({
       real_database_policy: "Only signed-in Supabase rows visible to the active corporate RBAC context count as operating proof.",
       steps: corporateOperatingPlan
     },
-    post_034_corporate_live_retest: {
+    post_042_corporate_live_retest: {
       ready_steps: corporateLiveRetestReady,
       total_steps: corporateLiveRetestChecklist.length,
-      accepted_only_when: "migration_034_applied_and_signed_in_corporate_rbac_rows_load_user_passport_data",
+      accepted_only_when: "migration_042_applied_and_signed_in_corporate_rbac_rows_load_user_passport_data",
       steps: corporateLiveRetestChecklist
     },
     corporate_verify_live_access_test: {
