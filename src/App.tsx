@@ -7631,6 +7631,14 @@ function hasHostedAuthCallbackUrl() {
   return Boolean(hashParams.get("access_token") || queryParams.get("access_token"));
 }
 
+function hostedAuthCallbackType() {
+  if (typeof window === "undefined") return null;
+
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const queryParams = new URLSearchParams(window.location.search);
+  return hashParams.get("type") ?? queryParams.get("type");
+}
+
 function repairHostedAuthLink(input: string, hostedUrl: string) {
   const trimmed = input.trim();
   if (!trimmed) return "";
@@ -7674,6 +7682,7 @@ function AuthPanel({
   const [dataRightsStatus, setDataRightsStatus] = useState(dataRightsMessage);
   const [busy, setBusy] = useState(false);
   const authRedirectUrl = hostedAuthRedirectUrl();
+  const recoverySessionReady = Boolean(session && accountStatus.toLowerCase().includes("password recovery"));
   const authPacketName = `trustgraph-auth-redirect-readiness-${new Date().toISOString().slice(0, 10)}.json`;
   const recoveryActions = [
     "resend_signup_confirmation",
@@ -7717,6 +7726,7 @@ function AuthPanel({
     email_rate_limit: "Supabase built-in email allows 2 emails per hour project-wide unless custom SMTP is configured.",
     session_state: session ? "signed_in" : "signed_out",
     account_status: accountStatus,
+    recovery_session_ready: recoverySessionReady,
     account_recovery_readiness: accountRecoveryReadiness
   };
   const authPaths = [
@@ -7889,6 +7899,9 @@ function AuthPanel({
             <span>RBAC context loading</span>
           </div>
           <form className="password-update-form" onSubmit={submitPasswordUpdate}>
+            {recoverySessionReady ? (
+              <span className="micro-pill success">Password recovery session ready</span>
+            ) : null}
             <input
               minLength={8}
               onChange={(event) => setNewPassword(event.target.value)}
@@ -8040,7 +8053,7 @@ function AuthPanel({
           <div className="auth-recovery-note">
             <div>
               <strong>Account recovery readiness</strong>
-              <small>Exports resend verification, reset password, repaired-link, callback, and password-update readiness for support review.</small>
+              <small>Reset password creates a hosted recovery session; after the email link opens TrustGraph, the Set new password form appears here.</small>
             </div>
             <span className="micro-pill">{email ? "email ready" : "email needed"}</span>
           </div>
@@ -10702,6 +10715,7 @@ function App() {
   useEffect(() => {
     let cancelled = false;
     const hadHostedAuthCallback = hasHostedAuthCallbackUrl();
+    const authCallbackType = hostedAuthCallbackType();
 
     Promise.resolve()
       .then(() => readSessionFromUrl())
@@ -10711,7 +10725,13 @@ function App() {
         setAuthSession(storedSession);
         if (storedSession) {
           setShowPublicSite(false);
-          setAccountStatus(hadHostedAuthCallback ? "Hosted email verification accepted; live session connected" : "Live session connected");
+          setAccountStatus(
+            authCallbackType === "recovery"
+              ? "Password recovery session connected; set a new password in Account."
+              : hadHostedAuthCallback
+                ? "Hosted email verification accepted; live session connected"
+                : "Live session connected"
+          );
         }
       })
       .catch((error) => {
