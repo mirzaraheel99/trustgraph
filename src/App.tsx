@@ -2963,6 +2963,7 @@ function CorporateDirectoryPanel({
     return matchesStatus && haystack.includes(directoryQuery.trim().toLowerCase());
   });
   const exportName = `trustgraph-corporate-directory-${new Date().toISOString().slice(0, 10)}.csv`;
+  const reviewQueueExportName = `trustgraph-corporate-review-queue-${new Date().toISOString().slice(0, 10)}.csv`;
   const packetName = `trustgraph-corporate-user-database-${new Date().toISOString().slice(0, 10)}.json`;
   const uniqueProfessionalCount = new Set(requests.map((request) => request.subject_profile_id)).size;
   const approvedAccessCount = requests.filter((request) => request.status === "approved").length;
@@ -3284,6 +3285,14 @@ function CorporateDirectoryPanel({
           type="button"
         >
           Export CSV
+        </button>
+        <button
+          className="secondary-action"
+          disabled={!corporateAccessReviewQueue.length}
+          onClick={() => downloadTextFile(reviewQueueExportName, corporateReviewQueueToCsv(corporateAccessReviewQueue), "text/csv")}
+          type="button"
+        >
+          Export review queue
         </button>
         <button
           className="secondary-action"
@@ -6069,6 +6078,50 @@ function corporateDirectoryToCsv(
   const csvRows = [
     ["access_grant_id", "subject_profile_id", "professional_name", "professional_email", "status", "purpose", "shared_record_count", "shared_record_titles", "open_gap_count", "gap_focus"],
     ...rows.map((row) => [row.id, row.subjectProfileId, row.name, row.detail, row.status, row.signal, String(row.sharedRecordCount), row.sharedRecordTitles.join("; "), String(row.openGapCount), row.gapTitles.join("; ")])
+  ];
+
+  return csvRows.map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+function corporateReviewQueueToCsv(
+  rows: Array<{
+    professional_name: string;
+    professional_email: string;
+    readiness: string;
+    shared_record_count: number;
+    visible_records: string[];
+    open_gap_count: number;
+    gap_focus: string[];
+    latest_review_status: string;
+    latest_review_note: string | null;
+    next_action: string;
+  }>
+) {
+  const csvRows = [
+    [
+      "professional_name",
+      "professional_email",
+      "readiness",
+      "shared_record_count",
+      "visible_records",
+      "open_gap_count",
+      "gap_focus",
+      "latest_review_status",
+      "latest_review_note",
+      "next_action"
+    ],
+    ...rows.map((row) => [
+      row.professional_name,
+      row.professional_email,
+      row.readiness,
+      String(row.shared_record_count),
+      row.visible_records.join("; "),
+      String(row.open_gap_count),
+      row.gap_focus.join("; "),
+      row.latest_review_status,
+      row.latest_review_note ?? "",
+      row.next_action
+    ])
   ];
 
   return csvRows.map((row) => row.map(csvCell).join(",")).join("\n");

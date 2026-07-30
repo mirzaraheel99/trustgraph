@@ -408,6 +408,7 @@ assertIncludesAny(bundleText, ["shared responsibilities"], "Corporate user datab
 assertIncludesAny(bundleText, ["Corporate user database packet"], "Corporate user database packet label");
 assertIncludesAny(bundleText, ["per-professional shared records"], "Corporate user database per-professional shared record proof");
 assertIncludesAny(bundleText, ["per_professional_shared_record_scope"], "Corporate user database per-professional packet field");
+assertIncludesAny(bundleText, ["Export review queue"], "Corporate user database review queue CSV export");
 assertIncludesAny(bundleText, ["Export user packet"], "Corporate user database packet export");
 assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");
 assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soon queue signal");
