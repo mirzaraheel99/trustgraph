@@ -2250,6 +2250,37 @@ function CorporateDailyTaskHub({
     }
   ];
   const corporateLiveRetestReady = corporateLiveRetestChecklist.filter((item) => item.ready).length;
+  const verifyAccessTestSteps = [
+    {
+      label: "Request by professional email",
+      detail: verifyRequests.length
+        ? `${verifyRequests.length} live Access Grant request${verifyRequests.length === 1 ? "" : "s"} loaded for this organization.`
+        : "Open Verify, enter the professional email, and create the Passport access request.",
+      ready: verifyRequests.length > 0
+    },
+    {
+      label: "Professional approval state",
+      detail: approvedVerifyRequests
+        ? `${approvedVerifyRequests} approved request${approvedVerifyRequests === 1 ? "" : "s"} can expose scoped Passport records.`
+        : `${requestedVerifyRequests} request${requestedVerifyRequests === 1 ? "" : "s"} waiting for professional consent.`,
+      ready: approvedVerifyRequests > 0
+    },
+    {
+      label: "Shared user Passport rows",
+      detail: sharedVerifyRecords.length
+        ? `${sharedVerifyRecords.length} shared Passport row${sharedVerifyRecords.length === 1 ? "" : "s"} visible to Corporate Verify.`
+        : "After approval, shared user records must appear here before the company can review them.",
+      ready: sharedVerifyRecords.length > 0
+    },
+    {
+      label: "Missing-record follow-up",
+      detail: openGaps
+        ? `${openGaps} open follow-up request${openGaps === 1 ? "" : "s"} need owner response.`
+        : "No open missing-record follow-ups are blocking the corporate review.",
+      ready: sharedVerifyRecords.length > 0 && openGaps === 0
+    }
+  ];
+  const verifyAccessTestReady = verifyAccessTestSteps.filter((item) => item.ready).length;
   const exportName = `trustgraph-corporate-daily-task-hub-${new Date().toISOString().slice(0, 10)}.json`;
   const packet = {
     generated_at: new Date().toISOString(),
@@ -2276,6 +2307,12 @@ function CorporateDailyTaskHub({
       total_steps: corporateLiveRetestChecklist.length,
       accepted_only_when: "migration_034_applied_and_signed_in_corporate_rbac_rows_load_user_passport_data",
       steps: corporateLiveRetestChecklist
+    },
+    corporate_verify_live_access_test: {
+      ready_steps: verifyAccessTestReady,
+      total_steps: verifyAccessTestSteps.length,
+      accepted_only_when: "approved_access_grant_and_shared_user_passport_rows_visible_to_active_corporate_rbac_context",
+      steps: verifyAccessTestSteps
     },
     live_counts: {
       active_members: activeMembers,
@@ -2351,6 +2388,29 @@ function CorporateDailyTaskHub({
         </div>
         <div className="corporate-live-retest-grid">
           {corporateLiveRetestChecklist.map((item) => (
+            <article className={item.ready ? "ready" : ""} key={item.label}>
+              <span className={`status-dot ${item.ready ? "on" : ""}`} />
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="corporate-verify-access-test" aria-label="Corporate Verify live access test">
+        <div className="corporate-operating-plan-header">
+          <div>
+            <span className="status-chip neutral">Corporate Verify live access test</span>
+            <strong>{verifyAccessTestReady}/{verifyAccessTestSteps.length} user database access checks ready</strong>
+            <small>Use this to prove the corporate portal can request, receive consent for, and review a real user's scoped Passport rows.</small>
+          </div>
+          <button className="secondary-action" onClick={() => onOpenWorkspace("verify")} type="button">
+            Open Verify
+          </button>
+        </div>
+        <div className="corporate-live-retest-grid">
+          {verifyAccessTestSteps.map((item) => (
             <article className={item.ready ? "ready" : ""} key={item.label}>
               <span className={`status-dot ${item.ready ? "on" : ""}`} />
               <div>

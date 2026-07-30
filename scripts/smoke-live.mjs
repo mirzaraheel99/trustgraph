@@ -140,6 +140,10 @@ assertIncludesAny(bundleText, ["corporate_operating_plan"], "corporate operating
 assertIncludesAny(bundleText, ["Post-034 live retest"], "corporate post migration live retest panel");
 assertIncludesAny(bundleText, ["post_034_corporate_live_retest"], "corporate post migration live retest packet field");
 assertIncludesAny(bundleText, ["Verify user data visible"], "corporate user data live retest step");
+assertIncludesAny(bundleText, ["Corporate Verify live access test"], "corporate Verify live access test panel");
+assertIncludesAny(bundleText, ["corporate_verify_live_access_test"], "corporate Verify live access packet field");
+assertIncludesAny(bundleText, ["Request by professional email"], "corporate Verify professional email request step");
+assertIncludesAny(bundleText, ["Shared user Passport rows"], "corporate Verify shared user Passport rows step");
 assertIncludesAny(bundleText, ["Pending corporate workspace"], "pending Corporate setup continuation card");
 assertIncludesAny(bundleText, ["Clear saved setup"], "pending Corporate setup reset control");
 assertIncludesAny(bundleText, ["Fix localhost email link"], "hosted auth link repair control");
