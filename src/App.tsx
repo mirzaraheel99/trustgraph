@@ -150,6 +150,7 @@ import {
   getRole,
   hasPermission,
   organizations,
+  type RoleDefinition,
   type RoleKey,
   sessionUser,
   type Organization,
@@ -2004,6 +2005,161 @@ function CorporateControlCenter({
           <strong>{nextAction}</strong>
           <small>Use the panels below to complete the next workflow step against Supabase.</small>
         </article>
+      </div>
+    </section>
+  );
+}
+
+function CorporateDailyTaskHub({
+  accessGrants,
+  activeOrganization,
+  activeRole,
+  authSession,
+  missingRecordRequests,
+  organizationSubscriptions,
+  sharedVerifyRecords,
+  teamInvitations,
+  teamMembers,
+  verifyRequests,
+  onOpenSetup,
+  onOpenWorkspace
+}: {
+  accessGrants: AccessGrantView[];
+  activeOrganization: Organization;
+  activeRole: RoleDefinition;
+  authSession: AuthSession | null;
+  missingRecordRequests: DbMissingRecordRequest[];
+  organizationSubscriptions: DbOrganizationSubscription[];
+  sharedVerifyRecords: RecordItem[];
+  teamInvitations: DbOrganizationInvitation[];
+  teamMembers: OrganizationMemberView[];
+  verifyRequests: VerifyAccessGrantView[];
+  onOpenSetup: (view: "corporate" | "team" | "billing" | "readiness") => void;
+  onOpenWorkspace: (workspaceId: WorkspaceId) => void;
+}) {
+  const isCorporateContext = activeOrganization.type !== "professional";
+  const activeMembers = teamMembers.filter((member) => member.status === "active").length;
+  const pendingInvites = teamInvitations.filter((invitation) => invitation.status === "pending").length;
+  const activeSubscriptions = organizationSubscriptions.filter((subscription) => subscription.status !== "cancelled");
+  const openGaps = missingRecordRequests.filter(
+    (request) => request.status === "requested" || request.status === "in_progress"
+  ).length;
+  const approvedVerifyRequests = verifyRequests.filter((request) => request.status === "approved").length;
+  const requestedVerifyRequests = verifyRequests.filter((request) => request.status === "requested").length;
+  const hubItems = [
+    {
+      label: "Corporate database",
+      value: isCorporateContext ? "Live context" : "Needs setup",
+      detail: isCorporateContext
+        ? `${activeOrganization.name} is active for ${activeRole.label}.`
+        : "Create or switch into an employer or staffing workspace.",
+      action: "Open corporate setup",
+      done: isCorporateContext,
+      onAction: () => onOpenSetup("corporate")
+    },
+    {
+      label: "Reviewer team",
+      value: `${activeMembers} active`,
+      detail: `${pendingInvites} pending invitation${pendingInvites === 1 ? "" : "s"} and ${teamMembers.length} visible member${teamMembers.length === 1 ? "" : "s"}.`,
+      action: "Manage team",
+      done: activeMembers > 0,
+      onAction: () => onOpenSetup("team")
+    },
+    {
+      label: "Verify pipeline",
+      value: `${verifyRequests.length} requests`,
+      detail: `${approvedVerifyRequests} approved, ${requestedVerifyRequests} waiting, ${sharedVerifyRecords.length} shared records visible.`,
+      action: "Open Verify",
+      done: verifyRequests.length > 0 || sharedVerifyRecords.length > 0,
+      onAction: () => onOpenWorkspace("verify")
+    },
+    {
+      label: "Billing ledger",
+      value: activeSubscriptions.length ? "Plan active" : "No plan",
+      detail: activeSubscriptions.length
+        ? `${activeSubscriptions.length} subscription ledger row${activeSubscriptions.length === 1 ? "" : "s"} loaded.`
+        : "Activate a Corporate Verify pilot plan before launch review.",
+      action: "Open billing",
+      done: activeSubscriptions.length > 0,
+      onAction: () => onOpenSetup("billing")
+    },
+    {
+      label: "Gaps and readiness",
+      value: `${openGaps} open gaps`,
+      detail: `${accessGrants.length} Access Grant${accessGrants.length === 1 ? "" : "s"} and readiness checks feed launch acceptance.`,
+      action: "Review readiness",
+      done: openGaps === 0 && accessGrants.length > 0,
+      onAction: () => onOpenSetup("readiness")
+    }
+  ];
+  const completed = hubItems.filter((item) => item.done).length;
+  const nextItem = hubItems.find((item) => !item.done) ?? hubItems[hubItems.length - 1];
+  const exportName = `trustgraph-corporate-daily-task-hub-${new Date().toISOString().slice(0, 10)}.json`;
+  const packet = {
+    generated_at: new Date().toISOString(),
+    mode: authSession ? "live_corporate_task_hub" : "preview_corporate_task_hub",
+    active_organization: {
+      id: activeOrganization.id,
+      name: activeOrganization.name,
+      type: activeOrganization.type,
+      status: activeOrganization.status
+    },
+    active_role: activeRole.key,
+    completed_steps: completed,
+    total_steps: hubItems.length,
+    next_action: nextItem.label,
+    live_counts: {
+      active_members: activeMembers,
+      pending_invitations: pendingInvites,
+      verify_requests: verifyRequests.length,
+      shared_verify_records: sharedVerifyRecords.length,
+      active_subscriptions: activeSubscriptions.length,
+      open_gaps: openGaps,
+      access_grants: accessGrants.length
+    },
+    tasks: hubItems.map((item) => ({
+      label: item.label,
+      value: item.value,
+      detail: item.detail,
+      done: item.done
+    }))
+  };
+
+  return (
+    <section className="corporate-task-hub" aria-label="Corporate daily task hub">
+      <div className="corporate-task-hub-header">
+        <div>
+          <span className="eyebrow">Corporate daily task hub</span>
+          <h2>Run the company workspace from one queue</h2>
+          <p>Live database signals route admins and reviewers to setup, team, billing, Verify requests, and launch readiness without hunting through every panel.</p>
+        </div>
+        <div className="corporate-task-score">
+          <span>Today</span>
+          <strong>{completed}/{hubItems.length}</strong>
+          <small>Next: {nextItem.label}</small>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(exportName, JSON.stringify(packet, null, 2), "application/json")}
+            type="button"
+          >
+            Export task packet
+          </button>
+        </div>
+      </div>
+      <div className="corporate-task-grid">
+        {hubItems.map((item) => (
+          <article className={item.done ? "complete" : item.label === nextItem.label ? "next" : ""} key={item.label}>
+            <div>
+              <span className={`status-chip ${item.done ? "success" : "neutral"}`}>{item.done ? "ready" : "next"}</span>
+              <strong>{item.label}</strong>
+              <small>{item.value}</small>
+            </div>
+            <p>{item.detail}</p>
+            <button className={item.label === nextItem.label ? "primary-action" : "secondary-action"} onClick={item.onAction} type="button">
+              {item.action}
+            </button>
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -9694,6 +9850,24 @@ function App() {
           teamMembers={teamMembers}
           onOpenReadiness={() => setSetupView("readiness")}
           onOpenRegistration={() => setShowPublicSite(true)}
+        />
+
+        <CorporateDailyTaskHub
+          accessGrants={accessGrants}
+          activeOrganization={activeOrganization}
+          activeRole={activeRole}
+          authSession={authSession}
+          missingRecordRequests={missingRecordRequests}
+          organizationSubscriptions={organizationSubscriptions}
+          sharedVerifyRecords={sharedVerifyRecords}
+          teamInvitations={teamInvitations}
+          teamMembers={teamMembers}
+          verifyRequests={verifyRequests}
+          onOpenSetup={(view) => {
+            setSetupView(view);
+            document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          onOpenWorkspace={changeWorkspace}
         />
 
             <section className="workspace-admin-grid" id="corporate-account-controls">

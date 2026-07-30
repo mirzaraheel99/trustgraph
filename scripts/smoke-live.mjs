@@ -119,6 +119,9 @@ assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup
 assertIncludesAny(bundleText, ["Create workspace"], "corporate setup workspace step");
 assertIncludesAny(bundleText, ["Confirm RBAC"], "corporate setup RBAC step");
 assertIncludesAny(bundleText, ["Select plan"], "corporate setup billing step");
+assertIncludesAny(bundleText, ["Corporate daily task hub"], "corporate dashboard task hub");
+assertIncludesAny(bundleText, ["Export task packet"], "corporate dashboard task packet export");
+assertIncludesAny(bundleText, ["live_corporate_task_hub"], "corporate dashboard live task packet mode");
 assertIncludesAny(bundleText, ["Pending corporate workspace"], "pending Corporate setup continuation card");
 assertIncludesAny(bundleText, ["Clear saved setup"], "pending Corporate setup reset control");
 assertIncludesAny(bundleText, ["Fix localhost email link"], "hosted auth link repair control");
