@@ -10524,6 +10524,7 @@ function App() {
       ready: hasLiveCorporateContext && canManageCorporateSetup
     }
   ];
+  const sessionSummary = authSession ? `${activeRole.label} at ${activeOrganization.name}` : "Preview mode";
 
   if (showPublicSite) {
     return (
@@ -10573,7 +10574,7 @@ function App() {
         <div className="sidebar-account-card">
           <span className={`status-chip ${authSession ? "success" : "neutral"}`}>{authSession ? "Signed in" : "Preview mode"}</span>
           <strong>{authSession?.user.email ?? "Product preview"}</strong>
-          <small>{authSession ? `${activeRole.label} at ${activeOrganization.name}` : "Open Account in the top bar to connect Supabase."}</small>
+          <small>{authSession ? sessionSummary : "Open Account to connect Supabase."}</small>
           <div className="sidebar-session-actions" aria-label="Session controls">
             <button className="secondary-action" onClick={openAuthControls} type="button">
               <KeyRound size={16} />
@@ -10662,7 +10663,7 @@ function App() {
             {authSession ? (
               <div className="topbar-session-card">
                 <span>{authSession.user.email}</span>
-                <small>{activeRole.label} - {activeOrganization.name}</small>
+                <small>{sessionSummary}</small>
                 <button className="secondary-action" onClick={openAuthControls} type="button">
                   <KeyRound size={16} />
                   Account
@@ -10677,7 +10678,13 @@ function App() {
                 </button>
               </div>
             ) : null}
-            <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+            {!authSession ? (
+              <button className="secondary-action" onClick={openAuthControls} type="button">
+                <KeyRound size={16} />
+                Login
+              </button>
+            ) : null}
+            <button className="secondary-action public-site-action" onClick={() => setShowPublicSite(true)} type="button">
               Public site
             </button>
             <button aria-label="View notifications" onClick={openNotifications} type="button">

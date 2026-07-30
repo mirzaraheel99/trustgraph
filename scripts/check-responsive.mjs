@@ -67,11 +67,11 @@ if (!css.includes(".trust-network-visual") || !css.includes("min-height: 268px")
   throw new Error("Responsive check failed: premium TrustGraph record graph needs stable desktop dimensions.");
 }
 
-if (!css.includes("grid-template-columns: minmax(192px, 224px) minmax(0, 1fr)") || !css.includes("contain: inline-size")) {
+if (!css.includes("grid-template-columns: minmax(260px, 300px) minmax(0, 1fr)") || !css.includes("contain: inline-size")) {
   throw new Error("Responsive check failed: app shell must keep the sidebar narrow and contain workspace overflow.");
 }
 
-if (!css.includes("width: min(100%, 1280px)") || !css.includes("grid-template-columns: minmax(0, 1fr) repeat(3, minmax(108px, auto))")) {
+if (!css.includes("width: min(100%, 1280px)") || !css.includes("grid-template-columns: repeat(3, minmax(0, 1fr))")) {
   throw new Error("Responsive check failed: premium shell must bound desktop content and wrap session actions on tablet.");
 }
 
@@ -79,7 +79,7 @@ if (!css.includes(".workspace > *") || !css.includes("grid-template-columns: rep
   throw new Error("Responsive check failed: workspace children and corporate plan cards must not force horizontal overflow.");
 }
 
-if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 720px") || !css.includes(".workspace-flow-strip") || !css.includes("max-width: 840px")) {
+if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 680px") || !css.includes(".workspace-flow-strip") || !css.includes("max-width: 760px")) {
   throw new Error("Responsive check failed: primary workspace route and portal path strips must stay compact.");
 }
 
