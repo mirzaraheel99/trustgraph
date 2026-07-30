@@ -7790,6 +7790,28 @@ function OnboardingChecklistPanel({
     }
   ];
   const workingDatabaseRunbookReady = workingDatabaseRunbookSteps.filter((step) => step.ready).length;
+  const nextDatabaseRepair = liveDatabaseRepairQueue[0] ?? null;
+  const workingDatabaseCommandCenter = {
+    label: "Working database command center",
+    status: workingDatabaseAcceptanceStatus,
+    next_action: liveDatabaseAcceptanceComplete
+      ? "Export working-data packet"
+      : !authSession
+        ? "Login on hosted TrustGraph"
+        : !accountContext
+          ? "Load account and RBAC context"
+          : nextDatabaseRepair?.action ?? "Run seed, reload rows, export proof",
+    next_detail: liveDatabaseAcceptanceComplete
+      ? "All required live row groups are loaded; export the packet before pilot acceptance review."
+      : nextDatabaseRepair
+        ? `${nextDatabaseRepair.label}: ${nextDatabaseRepair.required}`
+        : workingDatabaseAcceptanceDetail,
+    ready_groups: liveDatabaseAcceptancePassing,
+    total_groups: liveDatabaseAcceptanceRows.length,
+    seed_reconciliation: seedReconciliationComplete ? "matched" : visibleSeedEvidence ? "needs_reload_or_repair" : "not_run",
+    packet_export_required: true,
+    accepted_source: "signed_in_supabase_repository_rows"
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -7842,7 +7864,8 @@ function OnboardingChecklistPanel({
     account_context_loaded: Boolean(accountContext),
     live_rows_currently_loaded: workingDataRows,
     live_row_total: workingDataTotal,
-      live_database_acceptance: {
+    working_database_command_center: workingDatabaseCommandCenter,
+    live_database_acceptance: {
       status: workingDatabaseAcceptanceStatus,
       passing: liveDatabaseAcceptancePassing,
       total: liveDatabaseAcceptanceRows.length,
@@ -8056,6 +8079,33 @@ function OnboardingChecklistPanel({
           <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : "warning"}`}>
             {liveDatabaseAcceptancePassing}/{liveDatabaseAcceptanceRows.length} database groups ready
           </span>
+        </div>
+        <div className="working-database-command-center" aria-label="Working database command center">
+          <div>
+            <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : authSession ? "warning" : "neutral"}`}>
+              Working database command center
+            </span>
+            <strong>{workingDatabaseCommandCenter.next_action}</strong>
+            <small>{workingDatabaseCommandCenter.next_detail}</small>
+          </div>
+          <div className="working-database-command-grid">
+            <span>
+              <strong>{workingDatabaseCommandCenter.ready_groups}/{workingDatabaseCommandCenter.total_groups}</strong>
+              <small>Live row groups ready</small>
+            </span>
+            <span>
+              <strong>{workingDatabaseCommandCenter.seed_reconciliation.replace(/_/g, " ")}</strong>
+              <small>Seed reconciliation</small>
+            </span>
+            <span>
+              <strong>{workingDatabaseCommandCenter.accepted_source}</strong>
+              <small>Accepted source</small>
+            </span>
+            <span>
+              <strong>{workingDatabaseCommandCenter.packet_export_required ? "Required" : "Optional"}</strong>
+              <small>Working-data packet export</small>
+            </span>
+          </div>
         </div>
         <div className="working-database-acceptance-card">
           <div>

@@ -3169,6 +3169,65 @@ p,
   background: rgba(82, 214, 196, 0.045);
 }
 
+.working-database-command-center {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.075), rgba(134, 174, 246, 0.045)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.working-database-command-center > div:first-child {
+  display: grid;
+  gap: 6px;
+}
+
+.working-database-command-center strong,
+.working-database-command-center small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.working-database-command-center > div:first-child > strong {
+  font-size: 16px;
+  line-height: 1.18;
+}
+
+.working-database-command-center > div:first-child > small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.working-database-command-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.working-database-command-grid span {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.working-database-command-grid strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.working-database-command-grid small {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .real-database-policy-card {
   display: grid;
   gap: 10px;
@@ -8713,6 +8772,7 @@ p {
   .live-data-verdict,
   .live-data-verdict-grid,
   .working-database-runbook-grid,
+  .working-database-command-grid,
   .working-database-grid,
   .team-operations-cockpit,
   .team-operations-grid,

@@ -278,6 +278,9 @@ assertIncludesAny(bundleText, ["Export seed evidence"], "pilot seed evidence exp
 assertIncludesAny(bundleText, ["Seed reconciliation"], "pilot seed reconciliation panel");
 assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched count");
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
+assertIncludesAny(bundleText, ["Working database command center"], "working database command center panel");
+assertIncludesAny(bundleText, ["working_database_command_center"], "working database command center packet field");
+assertIncludesAny(bundleText, ["Working-data packet export"], "working database command packet export label");
 assertIncludesAny(bundleText, ["Working database acceptance"], "working database acceptance summary");
 assertIncludesAny(bundleText, ["Live Data Verdict"], "live data verdict panel");
 assertIncludesAny(bundleText, ["Required row groups"], "live data verdict row-group metric");
