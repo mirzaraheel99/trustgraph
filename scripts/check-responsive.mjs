@@ -8,6 +8,7 @@ const requiredMobileStacks = [
   ".auth-path-grid",
   ".auth-support-actions",
   ".account-operator-path",
+  ".billing-operator-path",
   ".database-status-counts",
   ".database-status-strip",
   ".connect-source-strip",

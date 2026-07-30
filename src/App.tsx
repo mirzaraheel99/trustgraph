@@ -5707,6 +5707,25 @@ function BillingPanel({
       active: activePlanIds.has(plan.id)
     };
   });
+  const billingOperatorSteps = [
+    {
+      label: "Choose team size",
+      status: "ready",
+      detail: `${seats} seats selected for Corporate Verify packaging.`
+    },
+    {
+      label: "Activate pilot ledger",
+      status: activeSubscriptions.length ? "ready" : "waiting",
+      detail: activeSubscriptions.length
+        ? `${activeSubscriptions.length} active subscription row${activeSubscriptions.length === 1 ? "" : "s"} loaded from Supabase.`
+        : "Select a plan to write the live organization subscription ledger row."
+    },
+    {
+      label: "Hold Stripe gate",
+      status: "human gate",
+      detail: "Checkout, invoices, tax, refunds, dunning, and webhooks stay gated until approval."
+    }
+  ];
   const pricingStructurePacket = {
     generated_at: new Date().toISOString(),
     mode: "pilot_subscription_ledger",
@@ -5723,6 +5742,7 @@ function BillingPanel({
       created_at: subscription.created_at
     })),
     billing_ledger_evidence: billingLedgerEvidence,
+    billing_operator_path: billingOperatorSteps,
     projected_plans: projectedPlans,
     billing_launch_readiness: billingLaunchReadiness,
     billing_gates: billingGates,
@@ -5753,6 +5773,7 @@ function BillingPanel({
       "Keep the pilot subscription ledger live for account packaging and pricing validation. Connect Stripe only after product, price, tax, invoice, refund, dunning, webhook, and security decisions are recorded.",
     active_subscription_count: activeSubscriptions.length,
     billing_ledger_evidence: billingLedgerEvidence,
+    billing_operator_path: billingOperatorSteps,
     projected_plans: projectedPlans
   };
 
@@ -5772,6 +5793,18 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="billing-operator-path" aria-label="Billing operator path">
+        {billingOperatorSteps.map((step, index) => (
+          <article className={step.status === "ready" ? "ready" : ""} key={step.label}>
+            <span>{index + 1}</span>
+            <div>
+              <strong>{step.label}</strong>
+              <small>{step.status}</small>
+              <small>{step.detail}</small>
+            </div>
+          </article>
+        ))}
+      </div>
       <div className="billing-summary-grid">
         <div>
           <span>Active plan</span>

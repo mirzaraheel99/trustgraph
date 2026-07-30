@@ -361,6 +361,9 @@ assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export co
 assertIncludesAny(bundleText, ["Export launch packet"], "billing launch packet export control");
 assertIncludesAny(bundleText, ["Pricing structure packet"], "pricing structure packet label");
 assertIncludesAny(bundleText, ["Export pricing packet"], "pricing structure packet export control");
+assertIncludesAny(bundleText, ["Billing operator path"], "billing operator path label");
+assertIncludesAny(bundleText, ["Activate pilot ledger"], "billing operator pilot ledger step");
+assertIncludesAny(bundleText, ["billing_operator_path"], "billing operator path packet field");
 assertIncludesAny(bundleText, ["Billing ledger acceptance"], "billing ledger acceptance proof");
 assertIncludesAny(bundleText, ["billing_ledger_evidence"], "billing ledger acceptance packet field");
 assertIncludesAny(bundleText, ["live_subscription_ledger"], "live billing ledger mode");
