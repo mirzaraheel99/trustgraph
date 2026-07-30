@@ -743,6 +743,59 @@ button {
   margin-top: 18px;
 }
 
+.auth-choice-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 700px;
+  margin-top: 18px;
+}
+
+.auth-choice-summary button {
+  min-height: 118px;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 14px;
+  text-align: left;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.018)),
+    rgba(8, 13, 15, 0.56);
+}
+
+.auth-choice-summary button.active {
+  color: var(--text);
+  border-color: rgba(82, 214, 196, 0.48);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.13), rgba(134, 174, 246, 0.045)),
+    rgba(8, 13, 15, 0.76);
+}
+
+.auth-choice-summary span,
+.auth-choice-summary strong,
+.auth-choice-summary small {
+  display: block;
+}
+
+.auth-choice-summary span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.auth-choice-summary strong {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.auth-choice-summary small {
+  line-height: 1.4;
+}
+
 .portal-access-guide {
   display: grid;
   gap: 12px;
@@ -942,6 +995,17 @@ button {
 
 .public-auth-card > .secondary-action {
   justify-content: center;
+}
+
+.auth-support-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auth-support-actions .secondary-action {
+  justify-content: center;
+  min-height: 42px;
 }
 
 .public-auth-card select {
@@ -7085,6 +7149,8 @@ p {
   .public-auth-section,
   .public-portal-rail,
   .public-session-handoff,
+  .auth-choice-summary,
+  .auth-support-actions,
   .portal-auth-summary-grid,
   .portal-access-steps,
   .portal-auth-outcome-grid,

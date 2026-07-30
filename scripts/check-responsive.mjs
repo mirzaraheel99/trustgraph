@@ -4,7 +4,9 @@ const css = readFileSync("app/globals.css", "utf8");
 
 const requiredMobileStacks = [
   ".auth-actions",
+  ".auth-choice-summary",
   ".auth-path-grid",
+  ".auth-support-actions",
   ".database-status-counts",
   ".database-status-strip",
   ".connect-source-strip",

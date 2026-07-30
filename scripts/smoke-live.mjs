@@ -128,6 +128,8 @@ assertIncludesAny(bundleText, ["Professional", "Passport", "Evidence", "Consent"
 assertIncludesAny(bundleText, ["Already signed in"], "public signed-in session handoff");
 assertIncludesAny(bundleText, ["Open dashboard"], "public signed-in dashboard action");
 assertIncludesAny(bundleText, ["Organization name"], "Corporate registration organization field");
+assertIncludesAny(bundleText, ["Selected portal login path"], "public auth portal choice switchboard");
+assertIncludesAny(bundleText, ["Corporate company", "Professional user"], "public auth professional and corporate selectors");
 assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup path");
 assertIncludesAny(bundleText, ["Create workspace"], "corporate setup workspace step");
 assertIncludesAny(bundleText, ["Confirm RBAC"], "corporate setup RBAC step");

@@ -8595,6 +8595,18 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className="auth-choice-summary" aria-label="Selected portal login path">
+            <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+              <span>Professional user</span>
+              <strong>Passport</strong>
+              <small>Private records, evidence, consent, and owned Access Grants.</small>
+            </button>
+            <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+              <span>Corporate company</span>
+              <strong>Verify</strong>
+              <small>Company workspace, RBAC team access, pricing ledger, and scoped user review.</small>
+            </button>
+          </div>
           <div className="portal-auth-summary-panel">
             <div>
               <span className="status-chip success">Selected portal route</span>
@@ -8753,15 +8765,17 @@ function PublicSite({
           >
             {mode === "signin" ? "Login" : "Create account"}
           </button>
-          <button className="secondary-action" onClick={onOpenProductPreview} type="button">
-            Open product preview
-          </button>
-          <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-            Resend verification
-          </button>
-          <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-            Reset password
-          </button>
+          <div className="auth-support-actions" aria-label="Account help actions">
+            <button className="secondary-action" onClick={onOpenProductPreview} type="button">
+              Open product preview
+            </button>
+            <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+              Resend verification
+            </button>
+            <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+              Reset password
+            </button>
+          </div>
           <div className="auth-link-repair">
             <div>
               <strong>Fix localhost email link</strong>
