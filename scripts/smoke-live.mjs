@@ -64,13 +64,16 @@ async function assertRepoReadinessArtifacts() {
     "Expected migration sequence to include 036 issuer credential update lifecycle"
   );
   assert(packageJson.scripts?.["check:pilot-acceptance"] === "node scripts/check-pilot-acceptance.mjs", "Expected package scripts to expose pilot acceptance check");
+  assert(packageJson.scripts?.["check:v1-demo-flow"] === "node scripts/check-v1-demo-flow.mjs", "Expected package scripts to expose v1 demo-flow check");
   assert(pagesWorkflow.includes("pnpm check:pilot-acceptance"), "Expected Pages CI to run pilot acceptance check");
+  assert(pagesWorkflow.includes("pnpm check:v1-demo-flow"), "Expected Pages CI to run v1 demo-flow check");
   assert(readiness.includes("13-Track Product Coverage"), "Expected v1 readiness checklist to include 13-track coverage");
   assert(readiness.includes("Stop Conditions"), "Expected v1 readiness checklist to include production stop conditions");
   assert(runbook.includes("Live Workflow Acceptance"), "Expected pilot runbook to include live workflow acceptance");
   assert(runbook.includes("Human Decisions Still Required"), "Expected pilot runbook to include human decision gates");
   assert(evidenceMap.includes("13-Track Evidence Map"), "Expected implementation evidence map to include 13-track coverage");
   assert(evidenceMap.includes("Live Database Proof Artifacts"), "Expected implementation evidence map to include live database proof artifacts");
+  assert(evidenceMap.includes("end-to-end demo-flow gate"), "Expected implementation evidence map to include v1 demo-flow gate");
   assert(evidenceMap.includes("Remaining Human Gates"), "Expected implementation evidence map to include human gates");
   assert(evidenceMap.includes("https://trustgraph.5-75-224-110.sslip.io"), "Expected implementation evidence map to name the TrustGraph VPS pilot host");
   assert(evidenceMap.includes("https://5-75-224-110.sslip.io/CRM-client-demo/login"), "Expected implementation evidence map to preserve VFIX isolation");
@@ -146,6 +149,9 @@ assertIncludesAny(bundleText, ["Personal Passport", "Corporate Verify", "Company
 assertIncludesAny(bundleText, ["Workspace command strip"], "signed-in workspace command strip");
 assertIncludesAny(bundleText, ["Open next workspace"], "workspace command next action");
 assertIncludesAny(bundleText, ["workspace_command_strip"], "authorized report workspace command strip field");
+assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
+assertIncludesAny(bundleText, ["Corporate setup"], "dashboard corporate setup action");
+assertIncludesAny(bundleText, ["Sign out"], "dashboard sign out action");
 assertIncludesAny(bundleText, ["Dashboard start map"], "dashboard workspace start map");
 assertIncludesAny(bundleText, ["Choose the workspace by what you need to do now"], "dashboard start map guidance");
 assertIncludesAny(bundleText, ["dashboard_start_map"], "authorized report dashboard start map field");
