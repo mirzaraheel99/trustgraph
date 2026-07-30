@@ -67,6 +67,26 @@ const requiredPhrases = [
   {
     file: "src/App.tsx",
     phrase: "Pilot-ready, not unrestricted production traffic"
+  },
+  {
+    file: "src/App.tsx",
+    phrase: "preview_data_accepted_for_v1: false"
+  },
+  {
+    file: "src/App.tsx",
+    phrase: "preview_data_accepted: false"
+  },
+  {
+    file: "src/App.tsx",
+    phrase: "browser_seed_evidence_accepted_without_reconciliation: false"
+  },
+  {
+    file: "src/App.tsx",
+    phrase: 'accepted_source: "signed_in_supabase_repository_rows"'
+  },
+  {
+    file: "scripts/check-v1-demo-flow.mjs",
+    phrase: "Working database acceptance rejects preview-only evidence"
   }
 ];
 
