@@ -9029,6 +9029,65 @@ p {
   line-height: 1;
 }
 
+.v1-audit-command {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 58%),
+    linear-gradient(160deg, rgba(225, 184, 102, 0.055), transparent 74%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.v1-audit-command > div:first-child,
+.v1-audit-command-grid article {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.v1-audit-command strong,
+.v1-audit-command small,
+.v1-audit-command span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-audit-command > div:first-child > strong {
+  font-size: 16px;
+  line-height: 1.18;
+}
+
+.v1-audit-command small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.v1-audit-command-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.v1-audit-command-grid article {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.v1-audit-command-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+}
+
 .plan-migration-card {
   display: flex;
   justify-content: space-between;
@@ -10250,6 +10309,8 @@ p {
   .dispute-form-grid,
   .passport-record-create-path,
   .plan-summary-grid,
+  .v1-audit-command,
+  .v1-audit-command-grid,
   .policy-grid,
   .policy-summary-grid,
   .production-gate-register,

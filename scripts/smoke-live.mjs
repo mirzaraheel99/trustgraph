@@ -303,6 +303,9 @@ assertIncludesAny(bundleText, ["Export production gates"], "production gate expo
 assertIncludesAny(bundleText, ["V1 completion audit packet"], "v1 completion audit packet label");
 assertIncludesAny(bundleText, ["Export v1 completion packet"], "v1 completion audit export control");
 assertIncludesAny(bundleText, ["pilot_ready_with_human_gates"], "v1 completion pilot mode");
+assertIncludesAny(bundleText, ["V1 completion audit command"], "v1 completion audit command surface");
+assertIncludesAny(bundleText, ["Know what is shipped, what needs live proof, and what needs human approval"], "v1 audit command headline");
+assertIncludesAny(bundleText, ["v1_audit_command"], "v1 completion audit command packet field");
 assertIncludesAny(bundleText, ["Completion audit open items"], "v1 completion open item summary");
 assertIncludesAny(bundleText, ["completion_audit_requirements"], "v1 completion requirements packet field");
 assertIncludesAny(bundleText, ["live_database_repair_queue"], "v1 completion evidence export repair queue field");

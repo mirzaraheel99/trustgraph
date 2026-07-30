@@ -5169,6 +5169,28 @@ function PlanAlignmentPanel({
   const completionAuditOpenItems = completionAuditRequirements.filter((item) =>
     ["prepared_human_access_required", "human_gated", "implemented_with_runtime_login_required"].includes(item.status)
   );
+  const v1AuditCommand = [
+    {
+      label: "Hosted product",
+      value: "Shipped",
+      detail: "GitHub Pages build, deploy, and hosted smoke are part of every release loop."
+    },
+    {
+      label: "Portal coverage",
+      value: `${deployedCount}/${foundationTracks.length}`,
+      detail: "Public site, professional portal, corporate portal, pricing, exports, and admin readiness are mapped to the 13 tracks."
+    },
+    {
+      label: "Live database proof",
+      value: completionAuditOpenItems.some((item) => item.status === "implemented_with_runtime_login_required") ? "Login proof needed" : "Accepted",
+      detail: "Working database acceptance requires signed-in Supabase row groups and exported working-data evidence."
+    },
+    {
+      label: "Human gates",
+      value: `${openProductionGateCount} open`,
+      detail: "Stripe, legal/security, pilot ownership, and VPS production cutover stay outside automated completion."
+    }
+  ];
   const v1CompletionPacket = {
     generated_at: new Date().toISOString(),
     source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
@@ -5189,6 +5211,7 @@ function PlanAlignmentPanel({
     },
     completion_audit_requirements: completionAuditRequirements,
     completion_audit_open_items: completionAuditOpenItems,
+    v1_audit_command: v1AuditCommand,
     evidence_exports: [
       "portal_access_packet",
       "corporate_provisioning_packet",
@@ -5318,6 +5341,24 @@ function PlanAlignmentPanel({
         <div>
           <span>Planned</span>
           <strong>{plannedCount}</strong>
+        </div>
+      </div>
+      <div className="v1-audit-command" aria-label="V1 completion audit command">
+        <div>
+          <span className="status-chip neutral">V1 completion audit command</span>
+          <strong>Know what is shipped, what needs live proof, and what needs human approval</strong>
+          <small>
+            This command separates deployable engineering work from runtime Supabase proof and production decisions, so preview data cannot be mistaken for accepted v1 database evidence.
+          </small>
+        </div>
+        <div className="v1-audit-command-grid">
+          {v1AuditCommand.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <article className="plan-migration-card">
