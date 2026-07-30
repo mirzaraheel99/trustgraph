@@ -312,6 +312,9 @@ assertIncludesAny(bundleText, ["hosted_login_database_handoff"], "hosted login d
 assertIncludesAny(bundleText, ["Role-aware dashboard"], "signed-in role-aware dashboard label");
 assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");
+assertIncludesAny(bundleText, ["Proof & exports hub", "Proof &amp; exports hub"], "proof and exports hub label");
+assertIncludesAny(bundleText, ["proof_export_hub"], "proof and exports hub packet field");
+assertIncludesAny(bundleText, ["Authorized workspace report"], "authorized workspace report export card");
 assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");
 assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff checklist packet field");
 assertIncludesAny(bundleText, ["Provision workspace"], "corporate portal handoff provisioning step");

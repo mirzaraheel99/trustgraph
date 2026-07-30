@@ -8109,7 +8109,7 @@ function OnboardingChecklistPanel({
           </div>
         </>
       ) : null}
-      <div className="working-database-proof">
+      <div className="working-database-proof" id="live-database-proof">
         <div className="working-database-proof-top">
           <div>
             <strong>Working database proof</strong>
@@ -11319,6 +11319,36 @@ function App() {
       kind: "account"
     }
   ];
+  const proofExportHub = [
+    {
+      label: "Working database proof",
+      detail: "Live Supabase row groups, seed reconciliation, RLS repair, and working-data packet.",
+      status: authSession ? "Open setup proof" : "Login required",
+      action: "Review database proof",
+      target: "account" as const
+    },
+    {
+      label: "Corporate reviewer packet",
+      detail: "Access lane, blocker map, approved grants, visible rows, consent coverage, and open gaps.",
+      status: `${sharedVerifyRecords.length} shared rows`,
+      action: "Open Verify proof",
+      target: "verify" as const
+    },
+    {
+      label: "Corporate user packet",
+      detail: "Filtered professional rows, shared records, request status, and per-professional scope.",
+      status: `${accessGrants.length} Access Grants`,
+      action: "Open user database",
+      target: "verify" as const
+    },
+    {
+      label: "Authorized workspace report",
+      detail: "One scoped JSON export for current role, organization, counts, dashboard actions, and production boundary.",
+      status: authSession ? "Ready" : "Preview",
+      action: "Export report",
+      target: "export" as const
+    }
+  ];
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -11354,6 +11384,7 @@ function App() {
     dashboard_start_map: dashboardStartMap,
     workspace_command_strip: workspaceCommandStrip,
     signed_in_landing_actions: signedInLandingActions,
+    proof_export_hub: proofExportHub,
     production_boundary: {
       payments: "pilot_ledger_only",
       automated_hiring_decisions: "not_enabled",
@@ -11646,6 +11677,47 @@ function App() {
                 </article>
               );
             })}
+          </div>
+        </section>
+        <section className="proof-export-hub" aria-label="Proof and exports hub">
+          <div className="proof-export-hub-header">
+            <div>
+              <span className="status-chip neutral">Proof &amp; exports hub</span>
+              <strong>Find the right proof packet without digging through every panel</strong>
+              <small>Use this hub when the dashboard feels dense: database proof, Corporate Verify proof, user database packets, and scoped workspace exports stay one click away.</small>
+            </div>
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>{authSession ? "scope enforced" : "preview only"}</span>
+          </div>
+          <div className="proof-export-hub-grid">
+            {proofExportHub.map((item) => (
+              <article key={item.label}>
+                <div>
+                  <strong>{item.label}</strong>
+                  <small>{item.detail}</small>
+                  <span>{item.status}</span>
+                </div>
+                <button
+                  className={item.target === "export" ? "primary-action" : "secondary-action"}
+                  onClick={() => {
+                    if (item.target === "export") {
+                      downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json");
+                      return;
+                    }
+                    if (item.target === "account") {
+                      openAuthControls();
+                      window.setTimeout(() => {
+                        document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }, 50);
+                      return;
+                    }
+                    changeWorkspace(item.target);
+                  }}
+                  type="button"
+                >
+                  {item.action}
+                </button>
+              </article>
+            ))}
           </div>
         </section>
         <section className="dashboard-start-map" aria-label="Dashboard start map">

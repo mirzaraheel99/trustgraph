@@ -46,6 +46,7 @@ const requiredMobileStacks = [
   ".portal-auth-summary-grid",
   ".portal-auth-outcome-grid",
   ".portal-login-switchboard-grid",
+  ".proof-export-hub-grid",
   ".workspace-command-strip",
   ".workspace-command-metrics",
   ".portal-decision-panel",
