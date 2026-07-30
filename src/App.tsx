@@ -7537,15 +7537,21 @@ function PermissionGate({ roleLabel, workspaceLabel }: { roleLabel: string; work
 }
 
 function PublicSite({
+  currentSession,
+  currentSessionContext,
   onCorporateSession,
   onOpenProductPreview,
+  onSignOut,
   onSession
 }: {
+  currentSession: AuthSession | null;
+  currentSessionContext: string;
   onCorporateSession: (
     session: AuthSession,
     input: { organizationName: string; organizationType: "employer" | "staffing_agency"; organizationDomain: string }
   ) => void;
   onOpenProductPreview: () => void;
+  onSignOut: () => void;
   onSession: (session: AuthSession) => void;
 }) {
   const [portal, setPortal] = useState<"professional" | "corporate">("professional");
@@ -7946,6 +7952,11 @@ function PublicSite({
           <button className="secondary-action" onClick={onOpenProductPreview}>
             Open product
           </button>
+          {currentSession ? (
+            <button className="secondary-action" onClick={onSignOut} type="button">
+              Sign out
+            </button>
+          ) : null}
           <button className="primary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView()}>
             Get started
           </button>
@@ -7969,6 +7980,23 @@ function PublicSite({
               Corporate portal
             </button>
           </div>
+          {currentSession ? (
+            <div className="public-session-handoff" aria-label="Public session handoff">
+              <div>
+                <span className="status-chip success">Already signed in</span>
+                <strong>{currentSession.user.email}</strong>
+                <small>{currentSessionContext}</small>
+              </div>
+              <div className="public-session-actions">
+                <button className="primary-action" onClick={onOpenProductPreview} type="button">
+                  Open dashboard
+                </button>
+                <button className="secondary-action" onClick={onSignOut} type="button">
+                  Sign out
+                </button>
+              </div>
+            </div>
+          ) : null}
           <div className="public-portal-rail">
             <button className={portal === "professional" ? "active" : ""} onClick={() => openPortal("professional")}>
               <Fingerprint size={18} />
@@ -9873,12 +9901,15 @@ function App() {
   if (showPublicSite) {
     return (
       <PublicSite
+        currentSession={authSession}
+        currentSessionContext={`${activeRole.label} - ${activeOrganization.name}`}
         onCorporateSession={(session, input) => {
           setPendingCorporateAccount(input);
           setAuthSession(session);
           setShowPublicSite(false);
         }}
         onOpenProductPreview={() => setShowPublicSite(false)}
+        onSignOut={handleSignOut}
         onSession={(session) => {
           setAuthSession(session);
           setShowPublicSite(false);

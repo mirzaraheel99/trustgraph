@@ -117,6 +117,8 @@ assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database 
 assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command center hero");
 assertIncludesAny(bundleText, ["Verified TrustGraph record graph"], "premium TrustGraph record graph visual");
 assertIncludesAny(bundleText, ["Professional", "Passport", "Evidence", "Consent"], "TrustGraph visual record nodes");
+assertIncludesAny(bundleText, ["Already signed in"], "public signed-in session handoff");
+assertIncludesAny(bundleText, ["Open dashboard"], "public signed-in dashboard action");
 assertIncludesAny(bundleText, ["Organization name"], "Corporate registration organization field");
 assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup path");
 assertIncludesAny(bundleText, ["Create workspace"], "corporate setup workspace step");
