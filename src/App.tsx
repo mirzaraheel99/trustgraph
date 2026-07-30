@@ -52,6 +52,7 @@ import type {
   ProductionGateStatus,
   PilotLaunchContactStatus,
   DataRightsRequestType,
+  DataRightsRequestStatus,
   ReferenceRequestStatus,
   RecordStatus,
   RecordType,
@@ -104,7 +105,7 @@ import {
   markWebhookSubscriptionStatus
 } from "./connectRepository";
 import { createConsentAuthorization, loadConsentAuthorizations, revokeConsentAuthorization } from "./consentRepository";
-import { loadDataRightsRequests, requestDataRightsAction } from "./dataRightsRepository";
+import { loadDataRightsRequests, markDataRightsRequestStatus, requestDataRightsAction } from "./dataRightsRepository";
 import {
   createAccessGrantRequest,
   decideAccessGrant,
@@ -3866,6 +3867,7 @@ function OperationsQueuePanel({
   disabled,
   message,
   onCreatePilotCases,
+  onDataRightsStatus,
   onDecision
 }: {
   cases: DbVerificationCase[];
@@ -3873,9 +3875,12 @@ function OperationsQueuePanel({
   disabled: boolean;
   message: string;
   onCreatePilotCases: () => Promise<void>;
+  onDataRightsStatus: (requestId: string, status: DataRightsRequestStatus, reviewerNote: string) => Promise<void>;
   onDecision: (caseId: string, status: VerificationCaseStatus) => Promise<void>;
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [dataRightsBusyId, setDataRightsBusyId] = useState<string | null>(null);
+  const [dataRightsNoteById, setDataRightsNoteById] = useState<Record<string, string>>({});
   const [busyPilotCases, setBusyPilotCases] = useState(false);
   const [caseQuery, setCaseQuery] = useState("");
   const [caseStatusFilter, setCaseStatusFilter] = useState<"all" | VerificationCaseStatus>("all");
@@ -3923,6 +3928,7 @@ function OperationsQueuePanel({
     packet_mode: "admin_data_rights_review",
     source_table: "data_rights_requests",
     automatic_deletion_enabled: false,
+    audit_event: "data_rights.status_changed",
     human_review_required: true,
     review_boundaries: ["retention_policy", "legal_hold", "active_access_grants", "unresolved_disputes", "audit_retention"],
     counts: {
@@ -3948,6 +3954,15 @@ function OperationsQueuePanel({
       await onDecision(caseId, status);
     } finally {
       setBusyId(null);
+    }
+  }
+
+  async function updateDataRightsStatus(requestId: string, status: DataRightsRequestStatus) {
+    setDataRightsBusyId(requestId);
+    try {
+      await onDataRightsStatus(requestId, status, dataRightsNoteById[requestId] ?? "");
+    } finally {
+      setDataRightsBusyId(null);
     }
   }
 
@@ -4098,6 +4113,47 @@ function OperationsQueuePanel({
                 <span className="status-chip neutral">{request.due_at ? `Due ${new Date(request.due_at).toLocaleDateString()}` : "No due date"}</span>
                 <span className="status-chip warning">manual review</span>
               </div>
+            </div>
+            <div className="data-rights-review-actions">
+              <input
+                aria-label={`Review note for ${request.request_type.replace("_", " ")}`}
+                disabled={disabled || dataRightsBusyId === request.id}
+                onChange={(event) => setDataRightsNoteById((current) => ({ ...current, [request.id]: event.target.value }))}
+                placeholder="Reviewer note"
+                value={dataRightsNoteById[request.id] ?? ""}
+              />
+              <button
+                className="secondary-action"
+                disabled={disabled || dataRightsBusyId === request.id || request.status === "in_review"}
+                onClick={() => void updateDataRightsStatus(request.id, "in_review")}
+                type="button"
+              >
+                Review
+              </button>
+              <button
+                className="secondary-action"
+                disabled={disabled || dataRightsBusyId === request.id || request.status === "ready"}
+                onClick={() => void updateDataRightsStatus(request.id, "ready")}
+                type="button"
+              >
+                Mark data-rights ready
+              </button>
+              <button
+                className="secondary-action"
+                disabled={disabled || dataRightsBusyId === request.id || request.status === "blocked"}
+                onClick={() => void updateDataRightsStatus(request.id, "blocked")}
+                type="button"
+              >
+                Block
+              </button>
+              <button
+                className="secondary-action"
+                disabled={disabled || dataRightsBusyId === request.id || request.status === "completed"}
+                onClick={() => void updateDataRightsStatus(request.id, "completed")}
+                type="button"
+              >
+                Complete data-rights request
+              </button>
             </div>
           </article>
         ))}
@@ -11438,6 +11494,29 @@ function App() {
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
   }
 
+  async function updateLiveDataRightsStatus(requestId: string, status: DataRightsRequestStatus, reviewerNote: string) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before reviewing data-rights requests.");
+    }
+
+    const request = await markDataRightsRequestStatus({
+      accessToken: authSession.accessToken,
+      requestId,
+      status,
+      reviewerNote
+    });
+    const [requests, notifications, events] = await Promise.all([
+      loadDataRightsRequests(authSession.accessToken),
+      loadNotificationEvents(authSession.accessToken).catch(() => notificationEvents),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setDataRightsRequests(requests);
+    setNotificationEvents(notifications);
+    setAuditEvents(events);
+    setDataRightsStatus(`Data-rights request marked ${request.status.replace("_", " ")}`);
+    setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+  }
+
   async function seedLivePilotWorkspace() {
     if (!authSession || !accountContext) {
       throw new Error("Sign in before seeding the live pilot workspace.");
@@ -12811,6 +12890,7 @@ function App() {
                   disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
                   message={operationsStatus}
                   onCreatePilotCases={createLiveOperationsPilotCases}
+                  onDataRightsStatus={updateLiveDataRightsStatus}
                   onDecision={decideLiveOperationsCase}
                 />
                 <ConnectPanel

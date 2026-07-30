@@ -411,6 +411,9 @@ assertIncludesAny(bundleText, ["Export cases"], "operations case export control"
 assertIncludesAny(bundleText, ["Data rights review"], "admin data-rights review panel");
 assertIncludesAny(bundleText, ["Export data-rights review"], "admin data-rights review export");
 assertIncludesAny(bundleText, ["admin_data_rights_review"], "admin data-rights packet mode");
+assertIncludesAny(bundleText, ["Mark data-rights ready"], "admin data-rights ready action");
+assertIncludesAny(bundleText, ["Complete data-rights request"], "admin data-rights completion action");
+assertIncludesAny(bundleText, ["data_rights.status_changed"], "admin data-rights status audit event");
 assertIncludesAny(bundleText, ["Fraud signal review"], "fraud signal review-only panel");
 assertIncludesAny(bundleText, ["fraud_signal_review_only"], "fraud signal review packet mode");
 assertIncludesAny(bundleText, ["automated_hiring_decisions"], "fraud signal no automated decision field");

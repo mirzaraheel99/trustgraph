@@ -40,6 +40,7 @@ const requiredMobileStacks = [
   ".fraud-review-metrics",
   ".data-rights-review-strip",
   ".data-rights-review-metrics",
+  ".data-rights-review-actions",
   ".issuer-source-strip",
   ".invitation-handoff-strip",
   ".live-database-repair-grid",
@@ -102,7 +103,7 @@ if (!css.includes(".trust-network-visual") || !css.includes("min-height: 268px")
   throw new Error("Responsive check failed: premium TrustGraph record graph needs stable desktop dimensions.");
 }
 
-if (!css.includes("grid-template-columns: minmax(208px, 232px) minmax(0, 1fr)") || !css.includes("contain: inline-size")) {
+if (!css.includes("grid-template-columns: minmax(196px, 224px) minmax(0, 1fr)") || !css.includes("contain: inline-size") || !css.includes("max-width: 224px")) {
   throw new Error("Responsive check failed: app shell must keep the sidebar narrow and contain workspace overflow.");
 }
 
@@ -134,7 +135,7 @@ if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-co
   throw new Error("Responsive check failed: workspace command strip must summarize signed-in routing without overflow.");
 }
 
-if (!gridStackCss.includes("grid-template-columns: minmax(180px, 0.72fr) minmax(0, 1fr) minmax(220px, 0.72fr)") || !gridStackCss.includes(".sidebar .security-card")) {
+if (!gridStackCss.includes("grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.2fr)") || !gridStackCss.includes(".sidebar .security-card")) {
   throw new Error("Responsive check failed: tablet sidebar must become a compact navigation band.");
 }
 
@@ -150,7 +151,7 @@ if (!css.includes(".data-rights-panel") || !css.includes(".data-rights-actions")
   throw new Error("Responsive check failed: data export and closure controls must stay contained.");
 }
 
-if (!css.includes(".data-rights-review-strip") || !css.includes(".data-rights-review-metrics") || !css.includes(".data-rights-case-card")) {
+if (!css.includes(".data-rights-review-strip") || !css.includes(".data-rights-review-metrics") || !css.includes(".data-rights-review-actions") || !css.includes(".data-rights-case-card")) {
   throw new Error("Responsive check failed: admin data-rights review must stay contained.");
 }
 
