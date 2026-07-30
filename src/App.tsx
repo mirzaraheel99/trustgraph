@@ -7595,6 +7595,21 @@ function PublicSite({
     selected_mode: mode,
     configured: authReady,
     selected_registration_path: selectedRegistrationPath,
+    portal_decision_matrix: {
+      label: "Portal decision matrix",
+      professional: {
+        buyer: "Individual professional",
+        start_here: "Register a Passport",
+        pricing: "Free pilot",
+        live_database_result: "Private Passport workspace, records, evidence metadata, consent, and Access Grants"
+      },
+      corporate: {
+        buyer: "Employer or staffing company",
+        start_here: "Register a company",
+        pricing: "$149 pilot monthly",
+        live_database_result: "Company organization, admin membership, team controls, billing ledger, and Verify requests"
+      }
+    },
     active_redirect_url: authRedirectUrl,
     required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
     allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
@@ -8107,6 +8122,26 @@ function PublicSite({
         <div className="public-section-heading">
           <span className="eyebrow">Portal registration</span>
           <h2>Choose the account type before data is written</h2>
+        </div>
+        <div className="portal-decision-panel">
+          <div>
+            <span className="status-chip success">Portal decision matrix</span>
+            <strong>One login system, two clean registration paths</strong>
+            <p>
+              Professionals register a private Passport first. Corporate teams register a company workspace first, then
+              activate the Verify plan, invite reviewers, and request scoped Passport access.
+            </p>
+          </div>
+          <div className="portal-decision-grid">
+            <span>
+              <strong>Professional user</strong>
+              <small>Start with the free Passport, then add records, evidence, consent, and Access Grants.</small>
+            </span>
+            <span>
+              <strong>Corporate company</strong>
+              <small>Start with Corporate Verify at $149 pilot monthly, then provision RBAC, team seats, and review workflows.</small>
+            </span>
+          </div>
         </div>
         <div className="portal-route-grid">
           {portalRoutes.map((route) => {

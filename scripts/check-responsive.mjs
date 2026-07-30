@@ -20,6 +20,8 @@ const requiredMobileStacks = [
   ".notification-source-strip",
   ".operations-source-strip",
   ".portal-access-steps",
+  ".portal-decision-panel",
+  ".portal-decision-grid",
   ".registration-path-grid",
   ".reference-source-strip",
   ".release-source-strip",
