@@ -103,6 +103,10 @@ if (!flexStackCss.includes(".hero-value") || !flexStackCss.includes("font-size: 
   throw new Error("Responsive check failed: mobile hero cards must use app-scale type.");
 }
 
+if (!flexStackCss.includes(".ai-card .advisory-source-grid") || !flexStackCss.includes(".ai-card .advisory-actions") || !flexStackCss.includes("nth-child(n + 3)")) {
+  throw new Error("Responsive check failed: mobile advisory card must stay compact.");
+}
+
 const missing = requiredMobileStacks.filter((selector) => !gridStackCss.includes(selector) && !flexStackCss.includes(selector));
 
 if (missing.length) {

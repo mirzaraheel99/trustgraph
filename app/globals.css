@@ -7708,6 +7708,19 @@ p {
     margin-top: 9px;
   }
 
+  .ai-card .advisory-source-grid,
+  .ai-card .advisory-actions {
+    display: none;
+  }
+
+  .ai-card .advisory-signals .status-chip:nth-child(n + 3) {
+    display: none;
+  }
+
+  .ai-card .advisory-export-row {
+    margin-top: 10px;
+  }
+
   .qa-score-card,
   .onboarding-score,
   .onboarding-seed-row,
