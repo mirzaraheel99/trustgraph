@@ -1,11 +1,16 @@
 name: Apply Supabase Migrations
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "supabase/migrations/*.sql"
   workflow_dispatch:
     inputs:
       migration_path:
         description: SQL file glob to apply
-        required: true
+        required: false
 
 permissions:
   contents: read
@@ -19,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Install Postgres client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
@@ -27,19 +34,32 @@ jobs:
         run: |
           test -n "$DIRECT_URL"
 
-      - name: Validate migration input
+      - name: Collect migration files
         run: |
-          test -n "$MIGRATION_PATH"
           rm -f /tmp/trustgraph-migrations.txt
-          for file in $MIGRATION_PATH; do
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            test -n "$MIGRATION_PATH"
+            for file in $MIGRATION_PATH; do
+              case "$file" in
+                supabase/migrations/*.sql) ;;
+                *) echo "Migration path must stay under supabase/migrations/*.sql: $file" >&2; exit 1 ;;
+              esac
+              test -f "$file"
+              printf '%s\n' "$file" >> /tmp/trustgraph-migrations.txt
+            done
+          else
+            git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- "supabase/migrations/*.sql" > /tmp/trustgraph-migrations.txt
+          fi
+          test -s /tmp/trustgraph-migrations.txt
+          while IFS= read -r file; do
             case "$file" in
               supabase/migrations/*.sql) ;;
               *) echo "Migration path must stay under supabase/migrations/*.sql: $file" >&2; exit 1 ;;
             esac
             test -f "$file"
-            printf '%s\n' "$file" >> /tmp/trustgraph-migrations.txt
           done
-          test -s /tmp/trustgraph-migrations.txt
+          sort -u /tmp/trustgraph-migrations.txt -o /tmp/trustgraph-migrations.txt
+          cat /tmp/trustgraph-migrations.txt
 
       - name: Apply SQL migrations
         run: |

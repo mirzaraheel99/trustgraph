@@ -54,6 +54,9 @@ jobs:
       - name: Verify responsive coverage
         run: pnpm check:responsive
 
+      - name: Verify Supabase migration workflow
+        run: pnpm check:migrations-workflow
+
       - name: Verify server env validator
         run: pnpm check:server-env
 

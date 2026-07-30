@@ -10,6 +10,7 @@
     "check:claims": "node scripts/check-claims.mjs",
     "check:responsive": "node scripts/check-responsive.mjs",
     "check:rls": "node scripts/check-rls.mjs",
+    "check:migrations-workflow": "node scripts/check-migrations-workflow.mjs",
     "check:server-env": "node scripts/check-server-env.mjs tools/test-server-env.example",
     "check:pilot-acceptance": "node scripts/check-pilot-acceptance.mjs",
     "check:v1-demo-flow": "node scripts/check-v1-demo-flow.mjs",
