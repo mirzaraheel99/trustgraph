@@ -406,7 +406,7 @@ button {
   z-index: 1;
   display: grid;
   gap: 4px;
-  width: 118px;
+  width: clamp(118px, 32%, 148px);
   min-height: 70px;
   align-content: center;
   padding: 10px;
@@ -417,6 +417,11 @@ button {
 }
 
 .trust-network-node span {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--muted);
   font-size: 10px;
   font-weight: 950;
@@ -426,6 +431,10 @@ button {
 }
 
 .trust-network-node strong {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-size: 16px;
   line-height: 1.05;
 }
