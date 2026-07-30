@@ -58,6 +58,7 @@ const requiredMobileStacks = [
   ".release-source-strip",
   ".setup-command-bar",
   ".setup-command-metrics",
+  ".signed-in-landing-grid",
   ".team-operations-cockpit",
   ".team-operations-grid",
   ".team-invite-path",

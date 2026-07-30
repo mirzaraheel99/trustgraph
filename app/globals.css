@@ -4326,6 +4326,108 @@ p {
   justify-content: center;
 }
 
+.signed-in-landing-actions {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 1180px);
+  margin: 0 auto 14px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.075), transparent 58%),
+    linear-gradient(160deg, rgba(82, 214, 196, 0.055), transparent 72%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.signed-in-landing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.signed-in-landing-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.signed-in-landing-header strong,
+.signed-in-landing-header small,
+.signed-in-landing-grid strong,
+.signed-in-landing-grid small,
+.signed-in-landing-grid span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.signed-in-landing-header > div > strong {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.signed-in-landing-actions small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.signed-in-landing-header .secondary-action {
+  min-height: 38px;
+  flex: 0 0 auto;
+}
+
+.signed-in-landing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.signed-in-landing-grid article {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 10px;
+  min-width: 0;
+  min-height: 176px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.signed-in-landing-grid article.active {
+  border-color: rgba(82, 214, 196, 0.38);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.105), rgba(134, 174, 246, 0.045)),
+    rgba(255, 255, 255, 0.032);
+}
+
+.signed-in-landing-grid article > div {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.signed-in-landing-grid strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.signed-in-landing-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.signed-in-landing-grid button {
+  min-height: 38px;
+  justify-content: center;
+}
+
 .dashboard-start-map {
   display: grid;
   gap: 12px;
@@ -8739,6 +8841,7 @@ p {
   .portal-auth-outcome-grid,
   .portal-login-switchboard-grid,
   .dashboard-start-map-grid,
+  .signed-in-landing-grid,
   .workspace-command-strip,
   .workspace-command-metrics,
   .portal-decision-panel,
@@ -8914,6 +9017,7 @@ p {
   .public-session-handoff,
   .corporate-operating-plan-header,
   .panel-heading,
+  .signed-in-landing-header,
   .record-row-main,
   .onboarding-item,
   .seed-reconciliation-top,

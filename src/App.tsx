@@ -11237,6 +11237,40 @@ function App() {
     role: activeRole.label,
     organization: activeOrganization.name
   };
+  const signedInLandingActions = [
+    {
+      label: "Personal Passport",
+      detail: "Manage your profile, records, evidence, consent, and corporate access approvals.",
+      status: livePassportRecords.length ? `${livePassportRecords.length} live record rows` : "Add first live record",
+      action: "Open Passport",
+      target: "passport" as const,
+      kind: "workspace"
+    },
+    {
+      label: "Corporate Verify",
+      detail: "Request scoped user database access and review only approved shared Passport rows.",
+      status: hasLiveCorporateContext ? `${sharedVerifyRecords.length} shared rows visible` : "Create company workspace first",
+      action: "Open Verify",
+      target: "verify" as const,
+      kind: "workspace"
+    },
+    {
+      label: "Company Admin",
+      detail: "Create company context, assign RBAC, invite team members, and manage pricing ledger.",
+      status: hasLiveCorporateContext ? nextCorporateSetupStep.label : "Corporate setup needed",
+      action: "Open Admin",
+      target: "admin" as const,
+      kind: "workspace"
+    },
+    {
+      label: "Account and recovery",
+      detail: "Open login, recovery, password, hosted redirect, and session controls.",
+      status: authSession ? "Live session" : "Login required",
+      action: "Open Account",
+      target: "account" as const,
+      kind: "account"
+    }
+  ];
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -11271,6 +11305,7 @@ function App() {
     },
     dashboard_start_map: dashboardStartMap,
     workspace_command_strip: workspaceCommandStrip,
+    signed_in_landing_actions: signedInLandingActions,
     production_boundary: {
       payments: "pilot_ledger_only",
       automated_hiring_decisions: "not_enabled",
@@ -11515,6 +11550,54 @@ function App() {
             <button className="secondary-action" onClick={openAuthControls} type="button">
               Account
             </button>
+          </div>
+        </section>
+        <section className="signed-in-landing-actions" aria-label="Signed-in landing actions">
+          <div className="signed-in-landing-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>
+                {authSession ? "Role-aware dashboard" : "Login to activate"}
+              </span>
+              <strong>{authSession ? `Signed in as ${activeRole.label}` : "Choose a portal, then login or register"}</strong>
+              <small>
+                {authSession
+                  ? "Use these first-screen actions for Passport, Corporate Verify, Company Admin, account recovery, and logout."
+                  : "Preview mode shows the product path; live database rows require hosted login."}
+              </small>
+            </div>
+            <button className="secondary-action" onClick={authSession ? handleSignOut : openAuthControls} type="button">
+              {authSession ? "Logout" : "Login or register"}
+            </button>
+          </div>
+          <div className="signed-in-landing-grid">
+            {signedInLandingActions.map((item) => {
+              const allowed = item.kind === "workspace" ? canAccessWorkspace(activeMembership.role, item.target as WorkspaceId) : true;
+              const active = item.kind === "workspace" && item.target === workspace.id;
+
+              return (
+                <article className={active ? "active" : ""} key={item.label}>
+                  <div>
+                    <strong>{item.label}</strong>
+                    <small>{item.detail}</small>
+                    <span>{item.status}</span>
+                  </div>
+                  <button
+                    className={active ? "primary-action" : "secondary-action"}
+                    disabled={!allowed}
+                    onClick={() => {
+                      if (item.kind === "account") {
+                        openAuthControls();
+                        return;
+                      }
+                      changeWorkspace(item.target as WorkspaceId);
+                    }}
+                    type="button"
+                  >
+                    {allowed ? item.action : "Role required"}
+                  </button>
+                </article>
+              );
+            })}
           </div>
         </section>
         <section className="dashboard-start-map" aria-label="Dashboard start map">

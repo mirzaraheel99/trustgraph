@@ -309,6 +309,9 @@ assertIncludesAny(bundleText, ["unmet_requirements"], "real database unmet requi
 assertIncludesAny(bundleText, ["Hosted login and database handoff"], "hosted login database handoff label");
 assertIncludesAny(bundleText, ["Export login handoff"], "hosted login database handoff export");
 assertIncludesAny(bundleText, ["hosted_login_database_handoff"], "hosted login database handoff packet field");
+assertIncludesAny(bundleText, ["Role-aware dashboard"], "signed-in role-aware dashboard label");
+assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
+assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");
 assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");
 assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff checklist packet field");
 assertIncludesAny(bundleText, ["Provision workspace"], "corporate portal handoff provisioning step");
