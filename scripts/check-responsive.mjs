@@ -146,11 +146,11 @@ if (!css.includes(".v1-audit-command") || !css.includes("grid-template-columns: 
   throw new Error("Responsive check failed: v1 completion panel needs a clear audit command surface.");
 }
 
-if (!css.includes("grid-template-columns: minmax(0, 1fr) minmax(220px, 300px)") || !css.includes("max-width: 300px") || !css.includes(".topbar-session-card .secondary-action:last-child")) {
-  throw new Error("Responsive check failed: premium shell actions must stay compact and preserve workspace width.");
+if (!css.includes("grid-template-columns: minmax(0, 1fr) auto") || !css.includes(".topbar-session-card") || !css.includes("display: none !important")) {
+  throw new Error("Responsive check failed: premium shell must remove duplicate session cards and preserve workspace width.");
 }
 
-if (!css.includes("width: min(100%, 1360px)") || !css.includes("margin: 0 auto") || !css.includes("grid-template-columns: minmax(240px, 0.85fr) minmax(300px, 1.08fr) minmax(280px, 0.92fr)")) {
+if (!css.includes("width: min(100%, 1280px)") || !css.includes("margin: 0 auto") || !css.includes("grid-template-columns: minmax(240px, 0.85fr) minmax(300px, 1.08fr) minmax(280px, 0.92fr)")) {
   throw new Error("Responsive check failed: premium shell must use the available console width without centered desktop drift.");
 }
 
@@ -158,16 +158,16 @@ if (!css.includes(".workspace > *") || !css.includes("grid-template-columns: rep
   throw new Error("Responsive check failed: workspace children and corporate plan cards must not force horizontal overflow.");
 }
 
-if (!css.includes(".workspace-route-strip") || !css.includes("max-width: 100%") || !css.includes(".workspace-flow-strip") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(170px, 1fr))")) {
+if (!css.includes(".workspace-route-strip") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(136px, 1fr))") || !css.includes(".workspace-flow-strip") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(190px, 1fr))")) {
   throw new Error("Responsive check failed: primary workspace route and portal path strips must stay compact.");
 }
 
-if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(190px, 0.64fr) minmax(0, 1.05fr) minmax(150px, 0.38fr)")) {
+if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1fr) minmax(160px, 0.32fr)")) {
   throw new Error("Responsive check failed: workspace command strip must summarize signed-in routing without overflow.");
 }
 
-if (!gridStackCss.includes("grid-template-columns: 1fr") || !gridStackCss.includes(".sidebar .security-card")) {
-  throw new Error("Responsive check failed: tablet sidebar must become a compact navigation band.");
+if (!css.includes(".sidebar") || !css.includes("display: none !important")) {
+  throw new Error("Responsive check failed: authenticated workspace must not resurrect the legacy sidebar rail.");
 }
 
 if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("flex-direction: column")) {

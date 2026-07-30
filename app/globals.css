@@ -1804,7 +1804,7 @@ button {
 }
 
 .sidebar {
-  display: none;
+  display: none !important;
 }
 
 .sidebar > * {
@@ -4810,9 +4810,9 @@ p,
 }
 
 .workspace {
-  width: min(100%, 1360px);
+  width: min(100%, 1280px);
   margin: 0 auto;
-  padding: 28px clamp(18px, 3vw, 44px) 64px;
+  padding: 30px clamp(20px, 4vw, 56px) 72px;
   min-width: 0;
   max-width: 100%;
   overflow-x: hidden;
@@ -4826,13 +4826,18 @@ p,
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
   align-items: flex-start;
   width: 100%;
-  margin: 0 0 14px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(201, 214, 207, 0.1);
+  margin: 0 0 16px;
+  padding: 18px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.06), rgba(134, 174, 246, 0.035) 46%, transparent 72%),
+    rgba(255, 255, 255, 0.026);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
 }
 
 .eyebrow {
@@ -4875,7 +4880,7 @@ p {
 .topbar h1 {
   max-width: 20ch;
   margin-bottom: 8px;
-  font-size: clamp(30px, 3cqw, 42px);
+  font-size: clamp(30px, 3cqw, 40px);
   line-height: 1.05;
 }
 
@@ -4892,16 +4897,21 @@ p {
   gap: 8px;
   max-width: 100%;
   margin-top: 12px;
-  padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.085);
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.026);
+  background: rgba(3, 16, 14, 0.34);
 }
 
 .session-command-bar button {
   min-height: 36px;
   justify-content: center;
   flex: 0 1 auto;
+  white-space: nowrap;
+}
+
+.topbar-session-card {
+  display: none !important;
 }
 
 .danger-action {
@@ -4918,25 +4928,27 @@ p {
 }
 
 .workspace-route-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
+  gap: 6px;
   overflow: visible;
   scrollbar-width: thin;
   max-width: 100%;
   margin-top: 10px;
-  padding-bottom: 3px;
+  padding: 6px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
 }
 
 .workspace-route-strip button {
-  min-height: 36px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  flex: 0 1 auto;
-  max-width: min(100%, 190px);
-  padding: 7px 10px;
-  text-align: left;
+  min-height: 40px;
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  max-width: none;
+  padding: 8px 10px;
+  text-align: center;
   color: var(--muted);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -4982,22 +4994,22 @@ p {
 }
 
 .workspace-route-strip small {
-  max-width: 82px;
+  max-width: none;
   font-size: 10px;
 }
 
 .workspace-flow-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   overflow: visible;
   scrollbar-width: thin;
-  gap: 7px;
+  gap: 8px;
   max-width: 100%;
   margin-top: 10px;
-  padding: 6px;
+  padding: 8px;
   border: 1px solid rgba(201, 214, 207, 0.12);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.026);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .workspace-flow-strip button {
@@ -5006,7 +5018,7 @@ p {
   align-content: start;
   gap: 4px;
   max-width: none;
-  padding: 8px;
+  padding: 10px;
   text-align: left;
   color: var(--muted);
   border: 1px solid var(--line);
@@ -5052,14 +5064,14 @@ p {
 
 .workspace-command-strip {
   display: grid;
-  grid-template-columns: minmax(190px, 0.64fr) minmax(0, 1.05fr) minmax(150px, 0.38fr);
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1fr) minmax(160px, 0.32fr);
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
-  margin: 0 0 12px;
-  padding: 12px;
+  margin: 0 0 14px;
+  padding: 14px;
   border: 1px solid rgba(134, 174, 246, 0.2);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   background:
     linear-gradient(135deg, rgba(134, 174, 246, 0.075), transparent 62%),
     rgba(255, 255, 255, 0.028);
