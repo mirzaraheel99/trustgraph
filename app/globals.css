@@ -759,6 +759,52 @@ button {
   justify-content: center;
 }
 
+.registration-path-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.065), transparent 65%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.registration-path-card > div:first-child {
+  display: grid;
+  gap: 6px;
+}
+
+.registration-path-card strong,
+.registration-path-card small {
+  display: block;
+}
+
+.registration-path-card strong {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.registration-path-card small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.registration-path-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.registration-path-grid span {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
 .auth-link-repair,
 .auth-readiness-packet {
   display: grid;
@@ -5786,6 +5832,10 @@ p {
   }
 
   .database-status-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .registration-path-grid {
     grid-template-columns: 1fr;
   }
 

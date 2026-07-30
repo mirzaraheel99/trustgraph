@@ -7083,11 +7083,36 @@ function PublicSite({
   const pendingCorporateRegistrationKey = "trustgraph.pendingCorporateRegistration";
   const repairedVerificationUrl = repairHostedAuthLink(verificationLinkInput, authRedirectUrl);
   const registrationPacketName = `trustgraph-registration-auth-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const selectedRegistrationPath =
+    portal === "corporate"
+      ? {
+          portal: "Corporate Verify",
+          plan: "Corporate Verify - $149 pilot monthly",
+          primaryWrite: "organization + admin membership",
+          databaseWrites: ["profiles", "organizations", "organization_memberships", "subscriptions", "access_grants"],
+          nextAction:
+            mode === "signup"
+              ? "Verify email, then login here to create the live company workspace."
+              : "Login to load the corporate account, RBAC role, team, billing, and Verify database panels.",
+          paymentStatus: "Supabase subscription ledger live; Stripe checkout remains human-gated."
+        }
+      : {
+          portal: "Professional Passport",
+          plan: "Professional - free",
+          primaryWrite: "profile + personal Passport workspace",
+          databaseWrites: ["profiles", "personal organizations", "organization_memberships", "trust_records", "evidence_documents"],
+          nextAction:
+            mode === "signup"
+              ? "Verify email if prompted, then login here to start the live Passport workspace."
+              : "Login to load Passport records, evidence, references, Access Grants, and consent panels.",
+          paymentStatus: "No payment collection for the professional pilot plan."
+        };
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
     selected_mode: mode,
     configured: authReady,
+    selected_registration_path: selectedRegistrationPath,
     active_redirect_url: authRedirectUrl,
     required_hosted_redirect: "https://mirzaraheel99.github.io/trustgraph/",
     allowed_production_redirects: ["https://mirzaraheel99.github.io/trustgraph/", "https://trustgraph.5-75-224-110.sslip.io", "https://trustgraph.5-75-224-110.sslip.io/"],
@@ -7694,6 +7719,25 @@ function PublicSite({
               </select>
             </>
           ) : null}
+          <div className="registration-path-card">
+            <div>
+              <span className="status-chip success">Selected path</span>
+              <strong>{selectedRegistrationPath.portal}</strong>
+              <small>{selectedRegistrationPath.plan}</small>
+            </div>
+            <div className="registration-path-grid">
+              <span>
+                <strong>{selectedRegistrationPath.primaryWrite}</strong>
+                <small>Primary database write</small>
+              </span>
+              <span>
+                <strong>{selectedRegistrationPath.databaseWrites.length} tables</strong>
+                <small>{selectedRegistrationPath.databaseWrites.join(", ")}</small>
+              </span>
+            </div>
+            <small>{selectedRegistrationPath.nextAction}</small>
+            <small>{selectedRegistrationPath.paymentStatus}</small>
+          </div>
           <button
             className="primary-action"
             disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}

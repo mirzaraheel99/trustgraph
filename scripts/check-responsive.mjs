@@ -16,6 +16,7 @@ const requiredMobileStacks = [
   ".missing-source-strip",
   ".notification-source-strip",
   ".operations-source-strip",
+  ".registration-path-grid",
   ".reference-source-strip",
   ".release-source-strip",
   ".team-source-strip"

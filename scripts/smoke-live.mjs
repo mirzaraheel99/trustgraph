@@ -258,6 +258,8 @@ assertIncludesAny(bundleText, ["Auth redirect readiness packet"], "auth redirect
 assertIncludesAny(bundleText, ["Export auth packet"], "auth redirect readiness export control");
 assertIncludesAny(bundleText, ["Registration auth readiness packet"], "registration auth readiness packet label");
 assertIncludesAny(bundleText, ["Export registration auth packet"], "registration auth readiness export control");
+assertIncludesAny(bundleText, ["Selected path"], "registration selected path proof");
+assertIncludesAny(bundleText, ["selected_registration_path"], "registration path packet field");
 assertIncludesAny(bundleText, ["protected_vfix_host"], "auth packet VFIX isolation field");
 assertIncludesAny(bundleText, ["trustgraph_vps_target"], "auth packet TrustGraph VPS field");
 assertIncludesAny(bundleText, ["Reset password"], "public portal password recovery control");
