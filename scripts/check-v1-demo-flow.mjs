@@ -93,6 +93,8 @@ const flowChecks = [
       "Corporate user database packet",
       "Corporate directory acceptance",
       "corporate_directory_acceptance",
+      "Corporate access review queue",
+      "Export review queue",
       "Corporate Verify live access test",
       "Visible user rows"
     ]
