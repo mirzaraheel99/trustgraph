@@ -150,7 +150,7 @@ if (!css.includes("grid-template-columns: minmax(0, 1fr) auto") || !css.includes
   throw new Error("Responsive check failed: premium shell must remove duplicate session cards and preserve workspace width.");
 }
 
-if (!css.includes("width: min(100%, 1280px)") || !css.includes("margin: 0 auto") || !css.includes("grid-template-columns: minmax(240px, 0.85fr) minmax(300px, 1.08fr) minmax(280px, 0.92fr)")) {
+if (!css.includes("width: min(100%, 1440px)") || !css.includes("overflow: clip") || !css.includes("grid-template-columns: minmax(240px, 0.8fr) minmax(280px, 1fr) minmax(280px, 0.92fr)")) {
   throw new Error("Responsive check failed: premium shell must use the available console width without centered desktop drift.");
 }
 
@@ -164,6 +164,18 @@ if (!css.includes(".workspace-route-strip") || !css.includes("grid-template-colu
 
 if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1fr) minmax(160px, 0.32fr)")) {
   throw new Error("Responsive check failed: workspace command strip must summarize signed-in routing without overflow.");
+}
+
+if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1fr)") || !css.includes(".workspace-command-actions") || !css.includes("grid-column: 1 / -1")) {
+  throw new Error("Responsive check failed: premium shell repair must keep command actions from squeezing dashboard metrics.");
+}
+
+if (!css.includes(".session-command-bar") || !css.includes("width: fit-content") || !css.includes(".workspace-route-strip,\n.workspace-flow-strip") || !css.includes("display: flex !important")) {
+  throw new Error("Responsive check failed: account/logout controls and workspace routes must wrap inside the premium shell.");
+}
+
+if (!css.includes(".account-admin-row,\n.team-controls,\n.directory-controls,\n.audit-controls,\n.evidence-controls") || !css.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))")) {
+  throw new Error("Responsive check failed: dense corporate/admin forms must auto-fit instead of forcing horizontal overflow.");
 }
 
 if (!css.includes(".sidebar") || !css.includes("display: none !important")) {

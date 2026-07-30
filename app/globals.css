@@ -10780,3 +10780,302 @@ p {
     font-size: 52px;
   }
 }
+
+/* Premium workspace shell repair: keep the authenticated app calm, bounded, and readable. */
+.app {
+  isolation: isolate;
+  background:
+    linear-gradient(180deg, rgba(236, 245, 239, 0.045), transparent 360px),
+    linear-gradient(135deg, rgba(134, 174, 246, 0.075), transparent 38%),
+    linear-gradient(225deg, rgba(82, 214, 196, 0.055), transparent 42%),
+    var(--bg);
+}
+
+.sidebar {
+  display: none !important;
+}
+
+.workspace {
+  width: min(100%, 1440px);
+  padding: 24px clamp(18px, 3vw, 44px) 76px;
+  overflow: clip;
+}
+
+.topbar,
+.workspace-command-strip,
+.corporate-task-hub,
+.signed-in-landing-actions,
+.dashboard-start-map,
+.proof-export-hub,
+.workspace-admin-grid {
+  border-color: rgba(201, 214, 207, 0.13);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.044), rgba(255, 255, 255, 0.018)),
+    rgba(6, 13, 16, 0.68);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.topbar {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  padding: clamp(16px, 2.2vw, 24px);
+}
+
+.topbar > div:first-child,
+.setup-center-header,
+.corporate-task-hub-header > div,
+.signed-in-landing-header > div,
+.dashboard-start-map-header > div,
+.proof-export-hub-header > div {
+  min-width: 0;
+}
+
+.topbar h1 {
+  max-width: 18ch;
+  font-size: clamp(34px, 4.4vw, 66px);
+  letter-spacing: 0;
+}
+
+.topbar p {
+  max-width: 920px;
+  color: var(--muted);
+  font-size: clamp(15px, 1.35vw, 18px);
+}
+
+.session-command-bar {
+  width: fit-content;
+  max-width: 100%;
+  padding: 7px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.session-command-bar button,
+.topbar-actions .secondary-action,
+.topbar-actions .primary-action,
+.workspace-command-actions button,
+.setup-command-actions button,
+.signed-in-landing-actions button,
+.dashboard-start-map button,
+.proof-export-hub button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.topbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: none;
+}
+
+.public-site-action {
+  order: -1;
+}
+
+.workspace-route-strip,
+.workspace-flow-strip {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: stretch;
+  overflow: visible;
+}
+
+.workspace-route-strip button,
+.workspace-flow-strip button {
+  flex: 1 1 156px;
+  min-width: min(100%, 148px);
+}
+
+.workspace-flow-strip button {
+  flex-basis: 216px;
+}
+
+.workspace-route-strip span,
+.workspace-route-strip small,
+.workspace-flow-strip span,
+.workspace-flow-strip small {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.hero {
+  grid-template-columns: minmax(240px, 0.8fr) minmax(280px, 1fr) minmax(280px, 0.92fr);
+  align-items: stretch;
+}
+
+.hero-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.hero-card p,
+.metric-card p,
+.corporate-task-hub small,
+.corporate-task-hub p,
+.workspace-command-strip small,
+.signed-in-landing-actions small,
+.dashboard-start-map small,
+.proof-export-hub small,
+.workspace-admin-grid small,
+.workspace-admin-grid p {
+  overflow-wrap: anywhere;
+}
+
+.workspace-command-strip {
+  grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1fr);
+}
+
+.workspace-command-actions {
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+}
+
+.workspace-command-metrics,
+.setup-command-metrics,
+.corporate-operator-strip,
+.metrics-grid,
+.signed-in-landing-grid,
+.dashboard-start-map-grid,
+.proof-export-hub-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+}
+
+.workspace-admin-grid {
+  padding: clamp(14px, 2vw, 22px);
+}
+
+.setup-command-bar,
+.corporate-setup-guide,
+.corporate-task-hub-header,
+.signed-in-landing-header,
+.dashboard-start-map-header,
+.proof-export-hub-header {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.setup-command-actions,
+.corporate-task-hub-header > div:last-child,
+.signed-in-landing-header > button,
+.dashboard-start-map-header > .status-chip,
+.proof-export-hub-header > .status-chip {
+  justify-self: start;
+}
+
+.setup-tabs {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+}
+
+.setup-tabs button,
+.corporate-setup-steps button,
+.signed-in-landing-grid article,
+.dashboard-start-map-grid article,
+.proof-export-hub-grid article,
+.corporate-task-grid article,
+.corporate-operating-plan-grid article,
+.corporate-live-retest-grid article {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.setup-panel-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 390px), 1fr));
+}
+
+.setup-panel-grid > section,
+.workspace-admin-grid > section,
+.records-panel,
+.detail-panel,
+.actions-panel {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.account-admin-row,
+.team-controls,
+.directory-controls,
+.audit-controls,
+.evidence-controls,
+.operations-controls,
+.missing-controls,
+.grant-controls,
+.production-gate-form {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+}
+
+.account-admin-row input,
+.account-admin-row select,
+.team-controls input,
+.team-controls select,
+.directory-controls input,
+.directory-controls select,
+.audit-controls input,
+.audit-controls select,
+.evidence-controls input,
+.evidence-controls select,
+.operations-controls input,
+.operations-controls select,
+.missing-controls input,
+.missing-controls select,
+.grant-controls input,
+.grant-controls select,
+.production-gate-form input,
+.production-gate-form select {
+  min-width: 0;
+}
+
+@media (max-width: 980px) {
+  .workspace {
+    padding-inline: 16px;
+  }
+
+  .topbar h1 {
+    font-size: clamp(32px, 8vw, 48px);
+  }
+
+  .hero,
+  .workspace-command-strip,
+  .workspace-command-metrics,
+  .setup-panel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .workspace {
+    padding: 12px 10px 48px;
+  }
+
+  .topbar,
+  .workspace-command-strip,
+  .corporate-task-hub,
+  .signed-in-landing-actions,
+  .dashboard-start-map,
+  .proof-export-hub,
+  .workspace-admin-grid {
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .session-command-bar,
+  .topbar-actions,
+  .workspace-command-actions,
+  .setup-command-actions {
+    width: 100%;
+  }
+
+  .session-command-bar button,
+  .topbar-actions button,
+  .workspace-command-actions button,
+  .setup-command-actions button {
+    flex: 1 1 132px;
+  }
+
+  .workspace-route-strip button,
+  .workspace-flow-strip button {
+    flex-basis: 100%;
+  }
+}
