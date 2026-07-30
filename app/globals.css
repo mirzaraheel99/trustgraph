@@ -7601,6 +7601,22 @@ p {
     padding: 16px;
   }
 
+  .workspace-route-strip,
+  .workspace-flow-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .workspace-route-strip button,
+  .workspace-flow-strip button {
+    min-height: 48px;
+    padding: 8px;
+  }
+
+  .workspace-route-strip small,
+  .workspace-flow-strip small {
+    display: none;
+  }
+
   .topbar,
   .advisory-export-row,
   .public-nav,
@@ -7695,7 +7711,6 @@ p {
   }
 
   .workspace-stack,
-  .workspace-route-strip,
   .module-nav,
   .auth-actions,
   .password-update-form,
@@ -7716,6 +7731,21 @@ p {
   .membership-list,
   .permission-panel {
     grid-template-columns: 1fr;
+  }
+
+  .workspace-route-strip,
+  .workspace-flow-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .topbar-actions {
+    flex-direction: row;
+  }
+
+  .topbar-actions > .secondary-action,
+  .topbar-actions button:not(.secondary-action):not(.primary-action) {
+    width: auto;
+    flex: 1 1 96px;
   }
 
   .setup-tabs {

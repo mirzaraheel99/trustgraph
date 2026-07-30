@@ -95,6 +95,10 @@ if (!flexStackCss.includes(".audit-controls button") || !flexStackCss.includes("
   throw new Error("Responsive check failed: dense mobile controls need stable touch targets.");
 }
 
+if (!flexStackCss.includes(".workspace-route-strip") || !flexStackCss.includes(".workspace-flow-strip") || !flexStackCss.includes("display: none")) {
+  throw new Error("Responsive check failed: mobile workspace routing must stay compact.");
+}
+
 const missing = requiredMobileStacks.filter((selector) => !gridStackCss.includes(selector) && !flexStackCss.includes(selector));
 
 if (missing.length) {
