@@ -1014,6 +1014,12 @@ p,
   line-height: 1.4;
 }
 
+.sidebar-session-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 7px;
+}
+
 .sidebar-account-card .secondary-action {
   justify-content: center;
   min-height: 34px;

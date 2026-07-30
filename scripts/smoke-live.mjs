@@ -254,6 +254,7 @@ assertIncludesAny(bundleText, ["5-75-224-110.sslip.io"], "VFIX protected host co
 assertIncludesAny(bundleText, ["Supabase email rate limit is active"], "auth rate-limit recovery guidance");
 assertIncludesAny(bundleText, ["Auth redirect needs the hosted TrustGraph URL"], "hosted auth redirect repair guidance");
 assertIncludesAny(bundleText, ["Hosted Supabase Auth is configured"], "hosted Supabase Auth configured status");
+assertIncludesAny(bundleText, ["Session controls"], "persistent session controls");
 assertIncludesAny(bundleText, ["Auth redirect readiness packet"], "auth redirect readiness packet label");
 assertIncludesAny(bundleText, ["Export auth packet"], "auth redirect readiness export control");
 assertIncludesAny(bundleText, ["Registration auth readiness packet"], "registration auth readiness packet label");

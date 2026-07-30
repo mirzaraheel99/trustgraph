@@ -9288,10 +9288,18 @@ function App() {
           <span className={`status-chip ${authSession ? "success" : "neutral"}`}>{authSession ? "Signed in" : "Preview mode"}</span>
           <strong>{authSession?.user.email ?? "Product preview"}</strong>
           <small>{authSession ? `${activeRole.label} at ${activeOrganization.name}` : "Open Account in the top bar to connect Supabase."}</small>
-          <button className="secondary-action" onClick={openAuthControls} type="button">
-            <KeyRound size={16} />
-            Account settings
-          </button>
+          <div className="sidebar-session-actions" aria-label="Session controls">
+            <button className="secondary-action" onClick={openAuthControls} type="button">
+              <KeyRound size={16} />
+              Account
+            </button>
+            {authSession ? (
+              <button className="secondary-action" onClick={handleSignOut} type="button">
+                <LogOut size={16} />
+                Sign out
+              </button>
+            ) : null}
+          </div>
         </div>
 
         <div className="sidebar-section-label">Current workspace</div>
