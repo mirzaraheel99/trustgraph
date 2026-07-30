@@ -514,6 +514,8 @@ assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview cont
 assertIncludesAny(bundleText, ["Product preview role"], "signed-out preview role label");
 assertIncludesAny(bundleText, ["Preview account context"], "signed-out account context label");
 assertIncludesAny(bundleText, ["Preview shared access"], "workspace context navigation action");
+assertIncludesAny(bundleText, ["Set up access"], "workspace locked route setup action");
+assertIncludesAny(bundleText, ["Set up access in Account"], "workspace locked route setup guidance");
 assertIncludesAny(bundleText, ["Public site"], "workspace public site return control");
 assertIncludesAny(bundleText, ["Sign out"], "workspace sign out control");
 assertIncludesAny(bundleText, ["Live database returned a policy or schema error"], "operator database error copy");

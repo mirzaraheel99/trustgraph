@@ -4943,6 +4943,15 @@ p {
   opacity: 0.46;
 }
 
+.workspace-route-strip button.locked,
+.workspace-flow-strip button.locked {
+  color: var(--muted);
+  border-color: rgba(225, 184, 102, 0.26);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.07), transparent 68%),
+    rgba(255, 255, 255, 0.018);
+}
+
 .workspace-route-strip span,
 .workspace-route-strip small {
   display: block;

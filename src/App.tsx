@@ -12789,6 +12789,20 @@ function App() {
     document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  function openWorkspaceOrSetup(target: WorkspaceId) {
+    if (canAccessWorkspace(activeMembership.role, target)) {
+      changeWorkspace(target);
+      return;
+    }
+
+    if (!authSession || target === "passport") {
+      openAuthControls();
+      return;
+    }
+
+    openCorporateControls();
+  }
+
   function handleSignOut() {
     signOut();
     setAuthSession(null);
@@ -12931,15 +12945,15 @@ function App() {
                 const allowed = canAccessWorkspace(activeMembership.role, item.id);
                 return (
                   <button
-                    className={item.id === workspace.id ? "active" : ""}
-                    disabled={!allowed}
+                    aria-disabled={!allowed}
+                    className={`${item.id === workspace.id ? "active" : ""} ${allowed ? "" : "locked"}`}
                     key={item.id}
-                    onClick={() => changeWorkspace(item.id)}
-                    title={allowed ? `Open ${item.label}` : `${item.label} requires a different RBAC role`}
+                    onClick={() => openWorkspaceOrSetup(item.id)}
+                    title={allowed ? `Open ${item.label}` : `Set up access for ${item.label}`}
                     type="button"
                   >
                     <span>{item.label}</span>
-                    <small>{allowed ? item.role : "Role required"}</small>
+                    <small>{allowed ? item.role : "Set up access"}</small>
                   </button>
                 );
               })}
@@ -12949,14 +12963,14 @@ function App() {
                 const allowed = canAccessWorkspace(activeMembership.role, item.id);
                 return (
                   <button
-                    className={`${item.id === workspace.id ? "active" : ""} ${item.ready ? "ready" : ""}`}
-                    disabled={!allowed}
+                    aria-disabled={!allowed}
+                    className={`${item.id === workspace.id ? "active" : ""} ${item.ready ? "ready" : ""} ${allowed ? "" : "locked"}`}
                     key={item.id}
-                    onClick={() => changeWorkspace(item.id)}
+                    onClick={() => openWorkspaceOrSetup(item.id)}
                     type="button"
                   >
                     <span>{item.label}</span>
-                    <small>{item.detail}</small>
+                    <small>{allowed ? item.detail : "Set up access in Account"}</small>
                   </button>
                 );
               })}
@@ -13149,17 +13163,16 @@ function App() {
                   </div>
                   <button
                     className={active ? "primary-action" : "secondary-action"}
-                    disabled={!allowed}
                     onClick={() => {
                       if (item.kind === "account") {
                         openAuthControls();
                         return;
                       }
-                      changeWorkspace(item.target as WorkspaceId);
+                      openWorkspaceOrSetup(item.target as WorkspaceId);
                     }}
                     type="button"
                   >
-                    {allowed ? item.action : "Role required"}
+                    {allowed ? item.action : "Set up access"}
                   </button>
                 </article>
               );
@@ -13188,8 +13201,8 @@ function App() {
                     <small>{item.detail}</small>
                     <span>{item.status}</span>
                   </div>
-                  <button className={item.target === workspace.id ? "primary-action" : "secondary-action"} disabled={!allowed} onClick={() => changeWorkspace(item.target)} type="button">
-                    {allowed ? item.action : "Role required"}
+                  <button className={item.target === workspace.id ? "primary-action" : "secondary-action"} onClick={() => openWorkspaceOrSetup(item.target)} type="button">
+                    {allowed ? item.action : "Set up access"}
                   </button>
                 </article>
               );
