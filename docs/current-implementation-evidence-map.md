@@ -34,7 +34,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | Evidence preview/download | Private Supabase Storage upload, metadata listing, manifest export, signed preview/download buttons | `supabase/migrations/017`, smoke evidence assertions |
 | Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts, organization RLS recursion repair | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
-| Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet | `supabase/migrations/012`, `016` |
+| Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet, and review-only fraud signal packet with no automated hiring decisions | `supabase/migrations/010`, `012`, `016` |
 | Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, v1 completion audit packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
 
 ## Live Database Proof Artifacts
@@ -59,6 +59,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.
 - Admin exports: operations cases, audit CSV/JSON, release ledger, security runbook, production gates, pilot launch contacts, Connect clients, and webhooks.
 - Issuer lifecycle packet: issued credential count, active and revoked credential count, issuer organization scope, corrected expiration metadata, revocation reason, and `credential.updated` / `credential.revoked` audit expectation.
+- Fraud signal review packet: RLS-protected Admin verification cases, open/high signal counts, allowed human-review actions, prohibited automated hiring decisions, and evidence metadata.
 
 ## Migration Coverage
 

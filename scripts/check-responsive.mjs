@@ -32,6 +32,8 @@ const requiredMobileStacks = [
   ".evidence-source-strip",
   ".evidence-access-chain",
   ".evidence-preview-download-grid",
+  ".fraud-review-strip",
+  ".fraud-review-metrics",
   ".issuer-source-strip",
   ".invitation-handoff-strip",
   ".live-database-repair-grid",

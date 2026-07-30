@@ -75,7 +75,7 @@ export const foundationTracks: FoundationTrack[] = [
     label: "Admin Operations",
     planStep: "Phase 5",
     status: "deployed",
-    detail: "Verification cases, fraud signals, and case decisions.",
+    detail: "Verification cases, review-only fraud signals, and audited case decisions.",
     tone: "success"
   },
   {
@@ -131,7 +131,7 @@ export const foundationTracks: FoundationTrack[] = [
     label: "TrustGraph AI",
     planStep: "Step 18",
     status: "deployed",
-    detail: "Deterministic source-grounded advisory summaries are live in each workspace.",
+    detail: "Deterministic source-grounded advisory summaries and review-only fraud packets are live without automated employment decisions.",
     tone: "success"
   }
 ];
@@ -278,7 +278,7 @@ export const lockedProfileAreas: LockedProfileArea[] = [
     label: "AI-generated professional summaries",
     productArea: "TrustGraph AI",
     status: "foundation",
-    evidence: "Source-grounded advisory summaries are live without automated employment decisions.",
+    evidence: "Source-grounded advisory summaries and fraud signal packets are live without automated employment decisions.",
     tone: "info"
   },
   {

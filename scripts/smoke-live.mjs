@@ -398,6 +398,10 @@ assertIncludesAny(bundleText, ["Export clients"], "Connect client export control
 assertIncludesAny(bundleText, ["Export webhooks"], "Connect webhook export control");
 assertIncludesAny(bundleText, ["Operations database"], "operations case source label");
 assertIncludesAny(bundleText, ["Export cases"], "operations case export control");
+assertIncludesAny(bundleText, ["Fraud signal review"], "fraud signal review-only panel");
+assertIncludesAny(bundleText, ["fraud_signal_review_only"], "fraud signal review packet mode");
+assertIncludesAny(bundleText, ["automated_hiring_decisions"], "fraud signal no automated decision field");
+assertIncludesAny(bundleText, ["Export fraud packet"], "fraud signal review packet export");
 assertIncludesAny(bundleText, ["Release database"], "release ledger source label");
 assertIncludesAny(bundleText, ["Export releases"], "release ledger export control");
 assertIncludesAny(bundleText, ["TrustGraph VPS launch guard"], "TrustGraph-only VPS launch guard panel");

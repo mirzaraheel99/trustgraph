@@ -3761,6 +3761,9 @@ function OperationsQueuePanel({
   const openCaseCount = cases.filter((item) => item.status === "open" || item.status === "in_review").length;
   const restrictedCaseCount = cases.filter((item) => item.status === "restricted").length;
   const criticalCaseCount = cases.filter((item) => item.priority === "critical" || item.priority === "high").length;
+  const fraudSignalCases = cases.filter((item) => item.case_type === "fraud_signal");
+  const openFraudSignals = fraudSignalCases.filter((item) => !["resolved", "dismissed"].includes(item.status));
+  const highFraudSignals = fraudSignalCases.filter((item) => ["critical", "high"].includes(item.priority));
   const filteredCases = cases.filter((item) => {
     const matchesStatus = caseStatusFilter === "all" || item.status === caseStatusFilter;
     const matchesPriority = priorityFilter === "all" || item.priority === priorityFilter;
@@ -3768,6 +3771,29 @@ function OperationsQueuePanel({
     return matchesStatus && matchesPriority && haystack.includes(caseQuery.trim().toLowerCase());
   });
   const exportName = `trustgraph-operations-cases-${new Date().toISOString().slice(0, 10)}.csv`;
+  const fraudPacketName = `trustgraph-fraud-signal-review-${new Date().toISOString().slice(0, 10)}.json`;
+  const fraudReviewPacket = {
+    generated_at: new Date().toISOString(),
+    packet_mode: "fraud_signal_review_only",
+    automated_hiring_decisions: "not_enabled",
+    human_review_required: true,
+    source_table: "verification_cases",
+    allowed_actions: ["open_case_review", "restrict_case", "resolve_with_note", "dismiss_with_note"],
+    prohibited_actions: ["automated_rejection", "automated_hiring_decision", "unscoped_external_export"],
+    total_fraud_signals: fraudSignalCases.length,
+    open_fraud_signals: openFraudSignals.length,
+    high_priority_fraud_signals: highFraudSignals.length,
+    cases: fraudSignalCases.map((item) => ({
+      id: item.id,
+      status: item.status,
+      priority: item.priority,
+      title: item.title,
+      reason_code: item.reason_code,
+      due_at: item.due_at,
+      resolution_note: item.resolution_note,
+      metadata: item.metadata
+    }))
+  };
 
   async function decide(caseId: string, status: VerificationCaseStatus) {
     setBusyId(caseId);
@@ -3825,6 +3851,35 @@ function OperationsQueuePanel({
           type="button"
         >
           Export cases
+        </button>
+      </div>
+      <div className="fraud-review-strip" aria-label="Fraud signal review-only packet">
+        <div>
+          <span className="status-chip warning">Fraud signal review</span>
+          <strong>Review-only signals, never automated decisions</strong>
+          <small>Fraud signals stay inside Admin operations as RLS-protected verification cases. They can trigger human review, restriction, resolution, or dismissal, but they cannot auto-reject, rank, or make hiring decisions.</small>
+        </div>
+        <div className="fraud-review-metrics">
+          <span>
+            <strong>{fraudSignalCases.length}</strong>
+            <small>Total signals</small>
+          </span>
+          <span>
+            <strong>{openFraudSignals.length}</strong>
+            <small>Need review</small>
+          </span>
+          <span>
+            <strong>{highFraudSignals.length}</strong>
+            <small>High priority</small>
+          </span>
+        </div>
+        <button
+          className="secondary-action"
+          disabled={!fraudSignalCases.length}
+          onClick={() => downloadTextFile(fraudPacketName, JSON.stringify(fraudReviewPacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export fraud packet
         </button>
       </div>
       <div className="operations-controls">
