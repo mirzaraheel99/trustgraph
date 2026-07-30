@@ -2596,6 +2596,33 @@ function CorporateDirectoryPanel({
   const reviewReadyCount = candidateRows.filter((row) => row.readiness === "review_ready").length;
   const waitingForConsentCount = candidateRows.filter((row) => row.readiness === "waiting_for_consent").length;
   const needsGapFollowUpCount = candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").length;
+  const openGapRequestCount = missingRecordRequests.filter((request) => request.status !== "fulfilled").length;
+  const corporateAccessPath = [
+    {
+      label: "Request access",
+      value: requests.length ? `${requests.length} sent` : "Not started",
+      detail: "Corporate reviewer requests Passport access by professional email.",
+      ready: requests.length > 0
+    },
+    {
+      label: "Professional approval",
+      value: approvedAccessCount ? `${approvedAccessCount} approved` : "Waiting",
+      detail: "Professional approval is required before any user records appear.",
+      ready: approvedAccessCount > 0
+    },
+    {
+      label: "Shared Passport rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "No rows",
+      detail: "Rows render only through approved Access Grant and consent scope.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Gap closure",
+      value: openGapRequestCount ? `${openGapRequestCount} open` : "Clear",
+      detail: "Missing-record requests identify what the corporate reviewer still needs.",
+      ready: openGapRequestCount === 0 && (requests.length > 0 || sharedRecords.length > 0)
+    }
+  ];
   const directoryReviewBoard = [
     {
       label: "Ready to review",
@@ -2648,6 +2675,7 @@ function CorporateDirectoryPanel({
       missing_record_requests: missingRecordRequests.length,
       open_gap_requests: missingRecordRequests.filter((request) => request.status !== "fulfilled").length
     },
+    corporate_data_access_path: corporateAccessPath,
     reviewer_scan_board: directoryReviewBoard.map((bucket) => ({
       label: bucket.label,
       count: bucket.count,
@@ -2749,6 +2777,18 @@ function CorporateDirectoryPanel({
           <strong>{reviewReadyCount}</strong>
           <small>Review-ready people</small>
         </div>
+      </div>
+      <div className="corporate-data-access-path" aria-label="Corporate data access path">
+        {corporateAccessPath.map((item) => (
+          <article className={item.ready ? "ready" : ""} key={item.label}>
+            <span className={`status-dot ${item.ready ? "on" : ""}`} />
+            <div>
+              <strong>{item.label}</strong>
+              <small>{item.value}</small>
+              <small>{item.detail}</small>
+            </div>
+          </article>
+        ))}
       </div>
       <div className="directory-review-board">
         {directoryReviewBoard.map((bucket) => (

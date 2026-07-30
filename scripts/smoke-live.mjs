@@ -289,6 +289,9 @@ assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user databas
 assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
 assertIncludesAny(bundleText, ["Ready to review"], "Corporate user database review-ready bucket");
 assertIncludesAny(bundleText, ["Waiting for consent"], "Corporate user database waiting bucket");
+assertIncludesAny(bundleText, ["Request access"], "corporate data access path request step");
+assertIncludesAny(bundleText, ["Professional approval"], "corporate data access path approval step");
+assertIncludesAny(bundleText, ["corporate_data_access_path"], "corporate data access path packet field");
 assertIncludesAny(bundleText, ["reviewer_scan_board"], "Corporate user database scan board packet field");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");
 assertIncludesAny(bundleText, ["shared responsibilities"], "Corporate user database structured responsibility proof");

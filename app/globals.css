@@ -5263,6 +5263,45 @@ p {
   line-height: 1;
 }
 
+.corporate-data-access-path {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-data-access-path article {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.corporate-data-access-path article.ready {
+  border-color: rgba(112, 224, 178, 0.24);
+  background: rgba(112, 224, 178, 0.05);
+}
+
+.corporate-data-access-path strong,
+.corporate-data-access-path small {
+  display: block;
+  min-width: 0;
+}
+
+.corporate-data-access-path strong {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.corporate-data-access-path small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .directory-review-board {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -7713,6 +7752,7 @@ p {
   .control-center-track,
   .corporate-live-retest-grid,
   .corporate-operating-plan-grid,
+  .corporate-data-access-path,
   .metrics-grid,
   .work-grid,
   .portal-grid,
