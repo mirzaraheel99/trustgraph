@@ -1097,8 +1097,9 @@ button {
 
 .public-auth-card {
   display: grid;
-  gap: 12px;
-  padding: 20px;
+  gap: 10px;
+  padding: clamp(14px, 2vw, 18px);
+  align-self: start;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
     rgba(17, 27, 31, 0.9);
@@ -1164,7 +1165,7 @@ button {
 
 .portal-handoff-checklist {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 8px;
 }
 
@@ -1233,7 +1234,7 @@ button {
 
 .auth-support-actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   gap: 8px;
 }
 
@@ -1279,7 +1280,7 @@ button {
 
 .auth-recovery-decision-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
   gap: 8px;
 }
 
@@ -1414,7 +1415,7 @@ button {
 .portal-login-switchboard-grid button {
   display: grid;
   gap: 6px;
-  min-height: 158px;
+  min-height: 118px;
   padding: 10px;
   text-align: left;
   color: var(--text);
@@ -1973,7 +1974,7 @@ p,
 
 .auth-panel {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   padding: 14px;
   border: 1px solid rgba(82, 214, 196, 0.18);
   border-radius: var(--radius);
@@ -1991,6 +1992,27 @@ p,
   background:
     linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 60%),
     rgba(255, 255, 255, 0.026);
+}
+
+.auth-session {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.auth-session > span,
+.auth-session > small,
+.auth-session .auth-session-meta,
+.auth-session .password-update-form,
+.auth-session .data-rights-panel {
+  grid-column: 1 / -1;
+}
+
+.auth-session > .secondary-action {
+  grid-column: 1 / -1;
+  justify-content: center;
+  min-height: 40px;
+  border-color: rgba(255, 129, 119, 0.28);
+  background: rgba(255, 129, 119, 0.08);
 }
 
 .data-rights-summary-grid,
@@ -3840,7 +3862,7 @@ p,
 }
 
 .password-update-form {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(130px, auto);
 }
 
 .password-update-form input {
@@ -4250,7 +4272,7 @@ p,
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(210px, 280px);
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
   gap: 14px;
   align-items: flex-start;
   width: min(100%, 1060px);
@@ -4773,7 +4795,7 @@ p {
   justify-content: flex-end;
   gap: 8px;
   width: 100%;
-  max-width: 280px;
+  max-width: 360px;
   min-width: 0;
 }
 
@@ -4792,7 +4814,7 @@ p {
 }
 
 .topbar-session-card {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .topbar-session-card > span,
