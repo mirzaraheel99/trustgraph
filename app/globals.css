@@ -857,9 +857,11 @@ button {
 
 .public-auth-section {
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 500px);
-  gap: clamp(22px, 4vw, 52px);
+  grid-template-columns: minmax(0, 0.78fr) minmax(320px, 440px);
+  gap: clamp(18px, 3vw, 34px);
   align-items: start;
+  max-width: 1240px;
+  margin: 0 auto;
 }
 
 .public-auth-section > div:first-child {
@@ -880,12 +882,12 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  max-width: 700px;
+  max-width: 620px;
   margin-top: 0;
 }
 
 .auth-choice-summary button {
-  min-height: 118px;
+  min-height: 104px;
   display: grid;
   align-content: start;
   gap: 6px;
@@ -933,7 +935,7 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  max-width: 700px;
+  max-width: 620px;
   margin-top: 0;
   padding: 8px;
   border: 1px solid rgba(82, 214, 196, 0.18);
@@ -984,7 +986,7 @@ button {
 .portal-auth-summary-panel {
   display: grid;
   gap: 12px;
-  max-width: 700px;
+  max-width: 620px;
   margin-top: 0;
   padding: 14px;
   border: 1px solid rgba(134, 174, 246, 0.24);
@@ -1067,7 +1069,7 @@ button {
 .portal-access-steps span {
   display: grid;
   gap: 5px;
-  min-height: 132px;
+  min-height: 116px;
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -1112,12 +1114,15 @@ button {
 
 .public-auth-card {
   display: grid;
-  gap: 10px;
+  gap: 9px;
   padding: clamp(14px, 2vw, 18px);
   align-self: start;
+  position: sticky;
+  top: 18px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
     rgba(17, 27, 31, 0.9);
+  box-shadow: var(--shadow-tight);
 }
 
 .public-auth-card.corporate-mode {
@@ -1180,13 +1185,13 @@ button {
 
 .portal-handoff-checklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
 .portal-handoff-checklist span {
   min-width: 0;
-  padding: 10px;
+  padding: 9px;
   border: 1px solid rgba(255, 255, 255, 0.085);
   border-radius: var(--radius);
   background:
@@ -1203,13 +1208,13 @@ button {
 .portal-handoff-checklist strong {
   margin: 4px 0;
   color: var(--text);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 950;
 }
 
 .portal-handoff-checklist small {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.35;
 }
 
