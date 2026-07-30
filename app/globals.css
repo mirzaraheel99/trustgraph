@@ -4493,6 +4493,12 @@ p {
   font-size: 15px;
 }
 
+.topbar h1 {
+  max-width: 18ch;
+  font-size: clamp(32px, 5.5cqw, 46px);
+  line-height: 1.04;
+}
+
 .session-strip {
   display: flex;
   flex-wrap: wrap;
@@ -9557,6 +9563,49 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+}
+
+@media (max-width: 1280px) {
+  .app {
+    display: block;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 12px;
+  }
+
+  .sidebar {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 10px;
+  }
+
+  .sidebar .brand {
+    grid-column: 1 / -1;
+  }
+
+  .sidebar .workspace-stack,
+  .sidebar .module-nav,
+  .sidebar .membership-list {
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    max-height: none;
+    overflow: auto;
+  }
+
+  .sidebar .security-card {
+    display: none;
+  }
+
+  .workspace {
+    padding-top: 18px;
+  }
 }
 
 @media (max-width: 1180px) {

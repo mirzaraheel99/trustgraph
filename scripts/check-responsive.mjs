@@ -89,11 +89,17 @@ const requiredMobileStacks = [
 
 const gridStart = css.indexOf("@media (max-width: 1020px)");
 const flexStart = css.indexOf("@media (max-width: 760px)");
+const premiumShellStart = css.indexOf("@media (max-width: 1280px)");
 const gridStackCss = gridStart >= 0 && flexStart > gridStart ? css.slice(gridStart, flexStart) : "";
 const flexStackCss = flexStart >= 0 ? css.slice(flexStart) : "";
+const premiumShellCss = premiumShellStart >= 0 && gridStart > premiumShellStart ? css.slice(premiumShellStart, gridStart) : "";
 
 if (!gridStackCss.includes(".record-form-grid") || !gridStackCss.includes("grid-template-columns: 1fr")) {
   throw new Error("Responsive check failed: missing 1020px grid stacking rule.");
+}
+
+if (!premiumShellCss.includes(".app") || !premiumShellCss.includes("display: block") || !premiumShellCss.includes(".sidebar") || !premiumShellCss.includes("border-bottom: 1px solid var(--line)")) {
+  throw new Error("Responsive check failed: dashboard shell must collapse before cramped desktop widths.");
 }
 
 if (!css.includes(".evidence-controls") || !css.includes("grid-template-columns: minmax(0, 1fr) 128px 184px 172px")) {
