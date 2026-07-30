@@ -630,6 +630,78 @@ button {
   margin-top: 18px;
 }
 
+.portal-access-guide {
+  display: grid;
+  gap: 12px;
+  max-width: 700px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.portal-access-guide > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.portal-access-guide strong,
+.portal-access-guide small {
+  display: block;
+}
+
+.portal-access-guide > div:first-child strong {
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.portal-access-guide > div:first-child small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.portal-access-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.portal-access-steps span {
+  display: grid;
+  gap: 5px;
+  min-height: 132px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.portal-access-steps span strong {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: #04110f;
+  border-radius: 999px;
+  background: var(--teal);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.portal-access-steps span small:first-of-type {
+  color: var(--text);
+  font-weight: 950;
+}
+
+.portal-access-steps span small:last-of-type {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .portal-outcome-list span {
   min-height: 34px;
   display: flex;
@@ -6084,6 +6156,7 @@ p {
   .public-hero,
   .public-auth-section,
   .public-portal-rail,
+  .portal-access-steps,
   .auth-path-grid,
   .billing-estimate-card,
   .billing-decision-card,

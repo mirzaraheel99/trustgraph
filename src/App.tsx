@@ -7539,6 +7539,42 @@ function PublicSite({
           "Approve or decline each Access Grant",
           "Control sensitive consent and sharing"
         ];
+  const selectedPortalGuide =
+    portal === "corporate"
+      ? [
+          {
+            label: "1",
+            title: "Register the admin user",
+            detail: "Create the corporate login with a real email and password, then verify the email if Supabase requires it."
+          },
+          {
+            label: "2",
+            title: "Save company details",
+            detail: "Organization name, domain, and employer or staffing type are stored until the verified admin logs in."
+          },
+          {
+            label: "3",
+            title: "Provision live workspace",
+            detail: "After login, TrustGraph creates the organization, admin membership, RBAC context, and corporate setup path."
+          }
+        ]
+      : [
+          {
+            label: "1",
+            title: "Register the professional",
+            detail: "Create the user account that owns the private Passport and consent decisions."
+          },
+          {
+            label: "2",
+            title: "Verify and login",
+            detail: "Return to this hosted app after email verification or use the link repair tool if an email points to localhost."
+          },
+          {
+            label: "3",
+            title: "Build the Passport",
+            detail: "Add records, evidence metadata, references, Access Grants, and sensitive consent controls."
+          }
+        ];
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -7785,6 +7821,22 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className="portal-access-guide">
+            <div>
+              <span className="eyebrow">{portal === "corporate" ? "Corporate registration sequence" : "Professional registration sequence"}</span>
+              <strong>{selectedRegistrationPath.portal}</strong>
+              <small>{selectedRegistrationPath.nextAction}</small>
+            </div>
+            <div className="portal-access-steps">
+              {selectedPortalGuide.map((step) => (
+                <span key={step.title}>
+                  <strong>{step.label}</strong>
+                  <small>{step.title}</small>
+                  <small>{step.detail}</small>
+                </span>
+              ))}
+            </div>
+          </div>
           <div className="portal-outcome-list">
             {selectedPortalSteps.map((step) => (
               <span key={step}>{step}</span>
