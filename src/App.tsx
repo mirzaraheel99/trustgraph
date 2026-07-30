@@ -6428,6 +6428,16 @@ function OnboardingChecklistPanel({
   const liveDatabaseAcceptancePassing = liveDatabaseAcceptanceRows.filter((row) => row.ok).length;
   const liveDatabaseAcceptanceComplete = Boolean(authSession && accountContext) && liveDatabaseAcceptancePassing === liveDatabaseAcceptanceRows.length;
   const hostedLoginDatabaseReady = Boolean(authSession && accountContext && liveDatabaseAcceptanceComplete);
+  const workingDatabaseAcceptanceStatus = liveDatabaseAcceptanceComplete
+    ? "working_database_accepted"
+    : authSession && accountContext
+      ? "live_rows_incomplete"
+      : "login_required";
+  const workingDatabaseAcceptanceDetail = liveDatabaseAcceptanceComplete
+    ? "All required v1 row groups are loaded from Supabase for this signed-in account."
+    : authSession && accountContext
+      ? "Live account context is connected, but at least one required row group is still missing."
+      : "Login on the hosted app before this workspace can prove live database acceptance.";
   const seededAccessGrantId = visibleSeedEvidence?.access_grant_id ?? "";
   const seededConsentAuthorizationId = visibleSeedEvidence?.consent_authorization_id ?? "";
   const seededSubscriptionId = visibleSeedEvidence?.subscription_id ?? "";
@@ -6525,6 +6535,7 @@ function OnboardingChecklistPanel({
     live_rows_currently_loaded: workingDataRows,
     live_row_total: workingDataTotal,
     live_database_acceptance: {
+      status: workingDatabaseAcceptanceStatus,
       passing: liveDatabaseAcceptancePassing,
       total: liveDatabaseAcceptanceRows.length,
       complete: liveDatabaseAcceptanceComplete,
@@ -6710,6 +6721,15 @@ function OnboardingChecklistPanel({
           </div>
           <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : "warning"}`}>
             {liveDatabaseAcceptancePassing}/{liveDatabaseAcceptanceRows.length} database groups ready
+          </span>
+        </div>
+        <div className="working-database-acceptance-card">
+          <div>
+            <strong>Working database acceptance</strong>
+            <small>{workingDatabaseAcceptanceDetail}</small>
+          </div>
+          <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : authSession && accountContext ? "warning" : "neutral"}`}>
+            {workingDatabaseAcceptanceStatus.replace(/_/g, " ")}
           </span>
         </div>
         <div className="seed-reconciliation-grid">

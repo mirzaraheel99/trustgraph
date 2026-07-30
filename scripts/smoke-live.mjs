@@ -194,6 +194,8 @@ assertIncludesAny(bundleText, ["Export seed evidence"], "pilot seed evidence exp
 assertIncludesAny(bundleText, ["Seed reconciliation"], "pilot seed reconciliation panel");
 assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched count");
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
+assertIncludesAny(bundleText, ["Working database acceptance"], "working database acceptance summary");
+assertIncludesAny(bundleText, ["working_database_accepted"], "working database acceptance packet status");
 assertIncludesAny(bundleText, ["Export working-data packet"], "working database proof export");
 assertIncludesAny(bundleText, ["Live rows currently loaded"], "working database live-count copy");
 assertIncludesAny(bundleText, ["Live database connected"], "database status strip live label");
