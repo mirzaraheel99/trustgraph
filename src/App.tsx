@@ -8125,6 +8125,8 @@ function LiveDataModePanel({
   const portalAccessPacket = {
     generated_at: new Date().toISOString(),
     mode: isLive ? "live_supabase" : "product_preview",
+    live_database_required_for_acceptance: true,
+    preview_data_accepted_for_v1: false,
     portal: {
       workspace: workspaceLabel,
       role: activeRoleLabel,
@@ -8188,7 +8190,7 @@ function LiveDataModePanel({
       <p>
         {isLive
           ? "This portal is reading and writing hosted Supabase data with account RBAC enforced."
-          : "This portal is showing product preview data only. Register or login before relying on saved records."}
+          : "This portal is showing product preview data only. Register or login before treating any rows as accepted v1 database proof."}
       </p>
       <div className="live-data-grid">
         {rows.map((row) => (
@@ -8200,7 +8202,7 @@ function LiveDataModePanel({
       </div>
       <div className="live-data-footer">
         <span className={`status-chip ${isLive ? "success" : "warning"}`}>{isLive ? "writes enabled" : "evaluation only"}</span>
-        <small>{isLive ? `${membershipCount} RBAC memberships loaded` : "Supabase keys are configured; login unlocks live rows."}</small>
+        <small>{isLive ? `${membershipCount} RBAC memberships loaded` : "Preview data is not accepted for v1. Login unlocks live rows."}</small>
       </div>
       <div className="portal-access-proof">
         <div>
@@ -10064,7 +10066,7 @@ function PublicSite({
             </div>
           </div>
         </div>
-        <aside className="public-proof public-command-center" aria-label="TrustGraph live product preview">
+        <aside className="public-proof public-command-center" aria-label="TrustGraph live database command preview">
           <div className="command-center-top">
             <span className="status-chip success">Live pilot</span>
             <strong>Corporate Verify review</strong>
@@ -12257,7 +12259,7 @@ function App() {
   const currentWorkspaceStep = workspaceFlow.find((item) => item.id === workspace.id) ?? workspaceFlow[0];
   const nextWorkspaceStep = workspaceFlow.find((item) => !item.ready) ?? currentWorkspaceStep;
   const workspaceCommandStrip = {
-    mode: authSession ? "Live database session" : "Product preview mode",
+    mode: authSession ? "Live database session" : "Preview only - login for v1 proof",
     current_portal: currentWorkspaceStep.label,
     current_detail: currentWorkspaceStep.detail,
     next_action: nextWorkspaceStep.ready ? "Continue current workspace" : nextWorkspaceStep.label,

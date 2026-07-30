@@ -249,6 +249,9 @@ assertIncludesAny(bundleText, ["record.dispute_opened"], "professional dispute a
 assertIncludesAny(bundleText, ["Live Supabase database mode"], "live database mode indicator");
 assertIncludesAny(bundleText, ["Portal access evidence"], "portal access evidence packet label");
 assertIncludesAny(bundleText, ["Export portal packet"], "portal access packet export control");
+assertIncludesAny(bundleText, ["live_database_required_for_acceptance"], "portal access live database acceptance field");
+assertIncludesAny(bundleText, ["preview_data_accepted_for_v1"], "portal access preview rejection field");
+assertIncludesAny(bundleText, ["Preview data is not accepted for v1"], "dashboard preview boundary copy");
 assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed database evidence");
 assertIncludesAny(bundleText, ["corporate_access_review_id"], "live pilot seed corporate review evidence");
 assertIncludesAny(bundleText, ["Export live readiness"], "live database readiness export");
