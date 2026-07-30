@@ -10716,6 +10716,32 @@ function App() {
       tone: nextCorporateSetupStep.done ? "success" : "warning"
     }
   ];
+  const dashboardStartMap = [
+    {
+      label: "Personal Passport",
+      detail: "Create records, upload evidence metadata, control consent, and approve Access Grants.",
+      status: livePassportRecords.length ? `${livePassportRecords.length} records loaded` : "Start with your first record",
+      action: "Open Passport",
+      target: "passport" as const,
+      ready: livePassportRecords.length > 0
+    },
+    {
+      label: "Corporate Verify",
+      detail: "Request user database access by professional email and review only approved shared rows.",
+      status: sharedVerifyRecords.length || accessGrants.length ? `${sharedVerifyRecords.length} shared rows, ${accessGrants.length} grants` : "Create or approve an Access Grant",
+      action: "Open Verify",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0 || accessGrants.length > 0
+    },
+    {
+      label: "Company Admin",
+      detail: "Manage corporate workspace, RBAC roles, team seats, pricing ledger, exports, and launch gates.",
+      status: hasLiveCorporateContext ? nextCorporateSetupStep.detail : "Create a corporate workspace first",
+      action: "Open Admin",
+      target: "admin" as const,
+      ready: hasLiveCorporateContext && canManageCorporateSetup
+    }
+  ];
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -10748,6 +10774,7 @@ function App() {
       release_ledger_rows: schemaMigrationRuns.length,
       production_gate_decisions: productionGateDecisions.length
     },
+    dashboard_start_map: dashboardStartMap,
     production_boundary: {
       payments: "pilot_ledger_only",
       automated_hiring_decisions: "not_enabled",
@@ -10985,6 +11012,36 @@ function App() {
           <PermissionGate roleLabel={activeRole.label} workspaceLabel={workspace.label} />
         ) : (
           <>
+        <section className="dashboard-start-map" aria-label="Dashboard start map">
+          <div className="dashboard-start-map-header">
+            <div>
+              <span className="status-chip success">Dashboard start map</span>
+              <strong>Choose the workspace by what you need to do now</strong>
+              <small>Personal users manage Passports. Corporate users request scoped database access. Admins manage RBAC, pricing, team, and launch readiness.</small>
+            </div>
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>
+              {authSession ? "live database session" : "login required"}
+            </span>
+          </div>
+          <div className="dashboard-start-map-grid">
+            {dashboardStartMap.map((item) => {
+              const allowed = canAccessWorkspace(activeMembership.role, item.target);
+
+              return (
+                <article className={item.ready ? "ready" : ""} key={item.label}>
+                  <div>
+                    <strong>{item.label}</strong>
+                    <small>{item.detail}</small>
+                    <span>{item.status}</span>
+                  </div>
+                  <button className={item.target === workspace.id ? "primary-action" : "secondary-action"} disabled={!allowed} onClick={() => changeWorkspace(item.target)} type="button">
+                    {allowed ? item.action : "Role required"}
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        </section>
         <section className="hero">
           <div className="hero-card primary">
             <div className="hero-card-top">

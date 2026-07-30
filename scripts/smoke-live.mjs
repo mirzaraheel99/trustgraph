@@ -125,6 +125,9 @@ assertIncludesAny(bundleText, ["portal_auth_outcome_summary"], "portal auth outc
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
 assertIncludesAny(bundleText, ["Personal Passport", "Corporate Verify", "Company Admin"], "dashboard portal path strip");
+assertIncludesAny(bundleText, ["Dashboard start map"], "dashboard workspace start map");
+assertIncludesAny(bundleText, ["Choose the workspace by what you need to do now"], "dashboard start map guidance");
+assertIncludesAny(bundleText, ["dashboard_start_map"], "authorized report dashboard start map field");
 assertIncludesAny(bundleText, ["Request access by professional email and review shared rows"], "corporate Verify path guidance");
 assertIncludesAny(bundleText, ["Corporate Verify review"], "premium command center hero");
 assertIncludesAny(bundleText, ["Verified TrustGraph record graph"], "premium TrustGraph record graph visual");

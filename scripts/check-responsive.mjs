@@ -12,6 +12,7 @@ const requiredMobileStacks = [
   ".billing-operator-path",
   ".database-status-counts",
   ".database-status-strip",
+  ".dashboard-start-map-grid",
   ".connect-source-strip",
   ".connect-export-actions",
   ".corporate-data-access-path",

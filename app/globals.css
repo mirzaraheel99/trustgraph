@@ -3939,6 +3939,89 @@ p {
   line-height: 1.35;
 }
 
+.dashboard-start-map {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 1280px);
+  margin: 0 auto 16px;
+  padding: 12px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.075), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.dashboard-start-map-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.dashboard-start-map-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dashboard-start-map strong,
+.dashboard-start-map small,
+.dashboard-start-map span {
+  display: block;
+}
+
+.dashboard-start-map-header > div > strong {
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.dashboard-start-map small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.dashboard-start-map-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dashboard-start-map-grid article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-start-map-grid article.ready {
+  border-color: rgba(82, 214, 196, 0.28);
+  background: rgba(82, 214, 196, 0.06);
+}
+
+.dashboard-start-map-grid article > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.dashboard-start-map-grid article > div > span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.dashboard-start-map-grid button {
+  min-height: 36px;
+  white-space: nowrap;
+}
+
 .topbar-actions {
   display: flex;
   flex-wrap: wrap;
@@ -7842,7 +7925,8 @@ p {
     grid-template-columns: 1fr;
   }
 
-  .database-status-actions {
+  .database-status-actions,
+  .dashboard-start-map-header {
     justify-content: flex-start;
   }
 
@@ -7888,6 +7972,7 @@ p {
   .portal-access-steps,
   .portal-auth-outcome-grid,
   .portal-login-switchboard-grid,
+  .dashboard-start-map-grid,
   .portal-decision-panel,
   .portal-decision-grid,
   .auth-path-grid,
