@@ -5685,6 +5685,69 @@ p {
   line-height: 1.35;
 }
 
+.corporate-visibility-ledger {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.06), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-visibility-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-visibility-grid article {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.corporate-visibility-grid article.ready {
+  border-color: rgba(112, 224, 178, 0.24);
+  background: rgba(112, 224, 178, 0.05);
+}
+
+.corporate-visibility-grid article.warning {
+  border-color: rgba(225, 184, 102, 0.24);
+  background: rgba(225, 184, 102, 0.06);
+}
+
+.corporate-visibility-grid span,
+.corporate-visibility-grid strong,
+.corporate-visibility-grid small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.corporate-visibility-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-visibility-grid strong {
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 26px;
+  line-height: 1;
+}
+
+.corporate-visibility-grid small {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .directory-review-board {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -8328,6 +8391,7 @@ p {
   .corporate-operating-plan-grid,
   .corporate-data-access-path,
   .corporate-access-review-grid,
+  .corporate-visibility-grid,
   .metrics-grid,
   .work-grid,
   .portal-grid,

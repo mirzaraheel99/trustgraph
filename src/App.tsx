@@ -2636,6 +2636,9 @@ function CorporateDirectoryPanel({
   const waitingForConsentCount = candidateRows.filter((row) => row.readiness === "waiting_for_consent").length;
   const needsGapFollowUpCount = candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").length;
   const openGapRequestCount = missingRecordRequests.filter((request) => request.status !== "fulfilled").length;
+  const sensitiveSharedRecordCount = sharedRecords.filter((record) => record.sensitivity && record.sensitivity !== "standard").length;
+  const consentRequiredSharedRecordCount = sharedRecords.filter((record) => record.consentRequired).length;
+  const unavailableRequestCount = requests.filter((request) => request.status !== "approved").length;
   const corporateAccessPath = [
     {
       label: "Request access",
@@ -2699,6 +2702,32 @@ function CorporateDirectoryPanel({
             ? "Wait for professional approval"
             : "Create or reopen an Access Grant"
   }));
+  const corporateVisibilityLedger = [
+    {
+      label: "Visible user records",
+      value: `${sharedRecords.length}`,
+      detail: "Shared Passport rows visible to this corporate workspace after Access Grant and consent scope.",
+      tone: sharedRecords.length ? "ready" : ""
+    },
+    {
+      label: "Sensitive scope",
+      value: `${sensitiveSharedRecordCount}`,
+      detail: `${consentRequiredSharedRecordCount} consent-required rows stay visible only when the professional allowed them.`,
+      tone: sensitiveSharedRecordCount || consentRequiredSharedRecordCount ? "warning" : ""
+    },
+    {
+      label: "Blocked requests",
+      value: `${unavailableRequestCount}`,
+      detail: "Requested, declined, or revoked Access Grants cannot expose user records to Corporate Verify.",
+      tone: unavailableRequestCount ? "warning" : "ready"
+    },
+    {
+      label: "Open gaps",
+      value: `${openGapRequestCount}`,
+      detail: "Missing-record requests that still need professional or provider follow-up.",
+      tone: openGapRequestCount ? "warning" : "ready"
+    }
+  ];
   const isLiveCorporateDatabase = databaseMode === "live_supabase_visibility";
   const databaseModeLabel = isLiveCorporateDatabase ? "Live corporate database" : "Corporate database locked";
   const databaseModeDetail = isLiveCorporateDatabase
@@ -2732,6 +2761,7 @@ function CorporateDirectoryPanel({
       open_gap_requests: missingRecordRequests.filter((request) => request.status !== "fulfilled").length
     },
     corporate_data_access_path: corporateAccessPath,
+    corporate_visibility_ledger: corporateVisibilityLedger,
     reviewer_scan_board: directoryReviewBoard.map((bucket) => ({
       label: bucket.label,
       count: bucket.count,
@@ -2846,6 +2876,21 @@ function CorporateDirectoryPanel({
             </div>
           </article>
         ))}
+      </div>
+      <div className="corporate-visibility-ledger" aria-label="Corporate visibility ledger">
+        <div className="directory-source-strip">
+          <span className="status-chip neutral">Corporate visibility ledger</span>
+          <small>Summarizes which user database rows Corporate Verify can see, which rows are sensitive, and which requests are still blocked.</small>
+        </div>
+        <div className="corporate-visibility-grid">
+          {corporateVisibilityLedger.map((item) => (
+            <article className={item.tone} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
       </div>
       <div className="directory-review-board">
         {directoryReviewBoard.map((bucket) => (

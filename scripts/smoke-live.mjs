@@ -318,6 +318,9 @@ assertIncludesAny(bundleText, ["Professional approval"], "corporate data access 
 assertIncludesAny(bundleText, ["corporate_data_access_path"], "corporate data access path packet field");
 assertIncludesAny(bundleText, ["Corporate access review queue"], "corporate access review queue panel");
 assertIncludesAny(bundleText, ["corporate_access_review_queue"], "corporate access review queue packet field");
+assertIncludesAny(bundleText, ["Corporate visibility ledger"], "corporate visibility ledger panel");
+assertIncludesAny(bundleText, ["corporate_visibility_ledger"], "corporate visibility ledger packet field");
+assertIncludesAny(bundleText, ["Visible user records"], "corporate visibility visible records count");
 assertIncludesAny(bundleText, ["Request access by professional email"], "corporate access review queue empty action");
 assertIncludesAny(bundleText, ["reviewer_scan_board"], "Corporate user database scan board packet field");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");
