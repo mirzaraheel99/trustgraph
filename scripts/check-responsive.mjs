@@ -49,6 +49,10 @@ if (!css.includes(".trust-network-visual") || !css.includes("min-height: 268px")
   throw new Error("Responsive check failed: premium TrustGraph record graph needs stable desktop dimensions.");
 }
 
+if (!css.includes("grid-template-columns: minmax(196px, 232px) minmax(0, 1fr)") || !css.includes("contain: inline-size")) {
+  throw new Error("Responsive check failed: app shell must keep the sidebar narrow and contain workspace overflow.");
+}
+
 if (!flexStackCss.includes(".record-form-footer") || !flexStackCss.includes("flex-direction: column")) {
   throw new Error("Responsive check failed: missing 760px flex stacking rule.");
 }
