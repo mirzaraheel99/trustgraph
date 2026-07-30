@@ -32,7 +32,7 @@ GitHub Pages remains the verified review target until the guarded VPS bootstrap 
 | References and missing records | `src/referenceRepository.ts`, `src/missingRecordRepository.ts`, request status controls and exports | `supabase/migrations/013`, `015` |
 | Issuer workflow | `src/credentialRepository.ts`, issuer role activation and credential issue workflow | `supabase/migrations/014` |
 | Evidence preview/download | Private Supabase Storage upload, metadata listing, manifest export, signed preview/download buttons | `supabase/migrations/017`, smoke evidence assertions |
-| Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033` |
+| Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, pilot contacts, organization RLS recursion repair | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
 | Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet | `supabase/migrations/012`, `016` |
 | Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, v1 completion audit packet, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md` |
@@ -61,7 +61,7 @@ The app exposes these operator exports to prove live database state after sign-i
 
 ## Migration Coverage
 
-Live Supabase migrations currently run through `033_pilot_launch_contacts.sql`. The RLS guard verifies protected-table enablement across 21 tables before every hosted deployment.
+Live Supabase migrations currently run through `034_fix_organization_policy_recursion.sql`. The RLS guard verifies protected-table enablement across 21 tables before every hosted deployment, and the app exposes a visible `034 RLS repair expected` marker so operators can distinguish code readiness from a Supabase project that still needs the migration applied.
 
 ## Verification Commands
 

@@ -4044,9 +4044,9 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 033 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate decision tracking, gate status constraints, operator-named pilot workflow RPCs, and pilot launch contact tracking.</small>
+          <small>Migrations through 034 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate decision tracking, gate status constraints, operator-named pilot workflow RPCs, pilot launch contact tracking, and the organization RLS recursion repair.</small>
         </div>
-        <span className="status-chip success">database live</span>
+        <span className="status-chip success">034 RLS repair expected</span>
       </article>
       <div className="production-gate-panel">
         <div className="production-stop-summary">
@@ -6780,6 +6780,10 @@ function DatabaseStatusStrip({
             {group.label}
           </span>
         ))}
+        <span className="loaded">
+          <strong>034</strong>
+          RLS repair
+        </span>
       </div>
       <div className="database-status-actions">
         <button className="secondary-action" onClick={isLive ? onOpenReadiness : onOpenRegistration} type="button">

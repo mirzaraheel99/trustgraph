@@ -316,7 +316,9 @@ assertIncludesAny(bundleText, ["selected_registration_path"], "registration path
 assertIncludesAny(bundleText, ["protected_vfix_host"], "auth packet VFIX isolation field");
 assertIncludesAny(bundleText, ["trustgraph_vps_target"], "auth packet TrustGraph VPS field");
 assertIncludesAny(bundleText, ["Reset password"], "public portal password recovery control");
-assertIncludesAny(bundleText, ["Migrations through 033"], "current database migration coverage copy");
+assertIncludesAny(bundleText, ["Migrations through 034"], "current database migration coverage copy");
+assertIncludesAny(bundleText, ["034 RLS repair expected"], "organization RLS recursion repair marker");
+assertIncludesAny(bundleText, ["RLS repair"], "database strip RLS repair proof");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
 assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact intake");
 assertIncludesAny(bundleText, ["Stop conditions"], "production stop condition summary");
