@@ -174,6 +174,8 @@ assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect
 assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");
 assertIncludesAny(bundleText, ["Account recovery readiness"], "account recovery readiness label");
 assertIncludesAny(bundleText, ["account_recovery_readiness"], "account recovery readiness packet field");
+assertIncludesAny(bundleText, ["Login or sign up"], "guided auth operator path");
+assertIncludesAny(bundleText, ["Create workspace"], "post-verification workspace action");
 assertIncludesAny(bundleText, ["2 emails per hour"], "Supabase built-in email rate limit guidance");
 assertIncludesAny(bundleText, ["not localhost"], "hosted auth redirect localhost warning");
 assertIncludesAny(bundleText, ["https://mirzaraheel99.github.io/trustgraph/"], "hosted auth redirect URL");

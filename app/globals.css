@@ -3286,6 +3286,55 @@ p,
   line-height: 1.4;
 }
 
+.auth-operator-path {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.07), transparent 70%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.auth-operator-path article {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.auth-operator-path article > span {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: #03100e;
+  border-radius: 999px;
+  background: var(--teal);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.auth-operator-path strong,
+.auth-operator-path small {
+  display: block;
+  min-width: 0;
+}
+
+.auth-operator-path strong {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.auth-operator-path small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .auth-recovery-note {
   display: flex;
   align-items: center;
@@ -7562,6 +7611,7 @@ p {
   .public-session-handoff,
   .auth-choice-summary,
   .auth-support-actions,
+  .auth-operator-path,
   .account-operator-path,
   .portal-auth-summary-grid,
   .portal-access-steps,

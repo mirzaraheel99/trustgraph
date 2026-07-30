@@ -6641,6 +6641,23 @@ function AuthPanel({
       detail: "Return here, sign in, then use Launch checklist to seed or create live pilot data."
     }
   ];
+  const authOperatorPath = [
+    {
+      step: "1",
+      label: "Login or sign up",
+      detail: "Use the hosted TrustGraph app before requesting emails."
+    },
+    {
+      step: "2",
+      label: "Verify email",
+      detail: "Open the newest Supabase link; repair it here if it points to localhost."
+    },
+    {
+      step: "3",
+      label: "Create workspace",
+      detail: "After login, open Corporate setup or Professional Passport."
+    }
+  ];
 
   async function handleAuth(event: FormEvent<HTMLFormElement>, mode: "signin" | "signup") {
     event.preventDefault();
@@ -6760,6 +6777,17 @@ function AuthPanel({
               <article key={path.label}>
                 <strong>{path.label}</strong>
                 <small>{path.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="auth-operator-path" aria-label="Login and recovery path">
+            {authOperatorPath.map((item) => (
+              <article key={item.step}>
+                <span>{item.step}</span>
+                <div>
+                  <strong>{item.label}</strong>
+                  <small>{item.detail}</small>
+                </div>
               </article>
             ))}
           </div>
