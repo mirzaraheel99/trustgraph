@@ -7887,7 +7887,7 @@ function AuthPanel({
     operator_next_steps: [
       "Copy the hosted redirect URL into Supabase Auth allowed redirects.",
       "Use Resend verify only after the rate-limit window clears or SMTP is configured.",
-      "Use Reset password from the hosted app so recovery returns to TrustGraph instead of localhost."
+      "Use Reset password from the hosted app so recovery sends redirect_to to TrustGraph instead of localhost."
     ],
     signed_in_recovery_control: session ? "password_update_available" : "password_update_requires_recovery_session"
   };
@@ -7912,6 +7912,7 @@ function AuthPanel({
       "Keep localhost only for local developer testing."
     ],
     email_rate_limit: "Supabase built-in email allows 2 emails per hour project-wide unless custom SMTP is configured.",
+    auth_request_redirect_transport: "redirect_to query parameter plus Supabase email redirect options",
     session_state: session ? "signed_in" : "signed_out",
     account_status: accountStatus,
     recovery_session_ready: recoverySessionReady,
@@ -8263,7 +8264,7 @@ function AuthPanel({
           <div className="auth-recovery-note">
             <div>
               <strong>Account recovery readiness</strong>
-              <small>Reset password creates a hosted recovery session; after the email link opens TrustGraph, the Set new password form appears here.</small>
+              <small>Reset password sends the hosted redirect_to value to Supabase; after the email link opens TrustGraph, the Set new password form appears here.</small>
             </div>
             <span className="micro-pill">{email ? "email ready" : "email needed"}</span>
           </div>

@@ -225,6 +225,8 @@ assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");
 assertIncludesAny(bundleText, ["Account recovery readiness"], "account recovery readiness label");
 assertIncludesAny(bundleText, ["account_recovery_readiness"], "account recovery readiness packet field");
 assertIncludesAny(bundleText, ["recovery_session_ready"], "account recovery packet session state");
+assertIncludesAny(bundleText, ["auth_request_redirect_transport"], "auth request redirect transport packet field");
+assertIncludesAny(bundleText, ["redirect_to query parameter"], "password recovery redirect transport copy");
 assertIncludesAny(bundleText, ["Data export and closure"], "account data-rights panel");
 assertIncludesAny(bundleText, ["Request data export"], "data export request control");
 assertIncludesAny(bundleText, ["Request account closure"], "account closure request control");

@@ -64,6 +64,19 @@ async function readAuthError(response: Response, fallback: string) {
   }
 }
 
+function authUrl(path: string, redirectTo?: string) {
+  const config = getSupabaseConfig();
+  if (!config) {
+    throw new Error("Supabase is not configured for this deployment.");
+  }
+
+  const url = new URL(`${config.url}/auth/v1/${path.replace(/^\//, "")}`);
+  if (redirectTo) {
+    url.searchParams.set("redirect_to", redirectTo);
+  }
+  return { config, url: url.toString() };
+}
+
 export function readStoredSession(): AuthSession | null {
   if (typeof window === "undefined") return null;
 
@@ -195,12 +208,9 @@ export async function signInWithPassword(email: string, password: string): Promi
 }
 
 export async function signUpWithPassword(email: string, password: string, redirectTo?: string): Promise<AuthSession | null> {
-  const config = getSupabaseConfig();
-  if (!config) {
-    throw new Error("Supabase is not configured for this deployment.");
-  }
+  const { config, url } = authUrl("signup", redirectTo);
 
-  const response = await fetch(`${config.url}/auth/v1/signup`, {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       apikey: config.anonKey,
@@ -224,12 +234,9 @@ export async function signUpWithPassword(email: string, password: string, redire
 }
 
 export async function requestPasswordRecovery(email: string, redirectTo?: string): Promise<void> {
-  const config = getSupabaseConfig();
-  if (!config) {
-    throw new Error("Supabase is not configured for this deployment.");
-  }
+  const { config, url } = authUrl("recover", redirectTo);
 
-  const response = await fetch(`${config.url}/auth/v1/recover`, {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       apikey: config.anonKey,
@@ -265,12 +272,9 @@ export async function updatePassword(accessToken: string, password: string): Pro
 }
 
 export async function resendSignupConfirmation(email: string, redirectTo?: string): Promise<void> {
-  const config = getSupabaseConfig();
-  if (!config) {
-    throw new Error("Supabase is not configured for this deployment.");
-  }
+  const { config, url } = authUrl("resend", redirectTo);
 
-  const response = await fetch(`${config.url}/auth/v1/resend`, {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       apikey: config.anonKey,
