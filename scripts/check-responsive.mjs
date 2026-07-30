@@ -10,6 +10,7 @@ const requiredMobileStacks = [
   ".auth-recovery-decision-grid",
   ".auth-support-actions",
   ".account-operator-path",
+  ".corporate-account-rbac-path",
   ".billing-operator-path",
   ".database-status-counts",
   ".database-status-strip",

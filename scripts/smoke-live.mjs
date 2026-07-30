@@ -323,6 +323,9 @@ assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff chec
 assertIncludesAny(bundleText, ["Provision workspace"], "corporate portal handoff provisioning step");
 assertIncludesAny(bundleText, ["database_acceptance_requires_live_login"], "hosted login database live-login requirement");
 assertIncludesAny(bundleText, ["vps_deployment_requires_human_access"], "hosted login VPS human-access requirement");
+assertIncludesAny(bundleText, ["Corporate account setup path"], "corporate account setup path label");
+assertIncludesAny(bundleText, ["corporate_account_rbac_path"], "corporate account RBAC path packet field");
+assertIncludesAny(bundleText, ["Activate RBAC role"], "corporate account RBAC role step");
 assertIncludesAny(bundleText, ["Corporate provisioning evidence"], "Corporate account provisioning proof");
 assertIncludesAny(bundleText, ["Export provisioning packet"], "Corporate provisioning export control");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");

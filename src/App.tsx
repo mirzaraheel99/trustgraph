@@ -5836,6 +5836,28 @@ function AccountPanel({
       ready: canManageActiveOrg && activeMembership.role === targetRole
     }
   ];
+  const corporateAccountRbacPath = [
+    {
+      label: "Login",
+      state: authSession ? "ready" : "next",
+      detail: authSession ? "Verified account session is connected." : "Sign in with the verified corporate admin email."
+    },
+    {
+      label: "Create company workspace",
+      state: accountUser.memberships.length > 1 ? "ready" : authSession ? "next" : "locked",
+      detail: accountUser.memberships.length > 1 ? "Employer or staffing workspace exists." : "Create the organization row that owns reviewers and requests."
+    },
+    {
+      label: "Activate RBAC role",
+      state: canManageActiveOrg ? "ready" : accountUser.memberships.length > 1 ? "next" : "locked",
+      detail: canManageActiveOrg ? "Admin controls are active for this workspace." : "Switch into the company workspace and assign the operating role."
+    },
+    {
+      label: "Invite and verify",
+      state: canManageActiveOrg ? "next" : "locked",
+      detail: "Invite reviewers, request Passport access, and export proof for the pilot run."
+    }
+  ];
 
   useEffect(() => {
     setTargetRole(activeOrg.type === "staffing_agency" ? "recruiter" : "employer_reviewer");
@@ -5867,7 +5889,8 @@ function AccountPanel({
         membership_id: provisionedMembership.id,
         role: provisionedMembership.role,
         status: provisionedMembership.status,
-        source: "create_corporate_account_rpc"
+        source: "create_corporate_account_rpc",
+        corporate_account_rbac_path: corporateAccountRbacPath
       }
     : null;
 
@@ -5905,6 +5928,15 @@ function AccountPanel({
         <strong>Corporate account and RBAC</strong>
       </div>
       <p className="panel-intro">Use this panel after login: create the live employer or staffing workspace first, switch into its admin role, then invite reviewers and activate billing from the setup guide.</p>
+      <div className="corporate-account-rbac-path" aria-label="Corporate account setup path">
+        {corporateAccountRbacPath.map((step, index) => (
+          <article className={step.state} key={step.label}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{step.label}</strong>
+            <small>{step.detail}</small>
+          </article>
+        ))}
+      </div>
       <div className="account-operator-path" aria-label="Corporate account operator path">
         {operatorPath.map((item) => (
           <article className={item.ready ? "ready" : ""} key={item.label}>

@@ -1849,6 +1849,62 @@ p,
   gap: 8px;
 }
 
+.corporate-account-rbac-path {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-account-rbac-path article {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.corporate-account-rbac-path article.ready {
+  border-color: rgba(112, 224, 178, 0.32);
+  background:
+    linear-gradient(135deg, rgba(112, 224, 178, 0.12), transparent 62%),
+    rgba(112, 224, 178, 0.045);
+}
+
+.corporate-account-rbac-path article.next {
+  border-color: rgba(245, 199, 107, 0.28);
+  background:
+    linear-gradient(135deg, rgba(245, 199, 107, 0.11), transparent 62%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.corporate-account-rbac-path span,
+.corporate-account-rbac-path strong,
+.corporate-account-rbac-path small {
+  display: block;
+}
+
+.corporate-account-rbac-path span {
+  color: var(--aqua);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.corporate-account-rbac-path strong {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.corporate-account-rbac-path small {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .account-operator-path article {
   display: flex;
   align-items: flex-start;
@@ -9032,6 +9088,7 @@ p {
   .auth-support-actions,
   .auth-recovery-decision-grid,
   .auth-operator-path,
+  .corporate-account-rbac-path,
   .account-operator-path,
   .portal-entry-path,
   .portal-handoff-checklist,
