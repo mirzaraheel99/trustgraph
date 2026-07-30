@@ -8969,6 +8969,24 @@ function PublicSite({
             detail: "Add records, evidence metadata, references, Access Grants, and sensitive consent controls."
           }
         ];
+  const portalLaunchMap = [
+    {
+      label: "Professional user",
+      action: "Create Passport",
+      plan: "$0 pilot",
+      firstWrite: "Profile and personal organization",
+      dashboard: "Passport records, evidence, consent, and Access Grants",
+      portal: "professional" as const
+    },
+    {
+      label: "Corporate company",
+      action: "Create company",
+      plan: "$149 pilot monthly",
+      firstWrite: "Company organization and admin membership",
+      dashboard: "Corporate Verify, RBAC team, billing, and user access requests",
+      portal: "corporate" as const
+    }
+  ];
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -9049,6 +9067,28 @@ function PublicSite({
                 <small>Request approved records through role-based Verify workspaces.</small>
               </span>
             </button>
+          </div>
+          <div className="portal-launch-map" aria-label="Portal launch map">
+            <div>
+              <span className="status-chip success">Portal launch map</span>
+              <strong>Start in the right portal before live database rows are created</strong>
+            </div>
+            <div className="portal-launch-map-grid">
+              {portalLaunchMap.map((item) => (
+                <button
+                  className={portal === item.portal ? "active" : ""}
+                  key={item.label}
+                  onClick={() => openPortal(item.portal)}
+                  type="button"
+                >
+                  <span>{item.label}</span>
+                  <strong>{item.action}</strong>
+                  <small>{item.plan}</small>
+                  <small>{item.firstWrite}</small>
+                  <small>{item.dashboard}</small>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         <aside className="public-proof public-command-center" aria-label="TrustGraph live product preview">

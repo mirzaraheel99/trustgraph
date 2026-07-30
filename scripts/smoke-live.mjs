@@ -106,6 +106,10 @@ assertIncludesAny(bundleText, ["Writes organization, admin membership, plan ledg
 assertIncludesAny(bundleText, ["gated production decisions"], "Scale pricing human gate copy");
 assertIncludesAny(bundleText, ["Corporate portal access"], "Corporate portal registration/login entry");
 assertIncludesAny(bundleText, ["Professional Passport access"], "Professional portal registration/login entry");
+assertIncludesAny(bundleText, ["Portal launch map"], "public hero portal launch map");
+assertIncludesAny(bundleText, ["Start in the right portal before live database rows are created"], "portal launch map database guidance");
+assertIncludesAny(bundleText, ["Company organization and admin membership"], "corporate portal launch first write");
+assertIncludesAny(bundleText, ["Profile and personal organization"], "professional portal launch first write");
 assertIncludesAny(bundleText, ["Corporate registration sequence"], "Corporate registration guided sequence");
 assertIncludesAny(bundleText, ["Professional registration sequence"], "Professional registration guided sequence");
 assertIncludesAny(bundleText, ["Provision live workspace"], "Corporate registration provisioning step");
