@@ -137,6 +137,9 @@ assertIncludesAny(bundleText, ["Corporate operating plan"], "corporate operating
 assertIncludesAny(bundleText, ["Prove company context"], "corporate operating company context step");
 assertIncludesAny(bundleText, ["Only signed-in Supabase rows visible to this corporate RBAC context"], "corporate operating real data policy");
 assertIncludesAny(bundleText, ["corporate_operating_plan"], "corporate operating packet field");
+assertIncludesAny(bundleText, ["Post-034 live retest"], "corporate post migration live retest panel");
+assertIncludesAny(bundleText, ["post_034_corporate_live_retest"], "corporate post migration live retest packet field");
+assertIncludesAny(bundleText, ["Verify user data visible"], "corporate user data live retest step");
 assertIncludesAny(bundleText, ["Pending corporate workspace"], "pending Corporate setup continuation card");
 assertIncludesAny(bundleText, ["Clear saved setup"], "pending Corporate setup reset control");
 assertIncludesAny(bundleText, ["Fix localhost email link"], "hosted auth link repair control");

@@ -2099,6 +2099,7 @@ function CorporateDailyTaskHub({
   authSession,
   missingRecordRequests,
   organizationSubscriptions,
+  schemaMigrationRuns,
   sharedVerifyRecords,
   teamInvitations,
   teamMembers,
@@ -2112,6 +2113,7 @@ function CorporateDailyTaskHub({
   authSession: AuthSession | null;
   missingRecordRequests: DbMissingRecordRequest[];
   organizationSubscriptions: DbOrganizationSubscription[];
+  schemaMigrationRuns: DbSchemaMigrationRun[];
   sharedVerifyRecords: RecordItem[];
   teamInvitations: DbOrganizationInvitation[];
   teamMembers: OrganizationMemberView[];
@@ -2128,6 +2130,9 @@ function CorporateDailyTaskHub({
   ).length;
   const approvedVerifyRequests = verifyRequests.filter((request) => request.status === "approved").length;
   const requestedVerifyRequests = verifyRequests.filter((request) => request.status === "requested").length;
+  const organizationRlsRepairApplied = schemaMigrationRuns.some(
+    (run) => run.migration_path.includes("034_fix_organization_policy_recursion.sql") && run.status === "applied"
+  );
   const hubItems = [
     {
       label: "Corporate database",
@@ -2207,6 +2212,44 @@ function CorporateDailyTaskHub({
     }
   ];
   const operatingReady = corporateOperatingPlan.filter((item) => item.ready).length;
+  const corporateLiveRetestChecklist = [
+    {
+      label: "034 organization RLS repair",
+      detail: organizationRlsRepairApplied
+        ? "Release ledger shows migration 034 applied for corporate account context."
+        : "Apply or load release ledger proof for migration 034 before accepting corporate context.",
+      ready: organizationRlsRepairApplied
+    },
+    {
+      label: "Corporate workspace loaded",
+      detail: isCorporateContext
+        ? `${activeOrganization.name} is visible to the signed-in role.`
+        : "Create or switch into an employer or staffing workspace.",
+      ready: isCorporateContext
+    },
+    {
+      label: "Reviewer database access",
+      detail: activeMembers
+        ? `${activeMembers} active member row${activeMembers === 1 ? "" : "s"} loaded from Supabase.`
+        : "Activate at least one real reviewer/member row.",
+      ready: activeMembers > 0
+    },
+    {
+      label: "Verify user data visible",
+      detail: sharedVerifyRecords.length
+        ? `${sharedVerifyRecords.length} shared user Passport record${sharedVerifyRecords.length === 1 ? "" : "s"} visible.`
+        : "Request and approve Passport access so Corporate Verify can read user records.",
+      ready: sharedVerifyRecords.length > 0
+    },
+    {
+      label: "Pilot billing ledger active",
+      detail: activeSubscriptions.length
+        ? `${activeSubscriptions.length} subscription ledger row${activeSubscriptions.length === 1 ? "" : "s"} loaded.`
+        : "Activate Corporate Verify pilot billing ledger before acceptance.",
+      ready: activeSubscriptions.length > 0
+    }
+  ];
+  const corporateLiveRetestReady = corporateLiveRetestChecklist.filter((item) => item.ready).length;
   const exportName = `trustgraph-corporate-daily-task-hub-${new Date().toISOString().slice(0, 10)}.json`;
   const packet = {
     generated_at: new Date().toISOString(),
@@ -2227,6 +2270,12 @@ function CorporateDailyTaskHub({
       next_step: corporateOperatingPlan.find((item) => !item.ready)?.label ?? "Corporate operating plan ready",
       real_database_policy: "Only signed-in Supabase rows visible to the active corporate RBAC context count as operating proof.",
       steps: corporateOperatingPlan
+    },
+    post_034_corporate_live_retest: {
+      ready_steps: corporateLiveRetestReady,
+      total_steps: corporateLiveRetestChecklist.length,
+      accepted_only_when: "migration_034_applied_and_signed_in_corporate_rbac_rows_load_user_passport_data",
+      steps: corporateLiveRetestChecklist
     },
     live_counts: {
       active_members: activeMembers,
@@ -2279,6 +2328,29 @@ function CorporateDailyTaskHub({
         </div>
         <div className="corporate-operating-plan-grid">
           {corporateOperatingPlan.map((item) => (
+            <article className={item.ready ? "ready" : ""} key={item.label}>
+              <span className={`status-dot ${item.ready ? "on" : ""}`} />
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="corporate-live-retest" aria-label="Post 034 corporate live retest">
+        <div className="corporate-operating-plan-header">
+          <div>
+            <span className="status-chip neutral">Post-034 live retest</span>
+            <strong>{corporateLiveRetestReady}/{corporateLiveRetestChecklist.length} corporate database checks ready</strong>
+            <small>Use this after migration 034 to prove Corporate Verify can load real user Passport rows through the active RBAC context.</small>
+          </div>
+          <button className="secondary-action" onClick={() => onOpenSetup("readiness")} type="button">
+            Review proof
+          </button>
+        </div>
+        <div className="corporate-live-retest-grid">
+          {corporateLiveRetestChecklist.map((item) => (
             <article className={item.ready ? "ready" : ""} key={item.label}>
               <span className={`status-dot ${item.ready ? "on" : ""}`} />
               <div>
@@ -10402,6 +10474,7 @@ function App() {
           authSession={authSession}
           missingRecordRequests={missingRecordRequests}
           organizationSubscriptions={organizationSubscriptions}
+          schemaMigrationRuns={schemaMigrationRuns}
           sharedVerifyRecords={sharedVerifyRecords}
           teamInvitations={teamInvitations}
           teamMembers={teamMembers}

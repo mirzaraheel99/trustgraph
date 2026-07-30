@@ -3546,6 +3546,17 @@ p {
     rgba(255, 255, 255, 0.028);
 }
 
+.corporate-live-retest {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 60%),
+    rgba(255, 255, 255, 0.028);
+}
+
 .corporate-operating-plan-header {
   display: flex;
   align-items: flex-start;
@@ -3575,7 +3586,23 @@ p {
   gap: 8px;
 }
 
+.corporate-live-retest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+}
+
 .corporate-operating-plan-grid article {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.corporate-live-retest-grid article {
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -3590,17 +3617,26 @@ p {
   background: rgba(82, 214, 196, 0.045);
 }
 
+.corporate-live-retest-grid article.ready {
+  border-color: rgba(82, 214, 196, 0.2);
+  background: rgba(82, 214, 196, 0.045);
+}
+
 .corporate-operating-plan-grid strong,
-.corporate-operating-plan-grid small {
+.corporate-operating-plan-grid small,
+.corporate-live-retest-grid strong,
+.corporate-live-retest-grid small {
   display: block;
 }
 
-.corporate-operating-plan-grid strong {
+.corporate-operating-plan-grid strong,
+.corporate-live-retest-grid strong {
   margin-bottom: 3px;
   font-size: 12px;
 }
 
-.corporate-operating-plan-grid small {
+.corporate-operating-plan-grid small,
+.corporate-live-retest-grid small {
   color: var(--muted);
   font-size: 11px;
   line-height: 1.35;
@@ -6980,6 +7016,7 @@ p {
   .control-center-header,
   .control-center-metrics,
   .control-center-track,
+  .corporate-live-retest-grid,
   .corporate-operating-plan-grid,
   .metrics-grid,
   .work-grid,
