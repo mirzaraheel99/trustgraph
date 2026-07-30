@@ -20,10 +20,13 @@ assert(authenticatedRender.includes('className="session-command-bar"'), "session
 assert(authenticatedRender.includes("Sign out"), "signed-in dashboard must expose a visible sign-out action.");
 assert(authenticatedRender.includes('className="workspace-route-strip"'), "workspace route strip must remain available after sidebar removal.");
 assert(authenticatedRender.includes('className="workspace-flow-strip"'), "daily portal path strip must remain available after sidebar removal.");
+assert(app.includes('aria-label="Live pilot row proof"'), "v1 readiness must expose live pilot row proof.");
 assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: none !important"), "final CSS layer must still suppress any legacy sidebar rail.");
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");
 assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))"), "dense admin forms must auto-fit narrow screens.");
+assert(premiumRepair.includes(".live-pilot-row-proof") && premiumRepair.includes(".live-pilot-row-proof-grid"), "live pilot row proof must be styled as a bounded premium panel.");
+assert(premiumRepair.includes(".pilot-contact-form") && premiumRepair.includes(".consent-controls"), "corporate/admin form controls must be included in overflow guards.");
 assert(!premiumRepair.includes("radial-gradient"), "premium shell repair must avoid decorative orb-style backgrounds.");
 
-console.log("TrustGraph premium layout check passed: legacy rail removed, logout visible, route strips and dense forms bounded.");
+console.log("TrustGraph premium layout check passed: legacy rail removed, logout visible, route strips, live proof, and dense forms bounded.");

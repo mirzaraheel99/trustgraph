@@ -337,6 +337,9 @@ assertIncludesAny(bundleText, ["Seed reconciliation"], "pilot seed reconciliatio
 assertIncludesAny(bundleText, ["matched"], "pilot seed reconciliation matched count");
 assertIncludesAny(bundleText, ["Corporate review attestation"], "pilot seed review attestation reconciliation row");
 assertIncludesAny(bundleText, ["Working database proof"], "working database proof panel");
+assertIncludesAny(bundleText, ["Live pilot row proof"], "top-level live pilot row proof panel");
+assertIncludesAny(bundleText, ["required Supabase row groups loaded"], "top-level live pilot row proof counter");
+assertIncludesAny(bundleText, ["live_pilot_row_proof"], "v1 completion live pilot row proof packet field");
 assertIncludesAny(bundleText, ["Working database command center"], "working database command center panel");
 assertIncludesAny(bundleText, ["working_database_command_center"], "working database command center packet field");
 assertIncludesAny(bundleText, ["Working-data packet export"], "working database command packet export label");

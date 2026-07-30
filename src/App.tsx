@@ -168,6 +168,22 @@ import {
   type Membership
 } from "./rbac";
 
+type LivePilotRowProof = {
+  source: "signed_in_supabase_rows" | "preview_or_logged_out";
+  accepted: boolean;
+  readyGroups: number;
+  totalRequiredGroups: number;
+  missingRequiredGroups: string[];
+  rows: Array<{
+    label: string;
+    table: string;
+    count: number;
+    required: boolean;
+    ready: boolean;
+    evidence: string;
+  }>;
+};
+
 const toneLabels: Record<Tone, string> = {
   success: "success",
   warning: "warning",
@@ -5030,12 +5046,14 @@ function ConnectPanel({
 
 function PlanAlignmentPanel({
   disabled,
+  livePilotRowProof,
   onRecordPilotLaunchContact,
   onRecordGateDecision,
   pilotLaunchContacts,
   productionGateDecisions
 }: {
   disabled: boolean;
+  livePilotRowProof: LivePilotRowProof;
   onRecordPilotLaunchContact: (input: {
     contactKey: string;
     status: PilotLaunchContactStatus;
@@ -5143,8 +5161,10 @@ function PlanAlignmentPanel({
     },
     {
       label: "Live Supabase database foundation",
-      status: "implemented_with_runtime_login_required",
-      evidence: "Repositories, migrations, RLS checks, seed reconciliation, and real database acceptance matrix are implemented; live rows prove only after hosted Supabase login."
+      status: livePilotRowProof.accepted ? "live_database_rows_accepted" : "implemented_with_runtime_login_required",
+      evidence: livePilotRowProof.accepted
+        ? `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups} required live Supabase row groups are loaded for the signed-in account.`
+        : `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups} required live Supabase row groups are loaded; missing ${livePilotRowProof.missingRequiredGroups.join(", ") || "hosted login proof"}.`
     },
     {
       label: "TrustGraph VPS deployment",
@@ -5182,8 +5202,10 @@ function PlanAlignmentPanel({
     },
     {
       label: "Live database proof",
-      value: completionAuditOpenItems.some((item) => item.status === "implemented_with_runtime_login_required") ? "Login proof needed" : "Accepted",
-      detail: "Working database acceptance requires signed-in Supabase row groups and exported working-data evidence."
+      value: livePilotRowProof.accepted ? "Accepted" : `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups}`,
+      detail: livePilotRowProof.accepted
+        ? "Signed-in Supabase row groups prove Passport, corporate, evidence, consent, billing, team, review, and release-ledger coverage."
+        : `Still needs live row proof for ${livePilotRowProof.missingRequiredGroups.join(", ") || "the hosted login session"}.`
     },
     {
       label: "Human gates",
@@ -5212,6 +5234,7 @@ function PlanAlignmentPanel({
     completion_audit_requirements: completionAuditRequirements,
     completion_audit_open_items: completionAuditOpenItems,
     v1_audit_command: v1AuditCommand,
+    live_pilot_row_proof: livePilotRowProof,
     evidence_exports: [
       "portal_access_packet",
       "corporate_provisioning_packet",
@@ -5220,6 +5243,7 @@ function PlanAlignmentPanel({
       "auth_redirect_readiness_packet",
       "registration_auth_readiness_packet",
       "working_database_packet",
+      "live_pilot_row_proof",
       "live_database_repair_queue",
       "seed_reconciliation",
       "security_runbook",
@@ -5357,6 +5381,32 @@ function PlanAlignmentPanel({
               <span>{item.label}</span>
               <strong>{item.value}</strong>
               <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="live-pilot-row-proof" aria-label="Live pilot row proof">
+        <div className="live-pilot-row-proof-top">
+          <div>
+            <span className={`status-chip ${livePilotRowProof.accepted ? "success" : "warning"}`}>Live pilot row proof</span>
+            <strong>{livePilotRowProof.readyGroups}/{livePilotRowProof.totalRequiredGroups} required Supabase row groups loaded</strong>
+            <small>
+              V1 database acceptance only counts signed-in Supabase rows. Preview data, browser seed memory, and plan copy cannot mark this complete.
+            </small>
+          </div>
+          <span className={`status-chip ${livePilotRowProof.source === "signed_in_supabase_rows" ? "success" : "neutral"}`}>
+            {livePilotRowProof.source.replace(/_/g, " ")}
+          </span>
+        </div>
+        <div className="live-pilot-row-proof-grid">
+          {livePilotRowProof.rows.map((row) => (
+            <article className={row.ready ? "ready" : ""} key={row.label}>
+              <span className={`status-dot ${row.ready ? "on" : ""}`} />
+              <div>
+                <strong>{row.label}</strong>
+                <small>{row.table}</small>
+                <small>{row.evidence}</small>
+              </div>
             </article>
           ))}
         </div>
@@ -12763,6 +12813,98 @@ function App() {
       target: "export" as const
     }
   ];
+  const livePilotRowProofRows: LivePilotRowProof["rows"] = [
+    {
+      label: "Hosted auth session",
+      table: "auth.users",
+      count: authSession ? 1 : 0,
+      required: true,
+      ready: Boolean(authSession),
+      evidence: authSession ? `Signed in as ${authSession.user.email}` : "Hosted login required"
+    },
+    {
+      label: "Account and RBAC context",
+      table: "profiles, organizations, organization_members",
+      count: accountContext ? accountContext.memberships.length : 0,
+      required: true,
+      ready: Boolean(accountContext),
+      evidence: accountContext ? `${accountContext.memberships.length} membership rows loaded` : "Account context must load without policy recursion"
+    },
+    {
+      label: "Passport records",
+      table: "trust_records",
+      count: livePassportRecords.length,
+      required: true,
+      ready: livePassportRecords.length > 0,
+      evidence: `${livePassportRecords.length} professional record rows`
+    },
+    {
+      label: "Evidence metadata",
+      table: "evidence_documents",
+      count: evidenceDocuments.length,
+      required: true,
+      ready: evidenceDocuments.length > 0,
+      evidence: `${evidenceDocuments.length} evidence metadata rows`
+    },
+    {
+      label: "Corporate access and shared rows",
+      table: "access_grants, verify_requests, shared_passport_records",
+      count: accessGrants.length + verifyRequests.length + sharedVerifyRecords.length,
+      required: true,
+      ready: accessGrants.length > 0 || verifyRequests.length > 0 || sharedVerifyRecords.length > 0,
+      evidence: `${accessGrants.length} grants, ${verifyRequests.length} requests, ${sharedVerifyRecords.length} shared rows`
+    },
+    {
+      label: "Sensitive consent",
+      table: "consent_authorizations",
+      count: consentAuthorizations.length,
+      required: true,
+      ready: consentAuthorizations.length > 0,
+      evidence: `${consentAuthorizations.length} consent authorization rows`
+    },
+    {
+      label: "Corporate team",
+      table: "organization_members, organization_invitations",
+      count: teamMembers.length + teamInvitations.length,
+      required: true,
+      ready: teamMembers.length > 0 || teamInvitations.length > 0,
+      evidence: `${teamMembers.length} members and ${teamInvitations.length} invitations`
+    },
+    {
+      label: "Billing ledger",
+      table: "organization_subscriptions",
+      count: organizationSubscriptions.length,
+      required: true,
+      ready: organizationSubscriptions.length > 0,
+      evidence: `${organizationSubscriptions.length} subscription ledger rows`
+    },
+    {
+      label: "Corporate review attestations",
+      table: "corporate_access_reviews",
+      count: corporateAccessReviews.length,
+      required: true,
+      ready: corporateAccessReviews.length > 0,
+      evidence: `${corporateAccessReviews.length} review attestation rows`
+    },
+    {
+      label: "Release ledger",
+      table: "schema_migration_runs",
+      count: schemaMigrationRuns.length,
+      required: true,
+      ready: schemaMigrationRuns.length > 0,
+      evidence: `${schemaMigrationRuns.length} migration ledger rows`
+    }
+  ];
+  const livePilotRowProofReadyGroups = livePilotRowProofRows.filter((row) => row.required && row.ready).length;
+  const livePilotRowProofRequiredGroups = livePilotRowProofRows.filter((row) => row.required).length;
+  const livePilotRowProof: LivePilotRowProof = {
+    source: authSession && accountContext ? "signed_in_supabase_rows" : "preview_or_logged_out",
+    accepted: Boolean(authSession && accountContext) && livePilotRowProofReadyGroups === livePilotRowProofRequiredGroups,
+    readyGroups: livePilotRowProofReadyGroups,
+    totalRequiredGroups: livePilotRowProofRequiredGroups,
+    missingRequiredGroups: livePilotRowProofRows.filter((row) => row.required && !row.ready).map((row) => row.label),
+    rows: livePilotRowProofRows
+  };
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -13612,6 +13754,7 @@ function App() {
                 <ConsentPolicyMatrixPanel />
                 <PlanAlignmentPanel
                   disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
+                  livePilotRowProof={livePilotRowProof}
                   onRecordPilotLaunchContact={recordLivePilotLaunchContact}
                   onRecordGateDecision={recordLiveProductionGateDecision}
                   pilotLaunchContacts={pilotLaunchContacts}

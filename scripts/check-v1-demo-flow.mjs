@@ -104,6 +104,8 @@ const flowChecks = [
     label: "Working database acceptance rejects preview-only evidence",
     required: [
       "Working database command center",
+      "Live pilot row proof",
+      "live_pilot_row_proof",
       "Preview data is not accepted for v1 database proof",
       "Export working-data packet",
       "Seed reconciliation",
@@ -126,6 +128,7 @@ const flowChecks = [
     label: "Admin launch readiness keeps human gates visible",
     required: [
       "V1 completion audit packet",
+      "required Supabase row groups loaded",
       "Human decision gates",
       "Security review checklist",
       "Production gate register",

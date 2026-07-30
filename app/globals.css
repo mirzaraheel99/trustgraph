@@ -10939,7 +10939,8 @@ p {
 .metrics-grid,
 .signed-in-landing-grid,
 .dashboard-start-map-grid,
-.proof-export-hub-grid {
+.proof-export-hub-grid,
+.live-pilot-row-proof-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
 }
 
@@ -10974,11 +10975,65 @@ p {
 .signed-in-landing-grid article,
 .dashboard-start-map-grid article,
 .proof-export-hub-grid article,
+.live-pilot-row-proof-grid article,
 .corporate-task-grid article,
 .corporate-operating-plan-grid article,
 .corporate-live-retest-grid article {
   min-width: 0;
   overflow: hidden;
+}
+
+.live-pilot-row-proof {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 18px);
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.065), rgba(255, 255, 255, 0.018)),
+    rgba(8, 17, 20, 0.72);
+}
+
+.live-pilot-row-proof-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.live-pilot-row-proof-top > div,
+.live-pilot-row-proof-grid article > div {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.live-pilot-row-proof strong,
+.live-pilot-row-proof small,
+.live-pilot-row-proof span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-pilot-row-proof-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.live-pilot-row-proof-grid article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.live-pilot-row-proof-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.26);
+  background: rgba(95, 240, 201, 0.07);
 }
 
 .setup-panel-grid {
@@ -11002,6 +11057,10 @@ p {
 .operations-controls,
 .missing-controls,
 .grant-controls,
+.consent-controls,
+.reference-controls,
+.billing-controls,
+.pilot-contact-form,
 .production-gate-form {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
 }
@@ -11022,9 +11081,34 @@ p {
 .missing-controls select,
 .grant-controls input,
 .grant-controls select,
+.consent-controls input,
+.consent-controls select,
+.reference-controls input,
+.reference-controls select,
+.billing-controls input,
+.billing-controls select,
+.pilot-contact-form input,
+.pilot-contact-form select,
 .production-gate-form input,
 .production-gate-form select {
   min-width: 0;
+}
+
+.account-admin-row button,
+.team-controls button,
+.directory-controls button,
+.audit-controls button,
+.evidence-controls button,
+.operations-controls button,
+.missing-controls button,
+.grant-controls button,
+.consent-controls button,
+.reference-controls button,
+.billing-controls button,
+.pilot-contact-form button,
+.production-gate-form button {
+  min-width: 0;
+  white-space: normal;
 }
 
 @media (max-width: 980px) {
@@ -11055,6 +11139,7 @@ p {
   .signed-in-landing-actions,
   .dashboard-start-map,
   .proof-export-hub,
+  .live-pilot-row-proof,
   .workspace-admin-grid {
     border-radius: 8px;
     padding: 12px;
@@ -11077,5 +11162,9 @@ p {
   .workspace-route-strip button,
   .workspace-flow-strip button {
     flex-basis: 100%;
+  }
+
+  .live-pilot-row-proof-top {
+    grid-template-columns: 1fr;
   }
 }
