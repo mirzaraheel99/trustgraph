@@ -1256,9 +1256,12 @@ button {
 .app span,
 .app label,
 .app input,
-.app select,
-.app button {
+.app select {
   overflow-wrap: anywhere;
+}
+
+.app button {
+  overflow-wrap: normal;
 }
 
 .brand {
@@ -1399,6 +1402,7 @@ p,
   justify-content: center;
   min-height: 34px;
   width: 100%;
+  white-space: nowrap;
 }
 
 .workspace-button.active {
