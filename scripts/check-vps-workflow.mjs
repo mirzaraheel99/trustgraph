@@ -23,6 +23,14 @@ const requiredSnippets = [
     label: "remote path is locked to /opt/trustgraph"
   },
   {
+    snippet: "repository secret TRUSTGRAPH_VPS_USER is required.",
+    label: "missing VPS user secret produces an explicit error"
+  },
+  {
+    snippet: "repository secret TRUSTGRAPH_VPS_SSH_KEY is required.",
+    label: "missing VPS SSH key secret produces an explicit error"
+  },
+  {
     snippet: "Use the VPS IP for SSH, not the protected VFIX public hostname.",
     label: "VFIX public hostname is refused for SSH target"
   },

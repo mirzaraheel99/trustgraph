@@ -35,10 +35,15 @@ jobs:
     steps:
       - name: Validate target
         run: |
-          test -n "$VPS_HOST"
-          test -n "$VPS_USER"
-          test -n "$VPS_SSH_KEY"
-          test -n "$PUBLIC_URL"
+          fail() {
+            echo "TrustGraph VPS deploy validation failed: $*" >&2
+            exit 1
+          }
+
+          test -n "$VPS_HOST" || fail "target_host input is required."
+          test -n "$VPS_USER" || fail "repository secret TRUSTGRAPH_VPS_USER is required."
+          test -n "$VPS_SSH_KEY" || fail "repository secret TRUSTGRAPH_VPS_SSH_KEY is required."
+          test -n "$PUBLIC_URL" || fail "public_url input is required."
           test "$REMOTE_PATH" = "/opt/trustgraph"
           case "$VPS_HOST" in
             5-75-224-110.sslip.io)
