@@ -340,7 +340,7 @@ function RecordDetail({
     evidenceSummary: string;
     file: File | null;
   }) => Promise<void>;
-  onOpenEvidence: (document: DbEvidenceDocument, mode: "preview" | "download") => Promise<void>;
+  onOpenEvidence: (document: DbEvidenceDocument, mode: "preview" | "download") => Promise<{ signedUrl: string; expiresIn: number }>;
   onUpdate: (input: {
     recordId: string;
     title: string;
@@ -374,6 +374,12 @@ function RecordDetail({
   const [busy, setBusy] = useState(false);
   const [evidenceBusy, setEvidenceBusy] = useState(false);
   const [openingEvidenceId, setOpeningEvidenceId] = useState<string | null>(null);
+  const [lastEvidenceLink, setLastEvidenceLink] = useState<{
+    documentTitle: string;
+    mode: "preview" | "download";
+    expiresAt: string;
+    urlHost: string;
+  } | null>(null);
   const [evidenceQuery, setEvidenceQuery] = useState("");
   const [evidenceStatusFilter, setEvidenceStatusFilter] = useState<"all" | "uploaded" | "classified" | "linked" | "restricted" | "rejected" | "archived">("all");
   const linkedEvidenceCount = evidenceDocuments.filter((document) => document.status === "linked").length;
@@ -470,6 +476,7 @@ function RecordDetail({
     },
     evidence_preview_download_ledger: evidencePreviewDownloadLedger,
     evidence_access_chain: evidenceAccessChain,
+    last_signed_evidence_link: lastEvidenceLink,
     documents: filteredEvidenceDocuments.map((document) => ({
       id: document.id,
       title: document.title,
@@ -502,6 +509,7 @@ function RecordDetail({
     setEvidenceMessage("Attach evidence metadata to selected record");
     setEvidenceQuery("");
     setEvidenceStatusFilter("all");
+    setLastEvidenceLink(null);
   }, [record]);
 
   async function submitUpdate(event: FormEvent<HTMLFormElement>) {
@@ -560,7 +568,14 @@ function RecordDetail({
     setOpeningEvidenceId(document.id);
     setEvidenceMessage(mode === "preview" ? "Creating preview link..." : "Creating download link...");
     try {
-      await onOpenEvidence(document, mode);
+      const result = await onOpenEvidence(document, mode);
+      const expiresAt = new Date(Date.now() + result.expiresIn * 1000).toISOString();
+      setLastEvidenceLink({
+        documentTitle: document.title,
+        mode,
+        expiresAt,
+        urlHost: new URL(result.signedUrl).host
+      });
       setEvidenceMessage(mode === "preview" ? "Preview link opened" : "Download link opened");
     } catch (error) {
       setEvidenceMessage(error instanceof Error ? error.message : "Could not open evidence file");
@@ -690,6 +705,17 @@ function RecordDetail({
                   </div>
                 </article>
               ))}
+            </div>
+            <div className="last-signed-evidence-link" aria-label="Last signed evidence link">
+              <div>
+                <span className={`status-chip ${lastEvidenceLink ? "success" : "neutral"}`}>Last signed evidence link</span>
+                <strong>{lastEvidenceLink ? lastEvidenceLink.documentTitle : "No signed link opened yet"}</strong>
+                <small>
+                  {lastEvidenceLink
+                    ? `${lastEvidenceLink.mode} link issued from ${lastEvidenceLink.urlHost}; expires ${new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(lastEvidenceLink.expiresAt))}.`
+                    : "Use Preview or Download on a file-backed evidence row to generate short-lived signed-link proof."}
+                </small>
+              </div>
             </div>
           </>
         ) : null}
@@ -11837,15 +11863,18 @@ function App() {
       throw new Error("This evidence item has metadata only; no file is attached.");
     }
 
+    const expiresIn = mode === "download" ? 120 : 300;
     const signedUrl = await createEvidenceDownloadUrl({
       accessToken: authSession.accessToken,
       storagePath: document.storage_path,
-      expiresIn: mode === "download" ? 120 : 300
+      expiresIn
     });
 
     if (typeof window !== "undefined") {
       window.open(signedUrl, "_blank", "noopener,noreferrer");
     }
+
+    return { signedUrl, expiresIn };
   }
 
   async function createLiveReferenceRequest(input: {

@@ -88,6 +88,8 @@ const flowChecks = [
       "Professional Passport setup",
       "Evidence metadata",
       "Signed evidence links",
+      "Last signed evidence link",
+      "last_signed_evidence_link",
       "Export access packet"
     ]
   },

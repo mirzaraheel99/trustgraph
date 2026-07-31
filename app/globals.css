@@ -2439,6 +2439,30 @@ p,
   white-space: normal;
 }
 
+.last-signed-evidence-link {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.07), rgba(255, 255, 255, 0.018)),
+    rgba(255, 255, 255, 0.024);
+}
+
+.last-signed-evidence-link > div,
+.last-signed-evidence-link strong,
+.last-signed-evidence-link small,
+.last-signed-evidence-link span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.last-signed-evidence-link > div {
+  display: grid;
+  gap: 6px;
+}
+
 .auth-access-command-grid span {
   color: var(--teal);
   font-size: 11px;
@@ -11076,6 +11100,11 @@ p {
 .live-pilot-row-proof-grid article.ready {
   border-color: rgba(95, 240, 201, 0.26);
   background: rgba(95, 240, 201, 0.07);
+}
+
+.last-signed-evidence-link {
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .setup-panel-grid {

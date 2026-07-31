@@ -250,6 +250,8 @@ assertIncludesAny(bundleText, ["Evidence preview/download proof"], "evidence pre
 assertIncludesAny(bundleText, ["Evidence preview/download ledger"], "evidence preview/download ledger label");
 assertIncludesAny(bundleText, ["evidence_preview_download_ledger"], "evidence preview/download ledger packet field");
 assertIncludesAny(bundleText, ["Signed preview ready"], "evidence signed preview readiness label");
+assertIncludesAny(bundleText, ["Last signed evidence link"], "last signed evidence link visible state");
+assertIncludesAny(bundleText, ["last_signed_evidence_link"], "last signed evidence link packet field");
 assertIncludesAny(bundleText, ["Evidence access chain"], "evidence access chain panel");
 assertIncludesAny(bundleText, ["evidence_access_chain"], "evidence access chain packet field");
 assertIncludesAny(bundleText, ["Audit expectation"], "evidence audit expectation step");
