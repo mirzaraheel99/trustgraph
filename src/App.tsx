@@ -8822,6 +8822,7 @@ function AuthPanel({
   const loginDecisionPacket = {
     generated_at: new Date().toISOString(),
     mode: "login_decision_path",
+    default_selection_marker: "Professional account path selected",
     selected_path: activeLoginPath.id,
     selected_label: activeLoginPath.label,
     route_after_login: activeLoginPath.route,
