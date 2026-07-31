@@ -211,6 +211,9 @@ assertIncludesAny(bundleText, ["dashboard_next_action"], "authorized report dash
 assertIncludesAny(bundleText, ["Login or register before live database work"], "dashboard next-action login state");
 assertIncludesAny(bundleText, ["Request approved user access for Corporate Verify"], "dashboard next-action corporate Verify state");
 assertIncludesAny(bundleText, ["V1 portal launchpad"], "signed-in first-screen portal launchpad");
+assertIncludesAny(bundleText, ["Today command center"], "signed-in first-screen daily command center");
+assertIncludesAny(bundleText, ["today_command_center"], "today command center packet field");
+assertIncludesAny(bundleText, ["first_screen_daily_command_center_separates_professional_corporate_company_setup_account_logout_pricing_and_database_proof_without_overflow"], "today command center acceptance rule");
 assertIncludesAny(bundleText, ["V1 command cockpit"], "signed-in first-screen V1 command cockpit");
 assertIncludesAny(bundleText, ["v1_command_cockpit"], "V1 command cockpit packet field");
 assertIncludesAny(bundleText, ["Website, login, Professional Passport, Corporate Verify, pricing"], "V1 command cockpit plain-language launch path");

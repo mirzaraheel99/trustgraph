@@ -19205,6 +19205,49 @@ function App() {
             ? "Admin"
             : "Account"
   }));
+  const todayCommandCenter = {
+    mode: "today_command_center",
+    source: authSession ? "live_session" : "login_required",
+    current_portal: workspace.label,
+    account: authSession ? authSession.user.email : "not_signed_in",
+    primary_next_action: authSession ? `Continue ${workspace.label}` : "Login or register",
+    accepted_when:
+      "first_screen_daily_command_center_separates_professional_corporate_company_setup_account_logout_pricing_and_database_proof_without_overflow"
+  };
+  const todayCommandCards = [
+    {
+      label: "Personal",
+      value: "Professional Passport",
+      detail: "Your profile, records, evidence, references, consent, and sharing.",
+      action: authSession ? "Open Passport" : "Login first",
+      target: "passport" as const,
+      ready: Boolean(authSession)
+    },
+    {
+      label: "Corporate",
+      value: "Corporate Verify",
+      detail: "Request user access, review approved shared rows, and export scoped proof.",
+      action: hasLiveCorporateContext ? "Open Verify" : "Setup company",
+      target: hasLiveCorporateContext ? ("verify" as const) : ("corporate_setup" as const),
+      ready: hasLiveCorporateContext
+    },
+    {
+      label: "Company",
+      value: "Setup and roles",
+      detail: "Create organization, roles, invitations, pricing ledger, and readiness.",
+      action: "Open setup",
+      target: "corporate_setup" as const,
+      ready: hasLiveCorporateContext && canManageCorporateSetup
+    },
+    {
+      label: "Account",
+      value: authSession ? "Signed in" : "Login/register",
+      detail: authSession ? authSession.user.email : "Hosted login, registration, password reset, and email link repair.",
+      action: authSession ? "Account tools" : "Login",
+      target: "account" as const,
+      ready: Boolean(authSession)
+    }
+  ];
   const signedInPortalFlowContract = {
     mode: "signed_in_portal_flow_contract",
     signed_in: Boolean(authSession),
@@ -20858,6 +20901,81 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="today-command-center" aria-label="Today command center">
+          <div className="today-command-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Today command center</span>
+            <strong>{authSession ? `Continue as ${activeRole.label}` : "Start with one clear portal"}</strong>
+            <small>
+              Pick Personal for your own Passport, Corporate for approved user review, Company for setup and roles, or Account for login, logout, and recovery.
+            </small>
+            <div className="today-command-actions">
+              <button className="primary-action" onClick={authSession ? () => openWorkspaceOrSetup(workspace.id) : openAuthControls} type="button">
+                {authSession ? `Continue ${workspace.label}` : "Login or register"}
+              </button>
+              <button className="secondary-action" onClick={() => setSetupView("billing")} type="button">
+                Pricing
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Database proof
+              </button>
+              {authSession ? (
+                <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Sign out
+                </button>
+              ) : null}
+            </div>
+          </div>
+          <div className="today-command-grid">
+            {todayCommandCards.map((card) => (
+              <button
+                className={`${card.ready ? "ready" : "next"} ${card.target === workspace.id || (card.target === "account" && setupView === "account") ? "current" : ""}`}
+                key={card.label}
+                onClick={() => {
+                  if (card.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (card.target === "corporate_setup") {
+                    openCorporateControls();
+                    return;
+                  }
+                  openWorkspaceOrSetup(card.target);
+                }}
+                type="button"
+              >
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+                <b>{card.action}</b>
+              </button>
+            ))}
+          </div>
+          <div className="today-command-proof">
+            <span>
+              <strong>{todayCommandCenter.current_portal}</strong>
+              <small>Current portal</small>
+            </span>
+            <span>
+              <strong>{authSession ? "Live session" : "Login required"}</strong>
+              <small>{todayCommandCenter.account}</small>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-today-command-center-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...todayCommandCenter, cards: todayCommandCards }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export command
+            </button>
+          </div>
+        </section>
 
         <section className="portal-usability-command" aria-label="Portal usability command">
           <div className="portal-usability-command-header">

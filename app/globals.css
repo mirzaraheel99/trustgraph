@@ -19065,6 +19065,7 @@ body {
 }
 
 .topbar,
+.today-command-center,
 .v1-command-cockpit,
 .v1-portal-launchpad,
 .role-workspace-switchboard,
@@ -19099,6 +19100,169 @@ body {
 
 .topbar p {
   max-width: 72ch;
+}
+
+.today-command-center {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.42fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  padding: 18px;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.12), rgba(134, 174, 246, 0.055) 58%, transparent),
+    rgba(6, 18, 20, 0.94);
+  box-shadow: 0 26px 86px rgba(0, 0, 0, 0.3);
+}
+
+.today-command-copy,
+.today-command-proof span {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  min-width: 0;
+}
+
+.today-command-copy strong,
+.today-command-copy small,
+.today-command-grid span,
+.today-command-grid strong,
+.today-command-grid small,
+.today-command-grid b,
+.today-command-proof strong,
+.today-command-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.today-command-copy > strong {
+  color: var(--text);
+  font-size: clamp(28px, 3vw, 48px);
+  line-height: 1.02;
+}
+
+.today-command-copy > small {
+  max-width: 58ch;
+  color: rgba(222, 239, 233, 0.74);
+  line-height: 1.5;
+}
+
+.today-command-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.today-command-actions button {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  white-space: normal;
+}
+
+.today-command-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.today-command-grid button {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  min-height: 174px;
+  padding: 15px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.036);
+  box-shadow: none;
+  white-space: normal;
+}
+
+.today-command-grid button.ready {
+  border-color: rgba(92, 236, 193, 0.34);
+  background: rgba(82, 214, 196, 0.08);
+}
+
+.today-command-grid button.next {
+  border-color: rgba(240, 198, 107, 0.26);
+}
+
+.today-command-grid button.current {
+  border-color: rgba(240, 198, 107, 0.42);
+  background:
+    linear-gradient(135deg, rgba(240, 198, 107, 0.11), transparent 62%),
+    rgba(255, 255, 255, 0.045);
+}
+
+.today-command-grid button:hover {
+  border-color: rgba(210, 231, 223, 0.28);
+  background-color: rgba(255, 255, 255, 0.058);
+}
+
+.today-command-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.today-command-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.12;
+}
+
+.today-command-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.today-command-grid b {
+  align-self: end;
+  color: #f8fffb;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.today-command-proof {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(210, 231, 223, 0.1);
+}
+
+.today-command-proof span,
+.today-command-proof button {
+  min-width: 0;
+}
+
+.today-command-proof span {
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.today-command-proof strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.today-command-proof small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .v1-command-cockpit {
@@ -20275,6 +20439,7 @@ body {
 
 @media (max-width: 1180px) {
   .dashboard-next-action,
+  .today-command-center,
   .v1-command-cockpit,
   .v1-portal-launchpad,
   .role-workspace-switchboard,
@@ -20301,6 +20466,9 @@ body {
   }
 
   .session-command-bar,
+  .today-command-actions,
+  .today-command-grid,
+  .today-command-proof,
   .v1-command-cockpit-lanes,
   .v1-command-cockpit-proof,
   .workspace-route-strip,
@@ -20335,6 +20503,8 @@ body {
   }
 
   .dashboard-next-action-buttons button,
+  .today-command-actions button,
+  .today-command-grid button,
   .role-workspace-switchboard-grid button,
   .portal-home-actions button,
   .workspace-command-actions button,
