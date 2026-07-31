@@ -38,6 +38,7 @@ assert(authenticatedRender.includes('aria-label="VPS deploy secrets checklist"')
 assert(app.includes("trustgraph-release.json"), "signed-in dashboard must expose the VPS release stamp verification command.");
 assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in dashboard must expose the end-to-end V1 operating map.");
 assert(authenticatedRender.includes('aria-label="Portal action dock"'), "signed-in dashboard must expose a compact portal action dock.");
+assert(authenticatedRender.includes('aria-label="Portal usability command"'), "signed-in dashboard must expose one clear personal, corporate, pricing, database, recovery, and server guide.");
 assert(authenticatedRender.includes('aria-label="Portal welcome path"'), "signed-in dashboard must expose a simple portal welcome path.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
 assert(authenticatedRender.includes('aria-label="Live database contract"'), "V1 cockpit must expose the live database contract.");
@@ -106,6 +107,7 @@ assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: no
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(css.includes(".portal-action-dock") && css.includes(".export-dock"), "portal action dock must be styled and bounded.");
+assert(css.includes(".portal-usability-command") && css.includes(".portal-usability-command-grid") && app.includes("first_signed_in_screen_has_one_clear_personal_corporate_pricing_database_account_and_server_command_without_sidebar_or_horizontal_overflow"), "portal usability command must be styled, bounded, and acceptance checked.");
 assert(consoleLayout.includes(".v1-portal-launchpad") && consoleLayout.includes(".v1-portal-launchpad-grid") && consoleLayout.includes(".v1-portal-launchpad-proof"), "V1 portal launchpad must be styled and bounded.");
 assert(app.includes('aria-label="Portal readiness board"'), "signed-in dashboard must expose a portal readiness board for login, Professional, Corporate, pricing, database, and server save.");
 assert(app.includes("portal_readiness_board") && app.includes("preview_data_accepted: false"), "portal readiness board packet must reject preview data as completion proof.");

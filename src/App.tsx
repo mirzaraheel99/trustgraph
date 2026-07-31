@@ -20459,6 +20459,72 @@ function App() {
       detail: "Workspace routes and portal paths use full-width grid rows on narrow screens."
     }
   ];
+  const portalUsabilityCommand = {
+    mode: "portal_usability_command",
+    source: authSession ? "live_session" : "preview_or_logged_out",
+    current_portal: workspace.label,
+    active_account: authSession ? authSession.user.email : "login_required",
+    accepted_when:
+      "first_signed_in_screen_has_one_clear_personal_corporate_pricing_database_account_and_server_command_without_sidebar_or_horizontal_overflow"
+  };
+  const portalUsabilityActions = [
+    {
+      label: "Personal Passport",
+      detail: "Own profile, evidence, references, sharing, and account recovery.",
+      status: authSession ? "Ready" : "Login first",
+      icon: Fingerprint,
+      target: "passport" as const,
+      action: "Open personal"
+    },
+    {
+      label: "Corporate Verify",
+      detail: "Company reviewers see approved user database rows and request missing records.",
+      status: hasLiveCorporateContext ? "Workspace ready" : "Setup needed",
+      icon: BriefcaseBusiness,
+      target: "verify" as const,
+      action: "Open corporate"
+    },
+    {
+      label: "Corporate setup",
+      detail: "Create organization, RBAC roles, invitations, and member access.",
+      status: hasLiveCorporateContext ? "Created" : "Next setup",
+      icon: Users,
+      target: "corporate_setup" as const,
+      action: "Setup company"
+    },
+    {
+      label: "Pricing",
+      detail: "Review Professional and Corporate pilot pricing before paid Stripe launch.",
+      status: subscriptionPlans.length ? "Plans loaded" : "Catalog needed",
+      icon: BadgeCheck,
+      target: "billing" as const,
+      action: "View pricing"
+    },
+    {
+      label: "Database proof",
+      detail: "Check live Supabase rows, scoped exports, and preview-data rejection.",
+      status: liveDatabaseContract.accepted ? "Live proof ready" : "Proof needed",
+      icon: Database,
+      target: "proof" as const,
+      action: "Check proof"
+    },
+    {
+      label: "Account recovery",
+      detail: "Logout, reset password, and repair hosted verification links.",
+      status: authSession ? "Available" : "Login desk",
+      icon: KeyRound,
+      target: "account" as const,
+      action: "Open account"
+    },
+    {
+      label: "Server sync",
+      detail: "Confirm GitHub source, VPS release stamp, and VFIX isolation.",
+      status: serverSyncMonitor.status === "synced" ? "VPS synced" : "VPS pull needed",
+      icon: Network,
+      target: "server_packet" as const,
+      action: "Export server"
+    }
+  ];
 
   if (showPublicSite) {
     return (
@@ -20607,6 +20673,73 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="portal-usability-command" aria-label="Portal usability command">
+          <div className="portal-usability-command-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Portal guide</span>
+              <strong>Choose one clear path before working in the dense tools</strong>
+              <small>{portalUsabilityCommand.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-portal-usability-command-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...portalUsabilityCommand, actions: portalUsabilityActions.map(({ icon: _icon, ...item }) => item) }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export guide
+            </button>
+          </div>
+          <div className="portal-usability-command-grid">
+            {portalUsabilityActions.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  className={item.target === workspace.id || (item.target === "corporate_setup" && setupView === "corporate") ? "current" : ""}
+                  key={item.label}
+                  onClick={() => {
+                    if (item.target === "account") {
+                      openAuthControls();
+                      return;
+                    }
+                    if (item.target === "corporate_setup") {
+                      openCorporateControls();
+                      return;
+                    }
+                    if (item.target === "billing") {
+                      setSetupView("billing");
+                      document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    if (item.target === "proof") {
+                      document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    if (item.target === "server_packet") {
+                      downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                      return;
+                    }
+                    openWorkspaceOrSetup(item.target);
+                  }}
+                  type="button"
+                >
+                  <span>
+                    <Icon size={18} />
+                  </span>
+                  <strong>{item.label}</strong>
+                  <small>{item.detail}</small>
+                  <em>{item.status}</em>
+                  <b>{item.action}</b>
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
         <nav className="portal-action-dock" aria-label="Portal action dock">
           {portalActionDock.map((item) => (

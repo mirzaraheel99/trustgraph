@@ -14888,6 +14888,9 @@ p {
   .public-auth-section,
   .public-portal-rail,
   .public-session-handoff,
+  .portal-usability-command,
+  .portal-usability-command-header,
+  .portal-usability-command-grid,
   .portal-action-dock,
   .portal-welcome-path,
   .portal-welcome-path-header,
@@ -17434,6 +17437,117 @@ body {
   color: var(--muted);
   font-size: 11px;
   line-height: 1.22;
+}
+
+.portal-usability-command {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.13);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.08), rgba(134, 174, 246, 0.06) 58%, transparent),
+    rgba(9, 22, 23, 0.82);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.24);
+}
+
+.portal-usability-command-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.portal-usability-command-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.portal-usability-command-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 9px;
+}
+
+.portal-usability-command-grid button {
+  display: grid;
+  grid-template-rows: auto auto minmax(44px, 1fr) auto auto;
+  gap: 7px;
+  min-width: 0;
+  min-height: 178px;
+  padding: 13px;
+  justify-items: start;
+  text-align: left;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.portal-usability-command-grid button.current {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.portal-usability-command-grid button > span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(95, 240, 201, 0.26);
+  border-radius: 8px;
+  color: #bffff0;
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.portal-usability-command strong,
+.portal-usability-command small,
+.portal-usability-command span,
+.portal-usability-command em,
+.portal-usability-command b {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.portal-usability-command-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 1.8vw, 28px);
+  line-height: 1.12;
+}
+
+.portal-usability-command-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+}
+
+.portal-usability-command small {
+  color: rgba(222, 239, 233, 0.7);
+  line-height: 1.38;
+}
+
+.portal-usability-command-grid em,
+.portal-usability-command-grid b {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.portal-usability-command-grid em {
+  color: rgba(222, 239, 233, 0.64);
+}
+
+.portal-usability-command-grid b {
+  width: fit-content;
+  padding: 6px 9px;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 999px;
+  color: #91ffd8;
+  background: rgba(95, 240, 201, 0.07);
 }
 
 .portal-home-command {
