@@ -55,6 +55,7 @@ import type {
   DbReferenceRequest,
   DbRegistrationIntent,
   DbSchemaMigrationRun,
+  DbSecurityRlsReviewReceipt,
   DbSubscriptionPlan,
   DbV1LiveDatabaseReadinessReceipt,
   DbVerificationCase,
@@ -173,6 +174,7 @@ import {
 import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
 import { loadPilotLaunchContacts, recordPilotLaunchContact } from "./pilotLaunchRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
+import { loadSecurityRlsReviewReceipts, recordSecurityRlsReviewReceipt } from "./securityRepository";
 import { isSupabaseConfigured } from "./supabase";
 import { loadV1LiveDatabaseReadinessReceipts, recordV1LiveDatabaseReadinessReceipt } from "./v1ReadinessRepository";
 import {
@@ -214,6 +216,8 @@ const ONBOARDING_WIZARD_RECEIPT_ACCEPTANCE_RULE =
   "onboarding_wizard_receipt_requires_hosted_login_account_context_registration_corporate_setup_pricing_user_database_and_preview_data_rejected";
 const AUTH_RECOVERY_RECEIPT_ACCEPTANCE_RULE =
   "auth_recovery_receipt_requires_hosted_redirect_email_rate_limit_guidance_localhost_link_repair_and_signed_in_owner_scope";
+const SECURITY_RLS_REVIEW_RECEIPT_ACCEPTANCE_RULE =
+  "security_rls_review_receipt_requires_ci_rls_guard_private_evidence_signed_url_review_rbac_audit_exports_and_external_signoff_before_production_traffic";
 
 type LivePilotRowProof = {
   source: "signed_in_supabase_rows" | "preview_or_logged_out";
@@ -7294,20 +7298,35 @@ function SecurityReviewPanel({
   auditEvents,
   consentAuthorizations,
   evidenceDocuments,
+  securityRlsReviewReceipts,
   schemaMigrationRuns,
   subscriptions,
   teamMembers,
-  webhookSubscriptions
+  webhookSubscriptions,
+  onRecordSecurityReceipt
 }: {
   apiClients: DbApiClient[];
   auditEvents: DbAuditEvent[];
   consentAuthorizations: DbConsentAuthorization[];
   evidenceDocuments: DbEvidenceDocument[];
+  securityRlsReviewReceipts: DbSecurityRlsReviewReceipt[];
   schemaMigrationRuns: DbSchemaMigrationRun[];
   subscriptions: DbOrganizationSubscription[];
   teamMembers: OrganizationMemberView[];
   webhookSubscriptions: DbWebhookSubscription[];
+  onRecordSecurityReceipt: (input: {
+    status: DbSecurityRlsReviewReceipt["status"];
+    rlsProtectedTableCount: number;
+    checksReady: number;
+    checksTotal: number;
+    migrationLedgerRows: number;
+    auditEventCount: number;
+    openSecurityItems: string[];
+    externalSignoffRecorded: boolean;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
 }) {
+  const [receiptBusy, setReceiptBusy] = useState(false);
   const rlsProtectedTables = [
     "organizations",
     "profiles",
@@ -7389,6 +7408,7 @@ function SecurityReviewPanel({
   ];
   const completed = checks.filter((check) => check.done).length;
   const openChecks = checks.filter((check) => !check.done);
+  const latestSecurityRlsReviewReceipt = securityRlsReviewReceipts[0] ?? null;
   const securitySignoffRows = [
     {
       label: "RLS coverage",
@@ -7479,6 +7499,35 @@ function SecurityReviewPanel({
   const signoffPacketName = `trustgraph-security-rls-signoff-${new Date().toISOString().slice(0, 10)}.json`;
   const reviewReceiptName = `trustgraph-v1-security-rls-review-receipt-${new Date().toISOString().slice(0, 10)}.json`;
 
+  async function saveSecurityReviewReceipt() {
+    setReceiptBusy(true);
+    try {
+      await onRecordSecurityReceipt({
+        status: openChecks.length ? "external_review_required" : "ready_for_external_review",
+        rlsProtectedTableCount: rlsProtectedTables.length,
+        checksReady: completed,
+        checksTotal: checks.length,
+        migrationLedgerRows: schemaMigrationRuns.length,
+        auditEventCount: auditEvents.length,
+        openSecurityItems: openChecks.map((check) => check.label),
+        externalSignoffRecorded: false,
+        metadata: {
+          security_signoff_packet: securitySignoffPacket,
+          v1_security_review_receipt: v1SecurityReviewReceipt,
+          acceptance_rule: SECURITY_RLS_REVIEW_RECEIPT_ACCEPTANCE_RULE,
+          api_clients: apiClients.length,
+          webhooks: webhookSubscriptions.length,
+          subscriptions: subscriptions.length,
+          team_members: teamMembers.length,
+          consent_authorizations: consentAuthorizations.length,
+          evidence_documents: evidenceDocuments.length
+        }
+      });
+    } finally {
+      setReceiptBusy(false);
+    }
+  }
+
   return (
     <section className="security-review-panel">
       <div className="mini-heading">
@@ -7499,6 +7548,40 @@ function SecurityReviewPanel({
         </button>
         <button className="secondary-action" onClick={() => downloadTextFile(reviewReceiptName, JSON.stringify(v1SecurityReviewReceipt, null, 2), "application/json")} type="button">
           Export review receipt
+        </button>
+      </div>
+      <div className="security-rls-database-receipt" aria-label="Security RLS database receipt">
+        <div>
+          <span className={`status-chip ${latestSecurityRlsReviewReceipt ? "success" : "warning"}`}>Security RLS database receipt</span>
+          <strong>
+            {latestSecurityRlsReviewReceipt
+              ? `${latestSecurityRlsReviewReceipt.checks_ready}/${latestSecurityRlsReviewReceipt.checks_total} checks saved`
+              : "Save security review proof to Supabase"}
+          </strong>
+          <small>
+            Persists CI RLS coverage, private evidence review boundary, RBAC/audit export status, open security items, and the rule that production traffic remains blocked until external signoff.
+          </small>
+        </div>
+        <div className="security-rls-database-grid">
+          <span>
+            <strong>{securityRlsReviewReceipts.length}</strong>
+            <small>Receipt rows</small>
+          </span>
+          <span>
+            <strong>{latestSecurityRlsReviewReceipt?.rls_protected_table_count ?? rlsProtectedTables.length}</strong>
+            <small>RLS tables</small>
+          </span>
+          <span>
+            <strong>{latestSecurityRlsReviewReceipt?.open_security_items.length ?? openChecks.length}</strong>
+            <small>Open items</small>
+          </span>
+          <span>
+            <strong>{latestSecurityRlsReviewReceipt?.production_traffic_allowed ? "Allowed" : "Blocked"}</strong>
+            <small>Production traffic</small>
+          </span>
+        </div>
+        <button className="secondary-action" disabled={receiptBusy} onClick={() => void saveSecurityReviewReceipt()} type="button">
+          Record security receipt
         </button>
       </div>
       <div className="security-signoff-packet" aria-label="Security RLS signoff packet">
@@ -15319,6 +15402,7 @@ function App() {
   const [auditEvents, setAuditEvents] = useState<DbAuditEvent[]>([]);
   const [auditStatus, setAuditStatus] = useState("Switch to Admin role for audit events");
   const [schemaMigrationRuns, setSchemaMigrationRuns] = useState<DbSchemaMigrationRun[]>([]);
+  const [securityRlsReviewReceipts, setSecurityRlsReviewReceipts] = useState<DbSecurityRlsReviewReceipt[]>([]);
   const [productionGateDecisions, setProductionGateDecisions] = useState<DbProductionGateDecision[]>([]);
   const [pilotLaunchContacts, setPilotLaunchContacts] = useState<DbPilotLaunchContact[]>([]);
   const [releaseStatus, setReleaseStatus] = useState("Switch to Admin role for release ledger");
@@ -15909,6 +15993,7 @@ function App() {
       setAuditEvents([]);
       setAuditStatus("Switch to Admin role for audit events");
       setSchemaMigrationRuns([]);
+      setSecurityRlsReviewReceipts([]);
       setProductionGateDecisions([]);
       setPilotLaunchContacts([]);
       setReleaseStatus("Switch to Admin role for release ledger");
@@ -15924,6 +16009,7 @@ function App() {
       setAuditEvents([]);
       setAuditStatus("Active role cannot access audit events");
       setSchemaMigrationRuns([]);
+      setSecurityRlsReviewReceipts([]);
       setProductionGateDecisions([]);
       setPilotLaunchContacts([]);
       setReleaseStatus("Active role cannot access release ledger");
@@ -15943,16 +16029,18 @@ function App() {
       loadVerificationCases(authSession.accessToken),
       loadAuditEvents(authSession.accessToken),
       loadSchemaMigrationRuns(authSession.accessToken).catch(() => []),
+      loadSecurityRlsReviewReceipts(authSession.accessToken).catch(() => []),
       loadProductionGateDecisions(authSession.accessToken).catch(() => []),
       loadPilotLaunchContacts(authSession.accessToken).catch(() => []),
       loadApiClients(authSession.accessToken),
       loadWebhookSubscriptions(authSession.accessToken)
     ])
-      .then(([items, events, migrations, gates, pilotContacts, clients, webhooks]) => {
+      .then(([items, events, migrations, securityReceipts, gates, pilotContacts, clients, webhooks]) => {
         if (cancelled) return;
         setOperationsCases(items);
         setAuditEvents(events);
         setSchemaMigrationRuns(migrations);
+        setSecurityRlsReviewReceipts(securityReceipts);
         setProductionGateDecisions(gates);
         setPilotLaunchContacts(pilotContacts);
         setApiClients(clients);
@@ -15975,6 +16063,7 @@ function App() {
         setOperationsCases([]);
         setAuditEvents([]);
         setSchemaMigrationRuns([]);
+        setSecurityRlsReviewReceipts([]);
         setProductionGateDecisions([]);
         setPilotLaunchContacts([]);
         setApiClients([]);
@@ -18067,6 +18156,48 @@ function App() {
     setAuthRecoveryReceipts(receipts);
     setAuditEvents(events);
     setAccountStatus(`Auth recovery receipt recorded: ${receipt.action_type.replace(/_/g, " ")}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
+  async function recordLiveSecurityRlsReviewReceipt(input: {
+    status: DbSecurityRlsReviewReceipt["status"];
+    rlsProtectedTableCount: number;
+    checksReady: number;
+    checksTotal: number;
+    migrationLedgerRows: number;
+    auditEventCount: number;
+    openSecurityItems: string[];
+    externalSignoffRecorded: boolean;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Login first to record security RLS review proof.");
+    }
+
+    const receipt = await recordSecurityRlsReviewReceipt({
+      accessToken: authSession.accessToken,
+      organizationId: activeMembership.organizationId || null,
+      status: input.status,
+      rlsProtectedTableCount: input.rlsProtectedTableCount,
+      checksReady: input.checksReady,
+      checksTotal: input.checksTotal,
+      migrationLedgerRows: input.migrationLedgerRows,
+      auditEventCount: input.auditEventCount,
+      openSecurityItems: input.openSecurityItems,
+      externalSignoffRecorded: input.externalSignoffRecorded,
+      metadata: {
+        ...input.metadata,
+        source: "signed_in_supabase_security_rls_review",
+        production_traffic_allowed: false
+      }
+    });
+    const [receipts, events] = await Promise.all([
+      loadSecurityRlsReviewReceipts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setSecurityRlsReviewReceipts(receipts);
+    setAuditEvents(events);
+    setReleaseStatus(`Security RLS review receipt recorded: ${receipt.checks_ready}/${receipt.checks_total} checks`);
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
@@ -20264,10 +20395,12 @@ function App() {
                   auditEvents={auditEvents}
                   consentAuthorizations={consentAuthorizations}
                   evidenceDocuments={evidenceDocuments}
+                  securityRlsReviewReceipts={securityRlsReviewReceipts}
                   schemaMigrationRuns={schemaMigrationRuns}
                   subscriptions={organizationSubscriptions}
                   teamMembers={teamMembers}
                   webhookSubscriptions={webhookSubscriptions}
+                  onRecordSecurityReceipt={recordLiveSecurityRlsReviewReceipt}
                 />
                 <ConsentPolicyMatrixPanel />
                 <PlanAlignmentPanel

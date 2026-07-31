@@ -12086,7 +12086,25 @@ p {
     rgba(255, 255, 255, 0.026);
 }
 
+.security-rls-database-receipt {
+  display: grid;
+  gap: 11px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(94, 234, 212, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(94, 234, 212, 0.08), rgba(255, 202, 122, 0.055) 68%),
+    rgba(255, 255, 255, 0.026);
+}
+
 .v1-security-review-receipt > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.security-rls-database-receipt > div:first-child {
   display: grid;
   gap: 7px;
   min-width: 0;
@@ -12094,7 +12112,10 @@ p {
 
 .v1-security-review-receipt strong,
 .v1-security-review-receipt small,
-.v1-security-review-receipt span {
+.v1-security-review-receipt span,
+.security-rls-database-receipt strong,
+.security-rls-database-receipt small,
+.security-rls-database-receipt span {
   display: block;
   min-width: 0;
   overflow-wrap: anywhere;
@@ -12112,12 +12133,29 @@ p {
   gap: 9px;
 }
 
+.security-rls-database-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 9px;
+}
+
 .v1-security-review-grid article {
   display: grid;
   align-content: start;
   gap: 6px;
   min-width: 0;
   min-height: 120px;
+  padding: 11px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.security-rls-database-grid span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 100px;
   padding: 11px;
   border: 1px solid rgba(201, 214, 207, 0.11);
   border-radius: 8px;
@@ -12131,10 +12169,27 @@ p {
   text-transform: uppercase;
 }
 
+.security-rls-database-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
 .v1-security-review-grid strong {
   color: var(--text);
   font-size: 17px;
   line-height: 1.15;
+}
+
+.security-rls-database-grid strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.security-rls-database-receipt > .secondary-action {
+  width: min(100%, 280px);
 }
 
 .v1-security-review-grid small {
@@ -13917,6 +13972,7 @@ p {
   .email-verification-delivery-grid,
   .security-signoff-header,
   .security-signoff-grid,
+  .security-rls-database-grid,
   .v1-security-review-grid,
   .billing-estimate-card,
   .billing-decision-card,

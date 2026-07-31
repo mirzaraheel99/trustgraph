@@ -454,6 +454,24 @@ export interface DbAuthRecoveryReceipt {
   created_at: string;
 }
 
+export interface DbSecurityRlsReviewReceipt {
+  id: string;
+  profile_id: string;
+  organization_id: string | null;
+  status: "external_review_required" | "ready_for_external_review" | "approved_for_pilot";
+  rls_protected_table_count: number;
+  checks_ready: number;
+  checks_total: number;
+  migration_ledger_rows: number;
+  audit_event_count: number;
+  open_security_items: string[];
+  external_signoff_recorded: boolean;
+  production_traffic_allowed: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbRegistrationIntent {
   id: string;
   profile_id: string;

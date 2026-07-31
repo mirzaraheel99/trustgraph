@@ -486,6 +486,15 @@ assertIncludesAny(
   ["auth_recovery_receipt_requires_hosted_redirect_email_rate_limit_guidance_localhost_link_repair_and_signed_in_owner_scope"],
   "auth recovery receipt acceptance rule"
 );
+assertIncludesAny(bundleText, ["security_rls_review_receipts"], "security RLS review receipt table");
+assertIncludesAny(bundleText, ["record_security_rls_review_receipt"], "security RLS review receipt RPC");
+assertIncludesAny(bundleText, ["Security RLS database receipt"], "security RLS database receipt label");
+assertIncludesAny(bundleText, ["Record security receipt"], "security RLS review receipt record action");
+assertIncludesAny(
+  bundleText,
+  ["security_rls_review_receipt_requires_ci_rls_guard_private_evidence_signed_url_review_rbac_audit_exports_and_external_signoff_before_production_traffic"],
+  "security RLS review receipt acceptance rule"
+);
 assertIncludesAny(bundleText, ["Onboarding handoff"], "top-level onboarding handoff command");
 assertIncludesAny(bundleText, ["onboarding_handoff_command"], "top-level onboarding handoff packet field");
 assertIncludesAny(bundleText, ["new_user_can_move_from_login_to_corporate_setup_live_row_completion_guided_seed_reconciliation_and_exported_proof_without_searching_the_dashboard"], "top-level onboarding handoff acceptance rule");

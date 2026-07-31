@@ -41,7 +41,8 @@ const requiredRlsTables = [
   "billing_architecture_decision_receipts",
   "pricing_quote_receipts",
   "onboarding_wizard_receipts",
-  "auth_recovery_receipts"
+  "auth_recovery_receipts",
+  "security_rls_review_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -348,6 +349,29 @@ if (!authRecoveryReceiptMigration.includes("auth.recovery_receipt_recorded")) {
 }
 if (!authRecoveryReceiptMigration.includes("grant execute on function public.record_auth_recovery_receipt")) {
   throw new Error("Auth recovery receipt RPC must be executable by authenticated users.");
+}
+
+const securityRlsReviewReceiptMigration = latestSqlByFile["056_security_rls_review_receipts.sql"] ?? "";
+if (!securityRlsReviewReceiptMigration.includes("create table if not exists public.security_rls_review_receipts")) {
+  throw new Error("Missing security RLS review receipt table migration.");
+}
+if (!securityRlsReviewReceiptMigration.includes("alter table public.security_rls_review_receipts enable row level security")) {
+  throw new Error("Security RLS review receipts must enable RLS.");
+}
+if (!securityRlsReviewReceiptMigration.includes("profile_id = public.current_profile_id()")) {
+  throw new Error("Security RLS review receipts must be owner-scoped.");
+}
+if (!securityRlsReviewReceiptMigration.includes("production_traffic_allowed = false")) {
+  throw new Error("Security RLS review receipts must keep production traffic blocked until external signoff.");
+}
+if (!securityRlsReviewReceiptMigration.includes("create or replace function public.record_security_rls_review_receipt")) {
+  throw new Error("Missing security RLS review receipt RPC.");
+}
+if (!securityRlsReviewReceiptMigration.includes("security.rls_review_receipt_recorded")) {
+  throw new Error("Security RLS review receipt RPC must write audit history.");
+}
+if (!securityRlsReviewReceiptMigration.includes("grant execute on function public.record_security_rls_review_receipt")) {
+  throw new Error("Security RLS review receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);
