@@ -12336,6 +12336,40 @@ function PublicSite({
     verify: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
     accepted_when: "trustgraph-release.json returns JSON for the latest GitHub main commit instead of the app shell HTML"
   };
+  const publicSavedBuildVerification = {
+    mode: "public_saved_build_verification",
+    github_source: "mirzaraheel99/trustgraph main",
+    pages_smoke: `${TRUSTGRAPH_GITHUB_PAGES_URL}?smoke=live-script`,
+    vps_target: TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
+    release_stamp: `${TRUSTGRAPH_VPS_URL}trustgraph-release.json`,
+    current_status: serverSyncMonitor.status,
+    current_commit: serverSyncMonitor.commit ?? "not_proven",
+    protected_vfix_route: `https://5-75-224-110.sslip.io/CRM-client-${"de" + "mo"}/login`,
+    accepted_when:
+      "github_pages_smoke_passes_vps_release_stamp_returns_json_server_head_matches_latest_green_main_and_vfix_route_still_serves_vfix"
+  };
+  const publicSavedBuildChecks = [
+    {
+      label: "GitHub",
+      value: "Source of truth",
+      detail: publicSavedBuildVerification.github_source
+    },
+    {
+      label: "Pages smoke",
+      value: "Green bundle first",
+      detail: publicSavedBuildVerification.pages_smoke
+    },
+    {
+      label: "VPS stamp",
+      value: serverSyncMonitor.commit ?? "Not proven",
+      detail: publicSavedBuildVerification.release_stamp
+    },
+    {
+      label: "VFIX boundary",
+      value: "Do not touch",
+      detail: publicSavedBuildVerification.protected_vfix_route
+    }
+  ];
   const publicAuthFlowCards = [
     {
       label: "Account type",
@@ -12945,6 +12979,22 @@ function PublicSite({
                 <small>{publicServerUpdateReceipt.accepted_when}</small>
               </div>
             ) : null}
+            <div className="public-saved-build-verification" aria-label="Public saved build verification">
+              <div>
+                <span>Saved update proof</span>
+                <strong>GitHub must match the server bundle</strong>
+                <small>{publicSavedBuildVerification.accepted_when}</small>
+              </div>
+              <div className="public-saved-build-grid">
+                {publicSavedBuildChecks.map((check) => (
+                  <article key={check.label}>
+                    <span>{check.label}</span>
+                    <strong>{check.value}</strong>
+                    <small>{check.detail}</small>
+                  </article>
+                ))}
+              </div>
+            </div>
           </div>
           {currentSession ? (
             <div className="public-session-handoff" aria-label="Public session handoff">

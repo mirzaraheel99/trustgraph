@@ -140,6 +140,8 @@ const requiredMobileStacks = [
   ".public-server-sync-receipt",
   ".public-server-sync-grid",
   ".public-server-update-receipt",
+  ".public-saved-build-verification",
+  ".public-saved-build-grid",
   ".public-auth-flow-grid",
   ".stripe-checkout-decision-grid",
   ".stripe-checkout-decision-actions",

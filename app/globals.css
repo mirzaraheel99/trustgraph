@@ -249,6 +249,72 @@ button {
   background: rgba(0, 0, 0, 0.22);
 }
 
+.public-saved-build-verification {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.075), transparent 66%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.public-saved-build-verification > div:first-child {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.public-saved-build-verification span,
+.public-saved-build-verification strong,
+.public-saved-build-verification small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-saved-build-verification > div:first-child > span,
+.public-saved-build-grid span {
+  color: #a7c2ff;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-saved-build-verification > div:first-child > strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.public-saved-build-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-saved-build-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.105);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-saved-build-grid strong {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.15;
+}
+
 .public-session-actions {
   display: flex;
   flex-wrap: wrap;
@@ -12923,6 +12989,8 @@ p {
   .public-portal-rail,
   .public-session-handoff,
   .public-server-update-receipt,
+  .public-saved-build-verification,
+  .public-saved-build-grid,
   .auth-choice-summary,
   .auth-operator-details,
   .auth-support-actions,

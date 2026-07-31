@@ -511,6 +511,14 @@ assertIncludesAny(bundleText, ["Release stamp commit"], "public release stamp co
 assertIncludesAny(bundleText, ["Public server update receipt"], "public saved-build update command receipt");
 assertIncludesAny(bundleText, ["public_server_update_receipt"], "public server update receipt packet field");
 assertIncludesAny(bundleText, ["tools/update-vps-from-github.sh"], "public VPS update command");
+assertIncludesAny(bundleText, ["Public saved build verification"], "public saved build verification");
+assertIncludesAny(bundleText, ["public_saved_build_verification"], "public saved build verification packet field");
+assertIncludesAny(bundleText, ["GitHub must match the server bundle"], "public saved build verification headline");
+assertIncludesAny(
+  bundleText,
+  ["github_pages_smoke_passes_vps_release_stamp_returns_json_server_head_matches_latest_green_main_and_vfix_route_still_serves_vfix"],
+  "public saved build verification acceptance rule"
+);
 assertIncludesAny(bundleText, ["Operator home"], "signed-in role-aware dashboard label");
 assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");
