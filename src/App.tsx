@@ -14277,6 +14277,47 @@ function PublicSite({
               Corporate portal
             </button>
           </div>
+          <div className="public-portal-launchpad" aria-label="Public portal launchpad">
+            <div className="public-portal-launchpad-copy">
+              <span className="status-chip success">Choose your path</span>
+              <strong>{portal === "corporate" ? "Corporate Verify starts with company setup" : "Professional Passport starts with your private record"}</strong>
+              <small>{selectedRegistrationPath.nextAction}</small>
+            </div>
+            <div className="public-portal-launchpad-grid">
+              {portalLoginSwitchboard.map((item) => (
+                <button
+                  className={portal === item.portal ? "active" : ""}
+                  key={item.label}
+                  onClick={() => openPortal(item.portal)}
+                  type="button"
+                >
+                  <span>{item.label}</span>
+                  <strong>{item.start}</strong>
+                  <small>{item.dashboard}</small>
+                  <small>{item.next}</small>
+                </button>
+              ))}
+              <button className="pricing" onClick={() => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" })} type="button">
+                <span>Pricing</span>
+                <strong>{portal === "corporate" ? "$149 pilot monthly" : "$0 professional pilot"}</strong>
+                <small>{selectedRegistrationPath.paymentStatus}</small>
+                <small>Review price and database path before signup.</small>
+              </button>
+            </div>
+            <div className="public-portal-launchpad-proof">
+              <span>
+                <strong>{selectedRegistrationPath.primaryWrite}</strong>
+                <small>First database write</small>
+              </span>
+              <span>
+                <strong>{portal === "corporate" ? "Scoped company review" : "Owner-controlled Passport"}</strong>
+                <small>{registrationDecisionReceipt.database_boundary}</small>
+              </span>
+              <button className="secondary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView({ behavior: "smooth" })} type="button">
+                Continue to {mode === "signup" ? "registration" : "login"}
+              </button>
+            </div>
+          </div>
           <div className="public-server-sync-receipt" aria-label="Public server sync receipt">
             <div>
               <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : serverSyncMonitor.status === "checking" ? "neutral" : "warning"}`}>

@@ -59,6 +59,7 @@ assert(app.includes('aria-label="Login issue resolver"'), "public auth must expo
 assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public auth must expose a live onboarding acceptance contract.");
 assert(app.includes('aria-label="Onboarding wizard database receipt"'), "guided onboarding must expose a persisted onboarding wizard receipt.");
 assert(app.includes('aria-label="Public auth flow command"'), "public auth must expose a simple flow command for account type, mode, and database result.");
+assert(app.includes('aria-label="Public portal launchpad"'), "public website must expose a compact portal, pricing, and database launchpad before signup.");
 assert(app.includes('aria-label="Public portal database access contract"'), "public website must expose Professional, Corporate, pricing, and scoped database access before signup.");
 assert(app.includes('aria-label="Public buyer launch path"'), "public website must expose a plain-language buyer launch path before signup.");
 assert(app.includes('aria-label="Registration database launch order"'), "public website must expose the selected registration-to-database launch order before signup.");
@@ -173,6 +174,7 @@ assert(premiumRepair.includes(".login-issue-resolver") && premiumRepair.includes
 assert(css.includes(".live-onboarding-contract") && css.includes(".live-onboarding-contract-grid") && css.includes(".live-onboarding-sequence"), "live onboarding acceptance contract must be styled and bounded.");
 assert(css.includes(".onboarding-wizard-receipt") && css.includes(".onboarding-wizard-receipt-grid"), "onboarding wizard receipt must be styled and bounded.");
 assert(css.includes(".public-auth-flow-command") && css.includes(".public-auth-flow-grid") && css.includes("Public auth simplification pass"), "public auth flow command must be styled and simplify the login/register surface.");
+assert(css.includes(".public-portal-launchpad") && css.includes(".public-portal-launchpad-grid") && css.includes(".public-portal-launchpad-proof"), "public portal launchpad must be styled and bounded.");
 assert(css.includes(".registration-focus-strip") && css.includes("grid-template-columns: repeat(2, minmax(0, 1fr))"), "registration focus strip must be styled and bounded.");
 assert(css.includes(".portal-launch-decision-strip") && css.includes(".portal-launch-decision-strip article"), "portal launch decision strip must be styled and bounded.");
 assert(app.includes('aria-label="Public portal launch checklist"'), "public website must expose the launch checklist for website, auth, pricing, database, and server readiness.");

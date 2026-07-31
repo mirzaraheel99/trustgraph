@@ -18419,6 +18419,133 @@ body {
   line-height: 1.4;
 }
 
+.public-portal-launchpad {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 820px);
+  margin-top: 18px;
+  padding: 15px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.09), rgba(134, 174, 246, 0.045) 58%, transparent),
+    rgba(8, 20, 22, 0.82);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.24);
+}
+
+.public-portal-launchpad-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-portal-launchpad-copy strong,
+.public-portal-launchpad-copy small,
+.public-portal-launchpad-grid strong,
+.public-portal-launchpad-grid small,
+.public-portal-launchpad-grid span,
+.public-portal-launchpad-proof strong,
+.public-portal-launchpad-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-launchpad-copy strong {
+  color: var(--text);
+  font-size: clamp(21px, 2vw, 30px);
+  line-height: 1.1;
+}
+
+.public-portal-launchpad-copy small {
+  color: rgba(222, 239, 233, 0.72);
+  line-height: 1.45;
+}
+
+.public-portal-launchpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.public-portal-launchpad-grid button {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  min-height: 132px;
+  padding: 12px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  box-shadow: none;
+  white-space: normal;
+}
+
+.public-portal-launchpad-grid button.active {
+  border-color: rgba(92, 236, 193, 0.32);
+  background: rgba(82, 214, 196, 0.075);
+}
+
+.public-portal-launchpad-grid button.pricing {
+  border-color: rgba(240, 198, 107, 0.28);
+  background: rgba(240, 198, 107, 0.06);
+}
+
+.public-portal-launchpad-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-launchpad-grid strong {
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.public-portal-launchpad-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 12px;
+  line-height: 1.34;
+}
+
+.public-portal-launchpad-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(180px, auto);
+  gap: 9px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(210, 231, 223, 0.1);
+}
+
+.public-portal-launchpad-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-portal-launchpad-proof strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.public-portal-launchpad-proof small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.public-portal-launchpad-proof button {
+  min-width: 0;
+  white-space: normal;
+}
+
 .public-auth-section {
   width: min(100%, 1180px);
   grid-template-columns: minmax(0, 0.72fr) minmax(340px, 420px);
@@ -18470,6 +18597,11 @@ body {
 
   .public-auth-card {
     position: static;
+  }
+
+  .public-portal-launchpad-grid,
+  .public-portal-launchpad-proof {
+    grid-template-columns: 1fr;
   }
 }
 

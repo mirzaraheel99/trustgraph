@@ -150,6 +150,9 @@ assertIncludesAny(bundleText, ["Writes organization, admin membership, plan ledg
 assertIncludesAny(bundleText, ["gated production decisions"], "Scale pricing human gate copy");
 assertIncludesAny(bundleText, ["Corporate portal access"], "Corporate portal registration/login entry");
 assertIncludesAny(bundleText, ["Professional Passport access"], "Professional portal registration/login entry");
+assertIncludesAny(bundleText, ["Public portal launchpad"], "public first-screen portal launchpad");
+assertIncludesAny(bundleText, ["Choose your path"], "public portal launchpad chooser");
+assertIncludesAny(bundleText, ["Review price and database path before signup"], "public launchpad pricing and database proof");
 assertIncludesAny(bundleText, ["Portal launch map"], "public hero portal launch map");
 assertIncludesAny(bundleText, ["Start in the right portal before live database rows are created"], "portal launch map database guidance");
 assertIncludesAny(bundleText, ["Company organization and admin membership"], "corporate portal launch first write");
