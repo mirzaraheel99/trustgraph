@@ -186,6 +186,9 @@ assertIncludesAny(bundleText, ["Setup command bar"], "logged-in setup command ba
 assertIncludesAny(bundleText, ["Open next step"], "setup next step action");
 assertIncludesAny(bundleText, ["Public registration"], "setup public registration action");
 assertIncludesAny(bundleText, ["Corporate account operator path"], "corporate account operator path");
+assertIncludesAny(bundleText, ["Corporate setup stepper"], "guided corporate account setup stepper");
+assertIncludesAny(bundleText, ["corporate_setup_stepper"], "corporate setup stepper packet mode");
+assertIncludesAny(bundleText, ["Export setup stepper"], "corporate setup stepper export");
 assertIncludesAny(bundleText, ["Switch admin context"], "corporate account admin context step");
 assertIncludesAny(bundleText, ["Team invitation operator path"], "team invitation operator path");
 assertIncludesAny(bundleText, ["Invitee accepts"], "team invitation acceptance step");

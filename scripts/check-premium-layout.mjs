@@ -23,6 +23,7 @@ assert(authenticatedRender.includes('className="workspace-route-strip"'), "works
 assert(authenticatedRender.includes('className="workspace-flow-strip"'), "daily portal path strip must remain available after sidebar removal.");
 assert(authenticatedRender.includes('className="setup-route-deck"'), "corporate setup center must expose a clear clickable route deck.");
 assert(authenticatedRender.includes('aria-label="Corporate launch cockpit"'), "corporate setup center must expose a single next-action launch cockpit.");
+assert(app.includes('aria-label="Corporate setup stepper"'), "corporate account panel must expose a guided setup stepper.");
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
@@ -36,6 +37,7 @@ assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))")
 assert(premiumRepair.includes(".live-pilot-row-proof") && premiumRepair.includes(".live-pilot-row-proof-grid"), "live pilot row proof must be styled as a bounded premium panel.");
 assert(premiumRepair.includes(".setup-route-deck") && premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 230px), 1fr))"), "setup route deck must auto-fit without overflow.");
 assert(premiumRepair.includes(".corporate-launch-cockpit") && premiumRepair.includes(".corporate-launch-lanes"), "corporate launch cockpit must be styled and bounded.");
+assert(premiumRepair.includes(".corporate-setup-stepper") && premiumRepair.includes(".corporate-setup-stepper-grid"), "corporate setup stepper must be styled and bounded.");
 assert(premiumRepair.includes(".auth-recovery-command-grid") && premiumRepair.includes(".public-auth-recovery-actions"), "auth recovery command buttons must be included in overflow guards.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");

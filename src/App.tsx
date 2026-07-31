@@ -6765,6 +6765,46 @@ function AccountPanel({
       detail: "Invite reviewers, request Passport access, and export proof for the pilot run."
     }
   ];
+  const corporateSetupStepper = corporateAccountRbacPath.map((step, index) => ({
+    ...step,
+    step: index + 1,
+    action:
+      step.label === "Login"
+        ? "Open account"
+        : step.label === "Create company workspace"
+          ? "Create workspace"
+          : step.label === "Activate RBAC role"
+            ? "Open RBAC"
+            : "Open Verify",
+    target:
+      step.label === "Login"
+        ? "live-auth-controls"
+        : step.label === "Create company workspace"
+          ? "create-corporate-workspace"
+          : step.label === "Activate RBAC role"
+            ? "corporate-rbac-controls"
+            : "corporate-account-controls"
+  }));
+  const activeCorporateStepperStep =
+    corporateSetupStepper.find((step) => step.state === "next") ?? corporateSetupStepper[corporateSetupStepper.length - 1];
+  const corporateSetupStepperPacket = {
+    mode: "corporate_setup_stepper",
+    generated_at: new Date().toISOString(),
+    active_step: activeCorporateStepperStep.label,
+    active_step_state: activeCorporateStepperStep.state,
+    signed_in: Boolean(authSession),
+    active_organization: activeOrg.name,
+    active_role: activeRole.label,
+    can_manage_workspace: canManageActiveOrg,
+    steps: corporateSetupStepper.map((step) => ({
+      step: step.step,
+      label: step.label,
+      state: step.state,
+      detail: step.detail,
+      action: step.action
+    })),
+    accepted_when: "corporate_admin_can_follow_stepper_to_workspace_rbac_team_billing_and_verify"
+  };
   const corporateLaunchActions = [
     {
       label: authSession ? "Account connected" : "Login first",
@@ -6871,6 +6911,59 @@ function AccountPanel({
         <strong>Corporate account and RBAC</strong>
       </div>
       <p className="panel-intro">Use this panel after login: create the live employer or staffing workspace first, switch into its admin role, then invite reviewers and activate billing from the setup guide.</p>
+      <div className="corporate-setup-stepper" aria-label="Corporate setup stepper">
+        <div className="corporate-setup-stepper-header">
+          <div>
+            <span className="status-chip success">Corporate setup stepper</span>
+            <strong>{activeCorporateStepperStep.label}</strong>
+            <small>{activeCorporateStepperStep.detail}</small>
+          </div>
+          <button
+            className="primary-action"
+            disabled={activeCorporateStepperStep.state === "locked"}
+            onClick={() =>
+              document
+                .getElementById(activeCorporateStepperStep.target)
+                ?.scrollIntoView({ behavior: "smooth", block: "center" })
+            }
+            type="button"
+          >
+            {activeCorporateStepperStep.action}
+          </button>
+        </div>
+        <div className="corporate-setup-stepper-grid">
+          {corporateSetupStepper.map((step) => (
+            <article className={step.state} key={step.label}>
+              <span>{step.step}</span>
+              <div>
+                <strong>{step.label}</strong>
+                <small>{step.detail}</small>
+              </div>
+              <button
+                className="secondary-action"
+                disabled={step.state === "locked"}
+                onClick={() => document.getElementById(step.target)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                type="button"
+              >
+                {step.action}
+              </button>
+            </article>
+          ))}
+        </div>
+        <button
+          className="secondary-action"
+          onClick={() =>
+            downloadTextFile(
+              `trustgraph-corporate-setup-stepper-${new Date().toISOString().slice(0, 10)}.json`,
+              JSON.stringify(corporateSetupStepperPacket, null, 2),
+              "application/json"
+            )
+          }
+          type="button"
+        >
+          Export setup stepper
+        </button>
+      </div>
       <div className="corporate-launch-command" aria-label="Corporate launch command">
         <div>
           <span className={`status-chip ${authSession ? "success" : "warning"}`}>Corporate launch command</span>
