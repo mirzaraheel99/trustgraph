@@ -219,6 +219,36 @@ button {
   font-size: 13px;
 }
 
+.public-server-update-receipt {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 118, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 205, 118, 0.055);
+}
+
+.public-server-update-receipt span {
+  color: #ffd58a;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.public-server-update-receipt code {
+  display: block;
+  min-width: 0;
+  padding: 8px;
+  overflow-wrap: anywhere;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 7px;
+  color: #f5fbf7;
+  background: rgba(0, 0, 0, 0.22);
+}
+
 .public-session-actions {
   display: flex;
   flex-wrap: wrap;
@@ -12241,6 +12271,7 @@ p {
   .public-auth-section,
   .public-portal-rail,
   .public-session-handoff,
+  .public-server-update-receipt,
   .auth-choice-summary,
   .auth-operator-details,
   .auth-support-actions,

@@ -72,6 +72,8 @@ assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includ
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".server-sync-monitor") && premiumRepair.includes(".server-sync-monitor-grid") && premiumRepair.includes(".server-sync-next"), "server sync monitor must be styled and bounded in the premium shell.");
 assert(css.includes(".public-server-sync-receipt") && css.includes(".public-server-sync-grid"), "public saved-build receipt must be styled and bounded.");
+assert(app.includes('aria-label="Public server update receipt"'), "public saved-build receipt must expose the VPS update command when the host is stale.");
+assert(css.includes(".public-server-update-receipt") && css.includes("grid-column: 1 / -1"), "public server update receipt must be styled and bounded.");
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");

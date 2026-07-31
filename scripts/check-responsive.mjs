@@ -121,6 +121,7 @@ const requiredMobileStacks = [
   ".public-pricing-estimator-actions",
   ".public-server-sync-receipt",
   ".public-server-sync-grid",
+  ".public-server-update-receipt",
   ".public-auth-flow-grid",
   ".stripe-checkout-decision-grid",
   ".stripe-checkout-decision-actions",

@@ -11804,6 +11804,12 @@ function PublicSite({
     next_step: selectedPortalCommand.next,
     proof_required: "Hosted Supabase login plus live repository rows; localhost callbacks and preview data are not accepted."
   };
+  const publicServerUpdateReceipt = {
+    mode: "public_server_update_receipt",
+    command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+    verify: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    accepted_when: "trustgraph-release.json returns JSON for the latest GitHub main commit instead of the app shell HTML"
+  };
   const publicAuthFlowCards = [
     {
       label: "Account type",
@@ -12357,6 +12363,14 @@ function PublicSite({
                 <small>Current host status</small>
               </span>
             </div>
+            {serverSyncMonitor.status !== "synced" ? (
+              <div className="public-server-update-receipt" aria-label="Public server update receipt">
+                <span>SSH updater</span>
+                <small>{publicServerUpdateReceipt.mode}</small>
+                <code>{publicServerUpdateReceipt.command}</code>
+                <small>{publicServerUpdateReceipt.accepted_when}</small>
+              </div>
+            ) : null}
           </div>
           {currentSession ? (
             <div className="public-session-handoff" aria-label="Public session handoff">

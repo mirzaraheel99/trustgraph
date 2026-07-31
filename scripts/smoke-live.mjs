@@ -488,6 +488,9 @@ assertIncludesAny(bundleText, ["The host is alive, but the release stamp returne
 assertIncludesAny(bundleText, ["Public server sync receipt"], "public server sync receipt");
 assertIncludesAny(bundleText, ["Saved build"], "public saved build label");
 assertIncludesAny(bundleText, ["Release stamp commit"], "public release stamp commit proof");
+assertIncludesAny(bundleText, ["Public server update receipt"], "public saved-build update command receipt");
+assertIncludesAny(bundleText, ["public_server_update_receipt"], "public server update receipt packet field");
+assertIncludesAny(bundleText, ["tools/update-vps-from-github.sh"], "public VPS update command");
 assertIncludesAny(bundleText, ["Operator home"], "signed-in role-aware dashboard label");
 assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");
