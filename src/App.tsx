@@ -15327,7 +15327,9 @@ function App() {
     server_head_command: "git -C /opt/trustgraph rev-parse --short HEAD",
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
     content_smoke_command: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/ | grep -E \"TrustGraph|_next/static\"",
-    accepted_when: "server_head_matches_latest_green_main_commit_vps_returns_200_and_bundle_contains_current_trustgraph_release_markers",
+    release_stamp_url: "https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    release_stamp_command: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    accepted_when: "server_head_matches_latest_green_main_commit_vps_returns_200_bundle_contains_current_trustgraph_release_markers_and_release_stamp_matches_commit",
     human_access_boundary: "Codex can push GitHub and verify public URLs, but the VPS pull must run from an authenticated SSH shell."
   };
   const hostedVersionReceiptSteps = [
@@ -15350,6 +15352,11 @@ function App() {
       label: "Bundle smoke",
       value: "Release markers",
       detail: "The served bundle must include current TrustGraph UI/proof text, not just an older healthy page."
+    },
+    {
+      label: "Release stamp",
+      value: "Commit JSON",
+      detail: "The VPS updater writes /trustgraph-release.json with the deployed Git commit after every rebuild."
     }
   ];
   const serverReleasePacketName = `trustgraph-server-release-save-path-${new Date().toISOString().slice(0, 10)}.json`;
@@ -15362,9 +15369,10 @@ function App() {
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     hosted_version_receipt: hostedVersionReceipt,
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
-    verify_command: "git -C /opt/trustgraph rev-parse --short HEAD && curl -I https://trustgraph.5-75-224-110.sslip.io/",
+    verify_command: "git -C /opt/trustgraph rev-parse --short HEAD && curl -I https://trustgraph.5-75-224-110.sslip.io/ && curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    release_stamp_url: "https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
     lanes: serverReleaseLanes,
-    accepted_when: "github_actions_passes_pages_smoke_passes_server_head_matches_latest_main_and_vps_url_returns_200"
+    accepted_when: "github_actions_passes_pages_smoke_passes_server_head_matches_latest_main_vps_url_returns_200_and_release_stamp_matches_commit"
   };
   const authorizedReport = {
     generated_at: new Date().toISOString(),
@@ -15802,6 +15810,10 @@ function App() {
             <div className="hosted-version-command">
               <span>Verify on VPS</span>
               <code>{hostedVersionReceipt.server_head_command} && curl -I {hostedVersionReceipt.vps_target}</code>
+            </div>
+            <div className="hosted-version-command">
+              <span>Release stamp</span>
+              <code>{hostedVersionReceipt.release_stamp_command}</code>
             </div>
           </div>
           <div className="server-release-grid">

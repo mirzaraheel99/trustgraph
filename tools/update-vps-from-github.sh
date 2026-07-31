@@ -29,6 +29,9 @@ origin="$(git remote get-url origin)"
 git fetch origin main
 git checkout main
 git pull --ff-only origin main
+commit_sha="$(git rev-parse HEAD)"
+commit_short="$(git rev-parse --short HEAD)"
+updated_at="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
 export TRUSTGRAPH_HOST
 bash tools/preflight-vps.sh
@@ -36,9 +39,27 @@ bash tools/preflight-vps.sh
 docker compose --env-file .env.server -f docker-compose.server.yml up -d --build --remove-orphans
 docker compose --env-file .env.server -f docker-compose.server.yml ps
 
+web_container="$(docker compose --env-file .env.server -f docker-compose.server.yml ps -q trustgraph-web)"
+[[ -n "$web_container" ]] || fail "could not find running trustgraph-web container"
+docker exec "$web_container" sh -c "cat > /srv/trustgraph/trustgraph-release.json" <<JSON
+{
+  "app": "TrustGraph",
+  "source": "https://github.com/mirzaraheel99/trustgraph",
+  "branch": "main",
+  "commit": "$commit_sha",
+  "commit_short": "$commit_short",
+  "updated_at": "$updated_at",
+  "public_url": "$PUBLIC_URL",
+  "protected_vfix_host": "https://5-75-224-110.sslip.io"
+}
+JSON
+
 curl --fail --location --silent --show-error "$PUBLIC_URL" >/tmp/trustgraph-vps-smoke.html
 grep -q "TrustGraph" /tmp/trustgraph-vps-smoke.html || fail "public smoke did not contain TrustGraph"
+curl --fail --location --silent --show-error "${PUBLIC_URL%/}/trustgraph-release.json" >/tmp/trustgraph-vps-release.json
+grep -q "$commit_short" /tmp/trustgraph-vps-release.json || fail "release stamp does not match current commit"
 
 echo "TrustGraph VPS updated from GitHub."
-echo "Commit: $(git rev-parse --short HEAD)"
+echo "Commit: $commit_short"
+echo "Release stamp: ${PUBLIC_URL%/}/trustgraph-release.json"
 echo "Open: $PUBLIC_URL"

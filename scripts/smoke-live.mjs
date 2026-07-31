@@ -391,6 +391,8 @@ assertIncludesAny(bundleText, ["Release sync command"], "release sync command su
 assertIncludesAny(bundleText, ["Export release sync packet"], "release sync export control");
 assertIncludesAny(bundleText, ["release_sync_command"], "release sync command packet field");
 assertIncludesAny(bundleText, ["tools/update-vps-from-github.sh"], "vps update command in release sync packet");
+assertIncludesAny(bundleText, ["trustgraph-release.json"], "server release stamp URL");
+assertIncludesAny(bundleText, ["release_stamp_command"], "server release stamp command field");
 assertIncludesAny(bundleText, ["Completion audit open items"], "v1 completion open item summary");
 assertIncludesAny(bundleText, ["completion_audit_requirements"], "v1 completion requirements packet field");
 assertIncludesAny(bundleText, ["live_database_repair_queue"], "v1 completion evidence export repair queue field");
