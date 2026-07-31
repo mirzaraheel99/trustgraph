@@ -15927,6 +15927,54 @@ function PublicSite({
       portal: "corporate" as const
     }
   ];
+  const buyerDecisionBoard = [
+    {
+      label: "Professional",
+      price: "$0 pilot",
+      chooseWhen: "You own your work history, credentials, references, training, and sharing consent.",
+      firstWrite: "Profile, personal organization, Professional membership, then Passport records.",
+      portalOutcome: "Private Passport workspace with evidence, consent, Access Grants, and exports.",
+      action: "Start Passport",
+      portal: "professional" as const
+    },
+    {
+      label: "Corporate Verify",
+      price: "$149 pilot monthly",
+      chooseWhen: "You review candidates, staff, contractors, or clinicians after they approve scoped access.",
+      firstWrite: "Company organization, admin membership, pricing ledger, team, and Verify workspace.",
+      portalOutcome: "Corporate portal can request one professional by email and see approved shared rows only.",
+      action: "Start Corporate",
+      portal: "corporate" as const
+    },
+    {
+      label: "TrustGraph Scale",
+      price: "Custom",
+      chooseWhen: "You need issuer workflows, Connect clients, compliance operations, or rollout support.",
+      firstWrite: "Human-gated production decision before paid checkout or regulated traffic.",
+      portalOutcome: "Scale conversations start through Corporate setup while Stripe remains disabled.",
+      action: "Review Corporate path",
+      portal: "corporate" as const
+    }
+  ];
+  const buyerDecisionPacket = {
+    generated_at: new Date().toISOString(),
+    mode: "public_buyer_decision_board",
+    selected_portal: portal,
+    selected_mode: mode,
+    preview_data_accepted: false,
+    pricing_boundary: "professional_free_corporate_verify_149_pilot_monthly_scale_custom_stripe_disabled_until_human_gate",
+    database_boundary:
+      "professional_owns_passport_rows_corporate_requests_one_professional_by_email_and_reads_only_approved_shared_rows",
+    accepted_when:
+      "public_buyer_decision_board_shows_professional_corporate_scale_pricing_first_database_write_portal_outcome_and_scoped_user_database_boundary_before_signup",
+    options: buyerDecisionBoard.map(({ label, price, chooseWhen, firstWrite, portalOutcome }) => ({
+      label,
+      price,
+      choose_when: chooseWhen,
+      first_database_write: firstWrite,
+      portal_outcome: portalOutcome
+    }))
+  };
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -16112,6 +16160,52 @@ function PublicSite({
                   <small>{item.dashboard}</small>
                 </button>
               ))}
+            </div>
+          </div>
+          <div className="public-buyer-decision-board" aria-label="Public buyer decision board">
+            <div className="public-buyer-decision-header">
+              <div>
+                <span className="status-chip success">Buyer decision board</span>
+                <strong>Pick the account type by role, price, and database boundary</strong>
+                <small>{buyerDecisionPacket.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-buyer-decision-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(buyerDecisionPacket, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export buyer proof
+              </button>
+            </div>
+            <div className="public-buyer-decision-grid">
+              {buyerDecisionBoard.map((item) => (
+                <article className={portal === item.portal ? "active" : ""} key={item.label}>
+                  <span>{item.price}</span>
+                  <strong>{item.label}</strong>
+                  <small>{item.chooseWhen}</small>
+                  <div>
+                    <b>First database write</b>
+                    <small>{item.firstWrite}</small>
+                  </div>
+                  <div>
+                    <b>Portal outcome</b>
+                    <small>{item.portalOutcome}</small>
+                  </div>
+                  <button className={item.portal === "professional" ? "primary-action" : "secondary-action"} onClick={() => openPortal(item.portal)} type="button">
+                    {item.action}
+                  </button>
+                </article>
+              ))}
+            </div>
+            <div className="public-buyer-decision-proof">
+              <span>{buyerDecisionPacket.pricing_boundary}</span>
+              <small>{buyerDecisionPacket.database_boundary}</small>
             </div>
           </div>
         </div>

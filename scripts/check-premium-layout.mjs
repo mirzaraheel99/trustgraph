@@ -73,6 +73,7 @@ assert(app.includes('aria-label="Portal access cockpit"'), "public auth must sta
 assert(app.includes('aria-label="Portal start desk"'), "public auth must expose a simple portal start desk before the dense registration form.");
 assert(app.includes('aria-label="Public portal launchpad"'), "public website must expose a compact portal, pricing, and database launchpad before signup.");
 assert(app.includes('aria-label="Public portal database access contract"'), "public website must expose Professional, Corporate, pricing, and scoped database access before signup.");
+assert(app.includes('aria-label="Public buyer decision board"') && app.includes("public_buyer_decision_board"), "public website must expose a buyer decision board for Professional, Corporate, Scale, pricing, and database boundaries.");
 assert(app.includes('aria-label="Public buyer launch path"'), "public website must expose a plain-language buyer launch path before signup.");
 assert(app.includes('aria-label="Registration database launch order"'), "public website must expose the selected registration-to-database launch order before signup.");
 assert(app.includes('aria-label="Registration focus strip"'), "public auth must expose a compact registration focus strip before form fields.");
@@ -246,6 +247,7 @@ assert(css.includes(".public-auth-flow-command") && css.includes(".public-auth-f
 assert(css.includes(".portal-access-cockpit") && css.includes(".portal-access-cockpit-actions") && css.includes(".portal-access-cockpit-grid"), "portal access cockpit must be styled and bounded.");
 assert(css.includes(".portal-start-desk") && css.includes(".portal-start-desk-switches") && css.includes(".portal-start-desk-grid"), "portal start desk must be styled and bounded.");
 assert(css.includes(".public-portal-launchpad") && css.includes(".public-portal-launchpad-grid") && css.includes(".public-portal-launchpad-proof"), "public portal launchpad must be styled and bounded.");
+assert(css.includes(".public-buyer-decision-board") && css.includes(".public-buyer-decision-grid") && css.includes(".public-buyer-decision-proof"), "public buyer decision board must be styled and bounded.");
 assert(css.includes(".registration-focus-strip") && css.includes("grid-template-columns: repeat(2, minmax(0, 1fr))"), "registration focus strip must be styled and bounded.");
 assert(css.includes(".portal-launch-decision-strip") && css.includes(".portal-launch-decision-strip article"), "portal launch decision strip must be styled and bounded.");
 assert(app.includes('aria-label="Public portal launch checklist"'), "public website must expose the launch checklist for website, auth, pricing, database, and server readiness.");
