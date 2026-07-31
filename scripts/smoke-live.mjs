@@ -156,6 +156,10 @@ assertIncludesAny(bundleText, ["Workspace command strip"], "signed-in workspace 
 assertIncludesAny(bundleText, ["Open next workspace"], "workspace command next action");
 assertIncludesAny(bundleText, ["workspace_command_strip"], "authorized report workspace command strip field");
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
+assertIncludesAny(bundleText, ["Portal home command center"], "signed-in portal home command center");
+assertIncludesAny(bundleText, ["Start with login, then choose the right portal"], "signed-in portal home guidance");
+assertIncludesAny(bundleText, ["Continue current portal"], "signed-in portal continuation action");
+assertIncludesAny(bundleText, ["Account and recovery"], "signed-in portal account action");
 assertIncludesAny(bundleText, ["Corporate setup"], "dashboard corporate setup action");
 assertIncludesAny(bundleText, ["Sign out"], "dashboard sign out action");
 assertIncludesAny(bundleText, ["Workspace picker"], "dashboard workspace start map");

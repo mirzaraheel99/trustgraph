@@ -13214,6 +13214,32 @@ function App() {
           </div>
         </header>
 
+        <section className="portal-home-command" aria-label="Portal home command center">
+          <div className="portal-home-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>{authSession ? "Signed in" : "Preview mode"}</span>
+            <strong>{authSession ? `You are in ${activeRole.label}` : "Start with login, then choose the right portal"}</strong>
+            <small>
+              Personal Passport is for the professional owner. Corporate Verify is for approved company reviewers. Company Admin is for workspace, RBAC, team, billing, and rollout controls.
+            </small>
+          </div>
+          <div className="portal-home-actions">
+            <button className="primary-action" onClick={authSession ? () => openWorkspaceOrSetup(workspace.id) : openAuthControls} type="button">
+              {authSession ? "Continue current portal" : "Login or register"}
+            </button>
+            <button className="secondary-action" onClick={openAuthControls} type="button">
+              Account and recovery
+            </button>
+            <button className="secondary-action" onClick={openCorporateControls} type="button">
+              Corporate setup
+            </button>
+            {authSession ? (
+              <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                Sign out
+              </button>
+            ) : null}
+          </div>
+        </section>
+
         {!workspaceAllowed ? (
           <PermissionGate
             roleLabel={activeRole.label}

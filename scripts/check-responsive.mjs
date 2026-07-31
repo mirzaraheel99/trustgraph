@@ -54,6 +54,8 @@ const requiredMobileStacks = [
   ".portal-access-steps",
   ".portal-entry-path",
   ".portal-handoff-checklist",
+  ".portal-home-actions",
+  ".portal-home-command",
   ".permission-actions",
   ".portal-launch-map-grid",
   ".portal-auth-summary-grid",
@@ -168,6 +170,10 @@ if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-co
 
 if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1fr)") || !css.includes(".workspace-command-actions") || !css.includes("grid-column: 1 / -1")) {
   throw new Error("Responsive check failed: premium shell repair must keep command actions from squeezing dashboard metrics.");
+}
+
+if (!css.includes(".portal-home-command") || !css.includes("grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr)") || !css.includes(".portal-home-actions")) {
+  throw new Error("Responsive check failed: signed-in portal home must provide a clear account/corporate command center.");
 }
 
 if (!css.includes(".session-command-bar") || !css.includes("width: fit-content") || !css.includes(".workspace-route-strip,\n.workspace-flow-strip") || !css.includes("display: flex !important")) {
