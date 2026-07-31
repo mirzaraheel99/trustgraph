@@ -129,6 +129,7 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
+import { recordRegistrationIntent } from "./registrationRepository";
 import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
 import { loadPilotLaunchContacts, recordPilotLaunchContact } from "./pilotLaunchRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
@@ -12658,7 +12659,10 @@ function PublicSite({
     mode: "registration_database_launch_order",
     selected_portal: portal,
     selected_mode: mode,
+    registration_intent_table: "registration_intents",
+    registration_intent_rpc: "record_registration_intent",
     selected_pricing: selectedRegistrationPath.plan,
+    pricing_plan_id: portal === "corporate" ? "corporate-verify" : "professional-free",
     first_live_database_write: selectedRegistrationPath.primaryWrite,
     accepted_when:
       "registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit",
@@ -13047,6 +13051,34 @@ function PublicSite({
     setHasPendingCorporateRegistration(false);
   }
 
+  async function recordLiveRegistrationIntent(session: AuthSession) {
+    try {
+      const corporateRegistration = portal === "corporate" ? readPendingCorporateRegistration() ?? pendingCorporateRegistration() : null;
+      await recordRegistrationIntent({
+        accessToken: session.accessToken,
+        selectedPortal: portal,
+        selectedMode: mode,
+        pricingPlanId: registrationDatabaseLaunchOrder.pricing_plan_id,
+        organizationName: corporateRegistration?.organizationName,
+        organizationType: corporateRegistration?.organizationType,
+        organizationDomain: corporateRegistration?.organizationDomain,
+        firstDatabaseWrite: selectedRegistrationPath.primaryWrite,
+        nextDashboard: registrationOutcomeCommand.next_dashboard,
+        metadata: {
+          auth_redirect_url: authRedirectUrl,
+          selected_price: selectedRegistrationPath.plan,
+          database_writes: selectedRegistrationPath.databaseWrites,
+          server_save_status: serverSyncMonitor.status,
+          preview_data_accepted: false
+        }
+      });
+      return true;
+    } catch (error) {
+      setMessage(authFailureMessage(error, authRedirectUrl, "Signed in, but registration intent was not recorded yet"));
+      return false;
+    }
+  }
+
   useEffect(() => {
     const storedCorporateRegistration = readPendingCorporateRegistration();
     if (!storedCorporateRegistration) return;
@@ -13079,6 +13111,7 @@ function PublicSite({
           ? await signInWithPassword(email, password)
           : await signUpWithPassword(email, password, authRedirectUrl);
       if (session) {
+        const intentRecorded = await recordLiveRegistrationIntent(session);
         const storedCorporateRegistration = portal === "corporate" ? readPendingCorporateRegistration() : null;
         if (portal === "corporate" && (mode === "signup" || storedCorporateRegistration)) {
           onCorporateSession(session, storedCorporateRegistration ?? pendingCorporateRegistration());
@@ -13086,7 +13119,15 @@ function PublicSite({
         } else {
           onSession(session);
         }
-        setMessage(portal === "corporate" ? "Corporate portal ready" : "Professional Passport ready");
+        setMessage(
+          intentRecorded
+            ? portal === "corporate"
+              ? "Corporate portal ready. Registration intent recorded in Supabase."
+              : "Professional Passport ready. Registration intent recorded in Supabase."
+            : portal === "corporate"
+              ? "Corporate portal ready. Apply migration 044 to record registration intent rows."
+              : "Professional Passport ready. Apply migration 044 to record registration intent rows."
+        );
       } else {
         if (portal === "corporate" && mode === "signup") {
           savePendingCorporateRegistration();

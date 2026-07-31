@@ -65,6 +65,8 @@ const flowChecks = [
       "Registration decision receipt",
       "registration_decision_receipt",
       "registration_database_launch_order",
+      "registration_intents",
+      "record_registration_intent",
       "registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit",
       "Live onboarding acceptance contract",
       "live_onboarding_acceptance_contract",

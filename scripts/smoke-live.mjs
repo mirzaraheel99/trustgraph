@@ -808,6 +808,9 @@ assertIncludesAny(bundleText, ["public_buyer_launch_path"], "public buyer launch
 assertIncludesAny(bundleText, ["public_buyer_can_follow_account_choice_hosted_verification_portal_landing_pricing_scoped_database_access_proof_export_and_server_save_before_signup"], "public buyer launch path acceptance rule");
 assertIncludesAny(bundleText, ["Registration database launch order"], "registration database launch order");
 assertIncludesAny(bundleText, ["registration_database_launch_order"], "registration database launch order packet field");
+assertIncludesAny(bundleText, ["registration_intents"], "registration intent table marker");
+assertIncludesAny(bundleText, ["record_registration_intent"], "registration intent RPC marker");
+assertIncludesAny(bundleText, ["Apply migration 044 to record registration intent rows"], "registration intent migration guidance");
 assertIncludesAny(bundleText, ["registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit"], "registration database launch order acceptance rule");
 assertIncludesAny(bundleText, ["Export registration order"], "registration database launch order export");
 assertIncludesAny(bundleText, ["Public portal launch checklist"], "public portal launch checklist");

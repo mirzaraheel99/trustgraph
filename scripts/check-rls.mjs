@@ -26,6 +26,7 @@ const requiredRlsTables = [
   "webhook_subscriptions",
   "subscription_plans",
   "organization_subscriptions",
+  "registration_intents",
   "organization_invitations",
   "consent_authorizations",
   "corporate_access_reviews",
@@ -63,6 +64,23 @@ if (!accountContextRpc.includes("security definer") || !accountContextRpc.includ
 
 if (!accountContextRpc.includes("grant execute on function public.get_account_context() to authenticated")) {
   throw new Error("RLS check failed: account context RPC must be executable by authenticated users.");
+}
+
+const registrationIntentMigration = latestSqlByFile["044_registration_intents.sql"] ?? "";
+if (!registrationIntentMigration.includes("create table if not exists public.registration_intents")) {
+  throw new Error("Missing registration intents migration for real signup handoff rows.");
+}
+
+if (!registrationIntentMigration.includes("profile_id = auth.uid()")) {
+  throw new Error("RLS check failed: registration intents must be owner-scoped.");
+}
+
+if (!registrationIntentMigration.includes("create or replace function public.record_registration_intent")) {
+  throw new Error("Missing authenticated registration intent RPC.");
+}
+
+if (!registrationIntentMigration.includes("grant execute on function public.record_registration_intent")) {
+  throw new Error("RLS check failed: registration intent RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

@@ -48,6 +48,9 @@ export type WebhookSubscriptionStatus = "active" | "paused" | "failed" | "revoke
 export type SubscriptionStatus = "trialing" | "active" | "past_due" | "cancelled";
 export type OrganizationInvitationStatus = "pending" | "accepted" | "cancelled" | "expired";
 export type ConsentAuthorizationStatus = "active" | "revoked" | "expired";
+export type RegistrationIntentPortal = "professional" | "corporate";
+export type RegistrationIntentMode = "signin" | "signup";
+export type RegistrationIntentStatus = "captured" | "workspace_created" | "cancelled";
 export type ProductionGateStatus =
   | "human_decision_required"
   | "external_signoff_required"
@@ -321,6 +324,23 @@ export interface DbOrganizationSubscription {
   created_at: string;
   updated_at: string;
   plan: DbSubscriptionPlan | null;
+}
+
+export interface DbRegistrationIntent {
+  id: string;
+  profile_id: string;
+  selected_portal: RegistrationIntentPortal;
+  selected_mode: RegistrationIntentMode;
+  pricing_plan_id: string | null;
+  organization_name: string | null;
+  organization_type: "employer" | "staffing_agency" | null;
+  organization_domain: string | null;
+  first_database_write: string;
+  next_dashboard: string;
+  status: RegistrationIntentStatus;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DbOrganizationInvitation {
