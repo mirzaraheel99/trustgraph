@@ -912,6 +912,15 @@ assertIncludesAny(bundleText, ["Export payment decision"], "billing architecture
 assertIncludesAny(bundleText, ["billing_architecture_decision"], "billing architecture packet mode");
 assertIncludesAny(bundleText, ["supabase_subscription_ledger"], "billing architecture current system");
 assertIncludesAny(bundleText, ["intentionally_disabled_until_human_gate"], "billing architecture disabled payment flows");
+assertIncludesAny(bundleText, ["billing_architecture_decision_receipts"], "billing architecture decision receipt table");
+assertIncludesAny(bundleText, ["record_billing_architecture_decision_receipt"], "billing architecture decision receipt RPC");
+assertIncludesAny(bundleText, ["Billing decision database receipt"], "billing architecture decision database receipt label");
+assertIncludesAny(bundleText, ["Record payment decision"], "billing architecture decision record action");
+assertIncludesAny(
+  bundleText,
+  ["billing_architecture_decision_receipt_requires_live_pricing_or_subscription_ledger_checkout_customer_portal_invoice_tax_refund_dunning_and_payment_webhooks_disabled_until_human_gate"],
+  "billing architecture decision receipt acceptance rule"
+);
 assertIncludesAny(bundleText, ["notes captured"], "pilot acceptance note capture");
 assertIncludesAny(bundleText, ["Export runbook"], "pilot acceptance markdown runbook export control");
 

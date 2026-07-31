@@ -4128,6 +4128,59 @@ p,
   min-height: 36px;
 }
 
+.billing-architecture-receipt {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 12px;
+  border: 1px solid rgba(247, 202, 104, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(247, 202, 104, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.billing-architecture-receipt > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.billing-architecture-receipt strong,
+.billing-architecture-receipt small,
+.billing-architecture-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.billing-architecture-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+  text-transform: capitalize;
+}
+
+.billing-architecture-receipt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+}
+
+.billing-architecture-receipt-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.billing-architecture-receipt > .secondary-action {
+  width: min(100%, 280px);
+}
+
 .billing-activation-receipt {
   display: grid;
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
@@ -13796,6 +13849,7 @@ p {
   .public-server-sync-grid,
   .stripe-checkout-decision-grid,
   .stripe-checkout-decision-actions,
+  .billing-architecture-receipt-grid,
   .pending-registration-grid,
   .registration-focus-strip,
   .portal-launch-decision-strip,

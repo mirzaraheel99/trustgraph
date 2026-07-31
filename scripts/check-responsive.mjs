@@ -167,6 +167,7 @@ const requiredMobileStacks = [
   ".public-auth-flow-grid",
   ".stripe-checkout-decision-grid",
   ".stripe-checkout-decision-actions",
+  ".billing-architecture-receipt-grid",
   ".public-session-handoff",
   ".real-database-policy-grid",
   ".request-scope-receipt-grid",

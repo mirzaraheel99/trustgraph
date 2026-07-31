@@ -385,6 +385,27 @@ export interface DbOrganizationSubscription {
   plan: DbSubscriptionPlan | null;
 }
 
+export interface DbBillingArchitectureDecisionReceipt {
+  id: string;
+  organization_id: string;
+  recorded_by_profile_id: string;
+  status: "pricing_catalog_only" | "pilot_ledger_active" | "stripe_human_gate_required";
+  selected_seats: number;
+  active_subscription_count: number;
+  payment_collection_live: boolean;
+  checkout_enabled: boolean;
+  customer_portal_enabled: boolean;
+  invoice_email_enabled: boolean;
+  tax_automation_enabled: boolean;
+  refund_automation_enabled: boolean;
+  dunning_enabled: boolean;
+  payment_webhook_reconciliation_enabled: boolean;
+  human_gate_required: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbRegistrationIntent {
   id: string;
   profile_id: string;

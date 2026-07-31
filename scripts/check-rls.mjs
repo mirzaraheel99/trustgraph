@@ -37,7 +37,8 @@ const requiredRlsTables = [
   "corporate_database_access_receipts",
   "evidence_access_receipts",
   "data_export_package_receipts",
-  "data_export_packages"
+  "data_export_packages",
+  "billing_architecture_decision_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -246,6 +247,32 @@ if (!dataExportPackageMigration.includes("data_export.package_download_marked"))
 }
 if (!dataExportPackageMigration.includes("grant execute on function public.generate_data_export_package")) {
   throw new Error("Data export package generation RPC must be executable by authenticated users.");
+}
+
+const billingArchitectureDecisionMigration = latestSqlByFile["052_billing_architecture_decision_receipts.sql"] ?? "";
+if (!billingArchitectureDecisionMigration.includes("create table if not exists public.billing_architecture_decision_receipts")) {
+  throw new Error("Missing billing architecture decision receipt table migration.");
+}
+if (!billingArchitectureDecisionMigration.includes("alter table public.billing_architecture_decision_receipts enable row level security")) {
+  throw new Error("Billing architecture decision receipts must enable RLS.");
+}
+if (!billingArchitectureDecisionMigration.includes("payment_collection_live = false")) {
+  throw new Error("Billing architecture decision receipts must reject live payment collection.");
+}
+if (!billingArchitectureDecisionMigration.includes("checkout_enabled = false")) {
+  throw new Error("Billing architecture decision receipts must keep checkout disabled.");
+}
+if (!billingArchitectureDecisionMigration.includes("payment_webhook_reconciliation_enabled = false")) {
+  throw new Error("Billing architecture decision receipts must keep payment webhook reconciliation disabled.");
+}
+if (!billingArchitectureDecisionMigration.includes("create or replace function public.record_billing_architecture_decision_receipt")) {
+  throw new Error("Missing billing architecture decision receipt RPC.");
+}
+if (!billingArchitectureDecisionMigration.includes("billing.architecture_decision_recorded")) {
+  throw new Error("Billing architecture decision receipt RPC must write audit history.");
+}
+if (!billingArchitectureDecisionMigration.includes("grant execute on function public.record_billing_architecture_decision_receipt")) {
+  throw new Error("Billing architecture decision receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

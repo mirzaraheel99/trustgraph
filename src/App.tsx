@@ -33,6 +33,7 @@ import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceI
 import type {
   DbAuditEvent,
   DbApiClient,
+  DbBillingArchitectureDecisionReceipt,
   DbConsentAuthorization,
   DbCorporateAccessReview,
   DbCorporateDatabaseAccessReceipt,
@@ -94,8 +95,10 @@ import {
 } from "./auth";
 import {
   activateOrganizationSubscription,
+  loadBillingArchitectureDecisionReceipts,
   loadOrganizationSubscriptions,
-  loadSubscriptionPlans
+  loadSubscriptionPlans,
+  recordBillingArchitectureDecisionReceipt
 } from "./billingRepository";
 import {
   ensureCredentialIssuerMembership,
@@ -8530,21 +8533,32 @@ function AccountPanel({
 }
 
 function BillingPanel({
+  decisionReceipts,
   disabled,
   message,
   onActivate,
+  onRecordDecisionReceipt,
   plans,
   subscriptions
 }: {
+  decisionReceipts: DbBillingArchitectureDecisionReceipt[];
   disabled: boolean;
   message: string;
   onActivate: (planId: string, seats: number) => Promise<void>;
+  onRecordDecisionReceipt: (input: {
+    selectedSeats: number;
+    activeSubscriptionCount: number;
+    status: DbBillingArchitectureDecisionReceipt["status"];
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
   plans: DbSubscriptionPlan[];
   subscriptions: DbOrganizationSubscription[];
 }) {
   const [seats, setSeats] = useState(5);
   const [busyPlanId, setBusyPlanId] = useState<string | null>(null);
+  const [decisionBusy, setDecisionBusy] = useState(false);
   const activeSubscriptions = subscriptions.filter((item) => item.status !== "cancelled");
+  const latestDecisionReceipt = decisionReceipts[0] ?? null;
   const activePlanIds = new Set(activeSubscriptions.map((item) => item.plan_id));
   const primarySubscription = activeSubscriptions[0] ?? null;
   const primaryPlan = primarySubscription?.plan ?? plans.find((plan) => plan.id === primarySubscription?.plan_id) ?? null;
@@ -8732,6 +8746,11 @@ function BillingPanel({
   const paymentArchitectureDecision = {
     generated_at: new Date().toISOString(),
     mode: "billing_architecture_decision",
+    receipt_table: "billing_architecture_decision_receipts",
+    receipt_rpc: "record_billing_architecture_decision_receipt",
+    latest_receipt_status: latestDecisionReceipt?.status ?? "not_recorded",
+    accepted_when:
+      "billing_architecture_decision_receipt_requires_live_pricing_or_subscription_ledger_checkout_customer_portal_invoice_tax_refund_dunning_and_payment_webhooks_disabled_until_human_gate",
     current_billing_system: "supabase_subscription_ledger",
     live_capabilities: [
       "Configured Professional, Corporate Verify, and Scale pricing plans",
@@ -8759,6 +8778,26 @@ function BillingPanel({
     stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
     projected_plans: projectedPlans
   };
+
+  async function recordDecisionReceipt() {
+    setDecisionBusy(true);
+    try {
+      await onRecordDecisionReceipt({
+        selectedSeats: seats,
+        activeSubscriptionCount: activeSubscriptions.length,
+        status: activeSubscriptions.length ? "pilot_ledger_active" : "stripe_human_gate_required",
+        metadata: {
+          payment_architecture_decision: paymentArchitectureDecision,
+          stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
+          billing_activation_receipt: billingActivationReceipt,
+          accepted_when:
+            "billing_architecture_decision_receipt_requires_live_pricing_or_subscription_ledger_checkout_customer_portal_invoice_tax_refund_dunning_and_payment_webhooks_disabled_until_human_gate"
+        }
+      });
+    } finally {
+      setDecisionBusy(false);
+    }
+  }
 
   async function activate(planId: string) {
     setBusyPlanId(planId);
@@ -8821,6 +8860,36 @@ function BillingPanel({
             Export checkout decision
           </button>
         </div>
+      </div>
+      <div className="billing-architecture-receipt" aria-label="Billing architecture decision database receipt">
+        <div>
+          <span className={`status-chip ${latestDecisionReceipt ? "success" : "warning"}`}>Billing decision database receipt</span>
+          <strong>{latestDecisionReceipt ? latestDecisionReceipt.status.replace(/_/g, " ") : "Not recorded"}</strong>
+          <small>
+            Persists the pilot-ledger-now, Stripe-later decision with checkout, portal, invoices, tax, refunds, dunning, and payment webhooks disabled.
+          </small>
+        </div>
+        <div className="billing-architecture-receipt-grid">
+          <span>
+            <strong>{decisionReceipts.length}</strong>
+            <small>Receipt rows</small>
+          </span>
+          <span>
+            <strong>{latestDecisionReceipt?.selected_seats ?? seats}</strong>
+            <small>Selected seats</small>
+          </span>
+          <span>
+            <strong>{latestDecisionReceipt?.active_subscription_count ?? activeSubscriptions.length}</strong>
+            <small>Ledger rows</small>
+          </span>
+          <span>
+            <strong>{latestDecisionReceipt?.payment_collection_live ? "Live" : "Disabled"}</strong>
+            <small>Payments</small>
+          </span>
+        </div>
+        <button className="secondary-action" disabled={disabled || decisionBusy} onClick={() => void recordDecisionReceipt()} type="button">
+          Record payment decision
+        </button>
       </div>
       <div className="billing-activation-receipt" aria-label="Billing activation receipt">
         <div>
@@ -14970,6 +15039,7 @@ function App() {
   const [accountStatus, setAccountStatus] = useState("Preview account context");
   const [subscriptionPlans, setSubscriptionPlans] = useState<DbSubscriptionPlan[]>([]);
   const [organizationSubscriptions, setOrganizationSubscriptions] = useState<DbOrganizationSubscription[]>([]);
+  const [billingDecisionReceipts, setBillingDecisionReceipts] = useState<DbBillingArchitectureDecisionReceipt[]>([]);
   const [billingStatus, setBillingStatus] = useState("Sign in to manage billing plans");
   const [teamInvitations, setTeamInvitations] = useState<DbOrganizationInvitation[]>([]);
   const [teamStatus, setTeamStatus] = useState("Sign in to invite corporate team members");
@@ -15180,6 +15250,7 @@ function App() {
       setAccountStatus("Preview account context");
       setSubscriptionPlans([]);
       setOrganizationSubscriptions([]);
+      setBillingDecisionReceipts([]);
       setRegistrationIntents([]);
       setRegistrationIntentStatus("Sign in to load registration intent rows");
       setBillingStatus("Sign in to manage billing plans");
@@ -15246,15 +15317,17 @@ function App() {
     Promise.all([
       loadSubscriptionPlans(authSession.accessToken),
       loadOrganizationSubscriptions(authSession.accessToken).catch(() => []),
+      loadBillingArchitectureDecisionReceipts(authSession.accessToken).catch(() => []),
       loadRegistrationIntents(authSession.accessToken).catch(() => []),
       loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => []),
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, intents, readinessReceipts, invitations, members]) => {
+      .then(([plans, subscriptions, decisionReceipts, intents, readinessReceipts, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
+        setBillingDecisionReceipts(decisionReceipts);
         setRegistrationIntents(intents);
         setV1ReadinessReceipts(readinessReceipts);
         setTeamInvitations(invitations);
@@ -15271,6 +15344,7 @@ function App() {
         if (cancelled) return;
         setSubscriptionPlans([]);
         setOrganizationSubscriptions([]);
+        setBillingDecisionReceipts([]);
         setRegistrationIntents([]);
         setV1ReadinessReceipts([]);
         setTeamInvitations([]);
@@ -16565,13 +16639,54 @@ function App() {
       planId,
       seats
     });
-    const [subscriptions, events] = await Promise.all([
+    const [subscriptions, decisionReceipts, events] = await Promise.all([
       loadOrganizationSubscriptions(authSession.accessToken),
+      loadBillingArchitectureDecisionReceipts(authSession.accessToken).catch(() => billingDecisionReceipts),
       loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
     ]);
     setOrganizationSubscriptions(subscriptions);
+    setBillingDecisionReceipts(decisionReceipts);
     setAuditEvents(events);
     setBillingStatus(`Plan activated: ${subscription.plan_id}`);
+  }
+
+  async function recordLiveBillingArchitectureDecisionReceipt(input: {
+    selectedSeats: number;
+    activeSubscriptionCount: number;
+    status: DbBillingArchitectureDecisionReceipt["status"];
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before recording the billing architecture decision.");
+    }
+
+    const receipt = await recordBillingArchitectureDecisionReceipt({
+      accessToken: authSession.accessToken,
+      selectedSeats: input.selectedSeats,
+      activeSubscriptionCount: input.activeSubscriptionCount,
+      status: input.status,
+      metadata: {
+        ...input.metadata,
+        source: "signed_in_supabase_billing_ledger",
+        payment_collection_live: false,
+        checkout_enabled: false,
+        customer_portal_enabled: false,
+        invoice_email_enabled: false,
+        tax_automation_enabled: false,
+        refund_automation_enabled: false,
+        dunning_enabled: false,
+        payment_webhook_reconciliation_enabled: false,
+        human_gate_required: true
+      }
+    });
+    const [receipts, events] = await Promise.all([
+      loadBillingArchitectureDecisionReceipts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setBillingDecisionReceipts(receipts);
+    setAuditEvents(events);
+    setBillingStatus(`Billing decision receipt recorded: ${receipt.status.replace(/_/g, " ")}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
   async function createLiveTeamInvitation(input: {
@@ -19483,9 +19598,11 @@ function App() {
                 ) : null}
                 {setupView === "billing" ? (
                   <BillingPanel
+                    decisionReceipts={billingDecisionReceipts}
                     disabled={!authSession || !accountContext || !hasPermission(activeMembership.role, "organization:manage")}
                     message={billingStatus}
                     onActivate={activateLiveSubscription}
+                    onRecordDecisionReceipt={recordLiveBillingArchitectureDecisionReceipt}
                     plans={subscriptionPlans}
                     subscriptions={organizationSubscriptions}
                   />
