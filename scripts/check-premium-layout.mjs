@@ -137,6 +137,8 @@ assert(css.includes(".public-server-sync-receipt") && css.includes(".public-serv
 assert(app.includes('aria-label="Public server update receipt"'), "public saved-build receipt must expose the VPS update command when the host is stale.");
 assert(css.includes(".public-server-update-receipt") && css.includes("grid-column: 1 / -1"), "public server update receipt must be styled and bounded.");
 assert(css.includes(".public-saved-build-verification") && css.includes(".public-saved-build-grid"), "public saved build verification must be styled and bounded.");
+assert(app.includes('aria-label="Public auth server save checkpoint"') && app.includes("public_auth_server_save_checkpoint"), "login and registration form must show a GitHub-to-VPS server save checkpoint.");
+assert(css.includes(".public-auth-server-checkpoint") && css.includes(".public-auth-server-checkpoint-grid"), "public auth server checkpoint must be styled and bounded.");
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");

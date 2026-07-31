@@ -15253,6 +15253,7 @@ p {
   .public-server-update-receipt,
   .public-saved-build-verification,
   .public-saved-build-grid,
+  .public-auth-server-checkpoint-grid,
   .public-buyer-launch-path,
   .public-buyer-launch-grid,
   .registration-database-launch-grid,
@@ -21211,6 +21212,75 @@ body {
     linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.045) 62%, transparent),
     rgba(6, 20, 21, 0.82);
   box-shadow: 0 16px 42px rgba(0, 0, 0, 0.2);
+}
+
+.public-auth-server-checkpoint {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(240, 198, 107, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(240, 198, 107, 0.09), rgba(95, 240, 201, 0.045) 66%, transparent),
+    rgba(7, 15, 18, 0.84);
+}
+
+.public-auth-server-checkpoint > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-auth-server-checkpoint span,
+.public-auth-server-checkpoint strong,
+.public-auth-server-checkpoint small {
+  min-width: 0;
+}
+
+.public-auth-server-checkpoint > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.public-auth-server-checkpoint small {
+  color: var(--muted);
+  line-height: 1.38;
+  overflow-wrap: anywhere;
+}
+
+.public-auth-server-checkpoint-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.public-auth-server-checkpoint-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-auth-server-checkpoint-grid small:first-child {
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-auth-server-checkpoint-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+.public-auth-server-checkpoint button {
+  justify-self: start;
 }
 
 .auth-path-summary > div:first-child {

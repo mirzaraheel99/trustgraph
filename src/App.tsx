@@ -15049,6 +15049,40 @@ function PublicSite({
       detail: publicSavedBuildVerification.protected_vfix_route
     }
   ];
+  const publicAuthServerCheckpoint = {
+    mode: "public_auth_server_save_checkpoint",
+    selected_portal: portal,
+    source_of_truth: publicSavedBuildVerification.github_source,
+    hosted_pages_check: publicSavedBuildVerification.pages_smoke,
+    server_target: publicSavedBuildVerification.vps_target,
+    server_status: serverSyncMonitor.status,
+    release_stamp: publicSavedBuildVerification.release_stamp,
+    protected_vfix_route: publicSavedBuildVerification.protected_vfix_route,
+    accepted_when:
+      "login_registration_form_shows_github_source_pages_smoke_vps_release_stamp_and_vfix_boundary_before_user_or_corporate_signup"
+  };
+  const publicAuthServerCheckpointCards = [
+    {
+      label: "Saved source",
+      value: "GitHub main",
+      detail: publicAuthServerCheckpoint.source_of_truth
+    },
+    {
+      label: "Hosted build",
+      value: "Pages smoke",
+      detail: publicAuthServerCheckpoint.hosted_pages_check
+    },
+    {
+      label: "Server target",
+      value: serverSyncMonitor.status === "synced" ? "VPS synced" : "VPS verify",
+      detail: publicAuthServerCheckpoint.release_stamp
+    },
+    {
+      label: "VFIX guard",
+      value: "Protected",
+      detail: publicAuthServerCheckpoint.protected_vfix_route
+    }
+  ];
   const publicAuthFlowCards = [
     {
       label: "Account type",
@@ -16693,6 +16727,35 @@ function PublicSite({
                 </span>
               ))}
             </div>
+          </div>
+          <div className="public-auth-server-checkpoint" aria-label="Public auth server save checkpoint">
+            <div>
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Server save checkpoint</span>
+              <strong>{serverSyncMonitor.status === "synced" ? "GitHub and VPS are aligned for login testing" : "GitHub is saved; verify the VPS release stamp before login testing"}</strong>
+              <small>{publicAuthServerCheckpoint.accepted_when}</small>
+            </div>
+            <div className="public-auth-server-checkpoint-grid">
+              {publicAuthServerCheckpointCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-public-auth-server-checkpoint-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(publicAuthServerCheckpoint, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export server checkpoint
+            </button>
           </div>
           <div className="portal-tabs">
             <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
