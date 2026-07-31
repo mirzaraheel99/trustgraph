@@ -10431,6 +10431,21 @@ function OnboardingChecklistPanel({
     ],
     checks: liveSeedPreflightChecks
   };
+  const liveSeedReloadReceipt = {
+    mode: "live_seed_reload_receipt",
+    has_seed_evidence: Boolean(visibleSeedEvidence),
+    seed_reconciliation_complete: seedReconciliationComplete,
+    seed_rows_matched: seedReconciliationPassing,
+    seed_rows_total: seedReconciliationRows.length,
+    accepted_only_when: "seed_ids_reconcile_with_reloaded_signed_in_supabase_repository_rows",
+    next_action: seedReconciliationComplete
+      ? "Export working-data packet"
+      : visibleSeedEvidence
+        ? "Reload rows and reconcile seed IDs"
+        : authSession
+          ? "Prepare live pilot workspace"
+          : "Login before live pilot seed"
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -10509,6 +10524,7 @@ function OnboardingChecklistPanel({
       complete: seedReconciliationComplete,
       rows: seedReconciliationRows
     },
+    live_seed_reload_receipt: liveSeedReloadReceipt,
     working_database_test_runbook: {
       label: "Working database test runbook",
       accepted_source: "not static preview data",
@@ -10894,6 +10910,27 @@ function OnboardingChecklistPanel({
               <button className="secondary-action" onClick={clearSeedEvidence} type="button">
                 Clear seed evidence
               </button>
+            </div>
+          </div>
+          <div className="live-seed-reload-receipt" aria-label="Live seed reload receipt">
+            <div>
+              <span className={`status-chip ${liveSeedReloadReceipt.seed_reconciliation_complete ? "success" : "warning"}`}>Live seed reload receipt</span>
+              <strong>{liveSeedReloadReceipt.next_action}</strong>
+              <small>Browser seed evidence is not enough for v1; seed IDs must reconcile with rows reloaded from Supabase repositories.</small>
+            </div>
+            <div className="live-seed-reload-grid">
+              <span>
+                <small>Seed evidence</small>
+                <strong>{liveSeedReloadReceipt.has_seed_evidence ? "Captured" : "Missing"}</strong>
+              </span>
+              <span>
+                <small>Reload match</small>
+                <strong>{liveSeedReloadReceipt.seed_rows_matched}/{liveSeedReloadReceipt.seed_rows_total}</strong>
+              </span>
+              <span>
+                <small>Accepted when</small>
+                <strong>{liveSeedReloadReceipt.accepted_only_when}</strong>
+              </span>
             </div>
           </div>
           <div className="seed-reconciliation-card">

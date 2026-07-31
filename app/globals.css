@@ -5026,6 +5026,46 @@ p,
   font-size: 11px;
 }
 
+.live-seed-reload-receipt {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 118, 0.2);
+  border-radius: var(--radius);
+  background: rgba(255, 205, 118, 0.055);
+}
+
+.live-seed-reload-receipt > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.live-seed-reload-receipt strong,
+.live-seed-reload-receipt small,
+.live-seed-reload-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-seed-reload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.live-seed-reload-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
 .seed-reconciliation-card {
   display: grid;
   gap: 10px;
@@ -12420,6 +12460,7 @@ p {
   .live-seed-preflight-top,
   .live-seed-preflight-actions,
   .live-seed-preflight-grid,
+  .live-seed-reload-grid,
   .live-onboarding-contract-grid,
   .live-onboarding-sequence,
   .registration-grid,

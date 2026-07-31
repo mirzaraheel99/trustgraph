@@ -81,6 +81,8 @@ assert(premiumRepair.includes(".live-row-completion-command") && premiumRepair.i
 assert(css.includes(".live-row-source-receipt") && css.includes(".live-row-source-grid") && css.includes(".live-row-source-next"), "live row source receipt must be styled and bounded.");
 assert(css.includes(".live-database-repair-command") && css.includes(".live-database-repair-actions") && css.includes(".live-database-repair-grid"), "live database repair command must be styled and bounded.");
 assert(css.includes(".live-seed-preflight") && css.includes(".live-seed-preflight-grid"), "live seed preflight must be styled and bounded.");
+assert(app.includes('aria-label="Live seed reload receipt"'), "live seed proof must expose the reload/reconciliation receipt.");
+assert(css.includes(".live-seed-reload-receipt") && css.includes(".live-seed-reload-grid"), "live seed reload receipt must be styled and bounded.");
 assert(css.includes(".release-sync-command") && css.includes(".release-sync-command-grid"), "release sync command must be styled and bounded.");
 assert(premiumRepair.includes(".dashboard-next-action") && premiumRepair.includes(".dashboard-next-action-metrics"), "dashboard next action command must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");

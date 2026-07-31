@@ -343,6 +343,9 @@ assertIncludesAny(bundleText, ["preview_data_accepted_for_v1"], "portal access p
 assertIncludesAny(bundleText, ["Preview data is not accepted for v1"], "dashboard preview boundary copy");
 assertIncludesAny(bundleText, ["Supabase rows written"], "live pilot seed database evidence");
 assertIncludesAny(bundleText, ["corporate_access_review_id"], "live pilot seed corporate review evidence");
+assertIncludesAny(bundleText, ["Live seed reload receipt"], "live seed reload receipt");
+assertIncludesAny(bundleText, ["live_seed_reload_receipt"], "live seed reload receipt packet field");
+assertIncludesAny(bundleText, ["seed_ids_reconcile_with_reloaded_signed_in_supabase_repository_rows"], "live seed reload acceptance rule");
 assertIncludesAny(bundleText, ["Export live readiness"], "live database readiness export");
 assertIncludesAny(bundleText, ["Product preview mode"], "preview mode indicator");
 assertIncludesAny(bundleText, ["All actors"], "audit actor filter");

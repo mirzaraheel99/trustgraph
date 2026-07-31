@@ -75,6 +75,7 @@ const requiredMobileStacks = [
   ".live-seed-preflight-top",
   ".live-seed-preflight-actions",
   ".live-seed-preflight-grid",
+  ".live-seed-reload-grid",
   ".live-onboarding-contract-grid",
   ".live-onboarding-sequence",
   ".live-database-acceptance-lanes-top",
