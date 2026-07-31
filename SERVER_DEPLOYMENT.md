@@ -81,9 +81,10 @@ For later updates:
 cd /opt/trustgraph
 bash tools/validate-server-env.sh .env.server
 bash tools/preflight-vps.sh
-git pull --ff-only origin main
-docker compose --env-file .env.server -f docker-compose.server.yml up -d --build
+bash tools/update-vps-from-github.sh
 ```
+
+The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-release.json`, and refuses a 200 OK page that does not contain the current bundle marker `billing_activation_receipt`.
 
 ## 4. Configure Server Env
 
