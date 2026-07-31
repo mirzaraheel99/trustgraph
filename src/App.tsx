@@ -21813,6 +21813,16 @@ function App() {
     accepted_when:
       "first_signed_in_screen_has_one_clear_personal_corporate_pricing_database_account_and_server_command_without_sidebar_or_horizontal_overflow"
   };
+  const premiumLaunchConsole = {
+    mode: "premium_launch_console",
+    current_portal: workspace.label,
+    active_account: authSession ? authSession.user.email : "login_required",
+    database_mode: authSession && accountContext ? "live_supabase_rows" : "hosted_login_required",
+    server_target: "https://trustgraph.5-75-224-110.sslip.io/",
+    server_status: serverSyncMonitor.status,
+    accepted_when:
+      "premium_launch_console_keeps_personal_corporate_admin_account_pricing_database_and_server_actions_visible_clickable_bounded_and_mobile_stacked"
+  };
   const portalUsabilityActions = [
     {
       label: "Personal Passport",
@@ -21869,6 +21879,74 @@ function App() {
       icon: Network,
       target: "server_packet" as const,
       action: "Export server"
+    }
+  ];
+  const premiumLaunchConsoleActions = [
+    {
+      label: "Personal Passport",
+      detail: "Own records, evidence, consent, and sharing.",
+      status: authSession ? `${livePassportRecords.length} records` : "Login required",
+      action: authSession ? "Open Passport" : "Login / register",
+      ready: Boolean(authSession && livePassportRecords.length),
+      icon: Fingerprint,
+      onClick: () => (authSession ? openWorkspaceOrSetup("passport") : openAuthControls())
+    },
+    {
+      label: "Corporate Verify",
+      detail: "Review approved user rows with scoped access.",
+      status: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} rows visible` : "Need approved access",
+      action: "Open Verify",
+      ready: Boolean(sharedVerifyRecords.length),
+      icon: BriefcaseBusiness,
+      onClick: () => openWorkspaceOrSetup("verify")
+    },
+    {
+      label: "Company Admin",
+      detail: "Workspace, RBAC roles, invites, and rollout.",
+      status: activeOrganization.type === "professional" ? "Setup needed" : activeMembership.role,
+      action: "Setup company",
+      ready: activeOrganization.type !== "professional",
+      icon: Users,
+      onClick: openCorporateControls
+    },
+    {
+      label: "Account",
+      detail: authSession ? "Recovery, hosted link repair, and logout." : "Login, register, or reset password.",
+      status: authSession ? authSession.user.email : "No session",
+      action: authSession ? "Open account" : "Login / register",
+      ready: Boolean(authSession),
+      icon: KeyRound,
+      onClick: openAuthControls
+    },
+    {
+      label: "Pricing",
+      detail: "Pilot ledger active now; Stripe remains gated.",
+      status: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "Pilot plans ready",
+      action: "Review pricing",
+      ready: Boolean(organizationSubscriptions.length),
+      icon: BadgeCheck,
+      onClick: () => {
+        setSetupView("billing");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Database proof",
+      detail: "Live-row receipts, scoped user rows, and preview rows rejected.",
+      status: authSession && accountContext ? "Live proof path" : "Login required",
+      action: "Open proof",
+      ready: Boolean(authSession && accountContext),
+      icon: Database,
+      onClick: () => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Server sync",
+      detail: "GitHub is source of truth; VPS must pull latest build.",
+      status: serverSyncMonitor.status.replaceAll("_", " "),
+      action: "Export server packet",
+      ready: serverSyncMonitor.status === "synced",
+      icon: Network,
+      onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
     }
   ];
 
@@ -22019,6 +22097,66 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="premium-launch-console" aria-label="Premium launch console">
+          <div className="premium-launch-console-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Launch console</span>
+            <strong>{authSession ? `Welcome back, ${activeRole.label}` : "Choose the right portal before creating live rows"}</strong>
+            <small>
+              Personal, Corporate Verify, Company Admin, Account, Pricing, Database proof, and Server sync are separated into one working surface.
+            </small>
+          </div>
+          <div className="premium-launch-console-actions">
+            {premiumLaunchConsoleActions.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button className={`${item.ready ? "ready" : "next"} ${item.label === workspace.label ? "current" : ""}`} key={item.label} onClick={item.onClick} type="button">
+                  <span>
+                    <Icon size={18} />
+                  </span>
+                  <strong>{item.label}</strong>
+                  <small>{item.detail}</small>
+                  <em>{item.status}</em>
+                  <b>{item.action}</b>
+                </button>
+              );
+            })}
+          </div>
+          <div className="premium-launch-console-proof">
+            <span>
+              <strong>{workspace.label}</strong>
+              <small>Current portal</small>
+            </span>
+            <span>
+              <strong>{premiumLaunchConsole.database_mode.replaceAll("_", " ")}</strong>
+              <small>Database mode</small>
+            </span>
+            <span>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+              <small>Server status</small>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-premium-launch-console-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      ...premiumLaunchConsole,
+                      actions: premiumLaunchConsoleActions.map(({ icon: _icon, onClick: _onClick, ...item }) => item)
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export console proof
+            </button>
+          </div>
+        </section>
 
         <section className="dashboard-front-door" aria-label="Dashboard front door">
           <div className="dashboard-front-door-copy">

@@ -31,6 +31,8 @@ const requiredMobileStacks = [
   ".production-gate-cockpit-header",
   ".production-gate-cockpit-grid",
   ".production-gate-cockpit-proof",
+  ".premium-launch-console-actions",
+  ".premium-launch-console-proof",
   ".today-command-center",
   ".today-command-actions",
   ".today-command-grid",
