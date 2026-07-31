@@ -50,6 +50,7 @@ The signed-in dashboard now exposes one operator path for pilot use:
 17. Confirm the CI responsive coverage guard passes before accepting mobile and narrow desktop layouts.
 18. Export the V1 operating map packet and confirm it matches the current pilot route before user testing.
 19. Export the server release save path packet before updating the VPS and confirm the server commit matches the latest GitHub `main`.
+20. Export the V1 live database readiness receipt and confirm Professional, Corporate, pricing, scoped database access, registration, review, and release row groups are live Supabase rows with preview data rejected.
 
 ## Stop Conditions
 

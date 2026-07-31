@@ -60,6 +60,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - UI layout proof: public professional/corporate access is contained in a two-column auth access desk, the signed-in dashboard uses the top command system instead of a fixed left rail, and VFIX remains isolated on `https://5-75-224-110.sslip.io/CRM-client-demo/login`.
 - Hosted login/database handoff packet: active Supabase return URL, current login state, live database acceptance requirements, TrustGraph VPS target, and VFIX isolation guard.
 - Working-data packet: currently loaded Passport, Access Grant, corporate review attestation, consent, subscription, team member, and invitation counts plus the live database repair queue and database policy repair guidance for missing required row groups or migration 042 proof.
+- V1 live database readiness receipt: single owner-facing packet for Professional rows, Corporate RBAC/access rows, evidence, consent, billing, team, review, registration, release proof, required exports, missing groups, and the rule that preview data is not accepted.
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC, including the corporate review attestation created from the approved Access Grant.
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.
 - Admin exports: operations cases, audit CSV/JSON, release ledger, security runbook, production gates, pilot launch contacts, Connect clients, and webhooks.

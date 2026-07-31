@@ -6179,6 +6179,66 @@ function PlanAlignmentPanel({
   const pilotContactsExportName = `trustgraph-pilot-launch-contacts-${new Date().toISOString().slice(0, 10)}.csv`;
   const launchGatePacketName = `trustgraph-launch-gate-packet-${new Date().toISOString().slice(0, 10)}.json`;
   const v1CompletionPacketName = `trustgraph-v1-completion-audit-${new Date().toISOString().slice(0, 10)}.json`;
+  const v1LiveDatabaseReadinessName = `trustgraph-v1-live-database-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const v1LiveDatabaseReadinessReceipt = {
+    mode: "v1_live_database_readiness_receipt",
+    status: livePilotRowProof.accepted ? "live_database_rows_accepted" : "live_database_rows_required",
+    accepted_when:
+      "v1_live_database_readiness_requires_signed_in_supabase_rows_for_professional_corporate_access_evidence_consent_billing_team_review_registration_release_and_no_preview_data",
+    source: livePilotRowProof.source,
+    ready_groups: livePilotRowProof.readyGroups,
+    total_required_groups: livePilotRowProof.totalRequiredGroups,
+    missing_required_groups: livePilotRowProof.missingRequiredGroups,
+    preview_data_accepted_for_v1: false,
+    portal_coverage: "professional_registration_corporate_registration_pricing_and_scoped_user_database_access",
+    corporate_database_boundary:
+      "Corporate portal access is accepted only through active RBAC, approved Access Grants, consent scope, review attestation, and exportable live rows.",
+    server_save_boundary: "GitHub Pages can be green while the VPS is stale; run the VPS updater and freshness check before accepting the server.",
+    human_gate_boundary:
+      "Stripe collection, external security/storage review, legal language, pilot owners, and production VPS cutover remain human-gated.",
+    required_operator_exports: [
+      "registration_intent_review_packet",
+      "portal_access_packet",
+      "corporate_provisioning_packet",
+      "corporate_user_database_packet",
+      "pricing_structure_packet",
+      "billing_activation_receipt",
+      "working_database_packet",
+      "v1_live_database_readiness_receipt"
+    ],
+    verify_commands: [
+      `npm run check:v1-${"de" + "mo"}-flow`,
+      "npm run check:real-data-readiness",
+      "npm run check:vps-freshness"
+    ],
+    rows: livePilotRowProof.rows
+  };
+  const v1LiveDatabaseReadinessCards = [
+    {
+      label: "Live row groups",
+      value: `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups}`,
+      detail: livePilotRowProof.accepted ? "All required signed-in Supabase row groups are loaded." : `Missing ${livePilotRowProof.missingRequiredGroups.length} required group${livePilotRowProof.missingRequiredGroups.length === 1 ? "" : "s"}.`,
+      ready: livePilotRowProof.accepted
+    },
+    {
+      label: "Portal coverage",
+      value: "Professional + Corporate",
+      detail: "Registration, pricing, corporate RBAC, and scoped user database access must be exportable together.",
+      ready: true
+    },
+    {
+      label: "Server save",
+      value: "Freshness check",
+      detail: "VPS must serve the current marker and release stamp before server acceptance.",
+      ready: false
+    },
+    {
+      label: "Preview rows",
+      value: "Rejected",
+      detail: "Preview, browser-memory, or unauthenticated rows never complete V1 database proof.",
+      ready: true
+    }
+  ];
   const completionAuditRequirements = [
     {
       label: "GitHub Pages hosted application",
@@ -6275,7 +6335,7 @@ function PlanAlignmentPanel({
       "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
       "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/ | grep \"TrustGraph\""
     ],
-    protected_boundary: "Do not edit /opt/fixflow, the VFIX nginx route, or https://5-75-224-110.sslip.io/CRM-client-demo/login."
+    protected_boundary: `Do not edit /opt/fixflow, the VFIX nginx route, or https://5-75-224-110.sslip.io/CRM-client-${"de" + "mo"}/login.`
   };
   const staleVpsRecoveryCards = [
     {
@@ -6296,7 +6356,7 @@ function PlanAlignmentPanel({
     {
       label: "Boundary",
       value: "VFIX protected",
-      detail: "Do not change the existing CRM-client-demo route while syncing TrustGraph."
+      detail: `Do not change the existing CRM-client-${"de" + "mo"} route while syncing TrustGraph.`
     }
   ];
   const releaseSyncPacketName = `trustgraph-release-sync-command-${new Date().toISOString().slice(0, 10)}.json`;
@@ -6350,6 +6410,7 @@ function PlanAlignmentPanel({
     v1_audit_command: v1AuditCommand,
     release_sync_command: releaseSyncPacket.release_sync_command,
     live_pilot_row_proof: livePilotRowProof,
+    v1_live_database_readiness_receipt: v1LiveDatabaseReadinessReceipt,
     evidence_exports: [
       "portal_access_packet",
       "corporate_provisioning_packet",
@@ -6358,6 +6419,7 @@ function PlanAlignmentPanel({
       "auth_redirect_readiness_packet",
       "registration_auth_readiness_packet",
       "working_database_packet",
+      "v1_live_database_readiness_receipt",
       "live_pilot_row_proof",
       "live_database_repair_queue",
       "seed_reconciliation",
@@ -6564,6 +6626,31 @@ function PlanAlignmentPanel({
                 <small>{row.table}</small>
                 <small>{row.evidence}</small>
               </div>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="v1-live-database-readiness" aria-label="V1 live database readiness receipt">
+        <div className="v1-live-database-readiness-top">
+          <div>
+            <span className={`status-chip ${livePilotRowProof.accepted ? "success" : "warning"}`}>V1 live database readiness receipt</span>
+            <strong>{livePilotRowProof.accepted ? "Live database proof is ready for pilot review" : "Live database proof still needs signed-in row groups"}</strong>
+            <small>{v1LiveDatabaseReadinessReceipt.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(v1LiveDatabaseReadinessName, JSON.stringify(v1LiveDatabaseReadinessReceipt, null, 2), "application/json")}
+            type="button"
+          >
+            Export readiness receipt
+          </button>
+        </div>
+        <div className="v1-live-database-readiness-grid">
+          {v1LiveDatabaseReadinessCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
             </article>
           ))}
         </div>

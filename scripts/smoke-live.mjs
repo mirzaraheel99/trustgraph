@@ -490,6 +490,13 @@ assertIncludesAny(bundleText, ["Working database proof"], "working database proo
 assertIncludesAny(bundleText, ["Live pilot row proof"], "top-level live pilot row proof panel");
 assertIncludesAny(bundleText, ["required Supabase row groups loaded"], "top-level live pilot row proof counter");
 assertIncludesAny(bundleText, ["live_pilot_row_proof"], "v1 completion live pilot row proof packet field");
+assertIncludesAny(bundleText, ["V1 live database readiness receipt"], "V1 live database readiness receipt");
+assertIncludesAny(bundleText, ["v1_live_database_readiness_receipt"], "V1 live database readiness packet field");
+assertIncludesAny(
+  bundleText,
+  ["v1_live_database_readiness_requires_signed_in_supabase_rows_for_professional_corporate_access_evidence_consent_billing_team_review_registration_release_and_no_preview_data"],
+  "V1 live database readiness acceptance rule"
+);
 assertIncludesAny(bundleText, ["Registration intent handoff"], "live pilot row proof registration intent group");
 assertIncludesAny(bundleText, ["Registration intent review"], "registration intent review panel");
 assertIncludesAny(bundleText, ["registration_intent_review_packet"], "registration intent review packet field");
