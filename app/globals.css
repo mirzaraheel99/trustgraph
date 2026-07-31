@@ -2854,6 +2854,70 @@ p,
   justify-content: end;
 }
 
+.data-rights-review-lanes {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.06), transparent 64%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.data-rights-review-lanes > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.data-rights-review-lanes strong,
+.data-rights-review-lanes small,
+.data-rights-review-lanes span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.data-rights-review-lanes > div:first-child > strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+}
+
+.data-rights-review-lanes small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.data-rights-review-lane-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.data-rights-review-lane-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.data-rights-review-lane-grid span.ready {
+  border-color: rgba(112, 224, 178, 0.22);
+  background: rgba(112, 224, 178, 0.055);
+}
+
+.data-rights-review-lane-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+}
+
 .billing-panel {
   display: grid;
   gap: 10px;
@@ -11603,6 +11667,7 @@ p {
   .password-update-form,
   .database-status-counts,
   .data-rights-summary-grid,
+  .data-rights-review-lane-grid,
   .data-rights-actions,
   .workspace-admin-grid,
   .setup-panel-grid,

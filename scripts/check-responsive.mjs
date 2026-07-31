@@ -21,6 +21,7 @@ const requiredMobileStacks = [
   ".database-status-strip",
   ".data-rights-summary-grid",
   ".data-rights-actions",
+  ".data-rights-review-lane-grid",
   ".dashboard-start-map-grid",
   ".dashboard-next-action",
   ".dashboard-next-action-metrics",

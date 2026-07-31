@@ -8521,6 +8521,39 @@ function AuthPanel({
     }
   ];
   const dataRightsPacketName = `trustgraph-data-rights-${new Date().toISOString().slice(0, 10)}.json`;
+  const openDataRightsRequests = dataRightsRequests.filter((request) => ["requested", "in_review"].includes(request.status));
+  const completedDataRightsRequests = dataRightsRequests.filter((request) => ["completed", "rejected", "cancelled"].includes(request.status));
+  const latestDataRightsRequest = dataRightsRequests[0] ?? null;
+  const dataRightsReviewLanes = [
+    {
+      label: "Export request",
+      value: `${dataRightsRequests.filter((request) => request.request_type === "data_export").length}`,
+      detail: "Creates a reviewed data export request row for eligible profile, Passport, evidence, grant, and audit scope.",
+      ready: dataRightsRequests.some((request) => request.request_type === "data_export")
+    },
+    {
+      label: "Closure review",
+      value: `${dataRightsRequests.filter((request) => request.request_type === "account_closure").length}`,
+      detail: "Closure is reviewed against retention, legal hold, active grants, disputes, and audit obligations before action.",
+      ready: dataRightsRequests.some((request) => request.request_type === "account_closure")
+    },
+    {
+      label: "Open review queue",
+      value: `${openDataRightsRequests.length}`,
+      detail: openDataRightsRequests.length
+        ? "Operator review is still open for at least one request."
+        : "No active export or closure review is waiting in this account.",
+      ready: openDataRightsRequests.length === 0 && dataRightsRequests.length > 0
+    }
+  ];
+  const dataRightsNextAction =
+    !session
+      ? "Sign in before requesting data rights"
+      : !dataRightsRequests.length
+        ? "Submit a data export or closure review request"
+        : openDataRightsRequests.length
+          ? "Wait for TrustGraph operator review"
+          : "Export the data-rights packet";
   const dataRightsPacket = {
     packet_mode: "account_data_rights",
     generated_at: new Date().toISOString(),
@@ -8529,6 +8562,19 @@ function AuthPanel({
     supported_requests: ["data_export", "account_closure"],
     automatic_deletion_enabled: false,
     closure_review_required: ["retention_policy", "legal_hold", "active_access_grants", "unresolved_disputes"],
+    review_lanes: dataRightsReviewLanes,
+    next_action: dataRightsNextAction,
+    open_review_count: openDataRightsRequests.length,
+    completed_or_closed_count: completedDataRightsRequests.length,
+    latest_request: latestDataRightsRequest
+      ? {
+          id: latestDataRightsRequest.id,
+          request_type: latestDataRightsRequest.request_type,
+          status: latestDataRightsRequest.status,
+          requested_scope: latestDataRightsRequest.requested_scope,
+          due_at: latestDataRightsRequest.due_at
+        }
+      : null,
     loaded_requests: dataRightsRequests.map((request) => ({
       id: request.id,
       request_type: request.request_type,
@@ -8719,6 +8765,24 @@ function AuthPanel({
                 </button>
               </div>
             </form>
+            <div className="data-rights-review-lanes" aria-label="Data rights review lanes">
+              <div>
+                <span className={`status-chip ${openDataRightsRequests.length ? "warning" : dataRightsRequests.length ? "success" : "neutral"}`}>
+                  Data-rights review path
+                </span>
+                <strong>{dataRightsNextAction}</strong>
+                <small>Exports and closure requests are live Supabase rows. Closure never deletes automatically; TrustGraph reviews policy gates first.</small>
+              </div>
+              <div className="data-rights-review-lane-grid">
+                {dataRightsReviewLanes.map((lane) => (
+                  <span className={lane.ready ? "ready" : ""} key={lane.label}>
+                    <strong>{lane.value}</strong>
+                    <small>{lane.label}</small>
+                    <small>{lane.detail}</small>
+                  </span>
+                ))}
+              </div>
+            </div>
             <small>
               Closure requests do not delete data automatically. TrustGraph reviews retention, legal hold, active grants, and open disputes before closure.
             </small>

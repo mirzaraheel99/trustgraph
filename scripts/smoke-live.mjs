@@ -265,6 +265,9 @@ assertIncludesAny(bundleText, ["Request data export"], "data export request cont
 assertIncludesAny(bundleText, ["Request account closure"], "account closure request control");
 assertIncludesAny(bundleText, ["Export data-rights packet"], "data-rights packet export");
 assertIncludesAny(bundleText, ["account_data_rights"], "data-rights packet mode");
+assertIncludesAny(bundleText, ["Data-rights review path"], "data-rights review lane panel");
+assertIncludesAny(bundleText, ["review_lanes"], "data-rights packet review lanes field");
+assertIncludesAny(bundleText, ["Closure never deletes automatically"], "data-rights closure safety copy");
 assertIncludesAny(bundleText, ["Login or sign up"], "guided auth operator path");
 assertIncludesAny(bundleText, ["Create workspace"], "post-verification workspace action");
 assertIncludesAny(bundleText, ["2 emails per hour"], "Supabase built-in email rate limit guidance");
