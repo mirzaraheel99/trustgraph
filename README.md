@@ -173,6 +173,9 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `041_corporate_access_review_attestations.sql`: corporate reviewer attestations for scoped user-database review, with RLS, audit events, and professional notifications.
 - `042_fix_operator_policy_self_reference.sql`: final organization policy self-reference repair so corporate account context can load without Supabase `42P17` policy recursion failures.
 - `043_account_context_rpc.sql`: account-context RPC for signed-in profile, organization membership, and active role loading after hosted login.
+- `044_registration_intents.sql`: authenticated public registration intent rows for Professional and Corporate portal choices, selected plan, first database write, and next dashboard.
+- `045_registration_intent_status.sql`: corporate registration completion RPC that marks captured Corporate intents as `workspace_created` after organization and admin membership creation.
+- `046_registration_intent_professional_status.sql`: professional registration completion RPC that marks captured Professional intents as `passport_initialized` after hosted login creates the Passport account context.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -180,12 +183,12 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 ## Current Live Workflow
 
 1. Sign up or sign in with Supabase Auth.
-2. TrustGraph creates a Professional account automatically.
+2. TrustGraph records the public registration intent and creates a Professional account automatically.
 3. Add live Passport records with evidence summaries, structured responsibilities, and skills.
 4. Export the renewal readiness packet to review expired and 45-day due-soon records from the visible Passport or Verify scope.
 5. Export the confidentiality review packet to inspect performance reviews, references, restricted records, and explicit-consent records inside the visible scope.
 6. Export the skills evidence packet to review visible skill claims with source records, responsibilities, status, and Access Grant scope.
-7. Create a corporate account or accept an invitation into one.
+7. Create a corporate account or accept an invitation into one, then confirm the captured Corporate registration intent moves to `workspace_created`.
 8. Corporate users invite team members, activate subscriptions, and request Access Grants from professionals by email.
 9. Export the portal access packet to prove the signed-in profile, active membership, organization, and workspace route used for RBAC acceptance.
 10. Switch to Verify to review approved shared records.
@@ -210,7 +213,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `043_account_context_rpc.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, issuer credential update/revocation lifecycle, dispute and data-rights workflows, the TrustGraph VPS cutover gate, corporate user-database review attestations, the migration 042 organization RLS recursion repair required for corporate account context, and the migration 043 account-context RPC required after hosted login.
+Live Supabase migrations are applied through `046_registration_intent_professional_status.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, issuer credential update/revocation lifecycle, dispute and data-rights workflows, the TrustGraph VPS cutover gate, corporate user-database review attestations, the migration 042 organization RLS recursion repair required for corporate account context, the migration 043 account-context RPC required after hosted login, and registration intent completion states for `workspace_created` and `passport_initialized`.
 
 ## Public Website and Pricing
 

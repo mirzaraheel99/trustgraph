@@ -5,8 +5,8 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 ## 13-Track Product Coverage
 
 1. Product foundation: public website, hosted app, and GitHub Pages deployment are live.
-2. Professional Passport: account creation, Passport records, record types, evidence metadata, and private evidence storage are implemented.
-3. Corporate account: employer and staffing agency account creation, role activation, plans, invitations, invitee acceptance handoff, member controls, and corporate directory acceptance proof are implemented.
+2. Professional Passport: account creation, `passport_initialized` registration intent completion, Passport records, record types, evidence metadata, and private evidence storage are implemented.
+3. Corporate account: employer and staffing agency account creation, `workspace_created` registration intent completion, role activation, plans, invitations, invitee acceptance handoff, member controls, and corporate directory acceptance proof are implemented.
 4. RBAC: Professional, Corporate, Verify, Issuer, Admin, Auditor, and System roles are mapped to workspace access and permissions.
 5. Access Grants: corporate requests, Passport approval/decline/revoke, and shared-record sync are implemented.
 6. Consent controls: sensitive and restricted records can require explicit consent and consent can be revoked.
@@ -35,20 +35,21 @@ The signed-in dashboard now exposes one operator path for pilot use:
 2. Smoke-check `https://mirzaraheel99.github.io/trustgraph/`.
 3. Sign up or sign in with hosted Supabase Auth.
 4. Confirm verification emails use the hosted GitHub Pages URL, not `localhost`.
-5. Create a Passport record and attach evidence metadata.
-6. Upload one private evidence file and test preview/download.
-7. Create a Corporate workspace and activate a pilot plan.
-8. Add or invite a reviewer, then confirm the invitee can review and accept the pending workspace invitation.
-9. Request Passport access by professional email.
-10. Approve the Access Grant from Passport.
-11. Confirm shared records render in Verify with scope context.
-12. Confirm the Corporate directory acceptance ledger is accepted only when live corporate RBAC context loads Access Grants, shared Passport rows, review-ready people, and review attestations.
-13. Create a consent authorization for a sensitive record, then revoke it.
-14. Export team invitations and personal pending invitations for the pilot acceptance packet.
-15. Open Admin, create pilot cases if needed, resolve or restrict one case, export operations cases, export audit CSV/JSON, export release ledger, and export the security runbook.
-16. Confirm the CI responsive coverage guard passes before accepting mobile and narrow desktop layouts.
-17. Export the V1 operating map packet and confirm it matches the current pilot route before user testing.
-18. Export the server release save path packet before updating the VPS and confirm the server commit matches the latest GitHub `main`.
+5. Confirm the registration intent review packet shows a live `registration_intents` row and the correct completion status: `passport_initialized` for Professional or `workspace_created` for Corporate.
+6. Create a Passport record and attach evidence metadata.
+7. Upload one private evidence file and test preview/download.
+8. Create a Corporate workspace and activate a pilot plan.
+9. Add or invite a reviewer, then confirm the invitee can review and accept the pending workspace invitation.
+10. Request Passport access by professional email.
+11. Approve the Access Grant from Passport.
+12. Confirm shared records render in Verify with scope context.
+13. Confirm the Corporate directory acceptance ledger is accepted only when live corporate RBAC context loads Access Grants, shared Passport rows, review-ready people, and review attestations.
+14. Create a consent authorization for a sensitive record, then revoke it.
+15. Export team invitations and personal pending invitations for the pilot acceptance packet.
+16. Open Admin, create pilot cases if needed, resolve or restrict one case, export operations cases, export audit CSV/JSON, export release ledger, and export the security runbook.
+17. Confirm the CI responsive coverage guard passes before accepting mobile and narrow desktop layouts.
+18. Export the V1 operating map packet and confirm it matches the current pilot route before user testing.
+19. Export the server release save path packet before updating the VPS and confirm the server commit matches the latest GitHub `main`.
 
 ## Stop Conditions
 

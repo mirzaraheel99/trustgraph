@@ -81,6 +81,10 @@ async function assertRepoReadinessArtifacts() {
   assert(evidenceMap.includes("contained professional/corporate auth access desk"), "Expected implementation evidence map to record the contained public auth layout");
   assert(evidenceMap.includes("no-rail dashboard command layout"), "Expected implementation evidence map to record the no-rail dashboard layout");
   assert(evidenceMap.includes("UI layout proof"), "Expected implementation evidence map to include UI layout proof");
+  assert(evidenceMap.includes("046_registration_intent_professional_status.sql"), "Expected implementation evidence map to record migration 046 registration completion coverage");
+  assert(evidenceMap.includes("passport_initialized"), "Expected implementation evidence map to record Professional registration completion status");
+  assert(readiness.includes("workspace_created") && readiness.includes("passport_initialized"), "Expected readiness checklist to require registration intent completion states");
+  assert(readme.includes("046_registration_intent_professional_status.sql"), "Expected README to list migration 046");
   assert(readme.includes("contained professional/corporate access desk"), "Expected README to describe the contained public auth access desk");
   assert(readme.includes("top command system instead of a fixed left rail"), "Expected README to describe the no-rail dashboard layout");
 }
