@@ -2172,6 +2172,121 @@ button {
   background: rgba(95, 240, 201, 0.12);
 }
 
+.public-portal-route-board {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.075), rgba(134, 174, 246, 0.034)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.public-portal-route-board-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.public-portal-route-board-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-portal-route-board strong,
+.public-portal-route-board small,
+.public-portal-route-board span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-route-board-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.14;
+}
+
+.public-portal-route-board-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.public-portal-route-board-grid button {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  color: var(--muted);
+  text-align: left;
+  white-space: normal;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-portal-route-board-grid button.active {
+  border-color: rgba(95, 240, 201, 0.38);
+  color: #eafff9;
+  background: rgba(95, 240, 201, 0.11);
+}
+
+.public-portal-route-board-grid button > span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-route-board-grid button strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.public-portal-route-board-grid button small {
+  color: inherit;
+  font-size: 12px;
+  line-height: 1.34;
+}
+
+.public-portal-route-board-proof {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.public-portal-route-board-proof > span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.public-portal-route-board-proof strong {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.18;
+}
+
+.public-portal-route-board-proof small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.public-portal-route-board-proof button {
+  min-width: 0;
+  white-space: normal;
+}
+
 .registration-focus-strip {
   display: grid;
   gap: 8px;
@@ -17323,6 +17438,9 @@ p {
 .auth-recovery-command-grid,
 .signed-in-recovery-control-grid,
 .signed-in-recovery-control-actions,
+.public-portal-route-board-header,
+.public-portal-route-board-grid,
+.public-portal-route-board-proof,
 .hosted-callback-proof-grid,
 .login-issue-resolver-grid,
 .public-auth-recovery-actions,

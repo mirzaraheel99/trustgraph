@@ -101,6 +101,8 @@ The public website and login/register card are also kept buyer-facing: portal ch
 
 The hosted login/register card now starts with a public auth front desk so Professional users and Corporate admins can switch account type, login/register mode, pricing review, and recovery from one compact surface before entering credentials.
 
+The public login/register surface now also includes a Public portal route board that compares Professional user and Corporate company paths side by side: price, first database write, landing dashboard, and the scoped database boundary are visible before anyone submits credentials.
+
 The signed-in app now opens with a premium launch console that separates Personal Passport, Corporate Verify, Company Admin, Account, Pricing, Database proof, and Server sync into one bounded command surface. This is the working first screen; dense proof receipts remain exportable without taking over the daily dashboard.
 
 The signed-in dashboard now adds a Portal daily navigator directly after the front door, with six plain actions for Personal, Corporate, Admin, Account, Pricing, and Database proof plus visible recovery, logout, and export controls. This gives operators one calm path before the deeper audit and database panels.

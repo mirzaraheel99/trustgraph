@@ -15366,6 +15366,34 @@ function PublicSite({
       detail: selectedRegistrationPath.nextAction
     }
   ];
+  const portalRouteBoard = {
+    mode: "public_portal_route_board",
+    selected_portal: portal,
+    selected_mode: mode,
+    selected_price: selectedRegistrationPath.plan,
+    selected_first_write: selectedRegistrationPath.primaryWrite,
+    selected_dashboard: portal === "corporate" ? "Company Admin then Corporate Verify" : "Professional Passport",
+    lanes: [
+      {
+        portal: "professional",
+        label: "Professional user",
+        price: "Free pilot",
+        first_write: "profile + personal Passport workspace",
+        dashboard: "Professional Passport",
+        boundary: "Own records, evidence, consent, and approved sharing."
+      },
+      {
+        portal: "corporate",
+        label: "Corporate company",
+        price: "$149/month pilot",
+        first_write: "organization + admin membership",
+        dashboard: "Company Admin then Corporate Verify",
+        boundary: "Request access by professional email; review approved scoped rows only."
+      }
+    ],
+    accepted_when:
+      "public_auth_starts_with_clear_user_vs_corporate_routes_pricing_first_database_write_dashboard_and_access_boundary"
+  };
   const registrationDecisionReceipt = {
     mode: "registration_decision_receipt",
     selected_portal: selectedRegistrationPath.portal,
@@ -17509,6 +17537,55 @@ function PublicSite({
                   <small>{item.detail}</small>
                 </span>
               ))}
+            </div>
+          </div>
+          <div className="public-portal-route-board" aria-label="Public portal route board">
+            <div className="public-portal-route-board-header">
+              <div>
+                <span className="status-chip success">Choose the right route</span>
+                <strong>{portalRouteBoard.selected_dashboard}</strong>
+                <small>{portalRouteBoard.accepted_when}</small>
+              </div>
+              <span className="status-chip neutral">{mode === "signup" ? "Register" : "Login"}</span>
+            </div>
+            <div className="public-portal-route-board-grid">
+              {portalRouteBoard.lanes.map((lane) => (
+                <button
+                  className={portal === lane.portal ? "active" : ""}
+                  key={lane.portal}
+                  onClick={() => setPortal(lane.portal as "professional" | "corporate")}
+                  type="button"
+                >
+                  <span>{lane.label}</span>
+                  <strong>{lane.price}</strong>
+                  <small>{lane.first_write}</small>
+                  <small>{lane.dashboard}</small>
+                  <small>{lane.boundary}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-portal-route-board-proof">
+              <span>
+                <strong>{portalRouteBoard.selected_price}</strong>
+                <small>Selected pricing</small>
+              </span>
+              <span>
+                <strong>{portalRouteBoard.selected_first_write}</strong>
+                <small>First database write</small>
+              </span>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-portal-route-board-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(portalRouteBoard, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export route board
+              </button>
             </div>
           </div>
           <div className="portal-auth-command" aria-label="Portal auth landing command">
