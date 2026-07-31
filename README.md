@@ -176,6 +176,7 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `044_registration_intents.sql`: authenticated public registration intent rows for Professional and Corporate portal choices, selected plan, first database write, and next dashboard.
 - `045_registration_intent_status.sql`: corporate registration completion RPC that marks captured Corporate intents as `workspace_created` after organization and admin membership creation.
 - `046_registration_intent_professional_status.sql`: professional registration completion RPC that marks captured Professional intents as `passport_initialized` after hosted login creates the Passport account context.
+- `047_v1_live_database_readiness_receipts.sql`: authenticated V1 live database readiness receipts for Professional, Corporate, pricing, scoped user database, registration, review, release proof, and preview-data rejection.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -210,10 +211,11 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 26. Export the working-data packet to prove the currently loaded Passport, Access Grant, corporate review attestation, consent, subscription, team, and invitation rows plus the live database repair queue.
 27. Export the V1 operating map packet to confirm the pilot path from public website through server release is understandable.
 28. Export the server release save path packet, then update the VPS from `/opt/trustgraph` with `bash tools/update-vps-from-github.sh`.
+29. Record and export the V1 live database readiness receipt from Admin after signed-in Supabase rows load for Professional, Corporate, pricing, scoped database access, registration, review, and release proof.
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `046_registration_intent_professional_status.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, issuer credential update/revocation lifecycle, dispute and data-rights workflows, the TrustGraph VPS cutover gate, corporate user-database review attestations, the migration 042 organization RLS recursion repair required for corporate account context, the migration 043 account-context RPC required after hosted login, and registration intent completion states for `workspace_created` and `passport_initialized`.
+Live Supabase migrations are applied through `047_v1_live_database_readiness_receipts.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, issuer credential update/revocation lifecycle, dispute and data-rights workflows, the TrustGraph VPS cutover gate, corporate user-database review attestations, the migration 042 organization RLS recursion repair required for corporate account context, the migration 043 account-context RPC required after hosted login, registration intent completion states for `workspace_created` and `passport_initialized`, and persisted V1 live database readiness receipts.
 
 ## Public Website and Pricing
 

@@ -49,6 +49,7 @@ import type {
   DbRegistrationIntent,
   DbSchemaMigrationRun,
   DbSubscriptionPlan,
+  DbV1LiveDatabaseReadinessReceipt,
   DbVerificationCase,
   DbWebhookSubscription,
   CorporateAccessReviewStatus,
@@ -140,6 +141,7 @@ import { loadProductionGateDecisions, recordProductionGateDecision } from "./pro
 import { loadPilotLaunchContacts, recordPilotLaunchContact } from "./pilotLaunchRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
 import { isSupabaseConfigured } from "./supabase";
+import { loadV1LiveDatabaseReadinessReceipts, recordV1LiveDatabaseReadinessReceipt } from "./v1ReadinessRepository";
 import {
   acceptOrganizationInvitation,
   createOrganizationInvitation,
@@ -6043,6 +6045,9 @@ function ConnectPanel({
 function PlanAlignmentPanel({
   disabled,
   livePilotRowProof,
+  v1ReadinessReceipts,
+  v1ReadinessStatus,
+  onRecordV1ReadinessReceipt,
   onRecordPilotLaunchContact,
   onRecordGateDecision,
   pilotLaunchContacts,
@@ -6050,6 +6055,9 @@ function PlanAlignmentPanel({
 }: {
   disabled: boolean;
   livePilotRowProof: LivePilotRowProof;
+  v1ReadinessReceipts: DbV1LiveDatabaseReadinessReceipt[];
+  v1ReadinessStatus: string;
+  onRecordV1ReadinessReceipt: () => Promise<void>;
   onRecordPilotLaunchContact: (input: {
     contactKey: string;
     status: PilotLaunchContactStatus;
@@ -6194,6 +6202,8 @@ function PlanAlignmentPanel({
     corporate_database_boundary:
       "Corporate portal access is accepted only through active RBAC, approved Access Grants, consent scope, review attestation, and exportable live rows.",
     server_save_boundary: "GitHub Pages can be green while the VPS is stale; run the VPS updater and freshness check before accepting the server.",
+    persisted_receipts_loaded: v1ReadinessReceipts.length,
+    latest_persisted_receipt: v1ReadinessReceipts[0] ?? null,
     human_gate_boundary:
       "Stripe collection, external security/storage review, legal language, pilot owners, and production VPS cutover remain human-gated.",
     required_operator_exports: [
@@ -6644,6 +6654,9 @@ function PlanAlignmentPanel({
           >
             Export readiness receipt
           </button>
+          <button className="secondary-action" disabled={disabled} onClick={() => void onRecordV1ReadinessReceipt()} type="button">
+            Record live receipt
+          </button>
         </div>
         <div className="v1-live-database-readiness-grid">
           {v1LiveDatabaseReadinessCards.map((item) => (
@@ -6654,6 +6667,7 @@ function PlanAlignmentPanel({
             </article>
           ))}
         </div>
+        <small>{v1ReadinessStatus}</small>
       </div>
       <article className="plan-migration-card">
         <div>
@@ -14686,6 +14700,8 @@ function App() {
   const [passportMissingRecordStatus, setPassportMissingRecordStatus] = useState("Sign in to review requested Passport records");
   const [registrationIntents, setRegistrationIntents] = useState<DbRegistrationIntent[]>([]);
   const [registrationIntentStatus, setRegistrationIntentStatus] = useState("Sign in to load registration intent rows");
+  const [v1ReadinessReceipts, setV1ReadinessReceipts] = useState<DbV1LiveDatabaseReadinessReceipt[]>([]);
+  const [v1ReadinessStatus, setV1ReadinessStatus] = useState("Sign in to record V1 live database readiness receipts");
   const [serverSyncMonitor, setServerSyncMonitor] = useState<ServerSyncMonitorState>({
     status: "checking",
     headline: "Checking saved build",
@@ -14915,14 +14931,16 @@ function App() {
       loadSubscriptionPlans(authSession.accessToken),
       loadOrganizationSubscriptions(authSession.accessToken).catch(() => []),
       loadRegistrationIntents(authSession.accessToken).catch(() => []),
+      loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => []),
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, intents, invitations, members]) => {
+      .then(([plans, subscriptions, intents, readinessReceipts, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
         setRegistrationIntents(intents);
+        setV1ReadinessReceipts(readinessReceipts);
         setTeamInvitations(invitations);
         setTeamMembers(members);
         setBillingStatus(
@@ -14931,16 +14949,19 @@ function App() {
         setTeamStatus(invitations.length ? `Team invitations: ${invitations.length}` : "No team invitations yet");
         setMemberStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
         setRegistrationIntentStatus(intents.length ? `Registration intents: ${intents.length}` : "No registration intent rows yet");
+        setV1ReadinessStatus(readinessReceipts.length ? `V1 readiness receipts: ${readinessReceipts.length}` : "No V1 live database readiness receipts yet");
       })
       .catch((error) => {
         if (cancelled) return;
         setSubscriptionPlans([]);
         setOrganizationSubscriptions([]);
         setRegistrationIntents([]);
+        setV1ReadinessReceipts([]);
         setTeamInvitations([]);
         setTeamMembers([]);
         setBillingStatus(operatorErrorMessage(error, "Could not load billing plans"));
         setRegistrationIntentStatus(operatorErrorMessage(error, "Could not load registration intents"));
+        setV1ReadinessStatus(operatorErrorMessage(error, "Could not load V1 readiness receipts"));
         setTeamStatus(operatorErrorMessage(error, "Could not load team invitations"));
         setMemberStatus(operatorErrorMessage(error, "Could not load team members"));
       });
@@ -17019,6 +17040,49 @@ function App() {
     missingRequiredGroups: livePilotRowProofRows.filter((row) => row.required && !row.ready).map((row) => row.label),
     rows: livePilotRowProofRows
   };
+
+  async function recordLiveDatabaseReadinessReceipt() {
+    if (!authSession || !accountContext) {
+      setV1ReadinessStatus("Login first to record V1 live database readiness.");
+      return;
+    }
+
+    setV1ReadinessStatus("Recording V1 live database readiness receipt...");
+    try {
+      await recordV1LiveDatabaseReadinessReceipt(
+        {
+          organizationId: activeMembership.organizationId || null,
+          status: livePilotRowProof.accepted ? "live_database_rows_accepted" : "live_database_rows_required",
+          source: livePilotRowProof.source,
+          readyGroups: livePilotRowProof.readyGroups,
+          totalRequiredGroups: livePilotRowProof.totalRequiredGroups,
+          missingRequiredGroups: livePilotRowProof.missingRequiredGroups,
+          requiredOperatorExports: [
+            "registration_intent_review_packet",
+            "portal_access_packet",
+            "corporate_user_database_packet",
+            "pricing_structure_packet",
+            "billing_activation_receipt",
+            "working_database_packet"
+          ],
+          serverSaveStatus: serverSyncMonitor.status,
+          metadata: {
+            active_workspace: workspace.id,
+            active_role: activeMembership.role,
+            server_commit: serverSyncMonitor.commit,
+            row_groups: livePilotRowProof.rows
+          }
+        },
+        authSession.accessToken
+      );
+      const receipts = await loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => v1ReadinessReceipts);
+      setV1ReadinessReceipts(receipts);
+      setV1ReadinessStatus("V1 live database readiness receipt recorded with audit history.");
+    } catch (error) {
+      setV1ReadinessStatus(operatorErrorMessage(error, "Could not record V1 live database readiness receipt"));
+    }
+  }
+
   const liveDatabaseContract = {
     mode: "live_database_contract",
     accepted: livePilotRowProof.accepted,
@@ -19175,6 +19239,9 @@ function App() {
                 <PlanAlignmentPanel
                   disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
                   livePilotRowProof={livePilotRowProof}
+                  v1ReadinessReceipts={v1ReadinessReceipts}
+                  v1ReadinessStatus={v1ReadinessStatus}
+                  onRecordV1ReadinessReceipt={recordLiveDatabaseReadinessReceipt}
                   onRecordPilotLaunchContact={recordLivePilotLaunchContact}
                   onRecordGateDecision={recordLiveProductionGateDecision}
                   pilotLaunchContacts={pilotLaunchContacts}

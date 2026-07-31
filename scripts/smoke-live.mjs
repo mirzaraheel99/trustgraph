@@ -492,6 +492,9 @@ assertIncludesAny(bundleText, ["required Supabase row groups loaded"], "top-leve
 assertIncludesAny(bundleText, ["live_pilot_row_proof"], "v1 completion live pilot row proof packet field");
 assertIncludesAny(bundleText, ["V1 live database readiness receipt"], "V1 live database readiness receipt");
 assertIncludesAny(bundleText, ["v1_live_database_readiness_receipt"], "V1 live database readiness packet field");
+assertIncludesAny(bundleText, ["v1_live_database_readiness_receipts"], "V1 live database readiness receipt table");
+assertIncludesAny(bundleText, ["record_v1_live_database_readiness_receipt"], "V1 live database readiness receipt RPC");
+assertIncludesAny(bundleText, ["Record live receipt"], "V1 live database readiness record action");
 assertIncludesAny(
   bundleText,
   ["v1_live_database_readiness_requires_signed_in_supabase_rows_for_professional_corporate_access_evidence_consent_billing_team_review_registration_release_and_no_preview_data"],

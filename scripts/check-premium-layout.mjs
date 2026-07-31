@@ -75,6 +75,7 @@ assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports m
 assert(app.includes('aria-label="V1 security RLS review checklist receipt"'), "security review must expose a V1 security/RLS checklist receipt.");
 assert(app.includes('aria-label="Live pilot row proof"'), "v1 readiness must expose live pilot row proof.");
 assert(app.includes('aria-label="V1 live database readiness receipt"'), "v1 readiness must expose a single live database readiness receipt.");
+assert(app.includes("Record live receipt"), "v1 readiness must allow recording the receipt into Supabase.");
 assert(app.includes('aria-label="Registration intent review"'), "proof hub must expose registration intent rows loaded from Supabase.");
 assert(app.includes('aria-label="Live database acceptance lanes"'), "launch checklist must expose clear Professional, Corporate, and pilot ledger database lanes.");
 assert(app.includes('aria-label="Pilot owner readiness receipt"'), "launch checklist must expose pilot customer, onboarding, support, and incident owner readiness.");

@@ -419,6 +419,23 @@ export interface DbPilotLaunchContact {
   updated_at: string;
 }
 
+export interface DbV1LiveDatabaseReadinessReceipt {
+  id: string;
+  profile_id: string;
+  organization_id: string | null;
+  status: "live_database_rows_accepted" | "live_database_rows_required";
+  source: "signed_in_supabase_rows" | "preview_or_logged_out";
+  ready_groups: number;
+  total_required_groups: number;
+  missing_required_groups: string[];
+  required_operator_exports: string[];
+  preview_data_accepted_for_v1: boolean;
+  accepted_when: string;
+  server_save_status: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface RoleCapability {
   role: RoleKey;
   permissions: PermissionKey[];

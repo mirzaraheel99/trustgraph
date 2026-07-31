@@ -32,7 +32,8 @@ const requiredRlsTables = [
   "corporate_access_reviews",
   "schema_migration_runs",
   "production_gate_decisions",
-  "pilot_launch_contacts"
+  "pilot_launch_contacts",
+  "v1_live_database_readiness_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -115,6 +116,31 @@ if (!registrationIntentProfessionalStatusMigration.includes("intent.selected_por
 
 if (!registrationIntentProfessionalStatusMigration.includes("grant execute on function public.mark_registration_intent_passport_initialized")) {
   throw new Error("RLS check failed: professional registration intent status RPC must be executable by authenticated users.");
+}
+
+const v1ReadinessMigration = latestSqlByFile["047_v1_live_database_readiness_receipts.sql"] ?? "";
+if (!v1ReadinessMigration.includes("create table if not exists public.v1_live_database_readiness_receipts")) {
+  throw new Error("Missing V1 live database readiness receipts migration.");
+}
+
+if (!v1ReadinessMigration.includes("profile_id = public.current_profile_id()")) {
+  throw new Error("RLS check failed: V1 live database readiness receipts must be profile-owner scoped.");
+}
+
+if (!v1ReadinessMigration.includes("preview_data_accepted_for_v1 = false")) {
+  throw new Error("RLS check failed: V1 live database readiness receipts must reject preview data for V1.");
+}
+
+if (!v1ReadinessMigration.includes("create or replace function public.record_v1_live_database_readiness_receipt")) {
+  throw new Error("Missing V1 live database readiness receipt RPC.");
+}
+
+if (!v1ReadinessMigration.includes("accepted v1 live database readiness requires signed-in supabase rows")) {
+  throw new Error("RLS check failed: accepted V1 readiness must require signed-in Supabase rows.");
+}
+
+if (!v1ReadinessMigration.includes("grant execute on function public.record_v1_live_database_readiness_receipt")) {
+  throw new Error("RLS check failed: V1 live database readiness RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);
