@@ -3797,6 +3797,19 @@ function CorporateDirectoryPanel({
       ready: corporateDatabaseAccessDecisionBoard.can_export_user_packet
     }
   ];
+  const corporateDatabaseActionCockpit = {
+    mode: "corporate_database_action_cockpit",
+    current_state: isLiveCorporateDatabase ? "Live corporate database" : "Corporate database locked",
+    next_action: corporateAccessNextAction.label,
+    next_action_detail: corporateAccessNextAction.detail,
+    export_ready: corporateAccessNextAction.ready,
+    visible_user_rows: sharedRecords.length,
+    approved_grants: approvedAccessCount,
+    open_gaps: openGapRequestCount,
+    review_attestations: reviews.length,
+    accepted_when:
+      "corporate_database_first_screen_shows_live_rbac_request_access_approved_rows_gap_review_attestation_export_and_no_open_user_browsing"
+  };
   const corporateReviewHandoffSteps = [
     {
       label: "Request access by professional email",
@@ -4048,6 +4061,7 @@ function CorporateDirectoryPanel({
       checks: corporateScopeReviewCommand
     },
     corporate_database_access_decision_board: corporateDatabaseAccessDecisionBoard,
+    corporate_database_action_cockpit: corporateDatabaseActionCockpit,
     corporate_access_next_action_command: corporateAccessNextActionCommand,
     corporate_review_handoff_receipt: corporateReviewHandoffReceipt,
     corporate_data_access_path: corporateAccessPath,
@@ -4195,6 +4209,41 @@ function CorporateDirectoryPanel({
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className="corporate-database-action-cockpit" aria-label="Corporate database action cockpit">
+        <div className="corporate-database-action-copy">
+          <span className={`status-chip ${corporateDatabaseActionCockpit.export_ready ? "success" : "warning"}`}>Corporate database action cockpit</span>
+          <strong>{corporateDatabaseActionCockpit.next_action}</strong>
+          <small>{corporateDatabaseActionCockpit.next_action_detail}</small>
+          <small>{corporateDatabaseActionCockpit.accepted_when}</small>
+        </div>
+        <div className="corporate-database-action-grid">
+          {corporateDatabaseAccessDecisionCards.map((card) => (
+            <article className={card.ready ? "ready" : "next"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-database-action-proof">
+          <span>
+            <strong>{corporateDatabaseActionCockpit.current_state}</strong>
+            <small>Database mode</small>
+          </span>
+          <span>
+            <strong>{corporateDatabaseActionCockpit.approved_grants}</strong>
+            <small>Approved grants</small>
+          </span>
+          <span>
+            <strong>{corporateDatabaseActionCockpit.visible_user_rows}</strong>
+            <small>Visible user rows</small>
+          </span>
+          <span>
+            <strong>{corporateDatabaseActionCockpit.review_attestations}</strong>
+            <small>Review attestations</small>
+          </span>
+        </div>
       </div>
       <div className="directory-controls">
         <input

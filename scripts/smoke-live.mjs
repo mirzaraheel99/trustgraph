@@ -747,6 +747,9 @@ assertIncludesAny(bundleText, ["Live corporate database"], "Corporate user datab
 assertIncludesAny(bundleText, ["live_database_evidence"], "Corporate user database evidence flag");
 assertIncludesAny(bundleText, ["real_database_policy"], "Corporate user database real data policy packet field");
 assertIncludesAny(bundleText, ["signed_in_supabase_rows_visible_to_active_corporate_rbac_context"], "Corporate user database accepted source");
+assertIncludesAny(bundleText, ["Corporate database action cockpit"], "Corporate user database action cockpit");
+assertIncludesAny(bundleText, ["corporate_database_action_cockpit"], "Corporate user database action cockpit packet field");
+assertIncludesAny(bundleText, ["no open user browsing"], "Corporate user database no-open-browsing boundary");
 assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
 assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
 assertIncludesAny(bundleText, ["Ready to review"], "Corporate user database review-ready bucket");

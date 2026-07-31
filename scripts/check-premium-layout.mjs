@@ -168,7 +168,9 @@ assert(css.includes(".corporate-scope-review-command") && css.includes(".corpora
 assert(app.includes('aria-label="Corporate access next action command"'), "Corporate Verify must expose the next action required to unlock scoped user database proof.");
 assert(css.includes(".corporate-access-next-action") && css.includes(".corporate-access-next-action-grid"), "corporate access next action command must be styled and bounded.");
 assert(app.includes('aria-label="Corporate database access decision board"'), "Corporate Verify must expose a current access decision board for request, view, attest, and export actions.");
+assert(app.includes('aria-label="Corporate database action cockpit"'), "Corporate Verify must expose a first-screen database action cockpit before directory filters and exports.");
 assert(css.includes(".corporate-database-access-decision-board") && css.includes(".corporate-database-access-decision-grid"), "corporate database access decision board must be styled and bounded.");
+assert(css.includes(".corporate-database-action-cockpit") && css.includes(".corporate-database-action-grid") && css.includes(".corporate-database-action-proof"), "corporate database action cockpit must be styled and bounded.");
 assert(app.includes('aria-label="Corporate user database export receipt"'), "Corporate Verify must expose an export receipt for scoped user database packets.");
 assert(css.includes(".corporate-user-database-export-receipt") && css.includes(".corporate-user-database-export-grid"), "corporate user database export receipt must be styled and bounded.");
 assert(app.includes("Record database receipt"), "Corporate Verify must expose a database access receipt save action.");
