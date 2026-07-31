@@ -10549,6 +10549,26 @@ function PublicSite({
       state: portal === "corporate" ? "Corporate" : "Professional"
     }
   ];
+  const accountTypeChooser = [
+    {
+      label: "Professional user",
+      portal: "professional" as const,
+      headline: "Create your private Passport",
+      bestFor: "Individuals who own their records and decide what to share.",
+      firstDatabaseWrite: "Profile and personal Passport workspace",
+      afterLogin: "Records, evidence, references, consent, and Access Grants",
+      pricing: "$0 pilot"
+    },
+    {
+      label: "Corporate company",
+      portal: "corporate" as const,
+      headline: "Create a company Verify workspace",
+      bestFor: "Employers and staffing teams reviewing approved professional records.",
+      firstDatabaseWrite: "Company organization and admin membership",
+      afterLogin: "RBAC team, billing ledger, Verify requests, and review queue",
+      pricing: "$149 pilot monthly"
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -10605,6 +10625,15 @@ function PublicSite({
       organization_domain_present: Boolean(organizationDomain.trim()),
       organization_type: organizationType
     },
+    account_type_chooser: accountTypeChooser.map((item) => ({
+      label: item.label,
+      selected: portal === item.portal,
+      headline: item.headline,
+      best_for: item.bestFor,
+      first_database_write: item.firstDatabaseWrite,
+      after_login: item.afterLogin,
+      pricing: item.pricing
+    })),
     portal_login_switchboard: portalLoginSwitchboard,
     auth_recovery_decision_path: authRecoveryDecisionPath,
     repaired_link_ready: Boolean(repairedVerificationUrl),
@@ -11273,6 +11302,44 @@ function PublicSite({
                 <small>{step.detail}</small>
               </span>
             ))}
+          </div>
+          <div className="account-type-chooser" aria-label="Account type chooser">
+            <div className="account-type-chooser-header">
+              <div>
+                <span className="status-chip success">Account type chooser</span>
+                <strong>Choose who is signing up before database rows are created</strong>
+                <small>Professional and corporate accounts use the same secure login, but they create different live workspaces.</small>
+              </div>
+              <span className="status-chip neutral">{mode === "signup" ? "registration" : "login"}</span>
+            </div>
+            <div className="account-type-chooser-grid">
+              {accountTypeChooser.map((item) => (
+                <button
+                  className={portal === item.portal ? "active" : ""}
+                  key={item.label}
+                  onClick={() => {
+                    setPortal(item.portal);
+                    setMode("signup");
+                  }}
+                  type="button"
+                >
+                  <span>{item.label}</span>
+                  <strong>{item.headline}</strong>
+                  <small>{item.bestFor}</small>
+                  <small>{item.pricing}</small>
+                  <small>First write: {item.firstDatabaseWrite}</small>
+                  <small>After login: {item.afterLogin}</small>
+                </button>
+              ))}
+            </div>
+            <div className="account-type-chooser-actions">
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                Register new account
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                Login existing account
+              </button>
+            </div>
           </div>
           <div className="auth-choice-summary" aria-label="Selected portal login path">
             <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">

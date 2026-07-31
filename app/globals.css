@@ -1592,6 +1592,113 @@ button {
   font-weight: 900;
 }
 
+.account-type-chooser {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.26);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.095), transparent 62%),
+    linear-gradient(160deg, rgba(134, 174, 246, 0.06), transparent 76%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.account-type-chooser-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.account-type-chooser-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.account-type-chooser strong,
+.account-type-chooser small,
+.account-type-chooser span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.account-type-chooser-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.12;
+}
+
+.account-type-chooser small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.account-type-chooser-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.account-type-chooser-grid button {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 178px;
+  padding: 12px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.account-type-chooser-grid button.active {
+  border-color: rgba(82, 214, 196, 0.5);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.14), rgba(134, 174, 246, 0.055)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.account-type-chooser-grid button > span {
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 8px;
+  color: #9bfbe3;
+  border: 1px solid rgba(82, 214, 196, 0.28);
+  border-radius: 999px;
+  background: rgba(82, 214, 196, 0.1);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.account-type-chooser-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.account-type-chooser-actions button {
+  min-width: 0;
+  min-height: 42px;
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+  font-weight: 950;
+}
+
+.account-type-chooser-actions button.active {
+  color: var(--text);
+  border-color: rgba(82, 214, 196, 0.42);
+  background: rgba(82, 214, 196, 0.12);
+}
+
 .portal-auth-outcome-card {
   display: grid;
   gap: 12px;
@@ -10703,6 +10810,9 @@ p {
   .portal-entry-path,
   .portal-auth-command,
   .portal-auth-command-actions,
+  .account-type-chooser-header,
+  .account-type-chooser-grid,
+  .account-type-chooser-actions,
   .portal-handoff-checklist,
   .portal-auth-summary-grid,
   .portal-access-steps,

@@ -133,6 +133,11 @@ assertIncludesAny(bundleText, ["Corporate registration sequence"], "Corporate re
 assertIncludesAny(bundleText, ["Professional registration sequence"], "Professional registration guided sequence");
 assertIncludesAny(bundleText, ["Provision live workspace"], "Corporate registration provisioning step");
 assertIncludesAny(bundleText, ["Auth landing command"], "public auth landing command");
+assertIncludesAny(bundleText, ["Account type chooser"], "public account type chooser");
+assertIncludesAny(bundleText, ["Choose who is signing up before database rows are created"], "account type chooser headline");
+assertIncludesAny(bundleText, ["Register new account"], "account type chooser registration action");
+assertIncludesAny(bundleText, ["Login existing account"], "account type chooser login action");
+assertIncludesAny(bundleText, ["account_type_chooser"], "registration packet account type chooser field");
 assertIncludesAny(bundleText, ["I already verified email"], "public auth verified-email shortcut");
 assertIncludesAny(bundleText, ["Selected portal route"], "auth selected portal route summary");
 assertIncludesAny(bundleText, ["Portal entry path"], "portal compact entry path");
