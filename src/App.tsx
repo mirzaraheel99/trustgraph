@@ -9226,6 +9226,52 @@ function BillingPanel({
       detail: activeSubscriptions.length ? "Export payment architecture decision before any Stripe build." : "Select a plan to write the pilot subscription row."
     }
   ];
+  const pricingDecisionBoardCards = [
+    {
+      label: "Current billing path",
+      value: activeSubscriptions.length ? "Pilot ledger active" : "Pilot ledger next",
+      detail: activeSubscriptions.length
+        ? "Supabase subscription rows are the accepted V1 billing proof."
+        : "Choose a plan and activate the pilot ledger before quoting launch."
+    },
+    {
+      label: "Quote proof",
+      value: latestPricingQuoteReceipt ? "Saved receipt" : "Receipt needed",
+      detail: latestPricingQuoteReceipt
+        ? `Latest database quote stores ${latestPricingQuoteReceipt.selected_seats} seats at $${latestPricingQuoteReceipt.projected_monthly_usd}/month.`
+        : "Record a pricing quote receipt so Corporate can review a saved database row."
+    },
+    {
+      label: "Stripe status",
+      value: "Not live",
+      detail: "Checkout, invoices, tax, refunds, dunning, and webhooks remain a human-gated build."
+    },
+    {
+      label: "Operator decision",
+      value: latestDecisionReceipt ? "Decision saved" : "Save decision",
+      detail: latestDecisionReceipt
+        ? "A database receipt exists for the pilot-ledger-now, Stripe-later boundary."
+        : "Record the payment decision before any paid production launch work."
+    }
+  ];
+  const pricingDecisionBoard = {
+    mode: "pricing_decision_board",
+    current_path: activeSubscriptions.length ? "pilot_ledger_now" : "activate_pilot_ledger_next",
+    selected_plan_id: selectedProjectedPlan?.plan_id ?? primaryPlan?.id ?? null,
+    selected_seats: seats,
+    latest_quote_receipt_id: latestPricingQuoteReceipt?.id ?? "not_recorded",
+    latest_payment_decision_status: latestDecisionReceipt?.status ?? "not_recorded",
+    stripe_checkout_status: "disabled_until_human_gate",
+    accepted_when:
+      "pilot_ledger_now_stripe_checkout_later_database_receipt_required_before_paid_launch",
+    required_operator_order: [
+      "confirm_pricing_catalog",
+      "activate_or_verify_pilot_subscription_ledger",
+      "record_pricing_quote_database_receipt",
+      "record_payment_architecture_decision_receipt",
+      "export_pricing_decision_board_before_stripe_build"
+    ]
+  };
   const pricingStructurePacket = {
     generated_at: new Date().toISOString(),
     mode: "pilot_subscription_ledger",
@@ -9245,6 +9291,7 @@ function BillingPanel({
     billing_activation_receipt: billingActivationReceipt,
     billing_operator_path: billingOperatorSteps,
     stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
+    pricing_decision_board: pricingDecisionBoard,
     projected_plans: projectedPlans,
     billing_launch_readiness: billingLaunchReadiness,
     billing_gates: billingGates,
@@ -9335,6 +9382,7 @@ function BillingPanel({
         metadata: {
           pricing_quote_receipt: pricingQuoteReceipt,
           pricing_structure_packet: pricingStructurePacket,
+          pricing_decision_board: pricingDecisionBoard,
           stripe_checkout_enabled: false,
           payment_collection_live: false
         }
@@ -9415,6 +9463,34 @@ function BillingPanel({
             type="button"
           >
             Export quote
+          </button>
+        </div>
+      </div>
+      <div className="pricing-decision-board" aria-label="Pricing decision board">
+        <div>
+          <span className="status-chip success">Pricing decision board</span>
+          <strong>Pilot ledger now, Stripe later, receipt before paid launch</strong>
+          <small>
+            This keeps Corporate pricing usable today while making the remaining billing gate obvious and auditable.
+          </small>
+        </div>
+        <div className="pricing-decision-board-grid">
+          {pricingDecisionBoardCards.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="pricing-decision-board-actions">
+          <small>{pricingDecisionBoard.required_operator_order.length} operator steps define the accepted pricing-to-payment order.</small>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(`trustgraph-pricing-decision-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(pricingDecisionBoard, null, 2), "application/json")}
+            type="button"
+          >
+            Export pricing decision
           </button>
         </div>
       </div>

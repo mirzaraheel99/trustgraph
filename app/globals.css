@@ -4122,6 +4122,80 @@ p,
   width: 100%;
 }
 
+.pricing-decision-board {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(112, 224, 178, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(112, 224, 178, 0.08), transparent 58%),
+    linear-gradient(160deg, rgba(137, 169, 255, 0.07), transparent 72%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.pricing-decision-board > div:first-child,
+.pricing-decision-board-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.pricing-decision-board strong,
+.pricing-decision-board small,
+.pricing-decision-board span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pricing-decision-board > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.16;
+}
+
+.pricing-decision-board-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pricing-decision-board-grid article {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.pricing-decision-board-grid span {
+  color: var(--mint);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.pricing-decision-board-grid small,
+.pricing-decision-board > div:first-child > small,
+.pricing-decision-board-actions small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.pricing-decision-board-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  align-items: center;
+  gap: 10px;
+}
+
+.pricing-decision-board-actions button {
+  justify-content: center;
+  width: 100%;
+}
+
 .stripe-checkout-decision {
   display: grid;
   gap: 12px;

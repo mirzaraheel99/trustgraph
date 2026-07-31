@@ -76,6 +76,7 @@ assert(app.includes('aria-label="Portal launch decision strip"'), "public auth m
 assert(app.includes('aria-label="Portal submit receipt"'), "public auth must show the selected portal submit path at the form action point.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
 assert(app.includes('aria-label="Pricing quote database receipt"'), "billing must expose a persisted pricing quote receipt.");
+assert(app.includes('aria-label="Pricing decision board"'), "billing must expose a clear pricing decision board.");
 assert(app.includes('aria-label="Billing architecture decision database receipt"'), "billing must expose a persisted billing architecture decision receipt.");
 assert(app.includes('aria-label="Billing activation receipt"'), "billing must expose a live ledger activation receipt.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
@@ -219,6 +220,7 @@ assert(app.includes('aria-label="Auth recovery database receipt"'), "public auth
 assert(css.includes(".auth-recovery-database-receipt") && css.includes(".auth-recovery-database-grid"), "auth recovery database receipt must be styled and bounded.");
 assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checkout-decision-grid") && css.includes(".stripe-checkout-decision-actions"), "Stripe checkout decision receipt must be styled and bounded.");
 assert(css.includes(".pricing-quote-receipt") && css.includes(".pricing-quote-receipt-grid") && css.includes(".pricing-quote-receipt-actions"), "pricing quote receipt must be styled and bounded.");
+assert(css.includes(".pricing-decision-board") && css.includes(".pricing-decision-board-grid") && css.includes(".pricing-decision-board-actions"), "pricing decision board must be styled and bounded.");
 assert(css.includes(".billing-architecture-receipt") && css.includes(".billing-architecture-receipt-grid"), "billing architecture decision receipt must be styled and bounded.");
 assert(css.includes(".billing-activation-receipt") && css.includes(".billing-activation-grid"), "billing activation receipt must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");

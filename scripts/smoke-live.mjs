@@ -1012,6 +1012,10 @@ assertIncludesAny(bundleText, ["pricing_quote_receipts"], "pricing quote receipt
 assertIncludesAny(bundleText, ["record_pricing_quote_receipt"], "pricing quote receipt RPC");
 assertIncludesAny(bundleText, ["Pricing quote database receipt"], "pricing quote database receipt label");
 assertIncludesAny(bundleText, ["Record pricing quote"], "pricing quote record action");
+assertIncludesAny(bundleText, ["Pricing decision board"], "pricing decision board label");
+assertIncludesAny(bundleText, ["pricing_decision_board"], "pricing decision board packet field");
+assertIncludesAny(bundleText, ["pilot_ledger_now_stripe_checkout_later_database_receipt_required_before_paid_launch"], "pricing decision board acceptance rule");
+assertIncludesAny(bundleText, ["Export pricing decision"], "pricing decision board export");
 assertIncludesAny(
   bundleText,
   ["pricing_quote_receipt_requires_live_pricing_catalog_selected_seats_projected_total_corporate_admin_rbac_and_stripe_checkout_disabled"],
