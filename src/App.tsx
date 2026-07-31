@@ -7986,6 +7986,79 @@ function hostedAuthCallbackType() {
   return hashParams.get("type") ?? queryParams.get("type");
 }
 
+type HostedAuthCallbackProof = {
+  mode: "hosted_auth_callback_proof";
+  status: "no_callback_detected" | "callback_detected" | "callback_session_accepted" | "callback_error";
+  callback_type: string;
+  token_transport: "hash" | "query" | "none";
+  hosted_origin: string;
+  browser_host: string;
+  localhost_source_detected: boolean;
+  access_token_present: boolean;
+  refresh_token_present: boolean;
+  tokens_redacted: true;
+  recovery_session_ready: boolean;
+  next_action: string;
+};
+
+function readHostedAuthCallbackProof(
+  status: HostedAuthCallbackProof["status"] = "callback_detected",
+  recoveryReady = false
+): HostedAuthCallbackProof {
+  if (typeof window === "undefined") {
+    return {
+      mode: "hosted_auth_callback_proof",
+      status: "no_callback_detected",
+      callback_type: "server_render",
+      token_transport: "none",
+      hosted_origin: TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
+      browser_host: "server-render",
+      localhost_source_detected: false,
+      access_token_present: false,
+      refresh_token_present: false,
+      tokens_redacted: true,
+      recovery_session_ready: false,
+      next_action: "Open the hosted TrustGraph app before requesting verification or recovery email."
+    };
+  }
+
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const queryParams = new URLSearchParams(window.location.search);
+  const hasHashToken = Boolean(hashParams.get("access_token"));
+  const hasQueryToken = Boolean(queryParams.get("access_token"));
+  const accessTokenPresent = hasHashToken || hasQueryToken;
+  const refreshTokenPresent = Boolean(hashParams.get("refresh_token") || queryParams.get("refresh_token"));
+  const callbackType = hashParams.get("type") ?? queryParams.get("type") ?? (accessTokenPresent ? "session" : "none");
+  const browserHost = `${window.location.origin}${window.location.pathname}`;
+  const localhostSourceDetected =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    browserHost.includes("localhost");
+  const tokenTransport = hasHashToken ? "hash" : hasQueryToken ? "query" : "none";
+  const accepted = status === "callback_session_accepted";
+
+  return {
+    mode: "hosted_auth_callback_proof",
+    status: accessTokenPresent ? status : "no_callback_detected",
+    callback_type: callbackType,
+    token_transport: tokenTransport,
+    hosted_origin: hostedAuthRedirectUrl(),
+    browser_host: browserHost,
+    localhost_source_detected: localhostSourceDetected,
+    access_token_present: accessTokenPresent,
+    refresh_token_present: refreshTokenPresent,
+    tokens_redacted: true,
+    recovery_session_ready: recoveryReady,
+    next_action: accepted
+      ? callbackType === "recovery"
+        ? "Open Account and set a new password."
+        : "Continue into the dashboard and create the needed Passport or Corporate workspace."
+      : accessTokenPresent
+        ? "Let TrustGraph accept the Supabase callback, then confirm the dashboard opens."
+        : "Use the hosted URL before requesting verification or recovery email."
+  };
+}
+
 function repairHostedAuthLink(input: string, hostedUrl: string) {
   const trimmed = input.trim();
   if (!trimmed) return "";
@@ -8007,6 +8080,7 @@ function repairHostedAuthLink(input: string, hostedUrl: string) {
 function AuthPanel({
   session,
   accountStatus,
+  hostedCallbackProof,
   dataRightsMessage,
   dataRightsRequests,
   onDataRightsRequest,
@@ -8014,6 +8088,7 @@ function AuthPanel({
 }: {
   session: AuthSession | null;
   accountStatus: string;
+  hostedCallbackProof: HostedAuthCallbackProof;
   dataRightsMessage: string;
   dataRightsRequests: DbDataRightsRequest[];
   onDataRightsRequest: (input: { requestType: DataRightsRequestType; requestedScope: string; reason: string }) => Promise<void>;
@@ -8075,6 +8150,7 @@ function AuthPanel({
     session_state: session ? "signed_in" : "signed_out",
     account_status: accountStatus,
     recovery_session_ready: recoverySessionReady,
+    hosted_auth_callback_proof: hostedCallbackProof,
     account_recovery_readiness: accountRecoveryReadiness
   };
   const authPaths = [
@@ -8444,6 +8520,32 @@ function AuthPanel({
                 Copy hosted redirect
               </button>
             </div>
+          </div>
+          <div className="hosted-callback-proof" aria-label="Hosted callback acceptance proof">
+            <div>
+              <span className={`status-chip ${hostedCallbackProof.status === "callback_session_accepted" ? "success" : "neutral"}`}>
+                Hosted callback acceptance proof
+              </span>
+              <strong>{hostedCallbackProof.status.replace(/_/g, " ")}</strong>
+              <small>
+                {hostedCallbackProof.callback_type} callback via {hostedCallbackProof.token_transport}; tokens are detected only as booleans and redacted from export.
+              </small>
+            </div>
+            <div className="hosted-callback-proof-grid">
+              <span>
+                <strong>{hostedCallbackProof.access_token_present ? "Present" : "None"}</strong>
+                <small>Access token signal</small>
+              </span>
+              <span>
+                <strong>{hostedCallbackProof.refresh_token_present ? "Present" : "None"}</strong>
+                <small>Refresh token signal</small>
+              </span>
+              <span>
+                <strong>{hostedCallbackProof.recovery_session_ready ? "Ready" : "Not recovery"}</strong>
+                <small>Recovery session</small>
+              </span>
+            </div>
+            <small>{hostedCallbackProof.next_action}</small>
           </div>
           <div className="auth-readiness-packet">
             <div>
@@ -10048,6 +10150,7 @@ function PermissionGate({
 function PublicSite({
   currentSession,
   currentSessionContext,
+  hostedCallbackProof,
   onCorporateSession,
   onOpenProductPreview,
   onSignOut,
@@ -10055,6 +10158,7 @@ function PublicSite({
 }: {
   currentSession: AuthSession | null;
   currentSessionContext: string;
+  hostedCallbackProof: HostedAuthCallbackProof;
   onCorporateSession: (
     session: AuthSession,
     input: { organizationName: string; organizationType: "employer" | "staffing_agency"; organizationDomain: string }
@@ -10297,6 +10401,7 @@ function PublicSite({
     auth_recovery_decision_path: authRecoveryDecisionPath,
     repaired_link_ready: Boolean(repairedVerificationUrl),
     portal_auth_outcome_summary: authOutcomePacket,
+    hosted_auth_callback_proof: hostedCallbackProof,
     pricing_decision_strip: pricingDecisionStrip,
     supabase_auth_settings_needed: [
       "Set Supabase Auth Site URL to the hosted TrustGraph app before inviting pilot users.",
@@ -11230,6 +11335,32 @@ function PublicSite({
               </button>
             </div>
           </div>
+          <div className="hosted-callback-proof" aria-label="Hosted callback acceptance proof">
+            <div>
+              <span className={`status-chip ${hostedCallbackProof.status === "callback_session_accepted" ? "success" : "neutral"}`}>
+                Hosted callback acceptance proof
+              </span>
+              <strong>{hostedCallbackProof.status.replace(/_/g, " ")}</strong>
+              <small>
+                {hostedCallbackProof.callback_type} callback via {hostedCallbackProof.token_transport}; TrustGraph records only callback metadata and redacts tokens.
+              </small>
+            </div>
+            <div className="hosted-callback-proof-grid">
+              <span>
+                <strong>{hostedCallbackProof.access_token_present ? "Detected" : "None"}</strong>
+                <small>Access token signal</small>
+              </span>
+              <span>
+                <strong>{hostedCallbackProof.refresh_token_present ? "Detected" : "None"}</strong>
+                <small>Refresh token signal</small>
+              </span>
+              <span>
+                <strong>{hostedCallbackProof.localhost_source_detected ? "Local" : "Hosted"}</strong>
+                <small>Browser origin</small>
+              </span>
+            </div>
+            <small>{hostedCallbackProof.next_action}</small>
+          </div>
           <details className="auth-operator-details">
             <summary>
               <span>Verification, recovery, and link repair</span>
@@ -11301,6 +11432,9 @@ function App() {
   const [activeMembershipId, setActiveMembershipId] = useState(sessionUser.activeMembershipId);
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
   const [showPublicSite, setShowPublicSite] = useState(true);
+  const [hostedCallbackProof, setHostedCallbackProof] = useState<HostedAuthCallbackProof>(() =>
+    readHostedAuthCallbackProof(hasHostedAuthCallbackUrl() ? "callback_detected" : "no_callback_detected")
+  );
   const [pendingCorporateAccount, setPendingCorporateAccount] = useState<{
     organizationName: string;
     organizationType: "employer" | "staffing_agency";
@@ -11368,6 +11502,10 @@ function App() {
     let cancelled = false;
     const hadHostedAuthCallback = hasHostedAuthCallbackUrl();
     const authCallbackType = hostedAuthCallbackType();
+    const initialCallbackProof = readHostedAuthCallbackProof(
+      hadHostedAuthCallback ? "callback_detected" : "no_callback_detected",
+      authCallbackType === "recovery"
+    );
 
     Promise.resolve()
       .then(() => readSessionFromUrl())
@@ -11376,6 +11514,19 @@ function App() {
         if (cancelled) return;
         setAuthSession(storedSession);
         if (storedSession) {
+          setHostedCallbackProof(
+            hadHostedAuthCallback
+              ? {
+                  ...initialCallbackProof,
+                  status: "callback_session_accepted",
+                  recovery_session_ready: authCallbackType === "recovery",
+                  next_action:
+                    authCallbackType === "recovery"
+                      ? "Open Account and set a new password."
+                      : "Continue into the dashboard and create the needed Passport or Corporate workspace."
+                }
+              : readHostedAuthCallbackProof("no_callback_detected")
+          );
           setShowPublicSite(false);
           setAccountStatus(
             authCallbackType === "recovery"
@@ -11388,6 +11539,7 @@ function App() {
       })
       .catch((error) => {
         if (cancelled) return;
+        setHostedCallbackProof(readHostedAuthCallbackProof("callback_error"));
         setAccountStatus(operatorErrorMessage(error, "Login again to reconnect live database access."));
       });
 
@@ -13252,15 +13404,18 @@ function App() {
       <PublicSite
         currentSession={authSession}
         currentSessionContext={`${activeRole.label} - ${activeOrganization.name}`}
+        hostedCallbackProof={hostedCallbackProof}
         onCorporateSession={(session, input) => {
           setPendingCorporateAccount(input);
           setAuthSession(session);
+          setHostedCallbackProof(readHostedAuthCallbackProof("callback_session_accepted"));
           setShowPublicSite(false);
         }}
         onOpenProductPreview={() => setShowPublicSite(false)}
         onSignOut={handleSignOut}
         onSession={(session) => {
           setAuthSession(session);
+          setHostedCallbackProof(readHostedAuthCallbackProof("callback_session_accepted"));
           setShowPublicSite(false);
         }}
       />
@@ -13761,6 +13916,7 @@ function App() {
                       accountStatus={accountStatus}
                       dataRightsMessage={dataRightsStatus}
                       dataRightsRequests={dataRightsRequests}
+                      hostedCallbackProof={hostedCallbackProof}
                       session={authSession}
                       onDataRightsRequest={createLiveDataRightsRequest}
                       onSession={setAuthSession}

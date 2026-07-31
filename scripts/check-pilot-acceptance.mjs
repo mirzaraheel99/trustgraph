@@ -49,7 +49,7 @@ const acceptanceChecks = [
     id: "auth_recovery",
     label: "Hosted auth, verification, and recovery",
     source: appSource,
-    required: ["Auth redirect readiness packet", "Account recovery readiness", "Fix localhost email link", "Reset password", "Hosted login and database handoff"]
+    required: ["Auth redirect readiness packet", "Account recovery readiness", "Fix localhost email link", "Reset password", "Hosted login and database handoff", "Hosted callback acceptance proof", "hosted_auth_callback_proof"]
   },
   {
     id: "admin_security_exports",
