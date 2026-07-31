@@ -130,7 +130,7 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
-import { loadRegistrationIntents, recordRegistrationIntent } from "./registrationRepository";
+import { loadRegistrationIntents, markRegistrationIntentWorkspaceCreated, recordRegistrationIntent } from "./registrationRepository";
 import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
 import { loadPilotLaunchContacts, recordPilotLaunchContact } from "./pilotLaunchRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
@@ -14794,9 +14794,22 @@ function App() {
       ...pendingCorporateAccount
     })
       .then(async (membership) => {
+        const capturedCorporateIntent = registrationIntents.find(
+          (intent) => intent.selected_portal === "corporate" && intent.status === "captured"
+        );
+        if (capturedCorporateIntent) {
+          await markRegistrationIntentWorkspaceCreated({
+            accessToken: authSession.accessToken,
+            intentId: capturedCorporateIntent.id,
+            organizationId: membership.organization_id
+          });
+        }
         const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
+        const intents = await loadRegistrationIntents(authSession.accessToken).catch(() => registrationIntents);
         if (cancelled) return;
         setAccountContext(context);
+        setRegistrationIntents(intents);
+        setRegistrationIntentStatus(intents.length ? `Registration intents: ${intents.length}` : "No registration intent rows yet");
         setActiveMembershipId(membership.id);
         setWorkspaceId("verify");
         setAccountStatus("Corporate portal created");
@@ -14811,7 +14824,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [accountContext, authSession, pendingCorporateAccount]);
+  }, [accountContext, authSession, pendingCorporateAccount, registrationIntents]);
 
   useEffect(() => {
     if (!authSession || !accountContext) {
@@ -15708,8 +15721,21 @@ function App() {
       accessToken: authSession.accessToken,
       ...input
     });
+    const capturedCorporateIntent = registrationIntents.find(
+      (intent) => intent.selected_portal === "corporate" && intent.status === "captured"
+    );
+    if (capturedCorporateIntent) {
+      await markRegistrationIntentWorkspaceCreated({
+        accessToken: authSession.accessToken,
+        intentId: capturedCorporateIntent.id,
+        organizationId: membership.organization_id
+      });
+    }
     const context = await loadAccountContext(accountContext.profile.id, authSession.accessToken);
+    const intents = await loadRegistrationIntents(authSession.accessToken).catch(() => registrationIntents);
     setAccountContext(context);
+    setRegistrationIntents(intents);
+    setRegistrationIntentStatus(intents.length ? `Registration intents: ${intents.length}` : "No registration intent rows yet");
     setActiveMembershipId(membership.id);
     setWorkspaceId("verify");
     setAccountStatus("Corporate account created");
@@ -16890,7 +16916,9 @@ function App() {
     status: registrationIntents.length ? "live_registration_intents_loaded" : authSession ? "no_registration_intents_loaded" : "hosted_login_required",
     table: "registration_intents",
     rpc: "record_registration_intent",
+    completion_rpc: "mark_registration_intent_workspace_created",
     loaded_count: registrationIntents.length,
+    workspace_created_count: registrationIntents.filter((intent) => intent.status === "workspace_created").length,
     latest_intent: latestRegistrationIntent,
     accepted_when:
       "registration_intents_are_written_after_hosted_auth_loaded_from_supabase_and_visible_in_live_row_proof_before_pilot_acceptance"
@@ -16910,6 +16938,11 @@ function App() {
       label: "Pricing",
       value: latestRegistrationIntent?.pricing_plan_id ?? "No plan",
       detail: latestRegistrationIntent?.next_dashboard ?? "Professional and Corporate selections write intent rows after hosted auth."
+    },
+    {
+      label: "Completed",
+      value: `${registrationIntentReviewPacket.workspace_created_count}`,
+      detail: "Corporate workspace creation marks matching captured intents as workspace_created."
     }
   ];
   const onboardingHandoffCommand = {

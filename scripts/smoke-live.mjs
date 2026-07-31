@@ -468,6 +468,8 @@ assertIncludesAny(bundleText, ["live_pilot_row_proof"], "v1 completion live pilo
 assertIncludesAny(bundleText, ["Registration intent handoff"], "live pilot row proof registration intent group");
 assertIncludesAny(bundleText, ["Registration intent review"], "registration intent review panel");
 assertIncludesAny(bundleText, ["registration_intent_review_packet"], "registration intent review packet field");
+assertIncludesAny(bundleText, ["mark_registration_intent_workspace_created"], "registration intent workspace-created RPC marker");
+assertIncludesAny(bundleText, ["workspace_created"], "registration intent completed status marker");
 assertIncludesAny(bundleText, ["registration_intents_are_written_after_hosted_auth_loaded_from_supabase_and_visible_in_live_row_proof_before_pilot_acceptance"], "registration intent review acceptance rule");
 assertIncludesAny(bundleText, ["Export intent review"], "registration intent review export control");
 assertIncludesAny(bundleText, ["Working database command center"], "working database command center panel");

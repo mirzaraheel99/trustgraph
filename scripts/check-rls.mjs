@@ -83,4 +83,21 @@ if (!registrationIntentMigration.includes("grant execute on function public.reco
   throw new Error("RLS check failed: registration intent RPC must be executable by authenticated users.");
 }
 
+const registrationIntentStatusMigration = latestSqlByFile["045_registration_intent_status.sql"] ?? "";
+if (!registrationIntentStatusMigration.includes("create or replace function public.mark_registration_intent_workspace_created")) {
+  throw new Error("Missing registration intent workspace-created status RPC.");
+}
+
+if (!registrationIntentStatusMigration.includes("intent.profile_id = current_id")) {
+  throw new Error("RLS check failed: registration intent status update must be owner-scoped.");
+}
+
+if (!registrationIntentStatusMigration.includes("public.has_role(target_organization_id")) {
+  throw new Error("RLS check failed: registration intent status update must require organization admin role.");
+}
+
+if (!registrationIntentStatusMigration.includes("grant execute on function public.mark_registration_intent_workspace_created")) {
+  throw new Error("RLS check failed: registration intent status RPC must be executable by authenticated users.");
+}
+
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

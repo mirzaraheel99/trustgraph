@@ -35,3 +35,18 @@ export async function recordRegistrationIntent(input: {
     { accessToken: input.accessToken }
   );
 }
+
+export async function markRegistrationIntentWorkspaceCreated(input: {
+  accessToken: string;
+  intentId: string;
+  organizationId: string;
+}): Promise<DbRegistrationIntent> {
+  return supabaseRpc<DbRegistrationIntent>(
+    "mark_registration_intent_workspace_created",
+    {
+      target_intent_id: input.intentId,
+      target_organization_id: input.organizationId
+    },
+    { accessToken: input.accessToken }
+  );
+}
