@@ -128,7 +128,13 @@ import {
   type VerifyAccessGrantView,
   type AccessGrantView
 } from "./grantRepository";
-import { createEvidenceDocument, createEvidenceDownloadUrl, loadEvidenceDocuments, uploadEvidenceFile } from "./evidenceRepository";
+import {
+  createEvidenceDocument,
+  createEvidenceDownloadUrl,
+  loadEvidenceDocuments,
+  recordEvidenceAccessReceipt,
+  uploadEvidenceFile
+} from "./evidenceRepository";
 import {
   createMissingRecordRequest,
   loadPassportMissingRecordRequests,
@@ -15659,12 +15665,29 @@ function App() {
       storagePath: document.storage_path,
       expiresIn
     });
+    const receipt = await recordEvidenceAccessReceipt({
+      accessToken: authSession.accessToken,
+      evidenceDocumentId: document.id,
+      accessMode: mode,
+      signedUrlExpiresInSeconds: expiresIn,
+      metadata: {
+        document_title: document.title,
+        document_type: document.document_type,
+        trust_record_id: document.trust_record_id,
+        raw_url_stored: false,
+        accepted_when:
+          "evidence_access_receipt_requires_private_storage_short_lived_signed_url_no_raw_url_storage_owner_or_approved_scope_and_audit_event"
+      }
+    }).catch(() => null);
+    const events = await loadAuditEvents(authSession.accessToken).catch(() => auditEvents);
+    setAuditEvents(events);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
 
     if (typeof window !== "undefined") {
       window.open(signedUrl, "_blank", "noopener,noreferrer");
     }
 
-    return { signedUrl, expiresIn };
+    return { signedUrl, expiresIn, receiptId: receipt?.id };
   }
 
   async function createLiveReferenceRequest(input: {

@@ -1,4 +1,4 @@
-import type { DbEvidenceDocument } from "./database";
+import type { DbEvidenceAccessReceipt, DbEvidenceDocument } from "./database";
 import { supabaseRest, supabaseRpc, supabaseStorageSignedUrl, supabaseStorageUpload } from "./supabase";
 
 const EVIDENCE_BUCKET = "trustgraph-evidence";
@@ -70,4 +70,23 @@ export async function createEvidenceDownloadUrl(input: {
   });
 
   return result.signedURL;
+}
+
+export async function recordEvidenceAccessReceipt(input: {
+  accessToken: string;
+  evidenceDocumentId: string;
+  accessMode: "preview" | "download";
+  signedUrlExpiresInSeconds: number;
+  metadata: Record<string, unknown>;
+}): Promise<DbEvidenceAccessReceipt> {
+  return supabaseRpc<DbEvidenceAccessReceipt>(
+    "record_evidence_access_receipt",
+    {
+      input_evidence_document_id: input.evidenceDocumentId,
+      input_access_mode: input.accessMode,
+      input_signed_url_expires_in_seconds: input.signedUrlExpiresInSeconds,
+      input_metadata: input.metadata
+    },
+    { accessToken: input.accessToken }
+  );
 }

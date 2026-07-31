@@ -196,6 +196,22 @@ export interface DbEvidenceDocument {
   updated_at: string;
 }
 
+export interface DbEvidenceAccessReceipt {
+  id: string;
+  evidence_document_id: string;
+  trust_record_id: string | null;
+  owner_profile_id: string;
+  actor_profile_id: string;
+  access_mode: "preview" | "download";
+  signed_url_expires_in_seconds: number;
+  storage_bucket: string;
+  storage_path_prefix: string;
+  raw_url_stored: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbNotificationEvent {
   id: string;
   recipient_profile_id: string | null;

@@ -34,7 +34,8 @@ const requiredRlsTables = [
   "production_gate_decisions",
   "pilot_launch_contacts",
   "v1_live_database_readiness_receipts",
-  "corporate_database_access_receipts"
+  "corporate_database_access_receipts",
+  "evidence_access_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -171,6 +172,26 @@ if (!corporateDatabaseReceiptMigration.includes("corporate_database_access.recei
 
 if (!corporateDatabaseReceiptMigration.includes("grant execute on function public.record_corporate_database_access_receipt")) {
   throw new Error("Corporate database access receipt RPC must be executable by authenticated users.");
+}
+
+const evidenceAccessReceiptMigration = latestSqlByFile["049_evidence_access_receipts.sql"] ?? "";
+if (!evidenceAccessReceiptMigration.includes("create table if not exists public.evidence_access_receipts")) {
+  throw new Error("Missing evidence access receipt table migration.");
+}
+if (!evidenceAccessReceiptMigration.includes("alter table public.evidence_access_receipts enable row level security")) {
+  throw new Error("Evidence access receipts must enable RLS.");
+}
+if (!evidenceAccessReceiptMigration.includes("raw_url_stored = false")) {
+  throw new Error("Evidence access receipts must prove raw signed URLs are not stored.");
+}
+if (!evidenceAccessReceiptMigration.includes("create or replace function public.record_evidence_access_receipt")) {
+  throw new Error("Missing evidence access receipt RPC.");
+}
+if (!evidenceAccessReceiptMigration.includes("evidence_access.signed_url_issued")) {
+  throw new Error("Evidence access receipt RPC must write audit history.");
+}
+if (!evidenceAccessReceiptMigration.includes("grant execute on function public.record_evidence_access_receipt")) {
+  throw new Error("Evidence access receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);
