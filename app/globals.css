@@ -11694,6 +11694,54 @@ p {
   font-weight: 950;
 }
 
+.stale-vps-recovery-runbook {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 111, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 205, 111, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.stale-vps-recovery-runbook > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.stale-vps-recovery-runbook strong,
+.stale-vps-recovery-runbook small,
+.stale-vps-recovery-runbook span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.stale-vps-recovery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 8px;
+}
+
+.stale-vps-recovery-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.stale-vps-recovery-grid span {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 950;
+}
+
 .plan-migration-card {
   display: flex;
   justify-content: space-between;
@@ -12867,6 +12915,7 @@ p {
   .server-release-grid,
   .server-sync-monitor-grid,
   .server-sync-next,
+  .stale-vps-recovery-grid,
   .v1-operating-map-header,
   .v1-operating-map-grid,
   .workspace-command-strip,

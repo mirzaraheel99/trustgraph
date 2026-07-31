@@ -6017,6 +6017,44 @@ function PlanAlignmentPanel({
       detail: "The server should pull GitHub main and run the TrustGraph VPS updater; VFIX stays on its protected host."
     }
   ];
+  const staleVpsRecoveryRunbook = {
+    mode: "stale_vps_recovery_runbook",
+    current_problem: "vps_can_return_200_while_serving_an_older_trustgraph_bundle",
+    accepted_when: "vps_release_stamp_returns_commit_json_and_contains_latest_green_main_commit",
+    github_source: "https://github.com/mirzaraheel99/trustgraph/tree/main",
+    pages_review_url: "https://mirzaraheel99.github.io/trustgraph/",
+    vps_release_stamp_url: "https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+    verify_commands: [
+      "git -C /opt/trustgraph rev-parse --short HEAD",
+      "curl -I https://trustgraph.5-75-224-110.sslip.io/",
+      "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+      "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/ | grep \"TrustGraph\""
+    ],
+    protected_boundary: "Do not edit /opt/fixflow, the VFIX nginx route, or https://5-75-224-110.sslip.io/CRM-client-demo/login."
+  };
+  const staleVpsRecoveryCards = [
+    {
+      label: "Healthy page is not enough",
+      value: "Need stamp",
+      detail: "A 200 response can still be an older bundle; verify trustgraph-release.json."
+    },
+    {
+      label: "Server update",
+      value: "Pull main",
+      detail: "Run the updater from /opt/trustgraph after GitHub Pages is green."
+    },
+    {
+      label: "Acceptance",
+      value: "Commit JSON",
+      detail: "The release stamp must return commit JSON for the latest green main build."
+    },
+    {
+      label: "Boundary",
+      value: "VFIX protected",
+      detail: "Do not change the existing CRM-client-demo route while syncing TrustGraph."
+    }
+  ];
   const releaseSyncPacketName = `trustgraph-release-sync-command-${new Date().toISOString().slice(0, 10)}.json`;
   const releaseSyncPacket = {
     generated_at: new Date().toISOString(),
@@ -6039,6 +6077,7 @@ function PlanAlignmentPanel({
         "TrustGraph serves from trustgraph.5-75-224-110.sslip.io."
       ]
     },
+    stale_vps_recovery_runbook: staleVpsRecoveryRunbook,
     v1_audit_command: v1AuditCommand,
     completion_open_items: completionAuditOpenItems,
     production_gates_open: openProductionGateCount,
@@ -6234,6 +6273,22 @@ function PlanAlignmentPanel({
         </div>
         <div className="release-sync-command-grid">
           {releaseSyncCommand.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="stale-vps-recovery-runbook" aria-label="Stale VPS recovery runbook">
+        <div>
+          <span className="status-chip warning">Stale VPS recovery runbook</span>
+          <strong>Do not accept a healthy VPS page until the release stamp matches GitHub main</strong>
+          <small>{staleVpsRecoveryRunbook.accepted_when}</small>
+        </div>
+        <div className="stale-vps-recovery-grid">
+          {staleVpsRecoveryCards.map((item) => (
             <article key={item.label}>
               <span>{item.label}</span>
               <strong>{item.value}</strong>

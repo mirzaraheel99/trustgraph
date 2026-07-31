@@ -92,6 +92,8 @@ assert(css.includes(".live-seed-preflight") && css.includes(".live-seed-prefligh
 assert(app.includes('aria-label="Live seed reload receipt"'), "live seed proof must expose the reload/reconciliation receipt.");
 assert(css.includes(".live-seed-reload-receipt") && css.includes(".live-seed-reload-grid"), "live seed reload receipt must be styled and bounded.");
 assert(css.includes(".release-sync-command") && css.includes(".release-sync-command-grid"), "release sync command must be styled and bounded.");
+assert(app.includes('aria-label="Stale VPS recovery runbook"'), "release sync must expose a stale VPS recovery runbook for 200-but-old bundle cases.");
+assert(css.includes(".stale-vps-recovery-runbook") && css.includes(".stale-vps-recovery-grid"), "stale VPS recovery runbook must be styled and bounded.");
 assert(premiumRepair.includes(".dashboard-next-action") && premiumRepair.includes(".dashboard-next-action-metrics"), "dashboard next action command must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");
 assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))"), "dense admin forms must auto-fit narrow screens.");

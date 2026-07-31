@@ -21,6 +21,7 @@ const requiredMobileStacks = [
   ".vps-saved-update-verification",
   ".vps-saved-update-command-list",
   ".vps-saved-update-next",
+  ".stale-vps-recovery-grid",
   ".account-operator-path",
   ".corporate-account-rbac-path",
   ".billing-operator-path",

@@ -399,6 +399,10 @@ assertIncludesAny(bundleText, ["Release sync command"], "release sync command su
 assertIncludesAny(bundleText, ["Export release sync packet"], "release sync export control");
 assertIncludesAny(bundleText, ["release_sync_command"], "release sync command packet field");
 assertIncludesAny(bundleText, ["tools/update-vps-from-github.sh"], "vps update command in release sync packet");
+assertIncludesAny(bundleText, ["Stale VPS recovery runbook"], "stale VPS recovery runbook");
+assertIncludesAny(bundleText, ["stale_vps_recovery_runbook"], "stale VPS recovery packet field");
+assertIncludesAny(bundleText, ["vps_can_return_200_while_serving_an_older_trustgraph_bundle"], "stale VPS 200-but-old warning");
+assertIncludesAny(bundleText, ["vps_release_stamp_returns_commit_json_and_contains_latest_green_main_commit"], "stale VPS acceptance rule");
 assertIncludesAny(bundleText, ["trustgraph-release.json"], "server release stamp URL");
 assertIncludesAny(bundleText, ["release_stamp_command"], "server release stamp command field");
 assertIncludesAny(bundleText, ["Completion audit open items"], "v1 completion open item summary");
