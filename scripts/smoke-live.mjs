@@ -806,6 +806,10 @@ assertIncludesAny(bundleText, ["professional_registration_corporate_registration
 assertIncludesAny(bundleText, ["Public buyer launch path"], "public buyer launch path");
 assertIncludesAny(bundleText, ["public_buyer_launch_path"], "public buyer launch path packet field");
 assertIncludesAny(bundleText, ["public_buyer_can_follow_account_choice_hosted_verification_portal_landing_pricing_scoped_database_access_proof_export_and_server_save_before_signup"], "public buyer launch path acceptance rule");
+assertIncludesAny(bundleText, ["Registration database launch order"], "registration database launch order");
+assertIncludesAny(bundleText, ["registration_database_launch_order"], "registration database launch order packet field");
+assertIncludesAny(bundleText, ["registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit"], "registration database launch order acceptance rule");
+assertIncludesAny(bundleText, ["Export registration order"], "registration database launch order export");
 assertIncludesAny(bundleText, ["Public portal launch checklist"], "public portal launch checklist");
 assertIncludesAny(bundleText, ["public_portal_launch_checklist"], "public portal launch checklist packet field");
 assertIncludesAny(bundleText, ["public_website_login_registration_pricing_corporate_database_path_hosted_auth_and_server_release_are_all_clear_before_v1_launch"], "public portal launch checklist acceptance rule");

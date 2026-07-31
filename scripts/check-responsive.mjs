@@ -121,6 +121,7 @@ const requiredMobileStacks = [
   ".portal-home-command",
   ".permission-actions",
   ".portal-launch-map-grid",
+  ".registration-database-launch-grid",
   ".portal-auth-summary-grid",
   ".portal-auth-outcome-grid",
   ".portal-choice-guide-header",

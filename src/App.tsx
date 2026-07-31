@@ -12654,6 +12654,47 @@ function PublicSite({
       }
     ]
   };
+  const registrationDatabaseLaunchOrder = {
+    mode: "registration_database_launch_order",
+    selected_portal: portal,
+    selected_mode: mode,
+    selected_pricing: selectedRegistrationPath.plan,
+    first_live_database_write: selectedRegistrationPath.primaryWrite,
+    accepted_when:
+      "registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit",
+    order: [
+      {
+        step: "1",
+        label: "Select account",
+        detail: portal === "corporate" ? "Corporate company creates a Verify workspace." : "Professional user creates a private Passport.",
+        proof: portal === "corporate" ? "organization + admin membership" : "profile + personal workspace"
+      },
+      {
+        step: "2",
+        label: "Confirm pricing",
+        detail: selectedRegistrationPath.plan,
+        proof: selectedRegistrationPath.paymentStatus
+      },
+      {
+        step: "3",
+        label: "Create first live row",
+        detail: selectedRegistrationPath.primaryWrite,
+        proof: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+      },
+      {
+        step: "4",
+        label: "Land in portal",
+        detail: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
+        proof: selectedRegistrationPath.nextAction
+      },
+      {
+        step: "5",
+        label: "Export proof",
+        detail: portal === "corporate" ? "Corporate RBAC, billing, team, and scoped user rows." : "Passport records, evidence, consent, and sharing rows.",
+        proof: "Live Supabase rows only; preview data is not accepted."
+      }
+    ]
+  };
   const publicServerUpdateReceipt = {
     mode: "public_server_update_receipt",
     command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
@@ -12917,6 +12958,7 @@ function PublicSite({
     public_portal_database_access_contract: portalDatabaseAccessContract,
     public_portal_launch_checklist: publicPortalLaunchChecklist,
     registration_outcome_command: registrationOutcomeCommand,
+    registration_database_launch_order: registrationDatabaseLaunchOrder,
     registration_decision_receipt: registrationDecisionReceipt,
     live_onboarding_acceptance_contract: liveOnboardingAcceptanceContract,
     portal_handoff_checklist: portalHandoffChecklist,
@@ -13676,6 +13718,36 @@ function PublicSite({
               </article>
             ))}
           </div>
+        </div>
+        <div className="registration-database-launch-order" aria-label="Registration database launch order">
+          <div className="registration-database-launch-copy">
+            <span className="status-chip neutral">Registration database launch order</span>
+            <strong>{portal === "corporate" ? "Corporate registration creates the company shell first" : "Professional registration creates the Passport owner first"}</strong>
+            <small>{registrationDatabaseLaunchOrder.accepted_when}</small>
+          </div>
+          <div className="registration-database-launch-grid">
+            {registrationDatabaseLaunchOrder.order.map((item) => (
+              <article key={item.step}>
+                <span>{item.step}</span>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+                <small>{item.proof}</small>
+              </article>
+            ))}
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-registration-database-launch-order-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(registrationDatabaseLaunchOrder, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export registration order
+          </button>
         </div>
         <div className="public-portal-launch-checklist" aria-label="Public portal launch checklist">
           <div>

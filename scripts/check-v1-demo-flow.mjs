@@ -51,6 +51,7 @@ const flowChecks = [
       "Start in the right portal before live database rows are created",
       "Professional user portal",
       "Corporate company portal",
+      "Registration database launch order",
       "Pricing structure packet"
     ]
   },
@@ -63,6 +64,8 @@ const flowChecks = [
       "public_auth_flow_command",
       "Registration decision receipt",
       "registration_decision_receipt",
+      "registration_database_launch_order",
+      "registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit",
       "Live onboarding acceptance contract",
       "live_onboarding_acceptance_contract",
       "preview_data_accepted: false",
