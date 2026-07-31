@@ -181,6 +181,8 @@ assert(css.includes(".empty-verify-state-command") && css.includes(".empty-verif
 assert(css.includes(".corporate-scope-review-command") && css.includes(".corporate-scope-review-grid"), "Corporate scope review command must be styled and bounded.");
 assert(app.includes('aria-label="Corporate access next action command"'), "Corporate Verify must expose the next action required to unlock scoped user database proof.");
 assert(css.includes(".corporate-access-next-action") && css.includes(".corporate-access-next-action-grid"), "corporate access next action command must be styled and bounded.");
+assert(app.includes('aria-label="Issuer provenance receipt"'), "issuer workflow must expose source, owner, expiration, revocation, and audit provenance.");
+assert(css.includes(".issuer-provenance-receipt") && css.includes(".issuer-provenance-grid"), "issuer provenance receipt must be styled and bounded.");
 assert(app.includes('aria-label="Corporate database access decision board"'), "Corporate Verify must expose a current access decision board for request, view, attest, and export actions.");
 assert(app.includes('aria-label="Corporate database action cockpit"'), "Corporate Verify must expose a first-screen database action cockpit before directory filters and exports.");
 assert(css.includes(".corporate-database-access-decision-board") && css.includes(".corporate-database-access-decision-grid"), "corporate database access decision board must be styled and bounded.");

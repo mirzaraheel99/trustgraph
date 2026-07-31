@@ -921,6 +921,15 @@ assertIncludesAny(bundleText, ["Registration auth readiness packet"], "registrat
 assertIncludesAny(bundleText, ["Export registration auth packet"], "registration auth readiness export control");
 assertIncludesAny(bundleText, ["Export lifecycle packet"], "issuer credential lifecycle export");
 assertIncludesAny(bundleText, ["issuer_credential_lifecycle"], "issuer credential lifecycle packet mode");
+assertIncludesAny(bundleText, ["Issuer provenance receipt"], "issuer provenance receipt panel");
+assertIncludesAny(bundleText, ["issuer_provenance_receipt"], "issuer provenance receipt packet mode");
+assertIncludesAny(bundleText, ["Export provenance receipt"], "issuer provenance receipt export");
+assertIncludesAny(bundleText, ["universal_trust_score_enabled"], "issuer provenance avoids universal trust score");
+assertIncludesAny(
+  bundleText,
+  ["issuer_credentials_show_owner_source_issuer_organization_status_expiration_revocation_and_audit_workflow_before_corporate_review"],
+  "issuer provenance acceptance rule"
+);
 assertIncludesAny(bundleText, ["revoke_issuer_credential"], "issuer credential revoke RPC evidence");
 assertIncludesAny(bundleText, ["update_issuer_credential_expiry"], "issuer credential update RPC evidence");
 assertIncludesAny(bundleText, ["Update expiry"], "issuer credential expiry update control");

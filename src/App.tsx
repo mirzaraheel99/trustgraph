@@ -5386,6 +5386,7 @@ function IssuerCredentialsPanel({
   const noExpiryCredentials = credentials.length - expiringCredentials;
   const exportName = `trustgraph-issued-credentials-${new Date().toISOString().slice(0, 10)}.csv`;
   const lifecyclePacketName = `trustgraph-issuer-lifecycle-${new Date().toISOString().slice(0, 10)}.json`;
+  const provenancePacketName = `trustgraph-issuer-provenance-receipt-${new Date().toISOString().slice(0, 10)}.json`;
   const issuerLifecyclePacket = {
     generated_at: new Date().toISOString(),
     packet_mode: "issuer_credential_lifecycle",
@@ -5409,6 +5410,63 @@ function IssuerCredentialsPanel({
       revocation_reason: typeof credential.metadata?.revocation_reason === "string" ? credential.metadata.revocation_reason : null
     }))
   };
+  const issuerProvenanceReceipt = {
+    generated_at: new Date().toISOString(),
+    packet_mode: "issuer_provenance_receipt",
+    accepted_when:
+      "issuer_credentials_show_owner_source_issuer_organization_status_expiration_revocation_and_audit_workflow_before_corporate_review",
+    source_planning_document: "docs/05-trust-and-verification-framework.md",
+    issuer_source_type: "credential_issuer",
+    verification_level: "issuer_confirmed",
+    universal_trust_score_enabled: false,
+    counts: {
+      issued_credentials: credentials.length,
+      owner_profiles_linked: credentials.filter((credential) => credential.owner_profile_id).length,
+      issuer_organizations_linked: credentials.filter((credential) => credential.issuer_organization_id).length,
+      credentials_with_expiration: expiringCredentials,
+      revoked_credentials: revokedCredentials
+    },
+    audit_expectations: ["credential.issued", "credential.updated", "credential.revoked"],
+    corporate_visibility_rule: "Corporate Verify can see issuer-backed rows only through approved Access Grants, active RBAC, consent scope, and record status.",
+    records: credentials.map((credential) => ({
+      credential_id: credential.id,
+      owner_profile_id: credential.owner_profile_id,
+      owner_email: credential.owner_profile?.email ?? null,
+      issuer_organization_id: credential.issuer_organization_id,
+      issuer_organization_name: credential.issuer_organization?.name ?? null,
+      title: credential.title,
+      type: credential.type,
+      source_name: credential.source_name,
+      status: credential.status,
+      issued_at: credential.issued_at,
+      expires_at: credential.expires_at,
+      revoked_at: typeof credential.metadata?.revoked_at === "string" ? credential.metadata.revoked_at : null,
+      evidence_summary: credential.evidence_summary ?? "",
+      verification_event_required: true
+    }))
+  };
+  const issuerProvenanceCards = [
+    {
+      label: "Source type",
+      value: "Issuer",
+      detail: "Credential rows must name the issuing organization, not a vague score."
+    },
+    {
+      label: "Owner link",
+      value: `${issuerProvenanceReceipt.counts.owner_profiles_linked}/${credentials.length}`,
+      detail: "Each issued credential should point to the Professional owner profile."
+    },
+    {
+      label: "Expiration",
+      value: `${expiringCredentials}`,
+      detail: "Expiration is shown separately from verification status."
+    },
+    {
+      label: "Audit events",
+      value: "Required",
+      detail: "Issue, update, and revoke actions expect audit and notification evidence."
+    }
+  ];
 
   useEffect(() => {
     setStatus(message);
@@ -5532,6 +5590,29 @@ function IssuerCredentialsPanel({
           type="button"
         >
           Export lifecycle packet
+        </button>
+      </div>
+      <div className="issuer-provenance-receipt" aria-label="Issuer provenance receipt">
+        <div>
+          <span className="status-chip success">Issuer provenance receipt</span>
+          <strong>Issuer-backed credentials keep source, owner, status, expiry, and revocation separate</strong>
+          <small>{issuerProvenanceReceipt.accepted_when}</small>
+        </div>
+        <div className="issuer-provenance-grid">
+          {issuerProvenanceCards.map((card) => (
+            <article key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <button
+          className="secondary-action"
+          onClick={() => downloadTextFile(provenancePacketName, JSON.stringify(issuerProvenanceReceipt, null, 2), "application/json")}
+          type="button"
+        >
+          Export provenance receipt
         </button>
       </div>
       <form className="issuer-form" onSubmit={submitCredential}>
