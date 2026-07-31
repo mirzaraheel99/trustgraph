@@ -107,6 +107,8 @@ The signed-in dashboard now adds a Portal daily navigator directly after the fro
 
 The public login/register form now shows a visible auth route summary immediately before the input fields, so Professional users and Corporate admins can confirm account type, login/register mode, pricing path, first database write, and landing portal before submitting.
 
+The public auth form also starts with a Registration route planner that keeps Professional versus Corporate, Register versus Login, price, first database write, next dashboard, recovery, and required proof in one compact operator view before the form fields.
+
 Corporate Verify now includes a request-to-row rail before directory filters, showing the reviewer exactly where they are across request, professional approval, scoped rows, attestation, visibility snapshot, and metadata-only export.
 
 Billing now starts with a pricing choice rail that summarizes selected plan, seats, projected monthly price, live pilot ledger state, saved quote receipt, Stripe gate, and pricing packet export before the deeper billing receipts.

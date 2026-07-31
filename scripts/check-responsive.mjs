@@ -256,6 +256,8 @@ const requiredMobileStacks = [
   ".request-scope-receipt-grid",
   ".registration-path-grid",
   ".registration-focus-strip",
+  ".registration-route-planner-grid",
+  ".registration-route-planner-actions",
   ".portal-launch-decision-strip",
   ".portal-submit-receipt-grid",
   ".registration-pre-submit-checklist",

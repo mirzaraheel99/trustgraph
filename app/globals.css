@@ -23838,6 +23838,107 @@ body {
   padding: 10px;
 }
 
+.registration-route-planner {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.12), rgba(31, 213, 190, 0.08)),
+    rgba(8, 18, 22, 0.9);
+}
+
+.registration-route-planner-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.registration-route-planner-copy strong {
+  color: var(--text);
+  font-size: clamp(21px, 2.2vw, 31px);
+  line-height: 1.04;
+}
+
+.registration-route-planner-copy small {
+  color: rgba(222, 239, 233, 0.72);
+  line-height: 1.38;
+  overflow-wrap: anywhere;
+}
+
+.registration-route-planner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.registration-route-planner-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.registration-route-planner-grid strong,
+.registration-route-planner-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.registration-route-planner-grid small:first-child {
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.registration-route-planner-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.registration-route-planner-grid small:last-child {
+  color: rgba(222, 239, 233, 0.64);
+  font-size: 11px;
+  line-height: 1.32;
+}
+
+.registration-route-planner-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 92px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.registration-route-planner-actions button {
+  min-width: 0;
+  min-height: 40px;
+  padding: 9px 10px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.13);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  font-weight: 900;
+  white-space: normal;
+}
+
+.registration-route-planner-actions button.active {
+  border-color: rgba(108, 240, 195, 0.38);
+  color: #95ffd9;
+  background: rgba(28, 171, 145, 0.13);
+}
+
 .public-auth-front-desk {
   display: grid;
   gap: 12px;

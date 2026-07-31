@@ -15389,6 +15389,43 @@ function PublicSite({
       detail: portal === "corporate" ? "RBAC, billing, team, and Verify access requests." : "Records, evidence, consent, and sharing."
     }
   ];
+  const registrationRoutePlanner = {
+    mode: "registration_route_planner",
+    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    price: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    next_dashboard: portal === "corporate" ? "Company Admin and Corporate Verify" : "Professional Passport",
+    accepted_when:
+      "public_auth_form_starts_with_plain_registration_route_planner_showing_account_type_action_price_first_database_write_next_dashboard_and_recovery"
+  };
+  const registrationRoutePlannerSteps = [
+    {
+      label: "1. Account",
+      value: registrationRoutePlanner.selected_portal,
+      detail: portal === "corporate" ? "Company workspace and reviewer roles." : "Private Passport owned by the user."
+    },
+    {
+      label: "2. Action",
+      value: registrationRoutePlanner.selected_action,
+      detail: selectedPortalCommand.next
+    },
+    {
+      label: "3. Price",
+      value: registrationRoutePlanner.price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "4. First row",
+      value: registrationRoutePlanner.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "5. Landing",
+      value: registrationRoutePlanner.next_dashboard,
+      detail: selectedRegistrationPath.nextAction
+    }
+  ];
   const portalLaunchDecisionStrip = [
     {
       label: "Choose this when",
@@ -17508,6 +17545,39 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="registration-route-planner" aria-label="Registration route planner">
+            <div className="registration-route-planner-copy">
+              <span className="status-chip success">Registration route</span>
+              <strong>{registrationRoutePlanner.selected_action} as {registrationRoutePlanner.selected_portal}</strong>
+              <small>{registrationRoutePlanner.accepted_when}</small>
+            </div>
+            <div className="registration-route-planner-grid">
+              {registrationRoutePlannerSteps.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="registration-route-planner-actions">
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                Professional
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                Corporate
+              </button>
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                Register
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                Login
+              </button>
+              <button disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset
+              </button>
+            </div>
+          </div>
           <div className="public-auth-front-desk" aria-label="Public auth front desk">
             <div className="public-auth-front-desk-copy">
               <span className="status-chip success">Public auth front desk</span>
