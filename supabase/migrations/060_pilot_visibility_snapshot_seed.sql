@@ -36,24 +36,24 @@ begin
     raise exception 'Active corporate membership required before pilot visibility snapshot seed';
   end if;
 
-  select count(distinct grant.subject_profile_id)
+  select count(distinct access_grant.subject_profile_id)
     into filtered_count
-  from public.access_grants grant
-  where grant.requester_organization_id = corporate_org.id
-    and grant.status = 'approved';
+  from public.access_grants access_grant
+  where access_grant.requester_organization_id = corporate_org.id
+    and access_grant.status = 'approved';
 
   select count(*)
     into grant_count
-  from public.access_grants grant
-  where grant.requester_organization_id = corporate_org.id
-    and grant.status = 'approved';
+  from public.access_grants access_grant
+  where access_grant.requester_organization_id = corporate_org.id
+    and access_grant.status = 'approved';
 
   select count(*)
     into shared_count
   from public.access_grant_records grant_record
-  join public.access_grants grant on grant.id = grant_record.access_grant_id
-  where grant.requester_organization_id = corporate_org.id
-    and grant.status = 'approved';
+  join public.access_grants access_grant on access_grant.id = grant_record.access_grant_id
+  where access_grant.requester_organization_id = corporate_org.id
+    and access_grant.status = 'approved';
 
   select count(*)
     into review_count
@@ -70,7 +70,7 @@ begin
       jsonb_agg(
         jsonb_build_object(
           'record_id', record.id,
-          'profile_id', grant.subject_profile_id,
+          'profile_id', access_grant.subject_profile_id,
           'type', record.type,
           'title', record.title,
           'status', record.status,
@@ -84,10 +84,10 @@ begin
     )
     into row_inventory
   from public.access_grant_records grant_record
-  join public.access_grants grant on grant.id = grant_record.access_grant_id
+  join public.access_grants access_grant on access_grant.id = grant_record.access_grant_id
   join public.trust_records record on record.id = grant_record.trust_record_id
-  where grant.requester_organization_id = corporate_org.id
-    and grant.status = 'approved';
+  where access_grant.requester_organization_id = corporate_org.id
+    and access_grant.status = 'approved';
 
   readiness_buckets := jsonb_build_array(
     jsonb_build_object('label', 'Approved grants', 'count', grant_count, 'ready', grant_count > 0),
