@@ -10543,6 +10543,48 @@ function OnboardingChecklistPanel({
           ? "Prepare live pilot workspace"
           : "Login before live pilot seed"
   };
+  const liveDatabaseReloadVerificationSteps = [
+    {
+      label: "Hosted account context reloaded",
+      value: accountContext ? "Loaded" : "Missing",
+      detail: "Profile, active organization, membership, and RBAC role must come back from Supabase after seed.",
+      ready: Boolean(accountContext)
+    },
+    {
+      label: "Seed IDs reconciled",
+      value: visibleSeedEvidence ? `${seedReconciliationPassing}/${seedReconciliationRows.length}` : "Not run",
+      detail: "Browser seed evidence is accepted only after IDs match repository rows.",
+      ready: seedReconciliationComplete
+    },
+    {
+      label: "Corporate user rows visible",
+      value: `${accessGrants.length} grants / ${corporateAccessReviews.length} reviews`,
+      detail: "Corporate Verify must load Access Grant, consent, team, and review attestation rows.",
+      ready: corporateDatabaseReady
+    },
+    {
+      label: "Working-data proof exported",
+      value: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "Ready" : "Required",
+      detail: "Export after reload so the packet reflects live Supabase rows, not seed memory.",
+      ready: liveDatabaseAcceptanceComplete && seedReconciliationComplete
+    }
+  ];
+  const liveDatabaseReloadVerificationReady = liveDatabaseReloadVerificationSteps.filter((step) => step.ready).length;
+  const liveDatabaseReloadVerification = {
+    mode: "live_database_reload_verification",
+    ready_steps: liveDatabaseReloadVerificationReady,
+    total_steps: liveDatabaseReloadVerificationSteps.length,
+    status:
+      liveDatabaseReloadVerificationReady === liveDatabaseReloadVerificationSteps.length
+        ? "reloaded_rows_verified"
+        : "reload_verification_open",
+    accepted_when:
+      "seeded_rows_are_reloaded_from_supabase_repositories_seed_ids_reconcile_corporate_rows_are_visible_and_working_data_packet_is_exported",
+    preview_data_accepted: false,
+    next_action:
+      liveDatabaseReloadVerificationSteps.find((step) => !step.ready)?.label ?? "Export working-data packet",
+    steps: liveDatabaseReloadVerificationSteps
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -10600,6 +10642,7 @@ function OnboardingChecklistPanel({
     live_account_acceptance_checklist: liveAccountAcceptancePacket,
     live_database_acceptance_lanes: liveDatabaseAcceptanceLanes,
     live_data_load_receipt: liveDataLoadReceipt,
+    live_database_reload_verification: liveDatabaseReloadVerification,
     live_row_source_receipt: liveRowSourceReceipt,
     live_database_acceptance: {
       status: workingDatabaseAcceptanceStatus,
@@ -11127,6 +11170,28 @@ function OnboardingChecklistPanel({
               <strong>{liveDataLoadReceipt.seed_rows_matched}/{liveDataLoadReceipt.seed_rows_required}</strong>
               <small>Seed IDs reconciled</small>
             </span>
+          </div>
+        </div>
+        <div className="live-database-reload-verification" aria-label="Live database reload verification">
+          <div>
+            <span className={`status-chip ${liveDatabaseReloadVerification.status === "reloaded_rows_verified" ? "success" : "warning"}`}>
+              Live database reload verification
+            </span>
+            <strong>{liveDatabaseReloadVerification.next_action}</strong>
+            <small>{liveDatabaseReloadVerification.accepted_when}</small>
+            <small>Preview data accepted: {liveDatabaseReloadVerification.preview_data_accepted ? "yes" : "no"}</small>
+          </div>
+          <div className="live-database-reload-grid">
+            {liveDatabaseReloadVerificationSteps.map((step) => (
+              <article className={step.ready ? "ready" : ""} key={step.label}>
+                <span className={`status-dot ${step.ready ? "on" : ""}`} />
+                <div>
+                  <strong>{step.label}</strong>
+                  <small>{step.value}</small>
+                  <small>{step.detail}</small>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
         <div className="live-row-source-receipt" aria-label="Live row source receipt">

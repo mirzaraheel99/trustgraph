@@ -442,6 +442,9 @@ assertIncludesAny(bundleText, ["live_row_source_receipt"], "working database liv
 assertIncludesAny(bundleText, ["Live database repair command"], "working database live repair command");
 assertIncludesAny(bundleText, ["live_database_repair_command"], "working database live repair command packet field");
 assertIncludesAny(bundleText, ["Export repair packet"], "working database repair packet export");
+assertIncludesAny(bundleText, ["Live database reload verification"], "working database reload verification");
+assertIncludesAny(bundleText, ["live_database_reload_verification"], "working database reload verification packet field");
+assertIncludesAny(bundleText, ["seeded_rows_are_reloaded_from_supabase_repositories_seed_ids_reconcile_corporate_rows_are_visible_and_working_data_packet_is_exported"], "working database reload verification acceptance rule");
 assertIncludesAny(bundleText, ["signed_in_supabase_repository_rows"], "working database accepted row source");
 assertIncludesAny(bundleText, ["missing_live_supabase_row"], "working database missing row source state");
 assertIncludesAny(bundleText, ["human_or_live_data_action_required"], "live account acceptance human/live data action state");
