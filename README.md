@@ -99,6 +99,8 @@ The signed-in console keeps the daily operator path lean: one dashboard front do
 
 The public website and login/register card are also kept buyer-facing: portal choice, pricing, first database write, required fields, and recovery actions stay visible first, while internal redirect/recovery receipts remain available in the bundle without crowding signup.
 
+The hosted login/register card now starts with a public auth front desk so Professional users and Corporate admins can switch account type, login/register mode, pricing review, and recovery from one compact surface before entering credentials.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text

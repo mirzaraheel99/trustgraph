@@ -74,6 +74,7 @@ assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public
 assert(app.includes('aria-label="Onboarding wizard database receipt"'), "guided onboarding must expose a persisted onboarding wizard receipt.");
 assert(app.includes('aria-label="Onboarding next action rail"') && app.includes("onboarding_next_action_rail"), "guided onboarding must expose one next-action rail for login, Passport, Corporate, pricing, database proof, and export route.");
 assert(app.includes('aria-label="Public auth flow command"'), "public auth must expose a simple flow command for account type, mode, and database result.");
+assert(app.includes('aria-label="Public auth front desk"') && app.includes("public_auth_front_desk"), "public auth must expose one front desk for login, registration, pricing, recovery, and hosted redirects.");
 assert(app.includes('aria-label="Portal access cockpit"'), "public auth must start with a single portal access cockpit for portal, mode, pricing, first write, and boundary.");
 assert(app.includes('aria-label="Portal start desk"'), "public auth must expose a simple portal start desk before the dense registration form.");
 assert(app.includes('aria-label="Portal front door"') && app.includes("portal_front_door"), "public website must expose one front door for Professional login, Corporate login, registration, pricing, database boundary, recovery, and server status.");
@@ -256,6 +257,7 @@ assert(css.includes(".live-onboarding-contract") && css.includes(".live-onboardi
 assert(css.includes(".onboarding-wizard-receipt") && css.includes(".onboarding-wizard-receipt-grid"), "onboarding wizard receipt must be styled and bounded.");
 assert(css.includes(".onboarding-next-action-rail") && css.includes(".onboarding-next-action-grid") && css.includes(".onboarding-next-action-proof"), "onboarding next action rail must be styled and bounded.");
 assert(css.includes(".public-auth-flow-command") && css.includes(".public-auth-flow-grid") && css.includes("Public auth simplification pass"), "public auth flow command must be styled and simplify the login/register surface.");
+assert(css.includes(".public-auth-front-desk") && css.includes(".public-auth-front-desk-grid") && css.includes(".public-auth-front-desk-actions"), "public auth front desk must be styled and bounded.");
 assert(css.includes(".portal-access-cockpit") && css.includes(".portal-access-cockpit-actions") && css.includes(".portal-access-cockpit-grid"), "portal access cockpit must be styled and bounded.");
 assert(css.includes(".portal-start-desk") && css.includes(".portal-start-desk-switches") && css.includes(".portal-start-desk-grid"), "portal start desk must be styled and bounded.");
 assert(css.includes("Public auth decision desk repair") && css.includes(".registration-focus-strip,\n.portal-handoff-checklist") && css.includes(".public-auth-card") && css.includes("position: relative !important"), "public auth page must hide duplicate proof panels and keep the login/register card usable.");

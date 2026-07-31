@@ -23141,6 +23141,9 @@ body {
 .portal-launch-map,
 .public-server-sync-receipt,
 .public-saved-build-verification,
+.public-auth-card .auth-path-summary,
+.public-auth-card .public-auth-server-checkpoint,
+.public-auth-card .portal-handoff-checklist,
 .public-auth-card .portal-submit-receipt,
 .public-auth-card .registration-outcome-command,
 .public-auth-card .login-issue-resolver,
@@ -23172,6 +23175,98 @@ body {
 
 .public-auth-card .registration-pre-submit-checklist {
   padding: 10px;
+}
+
+.public-auth-front-desk {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(97, 232, 208, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(31, 213, 190, 0.13), rgba(125, 164, 246, 0.07)),
+    rgba(5, 17, 19, 0.88);
+}
+
+.public-auth-front-desk-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-auth-front-desk-copy strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.4vw, 34px);
+  line-height: 1.03;
+}
+
+.public-auth-front-desk-copy small {
+  color: rgba(222, 239, 233, 0.72);
+  line-height: 1.38;
+  overflow-wrap: anywhere;
+}
+
+.public-auth-front-desk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 126px), 1fr));
+  gap: 8px;
+}
+
+.public-auth-front-desk-grid button {
+  display: grid;
+  gap: 5px;
+  justify-items: start;
+  min-height: 104px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+  white-space: normal;
+}
+
+.public-auth-front-desk-grid button.active {
+  border-color: rgba(108, 240, 195, 0.38);
+  background: rgba(28, 171, 145, 0.13);
+}
+
+.public-auth-front-desk-grid span,
+.public-auth-front-desk-grid strong,
+.public-auth-front-desk-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-auth-front-desk-grid span {
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-auth-front-desk-grid strong {
+  font-size: 15px;
+  line-height: 1.12;
+}
+
+.public-auth-front-desk-grid small {
+  color: rgba(222, 239, 233, 0.66);
+  font-size: 11px;
+  line-height: 1.32;
+}
+
+.public-auth-front-desk-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 8px;
+}
+
+.public-auth-front-desk-actions button {
+  min-width: 0;
+  white-space: normal;
 }
 
 .public-auth-card .registration-pre-submit-grid {

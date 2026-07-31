@@ -16204,6 +16204,42 @@ function PublicSite({
       mode
     }
   ];
+  const publicAuthFrontDesk = {
+    generated_at: new Date().toISOString(),
+    mode: "public_auth_front_desk",
+    selected_portal: selectedRegistrationPath.portal,
+    selected_mode: mode,
+    headline: selectedPortalCommand.headline,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    pricing: selectedRegistrationPath.plan,
+    recovery_ready: Boolean(email),
+    hosted_redirect: authRedirectUrl,
+    accepted_when:
+      "public_auth_front_desk_keeps_professional_login_corporate_login_registration_pricing_recovery_and_hosted_redirect_clear_before_form_submit"
+  };
+  const publicAuthFrontDeskCards = [
+    {
+      label: "Portal",
+      value: portal === "corporate" ? "Corporate" : "Professional",
+      detail: portal === "corporate" ? "Company setup and Verify" : "Passport owner workspace"
+    },
+    {
+      label: "Action",
+      value: mode === "signup" ? "Register" : "Login",
+      detail: selectedPortalCommand.next
+    },
+    {
+      label: "Price",
+      value: portal === "corporate" ? "$149 pilot" : "$0 pilot",
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "Recovery",
+      value: email ? "Ready" : "Email needed",
+      detail: "Reset and verification use the hosted redirect."
+    }
+  ];
+  const publicAuthFrontDeskPacketName = `trustgraph-public-auth-front-desk-${new Date().toISOString().slice(0, 10)}.json`;
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -17156,6 +17192,56 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="public-auth-front-desk" aria-label="Public auth front desk">
+            <div className="public-auth-front-desk-copy">
+              <span className="status-chip success">Public auth front desk</span>
+              <strong>{publicAuthFrontDesk.headline}</strong>
+              <small>{selectedRegistrationPath.nextAction}</small>
+            </div>
+            <div className="public-auth-front-desk-grid">
+              {publicAuthFrontDeskCards.map((item) => (
+                <button
+                  className={item.label === "Portal" || item.label === "Action" ? "active" : ""}
+                  key={item.label}
+                  onClick={() => {
+                    if (item.label === "Portal") {
+                      setPortal(portal === "corporate" ? "professional" : "corporate");
+                      return;
+                    }
+                    if (item.label === "Action") {
+                      setMode(mode === "signup" ? "signin" : "signup");
+                      return;
+                    }
+                    if (item.label === "Price") {
+                      document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" });
+                      return;
+                    }
+                    document.getElementById("public-auth-email")?.focus();
+                  }}
+                  type="button"
+                >
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-auth-front-desk-actions">
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() => downloadTextFile(publicAuthFrontDeskPacketName, JSON.stringify(publicAuthFrontDesk, null, 2), "application/json")}
+                type="button"
+              >
+                Export auth path
+              </button>
+            </div>
+          </div>
           <div className="auth-card-heading">
             <span className="status-chip neutral">{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</span>
             <strong>{mode === "signup" ? "Create account" : "Sign in"}</strong>
@@ -17342,7 +17428,7 @@ function PublicSite({
               Export checklist
             </button>
           </div>
-          <input onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
+          <input id="public-auth-email" onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
           <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
           {portal === "corporate" && mode === "signup" ? (
             <>

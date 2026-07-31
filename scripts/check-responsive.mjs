@@ -82,6 +82,8 @@ const requiredMobileStacks = [
   ".public-buyer-decision-header",
   ".public-buyer-decision-grid",
   ".public-buyer-decision-proof",
+  ".public-auth-front-desk-grid",
+  ".public-auth-front-desk-actions",
   ".corporate-database-path-grid",
   ".corporate-database-path-proof",
   ".dispute-source-strip",
