@@ -78,6 +78,7 @@ assert(app.includes('aria-label="Registration database launch order"'), "public 
 assert(app.includes('aria-label="Registration focus strip"'), "public auth must expose a compact registration focus strip before form fields.");
 assert(app.includes('aria-label="Portal launch decision strip"'), "public auth must expose a plain-language portal launch decision strip.");
 assert(app.includes('aria-label="Portal submit receipt"'), "public auth must show the selected portal submit path at the form action point.");
+assert(app.includes('aria-label="Registration pre-submit checklist"'), "public auth must show required fields, first database write, pricing, and next dashboard before submit.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
 assert(app.includes('aria-label="Pricing quote database receipt"'), "billing must expose a persisted pricing quote receipt.");
 assert(app.includes('aria-label="Pricing decision board"'), "billing must expose a clear pricing decision board.");
@@ -123,6 +124,7 @@ assert(css.includes(".login-decision-path") && css.includes(".login-decision-pat
 assert(css.includes(".public-portal-database-contract") && css.includes(".public-portal-database-contract-grid"), "public portal database access contract must be styled and bounded.");
 assert(css.includes(".public-buyer-launch-path") && css.includes(".public-buyer-launch-grid"), "public buyer launch path must be styled and bounded.");
 assert(css.includes(".registration-database-launch-order") && css.includes(".registration-database-launch-grid"), "registration database launch order must be styled and bounded.");
+assert(css.includes(".registration-pre-submit-checklist") && css.includes(".registration-pre-submit-grid"), "registration pre-submit checklist must be styled and bounded.");
 assert(css.includes(".corporate-onboarding-pricing-cockpit") && css.includes(".corporate-onboarding-pricing-grid") && css.includes(".corporate-onboarding-pricing-actions"), "corporate onboarding pricing cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");

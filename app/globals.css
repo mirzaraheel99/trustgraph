@@ -2102,6 +2102,66 @@ button {
   text-transform: uppercase;
 }
 
+.registration-pre-submit-checklist {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(143, 178, 255, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(143, 178, 255, 0.075), rgba(95, 240, 201, 0.05)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.registration-pre-submit-checklist > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.registration-pre-submit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.registration-pre-submit-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.registration-pre-submit-checklist strong,
+.registration-pre-submit-checklist small,
+.registration-pre-submit-checklist span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.registration-pre-submit-checklist > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.registration-pre-submit-grid small:first-child {
+  color: #9bb8ff;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.registration-pre-submit-checklist > button {
+  width: fit-content;
+  max-width: 100%;
+}
+
 .portal-handoff-checklist {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -14994,6 +15054,8 @@ p {
   .account-type-chooser-grid,
   .account-type-chooser-actions,
   .portal-submit-receipt-grid,
+  .registration-pre-submit-checklist,
+  .registration-pre-submit-grid,
   .portal-handoff-checklist,
   .portal-auth-summary-grid,
   .portal-access-steps,

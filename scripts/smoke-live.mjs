@@ -1030,6 +1030,10 @@ assertIncludesAny(bundleText, ["mark_registration_intent_passport_initialized"],
 assertIncludesAny(bundleText, ["Apply migration 044 to record registration intent rows"], "registration intent migration guidance");
 assertIncludesAny(bundleText, ["registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit"], "registration database launch order acceptance rule");
 assertIncludesAny(bundleText, ["Export registration order"], "registration database launch order export");
+assertIncludesAny(bundleText, ["Pre-submit checklist"], "registration pre-submit checklist");
+assertIncludesAny(bundleText, ["registration_pre_submit_checklist"], "registration pre-submit checklist packet field");
+assertIncludesAny(bundleText, ["registration_form_shows_required_fields_first_database_write_pricing_next_dashboard_and_preview_rejection_before_submit"], "registration pre-submit checklist acceptance rule");
+assertIncludesAny(bundleText, ["Export checklist"], "registration pre-submit checklist export");
 assertIncludesAny(bundleText, ["Public portal launch checklist"], "public portal launch checklist");
 assertIncludesAny(bundleText, ["public_portal_launch_checklist"], "public portal launch checklist packet field");
 assertIncludesAny(bundleText, ["public_website_login_registration_pricing_corporate_database_path_hosted_auth_and_server_release_are_all_clear_before_v1_launch"], "public portal launch checklist acceptance rule");

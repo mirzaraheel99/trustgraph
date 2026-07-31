@@ -14897,6 +14897,39 @@ function PublicSite({
       detail: portalSubmitReceipt.landing_dashboard
     }
   ];
+  const registrationPreSubmitChecklist = {
+    mode: "registration_pre_submit_checklist",
+    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_mode: mode === "signup" ? "Register" : "Login",
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    pricing: selectedRegistrationPath.plan,
+    next_dashboard: portalSubmitReceipt.landing_dashboard,
+    preview_data_accepted: false,
+    accepted_when:
+      "registration_form_shows_required_fields_first_database_write_pricing_next_dashboard_and_preview_rejection_before_submit"
+  };
+  const registrationPreSubmitItems = [
+    {
+      label: "Required fields",
+      value: selectedPortalCommand.required_fields.length,
+      detail: selectedPortalCommand.required_fields.join(", ").replace(/_/g, " ")
+    },
+    {
+      label: "First database write",
+      value: registrationPreSubmitChecklist.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Pricing path",
+      value: registrationPreSubmitChecklist.pricing,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "After submit",
+      value: portal === "corporate" ? "Company workspace" : "Private Passport",
+      detail: registrationPreSubmitChecklist.next_dashboard
+    }
+  ];
   const portalStartDesk = {
     mode: "portal_start_desk",
     selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
@@ -16464,6 +16497,35 @@ function PublicSite({
                 </span>
               ))}
             </div>
+          </div>
+          <div className="registration-pre-submit-checklist" aria-label="Registration pre-submit checklist">
+            <div>
+              <span className="status-chip success">Pre-submit checklist</span>
+              <strong>{mode === "signup" ? "Confirm the live database path before creating the account" : "Confirm the portal before login"}</strong>
+              <small>{registrationPreSubmitChecklist.accepted_when}</small>
+            </div>
+            <div className="registration-pre-submit-grid">
+              {registrationPreSubmitItems.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-registration-pre-submit-checklist-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(registrationPreSubmitChecklist, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export checklist
+            </button>
           </div>
           <input onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
           <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />

@@ -215,6 +215,8 @@ const requiredMobileStacks = [
   ".registration-focus-strip",
   ".portal-launch-decision-strip",
   ".portal-submit-receipt-grid",
+  ".registration-pre-submit-checklist",
+  ".registration-pre-submit-grid",
   ".registration-decision-grid",
   ".selected-portal-command",
   ".security-signoff-grid",
