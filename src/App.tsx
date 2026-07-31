@@ -2001,6 +2001,14 @@ function VerifyRequestsPanel({
   const accessBlockedCount = corporateAccessBlockerMap.filter((item) => item.state === "blocked").length;
   const accessNextCount = corporateAccessBlockerMap.filter((item) => item.state === "next").length;
   const verifyFlowPacketName = `trustgraph-verify-reviewer-flow-${new Date().toISOString().slice(0, 10)}.json`;
+  const liveAccessCommandTarget =
+    disabled || !requests.length
+      ? "corporate-verify-request-form"
+      : !approvedCount
+        ? "corporate-verify-request-list"
+        : !sharedRecords.length
+          ? "corporate-verify-request-list"
+          : "corporate-access-review-queue";
   const firstUseNextAction = disabled
     ? "Login with a corporate reviewer role or create the company workspace."
     : !requests.length
@@ -2047,6 +2055,48 @@ function VerifyRequestsPanel({
     }
   ];
   const corporateVerifyFirstUsePacketName = `trustgraph-corporate-verify-first-use-${new Date().toISOString().slice(0, 10)}.json`;
+  const corporateVerifyLiveAccessCommand = {
+    mode: "corporate_verify_live_access_command",
+    active_organization: activeOrganization.name,
+    live_corporate_context: !disabled,
+    next_action: firstUseNextAction,
+    target: liveAccessCommandTarget,
+    accepted_source: "approved_access_grants_shared_passport_rows_active_corporate_rbac_context",
+    preview_data_accepted: false,
+    counts: {
+      requests: requests.length,
+      approvals: approvedCount,
+      shared_user_rows: sharedRecords.length,
+      review_attestations: reviews.length,
+      open_gaps: pendingGapCount
+    }
+  };
+  const corporateVerifyLiveAccessCards = [
+    {
+      label: "Corporate context",
+      value: disabled ? "Locked" : "Live",
+      detail: disabled ? "Create or switch to corporate reviewer access." : activeOrganization.name,
+      ready: !disabled
+    },
+    {
+      label: "Access approval",
+      value: approvedCount ? `${approvedCount} approved` : requests.length ? "Waiting" : "Needed",
+      detail: requests.length ? "Tracked through Access Grants." : "Request one professional by email.",
+      ready: approvedCount > 0
+    },
+    {
+      label: "Shared user rows",
+      value: `${sharedRecords.length} visible`,
+      detail: "Only approved, consent-scoped Passport rows count.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length} attestations` : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} gap follow-ups open.` : "Record attestation after review.",
+      ready: reviews.length > 0 && pendingGapCount === 0
+    }
+  ];
   const corporateVerifyFirstUsePacket = {
     generated_at: new Date().toISOString(),
     mode: "corporate_verify_first_use_wizard",
@@ -2067,6 +2117,7 @@ function VerifyRequestsPanel({
       sensitive_shared_records: sharedRecordsNeedingConsent.length,
       covered_sensitive_records: coveredConsentRecords
     },
+    live_access_command: corporateVerifyLiveAccessCommand,
     accepted_when: "request_created_professional_approval_shared_rows_visible_review_attestation_exported",
     tokens_redacted: true,
     steps: corporateVerifyFirstUseWizard.map(({ label, value, detail, state }) => ({ label, value, detail, state }))
@@ -2152,7 +2203,44 @@ function VerifyRequestsPanel({
         </div>
         <div>
           <span>Inactive</span>
-          <strong>{inactiveCount}</strong>
+        <strong>{inactiveCount}</strong>
+        </div>
+      </div>
+      <div className="corporate-verify-live-command" aria-label="Corporate Verify live access command">
+        <div className="corporate-verify-live-command-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length && approvedCount ? "success" : "warning"}`}>Corporate Verify live access command</span>
+            <strong>{firstUseNextAction}</strong>
+            <small>Use this command to move from company setup to approved user database visibility without open browsing or preview-only proof.</small>
+          </div>
+          <div className="corporate-verify-live-command-actions">
+            <button
+              className="primary-action"
+              onClick={() => document.getElementById(liveAccessCommandTarget)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              type="button"
+            >
+              Open next step
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(corporateVerifyFirstUsePacketName, JSON.stringify(corporateVerifyFirstUsePacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export access command
+            </button>
+          </div>
+        </div>
+        <div className="corporate-verify-live-command-grid">
+          {corporateVerifyLiveAccessCards.map((item) => (
+            <article className={item.ready ? "ready" : ""} key={item.label}>
+              <span className={`status-dot ${item.ready ? "on" : ""}`} />
+              <div>
+                <strong>{item.value}</strong>
+                <small>{item.label}</small>
+                <small>{item.detail}</small>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
       <div className="corporate-verify-first-use" aria-label="Corporate Verify first-use wizard">

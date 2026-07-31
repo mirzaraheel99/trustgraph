@@ -15040,6 +15040,109 @@ body {
   }
 }
 
+/* Corporate Verify live access command: request, approval, shared rows, review proof. */
+.corporate-verify-live-command {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background: rgba(9, 22, 23, 0.76);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+}
+
+.corporate-verify-live-command-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.corporate-verify-live-command-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-verify-live-command-header strong {
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.1;
+}
+
+.corporate-verify-live-command-header small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.45;
+}
+
+.corporate-verify-live-command-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.corporate-verify-live-command-actions button {
+  width: 100%;
+}
+
+.corporate-verify-live-command-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 10px;
+}
+
+.corporate-verify-live-command-grid article {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  overflow: hidden;
+}
+
+.corporate-verify-live-command-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.corporate-verify-live-command-grid article > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.corporate-verify-live-command strong,
+.corporate-verify-live-command small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-verify-live-command-grid strong {
+  color: #f5fbf7;
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.corporate-verify-live-command-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.35;
+}
+
+@media (max-width: 980px) {
+  .corporate-verify-live-command-header {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .corporate-verify-live-command-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 680px) {
   .public-auth-section h2 {
     max-width: 14ch;

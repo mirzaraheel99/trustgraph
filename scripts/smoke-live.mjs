@@ -486,6 +486,9 @@ assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify re
 assertIncludesAny(bundleText, ["Corporate Verify first-use wizard"], "Corporate Verify first-use wizard label");
 assertIncludesAny(bundleText, ["corporate_verify_first_use_wizard"], "Corporate Verify first-use packet mode");
 assertIncludesAny(bundleText, ["Export first-use proof"], "Corporate Verify first-use proof export");
+assertIncludesAny(bundleText, ["Corporate Verify live access command"], "Corporate Verify live access command");
+assertIncludesAny(bundleText, ["corporate_verify_live_access_command"], "Corporate Verify live access command packet field");
+assertIncludesAny(bundleText, ["Export access command"], "Corporate Verify live access command export");
 assertIncludesAny(bundleText, ["Review visible user rows"], "Corporate Verify first-use review step");
 assertIncludesAny(bundleText, ["tokens_redacted"], "Corporate Verify first-use proof redacts tokens");
 assertIncludesAny(bundleText, ["Reviewer workflow"], "Corporate Verify reviewer workflow guide");

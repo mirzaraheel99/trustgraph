@@ -129,6 +129,8 @@ const flowChecks = [
       "request_scope_receipt",
       "Export review queue",
       "Corporate Verify live access test",
+      "Corporate Verify live access command",
+      "corporate_verify_live_access_command",
       "Visible user rows"
     ]
   },
