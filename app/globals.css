@@ -17687,6 +17687,7 @@ body {
 }
 
 .topbar,
+.v1-command-cockpit,
 .v1-portal-launchpad,
 .role-workspace-switchboard,
 .v1-launch-flow-command,
@@ -17720,6 +17721,160 @@ body {
 
 .topbar p {
   max-width: 72ch;
+}
+
+.v1-command-cockpit {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.46fr) minmax(0, 1fr);
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.11), rgba(134, 174, 246, 0.055) 56%, transparent),
+    rgba(6, 18, 20, 0.92);
+  box-shadow: 0 24px 84px rgba(0, 0, 0, 0.28);
+}
+
+.v1-command-cockpit-hero,
+.v1-command-cockpit-proof span {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.v1-command-cockpit strong,
+.v1-command-cockpit small,
+.v1-command-cockpit span,
+.v1-command-cockpit em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-command-cockpit-hero > strong {
+  color: var(--text);
+  font-size: clamp(28px, 2.8vw, 46px);
+  line-height: 1.02;
+}
+
+.v1-command-cockpit-hero > small {
+  max-width: 60ch;
+  color: rgba(222, 239, 233, 0.74);
+  line-height: 1.48;
+}
+
+.v1-command-cockpit-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 128px), 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.v1-command-cockpit-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.v1-command-cockpit-lanes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.v1-command-cockpit-lanes button {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  min-height: 168px;
+  padding: 13px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  box-shadow: none;
+}
+
+.v1-command-cockpit-lanes button.ready {
+  border-color: rgba(92, 236, 193, 0.32);
+  background: rgba(82, 214, 196, 0.07);
+}
+
+.v1-command-cockpit-lanes button.current {
+  border-color: rgba(240, 198, 107, 0.44);
+  background:
+    linear-gradient(135deg, rgba(240, 198, 107, 0.095), transparent 64%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.v1-command-cockpit-lanes button:hover {
+  border-color: rgba(210, 231, 223, 0.26);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.v1-command-cockpit-lanes span {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  color: #65f0d0;
+  border: 1px solid rgba(95, 240, 201, 0.28);
+  border-radius: 999px;
+  background: rgba(95, 240, 201, 0.08);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.v1-command-cockpit-lanes strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.12;
+}
+
+.v1-command-cockpit-lanes small {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 12px;
+  line-height: 1.38;
+}
+
+.v1-command-cockpit-lanes em {
+  align-self: end;
+  color: rgba(245, 251, 247, 0.84);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.v1-command-cockpit-proof {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(210, 231, 223, 0.1);
+}
+
+.v1-command-cockpit-proof span {
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.v1-command-cockpit-proof strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.v1-command-cockpit-proof small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .v1-portal-launchpad {
@@ -18620,6 +18775,7 @@ body {
 
 @media (max-width: 1180px) {
   .dashboard-next-action,
+  .v1-command-cockpit,
   .v1-portal-launchpad,
   .role-workspace-switchboard,
   .portal-command-deck-header,
@@ -18645,6 +18801,8 @@ body {
   }
 
   .session-command-bar,
+  .v1-command-cockpit-lanes,
+  .v1-command-cockpit-proof,
   .workspace-route-strip,
   .workspace-flow-strip,
   .v1-portal-launchpad-grid,

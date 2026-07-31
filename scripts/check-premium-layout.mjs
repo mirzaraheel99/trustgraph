@@ -19,6 +19,7 @@ const consoleLayout = consoleLayoutStart >= 0 ? css.slice(consoleLayoutStart) : 
 assert(authenticatedRenderStart >= 0, "authenticated app render block was not found.");
 assert(!authenticatedRender.includes('<aside className="sidebar">'), "legacy sidebar rail must not render in the authenticated workspace.");
 assert(authenticatedRender.includes('className="session-command-bar"'), "session command bar must be the primary account/logout control surface.");
+assert(authenticatedRender.includes('aria-label="V1 command cockpit"'), "signed-in dashboard must expose a single first-screen V1 command cockpit.");
 assert(authenticatedRender.includes('aria-label="V1 portal launchpad"'), "signed-in dashboard must expose a compact first-screen portal launchpad.");
 assert(authenticatedRender.includes('aria-label="Dashboard next action"'), "signed-in dashboard must expose a single role-aware next-action command.");
 assert(authenticatedRender.includes('aria-label="Role workspace switchboard"'), "signed-in dashboard must expose a first-screen role workspace switchboard.");
@@ -95,6 +96,7 @@ assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: no
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(consoleLayout.includes(".v1-portal-launchpad") && consoleLayout.includes(".v1-portal-launchpad-grid") && consoleLayout.includes(".v1-portal-launchpad-proof"), "V1 portal launchpad must be styled and bounded.");
+assert(consoleLayout.includes(".v1-command-cockpit") && consoleLayout.includes(".v1-command-cockpit-lanes") && consoleLayout.includes(".v1-command-cockpit-proof"), "V1 command cockpit must be styled and bounded.");
 assert(css.includes(".signed-in-portal-flow-contract") && css.includes(".signed-in-portal-flow-grid"), "signed-in portal flow contract must be styled and bounded.");
 assert(premiumRepair.includes(".portal-choice-guide") && premiumRepair.includes(".portal-choice-guide-grid"), "portal choice guide must be styled and bounded in the premium shell.");
 assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-collection-grid"), "V1 proof collection command must be styled and bounded.");
@@ -135,6 +137,7 @@ assert(premiumRepair.includes("display: flex !important") && premiumRepair.inclu
 assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))"), "dense admin forms must auto-fit narrow screens.");
 assert(consoleLayout.includes("Signed-in console layout contract"), "final signed-in console layout contract must be present.");
 assert(consoleLayout.includes("width: min(100%, 1460px)") && consoleLayout.includes("overflow-x: clip"), "signed-in console must use the available width without page-level horizontal overflow.");
+assert(app.includes("v1_command_cockpit") && app.includes("first_screen_shows_website_login_professional_corporate_pricing_user_database_and_server_sync_without_sidebar_overflow_or_hidden_actions"), "V1 command cockpit packet must encode the first-screen portal and server-sync acceptance rule.");
 assert(consoleLayout.includes(".topbar {\n  grid-template-columns: minmax(0, 1fr)") && consoleLayout.includes(".topbar-actions {\n  width: 100%"), "topbar must use one calm command row instead of a squeezed two-column header.");
 assert(app.includes("Choose the portal you need now") && consoleLayout.includes(".role-workspace-switchboard") && consoleLayout.includes(".role-workspace-switchboard-grid"), "role workspace switchboard must make Professional, Corporate, Admin, and Account choices obvious.");
 assert(consoleLayout.includes(".portal-command-deck") && consoleLayout.includes(".portal-command-deck-grid") && consoleLayout.includes("min-height: 172px"), "portal command deck must make Professional, Corporate, Admin, and account actions obvious.");

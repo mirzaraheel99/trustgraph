@@ -18367,6 +18367,17 @@ function App() {
     steps: v1OperatingMap,
     accepted_when: "public_website_professional_registration_corporate_registration_pricing_ledger_corporate_database_and_server_save_path_are_clear_and_exportable"
   };
+  const v1CommandCockpit = {
+    mode: "v1_command_cockpit",
+    headline: authSession ? "TrustGraph operating console" : "Start with hosted registration or login",
+    next_step: nextOperatingStep.label,
+    next_action: nextOperatingStep.action,
+    server_target: "https://trustgraph.5-75-224-110.sslip.io",
+    server_sync_state: "VPS must pull the latest green GitHub build before server freshness is accepted.",
+    lanes: v1OperatingMap,
+    accepted_when:
+      "first_screen_shows_website_login_professional_corporate_pricing_user_database_and_server_sync_without_sidebar_overflow_or_hidden_actions"
+  };
   const v1LaunchFlowCommand = {
     mode: "v1_launch_flow_command",
     current_portal: workspace.label,
@@ -19446,6 +19457,104 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="v1-command-cockpit" aria-label="V1 command cockpit">
+          <div className="v1-command-cockpit-hero">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>V1 command cockpit</span>
+            <strong>{v1CommandCockpit.headline}</strong>
+            <small>
+              Website, login, Professional Passport, Corporate Verify, pricing, scoped user database access, proof exports, and server sync are separated into one readable launch path.
+            </small>
+            <div className="v1-command-cockpit-actions">
+              <button
+                className="primary-action"
+                onClick={() => {
+                  if (nextOperatingStep.target === "public") {
+                    setShowPublicSite(true);
+                    return;
+                  }
+                  if (nextOperatingStep.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (nextOperatingStep.target === "corporate_setup") {
+                    openCorporateControls();
+                    return;
+                  }
+                  if (nextOperatingStep.target === "billing") {
+                    setSetupView("billing");
+                    return;
+                  }
+                  if (nextOperatingStep.target === "verify") {
+                    openWorkspaceOrSetup("verify");
+                    return;
+                  }
+                  downloadTextFile(v1OperatingMapPacketName, JSON.stringify(v1OperatingMapPacket, null, 2), "application/json");
+                }}
+                type="button"
+              >
+                {nextOperatingStep.action}
+              </button>
+              <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+                Website
+              </button>
+              <button className="secondary-action" onClick={authSession ? handleSignOut : openAuthControls} type="button">
+                {authSession ? "Sign out" : "Login"}
+              </button>
+            </div>
+          </div>
+          <div className="v1-command-cockpit-lanes">
+            {v1CommandCockpit.lanes.map((lane) => (
+              <button
+                className={`${lane.ready ? "ready" : "next"} ${lane.step === nextOperatingStep.step ? "current" : ""}`}
+                key={lane.step}
+                onClick={() => {
+                  if (lane.target === "public") {
+                    setShowPublicSite(true);
+                    return;
+                  }
+                  if (lane.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (lane.target === "corporate_setup") {
+                    openCorporateControls();
+                    return;
+                  }
+                  if (lane.target === "billing") {
+                    setSetupView("billing");
+                    return;
+                  }
+                  if (lane.target === "verify") {
+                    openWorkspaceOrSetup("verify");
+                    return;
+                  }
+                  downloadTextFile(v1OperatingMapPacketName, JSON.stringify(v1OperatingMapPacket, null, 2), "application/json");
+                }}
+                type="button"
+              >
+                <span>{lane.step}</span>
+                <strong>{lane.label}</strong>
+                <small>{lane.detail}</small>
+                <em>{lane.status}</em>
+              </button>
+            ))}
+          </div>
+          <div className="v1-command-cockpit-proof">
+            <span>
+              <strong>{authSession ? "Live auth" : "Login required"}</strong>
+              <small>{authSession ? authSession.user.email : "Hosted Supabase login is required for live rows."}</small>
+            </span>
+            <span>
+              <strong>{hasLiveCorporateContext ? "Corporate workspace ready" : "Corporate setup needed"}</strong>
+              <small>{hasLiveCorporateContext ? activeOrganization.name : nextCorporateSetupStep.detail}</small>
+            </span>
+            <span>
+              <strong>Server sync</strong>
+              <small>{v1CommandCockpit.server_sync_state}</small>
+            </span>
+          </div>
+        </section>
 
         <section className="v1-portal-launchpad" aria-label="V1 portal launchpad">
           <div className="v1-portal-launchpad-main">
