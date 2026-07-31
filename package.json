@@ -16,6 +16,7 @@
     "check:v1-demo-flow": "node scripts/check-v1-demo-flow.mjs",
     "check:real-data-readiness": "node scripts/check-real-data-readiness.mjs",
     "check:vps-workflow": "node scripts/check-vps-workflow.mjs",
+    "check:vps-freshness": "node scripts/check-vps-freshness.mjs",
     "check:premium-layout": "node scripts/check-premium-layout.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },

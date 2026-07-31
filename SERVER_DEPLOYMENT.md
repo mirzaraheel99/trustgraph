@@ -86,6 +86,14 @@ bash tools/update-vps-from-github.sh
 
 The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-release.json`, and refuses a 200 OK page that does not contain the current bundle marker `billing_activation_receipt`.
 
+From the repo, run the freshness check after every server update:
+
+```bash
+npm run check:vps-freshness
+```
+
+It passes only when GitHub Pages contains the current bundle marker, the VPS page contains the same marker, and `/trustgraph-release.json` reports the current GitHub commit.
+
 ## 4. Configure Server Env
 
 ```bash
