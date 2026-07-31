@@ -106,6 +106,24 @@ const runtimeSnippets = [
   {
     source: updateVps,
     path: "tools/update-vps-from-github.sh",
+    snippet: "cat > /srv/trustgraph/trustgraph-release.json",
+    label: "manual VPS update writes a hosted release stamp"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "\"commit_short\": \"$commit_short\"",
+    label: "hosted release stamp includes the deployed commit"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "grep -q \"$commit_short\" /tmp/trustgraph-vps-release.json",
+    label: "manual VPS update verifies release stamp matches current commit"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
     snippet: "5-75-224-110.sslip.io|5.75.224.110|*/CRM-client-demo*",
     label: "manual VPS update refuses VFIX host and CRM route"
   },
