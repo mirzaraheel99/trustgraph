@@ -20,6 +20,8 @@ const requiredMobileStacks = [
   ".hosted-corporate-retest-grid",
   ".hosted-version-command",
   ".hosted-version-receipt-grid",
+  ".claim-trust-taxonomy-grid",
+  ".claim-trust-receipt",
   ".vps-saved-update-verification",
   ".vps-saved-update-command-list",
   ".vps-saved-update-next",

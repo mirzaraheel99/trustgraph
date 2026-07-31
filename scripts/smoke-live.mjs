@@ -395,6 +395,15 @@ assertIncludesAny(bundleText, ["Audit expectation"], "evidence audit expectation
 assertIncludesAny(bundleText, ["Export access packet"], "evidence access packet export control");
 assertIncludesAny(bundleText, ["selected_record_evidence_preview_download"], "evidence access packet mode");
 assertIncludesAny(bundleText, ["short_lived_signed_url_only"], "evidence signed URL policy");
+assertIncludesAny(bundleText, ["Claim trust taxonomy"], "claim trust taxonomy panel");
+assertIncludesAny(bundleText, ["claim_trust_taxonomy"], "claim trust taxonomy packet field");
+assertIncludesAny(bundleText, ["Record provenance matrix"], "record provenance matrix receipt");
+assertIncludesAny(bundleText, ["record_provenance_matrix"], "record provenance matrix packet mode");
+assertIncludesAny(
+  bundleText,
+  ["record_claims_show_source_verifier_verification_time_current_status_and_visibility_scope"],
+  "claim provenance acceptance rule"
+);
 assertIncludesAny(bundleText, ["Responsibilities and skills"], "structured responsibilities detail section");
 assertIncludesAny(bundleText, ["Responsibilities, separated by commas"], "structured responsibilities intake");
 assertIncludesAny(bundleText, ["Credential renewal readiness"], "credential renewal readiness panel");

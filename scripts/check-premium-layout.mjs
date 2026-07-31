@@ -100,6 +100,7 @@ assert(app.includes('aria-label="Registration intent review"'), "proof hub must 
 assert(app.includes('aria-label="Live database acceptance lanes"'), "launch checklist must expose clear Professional, Corporate, and pilot ledger database lanes.");
 assert(app.includes('aria-label="Pilot owner readiness receipt"'), "launch checklist must expose pilot customer, onboarding, support, and incident owner readiness.");
 assert(app.includes('aria-label="Pilot owner readiness database receipt"'), "launch checklist must expose persisted pilot owner readiness database proof.");
+assert(app.includes('aria-label="Claim trust taxonomy"'), "Passport records must expose claim source, verifier, status, verification time, and visibility scope.");
 assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: none !important"), "final CSS layer must still suppress any legacy sidebar rail.");
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
@@ -227,6 +228,7 @@ assert(css.includes(".pricing-quote-receipt") && css.includes(".pricing-quote-re
 assert(css.includes(".pricing-decision-board") && css.includes(".pricing-decision-board-grid") && css.includes(".pricing-decision-board-actions"), "pricing decision board must be styled and bounded.");
 assert(css.includes(".billing-architecture-receipt") && css.includes(".billing-architecture-receipt-grid"), "billing architecture decision receipt must be styled and bounded.");
 assert(css.includes(".billing-activation-receipt") && css.includes(".billing-activation-grid"), "billing activation receipt must be styled and bounded.");
+assert(css.includes(".claim-trust-taxonomy") && css.includes(".claim-trust-taxonomy-grid") && css.includes(".claim-trust-receipt"), "claim trust taxonomy must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");

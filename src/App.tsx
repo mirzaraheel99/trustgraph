@@ -1462,6 +1462,108 @@ function SkillsEvidencePanel({
   );
 }
 
+function ClaimTrustTaxonomyPanel({
+  records,
+  workspaceLabel
+}: {
+  records: RecordItem[];
+  workspaceLabel: string;
+}) {
+  const trustLevels = [
+    "Self-reported",
+    "Document-supported",
+    "Employer-confirmed",
+    "Issuer-verified",
+    "Third-party verified",
+    "Expired",
+    "Disputed",
+    "Revoked"
+  ];
+  const classifyRecord = (record: RecordItem) => {
+    const haystack = `${record.trust} ${record.status} ${record.source} ${record.section}`.toLowerCase();
+    if (haystack.includes("revoked")) return "Revoked";
+    if (haystack.includes("disputed")) return "Disputed";
+    if (haystack.includes("expired")) return "Expired";
+    if (haystack.includes("third-party") || haystack.includes("background")) return "Third-party verified";
+    if (haystack.includes("issuer") || haystack.includes("board") || haystack.includes("credential")) return "Issuer-verified";
+    if (haystack.includes("employer") || haystack.includes("hr confirmation")) return "Employer-confirmed";
+    if (haystack.includes("document") || haystack.includes("certificate") || haystack.includes("evidence")) return "Document-supported";
+    return "Self-reported";
+  };
+  const provenanceRows = trustLevels.map((level) => {
+    const matchingRecords = records.filter((record) => classifyRecord(record) === level);
+    return {
+      level,
+      count: matchingRecords.length,
+      action:
+        level === "Self-reported"
+          ? "Attach evidence or request confirmation"
+          : level === "Expired" || level === "Disputed" || level === "Revoked"
+            ? "Hold or repair before sharing"
+            : "Ready for scoped review",
+      records: matchingRecords.map((record) => record.title)
+    };
+  });
+  const sourceCount = new Set(records.map((record) => record.source)).size;
+  const currentCount = records.filter((record) => !["Expired", "Disputed", "Revoked"].includes(classifyRecord(record))).length;
+  const packetName = `trustgraph-claim-trust-taxonomy-${workspaceLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${new Date().toISOString().slice(0, 10)}.json`;
+  const claimTrustTaxonomy = {
+    generated_at: new Date().toISOString(),
+    workspace: workspaceLabel,
+    claim_trust_taxonomy: true,
+    mode: "record_provenance_matrix",
+    accepted_when: "record_claims_show_source_verifier_verification_time_current_status_and_visibility_scope",
+    counts: {
+      visible_records: records.length,
+      distinct_sources: sourceCount,
+      current_shareable_records: currentCount,
+      records_requiring_repair: records.length - currentCount
+    },
+    trust_levels: provenanceRows,
+    record_provenance_matrix: records.map((record) => ({
+      record_id: record.id,
+      title: record.title,
+      category: record.section,
+      claim_source: record.source,
+      verifier_label: record.trust,
+      current_status: record.status,
+      verification_time: record.updated,
+      expiration: record.expires,
+      visibility_scope: record.access,
+      sensitivity: record.sensitivity ?? "standard",
+      consent_required: Boolean(record.consentRequired),
+      evidence_summary: record.evidence,
+      provenance_level: classifyRecord(record)
+    }))
+  };
+
+  return (
+    <section className="claim-trust-taxonomy" aria-label="Claim trust taxonomy">
+      <div className="mini-heading">
+        <ShieldCheck size={16} />
+        <strong>Claim trust taxonomy</strong>
+      </div>
+      <small>Record provenance matrix for source, verifier, verification time, current status, and visibility scope.</small>
+      <div className="claim-trust-taxonomy-grid">
+        {provenanceRows.map((row) => (
+          <article className={row.count ? "ready" : ""} key={row.level}>
+            <span>{row.level}</span>
+            <strong>{row.count}</strong>
+            <small>{row.action}</small>
+          </article>
+        ))}
+      </div>
+      <div className="claim-trust-receipt">
+        <span className="status-chip success">Record provenance matrix</span>
+        <small>{claimTrustTaxonomy.accepted_when}</small>
+      </div>
+      <button className="secondary-action" onClick={() => downloadTextFile(packetName, JSON.stringify(claimTrustTaxonomy, null, 2), "application/json")} type="button">
+        Export taxonomy packet
+      </button>
+    </section>
+  );
+}
+
 function AccessGrantsPanel({
   disabled,
   grants,
@@ -21979,6 +22081,7 @@ function App() {
             <RenewalReadinessPanel records={records} workspaceLabel={workspace.label} />
             <ConfidentialityReviewPanel records={records} workspaceLabel={workspace.label} />
             <SkillsEvidencePanel records={records} workspaceLabel={workspace.label} />
+            <ClaimTrustTaxonomyPanel records={records} workspaceLabel={workspace.label} />
 
             {workspace.id === "passport" ? (
               <>

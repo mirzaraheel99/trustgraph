@@ -13819,7 +13819,8 @@ p {
 
 .renewal-readiness-panel,
 .confidentiality-review-panel,
-.skills-evidence-panel {
+.skills-evidence-panel,
+.claim-trust-taxonomy {
   display: grid;
   gap: 10px;
   margin-top: 14px;
@@ -13839,17 +13840,26 @@ p {
   background: rgba(82, 214, 196, 0.045);
 }
 
+.claim-trust-taxonomy {
+  border-color: rgba(134, 174, 246, 0.22);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), rgba(82, 214, 196, 0.04)),
+    rgba(255, 255, 255, 0.025);
+}
+
 .renewal-summary-grid,
 .confidentiality-summary-grid,
-.skills-summary-grid {
+.skills-summary-grid,
+.claim-trust-taxonomy-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
   gap: 8px;
 }
 
 .renewal-summary-grid div,
 .confidentiality-summary-grid div,
-.skills-summary-grid div {
+.skills-summary-grid div,
+.claim-trust-taxonomy-grid article {
   display: grid;
   gap: 4px;
   min-width: 0;
@@ -13867,9 +13877,19 @@ p {
   border-color: rgba(82, 214, 196, 0.16);
 }
 
+.claim-trust-taxonomy-grid article {
+  border-color: rgba(134, 174, 246, 0.16);
+}
+
+.claim-trust-taxonomy-grid article.ready {
+  border-color: rgba(112, 224, 178, 0.22);
+  background: rgba(112, 224, 178, 0.045);
+}
+
 .renewal-summary-grid span,
 .confidentiality-summary-grid span,
-.skills-summary-grid span {
+.skills-summary-grid span,
+.claim-trust-taxonomy-grid span {
   color: var(--muted);
   font-size: 11px;
   font-weight: 850;
@@ -13878,21 +13898,36 @@ p {
 
 .renewal-summary-grid strong,
 .confidentiality-summary-grid strong,
-.skills-summary-grid strong {
+.skills-summary-grid strong,
+.claim-trust-taxonomy-grid strong {
   font-size: 18px;
 }
 
 .renewal-readiness-panel > small,
 .confidentiality-review-panel > small,
-.skills-evidence-panel > small {
+.skills-evidence-panel > small,
+.claim-trust-taxonomy > small,
+.claim-trust-taxonomy-grid small,
+.claim-trust-receipt small {
   color: var(--muted);
   line-height: 1.4;
 }
 
 .renewal-readiness-panel .secondary-action,
 .confidentiality-review-panel .secondary-action,
-.skills-evidence-panel .secondary-action {
+.skills-evidence-panel .secondary-action,
+.claim-trust-taxonomy .secondary-action {
   justify-content: center;
+}
+
+.claim-trust-receipt {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.16);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 .record-edit-form {
@@ -19493,6 +19528,8 @@ body {
   .role-workspace-switchboard-grid,
   .portal-command-deck-grid,
   .dashboard-next-action-metrics,
+  .claim-trust-taxonomy-grid,
+  .claim-trust-receipt,
   .portal-choice-guide-grid,
   .v1-operating-map-grid,
   .server-release-grid,
