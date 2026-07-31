@@ -751,6 +751,13 @@ assertIncludesAny(
 assertIncludesAny(bundleText, ["Live data load receipt"], "live data load receipt");
 assertIncludesAny(bundleText, ["live_data_load_receipt"], "live data load receipt packet field");
 assertIncludesAny(bundleText, ["hosted_session_row_groups_loaded_seed_ids_reconciled_and_no_preview_or_fixture_rows_are_used_for_acceptance"], "live data load receipt acceptance rule");
+assertIncludesAny(bundleText, ["Live data operator strip"], "live data operator strip");
+assertIncludesAny(bundleText, ["live_data_operator_strip"], "live data operator strip packet field");
+assertIncludesAny(
+  bundleText,
+  ["live_data_operator_strip_shows_login_seed_reload_reconcile_export_and_rejects_preview_or_fixture_data_before_live_database_panels"],
+  "live data operator strip acceptance rule"
+);
 assertIncludesAny(bundleText, ["Authorized workspace report"], "authorized workspace report export card");
 assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");
 assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff checklist packet field");

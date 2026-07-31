@@ -153,6 +153,8 @@ assert(css.includes(".live-database-repair-command") && css.includes(".live-data
 assert(css.includes(".live-seed-preflight") && css.includes(".live-seed-preflight-grid"), "live seed preflight must be styled and bounded.");
 assert(app.includes('aria-label="Live seed reload receipt"'), "live seed proof must expose the reload/reconciliation receipt.");
 assert(css.includes(".live-seed-reload-receipt") && css.includes(".live-seed-reload-grid"), "live seed reload receipt must be styled and bounded.");
+assert(app.includes('aria-label="Live data operator strip"') && app.includes("live_data_operator_strip"), "working database proof must expose a live data operator strip.");
+assert(css.includes(".live-data-operator-strip") && css.includes(".live-data-operator-grid") && css.includes(".live-data-operator-proof"), "live data operator strip must be styled and bounded.");
 assert(css.includes(".release-sync-command") && css.includes(".release-sync-command-grid"), "release sync command must be styled and bounded.");
 assert(app.includes('aria-label="Stale VPS recovery runbook"'), "release sync must expose a stale VPS recovery runbook for 200-but-old bundle cases.");
 assert(css.includes(".stale-vps-recovery-runbook") && css.includes(".stale-vps-recovery-grid"), "stale VPS recovery runbook must be styled and bounded.");

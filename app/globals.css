@@ -5647,6 +5647,128 @@ p,
   font-size: 11px;
 }
 
+.live-data-operator-strip {
+  display: grid;
+  gap: 12px;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.05)),
+    rgba(7, 15, 18, 0.76);
+}
+
+.live-data-operator-strip > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.live-data-operator-strip strong,
+.live-data-operator-strip small,
+.live-data-operator-strip span {
+  min-width: 0;
+}
+
+.live-data-operator-strip > div:first-child > strong {
+  font-size: 18px;
+  line-height: 1.16;
+}
+
+.live-data-operator-strip > div:first-child > small {
+  color: var(--muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.live-data-operator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr));
+  gap: 10px;
+}
+
+.live-data-operator-grid button {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 158px;
+  padding: 13px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.live-data-operator-grid button.ready {
+  border-color: rgba(112, 224, 178, 0.32);
+  background: rgba(112, 224, 178, 0.07);
+}
+
+.live-data-operator-grid button.next {
+  border-color: rgba(225, 184, 102, 0.28);
+}
+
+.live-data-operator-grid span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.live-data-operator-grid strong {
+  font-size: 18px;
+  line-height: 1.12;
+}
+
+.live-data-operator-grid small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.live-data-operator-grid em {
+  align-self: end;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 9px;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.live-data-operator-proof {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.live-data-operator-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.live-data-operator-proof strong {
+  font-size: 14px;
+}
+
+.live-data-operator-proof small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .live-database-acceptance-lanes {
   display: grid;
   gap: 12px;
@@ -15309,6 +15431,8 @@ p {
   .invitation-handoff-strip,
   .live-database-acceptance-lanes-top,
   .live-database-acceptance-lane-grid,
+  .live-data-operator-grid,
+  .live-data-operator-proof,
   .live-data-load-receipt,
   .live-data-load-grid,
   .live-row-source-grid,

@@ -12679,6 +12679,58 @@ function OnboardingChecklistPanel({
       "Working-data packet exported from live session"
     ]
   };
+  const liveDataOperatorStrip = {
+    mode: "live_data_operator_strip",
+    status: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "ready_to_export" : "operator_action_required",
+    next_action: liveDataLoadReceipt.next_action,
+    ready_steps:
+      (authSession ? 1 : 0) +
+      (accountContext ? 1 : 0) +
+      (visibleSeedEvidence ? 1 : 0) +
+      (liveDatabaseAcceptanceComplete ? 1 : 0) +
+      (seedReconciliationComplete ? 1 : 0),
+    total_steps: 5,
+    preview_or_fixture_data_accepted: false,
+    accepted_when:
+      "live_data_operator_strip_shows_login_seed_reload_reconcile_export_and_rejects_preview_or_fixture_data_before_live_database_panels"
+  };
+  const liveDataOperatorSteps = [
+    {
+      label: "Login",
+      value: authSession ? "Connected" : "Required",
+      detail: authSession ? authSession.user.email : "Use hosted Supabase auth first.",
+      ready: Boolean(authSession),
+      action: "Open login"
+    },
+    {
+      label: "Seed or create",
+      value: visibleSeedEvidence ? "Captured" : authSession ? "Ready" : "Locked",
+      detail: "Create Passport, evidence, corporate, consent, billing, team, and review rows.",
+      ready: Boolean(visibleSeedEvidence),
+      action: authSession ? "Prepare live pilot workspace" : "Login first"
+    },
+    {
+      label: "Reload",
+      value: accountContext ? "Context loaded" : "Needed",
+      detail: "Rows must reload from Supabase repositories after seed or manual creation.",
+      ready: Boolean(accountContext),
+      action: "Reload page"
+    },
+    {
+      label: "Reconcile",
+      value: seedReconciliationComplete ? "Matched" : `${seedReconciliationPassing}/${seedReconciliationRows.length}`,
+      detail: "Seed IDs must match currently loaded repository rows.",
+      ready: seedReconciliationComplete,
+      action: "Check rows"
+    },
+    {
+      label: "Export",
+      value: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "Ready" : "Blocked",
+      detail: "Export working-data proof only after live row groups and seed IDs match.",
+      ready: liveDatabaseAcceptanceComplete && seedReconciliationComplete,
+      action: "Export packet"
+    }
+  ];
   const realDatabaseProofCockpit = {
     mode: "real_database_proof_cockpit",
     status: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "live_database_accepted" : "live_database_proof_required",
@@ -13381,6 +13433,77 @@ function OnboardingChecklistPanel({
               <small>{row.label}</small>
             </span>
           ))}
+        </div>
+      </div>
+      <div className="live-data-operator-strip" aria-label="Live data operator strip">
+        <div>
+          <span className={`status-chip ${liveDataOperatorStrip.ready_steps === liveDataOperatorStrip.total_steps ? "success" : "warning"}`}>
+            Live data operator strip
+          </span>
+          <strong>{liveDataOperatorStrip.next_action}</strong>
+          <small>{liveDataOperatorStrip.accepted_when}</small>
+        </div>
+        <div className="live-data-operator-grid">
+          {liveDataOperatorSteps.map((step) => (
+            <button
+              className={step.ready ? "ready" : "next"}
+              key={step.label}
+              onClick={() => {
+                if (step.label === "Login") {
+                  onOpenHostedRegistration();
+                  return;
+                }
+                if (step.label === "Seed or create") {
+                  if (!authSession) {
+                    onOpenHostedRegistration();
+                    return;
+                  }
+                  void seedLiveData();
+                  return;
+                }
+                if (step.label === "Reload") {
+                  if (typeof window !== "undefined") {
+                    window.location.reload();
+                  }
+                  return;
+                }
+                if (step.label === "Reconcile") {
+                  document.querySelector(".live-seed-reload-receipt")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  return;
+                }
+                downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json");
+              }}
+              type="button"
+            >
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+              <em>{step.action}</em>
+            </button>
+          ))}
+        </div>
+        <div className="live-data-operator-proof">
+          <span>
+            <strong>{liveDataOperatorStrip.ready_steps}/{liveDataOperatorStrip.total_steps}</strong>
+            <small>Live-data steps ready</small>
+          </span>
+          <span>
+            <strong>No preview rows</strong>
+            <small>Only signed-in Supabase repository rows can satisfy acceptance.</small>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-live-data-operator-strip-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...liveDataOperatorStrip, steps: liveDataOperatorSteps }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export operator strip
+          </button>
         </div>
       </div>
       <div className="live-database-acceptance-lanes" aria-label="Live database acceptance lanes">
