@@ -14303,6 +14303,45 @@ function App() {
     ],
     accepted_when: "hosted_login_corporate_workspace_pricing_ledger_user_rows_evidence_consent_and_human_gates_are_explicitly_resolved"
   };
+  const serverReleaseLanes = [
+    {
+      label: "GitHub source",
+      detail: "All code changes are committed and pushed to the TrustGraph repository before the VPS pulls.",
+      status: "Primary source",
+      ready: true
+    },
+    {
+      label: "GitHub Pages",
+      detail: "Pages build and live smoke checks verify the browser bundle before the VPS update.",
+      status: "CI verified",
+      ready: true
+    },
+    {
+      label: "VPS pull",
+      detail: "The server updates from GitHub with tools/update-vps-from-github.sh so deployed files match main.",
+      status: "Run on server",
+      ready: false
+    },
+    {
+      label: "VFIX boundary",
+      detail: "TrustGraph deploys on trustgraph.5-75-224-110.sslip.io and does not change the protected VFIX route.",
+      status: "Protected",
+      ready: true
+    }
+  ];
+  const serverReleasePacketName = `trustgraph-server-release-save-path-${new Date().toISOString().slice(0, 10)}.json`;
+  const serverReleasePacket = {
+    mode: "server_release_save_path",
+    generated_at: new Date().toISOString(),
+    github_repository: "mirzaraheel99/trustgraph",
+    github_pages_url: "https://mirzaraheel99.github.io/trustgraph/",
+    vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
+    protected_vfix_host: "https://5-75-224-110.sslip.io",
+    server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+    verify_command: "git -C /opt/trustgraph rev-parse --short HEAD && curl -I https://trustgraph.5-75-224-110.sslip.io/",
+    lanes: serverReleaseLanes,
+    accepted_when: "github_actions_passes_pages_smoke_passes_server_head_matches_latest_main_and_vps_url_returns_200"
+  };
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -14339,6 +14378,7 @@ function App() {
     dashboard_next_action: dashboardNextActionPacket,
     workspace_command_strip: workspaceCommandStrip,
     v1_completion_cockpit: v1CompletionCockpit,
+    server_release_save_path: serverReleasePacket,
     signed_in_landing_actions: signedInLandingActions,
     proof_export_hub: proofExportHub,
     production_boundary: {
@@ -14626,6 +14666,38 @@ function App() {
                 Sign out
               </button>
             ) : null}
+          </div>
+        </section>
+
+        <section className="server-release-cockpit" aria-label="Server release save path">
+          <div className="server-release-cockpit-header">
+            <div>
+              <span className="status-chip success">Server release save path</span>
+              <strong>GitHub stays the source; the VPS pulls the saved build</strong>
+              <small>
+                Use this release path after each green GitHub deploy so the live server keeps TrustGraph updates without touching the VFIX host.
+              </small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export server packet
+            </button>
+          </div>
+          <div className="server-release-command">
+            <span>Run on VPS</span>
+            <code>{serverReleasePacket.server_update_command}</code>
+          </div>
+          <div className="server-release-grid">
+            {serverReleaseLanes.map((lane) => (
+              <article className={lane.ready ? "ready" : "next"} key={lane.label}>
+                <span>{lane.status}</span>
+                <strong>{lane.label}</strong>
+                <small>{lane.detail}</small>
+              </article>
+            ))}
           </div>
         </section>
 

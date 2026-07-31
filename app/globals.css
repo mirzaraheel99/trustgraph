@@ -11321,6 +11321,9 @@ p {
   .dashboard-next-action-buttons,
   .signed-in-landing-grid,
   .proof-export-hub-grid,
+  .server-release-cockpit-header,
+  .server-release-command,
+  .server-release-grid,
   .workspace-command-strip,
   .workspace-command-metrics,
   .portal-decision-panel,
@@ -13212,6 +13215,7 @@ body {
 
 .topbar,
 .portal-home-command,
+.server-release-cockpit,
 .dashboard-next-action,
 .workspace-command-strip,
 .hero-card,
@@ -13277,6 +13281,7 @@ body {
 
 .session-command-bar button,
 .portal-home-actions button,
+.server-release-cockpit button,
 .dashboard-next-action-buttons button,
 .workspace-command-actions button,
 .setup-command-actions button,
@@ -13302,7 +13307,103 @@ body {
   background: rgba(12, 26, 27, 0.72);
 }
 
+.server-release-cockpit {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 8px;
+  background: rgba(10, 22, 23, 0.76);
+  overflow: hidden;
+}
+
+.server-release-cockpit-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.server-release-cockpit-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.server-release-command {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.server-release-command span {
+  color: #65f0d0;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.server-release-command code {
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: rgba(245, 251, 247, 0.86);
+}
+
+.server-release-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 10px;
+}
+
+.server-release-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  overflow: hidden;
+}
+
+.server-release-grid article.ready {
+  border-color: rgba(83, 232, 178, 0.24);
+  background: rgba(83, 232, 178, 0.07);
+}
+
+.server-release-grid article.next {
+  border-color: rgba(255, 205, 111, 0.28);
+  background: rgba(255, 205, 111, 0.07);
+}
+
+.server-release-grid span,
+.server-release-grid strong,
+.server-release-grid small,
+.server-release-cockpit strong,
+.server-release-cockpit small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.server-release-grid span {
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(222, 239, 233, 0.72);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .portal-home-copy,
+.server-release-cockpit-header > div,
 .dashboard-next-action-copy,
 .workspace-command-strip > div:first-child,
 .setup-command-bar > div:first-child {

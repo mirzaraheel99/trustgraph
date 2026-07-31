@@ -102,6 +102,9 @@ const requiredMobileStacks = [
   ".selected-portal-command",
   ".security-signoff-grid",
   ".security-signoff-header",
+  ".server-release-cockpit-header",
+  ".server-release-command",
+  ".server-release-grid",
   ".reference-source-strip",
   ".release-source-strip",
   ".session-command-bar",
@@ -213,6 +216,10 @@ if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-co
 
 if (!css.includes(".portal-home-command") || !css.includes("grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr)") || !css.includes(".portal-home-actions")) {
   throw new Error("Responsive check failed: signed-in portal home must provide a clear account/corporate command center.");
+}
+
+if (!css.includes(".server-release-cockpit") || !css.includes(".server-release-command") || !css.includes(".server-release-grid")) {
+  throw new Error("Responsive check failed: server release save path must be visible and bounded.");
 }
 
 if (!css.includes(".session-command-bar") || !css.includes("width: fit-content") || !css.includes(".workspace-route-strip,\n.workspace-flow-strip") || !css.includes("display: flex !important")) {

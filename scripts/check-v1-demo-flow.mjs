@@ -72,6 +72,9 @@ const flowChecks = [
     label: "Signed-in users can find account, corporate, public, and logout actions",
     required: [
       "Session command bar",
+      "Server release save path",
+      "server_release_save_path",
+      "Export server packet",
       "Corporate setup",
       "Corporate setup route",
       "Account first",
