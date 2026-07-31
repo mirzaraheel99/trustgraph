@@ -81,6 +81,7 @@ const requiredMobileStacks = [
   ".live-row-source-grid",
   ".live-row-source-next",
   ".live-database-contract-grid",
+  ".live-row-completion-grid",
   ".live-data-verdict",
   ".login-issue-resolver-grid",
   ".live-account-acceptance-grid",

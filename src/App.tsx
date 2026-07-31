@@ -15484,6 +15484,42 @@ function App() {
       ? "Export V1 cockpit and working-data packets for pilot evidence."
       : "Open Account, seed or create live rows, reload the dashboard, then export the working-data packet again."
   };
+  const missingLiveRowCommands = livePilotRowProofRows
+    .filter((row) => row.required && !row.ready)
+    .map((row) => ({
+      label: row.label,
+      table: row.table,
+      evidence: row.evidence,
+      action:
+        row.label === "Hosted auth session" || row.label === "Account and RBAC context"
+          ? "Open account"
+          : row.label === "Passport records" || row.label === "Evidence metadata" || row.label === "Sensitive consent"
+            ? "Open Passport"
+            : row.label === "Billing ledger"
+              ? "Open billing"
+              : row.label === "Release ledger"
+                ? "Open readiness"
+                : "Open Verify",
+      target:
+        row.label === "Hosted auth session" || row.label === "Account and RBAC context"
+          ? "account"
+          : row.label === "Passport records" || row.label === "Evidence metadata" || row.label === "Sensitive consent"
+            ? "passport"
+            : row.label === "Billing ledger"
+              ? "billing"
+              : row.label === "Release ledger"
+                ? "readiness"
+                : "verify"
+    }));
+  const liveRowCompletionCommand = {
+    mode: "live_row_completion_command",
+    missing_count: missingLiveRowCommands.length,
+    total_required_groups: livePilotRowProofRequiredGroups,
+    accepted: livePilotRowProof.accepted,
+    preview_data_accepted: false,
+    commands: missingLiveRowCommands,
+    accepted_when: "all_required_signed_in_supabase_row_groups_are_loaded_and_working_data_packet_is_exported"
+  };
   const v1CompletionLanes = [
     {
       label: "Hosted login",
@@ -15555,6 +15591,7 @@ function App() {
     lanes: v1CompletionLanes,
     live_pilot_row_proof: livePilotRowProof,
     live_database_contract: liveDatabaseContract,
+    live_row_completion_command: liveRowCompletionCommand,
     human_gates: [
       "Stripe checkout and payment collection",
       "Production traffic approval",
@@ -16361,6 +16398,64 @@ function App() {
               </span>
             </div>
             <small>{liveDatabaseContract.operator_next_step}</small>
+          </div>
+          <div className="live-row-completion-command" aria-label="Live row completion command">
+            <div>
+              <span className={`status-chip ${liveRowCompletionCommand.accepted ? "success" : "warning"}`}>
+                Live row completion command
+              </span>
+              <strong>
+                {liveRowCompletionCommand.accepted
+                  ? "All required live row groups are loaded"
+                  : `${liveRowCompletionCommand.missing_count} live row group${liveRowCompletionCommand.missing_count === 1 ? "" : "s"} still needed`}
+              </strong>
+              <small>Use this list after login to finish real Supabase proof. Preview data accepted: {liveRowCompletionCommand.preview_data_accepted ? "yes" : "no"}.</small>
+            </div>
+            <div className="live-row-completion-grid">
+              {missingLiveRowCommands.length ? (
+                missingLiveRowCommands.map((command) => (
+                  <article key={command.label}>
+                    <div>
+                      <strong>{command.label}</strong>
+                      <small>{command.table}</small>
+                      <small>{command.evidence}</small>
+                    </div>
+                    <button
+                      className="secondary-action"
+                      onClick={() => {
+                        if (command.target === "account") {
+                          openAuthControls();
+                          return;
+                        }
+                        if (command.target === "billing" || command.target === "readiness") {
+                          setSetupView(command.target);
+                          document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          return;
+                        }
+                        openWorkspaceOrSetup(command.target as WorkspaceId);
+                      }}
+                      type="button"
+                    >
+                      {command.action}
+                    </button>
+                  </article>
+                ))
+              ) : (
+                <article className="ready">
+                  <div>
+                    <strong>Working database proof ready</strong>
+                    <small>All required signed-in Supabase row groups are loaded for this context.</small>
+                  </div>
+                  <button
+                    className="secondary-action"
+                    onClick={() => downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json")}
+                    type="button"
+                  >
+                    Export report
+                  </button>
+                </article>
+              )}
+            </div>
           </div>
           <div className="v1-completion-lane-grid">
             {v1CompletionLanes.map((lane) => (

@@ -12220,6 +12220,7 @@ p {
   .signed-in-landing-grid,
   .proof-export-hub-grid,
   .v1-proof-collection-grid,
+  .live-row-completion-grid,
   .server-release-cockpit-header,
   .server-release-command,
   .server-release-grid,
@@ -15032,6 +15033,65 @@ body {
 
 .live-database-contract-grid strong {
   overflow-wrap: anywhere;
+}
+
+.live-row-completion-command {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.live-row-completion-command > div:first-child {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.live-row-completion-command strong,
+.live-row-completion-command small,
+.live-row-completion-command span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-row-completion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 10px;
+}
+
+.live-row-completion-grid article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.live-row-completion-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.live-row-completion-grid article > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.live-row-completion-grid button {
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
 }
 
 .v1-completion-lane-grid {

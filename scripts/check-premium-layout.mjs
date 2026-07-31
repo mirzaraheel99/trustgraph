@@ -31,6 +31,7 @@ assert(app.includes("trustgraph-release.json"), "signed-in dashboard must expose
 assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in dashboard must expose the end-to-end V1 operating map.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
 assert(authenticatedRender.includes('aria-label="Live database contract"'), "V1 cockpit must expose the live database contract.");
+assert(authenticatedRender.includes('aria-label="Live row completion command"'), "V1 cockpit must expose a live row completion command.");
 assert(app.includes('aria-label="Live row source receipt"'), "working database proof must expose a live row source receipt.");
 assert(app.includes('aria-label="Live database repair command"'), "working database proof must expose a live database repair command.");
 assert(authenticatedRender.includes("Sign out"), "signed-in dashboard must expose a visible sign-out action.");
@@ -73,6 +74,7 @@ assert(css.includes(".public-server-sync-receipt") && css.includes(".public-serv
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");
+assert(premiumRepair.includes(".live-row-completion-command") && premiumRepair.includes(".live-row-completion-grid"), "live row completion command must be styled and bounded in the premium shell.");
 assert(css.includes(".live-row-source-receipt") && css.includes(".live-row-source-grid") && css.includes(".live-row-source-next"), "live row source receipt must be styled and bounded.");
 assert(css.includes(".live-database-repair-command") && css.includes(".live-database-repair-actions") && css.includes(".live-database-repair-grid"), "live database repair command must be styled and bounded.");
 assert(css.includes(".live-seed-preflight") && css.includes(".live-seed-preflight-grid"), "live seed preflight must be styled and bounded.");

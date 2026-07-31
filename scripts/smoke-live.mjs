@@ -496,6 +496,9 @@ assertIncludesAny(bundleText, ["proof_export_hub"], "proof and exports hub packe
 assertIncludesAny(bundleText, ["V1 proof collection command"], "V1 proof collection command");
 assertIncludesAny(bundleText, ["v1_proof_collection_command"], "V1 proof collection packet field");
 assertIncludesAny(bundleText, ["Collect proof packets in order before calling the build accepted"], "V1 proof collection guidance");
+assertIncludesAny(bundleText, ["Live row completion command"], "live row completion command");
+assertIncludesAny(bundleText, ["live_row_completion_command"], "live row completion packet field");
+assertIncludesAny(bundleText, ["all_required_signed_in_supabase_row_groups_are_loaded"], "live row completion acceptance rule");
 assertIncludesAny(bundleText, ["Authorized workspace report"], "authorized workspace report export card");
 assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");
 assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff checklist packet field");
