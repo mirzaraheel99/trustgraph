@@ -624,6 +624,13 @@ assertIncludesAny(bundleText, ["Export review queue"], "Corporate user database 
 assertIncludesAny(bundleText, ["Export user packet"], "Corporate user database packet export");
 assertIncludesAny(bundleText, ["Export gap packet"], "missing-record gap packet export control");
 assertIncludesAny(bundleText, ["No near-term due gaps"], "missing-record due-soon queue signal");
+assertIncludesAny(bundleText, ["Missing record lifecycle"], "missing record lifecycle receipt");
+assertIncludesAny(bundleText, ["missing_record_lifecycle_receipt"], "missing record lifecycle packet field");
+assertIncludesAny(
+  bundleText,
+  ["corporate_gap_requests_are_created_from_live_verify_context_professional_owner_can_start_or_fulfill_and_gap_packet_exports_current_status"],
+  "missing record lifecycle acceptance rule"
+);
 assertIncludesAny(bundleText, ["Membership database"], "Corporate team member source label");
 assertIncludesAny(bundleText, ["Admins"], "Corporate member roster admin count");
 assertIncludesAny(bundleText, ["membership rows"], "Corporate member roster row count");
@@ -642,6 +649,13 @@ assertIncludesAny(bundleText, ["Invitee handoff packet"], "personal invitation h
 assertIncludesAny(bundleText, ["Export handoff packet"], "personal invitation handoff packet export");
 assertIncludesAny(bundleText, ["invitee_membership_handoff"], "personal invitation handoff packet mode");
 assertIncludesAny(bundleText, ["Requested Passport records"], "Professional missing-record request inbox");
+assertIncludesAny(bundleText, ["Passport missing-record handoff"], "passport missing record handoff receipt");
+assertIncludesAny(bundleText, ["passport_missing_record_handoff_receipt"], "passport missing record handoff packet field");
+assertIncludesAny(
+  bundleText,
+  ["professional_can_see_corporate_gap_requests_start_work_mark_fulfilled_or_declined_and_return_status_to_corporate_verify"],
+  "passport missing record handoff acceptance rule"
+);
 assertIncludesAny(bundleText, ["workflow-notifications"], "topbar notification target");
 assertIncludesAny(bundleText, ["Reference database"], "structured reference source label");
 assertIncludesAny(bundleText, ["Export references"], "structured reference export control");

@@ -4347,6 +4347,41 @@ function MissingRecordRequestsPanel({
     const haystack = `${request.title} ${request.reason} ${request.subject_profile?.full_name ?? ""} ${request.subject_profile?.email ?? ""}`.toLowerCase();
     return matchesStatus && haystack.includes(requestQuery.trim().toLowerCase());
   });
+  const missingRecordLifecycleReceipt = {
+    mode: "missing_record_lifecycle_receipt",
+    view: "corporate_verify_gap_requests",
+    source: disabled ? "locked_until_corporate_verify_role" : "live_supabase_missing_record_requests",
+    total_requests: requests.length,
+    open_requests: openCount,
+    due_soon_requests: dueSoonCount,
+    fulfilled_requests: fulfilledCount,
+    declined_requests: declinedCount,
+    filtered_requests: filteredRequests.length,
+    accepted_when:
+      "corporate_gap_requests_are_created_from_live_verify_context_professional_owner_can_start_or_fulfill_and_gap_packet_exports_current_status"
+  };
+  const missingRecordLifecycleCards = [
+    {
+      label: "Corporate request",
+      value: disabled ? "Locked" : "Live",
+      detail: "Verify users request only the missing record needed for a scoped review."
+    },
+    {
+      label: "Professional owner",
+      value: openCount ? `${openCount} open` : "Clear",
+      detail: "Open requests appear in the Professional Passport inbox."
+    },
+    {
+      label: "Due soon",
+      value: `${dueSoonCount}`,
+      detail: "Near-term gaps should be resolved before review handoff."
+    },
+    {
+      label: "Export",
+      value: `${filteredRequests.length}`,
+      detail: "Gap packet includes the current filtered lifecycle state."
+    }
+  ];
   const exportName = `trustgraph-missing-record-gap-packet-${new Date().toISOString().slice(0, 10)}.csv`;
 
   useEffect(() => {
@@ -4464,6 +4499,22 @@ function MissingRecordRequestsPanel({
         </span>
         <small>{filteredRequests.length} filtered request{filteredRequests.length === 1 ? "" : "s"} ready for operator handoff or reviewer follow-up.</small>
       </div>
+      <div className="missing-record-lifecycle-receipt" aria-label="Missing record lifecycle receipt">
+        <div>
+          <span className={`status-chip ${openCount ? "warning" : "success"}`}>Missing record lifecycle</span>
+          <strong>{openCount ? "Gap follow-up is still open" : "No open missing-record gaps"}</strong>
+          <small>{missingRecordLifecycleReceipt.accepted_when}</small>
+        </div>
+        <div className="missing-record-lifecycle-grid">
+          {missingRecordLifecycleCards.map((card) => (
+            <article key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+      </div>
       <div className="missing-list">
         {filteredRequests.length ? (
           filteredRequests.slice(0, 8).map((request) => (
@@ -4518,6 +4569,42 @@ function PassportMissingRecordPanel({
     if (!request.due_at || ["fulfilled", "declined", "cancelled"].includes(request.status)) return false;
     return new Date(request.due_at).getTime() <= Date.now() + 7 * 24 * 60 * 60 * 1000;
   }).length;
+  const inProgressCount = requests.filter((request) => request.status === "in_progress").length;
+  const fulfilledCount = requests.filter((request) => request.status === "fulfilled").length;
+  const passportMissingRecordHandoffReceipt = {
+    mode: "passport_missing_record_handoff_receipt",
+    view: "professional_passport_requested_records",
+    source: disabled ? "locked_until_professional_login" : "live_supabase_missing_record_requests",
+    total_requests: requests.length,
+    open_requests: openCount,
+    in_progress_requests: inProgressCount,
+    due_soon_requests: dueSoonCount,
+    fulfilled_requests: fulfilledCount,
+    accepted_when:
+      "professional_can_see_corporate_gap_requests_start_work_mark_fulfilled_or_declined_and_return_status_to_corporate_verify"
+  };
+  const passportMissingRecordHandoffCards = [
+    {
+      label: "Inbox source",
+      value: disabled ? "Locked" : "Live",
+      detail: "Requests load for the signed-in professional profile."
+    },
+    {
+      label: "Open",
+      value: `${openCount}`,
+      detail: "Open gaps need a Passport record or response."
+    },
+    {
+      label: "In progress",
+      value: `${inProgressCount}`,
+      detail: "Started items are visible back to Corporate Verify."
+    },
+    {
+      label: "Fulfilled",
+      value: `${fulfilledCount}`,
+      detail: "Fulfilled gaps can unblock scoped review."
+    }
+  ];
 
   async function update(requestId: string, nextStatus: "in_progress" | "fulfilled" | "declined") {
     setBusyId(requestId);
@@ -4547,6 +4634,22 @@ function PassportMissingRecordPanel({
         <div>
           <span>Total</span>
           <strong>{requests.length}</strong>
+        </div>
+      </div>
+      <div className="passport-missing-handoff-receipt" aria-label="Passport missing record handoff receipt">
+        <div>
+          <span className={`status-chip ${openCount ? "warning" : "success"}`}>Passport missing-record handoff</span>
+          <strong>{openCount ? "Corporate gap requests need action" : "No open corporate gap requests"}</strong>
+          <small>{passportMissingRecordHandoffReceipt.accepted_when}</small>
+        </div>
+        <div className="passport-missing-handoff-grid">
+          {passportMissingRecordHandoffCards.map((card) => (
+            <article key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <div className="missing-list">

@@ -8736,6 +8736,63 @@ p {
   line-height: 1;
 }
 
+.missing-record-lifecycle-receipt,
+.passport-missing-handoff-receipt {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.missing-record-lifecycle-receipt > div:first-child,
+.passport-missing-handoff-receipt > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.missing-record-lifecycle-receipt strong,
+.missing-record-lifecycle-receipt small,
+.missing-record-lifecycle-receipt span,
+.passport-missing-handoff-receipt strong,
+.passport-missing-handoff-receipt small,
+.passport-missing-handoff-receipt span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.missing-record-lifecycle-grid,
+.passport-missing-handoff-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.missing-record-lifecycle-grid article,
+.passport-missing-handoff-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.missing-record-lifecycle-grid span,
+.passport-missing-handoff-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
 .missing-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 140px 156px;
@@ -13264,7 +13321,9 @@ p {
   .live-row-source-grid,
   .live-row-source-next,
   .missing-controls,
+  .missing-record-lifecycle-grid,
   .missing-summary-grid,
+  .passport-missing-handoff-grid,
   .notification-summary-grid,
   .operations-controls,
   .operations-summary-grid,
