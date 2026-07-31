@@ -13456,6 +13456,145 @@ p {
   font-size: 12px;
 }
 
+.production-gate-cockpit {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 193, 7, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 193, 7, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.production-gate-cockpit-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, max-content);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.production-gate-cockpit-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.production-gate-cockpit-header strong,
+.production-gate-cockpit-header small,
+.production-gate-cockpit-grid span,
+.production-gate-cockpit-grid strong,
+.production-gate-cockpit-grid small,
+.production-gate-cockpit-grid em,
+.production-gate-cockpit-grid b,
+.production-gate-cockpit-proof strong,
+.production-gate-cockpit-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.production-gate-cockpit-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.16;
+}
+
+.production-gate-cockpit-header small {
+  max-width: 76ch;
+  color: var(--muted);
+}
+
+.production-gate-cockpit-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.production-gate-cockpit-grid article {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  gap: 6px;
+  min-width: 0;
+  min-height: 160px;
+  padding: 10px;
+  border: 1px solid rgba(255, 193, 7, 0.18);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.production-gate-cockpit-grid article.ready {
+  border-color: rgba(112, 224, 178, 0.24);
+  background: rgba(112, 224, 178, 0.05);
+}
+
+.production-gate-cockpit-grid article.warning {
+  border-color: rgba(225, 184, 102, 0.28);
+  background: rgba(225, 184, 102, 0.06);
+}
+
+.production-gate-cockpit-grid span {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.production-gate-cockpit-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.16;
+}
+
+.production-gate-cockpit-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.production-gate-cockpit-grid em {
+  color: rgba(171, 247, 224, 0.8);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.production-gate-cockpit-grid b {
+  align-self: end;
+  color: #f8fffb;
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.production-gate-cockpit-proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.production-gate-cockpit-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 193, 7, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.production-gate-cockpit-proof strong {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.16;
+}
+
+.production-gate-cockpit-proof small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .pilot-owner-readiness-receipt {
   display: grid;
   gap: 10px;
@@ -14804,6 +14943,10 @@ p {
   .server-sync-monitor-grid,
   .server-sync-next,
   .stale-vps-recovery-grid,
+  .production-gate-cockpit,
+  .production-gate-cockpit-header,
+  .production-gate-cockpit-grid,
+  .production-gate-cockpit-proof,
   .reviewer-database-readiness-board,
   .reviewer-database-readiness-header,
   .reviewer-database-readiness-grid,

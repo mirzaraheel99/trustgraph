@@ -173,6 +173,9 @@ assert(premiumRepair.includes(".v1-live-database-readiness") && premiumRepair.in
 assert(premiumRepair.includes(".live-database-acceptance-lanes") && premiumRepair.includes(".live-database-acceptance-lane-grid"), "live database acceptance lanes must be styled and bounded.");
 assert(css.includes(".pilot-owner-readiness-receipt") && css.includes(".pilot-owner-readiness-grid"), "pilot owner readiness receipt must be styled and bounded.");
 assert(css.includes(".pilot-owner-readiness-database-receipt") && css.includes(".pilot-owner-readiness-database-grid"), "pilot owner readiness database receipt must be styled and bounded.");
+assert(app.includes('aria-label="Production gate cockpit"'), "Admin readiness must expose a single production gate cockpit for human launch decisions.");
+assert(app.includes("production_gate_cockpit") && app.includes("production_gate_cockpit_requires_stripe_security_storage_legal_pilot_owner_and_vps_cutover_approval"), "production gate cockpit packet must encode all remaining human launch gates.");
+assert(css.includes(".production-gate-cockpit") && css.includes(".production-gate-cockpit-grid") && css.includes(".production-gate-cockpit-proof"), "production gate cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".setup-route-deck") && premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 230px), 1fr))"), "setup route deck must auto-fit without overflow.");
 assert(premiumRepair.includes(".corporate-launch-cockpit") && premiumRepair.includes(".corporate-launch-lanes"), "corporate launch cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".team-billing-handoff") && premiumRepair.includes(".team-billing-handoff-grid"), "team and billing handoff must be styled and bounded.");

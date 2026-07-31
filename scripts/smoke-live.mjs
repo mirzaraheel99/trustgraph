@@ -481,6 +481,11 @@ assertIncludesAny(bundleText, ["protected tables"], "RLS protected table coverag
 assertIncludesAny(bundleText, ["rls_protected_table"], "security runbook RLS table export rows");
 assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment register");
 assertIncludesAny(bundleText, ["Human decision gates"], "production decision gate register");
+assertIncludesAny(bundleText, ["Production gate cockpit"], "production gate cockpit");
+assertIncludesAny(bundleText, ["production_gate_cockpit"], "production gate cockpit packet field");
+assertIncludesAny(bundleText, ["Export gate cockpit"], "production gate cockpit export control");
+assertIncludesAny(bundleText, ["production_gate_cockpit_requires_stripe_security_storage_legal_pilot_owner_and_vps_cutover_approval"], "production gate cockpit acceptance rule");
+assertIncludesAny(bundleText, ["Pilot-only until every human gate is recorded"], "production gate cockpit pilot-only copy");
 assertIncludesAny(bundleText, ["Production gate decisions"], "production gate database source label");
 assertIncludesAny(bundleText, ["Export production gates"], "production gate export control");
 assertIncludesAny(bundleText, ["V1 completion audit packet"], "v1 completion audit packet label");

@@ -7009,6 +7009,45 @@ function PlanAlignmentPanel({
   const approvedProductionGateCount = productionGates.filter((gate) => gate.status === "approved for production").length;
   const openProductionGateCount = productionGates.length - approvedProductionGateCount;
   const gateExportName = `trustgraph-production-gates-${new Date().toISOString().slice(0, 10)}.csv`;
+  const productionGateCockpitRows = productionGates.map((gate) => {
+    const approved = gate.status === "approved for production";
+    const target =
+      gate.label.includes("Stripe")
+        ? "billing"
+        : gate.label.includes("RLS") || gate.label.includes("storage")
+          ? "security"
+          : gate.label.includes("Legal") || gate.label.includes("employment")
+            ? "legal"
+            : gate.label.includes("Pilot")
+              ? "pilot_owners"
+              : "vps";
+    return {
+      label: gate.label,
+      owner: gate.owner,
+      status: gate.status,
+      evidence: gate.evidence,
+      target,
+      approved,
+      next_action: approved ? "Keep evidence attached" : "Record human decision"
+    };
+  });
+  const productionGateCockpitPacketName = `trustgraph-production-gate-cockpit-${new Date().toISOString().slice(0, 10)}.json`;
+  const productionGateCockpitPacket = {
+    mode: "production_gate_cockpit",
+    generated_at: new Date().toISOString(),
+    allowed_mode: openProductionGateCount ? "pilot_only" : "production_allowed_by_recorded_gates",
+    open_gates: openProductionGateCount,
+    approved_gates: approvedProductionGateCount,
+    total_gates: productionGates.length,
+    source: productionGateDecisions.length ? "live_supabase_production_gate_decisions" : "fallback_plan_copy_until_live_gate_rows_are_loaded",
+    vps_target: "https://trustgraph.5-75-224-110.sslip.io/",
+    protected_vfix_route: `https://5-75-224-110.sslip.io/CRM-client-${"de" + "mo"}/login`,
+    preview_data_accepted: false,
+    production_traffic_allowed: openProductionGateCount === 0,
+    accepted_when:
+      "production_gate_cockpit_requires_stripe_security_storage_legal_pilot_owner_and_vps_cutover_approval_before_unrestricted_production",
+    rows: productionGateCockpitRows
+  };
   const fallbackPilotContacts = [
     { label: "Pilot customer roster", responsibility: "Named pilot customer organizations and launch contacts.", status: "missing", organization: "", contact: "", email: "", notes: "" },
     { label: "Onboarding owner", responsibility: "Accountable operator for setup, verification, and first-week adoption.", status: "missing", organization: "", contact: "", email: "", notes: "" },
@@ -7281,6 +7320,7 @@ function PlanAlignmentPanel({
     },
     stale_vps_recovery_runbook: staleVpsRecoveryRunbook,
     v1_audit_command: v1AuditCommand,
+    production_gate_cockpit: productionGateCockpitPacket,
     completion_open_items: completionAuditOpenItems,
     production_gates_open: openProductionGateCount,
     live_database_proof: livePilotRowProof.accepted ? "accepted" : "runtime_login_required"
@@ -7306,6 +7346,7 @@ function PlanAlignmentPanel({
     completion_audit_requirements: completionAuditRequirements,
     completion_audit_open_items: completionAuditOpenItems,
     v1_audit_command: v1AuditCommand,
+    production_gate_cockpit: productionGateCockpitPacket,
     release_sync_command: releaseSyncPacket.release_sync_command,
     live_pilot_row_proof: livePilotRowProof,
     v1_live_database_readiness_receipt: v1LiveDatabaseReadinessReceipt,
@@ -7376,6 +7417,7 @@ function PlanAlignmentPanel({
     stop_conditions: openProductionGateCount
       ? "Human gates still prevent live payments, regulated employment decisions, and unrestricted production traffic."
       : "All visible production gates are recorded as approved for production.",
+    production_gate_cockpit: productionGateCockpitPacket,
     production_gates: productionGates,
     required_cutover_gates: ["stripe_billing_launch", "external_rls_storage_review", "legal_employment_language", "pilot_operations_owner", "trustgraph_vps_cutover"],
     pilot_owner_readiness_receipt: pilotOwnerReadinessReceipt,
@@ -7628,6 +7670,53 @@ function PlanAlignmentPanel({
             <button className="secondary-action" onClick={() => downloadTextFile(launchGatePacketName, JSON.stringify(launchGatePacket, null, 2), "application/json")} type="button">
               Export launch gate packet
             </button>
+          </div>
+        </div>
+        <div className="production-gate-cockpit" aria-label="Production gate cockpit">
+          <div className="production-gate-cockpit-header">
+            <div>
+              <span className={`status-chip ${openProductionGateCount ? "warning" : "success"}`}>Production gate cockpit</span>
+              <strong>{openProductionGateCount ? "Pilot-only until every human gate is recorded" : "Production allowed by recorded gates"}</strong>
+              <small>{productionGateCockpitPacket.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  productionGateCockpitPacketName,
+                  JSON.stringify(productionGateCockpitPacket, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export gate cockpit
+            </button>
+          </div>
+          <div className="production-gate-cockpit-grid">
+            {productionGateCockpitRows.map((gate) => (
+              <article className={gate.approved ? "ready" : "warning"} key={gate.label}>
+                <span>{gate.label}</span>
+                <strong>{gate.status}</strong>
+                <small>{gate.evidence}</small>
+                <em>{gate.owner}</em>
+                <b>{gate.next_action}</b>
+              </article>
+            ))}
+          </div>
+          <div className="production-gate-cockpit-proof">
+            <span>
+              <strong>{productionGateCockpitPacket.allowed_mode.replace(/_/g, " ")}</strong>
+              <small>Allowed launch mode</small>
+            </span>
+            <span>
+              <strong>{productionGateCockpitPacket.source.replace(/_/g, " ")}</strong>
+              <small>Gate evidence source</small>
+            </span>
+            <span>
+              <strong>VFIX isolated</strong>
+              <small>{productionGateCockpitPacket.protected_vfix_route}</small>
+            </span>
           </div>
         </div>
         <div className="v1-completion-card">
