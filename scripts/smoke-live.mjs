@@ -511,6 +511,9 @@ assertIncludesAny(bundleText, ["Collect proof packets in order before calling th
 assertIncludesAny(bundleText, ["Live row completion command"], "live row completion command");
 assertIncludesAny(bundleText, ["live_row_completion_command"], "live row completion packet field");
 assertIncludesAny(bundleText, ["all_required_signed_in_supabase_row_groups_are_loaded"], "live row completion acceptance rule");
+assertIncludesAny(bundleText, ["Live data load receipt"], "live data load receipt");
+assertIncludesAny(bundleText, ["live_data_load_receipt"], "live data load receipt packet field");
+assertIncludesAny(bundleText, ["hosted_session_row_groups_loaded_seed_ids_reconciled_and_no_preview_or_fixture_rows_are_used_for_acceptance"], "live data load receipt acceptance rule");
 assertIncludesAny(bundleText, ["Authorized workspace report"], "authorized workspace report export card");
 assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");
 assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff checklist packet field");

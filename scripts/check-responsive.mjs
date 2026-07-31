@@ -87,6 +87,8 @@ const requiredMobileStacks = [
   ".live-row-source-next",
   ".live-database-contract-grid",
   ".live-row-completion-grid",
+  ".live-data-load-receipt",
+  ".live-data-load-grid",
   ".live-data-verdict",
   ".login-issue-resolver-grid",
   ".live-account-acceptance-grid",
@@ -251,6 +253,10 @@ if (!css.includes(".release-sync-command") || !css.includes("grid-template-colum
 
 if (!css.includes(".live-seed-preflight") || !css.includes(".live-seed-preflight-grid") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr))")) {
   throw new Error("Responsive check failed: live seed preflight needs a bounded responsive grid.");
+}
+
+if (!css.includes(".live-data-load-receipt") || !css.includes("grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr)") || !css.includes(".live-data-load-grid")) {
+  throw new Error("Responsive check failed: live data load receipt needs a bounded responsive grid.");
 }
 
 if (!css.includes(".corporate-scope-review-command") || !css.includes(".corporate-scope-review-grid") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr))")) {

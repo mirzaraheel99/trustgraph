@@ -84,6 +84,7 @@ assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.include
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-row-completion-command") && premiumRepair.includes(".live-row-completion-grid"), "live row completion command must be styled and bounded in the premium shell.");
 assert(css.includes(".live-row-source-receipt") && css.includes(".live-row-source-grid") && css.includes(".live-row-source-next"), "live row source receipt must be styled and bounded.");
+assert(css.includes(".live-data-load-receipt") && css.includes(".live-data-load-grid"), "live data load receipt must be styled and bounded.");
 assert(css.includes(".live-database-repair-command") && css.includes(".live-database-repair-actions") && css.includes(".live-database-repair-grid"), "live database repair command must be styled and bounded.");
 assert(css.includes(".live-seed-preflight") && css.includes(".live-seed-preflight-grid"), "live seed preflight must be styled and bounded.");
 assert(app.includes('aria-label="Live seed reload receipt"'), "live seed proof must expose the reload/reconciliation receipt.");

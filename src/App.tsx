@@ -10162,6 +10162,35 @@ function OnboardingChecklistPanel({
       ready: seedReconciliationComplete
     }
   ];
+  const liveDataLoadReceipt = {
+    mode: "live_data_load_receipt",
+    status: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "real_rows_loaded_and_reconciled" : "live_rows_or_seed_reconciliation_required",
+    accepted_when: "hosted_session_row_groups_loaded_seed_ids_reconciled_and_no_preview_or_fixture_rows_are_used_for_acceptance",
+    preview_or_fixture_data_accepted: false,
+    hosted_session: Boolean(authSession),
+    rbac_context_loaded: Boolean(accountContext),
+    row_groups_loaded: liveDatabaseAcceptancePassing,
+    row_groups_required: liveDatabaseAcceptanceRows.length,
+    seed_rows_matched: seedReconciliationPassing,
+    seed_rows_required: seedReconciliationRows.length,
+    next_action:
+      !authSession
+        ? "Login on hosted TrustGraph"
+        : !accountContext
+          ? "Load RBAC account context"
+          : !liveDatabaseAcceptanceComplete
+            ? liveDatabaseRepairQueue[0]?.action ?? "Prepare live pilot workspace"
+            : !seedReconciliationComplete
+              ? "Reload rows after live pilot seed"
+              : "Export working-data packet",
+    evidence_chain: [
+      "Hosted Supabase session",
+      "RBAC account context",
+      "Required repository row groups",
+      "Seed IDs reconciled against reloaded rows",
+      "Working-data packet exported from live session"
+    ]
+  };
   const workingDatabaseRunbookSteps = [
     {
       label: "1. Sign in on hosted TrustGraph",
@@ -10502,6 +10531,7 @@ function OnboardingChecklistPanel({
     live_database_repair_command: liveDatabaseRepairCommand,
     live_account_acceptance_checklist: liveAccountAcceptancePacket,
     live_database_acceptance_lanes: liveDatabaseAcceptanceLanes,
+    live_data_load_receipt: liveDataLoadReceipt,
     live_row_source_receipt: liveRowSourceReceipt,
     live_database_acceptance: {
       status: workingDatabaseAcceptanceStatus,
@@ -11000,6 +11030,34 @@ function OnboardingChecklistPanel({
             <span>
               <strong>{workingDatabaseCommandCenter.packet_export_required ? "Required" : "Optional"}</strong>
               <small>Working-data packet export</small>
+            </span>
+          </div>
+        </div>
+        <div className="live-data-load-receipt" aria-label="Live data load receipt">
+          <div>
+            <span className={`status-chip ${liveDataLoadReceipt.status === "real_rows_loaded_and_reconciled" ? "success" : "warning"}`}>
+              Live data load receipt
+            </span>
+            <strong>{liveDataLoadReceipt.next_action}</strong>
+            <small>{liveDataLoadReceipt.accepted_when}</small>
+            <small>Preview or fixture data accepted: {liveDataLoadReceipt.preview_or_fixture_data_accepted ? "yes" : "no"}</small>
+          </div>
+          <div className="live-data-load-grid">
+            <span>
+              <strong>{liveDataLoadReceipt.hosted_session ? "Yes" : "No"}</strong>
+              <small>Hosted session</small>
+            </span>
+            <span>
+              <strong>{liveDataLoadReceipt.rbac_context_loaded ? "Yes" : "No"}</strong>
+              <small>RBAC context</small>
+            </span>
+            <span>
+              <strong>{liveDataLoadReceipt.row_groups_loaded}/{liveDataLoadReceipt.row_groups_required}</strong>
+              <small>Repository row groups</small>
+            </span>
+            <span>
+              <strong>{liveDataLoadReceipt.seed_rows_matched}/{liveDataLoadReceipt.seed_rows_required}</strong>
+              <small>Seed IDs reconciled</small>
             </span>
           </div>
         </div>

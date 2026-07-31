@@ -5291,6 +5291,68 @@ p,
   line-height: 1.35;
 }
 
+.live-data-load-receipt {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 199, 102, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 199, 102, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.live-data-load-receipt > div:first-child {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.live-data-load-receipt strong,
+.live-data-load-receipt small,
+.live-data-load-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-data-load-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.18;
+}
+
+.live-data-load-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.live-data-load-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.live-data-load-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.live-data-load-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.32;
+}
+
 .live-row-source-receipt {
   display: grid;
   gap: 10px;
@@ -12568,6 +12630,8 @@ p {
   .invitation-handoff-strip,
   .live-database-acceptance-lanes-top,
   .live-database-acceptance-lane-grid,
+  .live-data-load-receipt,
+  .live-data-load-grid,
   .live-row-source-grid,
   .live-row-source-next,
   .missing-controls,
