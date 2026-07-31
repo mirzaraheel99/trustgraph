@@ -14110,6 +14110,85 @@ function App() {
     missingRequiredGroups: livePilotRowProofRows.filter((row) => row.required && !row.ready).map((row) => row.label),
     rows: livePilotRowProofRows
   };
+  const v1CompletionLanes = [
+    {
+      label: "Hosted login",
+      detail: authSession ? `Signed in as ${authSession.user.email}` : "Hosted login or registration is required before any V1 database proof.",
+      status: authSession ? "Ready" : "Needed",
+      ready: Boolean(authSession),
+      action: "Open account",
+      target: "account" as const
+    },
+    {
+      label: "Corporate workspace",
+      detail: hasLiveCorporateContext ? `${activeOrganization.name} is active with ${activeRole.label}.` : "Create or switch into an employer or staffing workspace.",
+      status: hasLiveCorporateContext ? "Ready" : "Needed",
+      ready: hasLiveCorporateContext,
+      action: "Open corporate setup",
+      target: "corporate_setup" as const
+    },
+    {
+      label: "Pricing ledger",
+      detail: organizationSubscriptions.length
+        ? `${organizationSubscriptions.length} subscription ledger row${organizationSubscriptions.length === 1 ? "" : "s"} loaded.`
+        : "Activate the Corporate Verify pilot ledger; Stripe remains human-gated.",
+      status: organizationSubscriptions.length ? "Ledger live" : "Needed",
+      ready: organizationSubscriptions.length > 0,
+      action: "Open billing",
+      target: "billing" as const
+    },
+    {
+      label: "User database access",
+      detail: sharedVerifyRecords.length
+        ? `${sharedVerifyRecords.length} approved shared row${sharedVerifyRecords.length === 1 ? "" : "s"} visible to Corporate Verify.`
+        : "Request Access Grants and review approved Passport rows.",
+      status: sharedVerifyRecords.length ? "Rows visible" : "Needs grants",
+      ready: sharedVerifyRecords.length > 0,
+      action: "Open Verify",
+      target: "verify" as const
+    },
+    {
+      label: "Evidence and consent",
+      detail: evidenceDocuments.length && consentAuthorizations.length
+        ? `${evidenceDocuments.length} evidence rows and ${consentAuthorizations.length} consent rows loaded.`
+        : "Upload evidence metadata and create consent authorizations before final acceptance.",
+      status: evidenceDocuments.length && consentAuthorizations.length ? "Ready" : "Needed",
+      ready: evidenceDocuments.length > 0 && consentAuthorizations.length > 0,
+      action: "Open Passport",
+      target: "passport" as const
+    },
+    {
+      label: "Human gates",
+      detail: "Stripe, production traffic, legal retention, tax, invoices, and security signoff stay human-approved.",
+      status: "Human decision",
+      ready: false,
+      action: "Open readiness",
+      target: "readiness" as const
+    }
+  ];
+  const v1CodeOwnedReadyLanes = v1CompletionLanes.filter((lane) => lane.target !== "readiness" && lane.ready).length;
+  const v1CodeOwnedTotalLanes = v1CompletionLanes.filter((lane) => lane.target !== "readiness").length;
+  const nextV1CompletionLane = v1CompletionLanes.find((lane) => !lane.ready) ?? v1CompletionLanes[v1CompletionLanes.length - 1];
+  const v1CompletionCockpit = {
+    mode: "v1_completion_cockpit",
+    generated_at: new Date().toISOString(),
+    code_owned_ready_lanes: v1CodeOwnedReadyLanes,
+    code_owned_total_lanes: v1CodeOwnedTotalLanes,
+    all_code_owned_lanes_ready: v1CodeOwnedReadyLanes === v1CodeOwnedTotalLanes,
+    next_lane: nextV1CompletionLane.label,
+    next_action: nextV1CompletionLane.action,
+    next_detail: nextV1CompletionLane.detail,
+    lanes: v1CompletionLanes,
+    live_pilot_row_proof: livePilotRowProof,
+    human_gates: [
+      "Stripe checkout and payment collection",
+      "Production traffic approval",
+      "Legal retention and account closure review",
+      "Tax, invoice, refund, dunning, and webhook decisions",
+      "Final security and RLS signoff"
+    ],
+    accepted_when: "hosted_login_corporate_workspace_pricing_ledger_user_rows_evidence_consent_and_human_gates_are_explicitly_resolved"
+  };
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -14145,6 +14224,7 @@ function App() {
     dashboard_start_map: dashboardStartMap,
     dashboard_next_action: dashboardNextActionPacket,
     workspace_command_strip: workspaceCommandStrip,
+    v1_completion_cockpit: v1CompletionCockpit,
     signed_in_landing_actions: signedInLandingActions,
     proof_export_hub: proofExportHub,
     production_boundary: {
@@ -14534,6 +14614,72 @@ function App() {
           onOpenReadiness={() => setSetupView("readiness")}
           onOpenRegistration={() => setShowPublicSite(true)}
         />
+
+        <section className="v1-completion-cockpit" aria-label="V1 completion cockpit">
+          <div className="v1-completion-cockpit-header">
+            <div>
+              <span className={`status-chip ${v1CodeOwnedReadyLanes === v1CodeOwnedTotalLanes ? "success" : "warning"}`}>
+                V1 completion cockpit
+              </span>
+              <strong>{v1CodeOwnedReadyLanes}/{v1CodeOwnedTotalLanes} code-owned V1 lanes ready</strong>
+              <small>{nextV1CompletionLane.detail}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-v1-completion-cockpit-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(v1CompletionCockpit, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export V1 cockpit
+            </button>
+          </div>
+          <div className="v1-completion-progress" aria-label="V1 completion progress">
+            <span style={{ width: `${Math.round((v1CodeOwnedReadyLanes / v1CodeOwnedTotalLanes) * 100)}%` }} />
+          </div>
+          <div className="v1-completion-lane-grid">
+            {v1CompletionLanes.map((lane) => (
+              <article className={lane.ready ? "ready" : lane.target === "readiness" ? "human-gate" : ""} key={lane.label}>
+                <div>
+                  <strong>{lane.label}</strong>
+                  <small>{lane.detail}</small>
+                  <span>{lane.status}</span>
+                </div>
+                <button
+                  className={lane.ready ? "secondary-action" : "primary-action"}
+                  onClick={() => {
+                    if (lane.target === "account") {
+                      openAuthControls();
+                      return;
+                    }
+                    if (lane.target === "corporate_setup") {
+                      openCorporateControls();
+                      return;
+                    }
+                    if (lane.target === "billing") {
+                      openCorporateControls();
+                      window.setTimeout(() => setSetupView("billing"), 50);
+                      return;
+                    }
+                    if (lane.target === "readiness") {
+                      setSetupView("readiness");
+                      document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    changeWorkspace(lane.target);
+                  }}
+                  type="button"
+                >
+                  {lane.action}
+                </button>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <CorporateDailyTaskHub
           accessGrants={accessGrants}

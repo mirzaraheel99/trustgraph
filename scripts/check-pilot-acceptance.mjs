@@ -61,7 +61,7 @@ const acceptanceChecks = [
     id: "pilot_readiness",
     label: "Pilot readiness and human gates",
     source: appSource,
-    required: ["V1 completion audit packet", "Live pilot row proof", "live_pilot_row_proof", "Live account acceptance checklist", "live_account_acceptance_checklist", "Human decision gates", "Stop conditions", "Pilot-ready, not unrestricted production traffic"]
+    required: ["V1 completion audit packet", "V1 completion cockpit", "v1_completion_cockpit", "Export V1 cockpit", "Live pilot row proof", "live_pilot_row_proof", "Live account acceptance checklist", "live_account_acceptance_checklist", "Human decision gates", "Stop conditions", "Pilot-ready, not unrestricted production traffic"]
   }
 ];
 

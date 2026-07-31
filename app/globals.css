@@ -13501,6 +13501,106 @@ body {
   overflow-wrap: anywhere;
 }
 
+.v1-completion-cockpit {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(11, 24, 25, 0.78);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+
+.v1-completion-cockpit-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.v1-completion-cockpit-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.v1-completion-cockpit strong,
+.v1-completion-cockpit small,
+.v1-completion-cockpit span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-completion-cockpit-header > div > strong {
+  font-size: clamp(22px, 2vw, 32px);
+  line-height: 1.08;
+}
+
+.v1-completion-cockpit small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.48;
+}
+
+.v1-completion-progress {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.v1-completion-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #45dccb, #d5c46c);
+}
+
+.v1-completion-lane-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 10px;
+}
+
+.v1-completion-lane-grid article {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  overflow: hidden;
+}
+
+.v1-completion-lane-grid article.ready {
+  border-color: rgba(83, 232, 178, 0.28);
+  background: rgba(83, 232, 178, 0.075);
+}
+
+.v1-completion-lane-grid article.human-gate {
+  border-color: rgba(255, 205, 111, 0.3);
+  background: rgba(255, 205, 111, 0.075);
+}
+
+.v1-completion-lane-grid article > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.v1-completion-lane-grid article > div > strong {
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.v1-completion-lane-grid button,
+.v1-completion-cockpit-header button {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+
 @media (max-width: 1180px) {
   .workspace {
     padding: 18px;
@@ -13510,6 +13610,7 @@ body {
   .portal-home-command,
   .dashboard-next-action,
   .workspace-command-strip,
+  .v1-completion-cockpit-header,
   .hero {
     grid-template-columns: 1fr;
   }
@@ -13518,7 +13619,8 @@ body {
   .portal-home-actions,
   .dashboard-next-action-buttons,
   .workspace-command-actions,
-  .setup-command-actions {
+  .setup-command-actions,
+  .v1-completion-cockpit-header {
     justify-content: flex-start;
   }
 }
@@ -13533,6 +13635,7 @@ body {
   .portal-home-command,
   .dashboard-next-action,
   .workspace-command-strip,
+  .v1-completion-cockpit,
   .hero-card,
   .workspace-admin-grid {
     padding: 14px;
@@ -13559,7 +13662,9 @@ body {
   .portal-home-actions button,
   .dashboard-next-action-buttons button,
   .workspace-command-actions button,
-  .setup-command-actions button {
+  .setup-command-actions button,
+  .v1-completion-cockpit-header button,
+  .v1-completion-lane-grid button {
     flex: 1 1 100%;
     width: 100%;
   }
