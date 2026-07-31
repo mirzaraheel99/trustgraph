@@ -74,6 +74,8 @@ const flowChecks = [
     label: "Signed-in users can find account, corporate, public, and logout actions",
     required: [
       "Session command bar",
+      "Portal choice guide",
+      "portal_choice_guide",
       "Server release save path",
       "server_release_save_path",
       "Hosted version receipt",

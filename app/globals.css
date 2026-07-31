@@ -11410,6 +11410,8 @@ p {
   .portal-auth-summary-grid,
   .portal-access-steps,
   .portal-auth-outcome-grid,
+  .portal-choice-guide-header,
+  .portal-choice-guide-grid,
   .portal-login-switchboard-grid,
   .dashboard-start-map-grid,
   .dashboard-next-action,
@@ -13443,6 +13445,82 @@ body {
   align-items: stretch;
   padding: 18px;
   background: rgba(12, 26, 27, 0.72);
+}
+
+.portal-choice-guide {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(11, 24, 25, 0.74);
+}
+
+.portal-choice-guide-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.portal-choice-guide-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.portal-choice-guide-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+}
+
+.portal-choice-guide-grid article {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 10px;
+  min-width: 0;
+  min-height: 178px;
+  padding: 14px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.portal-choice-guide-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.24);
+  background: rgba(95, 240, 201, 0.06);
+}
+
+.portal-choice-guide-grid article > span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(95, 240, 201, 0.28);
+  border-radius: 999px;
+  color: #cffff0;
+  font-weight: 950;
+}
+
+.portal-choice-guide-grid article > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.portal-choice-guide-grid button {
+  grid-column: 1 / -1;
+  align-self: end;
+  width: 100%;
+}
+
+.portal-choice-guide strong,
+.portal-choice-guide small,
+.portal-choice-guide span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .server-release-cockpit {

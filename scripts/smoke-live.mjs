@@ -171,6 +171,9 @@ assertIncludesAny(bundleText, ["Portal home command center"], "signed-in portal 
 assertIncludesAny(bundleText, ["Start with login, then choose the right portal"], "signed-in portal home guidance");
 assertIncludesAny(bundleText, ["Continue current portal"], "signed-in portal continuation action");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in portal account action");
+assertIncludesAny(bundleText, ["Portal choice guide"], "signed-in portal choice guide");
+assertIncludesAny(bundleText, ["Choose the right workspace before acting"], "portal choice guide headline");
+assertIncludesAny(bundleText, ["portal_choice_guide"], "authorized report portal choice guide field");
 assertIncludesAny(bundleText, ["Corporate setup"], "dashboard corporate setup action");
 assertIncludesAny(bundleText, ["Sign out"], "dashboard sign out action");
 assertIncludesAny(bundleText, ["Workspace picker"], "dashboard workspace start map");

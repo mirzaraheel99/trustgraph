@@ -14049,6 +14049,15 @@ function App() {
       ready: hasLiveCorporateContext && canManageCorporateSetup
     }
   ];
+  const portalChoiceGuide = dashboardStartMap.map((item, index) => ({
+    step: `${index + 1}`,
+    portal: item.label,
+    use_when: item.detail,
+    current_status: item.status,
+    recommended_action: item.action,
+    target: item.target,
+    ready: item.ready
+  }));
   const workspaceFlow = [
     {
       id: "passport" as const,
@@ -14581,6 +14590,7 @@ function App() {
       production_gate_decisions: productionGateDecisions.length
     },
     dashboard_start_map: dashboardStartMap,
+    portal_choice_guide: portalChoiceGuide,
     dashboard_next_action: dashboardNextActionPacket,
     workspace_command_strip: workspaceCommandStrip,
     v1_completion_cockpit: v1CompletionCockpit,
@@ -14874,6 +14884,38 @@ function App() {
                 Sign out
               </button>
             ) : null}
+          </div>
+        </section>
+
+        <section className="portal-choice-guide" aria-label="Portal choice guide">
+          <div className="portal-choice-guide-header">
+            <div>
+              <span className="status-chip neutral">Portal choice guide</span>
+              <strong>Choose the right workspace before acting</strong>
+              <small>Personal Passport, Corporate Verify, and Company Admin have separate jobs so records, roles, and exports stay understandable.</small>
+            </div>
+            <button className="secondary-action" onClick={() => downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json")} type="button">
+              Export guide
+            </button>
+          </div>
+          <div className="portal-choice-guide-grid">
+            {portalChoiceGuide.map((item) => (
+              <article className={item.ready ? "ready" : ""} key={item.portal}>
+                <span>{item.step}</span>
+                <div>
+                  <strong>{item.portal}</strong>
+                  <small>{item.use_when}</small>
+                  <small>{item.current_status}</small>
+                </div>
+                <button
+                  className={item.ready ? "secondary-action" : "primary-action"}
+                  onClick={() => openWorkspaceOrSetup(item.target)}
+                  type="button"
+                >
+                  {item.recommended_action}
+                </button>
+              </article>
+            ))}
           </div>
         </section>
 
