@@ -7512,7 +7512,7 @@ p {
 
 .directory-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 160px 112px 148px;
+  grid-template-columns: minmax(0, 1fr) 154px 176px 112px 148px 148px;
   gap: 8px;
 }
 
@@ -7543,6 +7543,65 @@ p {
   display: grid;
   gap: 6px;
   padding: 12px;
+}
+
+.corporate-directory-filter-receipt {
+  display: grid;
+  grid-template-columns: minmax(0, 0.84fr) minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-directory-filter-receipt > div:first-child,
+.corporate-directory-filter-grid span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.corporate-directory-filter-receipt strong,
+.corporate-directory-filter-receipt small,
+.corporate-directory-filter-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-directory-filter-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.corporate-directory-filter-receipt small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.corporate-directory-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-directory-filter-grid span {
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.corporate-directory-filter-grid strong {
+  font-size: 14px;
+}
+
+.corporate-directory-filter-grid small {
+  font-size: 11px;
 }
 
 .directory-source-strip,
@@ -11245,6 +11304,8 @@ p {
   .registration-grid,
   .selected-portal-command,
   .directory-controls,
+  .corporate-directory-filter-receipt,
+  .corporate-directory-filter-grid,
   .directory-review-board,
   .admin-audit-export-command-grid,
   .admin-audit-export-command-actions,

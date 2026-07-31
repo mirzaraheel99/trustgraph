@@ -3062,6 +3062,7 @@ function CorporateDirectoryPanel({
   const [reviewNote, setReviewNote] = useState("Scoped corporate review completed against visible Passport rows and open gaps.");
   const [reviewMessage, setReviewMessage] = useState("Record a live review attestation after checking visible user rows.");
   const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "approved" | "declined" | "revoked">("all");
+  const [readinessFilter, setReadinessFilter] = useState<"all" | "review_ready" | "waiting_for_consent" | "needs_gap_follow_up" | "not_available">("all");
   const latestReviewByGrant = reviews.reduce<Record<string, DbCorporateAccessReview>>((latest, review) => {
     if (!latest[review.access_grant_id]) {
       latest[review.access_grant_id] = review;
@@ -3116,8 +3117,9 @@ function CorporateDirectoryPanel({
   const sharedSkillCount = sharedRecords.reduce((count, record) => count + (record.skills?.length ?? 0), 0);
   const filteredRows = candidateRows.filter((row) => {
     const matchesStatus = statusFilter === "all" || row.rawStatus === statusFilter;
+    const matchesReadiness = readinessFilter === "all" || row.readiness === readinessFilter;
     const haystack = `${row.name} ${row.detail} ${row.signal} ${row.gapTitles.join(" ")}`.toLowerCase();
-    return matchesStatus && haystack.includes(directoryQuery.trim().toLowerCase());
+    return matchesStatus && matchesReadiness && haystack.includes(directoryQuery.trim().toLowerCase());
   });
   const exportName = `trustgraph-corporate-directory-${new Date().toISOString().slice(0, 10)}.csv`;
   const reviewQueueExportName = `trustgraph-corporate-review-queue-${new Date().toISOString().slice(0, 10)}.csv`;
@@ -3291,6 +3293,21 @@ function CorporateDirectoryPanel({
       tone: openGapRequestCount ? "warning" : "ready"
     }
   ];
+  const activeDirectoryFilters = [
+    statusFilter !== "all" ? `status:${statusFilter}` : "",
+    readinessFilter !== "all" ? `readiness:${readinessFilter}` : "",
+    directoryQuery.trim() ? `query:${directoryQuery.trim()}` : ""
+  ].filter(Boolean);
+  const corporateDirectoryFilterReceipt = {
+    label: "Corporate directory filter receipt",
+    active_filters: activeDirectoryFilters.length ? activeDirectoryFilters : ["none"],
+    status_filter: statusFilter,
+    readiness_filter: readinessFilter,
+    query: directoryQuery.trim(),
+    filtered_rows: filteredRows.length,
+    total_access_grant_rows: candidateRows.length,
+    export_boundary: "Exports only professionals and Passport rows visible to the active corporate RBAC, Access Grant, and consent scope."
+  };
   const databaseModeLabel = isLiveCorporateDatabase ? "Live corporate database" : "Corporate database locked";
   const databaseModeDetail = isLiveCorporateDatabase
     ? "Reads corporate visibility from Supabase Access Grants, shared Passport records, professional profiles, and missing-record requests."
@@ -3306,8 +3323,10 @@ function CorporateDirectoryPanel({
     },
     filters: {
       status: statusFilter,
+      readiness: readinessFilter,
       query: directoryQuery.trim()
     },
+    filter_receipt: corporateDirectoryFilterReceipt,
     source_counts: {
       access_grants: requests.length,
       filtered_professionals: filteredRows.length,
@@ -3435,6 +3454,13 @@ function CorporateDirectoryPanel({
           <option value="declined">Declined</option>
           <option value="revoked">Revoked</option>
         </select>
+        <select onChange={(event) => setReadinessFilter(event.target.value as typeof readinessFilter)} value={readinessFilter}>
+          <option value="all">All readiness</option>
+          <option value="review_ready">Review ready</option>
+          <option value="waiting_for_consent">Waiting for consent</option>
+          <option value="needs_gap_follow_up">Needs gap follow-up</option>
+          <option value="not_available">Not available</option>
+        </select>
         <button
           className="secondary-action"
           disabled={!filteredRows.length}
@@ -3476,6 +3502,27 @@ function CorporateDirectoryPanel({
         <div>
           <strong>{reviewReadyCount}</strong>
           <small>Review-ready people</small>
+        </div>
+      </div>
+      <div className="corporate-directory-filter-receipt" aria-label="Corporate directory filter receipt">
+        <div>
+          <span className={`status-chip ${activeDirectoryFilters.length ? "success" : "neutral"}`}>Directory filter receipt</span>
+          <strong>{filteredRows.length}/{candidateRows.length} corporate user rows in view</strong>
+          <small>{corporateDirectoryFilterReceipt.export_boundary}</small>
+        </div>
+        <div className="corporate-directory-filter-grid">
+          <span>
+            <strong>{statusFilter.replace(/_/g, " ")}</strong>
+            <small>Grant status</small>
+          </span>
+          <span>
+            <strong>{readinessFilter.replace(/_/g, " ")}</strong>
+            <small>Readiness</small>
+          </span>
+          <span>
+            <strong>{directoryQuery.trim() || "No search"}</strong>
+            <small>Search query</small>
+          </span>
         </div>
       </div>
       <div className="corporate-data-access-path" aria-label="Corporate data access path">

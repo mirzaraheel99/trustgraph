@@ -44,6 +44,8 @@ const requiredMobileStacks = [
   ".corporate-setup-stepper-header",
   ".corporate-setup-stepper-grid",
   ".directory-source-strip",
+  ".corporate-directory-filter-receipt",
+  ".corporate-directory-filter-grid",
   ".directory-review-board",
   ".admin-audit-export-command-grid",
   ".admin-audit-export-command-actions",

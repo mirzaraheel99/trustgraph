@@ -226,6 +226,10 @@ assertIncludesAny(bundleText, ["Corporate user data proof"], "corporate Verify u
 assertIncludesAny(bundleText, ["user_data_proof"], "corporate Verify user data proof packet field");
 assertIncludesAny(bundleText, ["Corporate directory acceptance"], "corporate user database acceptance ledger");
 assertIncludesAny(bundleText, ["corporate_directory_acceptance"], "corporate user database acceptance packet field");
+assertIncludesAny(bundleText, ["Directory filter receipt"], "corporate directory filter receipt");
+assertIncludesAny(bundleText, ["filter_receipt"], "corporate directory filter receipt packet field");
+assertIncludesAny(bundleText, ["All readiness"], "corporate directory readiness filter");
+assertIncludesAny(bundleText, ["Review ready", "Needs gap follow-up"], "corporate directory readiness filter options");
 assertIncludesAny(bundleText, ["live_corporate_rbac_context_loads_access_grants_shared_passport_rows_review_ready_people_and_review_attestations"], "corporate directory real database acceptance rule");
 assertIncludesAny(bundleText, ["Corporate access blocker map"], "corporate Verify access blocker map");
 assertIncludesAny(bundleText, ["corporate_access_blocker_map"], "corporate Verify blocker map packet field");
