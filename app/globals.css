@@ -14337,3 +14337,244 @@ body {
     font-size: 48px;
   }
 }
+
+/* Signed-in console layout contract: keep Professional and Corporate portals usable before visual polish. */
+.app {
+  overflow-x: clip;
+}
+
+.workspace {
+  width: min(100%, 1460px);
+  padding-inline: clamp(14px, 2.5vw, 34px);
+}
+
+.topbar,
+.dashboard-next-action,
+.portal-home-command,
+.portal-choice-guide,
+.server-release-cockpit,
+.v1-operating-map,
+.workspace-command-strip,
+.workspace-admin-grid,
+.hero,
+.metrics-grid,
+.work-grid {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.topbar {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.topbar h1 {
+  max-width: 18ch;
+  font-size: clamp(30px, 2.7vw, 44px);
+}
+
+.topbar p {
+  max-width: 72ch;
+}
+
+.topbar-actions {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.topbar-actions .public-site-action,
+.topbar-actions .secondary-action {
+  flex: 0 1 auto;
+}
+
+.topbar-actions button:not(.secondary-action):not(.primary-action) {
+  width: 44px;
+  flex: 0 0 44px;
+}
+
+.session-command-bar,
+.workspace-route-strip,
+.workspace-flow-strip {
+  width: 100%;
+  overflow: visible;
+}
+
+.session-command-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 154px), 1fr));
+  width: min(100%, 720px);
+}
+
+.workspace-route-strip {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+}
+
+.workspace-flow-strip {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.workspace-route-strip button,
+.workspace-flow-strip button,
+.session-command-bar button {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-next-action,
+.portal-home-command {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.46fr);
+  align-items: stretch;
+}
+
+.dashboard-next-action-buttons,
+.portal-home-actions {
+  display: grid;
+  align-content: start;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.dashboard-next-action-metrics,
+.portal-choice-guide-grid,
+.v1-operating-map-grid,
+.server-release-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.portal-choice-guide-grid article,
+.v1-operating-map-grid article {
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+}
+
+.portal-choice-guide-grid article button,
+.v1-operating-map-grid article button {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.workspace-command-strip {
+  grid-template-columns: minmax(220px, 0.64fr) minmax(0, 1fr);
+}
+
+.workspace-command-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 8px;
+}
+
+.workspace-command-actions button {
+  width: 100%;
+}
+
+.hero {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+
+.hero-card {
+  min-height: 0;
+}
+
+.work-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+}
+
+.records-panel,
+.side-stack,
+.actions-panel,
+.detail-panel {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.side-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.search-box,
+.panel-heading {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.panel-heading {
+  flex-wrap: wrap;
+}
+
+.search-box {
+  width: min(100%, 420px);
+}
+
+.workspace-admin-grid,
+.setup-panel-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+}
+
+.setup-command-bar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.setup-command-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+}
+
+@media (max-width: 1180px) {
+  .dashboard-next-action,
+  .portal-home-command,
+  .workspace-command-strip,
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .side-stack {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    padding-inline: 10px;
+  }
+
+  .topbar h1 {
+    max-width: 16ch;
+    font-size: clamp(28px, 9vw, 38px);
+  }
+
+  .session-command-bar,
+  .workspace-route-strip,
+  .workspace-flow-strip,
+  .dashboard-next-action-metrics,
+  .portal-choice-guide-grid,
+  .v1-operating-map-grid,
+  .server-release-grid,
+  .workspace-command-actions,
+  .setup-command-actions,
+  .side-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-route-strip,
+  .workspace-flow-strip {
+    display: grid !important;
+  }
+
+  .topbar-actions .public-site-action,
+  .topbar-actions .secondary-action,
+  .topbar-actions button:not(.secondary-action):not(.primary-action) {
+    flex: 1 1 calc(50% - 8px);
+    width: auto;
+  }
+
+  .dashboard-next-action-buttons button,
+  .portal-home-actions button,
+  .workspace-command-actions button,
+  .setup-command-actions button {
+    width: 100%;
+  }
+}

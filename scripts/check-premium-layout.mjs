@@ -13,6 +13,8 @@ const authenticatedRenderStart = app.indexOf('return (\n    <div className="app"
 const authenticatedRender = authenticatedRenderStart >= 0 ? app.slice(authenticatedRenderStart) : "";
 const premiumRepairStart = css.indexOf("Premium workspace shell repair");
 const premiumRepair = premiumRepairStart >= 0 ? css.slice(premiumRepairStart) : "";
+const consoleLayoutStart = css.indexOf("Signed-in console layout contract");
+const consoleLayout = consoleLayoutStart >= 0 ? css.slice(consoleLayoutStart) : "";
 
 assert(authenticatedRenderStart >= 0, "authenticated app render block was not found.");
 assert(!authenticatedRender.includes('<aside className="sidebar">'), "legacy sidebar rail must not render in the authenticated workspace.");
@@ -56,6 +58,16 @@ assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includ
 assert(premiumRepair.includes(".dashboard-next-action") && premiumRepair.includes(".dashboard-next-action-metrics"), "dashboard next action command must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");
 assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))"), "dense admin forms must auto-fit narrow screens.");
+assert(consoleLayout.includes("Signed-in console layout contract"), "final signed-in console layout contract must be present.");
+assert(consoleLayout.includes("width: min(100%, 1460px)") && consoleLayout.includes("overflow-x: clip"), "signed-in console must use the available width without page-level horizontal overflow.");
+assert(consoleLayout.includes(".topbar {\n  grid-template-columns: minmax(0, 1fr)") && consoleLayout.includes(".topbar-actions {\n  width: 100%"), "topbar must use one calm command row instead of a squeezed two-column header.");
+assert(consoleLayout.includes(".session-command-bar") && consoleLayout.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 154px), 1fr))"), "account, corporate setup, public site, and logout controls must auto-fit.");
+assert(consoleLayout.includes(".workspace-route-strip") && consoleLayout.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr))"), "workspace route strip must be grid bounded.");
+assert(consoleLayout.includes(".workspace-flow-strip") && consoleLayout.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr))"), "workspace flow strip must be grid bounded.");
+assert(consoleLayout.includes(".dashboard-next-action,\n.portal-home-command") && consoleLayout.includes("grid-template-columns: minmax(0, 1fr) minmax(280px, 0.46fr)"), "dashboard and portal command centers must keep copy and actions understandable.");
+assert(consoleLayout.includes(".work-grid") && consoleLayout.includes("grid-template-columns: minmax(0, 1fr) minmax(280px, 340px)"), "main record surface must reserve a bounded side stack without crushing records.");
+assert(consoleLayout.includes("@media (max-width: 1180px)") && consoleLayout.includes(".work-grid {\n    grid-template-columns: 1fr"), "console must stack before laptop/tablet widths get cramped.");
+assert(consoleLayout.includes("@media (max-width: 760px)") && consoleLayout.includes(".workspace-route-strip,\n  .workspace-flow-strip {\n    display: grid !important"), "mobile workspace routes must be vertical grids, not horizontal scrollers.");
 assert(premiumRepair.includes(".live-pilot-row-proof") && premiumRepair.includes(".live-pilot-row-proof-grid"), "live pilot row proof must be styled as a bounded premium panel.");
 assert(premiumRepair.includes(".live-database-acceptance-lanes") && premiumRepair.includes(".live-database-acceptance-lane-grid"), "live database acceptance lanes must be styled and bounded.");
 assert(premiumRepair.includes(".setup-route-deck") && premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 230px), 1fr))"), "setup route deck must auto-fit without overflow.");
