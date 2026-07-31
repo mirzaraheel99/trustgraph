@@ -19227,6 +19227,76 @@ function App() {
     steps: portalWelcomePath.map(({ label, status, ready }) => ({ label, status, ready })),
     accepted_when: "first_dashboard_view_clearly_separates_professional_user_corporate_admin_corporate_reviewer_pricing_and_server_save_paths"
   };
+  const portalReadinessBoard = [
+    {
+      label: "Login",
+      status: authSession ? "Live session" : "Hosted login needed",
+      detail: authSession ? authSession.user.email : "Use the hosted TrustGraph URL so verification and reset links return here.",
+      action: authSession ? "Open Account" : "Login",
+      target: "account" as const,
+      ready: Boolean(authSession),
+      proof: authSession ? "Supabase auth session" : "No live user rows yet"
+    },
+    {
+      label: "Professional",
+      status: livePassportRecords.length ? `${livePassportRecords.length} Passport rows` : "Passport rows needed",
+      detail: "Professional users own identity, work, credential, evidence, consent, and sharing rows.",
+      action: "Open Passport",
+      target: "passport" as const,
+      ready: livePassportRecords.length > 0,
+      proof: "Owner-scoped Passport database"
+    },
+    {
+      label: "Corporate",
+      status: hasLiveCorporateContext ? activeOrganization.name : "Company setup needed",
+      detail: "Corporate admins create the organization, RBAC roles, team, invitations, and pilot ledger.",
+      action: hasLiveCorporateContext ? "Open Admin" : "Create company",
+      target: hasLiveCorporateContext ? ("admin" as const) : ("corporate_setup" as const),
+      ready: hasLiveCorporateContext,
+      proof: "Organization and membership rows"
+    },
+    {
+      label: "Pricing",
+      status: organizationSubscriptions.length ? "Pilot ledger active" : "$149 pilot ledger needed",
+      detail: "Pricing is recorded in Supabase; Stripe checkout remains gated until the billing decision is approved.",
+      action: "Open pricing",
+      target: "billing" as const,
+      ready: organizationSubscriptions.length > 0,
+      proof: "Subscription ledger receipt"
+    },
+    {
+      label: "User database",
+      status: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Access Grant needed",
+      detail: "Corporate reviewers see only professional-approved rows, never raw private files or preview data.",
+      action: "Open Verify",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0,
+      proof: "Access Grant and consent scope"
+    },
+    {
+      label: "Server",
+      status: serverSyncMonitor.status === "synced" ? "VPS synced" : "GitHub saved, VPS pull needed",
+      detail: "The server is accepted only when the release stamp returns commit JSON for the latest green main build.",
+      action: "Export server packet",
+      target: "server_packet" as const,
+      ready: serverSyncMonitor.status === "synced",
+      proof: "trustgraph-release.json"
+    }
+  ];
+  const nextPortalReadinessItem = portalReadinessBoard.find((item) => !item.ready) ?? portalReadinessBoard[portalReadinessBoard.length - 1];
+  const portalReadinessBoardPacket = {
+    mode: "portal_readiness_board",
+    generated_at: new Date().toISOString(),
+    signed_in: Boolean(authSession),
+    current_workspace: workspace.id,
+    next_action: nextPortalReadinessItem.label,
+    ready_items: portalReadinessBoard.filter((item) => item.ready).length,
+    total_items: portalReadinessBoard.length,
+    items: portalReadinessBoard.map(({ label, status, ready, proof }) => ({ label, status, ready, proof })),
+    preview_data_accepted: false,
+    accepted_when:
+      "login_professional_passport_corporate_workspace_pricing_ledger_scoped_user_database_and_vps_release_stamp_are_visible_actionable_and_backed_by_live_rows"
+  };
   const portalActionDock = [
     {
       label: "Passport",
@@ -20106,6 +20176,7 @@ function App() {
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,
     portal_welcome_path: portalWelcomePathPacket,
+    portal_readiness_board: portalReadinessBoardPacket,
     portal_action_dock: portalActionDockPacket,
     signed_in_portal_flow_contract: signedInPortalFlowContract,
     corporate_onboarding_pricing_cockpit: corporateOnboardingPricingCockpit,
@@ -20559,6 +20630,62 @@ function App() {
             >
               Export proof
             </button>
+          </div>
+          <div className="portal-readiness-board" aria-label="Portal readiness board">
+            <div className="portal-readiness-board-header">
+              <div>
+                <span className="status-chip success">Portal readiness board</span>
+                <strong>One launch board for users, corporate teams, pricing, database access, and server save</strong>
+                <small>{portalReadinessBoardPacket.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-portal-readiness-board-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(portalReadinessBoardPacket, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export board
+              </button>
+            </div>
+            <div className="portal-readiness-board-grid">
+              {portalReadinessBoard.map((item) => (
+                <button
+                  className={item.ready ? "ready" : "next"}
+                  key={item.label}
+                  onClick={() => {
+                    if (item.target === "account") {
+                      openAuthControls();
+                      return;
+                    }
+                    if (item.target === "corporate_setup") {
+                      openCorporateControls();
+                      return;
+                    }
+                    if (item.target === "billing") {
+                      setSetupView("billing");
+                      return;
+                    }
+                    if (item.target === "server_packet") {
+                      downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                      return;
+                    }
+                    openWorkspaceOrSetup(item.target);
+                  }}
+                  type="button"
+                >
+                  <span>{item.label}</span>
+                  <strong>{item.status}</strong>
+                  <small>{item.detail}</small>
+                  <em>{item.proof}</em>
+                  <b>{item.action}</b>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 

@@ -107,6 +107,9 @@ assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.inclu
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(css.includes(".portal-action-dock") && css.includes(".export-dock"), "portal action dock must be styled and bounded.");
 assert(consoleLayout.includes(".v1-portal-launchpad") && consoleLayout.includes(".v1-portal-launchpad-grid") && consoleLayout.includes(".v1-portal-launchpad-proof"), "V1 portal launchpad must be styled and bounded.");
+assert(app.includes('aria-label="Portal readiness board"'), "signed-in dashboard must expose a portal readiness board for login, Professional, Corporate, pricing, database, and server save.");
+assert(app.includes("portal_readiness_board") && app.includes("preview_data_accepted: false"), "portal readiness board packet must reject preview data as completion proof.");
+assert(css.includes(".portal-readiness-board") && css.includes(".portal-readiness-board-header") && css.includes(".portal-readiness-board-grid"), "portal readiness board must be styled and bounded.");
 assert(consoleLayout.includes(".v1-command-cockpit") && consoleLayout.includes(".v1-command-cockpit-lanes") && consoleLayout.includes(".v1-command-cockpit-proof"), "V1 command cockpit must be styled and bounded.");
 assert(css.includes(".portal-welcome-path") && css.includes(".portal-welcome-path-grid") && css.includes(".portal-welcome-path-proof"), "portal welcome path must be styled and bounded.");
 assert(css.includes(".signed-in-portal-flow-contract") && css.includes(".signed-in-portal-flow-grid"), "signed-in portal flow contract must be styled and bounded.");

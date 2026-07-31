@@ -221,6 +221,10 @@ assertIncludesAny(bundleText, ["Portal welcome path"], "signed-in portal welcome
 assertIncludesAny(bundleText, ["portal_welcome_path"], "signed-in portal welcome packet field");
 assertIncludesAny(bundleText, ["Professional, Corporate admin, Corporate reviewer, pricing, and server save"], "portal welcome path role separation");
 assertIncludesAny(bundleText, ["first_dashboard_view_clearly_separates_professional_user_corporate_admin_corporate_reviewer_pricing_and_server_save_paths"], "portal welcome path acceptance rule");
+assertIncludesAny(bundleText, ["Portal readiness board"], "signed-in portal readiness board");
+assertIncludesAny(bundleText, ["portal_readiness_board"], "portal readiness board packet field");
+assertIncludesAny(bundleText, ["login_professional_passport_corporate_workspace_pricing_ledger_scoped_user_database_and_vps_release_stamp"], "portal readiness board acceptance rule");
+assertIncludesAny(bundleText, ["Export board"], "portal readiness board export action");
 assertIncludesAny(bundleText, ["Start here"], "portal launchpad start marker");
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
 assertIncludesAny(bundleText, ["Portal command deck"], "signed-in portal command deck");

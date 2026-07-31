@@ -18826,6 +18826,127 @@ body {
   line-height: 1.35;
 }
 
+.portal-readiness-board {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(210, 231, 223, 0.1);
+}
+
+.portal-readiness-board-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, max-content);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.portal-readiness-board-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.portal-readiness-board-header strong,
+.portal-readiness-board-header small,
+.portal-readiness-board-grid span,
+.portal-readiness-board-grid strong,
+.portal-readiness-board-grid small,
+.portal-readiness-board-grid em,
+.portal-readiness-board-grid b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.portal-readiness-board-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.55vw, 24px);
+  line-height: 1.14;
+}
+
+.portal-readiness-board-header small {
+  max-width: 78ch;
+  color: rgba(222, 239, 233, 0.7);
+  line-height: 1.42;
+}
+
+.portal-readiness-board-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.portal-readiness-board-grid button {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  gap: 7px;
+  min-width: 0;
+  min-height: 170px;
+  padding: 13px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  box-shadow: none;
+  white-space: normal;
+}
+
+.portal-readiness-board-grid button.ready {
+  border-color: rgba(92, 236, 193, 0.3);
+  background:
+    linear-gradient(135deg, rgba(92, 236, 193, 0.09), transparent 64%),
+    rgba(255, 255, 255, 0.036);
+}
+
+.portal-readiness-board-grid button.next {
+  border-color: rgba(240, 198, 107, 0.3);
+  background:
+    linear-gradient(135deg, rgba(240, 198, 107, 0.08), transparent 64%),
+    rgba(255, 255, 255, 0.034);
+}
+
+.portal-readiness-board-grid button:hover {
+  border-color: rgba(210, 231, 223, 0.28);
+  background-color: rgba(255, 255, 255, 0.055);
+}
+
+.portal-readiness-board-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.portal-readiness-board-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.14;
+}
+
+.portal-readiness-board-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.portal-readiness-board-grid em {
+  color: rgba(171, 247, 224, 0.82);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.portal-readiness-board-grid b {
+  align-self: end;
+  color: #f8fffb;
+  font-size: 12px;
+  font-weight: 950;
+}
+
 .role-workspace-switchboard {
   display: grid;
   grid-template-columns: minmax(0, 0.48fr) minmax(0, 1fr);
@@ -19499,6 +19620,7 @@ body {
 
 .dashboard-next-action-metrics,
 .v1-portal-launchpad-grid,
+.portal-readiness-board-grid,
 .role-workspace-switchboard-grid,
 .portal-choice-guide-grid,
 .v1-operating-map-grid,
