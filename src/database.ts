@@ -51,6 +51,7 @@ export type ConsentAuthorizationStatus = "active" | "revoked" | "expired";
 export type RegistrationIntentPortal = "professional" | "corporate";
 export type RegistrationIntentMode = "signin" | "signup";
 export type RegistrationIntentStatus = "captured" | "workspace_created" | "passport_initialized" | "cancelled";
+export type AuthRecoveryReceiptAction = "signup_verification" | "password_recovery" | "localhost_link_repair" | "hosted_callback";
 export type ProductionGateStatus =
   | "human_decision_required"
   | "external_signoff_required"
@@ -433,6 +434,21 @@ export interface DbOnboardingWizardReceipt {
   current_step_status: "ready" | "needs_action";
   live_database_rows: number;
   preview_data_accepted_for_v1: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface DbAuthRecoveryReceipt {
+  id: string;
+  profile_id: string;
+  email: string;
+  action_type: AuthRecoveryReceiptAction;
+  selected_portal: RegistrationIntentPortal;
+  redirect_url: string;
+  hosted_redirect_required: boolean;
+  localhost_link_detected: boolean;
+  email_rate_limit_note: string;
   accepted_when: string;
   metadata: Record<string, unknown>;
   created_at: string;

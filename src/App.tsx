@@ -33,6 +33,7 @@ import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceI
 import type {
   DbAuditEvent,
   DbApiClient,
+  DbAuthRecoveryReceipt,
   DbBillingArchitectureDecisionReceipt,
   DbConsentAuthorization,
   DbCorporateAccessReview,
@@ -95,6 +96,7 @@ import {
   updatePassword,
   type AuthSession
 } from "./auth";
+import { loadAuthRecoveryReceipts, recordAuthRecoveryReceipt } from "./authRecoveryRepository";
 import {
   activateOrganizationSubscription,
   loadBillingArchitectureDecisionReceipts,
@@ -210,6 +212,8 @@ import {
 
 const ONBOARDING_WIZARD_RECEIPT_ACCEPTANCE_RULE =
   "onboarding_wizard_receipt_requires_hosted_login_account_context_registration_corporate_setup_pricing_user_database_and_preview_data_rejected";
+const AUTH_RECOVERY_RECEIPT_ACCEPTANCE_RULE =
+  "auth_recovery_receipt_requires_hosted_redirect_email_rate_limit_guidance_localhost_link_repair_and_signed_in_owner_scope";
 
 type LivePilotRowProof = {
   source: "signed_in_supabase_rows" | "preview_or_logged_out";
@@ -12930,15 +12934,18 @@ function PermissionGate({
 }
 
 function PublicSite({
+  authRecoveryReceipts,
   currentSession,
   currentSessionContext,
   hostedCallbackProof,
   onCorporateSession,
   onOpenProductPreview,
+  onRecordAuthRecoveryReceipt,
   onSignOut,
   onSession,
   serverSyncMonitor
 }: {
+  authRecoveryReceipts: DbAuthRecoveryReceipt[];
   currentSession: AuthSession | null;
   currentSessionContext: string;
   hostedCallbackProof: HostedAuthCallbackProof;
@@ -12947,6 +12954,14 @@ function PublicSite({
     input: { organizationName: string; organizationType: "employer" | "staffing_agency"; organizationDomain: string }
   ) => void;
   onOpenProductPreview: () => void;
+  onRecordAuthRecoveryReceipt: (input: {
+    email: string;
+    actionType: DbAuthRecoveryReceipt["action_type"];
+    selectedPortal: DbAuthRecoveryReceipt["selected_portal"];
+    redirectUrl: string;
+    localhostLinkDetected: boolean;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
   onSignOut: () => void;
   onSession: (session: AuthSession) => void;
   serverSyncMonitor: ServerSyncMonitorState;
@@ -12968,6 +12983,7 @@ function PublicSite({
   const authRedirectUrl = hostedAuthRedirectUrl();
   const pendingCorporateRegistrationKey = "trustgraph.pendingCorporateRegistration";
   const repairedVerificationUrl = repairHostedAuthLink(verificationLinkInput, authRedirectUrl);
+  const latestAuthRecoveryReceipt = authRecoveryReceipts[0] ?? null;
   const registrationPacketName = `trustgraph-registration-auth-readiness-${new Date().toISOString().slice(0, 10)}.json`;
   const selectedRegistrationPath =
     portal === "corporate"
@@ -13758,6 +13774,29 @@ function PublicSite({
     email_rate_limit: "Supabase built-in email allows 2 emails per hour project-wide; wait 60+ minutes after rate-limit errors or configure custom SMTP."
   };
 
+  async function saveAuthRecoveryReceipt(actionType: DbAuthRecoveryReceipt["action_type"], localhostLinkDetected = false) {
+    if (!currentSession) {
+      setMessage("Login first to save auth recovery proof in Supabase. You can still use resend, reset, and link repair before login.");
+      return;
+    }
+
+    await onRecordAuthRecoveryReceipt({
+      email: email || currentSession.user.email,
+      actionType,
+      selectedPortal: portal,
+      redirectUrl: authRedirectUrl,
+      localhostLinkDetected,
+      metadata: {
+        selected_mode: mode,
+        repaired_link_ready: Boolean(repairedVerificationUrl),
+        hosted_callback_status: hostedCallbackProof.status,
+        current_session_context: currentSessionContext,
+        acceptance_rule: AUTH_RECOVERY_RECEIPT_ACCEPTANCE_RULE,
+        rate_limit_guidance_visible: true
+      }
+    });
+  }
+
   function pendingCorporateRegistration() {
     return {
       organizationName,
@@ -13907,6 +13946,7 @@ function PublicSite({
     setMessage("Sending verification email...");
     try {
       await resendSignupConfirmation(email, authRedirectUrl);
+      await saveAuthRecoveryReceipt("signup_verification", false);
       setMessage("Verification email requested. If the rate limit is active, wait 60+ minutes or configure custom SMTP.");
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not resend verification email."));
@@ -13929,6 +13969,7 @@ function PublicSite({
     setMessage("Sending password recovery email...");
     try {
       await requestPasswordRecovery(email, authRedirectUrl);
+      await saveAuthRecoveryReceipt("password_recovery", false);
       setMessage("Password recovery email requested. Use the inbox link to return to this hosted TrustGraph app; wait 60+ minutes if Supabase email is rate-limited.");
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not request password recovery."));
@@ -13945,6 +13986,7 @@ function PublicSite({
 
     try {
       await navigator.clipboard.writeText(repairedVerificationUrl);
+      await saveAuthRecoveryReceipt("localhost_link_repair", true);
       setVerificationLinkMessage("Hosted verification link copied. Open it in this browser, then login again.");
     } catch {
       setVerificationLinkMessage("Copy blocked by the browser. Select the hosted link below and open it manually.");
@@ -15104,6 +15146,45 @@ function PublicSite({
               </button>
             </div>
           </div>
+          <div className="auth-recovery-database-receipt" aria-label="Auth recovery database receipt">
+            <div>
+              <span className={`status-chip ${latestAuthRecoveryReceipt ? "success" : "warning"}`}>Auth recovery database receipt</span>
+              <strong>
+                {latestAuthRecoveryReceipt
+                  ? `${latestAuthRecoveryReceipt.action_type.replace(/_/g, " ")} saved`
+                  : "Save recovery proof after hosted login"}
+              </strong>
+              <small>
+                Persists hosted redirect, selected portal, email rate-limit guidance, localhost link repair status, and owner-scoped recovery proof.
+              </small>
+            </div>
+            <div className="auth-recovery-database-grid">
+              <span>
+                <strong>{authRecoveryReceipts.length}</strong>
+                <small>Receipt rows</small>
+              </span>
+              <span>
+                <strong>{latestAuthRecoveryReceipt?.selected_portal ?? portal}</strong>
+                <small>Portal</small>
+              </span>
+              <span>
+                <strong>{latestAuthRecoveryReceipt?.localhost_link_detected ? "Detected" : repairedVerificationUrl ? "Ready" : "No"}</strong>
+                <small>Localhost repair</small>
+              </span>
+              <span>
+                <strong>{latestAuthRecoveryReceipt?.redirect_url.includes("localhost") ? "Fix needed" : "Hosted"}</strong>
+                <small>Redirect</small>
+              </span>
+            </div>
+            <button
+              className="secondary-action"
+              disabled={!currentSession || busy}
+              onClick={() => void saveAuthRecoveryReceipt(hostedCallbackProof.status === "callback_session_accepted" ? "hosted_callback" : "localhost_link_repair", Boolean(repairedVerificationUrl))}
+              type="button"
+            >
+              Record recovery proof
+            </button>
+          </div>
           <div className="hosted-callback-proof" aria-label="Hosted callback acceptance proof">
             <div>
               <span className={`status-chip ${hostedCallbackProof.status === "callback_session_accepted" ? "success" : "neutral"}`}>
@@ -15261,6 +15342,7 @@ function App() {
   const [passportMissingRecordStatus, setPassportMissingRecordStatus] = useState("Sign in to review requested Passport records");
   const [registrationIntents, setRegistrationIntents] = useState<DbRegistrationIntent[]>([]);
   const [registrationIntentStatus, setRegistrationIntentStatus] = useState("Sign in to load registration intent rows");
+  const [authRecoveryReceipts, setAuthRecoveryReceipts] = useState<DbAuthRecoveryReceipt[]>([]);
   const [onboardingReceipts, setOnboardingReceipts] = useState<DbOnboardingWizardReceipt[]>([]);
   const [v1ReadinessReceipts, setV1ReadinessReceipts] = useState<DbV1LiveDatabaseReadinessReceipt[]>([]);
   const [v1ReadinessStatus, setV1ReadinessStatus] = useState("Sign in to record V1 live database readiness receipts");
@@ -15429,6 +15511,7 @@ function App() {
       setBillingDecisionReceipts([]);
       setPricingQuoteReceipts([]);
       setRegistrationIntents([]);
+      setAuthRecoveryReceipts([]);
       setOnboardingReceipts([]);
       setRegistrationIntentStatus("Sign in to load registration intent rows");
       setBillingStatus("Sign in to manage billing plans");
@@ -15498,18 +15581,20 @@ function App() {
       loadBillingArchitectureDecisionReceipts(authSession.accessToken).catch(() => []),
       loadPricingQuoteReceipts(authSession.accessToken).catch(() => []),
       loadRegistrationIntents(authSession.accessToken).catch(() => []),
+      loadAuthRecoveryReceipts(authSession.accessToken).catch(() => []),
       loadOnboardingWizardReceipts(authSession.accessToken).catch(() => []),
       loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => []),
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, onboardingRows, readinessReceipts, invitations, members]) => {
+      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, authReceipts, onboardingRows, readinessReceipts, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
         setBillingDecisionReceipts(decisionReceipts);
         setPricingQuoteReceipts(quoteReceipts);
         setRegistrationIntents(intents);
+        setAuthRecoveryReceipts(authReceipts);
         setOnboardingReceipts(onboardingRows);
         setV1ReadinessReceipts(readinessReceipts);
         setTeamInvitations(invitations);
@@ -15529,6 +15614,7 @@ function App() {
         setBillingDecisionReceipts([]);
         setPricingQuoteReceipts([]);
         setRegistrationIntents([]);
+        setAuthRecoveryReceipts([]);
         setOnboardingReceipts([]);
         setV1ReadinessReceipts([]);
         setTeamInvitations([]);
@@ -17949,6 +18035,41 @@ function App() {
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
+  async function recordLiveAuthRecoveryReceipt(input: {
+    email: string;
+    actionType: DbAuthRecoveryReceipt["action_type"];
+    selectedPortal: DbAuthRecoveryReceipt["selected_portal"];
+    redirectUrl: string;
+    localhostLinkDetected: boolean;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession) {
+      throw new Error("Login first to save an auth recovery receipt.");
+    }
+
+    const receipt = await recordAuthRecoveryReceipt({
+      accessToken: authSession.accessToken,
+      email: input.email,
+      actionType: input.actionType,
+      selectedPortal: input.selectedPortal,
+      redirectUrl: input.redirectUrl,
+      localhostLinkDetected: input.localhostLinkDetected,
+      metadata: {
+        ...input.metadata,
+        source: "signed_in_supabase_auth_recovery",
+        preview_data_accepted_for_v1: false
+      }
+    });
+    const [receipts, events] = await Promise.all([
+      loadAuthRecoveryReceipts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setAuthRecoveryReceipts(receipts);
+    setAuditEvents(events);
+    setAccountStatus(`Auth recovery receipt recorded: ${receipt.action_type.replace(/_/g, " ")}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
   const liveDatabaseContract = {
     mode: "live_database_contract",
     accepted: livePilotRowProof.accepted,
@@ -18448,6 +18569,7 @@ function App() {
   if (showPublicSite) {
     return (
       <PublicSite
+        authRecoveryReceipts={authRecoveryReceipts}
         currentSession={authSession}
         currentSessionContext={`${activeRole.label} - ${activeOrganization.name}`}
         hostedCallbackProof={hostedCallbackProof}
@@ -18458,6 +18580,7 @@ function App() {
           setShowPublicSite(false);
         }}
         onOpenProductPreview={() => setShowPublicSite(false)}
+        onRecordAuthRecoveryReceipt={recordLiveAuthRecoveryReceipt}
         onSignOut={handleSignOut}
         onSession={(session) => {
           setAuthSession(session);

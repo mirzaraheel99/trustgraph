@@ -15,6 +15,7 @@ const requiredMobileStacks = [
   ".auth-support-actions",
   ".hosted-auth-redirect-grid",
   ".email-verification-delivery-grid",
+  ".auth-recovery-database-grid",
   ".hosted-callback-proof-grid",
   ".hosted-corporate-retest-grid",
   ".hosted-version-command",

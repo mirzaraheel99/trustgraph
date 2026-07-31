@@ -40,7 +40,8 @@ const requiredRlsTables = [
   "data_export_packages",
   "billing_architecture_decision_receipts",
   "pricing_quote_receipts",
-  "onboarding_wizard_receipts"
+  "onboarding_wizard_receipts",
+  "auth_recovery_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -324,6 +325,29 @@ if (!onboardingWizardReceiptMigration.includes("onboarding.wizard_receipt_record
 }
 if (!onboardingWizardReceiptMigration.includes("grant execute on function public.record_onboarding_wizard_receipt")) {
   throw new Error("Onboarding wizard receipt RPC must be executable by authenticated users.");
+}
+
+const authRecoveryReceiptMigration = latestSqlByFile["055_auth_recovery_receipts.sql"] ?? "";
+if (!authRecoveryReceiptMigration.includes("create table if not exists public.auth_recovery_receipts")) {
+  throw new Error("Missing auth recovery receipt table migration.");
+}
+if (!authRecoveryReceiptMigration.includes("alter table public.auth_recovery_receipts enable row level security")) {
+  throw new Error("Auth recovery receipts must enable RLS.");
+}
+if (!authRecoveryReceiptMigration.includes("profile_id = public.current_profile_id()")) {
+  throw new Error("Auth recovery receipts must be owner-scoped.");
+}
+if (!authRecoveryReceiptMigration.includes("hosted_redirect_required = true")) {
+  throw new Error("Auth recovery receipts must require hosted redirect proof.");
+}
+if (!authRecoveryReceiptMigration.includes("create or replace function public.record_auth_recovery_receipt")) {
+  throw new Error("Missing auth recovery receipt RPC.");
+}
+if (!authRecoveryReceiptMigration.includes("auth.recovery_receipt_recorded")) {
+  throw new Error("Auth recovery receipt RPC must write audit history.");
+}
+if (!authRecoveryReceiptMigration.includes("grant execute on function public.record_auth_recovery_receipt")) {
+  throw new Error("Auth recovery receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

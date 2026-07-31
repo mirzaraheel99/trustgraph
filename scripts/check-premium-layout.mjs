@@ -180,6 +180,8 @@ assert(app.includes('aria-label="Hosted auth redirect verification receipt"'), "
 assert(premiumRepair.includes(".hosted-auth-redirect-verification") && premiumRepair.includes(".hosted-auth-redirect-grid"), "hosted auth redirect verification must be styled and bounded.");
 assert(app.includes('aria-label="Email verification delivery receipt"'), "public auth must expose email verification delivery receipt.");
 assert(css.includes(".email-verification-delivery-receipt") && css.includes(".email-verification-delivery-grid"), "email verification delivery receipt must be styled and bounded.");
+assert(app.includes('aria-label="Auth recovery database receipt"'), "public auth must expose persisted auth recovery receipt proof.");
+assert(css.includes(".auth-recovery-database-receipt") && css.includes(".auth-recovery-database-grid"), "auth recovery database receipt must be styled and bounded.");
 assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checkout-decision-grid") && css.includes(".stripe-checkout-decision-actions"), "Stripe checkout decision receipt must be styled and bounded.");
 assert(css.includes(".pricing-quote-receipt") && css.includes(".pricing-quote-receipt-grid") && css.includes(".pricing-quote-receipt-actions"), "pricing quote receipt must be styled and bounded.");
 assert(css.includes(".billing-architecture-receipt") && css.includes(".billing-architecture-receipt-grid"), "billing architecture decision receipt must be styled and bounded.");

@@ -84,7 +84,7 @@ for (const [phrase, label] of runbookRequirements) {
 
 assertIncludes(evidenceMap, "Working-data packet", "evidence map working-data export");
 assertIncludes(evidenceMap, "Seed reconciliation", "evidence map seed reconciliation");
-assertIncludes(evidenceMap, "Live Supabase migrations currently run through `054_onboarding_wizard_receipts.sql`", "evidence map current migration boundary");
+assertIncludes(evidenceMap, "Live Supabase migrations currently run through `055_auth_recovery_receipts.sql`", "evidence map current migration boundary");
 assertIncludes(evidenceMap, "043_account_context_rpc.sql", "evidence map account-context migration history");
 assertIncludes(evidenceMap, "passport_initialized", "evidence map professional registration completion status");
 assertIncludes(evidenceMap, "persisted V1 live database readiness receipts", "evidence map persisted readiness receipt");
@@ -105,6 +105,7 @@ assertMigration(migrationFiles, "051_", "data export package manifest persistenc
 assertMigration(migrationFiles, "052_", "billing architecture decision receipt persistence");
 assertMigration(migrationFiles, "053_", "pricing quote receipt persistence");
 assertMigration(migrationFiles, "054_", "onboarding wizard receipt persistence");
+assertMigration(migrationFiles, "055_", "auth recovery receipt persistence");
 
 assert(packageJson.scripts?.["check:real-data-readiness"] === "node scripts/check-real-data-readiness.mjs", "package script check:real-data-readiness");
 assertIncludes(workflow, "pnpm check:real-data-readiness", "GitHub Pages workflow real-data readiness gate");

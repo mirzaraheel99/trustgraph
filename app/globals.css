@@ -15128,7 +15128,25 @@ p {
     rgba(255, 255, 255, 0.03);
 }
 
+.auth-recovery-database-receipt {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(94, 234, 212, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(94, 234, 212, 0.08), rgba(96, 165, 250, 0.06) 66%),
+    rgba(255, 255, 255, 0.03);
+}
+
 .email-verification-delivery-receipt > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.auth-recovery-database-receipt > div:first-child {
   display: grid;
   gap: 7px;
   min-width: 0;
@@ -15136,7 +15154,10 @@ p {
 
 .email-verification-delivery-receipt strong,
 .email-verification-delivery-receipt small,
-.email-verification-delivery-receipt span {
+.email-verification-delivery-receipt span,
+.auth-recovery-database-receipt strong,
+.auth-recovery-database-receipt small,
+.auth-recovery-database-receipt span {
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -15147,7 +15168,23 @@ p {
   gap: 9px;
 }
 
+.auth-recovery-database-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 9px;
+}
+
 .email-verification-delivery-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.auth-recovery-database-grid span {
   display: grid;
   gap: 5px;
   min-width: 0;
@@ -15164,10 +15201,27 @@ p {
   text-transform: uppercase;
 }
 
+.auth-recovery-database-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
 .email-verification-delivery-grid strong {
   color: var(--text);
   font-size: 16px;
   line-height: 1.15;
+}
+
+.auth-recovery-database-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.auth-recovery-database-receipt > .secondary-action {
+  width: min(100%, 260px);
 }
 
 .hosted-callback-proof > div:first-child {
@@ -15706,6 +15760,7 @@ p {
     grid-template-columns: 1fr;
   }
 
+  .auth-recovery-database-grid,
   .onboarding-wizard-receipt-grid {
     grid-template-columns: 1fr;
   }

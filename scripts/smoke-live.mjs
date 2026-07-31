@@ -477,6 +477,15 @@ assertIncludesAny(
   ["onboarding_wizard_receipt_requires_hosted_login_account_context_registration_corporate_setup_pricing_user_database_and_preview_data_rejected"],
   "onboarding wizard receipt acceptance rule"
 );
+assertIncludesAny(bundleText, ["auth_recovery_receipts"], "auth recovery receipt table");
+assertIncludesAny(bundleText, ["record_auth_recovery_receipt"], "auth recovery receipt RPC");
+assertIncludesAny(bundleText, ["Auth recovery database receipt"], "auth recovery database receipt label");
+assertIncludesAny(bundleText, ["Record recovery proof"], "auth recovery receipt record action");
+assertIncludesAny(
+  bundleText,
+  ["auth_recovery_receipt_requires_hosted_redirect_email_rate_limit_guidance_localhost_link_repair_and_signed_in_owner_scope"],
+  "auth recovery receipt acceptance rule"
+);
 assertIncludesAny(bundleText, ["Onboarding handoff"], "top-level onboarding handoff command");
 assertIncludesAny(bundleText, ["onboarding_handoff_command"], "top-level onboarding handoff packet field");
 assertIncludesAny(bundleText, ["new_user_can_move_from_login_to_corporate_setup_live_row_completion_guided_seed_reconciliation_and_exported_proof_without_searching_the_dashboard"], "top-level onboarding handoff acceptance rule");
