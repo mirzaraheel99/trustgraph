@@ -10931,6 +10931,39 @@ function AuthPanel({
     }
   }
 
+  const signedInRecoveryRoute = {
+    mode: "signed_in_recovery_route",
+    session_email: session?.user.email ?? "signed_out",
+    session_state: session ? "signed_in" : "signed_out",
+    recovery_session_ready: recoverySessionReady,
+    password_update_available: Boolean(session),
+    logout_available: Boolean(session),
+    hosted_redirect_url: authRedirectUrl,
+    accepted_when: "signed_in_account_shows_logout_password_update_recovery_state_and_hosted_redirect_without_hidden_controls"
+  };
+  const signedInRecoveryRouteCards = [
+    {
+      label: "Session",
+      value: session ? "Signed in" : "Signed out",
+      detail: session?.user.email ?? "Use login or registration before account work."
+    },
+    {
+      label: "Recovery",
+      value: recoverySessionReady ? "Ready" : "Normal session",
+      detail: recoverySessionReady ? "Set a new password now." : "Use Reset password if you need a recovery email."
+    },
+    {
+      label: "Password",
+      value: newPassword.length >= 8 ? "Ready to update" : "8+ chars",
+      detail: "Password update is available for the current signed-in session."
+    },
+    {
+      label: "Exit",
+      value: "Sign out visible",
+      detail: "Use Sign out to clear this browser session before switching accounts."
+    }
+  ];
+
   return (
     <section className="auth-panel" id="live-auth-controls">
       <div className="mini-heading">
@@ -10944,6 +10977,29 @@ function AuthPanel({
           <div className="auth-session-meta">
             <span>Live database access</span>
             <span>RBAC context loading</span>
+          </div>
+          <div className="signed-in-recovery-route" aria-label="Signed-in recovery route">
+            <div>
+              <span className={`status-chip ${recoverySessionReady ? "success" : "neutral"}`}>Signed-in recovery route</span>
+              <strong>{recoverySessionReady ? "Recovery session is ready: set a new password" : "Account controls are ready"}</strong>
+              <small>Logout, password update, recovery state, and hosted redirect proof stay together in Account so users can switch or recover cleanly.</small>
+            </div>
+            <div className="signed-in-recovery-route-grid">
+              {signedInRecoveryRouteCards.map((item) => (
+                <span key={item.label}>
+                  <strong>{item.value}</strong>
+                  <small>{item.label}</small>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(`trustgraph-signed-in-recovery-route-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(signedInRecoveryRoute, null, 2), "application/json")}
+              type="button"
+            >
+              Export recovery route
+            </button>
           </div>
           <form className="password-update-form" onSubmit={submitPasswordUpdate}>
             {recoverySessionReady ? (

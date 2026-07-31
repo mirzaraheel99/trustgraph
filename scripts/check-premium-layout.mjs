@@ -62,6 +62,7 @@ assert(app.includes('aria-label="Corporate access request scope receipt"'), "Cor
 assert(app.includes('aria-label="Corporate user database access contract"'), "Corporate Verify must expose the exact corporate user database access boundary.");
 assert(app.includes('aria-label="Corporate scope review command"'), "Corporate Verify must expose a scope review command before export or handoff.");
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
+assert(app.includes('aria-label="Signed-in recovery route"'), "signed-in account must expose a visible logout and password recovery route.");
 assert(app.includes('aria-label="Login issue resolver"'), "public auth must expose visible login issue resolver guidance.");
 assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public auth must expose a live onboarding acceptance contract.");
 assert(app.includes('aria-label="Onboarding wizard database receipt"'), "guided onboarding must expose a persisted onboarding wizard receipt.");
@@ -201,6 +202,7 @@ assert(css.includes(".passport-missing-handoff-receipt") && css.includes(".passp
 assert(css.includes(".request-scope-receipt") && css.includes(".request-scope-receipt-grid"), "Corporate Verify request scope receipt must be styled and bounded.");
 assert(premiumRepair.includes(".corporate-user-database-contract") && premiumRepair.includes(".corporate-user-database-contract-grid"), "corporate user database access contract must be styled and bounded.");
 assert(premiumRepair.includes(".auth-recovery-command-grid") && premiumRepair.includes(".public-auth-recovery-actions"), "auth recovery command buttons must be included in overflow guards.");
+assert(css.includes(".signed-in-recovery-route") && css.includes(".signed-in-recovery-route-grid"), "signed-in recovery route must be styled and bounded.");
 assert(premiumRepair.includes(".login-issue-resolver") && premiumRepair.includes(".login-issue-resolver-grid"), "login issue resolver must be styled and bounded.");
 assert(css.includes(".live-onboarding-contract") && css.includes(".live-onboarding-contract-grid") && css.includes(".live-onboarding-sequence"), "live onboarding acceptance contract must be styled and bounded.");
 assert(css.includes(".onboarding-wizard-receipt") && css.includes(".onboarding-wizard-receipt-grid"), "onboarding wizard receipt must be styled and bounded.");

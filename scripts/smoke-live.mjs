@@ -332,6 +332,10 @@ assertIncludesAny(bundleText, ["Set new password"], "password recovery update co
 assertIncludesAny(bundleText, ["Password recovery session ready"], "password recovery session ready state");
 assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
 assertIncludesAny(bundleText, ["Auth recovery command center"], "visible auth recovery command center");
+assertIncludesAny(bundleText, ["Signed-in recovery route"], "signed-in logout and recovery route");
+assertIncludesAny(bundleText, ["signed_in_recovery_route"], "signed-in recovery route packet field");
+assertIncludesAny(bundleText, ["Export recovery route"], "signed-in recovery route export");
+assertIncludesAny(bundleText, ["signed_in_account_shows_logout_password_update_recovery_state_and_hosted_redirect_without_hidden_controls"], "signed-in recovery route acceptance rule");
 assertIncludesAny(bundleText, ["Copy hosted redirect"], "hosted auth redirect copy action");
 assertIncludesAny(bundleText, ["Portal access command"], "professional and corporate auth access command");
 assertIncludesAny(bundleText, ["Registration outcome command"], "registration outcome command");

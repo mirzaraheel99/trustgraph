@@ -3601,6 +3601,64 @@ p,
   white-space: normal;
 }
 
+.signed-in-recovery-route {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.signed-in-recovery-route > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.signed-in-recovery-route strong,
+.signed-in-recovery-route small,
+.signed-in-recovery-route span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.signed-in-recovery-route > div:first-child > strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.16;
+}
+
+.signed-in-recovery-route-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 146px), 1fr));
+  gap: 8px;
+}
+
+.signed-in-recovery-route-grid span {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.signed-in-recovery-route-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.32;
+}
+
+.signed-in-recovery-route > .secondary-action {
+  justify-content: center;
+  width: min(100%, 240px);
+}
+
 .login-issue-resolver {
   display: grid;
   gap: 10px;
