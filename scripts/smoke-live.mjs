@@ -501,6 +501,14 @@ assertIncludesAny(bundleText, ["Record database receipt"], "corporate database a
 assertIncludesAny(bundleText, ["evidence_access_receipts"], "evidence access receipt table");
 assertIncludesAny(bundleText, ["record_evidence_access_receipt"], "evidence access receipt RPC");
 assertIncludesAny(bundleText, ["evidence_access_receipt_requires_private_storage_short_lived_signed_url_no_raw_url_storage_owner_or_approved_scope_and_audit_event"], "evidence access receipt acceptance rule");
+assertIncludesAny(bundleText, ["data_export_package_receipts"], "data export package receipt table");
+assertIncludesAny(bundleText, ["record_data_export_package_receipt"], "data export package receipt RPC");
+assertIncludesAny(bundleText, ["Data export package receipt"], "data export package receipt panel");
+assertIncludesAny(
+  bundleText,
+  ["data_export_package_receipt_requires_signed_in_owner_live_rows_review_request_metadata_only_raw_private_files_excluded_and_no_preview_data"],
+  "data export package receipt acceptance rule"
+);
 assertIncludesAny(
   bundleText,
   ["v1_live_database_readiness_requires_signed_in_supabase_rows_for_professional_corporate_access_evidence_consent_billing_team_review_registration_release_and_no_preview_data"],

@@ -31,6 +31,7 @@ const requiredMobileStacks = [
   ".data-rights-summary-grid",
   ".data-rights-actions",
   ".data-rights-review-lane-grid",
+  ".data-export-package-grid",
   ".v1-completion-lane-grid",
   ".dashboard-start-map-grid",
   ".dashboard-next-action",

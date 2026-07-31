@@ -245,6 +245,23 @@ export interface DbDataRightsRequest {
   updated_at: string;
 }
 
+export interface DbDataExportPackageReceipt {
+  id: string;
+  profile_id: string;
+  data_rights_request_id: string | null;
+  status: "export_ready" | "request_required" | "review_pending";
+  requested_scope: string;
+  passport_record_count: number;
+  evidence_metadata_count: number;
+  access_grant_count: number;
+  audit_event_count: number;
+  raw_private_files_included: boolean;
+  preview_data_accepted_for_v1: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbReferenceRequest {
   id: string;
   subject_profile_id: string;

@@ -3847,6 +3847,65 @@ p,
   line-height: 1.4;
 }
 
+.data-export-package-receipt {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 12px;
+  border: 1px solid rgba(97, 231, 201, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(97, 231, 201, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.data-export-package-receipt > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.data-export-package-receipt strong,
+.data-export-package-receipt small,
+.data-export-package-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.data-export-package-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+  text-transform: capitalize;
+}
+
+.data-export-package-receipt small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.data-export-package-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+}
+
+.data-export-package-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.data-export-package-receipt > .secondary-action {
+  width: min(100%, 280px);
+}
+
 .data-rights-review-lane-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -14004,6 +14063,7 @@ p {
   .database-status-counts,
   .data-rights-summary-grid,
   .data-rights-review-lane-grid,
+  .data-export-package-grid,
   .data-rights-actions,
   .workspace-admin-grid,
   .setup-panel-grid,

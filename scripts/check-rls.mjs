@@ -35,7 +35,8 @@ const requiredRlsTables = [
   "pilot_launch_contacts",
   "v1_live_database_readiness_receipts",
   "corporate_database_access_receipts",
-  "evidence_access_receipts"
+  "evidence_access_receipts",
+  "data_export_package_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -192,6 +193,29 @@ if (!evidenceAccessReceiptMigration.includes("evidence_access.signed_url_issued"
 }
 if (!evidenceAccessReceiptMigration.includes("grant execute on function public.record_evidence_access_receipt")) {
   throw new Error("Evidence access receipt RPC must be executable by authenticated users.");
+}
+
+const dataExportPackageReceiptMigration = latestSqlByFile["050_data_export_package_receipts.sql"] ?? "";
+if (!dataExportPackageReceiptMigration.includes("create table if not exists public.data_export_package_receipts")) {
+  throw new Error("Missing data export package receipt table migration.");
+}
+if (!dataExportPackageReceiptMigration.includes("alter table public.data_export_package_receipts enable row level security")) {
+  throw new Error("Data export package receipts must enable RLS.");
+}
+if (!dataExportPackageReceiptMigration.includes("raw_private_files_included = false")) {
+  throw new Error("Data export package receipts must reject raw private file inclusion.");
+}
+if (!dataExportPackageReceiptMigration.includes("preview_data_accepted_for_v1 = false")) {
+  throw new Error("Data export package receipts must reject preview data for V1.");
+}
+if (!dataExportPackageReceiptMigration.includes("create or replace function public.record_data_export_package_receipt")) {
+  throw new Error("Missing data export package receipt RPC.");
+}
+if (!dataExportPackageReceiptMigration.includes("data_export.package_receipt_recorded")) {
+  throw new Error("Data export package receipt RPC must write audit history.");
+}
+if (!dataExportPackageReceiptMigration.includes("grant execute on function public.record_data_export_package_receipt")) {
+  throw new Error("Data export package receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);
