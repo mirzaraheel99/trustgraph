@@ -81,6 +81,8 @@ const requiredMobileStacks = [
   ".v1-proof-collection-grid",
   ".fraud-review-strip",
   ".fraud-review-metrics",
+  ".regulated-employment-boundary",
+  ".regulated-employment-metrics",
   ".data-rights-review-strip",
   ".data-rights-review-metrics",
   ".data-rights-review-actions",

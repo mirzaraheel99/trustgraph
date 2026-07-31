@@ -91,6 +91,7 @@ assert(app.includes('aria-label="Data export package receipt"'), "Account data r
 assert(app.includes('aria-label="Data export package manifest"'), "Account data rights must expose data export package manifest state.");
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
 assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
+assert(app.includes('aria-label="Regulated employment boundary packet"'), "Admin operations must expose background-check and adverse-action legal gating.");
 assert(app.includes('aria-label="V1 security RLS review checklist receipt"'), "security review must expose a V1 security/RLS checklist receipt.");
 assert(app.includes('aria-label="Security RLS database receipt"'), "security review must expose persisted security/RLS database receipt proof.");
 assert(app.includes('aria-label="Live pilot row proof"'), "v1 readiness must expose live pilot row proof.");
@@ -229,6 +230,7 @@ assert(css.includes(".pricing-decision-board") && css.includes(".pricing-decisio
 assert(css.includes(".billing-architecture-receipt") && css.includes(".billing-architecture-receipt-grid"), "billing architecture decision receipt must be styled and bounded.");
 assert(css.includes(".billing-activation-receipt") && css.includes(".billing-activation-grid"), "billing activation receipt must be styled and bounded.");
 assert(css.includes(".claim-trust-taxonomy") && css.includes(".claim-trust-taxonomy-grid") && css.includes(".claim-trust-receipt"), "claim trust taxonomy must be styled and bounded.");
+assert(css.includes(".regulated-employment-boundary") && css.includes(".regulated-employment-metrics"), "regulated employment boundary must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");

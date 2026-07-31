@@ -11762,7 +11762,8 @@ p {
   min-height: 34px;
 }
 
-.fraud-review-strip {
+.fraud-review-strip,
+.regulated-employment-boundary {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(230px, 0.48fr) 148px;
   align-items: center;
@@ -11772,6 +11773,13 @@ p {
   border-radius: var(--radius);
   background:
     linear-gradient(135deg, rgba(225, 184, 102, 0.075), transparent 68%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.regulated-employment-boundary {
+  border-color: rgba(255, 129, 119, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 129, 119, 0.075), transparent 68%),
     rgba(255, 255, 255, 0.03);
 }
 
@@ -11790,6 +11798,8 @@ p {
 
 .fraud-review-strip > div:first-child,
 .fraud-review-metrics span,
+.regulated-employment-boundary > div:first-child,
+.regulated-employment-metrics span,
 .data-rights-review-strip > div:first-child,
 .data-rights-review-metrics span {
   min-width: 0;
@@ -11797,12 +11807,15 @@ p {
 
 .fraud-review-strip strong,
 .fraud-review-strip small,
+.regulated-employment-boundary strong,
+.regulated-employment-boundary small,
 .data-rights-review-strip strong,
 .data-rights-review-strip small {
   display: block;
 }
 
 .fraud-review-strip > div:first-child > strong,
+.regulated-employment-boundary > div:first-child > strong,
 .data-rights-review-strip > div:first-child > strong {
   margin-top: 8px;
   font-size: 15px;
@@ -11810,6 +11823,7 @@ p {
 }
 
 .fraud-review-strip > div:first-child > small,
+.regulated-employment-boundary > div:first-child > small,
 .data-rights-review-strip > div:first-child > small {
   margin-top: 5px;
   color: var(--muted);
@@ -11818,6 +11832,7 @@ p {
 }
 
 .fraud-review-metrics,
+.regulated-employment-metrics,
 .data-rights-review-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -11825,6 +11840,7 @@ p {
 }
 
 .fraud-review-metrics span,
+.regulated-employment-metrics span,
 .data-rights-review-metrics span {
   padding: 9px;
   border: 1px solid var(--line);
@@ -11833,12 +11849,14 @@ p {
 }
 
 .fraud-review-metrics strong,
+.regulated-employment-metrics strong,
 .data-rights-review-metrics strong {
   font-size: 22px;
   line-height: 1;
 }
 
 .fraud-review-metrics small,
+.regulated-employment-metrics small,
 .data-rights-review-metrics small {
   margin-top: 4px;
   color: var(--muted);
@@ -11848,6 +11866,7 @@ p {
 }
 
 .fraud-review-strip .secondary-action,
+.regulated-employment-boundary .secondary-action,
 .data-rights-review-strip .secondary-action {
   justify-content: center;
   min-height: 36px;
@@ -14737,6 +14756,8 @@ p {
   .evidence-summary-grid,
   .fraud-review-strip,
   .fraud-review-metrics,
+  .regulated-employment-boundary,
+  .regulated-employment-metrics,
   .data-rights-review-strip,
   .data-rights-review-metrics,
   .grant-controls,

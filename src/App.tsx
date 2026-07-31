@@ -5643,8 +5643,19 @@ function OperationsQueuePanel({
   const restrictedCaseCount = cases.filter((item) => item.status === "restricted").length;
   const criticalCaseCount = cases.filter((item) => item.priority === "critical" || item.priority === "high").length;
   const fraudSignalCases = cases.filter((item) => item.case_type === "fraud_signal");
+  const regulatedEmploymentCases = cases.filter((item) => {
+    const haystack = `${item.case_type} ${item.title} ${item.summary} ${item.reason_code}`.toLowerCase();
+    return (
+      haystack.includes("background") ||
+      haystack.includes("adverse") ||
+      haystack.includes("employment") ||
+      haystack.includes("performance") ||
+      haystack.includes("reference")
+    );
+  });
   const openFraudSignals = fraudSignalCases.filter((item) => !["resolved", "dismissed"].includes(item.status));
   const highFraudSignals = fraudSignalCases.filter((item) => ["critical", "high"].includes(item.priority));
+  const openRegulatedEmploymentCases = regulatedEmploymentCases.filter((item) => !["resolved", "dismissed"].includes(item.status));
   const filteredCases = cases.filter((item) => {
     const matchesStatus = caseStatusFilter === "all" || item.status === caseStatusFilter;
     const matchesPriority = priorityFilter === "all" || item.priority === priorityFilter;
@@ -5653,6 +5664,7 @@ function OperationsQueuePanel({
   });
   const exportName = `trustgraph-operations-cases-${new Date().toISOString().slice(0, 10)}.csv`;
   const fraudPacketName = `trustgraph-fraud-signal-review-${new Date().toISOString().slice(0, 10)}.json`;
+  const regulatedEmploymentPacketName = `trustgraph-regulated-employment-boundary-${new Date().toISOString().slice(0, 10)}.json`;
   const dataRightsPacketName = `trustgraph-admin-data-rights-${new Date().toISOString().slice(0, 10)}.json`;
   const fraudReviewPacket = {
     generated_at: new Date().toISOString(),
@@ -5698,6 +5710,47 @@ function OperationsQueuePanel({
       requested_scope: request.requested_scope,
       due_at: request.due_at,
       metadata: request.metadata
+    }))
+  };
+  const regulatedEmploymentBoundaryPacket = {
+    generated_at: new Date().toISOString(),
+    packet_mode: "regulated_employment_boundary",
+    source_planning_document: "docs/08-legal-and-compliance-requirements.md",
+    legal_review_required: true,
+    adverse_action_workflows_enabled: false,
+    automated_employment_decisions: "not_enabled",
+    prohibited_actions: [
+      "background_check_launch_without_legal_review",
+      "automated_adverse_action",
+      "hidden_worker_ranking",
+      "unsupported_reputation_score",
+      "unscoped_employer_download"
+    ],
+    required_controls_before_production: [
+      "authorization_workflow",
+      "disclosure_tracking",
+      "dispute_process",
+      "restricted_visibility",
+      "retention_rules",
+      "legal_gate_decision_record"
+    ],
+    accepted_when:
+      "regulated_employment_boundary_requires_legal_review_authorization_disclosure_dispute_retention_and_no_automated_adverse_action",
+    counts: {
+      regulated_cases: regulatedEmploymentCases.length,
+      open_regulated_cases: openRegulatedEmploymentCases.length,
+      background_check_cases: regulatedEmploymentCases.filter((item) => `${item.case_type} ${item.title} ${item.summary}`.toLowerCase().includes("background")).length,
+      performance_or_reference_cases: regulatedEmploymentCases.filter((item) => `${item.case_type} ${item.title} ${item.summary}`.toLowerCase().includes("performance") || `${item.case_type} ${item.title} ${item.summary}`.toLowerCase().includes("reference")).length
+    },
+    cases: regulatedEmploymentCases.map((item) => ({
+      id: item.id,
+      status: item.status,
+      priority: item.priority,
+      case_type: item.case_type,
+      title: item.title,
+      reason_code: item.reason_code,
+      due_at: item.due_at,
+      metadata: item.metadata
     }))
   };
 
@@ -5799,6 +5852,36 @@ function OperationsQueuePanel({
           type="button"
         >
           Export fraud packet
+        </button>
+      </div>
+      <div className="regulated-employment-boundary" aria-label="Regulated employment boundary packet">
+        <div>
+          <span className="status-chip warning">Regulated employment boundary</span>
+          <strong>Background-check and adverse-action workflows stay legally gated</strong>
+          <small>
+            Admin can review cases and export evidence, but TrustGraph does not enable automated adverse action, hidden worker rankings, or unreviewed background-check launch flows.
+          </small>
+        </div>
+        <div className="regulated-employment-metrics">
+          <span>
+            <strong>{regulatedEmploymentCases.length}</strong>
+            <small>Legal-scope cases</small>
+          </span>
+          <span>
+            <strong>{openRegulatedEmploymentCases.length}</strong>
+            <small>Open review</small>
+          </span>
+          <span>
+            <strong>0</strong>
+            <small>Auto decisions</small>
+          </span>
+        </div>
+        <button
+          className="secondary-action"
+          onClick={() => downloadTextFile(regulatedEmploymentPacketName, JSON.stringify(regulatedEmploymentBoundaryPacket, null, 2), "application/json")}
+          type="button"
+        >
+          Export legal boundary
         </button>
       </div>
       <div className="data-rights-review-strip" aria-label="Admin data rights review packet">

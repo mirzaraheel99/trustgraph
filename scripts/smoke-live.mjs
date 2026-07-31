@@ -886,6 +886,15 @@ assertIncludesAny(bundleText, ["Fraud signal review"], "fraud signal review-only
 assertIncludesAny(bundleText, ["fraud_signal_review_only"], "fraud signal review packet mode");
 assertIncludesAny(bundleText, ["automated_hiring_decisions"], "fraud signal no automated decision field");
 assertIncludesAny(bundleText, ["Export fraud packet"], "fraud signal review packet export");
+assertIncludesAny(bundleText, ["Regulated employment boundary"], "regulated employment legal boundary panel");
+assertIncludesAny(bundleText, ["regulated_employment_boundary"], "regulated employment boundary packet mode");
+assertIncludesAny(bundleText, ["adverse_action_workflows_enabled"], "regulated employment adverse action disabled field");
+assertIncludesAny(bundleText, ["Export legal boundary"], "regulated employment boundary export");
+assertIncludesAny(
+  bundleText,
+  ["regulated_employment_boundary_requires_legal_review_authorization_disclosure_dispute_retention_and_no_automated_adverse_action"],
+  "regulated employment boundary acceptance rule"
+);
 assertIncludesAny(bundleText, ["Release database"], "release ledger source label");
 assertIncludesAny(bundleText, ["Export releases"], "release ledger export control");
 assertIncludesAny(bundleText, ["TrustGraph VPS launch guard"], "TrustGraph-only VPS launch guard panel");
