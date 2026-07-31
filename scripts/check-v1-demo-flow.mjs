@@ -160,6 +160,7 @@ const flowChecks = [
       "live_account_acceptance_checklist",
       "Live pilot row proof",
       "live_pilot_row_proof",
+      "Corporate visibility snapshot",
       "Live database contract",
       "live_database_contract",
       "Real data acceptance ledger",
@@ -174,6 +175,7 @@ const flowChecks = [
       "Preview data is not accepted for v1 database proof",
       "Export working-data packet",
       "Seed reconciliation",
+      "seedPilotVisibilitySnapshot",
       "Prepare live pilot workspace"
     ]
   },

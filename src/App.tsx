@@ -133,7 +133,8 @@ import {
 } from "./corporateDatabaseReceiptRepository";
 import {
   loadCorporateDatabaseVisibilitySnapshots,
-  recordCorporateDatabaseVisibilitySnapshot
+  recordCorporateDatabaseVisibilitySnapshot,
+  seedPilotVisibilitySnapshot
 } from "./corporateVisibilitySnapshotRepository";
 import {
   generateDataExportPackage,
@@ -11315,6 +11316,7 @@ function OnboardingChecklistPanel({
   authSession,
   consentAuthorizations,
   corporateAccessReviews,
+  corporateVisibilitySnapshots,
   evidenceDocuments,
   livePassportRecords,
   onboardingReceipts,
@@ -11332,6 +11334,7 @@ function OnboardingChecklistPanel({
   authSession: AuthSession | null;
   consentAuthorizations: DbConsentAuthorization[];
   corporateAccessReviews: DbCorporateAccessReview[];
+  corporateVisibilitySnapshots: DbCorporateDatabaseVisibilitySnapshot[];
   evidenceDocuments: DbEvidenceDocument[];
   livePassportRecords: RecordItem[];
   onboardingReceipts: DbOnboardingWizardReceipt[];
@@ -11599,6 +11602,7 @@ function OnboardingChecklistPanel({
   const seededAccessGrantId = visibleSeedEvidence?.access_grant_id ?? "";
   const seededConsentAuthorizationId = visibleSeedEvidence?.consent_authorization_id ?? "";
   const seededCorporateAccessReviewId = visibleSeedEvidence?.corporate_access_review_id ?? "";
+  const seededCorporateVisibilitySnapshotId = visibleSeedEvidence?.corporate_database_visibility_snapshot_id ?? "";
   const seededSubscriptionId = visibleSeedEvidence?.subscription_id ?? "";
   const seededMembershipId = visibleSeedEvidence?.membership_id ?? "";
   const seedReconciliationRows = [
@@ -11631,6 +11635,12 @@ function OnboardingChecklistPanel({
       expected: visibleSeedEvidence ? 1 : 0,
       actual: corporateAccessReviews.length,
       ok: Boolean(seededCorporateAccessReviewId) && corporateAccessReviews.some((review) => review.id === seededCorporateAccessReviewId)
+    },
+    {
+      label: "Corporate visibility snapshot",
+      expected: visibleSeedEvidence ? 1 : 0,
+      actual: corporateVisibilitySnapshots.length,
+      ok: Boolean(seededCorporateVisibilitySnapshotId) && corporateVisibilitySnapshots.some((snapshot) => snapshot.id === seededCorporateVisibilitySnapshotId)
     },
     {
       label: "Subscription",
@@ -17270,9 +17280,11 @@ function App() {
       note: "Pilot seed confirmed Corporate Verify can review approved user database rows.",
       accessToken: authSession.accessToken
     });
+    const seededVisibilitySnapshot = await seedPilotVisibilitySnapshot(authSession.accessToken);
     const seededWithReview = {
       ...seeded,
-      corporate_access_review_id: seededReview.id
+      corporate_access_review_id: seededReview.id,
+      corporate_database_visibility_snapshot_id: seededVisibilitySnapshot.id
     };
     const [
       context,
@@ -17285,6 +17297,7 @@ function App() {
       verifyRequests,
       sharedRecords,
       reviews,
+      visibilitySnapshots,
       notifications,
       dataRightsRows,
       events
@@ -17299,6 +17312,7 @@ function App() {
       loadVerifyAccessGrants(seeded.corporate_organization_id, authSession.accessToken),
       loadSharedVerifyRecords(authSession.accessToken),
       loadCorporateAccessReviews(seeded.corporate_organization_id, authSession.accessToken),
+      loadCorporateDatabaseVisibilitySnapshots(seeded.corporate_organization_id, authSession.accessToken),
       loadNotificationEvents(authSession.accessToken),
       loadDataRightsRequests(authSession.accessToken).catch(() => dataRightsRequests),
       loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
@@ -17316,6 +17330,7 @@ function App() {
     setVerifyRequests(verifyRequests);
     setSharedVerifyRecords(sharedRecords);
     setCorporateAccessReviews(reviews);
+    setCorporateVisibilitySnapshots(visibilitySnapshots);
     setNotificationEvents(notifications);
     setDataRightsRequests(dataRightsRows);
     setAuditEvents(events);
@@ -17327,7 +17342,7 @@ function App() {
     setTeamStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
     setVerifyStatus(
       verifyRequests.length || sharedRecords.length
-        ? `Live Supabase Verify data: ${verifyRequests.length} requests, ${sharedRecords.length} shared records, ${reviews.length} review attestations`
+        ? `Live Supabase Verify data: ${verifyRequests.length} requests, ${sharedRecords.length} shared records, ${reviews.length} review attestations, ${visibilitySnapshots.length} visibility snapshots`
         : "No Verify requests yet"
     );
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
@@ -17335,7 +17350,8 @@ function App() {
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
     return {
       ...seededWithReview,
-      corporate_access_reviews: reviews.length
+      corporate_access_reviews: reviews.length,
+      corporate_database_visibility_snapshots: visibilitySnapshots.length
     };
   }
 
@@ -18375,6 +18391,14 @@ function App() {
       required: true,
       ready: corporateAccessReviews.length > 0,
       evidence: `${corporateAccessReviews.length} review attestation rows`
+    },
+    {
+      label: "Corporate visibility snapshots",
+      table: "corporate_database_visibility_snapshots",
+      count: corporateVisibilitySnapshots.length,
+      required: true,
+      ready: corporateVisibilitySnapshots.length > 0,
+      evidence: `${corporateVisibilitySnapshots.length} filtered database visibility snapshot rows`
     },
     {
       label: "Release ledger",
@@ -20820,6 +20844,7 @@ function App() {
                       authSession={authSession}
                       consentAuthorizations={consentAuthorizations}
                       corporateAccessReviews={corporateAccessReviews}
+                      corporateVisibilitySnapshots={corporateVisibilitySnapshots}
                       evidenceDocuments={evidenceDocuments}
                       livePassportRecords={livePassportRecords}
                       onboardingReceipts={onboardingReceipts}

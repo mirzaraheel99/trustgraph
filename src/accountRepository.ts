@@ -175,6 +175,8 @@ export async function seedPilotWorkspace(accessToken: string) {
     subscription_id: string;
     access_grant_id: string;
     corporate_access_review_id?: string;
+    corporate_database_visibility_snapshot_id?: string;
+    corporate_database_visibility_snapshots?: number;
     corporate_access_reviews?: number;
     consent_authorization_id: string;
     passport_records: number;

@@ -47,3 +47,11 @@ export function recordCorporateDatabaseVisibilitySnapshot(
     { accessToken }
   );
 }
+
+export function seedPilotVisibilitySnapshot(accessToken: string) {
+  return supabaseRpc<DbCorporateDatabaseVisibilitySnapshot>(
+    "seed_pilot_visibility_snapshot",
+    {},
+    { accessToken }
+  );
+}

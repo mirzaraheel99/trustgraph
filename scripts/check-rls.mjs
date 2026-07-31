@@ -222,6 +222,35 @@ if (!corporateDatabaseVisibilitySnapshotMigration.includes("grant execute on fun
   throw new Error("Corporate database visibility snapshot RPC must be executable by authenticated users.");
 }
 
+const pilotVisibilitySnapshotSeedMigration = latestSqlByFile["060_pilot_visibility_snapshot_seed.sql"] ?? "";
+if (!pilotVisibilitySnapshotSeedMigration.includes("create or replace function public.seed_pilot_visibility_snapshot()")) {
+  throw new Error("Missing pilot visibility snapshot seed RPC.");
+}
+
+if (!pilotVisibilitySnapshotSeedMigration.includes("current_id uuid := public.current_profile_id()")) {
+  throw new Error("Pilot visibility snapshot seed must require the authenticated profile.");
+}
+
+if (!pilotVisibilitySnapshotSeedMigration.includes("membership.role in ('system_admin', 'compliance_admin', 'employer_admin', 'employer_reviewer', 'staffing_agency_admin', 'recruiter')")) {
+  throw new Error("Pilot visibility snapshot seed must require active corporate RBAC.");
+}
+
+if (!pilotVisibilitySnapshotSeedMigration.includes("corporate_database_visibility_snapshots")) {
+  throw new Error("Pilot visibility snapshot seed must persist a corporate database visibility snapshot row.");
+}
+
+if (!pilotVisibilitySnapshotSeedMigration.includes("raw_private_files_included") || !pilotVisibilitySnapshotSeedMigration.includes("preview_data_accepted")) {
+  throw new Error("Pilot visibility snapshot seed must reject raw private files and preview data.");
+}
+
+if (!pilotVisibilitySnapshotSeedMigration.includes("pilot_workspace.visibility_snapshot_seeded")) {
+  throw new Error("Pilot visibility snapshot seed must write audit history.");
+}
+
+if (!pilotVisibilitySnapshotSeedMigration.includes("grant execute on function public.seed_pilot_visibility_snapshot() to authenticated")) {
+  throw new Error("Pilot visibility snapshot seed RPC must be executable by authenticated users.");
+}
+
 const evidenceAccessReceiptMigration = latestSqlByFile["049_evidence_access_receipts.sql"] ?? "";
 if (!evidenceAccessReceiptMigration.includes("create table if not exists public.evidence_access_receipts")) {
   throw new Error("Missing evidence access receipt table migration.");

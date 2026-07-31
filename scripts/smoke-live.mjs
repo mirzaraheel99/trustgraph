@@ -541,6 +541,7 @@ assertIncludesAny(bundleText, ["record_corporate_database_access_receipt"], "cor
 assertIncludesAny(bundleText, ["Record database receipt"], "corporate database access receipt action");
 assertIncludesAny(bundleText, ["corporate_database_visibility_snapshots"], "corporate database visibility snapshot table");
 assertIncludesAny(bundleText, ["record_corporate_database_visibility_snapshot"], "corporate database visibility snapshot RPC");
+assertIncludesAny(bundleText, ["seed_pilot_visibility_snapshot"], "pilot visibility snapshot seed RPC");
 assertIncludesAny(bundleText, ["Corporate database visibility snapshot"], "corporate database visibility snapshot panel");
 assertIncludesAny(bundleText, ["Record visibility snapshot"], "corporate database visibility snapshot action");
 assertIncludesAny(
