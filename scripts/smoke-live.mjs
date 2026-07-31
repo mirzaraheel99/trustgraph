@@ -544,6 +544,9 @@ assertIncludesAny(
 assertIncludesAny(bundleText, ["Operator home"], "signed-in role-aware dashboard label");
 assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");
+assertIncludesAny(bundleText, ["V1 launch flow"], "signed-in V1 launch flow command");
+assertIncludesAny(bundleText, ["v1_launch_flow_command"], "signed-in V1 launch flow packet field");
+assertIncludesAny(bundleText, ["website_login_professional_passport_corporate_setup_pricing_scoped_database_proof_export_and_vps_save_path_are_visible_from_the_first_console_screen"], "signed-in V1 launch flow acceptance rule");
 assertIncludesAny(bundleText, ["Proof & exports", "Proof &amp; exports"], "proof and exports hub label");
 assertIncludesAny(bundleText, ["proof_export_hub"], "proof and exports hub packet field");
 assertIncludesAny(bundleText, ["V1 proof collection command"], "V1 proof collection command");

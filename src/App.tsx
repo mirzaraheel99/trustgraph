@@ -16482,6 +16482,31 @@ function App() {
     steps: v1OperatingMap,
     accepted_when: "public_website_professional_registration_corporate_registration_pricing_ledger_corporate_database_and_server_save_path_are_clear_and_exportable"
   };
+  const v1LaunchFlowCommand = {
+    mode: "v1_launch_flow_command",
+    current_portal: workspace.label,
+    next_step: nextOperatingStep.label,
+    next_action: nextOperatingStep.action,
+    lanes_ready: v1OperatingMap.filter((step) => step.ready).length,
+    lanes_total: v1OperatingMap.length,
+    accepted_when:
+      "website_login_professional_passport_corporate_setup_pricing_scoped_database_proof_export_and_vps_save_path_are_visible_from_the_first_console_screen"
+  };
+  const v1LaunchFlowLanes = v1OperatingMap.map((step) => ({
+    ...step,
+    shortDetail:
+      step.target === "public"
+        ? "Website, portal choice, pricing, and registration"
+        : step.target === "account"
+          ? "Hosted login, email verification, recovery, and Passport owner"
+          : step.target === "corporate_setup"
+            ? "Company workspace, RBAC, team, and reviewer readiness"
+            : step.target === "billing"
+              ? "Pilot ledger now; Stripe checkout after approval"
+              : step.target === "verify"
+                ? "Approved grants and consent-scoped user rows"
+                : "GitHub source, VPS pull, release stamp, and VFIX guard"
+  }));
   const livePilotRowProofRows: LivePilotRowProof["rows"] = [
     {
       label: "Hosted auth session",
@@ -17114,6 +17139,68 @@ function App() {
                 <strong>{card.value}</strong>
                 <small>{card.detail}</small>
               </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="v1-launch-flow-command" aria-label="V1 launch flow command">
+          <div className="v1-launch-flow-copy">
+            <span className={`status-chip ${nextOperatingStep.ready ? "success" : "warning"}`}>V1 launch flow</span>
+            <strong>{nextOperatingStep.ready ? "The full V1 path is visible from here" : `Next: ${nextOperatingStep.label}`}</strong>
+            <small>{v1LaunchFlowCommand.accepted_when}</small>
+          </div>
+          <div className="v1-launch-flow-status">
+            <span>
+              <strong>{v1LaunchFlowCommand.lanes_ready}/{v1LaunchFlowCommand.lanes_total}</strong>
+              <small>Flow lanes ready</small>
+            </span>
+            <span>
+              <strong>{workspace.label}</strong>
+              <small>Current portal</small>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(v1OperatingMapPacketName, JSON.stringify(v1OperatingMapPacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export flow
+            </button>
+          </div>
+          <div className="v1-launch-flow-grid">
+            {v1LaunchFlowLanes.map((lane) => (
+              <button
+                className={`${lane.ready ? "ready" : ""} ${lane.step === nextOperatingStep.step ? "next" : ""}`}
+                key={lane.step}
+                onClick={() => {
+                  if (lane.target === "public") {
+                    setShowPublicSite(true);
+                    return;
+                  }
+                  if (lane.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (lane.target === "corporate_setup") {
+                    openCorporateControls();
+                    return;
+                  }
+                  if (lane.target === "billing") {
+                    setSetupView("billing");
+                    return;
+                  }
+                  if (lane.target === "verify") {
+                    openWorkspaceOrSetup("verify");
+                    return;
+                  }
+                  downloadTextFile(v1OperatingMapPacketName, JSON.stringify(v1OperatingMapPacket, null, 2), "application/json");
+                }}
+                type="button"
+              >
+                <span>{lane.step}</span>
+                <strong>{lane.label}</strong>
+                <small>{lane.shortDetail}</small>
+                <em>{lane.status}</em>
+              </button>
             ))}
           </div>
         </section>

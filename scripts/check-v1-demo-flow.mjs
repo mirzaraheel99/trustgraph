@@ -82,6 +82,8 @@ const flowChecks = [
     required: [
       "Session command bar",
       "Portal command deck",
+      "V1 launch flow",
+      "v1_launch_flow_command",
       "Portal choice guide",
       "portal_choice_guide",
       "Server release save path",
