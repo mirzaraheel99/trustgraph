@@ -71,6 +71,8 @@ const requiredMobileStacks = [
   ".corporate-classification-boundary",
   ".corporate-reviewer-action-bar",
   ".corporate-reviewer-action-grid",
+  ".corporate-reviewer-front-desk-grid",
+  ".corporate-reviewer-front-desk-actions",
   ".corporate-access-progress-strip-header",
   ".corporate-access-progress-grid",
   ".corporate-access-progress-proof",

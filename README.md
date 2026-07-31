@@ -93,6 +93,8 @@ The signed-in dashboard front door now exposes clickable cards for Professional 
 
 Corporate Verify now keeps the visible operator path focused on the quick start, progress strip, request form, request list, user-data proof, and scoped directory. Duplicate wizard/command/blocker panels remain in the bundle for proof exports and tests, but they do not crowd the working reviewer flow.
 
+Corporate Verify also includes a reviewer front desk that summarizes request, approval, scoped rows, review proof, and the next action before the reviewer reaches filters or export receipts. This keeps the corporate database path understandable on hosted desktop and mobile views while preserving metadata-only proof packets for audit.
+
 The signed-in console keeps the daily operator path lean: one dashboard front door, the setup center, and the active workspace surface. Release, readiness, and proof machinery stay exportable from their command buttons and packets without stacking into the first screen.
 
 The public website and login/register card are also kept buyer-facing: portal choice, pricing, first database write, required fields, and recovery actions stay visible first, while internal redirect/recovery receipts remain available in the bundle without crowding signup.

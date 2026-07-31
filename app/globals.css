@@ -22979,6 +22979,7 @@ body {
 }
 
 .verify-panel .corporate-portal-quick-start,
+.verify-panel .corporate-reviewer-front-desk,
 .verify-panel .corporate-access-progress-strip,
 .verify-panel .verify-request-form,
 .verify-panel .grant-list,
@@ -22992,6 +22993,7 @@ body {
 }
 
 .verify-panel .corporate-portal-quick-start-grid,
+.verify-panel .corporate-reviewer-front-desk-grid,
 .verify-panel .corporate-access-progress-grid,
 .verify-panel .request-scope-receipt-grid,
 .verify-panel .verify-user-data-proof-grid,
@@ -22999,11 +23001,89 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr));
 }
 
+.corporate-reviewer-front-desk {
+  display: grid;
+  gap: 14px;
+  padding: clamp(16px, 2vw, 22px);
+  border: 1px solid rgba(97, 232, 208, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(32, 216, 191, 0.14), rgba(93, 128, 238, 0.08)),
+    rgba(11, 23, 25, 0.9);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.26);
+}
+
+.corporate-reviewer-front-desk-copy {
+  display: grid;
+  gap: 7px;
+}
+
+.corporate-reviewer-front-desk-copy strong {
+  font-size: clamp(22px, 3vw, 36px);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.corporate-reviewer-front-desk-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.corporate-reviewer-front-desk-grid button {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  min-height: 118px;
+  padding: 14px;
+  border: 1px solid rgba(210, 231, 223, 0.16);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.045);
+  text-align: left;
+}
+
+.corporate-reviewer-front-desk-grid button.ready {
+  border-color: rgba(108, 240, 195, 0.4);
+  background: rgba(26, 176, 145, 0.14);
+}
+
+.corporate-reviewer-front-desk-grid button.next {
+  border-color: rgba(255, 209, 102, 0.34);
+}
+
+.corporate-reviewer-front-desk-grid span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-reviewer-front-desk-grid strong {
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1;
+}
+
+.corporate-reviewer-front-desk-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+}
+
+.verify-panel .corporate-directory-panel .corporate-database-action-cockpit,
+.verify-panel .corporate-directory-panel .reviewer-database-readiness-board,
+.verify-panel .corporate-directory-panel .corporate-database-visibility-snapshot,
+.verify-panel .corporate-directory-panel .corporate-classification-contract,
+.verify-panel .corporate-directory-panel .corporate-directory-acceptance,
+.verify-panel .corporate-directory-panel .corporate-review-handoff-receipt {
+  display: none !important;
+}
+
 .verify-panel .record-form-grid.verify-request-fields {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(120px, 0.36fr);
 }
 
 .verify-panel .corporate-portal-quick-start-header,
+.verify-panel .corporate-reviewer-front-desk-actions,
 .verify-panel .corporate-access-progress-strip-header,
 .verify-panel .verify-request-header,
 .verify-panel .record-form-footer {
@@ -23030,6 +23110,7 @@ body {
 @media (max-width: 860px) {
   .verify-panel .record-form-grid.verify-request-fields,
   .verify-panel .corporate-portal-quick-start-header,
+  .verify-panel .corporate-reviewer-front-desk-actions,
   .verify-panel .corporate-access-progress-strip-header,
   .verify-panel .verify-request-header,
   .verify-panel .record-form-footer {

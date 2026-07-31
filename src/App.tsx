@@ -2456,6 +2456,67 @@ function VerifyRequestsPanel({
       action: sharedRecords.length ? "Review rows" : "Start request"
     }
   ];
+  const corporateReviewerFrontDesk = {
+    mode: "corporate_reviewer_front_desk",
+    headline: sharedRecords.length
+      ? "Review approved user rows without open browsing"
+      : requests.length
+        ? "Track the approval before user rows unlock"
+        : "Request one professional before Corporate Verify can show records",
+    next_action: firstUseNextAction,
+    primary_target: liveAccessCommandTarget,
+    accepted_when:
+      "corporate_reviewer_front_desk_keeps_role_request_approval_visible_rows_review_export_and_logout_path_clear_without_overflow"
+  };
+  const corporateReviewerFrontDeskCards = [
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "Start",
+      detail: "One professional email and purpose.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form",
+      action: "Request"
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount}` : "Waiting",
+      detail: "Rows stay hidden until approval.",
+      ready: approvedCount > 0,
+      target: "corporate-verify-request-list",
+      action: "Grants"
+    },
+    {
+      label: "Rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Locked",
+      detail: "Only scoped Passport rows.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue",
+      action: "Review"
+    },
+    {
+      label: "Proof",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} open gaps.` : "Attest and export.",
+      ready: reviews.length > 0 && pendingGapCount === 0,
+      target: "corporate-access-review-queue",
+      action: "Attest"
+    }
+  ];
+  const corporateReviewerFrontDeskPacket = {
+    generated_at: new Date().toISOString(),
+    ...corporateReviewerFrontDesk,
+    active_organization: activeOrganization.name,
+    preview_data_accepted: false,
+    counts: {
+      requests: requests.length,
+      approvals: approvedCount,
+      visible_user_rows: sharedRecords.length,
+      review_attestations: reviews.length,
+      open_gaps: pendingGapCount
+    },
+    cards: corporateReviewerFrontDeskCards.map(({ label, value, ready }) => ({ label, value, ready }))
+  };
+  const corporateReviewerFrontDeskPacketName = `trustgraph-corporate-reviewer-front-desk-${new Date().toISOString().slice(0, 10)}.json`;
   const emptyVerifyStateCommand = {
     mode: "empty_verify_state_command",
     visible_shared_rows: sharedRecords.length,
@@ -2607,6 +2668,50 @@ function VerifyRequestsPanel({
               </button>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="corporate-reviewer-front-desk" aria-label="Corporate reviewer front desk">
+        <div className="corporate-reviewer-front-desk-copy">
+          <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Corporate reviewer front desk</span>
+          <strong>{corporateReviewerFrontDesk.headline}</strong>
+          <small>{corporateReviewerFrontDesk.next_action}</small>
+        </div>
+        <div className="corporate-reviewer-front-desk-grid">
+          {corporateReviewerFrontDeskCards.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => document.getElementById(item.target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              type="button"
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-reviewer-front-desk-actions">
+          <button
+            className="primary-action"
+            onClick={() => document.getElementById(corporateReviewerFrontDesk.primary_target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            type="button"
+          >
+            Open next action
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() => document.getElementById("corporate-access-review-queue")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            type="button"
+          >
+            Open review queue
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(corporateReviewerFrontDeskPacketName, JSON.stringify(corporateReviewerFrontDeskPacket, null, 2), "application/json")}
+            type="button"
+          >
+            Export front desk
+          </button>
         </div>
       </div>
       <div className="corporate-access-progress-strip" aria-label="Corporate Verify access progress strip">
