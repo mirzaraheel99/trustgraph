@@ -93,6 +93,8 @@ The signed-in dashboard front door now exposes clickable cards for Professional 
 
 Corporate Verify now keeps the visible operator path focused on the quick start, progress strip, request form, request list, user-data proof, and scoped directory. Duplicate wizard/command/blocker panels remain in the bundle for proof exports and tests, but they do not crowd the working reviewer flow.
 
+The signed-in console keeps the daily operator path lean: one dashboard front door, the setup center, and the active workspace surface. Release, readiness, and proof machinery stay exportable from their command buttons and packets without stacking into the first screen.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text

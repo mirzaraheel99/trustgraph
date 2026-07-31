@@ -22593,6 +22593,8 @@ body {
 .today-command-center,
 .portal-usability-command,
 .portal-readiness-board,
+.v1-command-cockpit,
+.v1-portal-launchpad,
 .role-workspace-switchboard,
 .console-layout-receipt,
 .v1-launch-flow-command,
@@ -22604,8 +22606,56 @@ body {
 .portal-choice-guide,
 .portal-welcome-path,
 .signed-in-landing-actions,
-.dashboard-start-map {
+.dashboard-start-map,
+.proof-export-hub {
   display: none !important;
+}
+
+/* Premium operator flow reduction: keep proof machinery exportable but out of the daily console path. */
+.server-release-cockpit,
+.hosted-version-receipt,
+.server-sync-monitor,
+.vps-deploy-secrets,
+.v1-operating-map,
+.v1-proof-collection-command,
+.registration-intent-review,
+.live-database-contract,
+.real-data-acceptance-ledger,
+.live-row-completion-command,
+.live-database-repair-guide {
+  display: none !important;
+}
+
+.dashboard-front-door {
+  position: relative;
+  grid-template-columns: minmax(0, 0.72fr) minmax(360px, 1.28fr);
+  align-items: stretch;
+}
+
+.dashboard-front-door-proof {
+  grid-column: 1 / -1;
+}
+
+.dashboard-front-door-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 154px), 1fr));
+}
+
+.dashboard-front-door-grid button {
+  min-height: 112px;
+}
+
+.workspace-admin-grid {
+  margin-top: 14px;
+}
+
+.work-grid {
+  margin-top: 14px;
+}
+
+@media (max-width: 980px) {
+  .dashboard-front-door {
+    grid-template-columns: 1fr;
+  }
 }
 
 .app,
