@@ -150,6 +150,8 @@ const flowChecks = [
       "live_database_contract",
       "Live row source receipt",
       "live_row_source_receipt",
+      "Live database repair command",
+      "live_database_repair_command",
       "signed_in_supabase_repository_rows",
       "preview_data_accepted: false",
       "Preview data is not accepted for v1 database proof",

@@ -9961,6 +9961,46 @@ function OnboardingChecklistPanel({
     open_items: liveAccountAcceptanceOpenItems.map((item) => item.label),
     checklist: liveAccountAcceptanceChecklist
   };
+  const liveDatabaseRepairCommand = {
+    mode: "live_database_repair_command",
+    status: liveDatabaseAcceptanceComplete ? "all_live_rows_loaded" : authSession ? "repair_required" : "hosted_login_required",
+    next_action: liveDatabaseAcceptanceComplete
+      ? "Export working-data packet"
+      : !authSession
+        ? "Login or register first"
+        : nextDatabaseRepair?.action ?? "Prepare live pilot workspace",
+    next_required_row_group: nextDatabaseRepair?.label ?? "none",
+    next_required_evidence: nextDatabaseRepair?.required ?? "All required live row groups are loaded.",
+    accepted_source: "signed_in_supabase_repository_rows",
+    preview_data_accepted: false,
+    repair_queue: liveDatabaseRepairQueue
+  };
+  const liveDatabaseRepairCards = [
+    {
+      label: "Accepted source",
+      value: authSession && accountContext ? "Live Supabase" : "Not connected",
+      detail: "Preview rows do not count.",
+      ready: Boolean(authSession && accountContext)
+    },
+    {
+      label: "Ready groups",
+      value: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length}`,
+      detail: liveDatabaseAcceptanceComplete ? "All required live groups loaded." : `${liveDatabaseRepairQueue.length} groups still missing.`,
+      ready: liveDatabaseAcceptanceComplete
+    },
+    {
+      label: "Next repair",
+      value: liveDatabaseRepairCommand.next_required_row_group,
+      detail: liveDatabaseRepairCommand.next_required_evidence,
+      ready: liveDatabaseAcceptanceComplete
+    },
+    {
+      label: "Seed evidence",
+      value: seedReconciliationComplete ? "Matched" : visibleSeedEvidence ? "Reload needed" : "Not run",
+      detail: seedReconciliationComplete ? "Seed IDs reconcile with loaded rows." : "Run seed after hosted login, then reload rows.",
+      ready: seedReconciliationComplete
+    }
+  ];
   const professionalDatabaseReady = livePassportRecords.length > 0 && evidenceDocuments.length > 0;
   const corporateDatabaseReady =
     accessGrants.length > 0 &&
@@ -10067,6 +10107,7 @@ function OnboardingChecklistPanel({
     live_rows_currently_loaded: workingDataRows,
     live_row_total: workingDataTotal,
     working_database_command_center: workingDatabaseCommandCenter,
+    live_database_repair_command: liveDatabaseRepairCommand,
     live_account_acceptance_checklist: liveAccountAcceptancePacket,
     live_database_acceptance_lanes: liveDatabaseAcceptanceLanes,
     live_row_source_receipt: liveRowSourceReceipt,
@@ -10342,6 +10383,49 @@ function OnboardingChecklistPanel({
                 <strong>{item.label}</strong>
                 <small>{item.required}</small>
                 <small>{item.evidence}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="live-database-repair-command" aria-label="Live database repair command">
+        <div className="live-database-repair-command-top">
+          <div>
+            <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : "warning"}`}>Live database repair command</span>
+            <strong>{liveDatabaseRepairCommand.next_action}</strong>
+            <small>{liveDatabaseRepairCommand.next_required_evidence}</small>
+          </div>
+          <div className="live-database-repair-actions">
+            <button
+              className={liveDatabaseAcceptanceComplete ? "secondary-action" : "primary-action"}
+              onClick={() => {
+                if (!authSession) {
+                  onOpenHostedRegistration();
+                  return;
+                }
+                if (nextDatabaseRepair?.action === "Open Corporate Verify") {
+                  onOpenWorkspace("verify");
+                  return;
+                }
+                onOpenWorkspace("passport");
+              }}
+              type="button"
+            >
+              {liveDatabaseRepairCommand.next_action}
+            </button>
+            <button className="secondary-action" onClick={() => downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json")} type="button">
+              Export repair packet
+            </button>
+          </div>
+        </div>
+        <div className="live-database-repair-grid">
+          {liveDatabaseRepairCards.map((item) => (
+            <article className={item.ready ? "ready" : ""} key={item.label}>
+              <span className={`status-dot ${item.ready ? "on" : ""}`} />
+              <div>
+                <strong>{item.value}</strong>
+                <small>{item.label}</small>
+                <small>{item.detail}</small>
               </div>
             </article>
           ))}
