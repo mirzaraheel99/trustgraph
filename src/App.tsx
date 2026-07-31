@@ -13246,6 +13246,49 @@ function App() {
       ready: sharedVerifyRecords.length > 0
     }
   ];
+  const teamBillingHandoffSteps = [
+    {
+      label: "Invite reviewer",
+      detail: teamMembers.length || teamInvitations.length ? `${teamMembers.length} members and ${teamInvitations.length} invitations in scope.` : "Send the first corporate reviewer invitation.",
+      status: teamMembers.length || teamInvitations.length ? "Started" : "Next",
+      target: "team" as const,
+      done: Boolean(teamMembers.length || teamInvitations.length)
+    },
+    {
+      label: "Activate pilot ledger",
+      detail: organizationSubscriptions.length ? `${organizationSubscriptions.length} subscription ledger row${organizationSubscriptions.length === 1 ? "" : "s"} active.` : "Select the Corporate Verify pilot plan before launch review.",
+      status: organizationSubscriptions.length ? "Ledger live" : "Needed",
+      target: "billing" as const,
+      done: Boolean(organizationSubscriptions.length)
+    },
+    {
+      label: "Verify users",
+      detail: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} shared user row${sharedVerifyRecords.length === 1 ? "" : "s"} visible.` : "Request Access Grants and review approved Passport rows.",
+      status: sharedVerifyRecords.length ? "Rows visible" : "Needs grants",
+      target: "verify" as const,
+      done: sharedVerifyRecords.length > 0
+    }
+  ];
+  const nextTeamBillingHandoffStep = teamBillingHandoffSteps.find((step) => !step.done) ?? teamBillingHandoffSteps[teamBillingHandoffSteps.length - 1];
+  const teamBillingHandoffPacket = {
+    mode: "team_billing_handoff",
+    generated_at: new Date().toISOString(),
+    next_step: nextTeamBillingHandoffStep.label,
+    next_status: nextTeamBillingHandoffStep.status,
+    active_organization: activeOrganization.name,
+    active_role: activeRole.label,
+    can_manage_workspace: canManageCorporateSetup,
+    counts: {
+      team_members: teamMembers.length,
+      team_invitations: teamInvitations.length,
+      active_subscriptions: organizationSubscriptions.length,
+      verify_requests: verifyRequests.length,
+      access_grants: accessGrants.length,
+      shared_user_rows: sharedVerifyRecords.length
+    },
+    steps: teamBillingHandoffSteps,
+    accepted_when: "reviewer_invited_or_active_billing_ledger_live_and_corporate_verify_rows_visible"
+  };
   const dashboardStartMap = [
     {
       label: "Personal Passport",
@@ -14096,6 +14139,82 @@ function App() {
                   <span>3</span>
                   <strong>Verify users</strong>
                   <small>Request Passport access, review approved rows, and export scoped corporate proof.</small>
+                </button>
+              </div>
+              <div className="team-billing-handoff" aria-label="Team and billing handoff">
+                <div className="team-billing-handoff-header">
+                  <div>
+                    <span className={`status-chip ${teamBillingHandoffSteps.every((step) => step.done) ? "success" : "warning"}`}>
+                      Team and billing handoff
+                    </span>
+                    <strong>{nextTeamBillingHandoffStep.label}</strong>
+                    <small>{nextTeamBillingHandoffStep.detail}</small>
+                  </div>
+                  <button
+                    className="primary-action"
+                    onClick={() => {
+                      if (nextTeamBillingHandoffStep.target === "verify") {
+                        openWorkspaceOrSetup("verify");
+                        return;
+                      }
+                      setSetupView(nextTeamBillingHandoffStep.target);
+                    }}
+                    type="button"
+                  >
+                    {nextTeamBillingHandoffStep.target === "verify" ? "Open Verify" : `Open ${nextTeamBillingHandoffStep.label}`}
+                  </button>
+                </div>
+                <div className="team-billing-handoff-grid">
+                  {teamBillingHandoffSteps.map((step, index) => (
+                    <article className={step.done ? "ready" : step.label === nextTeamBillingHandoffStep.label ? "next" : ""} key={step.label}>
+                      <span>{index + 1}</span>
+                      <div>
+                        <strong>{step.label}</strong>
+                        <small>{step.detail}</small>
+                        <small>{step.status}</small>
+                      </div>
+                      <button
+                        className={step.done ? "secondary-action" : "primary-action"}
+                        onClick={() => {
+                          if (step.target === "verify") {
+                            openWorkspaceOrSetup("verify");
+                            return;
+                          }
+                          setSetupView(step.target);
+                        }}
+                        type="button"
+                      >
+                        {step.target === "verify" ? "Open Verify" : `Open ${step.target}`}
+                      </button>
+                    </article>
+                  ))}
+                </div>
+                <div className="team-billing-handoff-counts">
+                  <span>
+                    <strong>{teamMembers.length + teamInvitations.length}</strong>
+                    <small>Team signals</small>
+                  </span>
+                  <span>
+                    <strong>{organizationSubscriptions.length}</strong>
+                    <small>Billing rows</small>
+                  </span>
+                  <span>
+                    <strong>{sharedVerifyRecords.length}</strong>
+                    <small>Verify rows</small>
+                  </span>
+                </div>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(
+                      `trustgraph-team-billing-handoff-${new Date().toISOString().slice(0, 10)}.json`,
+                      JSON.stringify(teamBillingHandoffPacket, null, 2),
+                      "application/json"
+                    )
+                  }
+                  type="button"
+                >
+                  Export handoff proof
                 </button>
               </div>
               <div className="corporate-setup-guide" aria-label="Corporate setup guide">

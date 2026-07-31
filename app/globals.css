@@ -11756,6 +11756,97 @@ p {
   overflow-wrap: anywhere;
 }
 
+.team-billing-handoff {
+  display: grid;
+  gap: 13px;
+  padding: clamp(14px, 2vw, 18px);
+  border: 1px solid rgba(201, 214, 207, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(134, 174, 246, 0.08), rgba(95, 240, 201, 0.025)),
+    rgba(0, 0, 0, 0.18);
+}
+
+.team-billing-handoff-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.team-billing-handoff-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.team-billing-handoff-grid,
+.team-billing-handoff-counts {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.team-billing-handoff-grid article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px 10px;
+  align-items: start;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.team-billing-handoff-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.25);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.team-billing-handoff-grid article.next {
+  border-color: rgba(240, 198, 107, 0.34);
+  background: rgba(240, 198, 107, 0.08);
+}
+
+.team-billing-handoff-grid article > span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(134, 174, 246, 0.32);
+  border-radius: 999px;
+  color: #b7ccff;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.team-billing-handoff-grid article > div,
+.team-billing-handoff-counts span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.team-billing-handoff-grid button {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.team-billing-handoff-counts span {
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.team-billing-handoff strong,
+.team-billing-handoff small,
+.team-billing-handoff span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 980px) {
   .workspace {
     padding-inline: 16px;
@@ -12070,6 +12161,7 @@ body {
   .hero,
   .corporate-launch-cockpit-top,
   .corporate-setup-stepper-header,
+  .team-billing-handoff-header,
   .workspace-command-strip {
     grid-template-columns: 1fr;
   }

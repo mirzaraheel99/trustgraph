@@ -180,6 +180,9 @@ assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup
 assertIncludesAny(bundleText, ["Corporate launch cockpit"], "corporate setup next-action cockpit");
 assertIncludesAny(bundleText, ["corporate_launch_cockpit"], "corporate launch cockpit packet mode");
 assertIncludesAny(bundleText, ["Export cockpit proof"], "corporate launch cockpit export");
+assertIncludesAny(bundleText, ["Team and billing handoff"], "team billing Verify handoff panel");
+assertIncludesAny(bundleText, ["team_billing_handoff"], "team billing handoff packet mode");
+assertIncludesAny(bundleText, ["Export handoff proof"], "team billing handoff export");
 assertIncludesAny(bundleText, ["Corporate operator status"], "corporate setup operator status band");
 assertIncludesAny(bundleText, ["Next operator action"], "corporate setup next operator action");
 assertIncludesAny(bundleText, ["Setup command bar"], "logged-in setup command bar");
