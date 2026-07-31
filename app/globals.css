@@ -19126,3 +19126,119 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Corporate portal usability repair: stop fixed controls and dense cards from creating horizontal scroll. */
+.workspace,
+.workspace-main,
+.workspace-admin-grid,
+.work-grid,
+.records-panel,
+.corporate-directory-panel,
+.verify-panel,
+.account-panel,
+.public-auth-section,
+.public-auth-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.corporate-directory-panel,
+.verify-panel,
+.public-auth-card {
+  overflow-x: clip;
+}
+
+.corporate-directory-panel .directory-controls {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  align-items: stretch;
+}
+
+.corporate-directory-panel .directory-controls input {
+  grid-column: span 2;
+}
+
+.corporate-directory-panel .directory-controls button,
+.corporate-directory-panel .directory-controls select,
+.public-auth-card button,
+.public-auth-card input,
+.public-auth-card select,
+.public-auth-card textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.corporate-directory-panel .secondary-action,
+.corporate-directory-panel .primary-action,
+.verify-panel .secondary-action,
+.verify-panel .primary-action {
+  white-space: normal;
+  line-height: 1.15;
+}
+
+.corporate-directory-panel article,
+.corporate-directory-panel div,
+.verify-panel article,
+.verify-panel div,
+.public-auth-card article,
+.public-auth-card div {
+  min-width: 0;
+}
+
+.corporate-directory-panel strong,
+.corporate-directory-panel small,
+.corporate-directory-panel span,
+.verify-panel strong,
+.verify-panel small,
+.verify-panel span,
+.public-auth-card strong,
+.public-auth-card small,
+.public-auth-card span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.directory-metrics,
+.corporate-user-database-export-grid,
+.corporate-database-visibility-grid,
+.corporate-scope-review-grid,
+.corporate-access-next-action-grid,
+.corporate-database-access-decision-grid,
+.corporate-review-handoff-grid,
+.verify-user-data-proof-grid,
+.corporate-verify-first-use-grid,
+.corporate-verify-access-lane-grid,
+.corporate-access-blocker-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+}
+
+.grant-list,
+.shared-record-grid,
+.directory-list,
+.reference-list,
+.missing-list {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.grant-card,
+.shared-record-card,
+.directory-card,
+.reference-card,
+.missing-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  .corporate-directory-panel .directory-controls input {
+    grid-column: 1;
+  }
+
+  .public-auth-section {
+    padding-inline: 12px;
+  }
+
+  .public-auth-card {
+    top: auto;
+  }
+}

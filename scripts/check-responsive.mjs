@@ -370,6 +370,14 @@ if (!css.includes(".account-admin-row,\n.team-controls,\n.directory-controls,\n.
   throw new Error("Responsive check failed: dense corporate/admin forms must auto-fit instead of forcing horizontal overflow.");
 }
 
+if (!css.includes("Corporate portal usability repair") || !css.includes(".corporate-directory-panel .directory-controls") || !css.includes("repeat(auto-fit, minmax(min(100%, 168px), 1fr))")) {
+  throw new Error("Responsive check failed: Corporate Verify directory controls must use the final auto-fit usability repair.");
+}
+
+if (!css.includes(".grant-card,\n.shared-record-card,\n.directory-card,\n.reference-card,\n.missing-card") || !css.includes("overflow: hidden")) {
+  throw new Error("Responsive check failed: corporate record cards must be contained to prevent horizontal scroll.");
+}
+
 if (!css.includes(".sidebar") || !css.includes("display: none !important")) {
   throw new Error("Responsive check failed: authenticated workspace must not resurrect the legacy sidebar rail.");
 }

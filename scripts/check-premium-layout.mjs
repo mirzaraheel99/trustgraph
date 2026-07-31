@@ -168,6 +168,8 @@ assert(app.includes("Record database receipt"), "Corporate Verify must expose a 
 assert(app.includes('aria-label="Corporate database visibility snapshot"'), "Corporate Verify must expose a persisted visibility snapshot for filtered database rows.");
 assert(css.includes(".corporate-database-visibility-snapshot") && css.includes(".corporate-database-visibility-grid"), "corporate database visibility snapshot must be styled and bounded.");
 assert(app.includes("Record visibility snapshot"), "Corporate Verify must expose a visibility snapshot save action.");
+assert(css.includes("Corporate portal usability repair") && css.includes(".corporate-directory-panel .directory-controls"), "Corporate Verify must include the final usability repair for directory controls.");
+assert(css.includes("repeat(auto-fit, minmax(min(100%, 168px), 1fr))") && css.includes(".grant-card,\n.shared-record-card,\n.directory-card"), "Corporate Verify cards and controls must be protected from horizontal overflow.");
 assert(app.includes('aria-label="Corporate review handoff receipt"'), "Corporate Verify must expose the end-to-end review handoff receipt.");
 assert(css.includes(".corporate-review-handoff-receipt") && css.includes(".corporate-review-handoff-grid"), "corporate review handoff receipt must be styled and bounded.");
 assert(app.includes('aria-label="Missing record lifecycle receipt"'), "Corporate Verify missing-record requests must expose lifecycle receipt.");
