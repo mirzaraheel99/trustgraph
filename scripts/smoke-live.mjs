@@ -320,6 +320,13 @@ assertIncludesAny(bundleText, ["evidence_preview_download_ledger"], "evidence pr
 assertIncludesAny(bundleText, ["Signed preview ready"], "evidence signed preview readiness label");
 assertIncludesAny(bundleText, ["Last signed evidence link"], "last signed evidence link visible state");
 assertIncludesAny(bundleText, ["last_signed_evidence_link"], "last signed evidence link packet field");
+assertIncludesAny(bundleText, ["Signed evidence access audit"], "signed evidence access audit receipt");
+assertIncludesAny(bundleText, ["signed_evidence_access_audit_receipt"], "signed evidence access audit packet field");
+assertIncludesAny(
+  bundleText,
+  ["evidence_file_access_uses_short_lived_signed_urls_metadata_only_rows_do_not_expose_files_and_last_preview_or_download_state_is_exportable"],
+  "signed evidence access audit acceptance rule"
+);
 assertIncludesAny(bundleText, ["Evidence access chain"], "evidence access chain panel");
 assertIncludesAny(bundleText, ["evidence_access_chain"], "evidence access chain packet field");
 assertIncludesAny(bundleText, ["Audit expectation"], "evidence audit expectation step");

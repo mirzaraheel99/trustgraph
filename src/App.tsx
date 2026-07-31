@@ -456,6 +456,47 @@ function RecordDetail({
       ready: true
     }
   ];
+  const signedEvidenceAccessAuditReceipt = {
+    mode: "signed_evidence_access_audit_receipt",
+    record_id: record.id,
+    file_backed_documents: fileBackedEvidenceCount,
+    metadata_only_documents: metadataOnlyEvidenceCount,
+    last_signed_link: lastEvidenceLink
+      ? {
+          document_title: lastEvidenceLink.documentTitle,
+          mode: lastEvidenceLink.mode,
+          url_host: lastEvidenceLink.urlHost,
+          expires_at: lastEvidenceLink.expiresAt
+        }
+      : null,
+    preview_expiry_seconds: 300,
+    download_expiry_seconds: 120,
+    raw_file_policy: "private_storage_short_lived_signed_urls_only",
+    accepted_when:
+      "evidence_file_access_uses_short_lived_signed_urls_metadata_only_rows_do_not_expose_files_and_last_preview_or_download_state_is_exportable"
+  };
+  const signedEvidenceAuditCards = [
+    {
+      label: "File access",
+      value: fileBackedEvidenceCount ? "Signed only" : "No files",
+      detail: `${fileBackedEvidenceCount} file-backed evidence row${fileBackedEvidenceCount === 1 ? "" : "s"} in this record.`
+    },
+    {
+      label: "Preview expiry",
+      value: "5 min",
+      detail: "Preview links use short-lived Supabase signed URLs."
+    },
+    {
+      label: "Download expiry",
+      value: "2 min",
+      detail: "Download links use the stricter signed URL window."
+    },
+    {
+      label: "Last action",
+      value: lastEvidenceLink ? lastEvidenceLink.mode : "None",
+      detail: lastEvidenceLink ? `${lastEvidenceLink.documentTitle} via ${lastEvidenceLink.urlHost}` : "Preview or download a file-backed row to create proof."
+    }
+  ];
   const evidenceAccessPacket = {
     generated_at: new Date().toISOString(),
     packet_mode: "selected_record_evidence_preview_download",
@@ -486,6 +527,7 @@ function RecordDetail({
     },
     evidence_preview_download_ledger: evidencePreviewDownloadLedger,
     evidence_access_chain: evidenceAccessChain,
+    signed_evidence_access_audit_receipt: signedEvidenceAccessAuditReceipt,
     last_signed_evidence_link: lastEvidenceLink,
     documents: filteredEvidenceDocuments.map((document) => ({
       id: document.id,
@@ -725,6 +767,22 @@ function RecordDetail({
                     ? `${lastEvidenceLink.mode} link issued from ${lastEvidenceLink.urlHost}; expires ${new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(lastEvidenceLink.expiresAt))}.`
                     : "Use Preview or Download on a file-backed evidence row to generate short-lived signed-link proof."}
                 </small>
+              </div>
+            </div>
+            <div className="signed-evidence-access-audit" aria-label="Signed evidence access audit receipt">
+              <div>
+                <span className={`status-chip ${fileBackedEvidenceCount ? "success" : "neutral"}`}>Signed evidence access audit</span>
+                <strong>{fileBackedEvidenceCount ? "Private files use signed access only" : "Metadata-only evidence is visible"}</strong>
+                <small>{signedEvidenceAccessAuditReceipt.accepted_when}</small>
+              </div>
+              <div className="signed-evidence-access-grid">
+                {signedEvidenceAuditCards.map((card) => (
+                  <article key={card.label}>
+                    <span>{card.label}</span>
+                    <strong>{card.value}</strong>
+                    <small>{card.detail}</small>
+                  </article>
+                ))}
               </div>
             </div>
           </>

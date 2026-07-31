@@ -62,6 +62,7 @@ assert(app.includes('aria-label="Public server sync receipt"'), "public website 
 assert(app.includes('aria-label="Public saved build verification"'), "public website must expose GitHub, Pages, VPS stamp, and VFIX boundary proof before login.");
 assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readiness must expose hosted corporate retest checklist.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
+assert(app.includes('aria-label="Signed evidence access audit receipt"'), "evidence preview/download must expose signed access audit receipt state.");
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
 assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
 assert(app.includes('aria-label="Live pilot row proof"'), "v1 readiness must expose live pilot row proof.");
@@ -147,6 +148,7 @@ assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checko
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");
+assert(css.includes(".signed-evidence-access-audit") && css.includes(".signed-evidence-access-grid"), "signed evidence access audit receipt must be styled and bounded.");
 assert(premiumRepair.includes(".admin-audit-export-command") && premiumRepair.includes(".admin-audit-export-command-grid"), "admin audit export command must be bounded in the premium shell.");
 assert(premiumRepair.includes(".audit-filter-receipt"), "audit filter receipt must be bounded in the premium shell.");
 assert(premiumRepair.includes(".pilot-contact-form") && premiumRepair.includes(".consent-controls"), "corporate/admin form controls must be included in overflow guards.");
