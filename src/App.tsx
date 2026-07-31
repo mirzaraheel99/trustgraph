@@ -18618,6 +18618,58 @@ function App() {
     accepted_when:
       "first_screen_shows_website_login_professional_corporate_pricing_user_database_and_server_sync_without_sidebar_overflow_or_hidden_actions"
   };
+  const portalWelcomePath = [
+    {
+      label: "Professional user",
+      detail: "Open Passport for personal identity, work history, credentials, evidence, consent, and recovery.",
+      action: authSession ? "Open Passport" : "Login or register",
+      status: authSession ? `${livePassportRecords.length} Passport rows` : "Hosted login required",
+      target: "passport" as const,
+      ready: Boolean(authSession)
+    },
+    {
+      label: "Corporate admin",
+      detail: "Create the company workspace, activate RBAC, invite reviewers, and choose the pilot pricing ledger.",
+      action: hasLiveCorporateContext ? "Open company setup" : "Create company",
+      status: hasLiveCorporateContext ? activeOrganization.name : "Workspace needed",
+      target: "corporate_setup" as const,
+      ready: hasLiveCorporateContext
+    },
+    {
+      label: "Corporate reviewer",
+      detail: "Request professional access and review only approved, consent-scoped user database rows.",
+      action: "Open Verify",
+      status: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Access grant needed",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0
+    },
+    {
+      label: "Pricing",
+      detail: "Review pilot plan, seat estimate, ledger receipt, and Stripe human-gate decision before launch.",
+      action: "Open pricing",
+      status: organizationSubscriptions.length ? "Pilot ledger active" : "Pilot ledger needed",
+      target: "billing" as const,
+      ready: organizationSubscriptions.length > 0
+    },
+    {
+      label: "Server save",
+      detail: "GitHub is the source; VPS freshness is accepted only when the release stamp matches the latest green build.",
+      action: "Export server packet",
+      status: serverSyncMonitor.status === "synced" ? "VPS synced" : "GitHub saved",
+      target: "server_packet" as const,
+      ready: serverSyncMonitor.status === "synced"
+    }
+  ];
+  const portalWelcomePathPacket = {
+    mode: "portal_welcome_path",
+    current_portal: workspace.label,
+    signed_in: Boolean(authSession),
+    next_step: portalWelcomePath.find((step) => !step.ready)?.label ?? "Ready for launch review",
+    steps_ready: portalWelcomePath.filter((step) => step.ready).length,
+    steps_total: portalWelcomePath.length,
+    steps: portalWelcomePath.map(({ label, status, ready }) => ({ label, status, ready })),
+    accepted_when: "first_dashboard_view_clearly_separates_professional_user_corporate_admin_corporate_reviewer_pricing_and_server_save_paths"
+  };
   const v1LaunchFlowCommand = {
     mode: "v1_launch_flow_command",
     current_portal: workspace.label,
@@ -19458,6 +19510,7 @@ function App() {
     workspace_command_strip: workspaceCommandStrip,
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,
+    portal_welcome_path: portalWelcomePathPacket,
     signed_in_portal_flow_contract: signedInPortalFlowContract,
     corporate_onboarding_pricing_cockpit: corporateOnboardingPricingCockpit,
     hosted_version_receipt: hostedVersionReceipt,
@@ -20806,6 +20859,76 @@ function App() {
           }}
           onOpenWorkspace={changeWorkspace}
         />
+
+        <section className="portal-welcome-path" aria-label="Portal welcome path">
+          <div className="portal-welcome-path-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Portal welcome path</span>
+              <strong>{authSession ? "Choose the right portal without hunting" : "Start with hosted login, then choose a portal"}</strong>
+              <small>
+                Professional, Corporate admin, Corporate reviewer, pricing, and server save each have a separate action so the dashboard stays readable.
+              </small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-portal-welcome-path-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(portalWelcomePathPacket, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export portal path
+            </button>
+          </div>
+          <div className="portal-welcome-path-grid">
+            {portalWelcomePath.map((item, index) => (
+              <button
+                className={`${item.ready ? "ready" : "next"} ${item.target === workspace.id ? "current" : ""}`}
+                key={item.label}
+                onClick={() => {
+                  if (item.target === "passport" || item.target === "verify") {
+                    openWorkspaceOrSetup(item.target);
+                    return;
+                  }
+                  if (item.target === "corporate_setup") {
+                    openCorporateControls();
+                    return;
+                  }
+                  if (item.target === "billing") {
+                    setSetupView("billing");
+                    document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                }}
+                type="button"
+              >
+                <span>{index + 1}</span>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+                <em>{item.status}</em>
+                <b>{item.action}</b>
+              </button>
+            ))}
+          </div>
+          <div className="portal-welcome-path-proof">
+            <span>
+              <strong>{portalWelcomePathPacket.steps_ready}/{portalWelcomePathPacket.steps_total}</strong>
+              <small>Paths ready</small>
+            </span>
+            <span>
+              <strong>{workspace.label}</strong>
+              <small>Current portal</small>
+            </span>
+            <span>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+              <small>VPS freshness state</small>
+            </span>
+          </div>
+        </section>
 
         <section className="signed-in-landing-actions" aria-label="Signed-in landing actions">
           <div className="signed-in-landing-header">

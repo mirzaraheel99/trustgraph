@@ -37,6 +37,7 @@ assert(authenticatedRender.includes('aria-label="Server sync monitor"'), "signed
 assert(authenticatedRender.includes('aria-label="VPS deploy secrets checklist"'), "signed-in dashboard must expose the VPS deploy secrets checklist when automatic server save is blocked.");
 assert(app.includes("trustgraph-release.json"), "signed-in dashboard must expose the VPS release stamp verification command.");
 assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in dashboard must expose the end-to-end V1 operating map.");
+assert(authenticatedRender.includes('aria-label="Portal welcome path"'), "signed-in dashboard must expose a simple portal welcome path.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
 assert(authenticatedRender.includes('aria-label="Live database contract"'), "V1 cockpit must expose the live database contract.");
 assert(authenticatedRender.includes('aria-label="Real data acceptance ledger"'), "V1 cockpit must expose a real-data acceptance ledger that rejects preview rows.");
@@ -100,6 +101,7 @@ assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.inclu
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(consoleLayout.includes(".v1-portal-launchpad") && consoleLayout.includes(".v1-portal-launchpad-grid") && consoleLayout.includes(".v1-portal-launchpad-proof"), "V1 portal launchpad must be styled and bounded.");
 assert(consoleLayout.includes(".v1-command-cockpit") && consoleLayout.includes(".v1-command-cockpit-lanes") && consoleLayout.includes(".v1-command-cockpit-proof"), "V1 command cockpit must be styled and bounded.");
+assert(css.includes(".portal-welcome-path") && css.includes(".portal-welcome-path-grid") && css.includes(".portal-welcome-path-proof"), "portal welcome path must be styled and bounded.");
 assert(css.includes(".signed-in-portal-flow-contract") && css.includes(".signed-in-portal-flow-grid"), "signed-in portal flow contract must be styled and bounded.");
 assert(premiumRepair.includes(".portal-choice-guide") && premiumRepair.includes(".portal-choice-guide-grid"), "portal choice guide must be styled and bounded in the premium shell.");
 assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-collection-grid"), "V1 proof collection command must be styled and bounded.");

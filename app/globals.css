@@ -7594,6 +7594,122 @@ p {
     rgba(255, 255, 255, 0.026);
 }
 
+.portal-welcome-path {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  margin: 0 0 14px;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.09), rgba(134, 174, 246, 0.05) 58%, rgba(240, 198, 107, 0.035)),
+    rgba(6, 18, 19, 0.74);
+}
+
+.portal-welcome-path-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.portal-welcome-path-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.portal-welcome-path-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 9px;
+}
+
+.portal-welcome-path-grid button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 7px 10px;
+  align-items: start;
+  min-width: 0;
+  min-height: 168px;
+  padding: 12px;
+  text-align: left;
+  border-color: rgba(201, 214, 207, 0.12);
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.portal-welcome-path-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.portal-welcome-path-grid button.current {
+  box-shadow: inset 0 0 0 1px rgba(95, 240, 201, 0.2);
+}
+
+.portal-welcome-path-grid button > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #cffff0;
+  border: 1px solid rgba(95, 240, 201, 0.3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.portal-welcome-path-grid strong,
+.portal-welcome-path-grid small,
+.portal-welcome-path-grid em,
+.portal-welcome-path-grid b {
+  grid-column: 2;
+}
+
+.portal-welcome-path-grid em,
+.portal-welcome-path-grid b {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.portal-welcome-path-grid em {
+  color: var(--gold);
+}
+
+.portal-welcome-path-grid b {
+  align-self: end;
+  color: #9bfbe3;
+}
+
+.portal-welcome-path-proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.portal-welcome-path-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.portal-welcome-path strong,
+.portal-welcome-path small,
+.portal-welcome-path span,
+.portal-welcome-path em,
+.portal-welcome-path b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .signed-in-landing-header {
   display: flex;
   justify-content: space-between;
@@ -14225,6 +14341,10 @@ p {
   .public-auth-section,
   .public-portal-rail,
   .public-session-handoff,
+  .portal-welcome-path,
+  .portal-welcome-path-header,
+  .portal-welcome-path-grid,
+  .portal-welcome-path-proof,
   .public-server-update-receipt,
   .public-saved-build-verification,
   .public-saved-build-grid,
