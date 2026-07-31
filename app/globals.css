@@ -11324,6 +11324,8 @@ p {
   .server-release-cockpit-header,
   .server-release-command,
   .server-release-grid,
+  .v1-operating-map-header,
+  .v1-operating-map-grid,
   .workspace-command-strip,
   .workspace-command-metrics,
   .portal-decision-panel,
@@ -13216,6 +13218,7 @@ body {
 .topbar,
 .portal-home-command,
 .server-release-cockpit,
+.v1-operating-map,
 .dashboard-next-action,
 .workspace-command-strip,
 .hero-card,
@@ -13282,6 +13285,7 @@ body {
 .session-command-bar button,
 .portal-home-actions button,
 .server-release-cockpit button,
+.v1-operating-map button,
 .dashboard-next-action-buttons button,
 .workspace-command-actions button,
 .setup-command-actions button,
@@ -13402,8 +13406,87 @@ body {
   font-weight: 800;
 }
 
+.v1-operating-map {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 8px;
+  background: rgba(11, 24, 25, 0.74);
+  overflow: hidden;
+}
+
+.v1-operating-map-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.v1-operating-map-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.v1-operating-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 10px;
+}
+
+.v1-operating-map-grid article {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  overflow: hidden;
+}
+
+.v1-operating-map-grid article.ready {
+  border-color: rgba(83, 232, 178, 0.24);
+  background: rgba(83, 232, 178, 0.07);
+}
+
+.v1-operating-map-grid article.next {
+  border-color: rgba(255, 205, 111, 0.3);
+  background: rgba(255, 205, 111, 0.075);
+}
+
+.v1-operating-map-grid article > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(101, 240, 208, 0.14);
+  color: #65f0d0;
+  font-weight: 900;
+}
+
+.v1-operating-map-grid article > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.v1-operating-map-grid button {
+  grid-column: 1 / -1;
+}
+
+.v1-operating-map strong,
+.v1-operating-map small,
+.v1-operating-map span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .portal-home-copy,
 .server-release-cockpit-header > div,
+.v1-operating-map-header > div,
 .dashboard-next-action-copy,
 .workspace-command-strip > div:first-child,
 .setup-command-bar > div:first-child {

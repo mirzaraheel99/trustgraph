@@ -20,6 +20,7 @@ assert(authenticatedRender.includes('className="session-command-bar"'), "session
 assert(authenticatedRender.includes('aria-label="Dashboard next action"'), "signed-in dashboard must expose a single role-aware next-action command.");
 assert(authenticatedRender.includes('aria-label="Portal home command center"'), "signed-in dashboard must expose a simple portal home command center.");
 assert(authenticatedRender.includes('aria-label="Server release save path"'), "signed-in dashboard must expose the GitHub-to-VPS release save path.");
+assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in dashboard must expose the end-to-end V1 operating map.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
 assert(authenticatedRender.includes("Sign out"), "signed-in dashboard must expose a visible sign-out action.");
 assert(authenticatedRender.includes('className="workspace-route-strip"'), "workspace route strip must remain available after sidebar removal.");
@@ -41,6 +42,7 @@ assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: no
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
+assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".dashboard-next-action") && premiumRepair.includes(".dashboard-next-action-metrics"), "dashboard next action command must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");

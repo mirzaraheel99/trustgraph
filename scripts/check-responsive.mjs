@@ -105,6 +105,8 @@ const requiredMobileStacks = [
   ".server-release-cockpit-header",
   ".server-release-command",
   ".server-release-grid",
+  ".v1-operating-map-header",
+  ".v1-operating-map-grid",
   ".reference-source-strip",
   ".release-source-strip",
   ".session-command-bar",
@@ -220,6 +222,10 @@ if (!css.includes(".portal-home-command") || !css.includes("grid-template-column
 
 if (!css.includes(".server-release-cockpit") || !css.includes(".server-release-command") || !css.includes(".server-release-grid")) {
   throw new Error("Responsive check failed: server release save path must be visible and bounded.");
+}
+
+if (!css.includes(".v1-operating-map") || !css.includes(".v1-operating-map-grid") || !css.includes("grid-template-columns: 30px minmax(0, 1fr)")) {
+  throw new Error("Responsive check failed: V1 operating map must be visible and bounded.");
 }
 
 if (!css.includes(".session-command-bar") || !css.includes("width: fit-content") || !css.includes(".workspace-route-strip,\n.workspace-flow-strip") || !css.includes("display: flex !important")) {

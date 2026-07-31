@@ -14132,6 +14132,72 @@ function App() {
       target: "export" as const
     }
   ];
+  const v1OperatingMap = [
+    {
+      step: "1",
+      label: "Website",
+      detail: "Public page explains TrustGraph, pricing, professional signup, corporate signup, and the product boundary.",
+      status: "Public entry",
+      action: "Open public site",
+      target: "public" as const,
+      ready: true
+    },
+    {
+      step: "2",
+      label: "Professional registration",
+      detail: "Users create a Professional Passport account, verify hosted email, then add live records and evidence.",
+      status: authSession && activeOrganization.type === "professional" ? "Live user" : "Needs hosted login",
+      action: "Open account",
+      target: "account" as const,
+      ready: Boolean(authSession)
+    },
+    {
+      step: "3",
+      label: "Corporate registration",
+      detail: "Companies create an employer or staffing workspace, activate RBAC, invite reviewers, and prepare Verify access.",
+      status: hasLiveCorporateContext ? "Corporate active" : "Create company",
+      action: "Corporate setup",
+      target: "corporate_setup" as const,
+      ready: hasLiveCorporateContext
+    },
+    {
+      step: "4",
+      label: "Pricing ledger",
+      detail: "Corporate Verify pilot pricing is active in the Supabase ledger while Stripe checkout remains human-gated.",
+      status: organizationSubscriptions.length ? "Ledger live" : "Pilot ledger needed",
+      action: "Open pricing",
+      target: "billing" as const,
+      ready: organizationSubscriptions.length > 0
+    },
+    {
+      step: "5",
+      label: "Corporate user database",
+      detail: "Reviewers request access by professional email and see only approved, consent-scoped Passport rows.",
+      status: sharedVerifyRecords.length ? "Rows visible" : "Needs approved grants",
+      action: "Open Verify",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0
+    },
+    {
+      step: "6",
+      label: "Deploy and save",
+      detail: "GitHub remains the source of truth; the VPS pulls the green build and keeps VFIX isolated.",
+      status: "Server path ready",
+      action: "Export server packet",
+      target: "server_packet" as const,
+      ready: true
+    }
+  ];
+  const nextOperatingStep = v1OperatingMap.find((step) => !step.ready) ?? v1OperatingMap[v1OperatingMap.length - 1];
+  const v1OperatingMapPacketName = `trustgraph-v1-operating-map-${new Date().toISOString().slice(0, 10)}.json`;
+  const v1OperatingMapPacket = {
+    mode: "v1_operating_map",
+    generated_at: new Date().toISOString(),
+    next_step: nextOperatingStep.label,
+    next_action: nextOperatingStep.action,
+    steps: v1OperatingMap,
+    accepted_when: "public_website_professional_registration_corporate_registration_pricing_ledger_corporate_database_and_server_save_path_are_clear_and_exportable"
+  };
   const livePilotRowProofRows: LivePilotRowProof["rows"] = [
     {
       label: "Hosted auth session",
@@ -14378,6 +14444,7 @@ function App() {
     dashboard_next_action: dashboardNextActionPacket,
     workspace_command_strip: workspaceCommandStrip,
     v1_completion_cockpit: v1CompletionCockpit,
+    v1_operating_map: v1OperatingMapPacket,
     server_release_save_path: serverReleasePacket,
     signed_in_landing_actions: signedInLandingActions,
     proof_export_hub: proofExportHub,
@@ -14696,6 +14763,67 @@ function App() {
                 <span>{lane.status}</span>
                 <strong>{lane.label}</strong>
                 <small>{lane.detail}</small>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="v1-operating-map" aria-label="V1 operating map">
+          <div className="v1-operating-map-header">
+            <div>
+              <span className="status-chip success">V1 operating map</span>
+              <strong>{nextOperatingStep.ready ? "TrustGraph V1 flow is mapped end to end" : `Next: ${nextOperatingStep.label}`}</strong>
+              <small>
+                One path connects the website, user registration, corporate registration, pricing, scoped database access, and server release.
+              </small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(v1OperatingMapPacketName, JSON.stringify(v1OperatingMapPacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export operating map
+            </button>
+          </div>
+          <div className="v1-operating-map-grid">
+            {v1OperatingMap.map((step) => (
+              <article className={step.ready ? "ready" : step.label === nextOperatingStep.label ? "next" : ""} key={step.label}>
+                <span>{step.step}</span>
+                <div>
+                  <strong>{step.label}</strong>
+                  <small>{step.detail}</small>
+                  <small>{step.status}</small>
+                </div>
+                <button
+                  className={step.ready ? "secondary-action" : "primary-action"}
+                  onClick={() => {
+                    if (step.target === "public") {
+                      setShowPublicSite(true);
+                      return;
+                    }
+                    if (step.target === "account") {
+                      openAuthControls();
+                      return;
+                    }
+                    if (step.target === "corporate_setup") {
+                      openCorporateControls();
+                      return;
+                    }
+                    if (step.target === "billing") {
+                      openCorporateControls();
+                      window.setTimeout(() => setSetupView("billing"), 50);
+                      return;
+                    }
+                    if (step.target === "verify") {
+                      openWorkspaceOrSetup("verify");
+                      return;
+                    }
+                    downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                  }}
+                  type="button"
+                >
+                  {step.action}
+                </button>
               </article>
             ))}
           </div>
