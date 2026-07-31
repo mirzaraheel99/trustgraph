@@ -3800,6 +3800,21 @@ function CorporateDirectoryPanel({
       detail: "Organization role, Access Grant, and professional consent filter every row."
     }
   ];
+  const corporateUserDatabaseExportReceipt = {
+    mode: "corporate_user_database_export_receipt",
+    export_file: packetName,
+    csv_file: exportName,
+    review_queue_file: reviewQueueExportName,
+    status: corporateAccessNextAction.ready ? "export_ready" : "export_blocked",
+    filtered_rows: filteredRows.length,
+    total_access_grant_rows: candidateRows.length,
+    shared_passport_records: sharedRecords.length,
+    review_attestations: reviews.length,
+    active_filters: corporateDirectoryFilterReceipt.active_filters,
+    next_action: corporateAccessNextAction.action,
+    accepted_when:
+      "corporate_user_database_export_receipt_requires_live_rbac_rows_filters_scope_review_attestation_and_no_preview_data"
+  };
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -3815,6 +3830,7 @@ function CorporateDirectoryPanel({
       query: directoryQuery.trim()
     },
     filter_receipt: corporateDirectoryFilterReceipt,
+    export_receipt: corporateUserDatabaseExportReceipt,
     corporate_user_database_access_contract: corporateUserDatabaseAccessContract,
     source_counts: {
       access_grants: requests.length,
@@ -4001,6 +4017,31 @@ function CorporateDirectoryPanel({
         <div>
           <strong>{reviewReadyCount}</strong>
           <small>Review-ready people</small>
+        </div>
+      </div>
+      <div className="corporate-user-database-export-receipt" aria-label="Corporate user database export receipt">
+        <div>
+          <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Corporate user database export receipt</span>
+          <strong>{corporateAccessNextAction.ready ? "Scoped export is ready" : "Export is blocked by next action"}</strong>
+          <small>{corporateUserDatabaseExportReceipt.accepted_when}</small>
+        </div>
+        <div className="corporate-user-database-export-grid">
+          <span>
+            <strong>{corporateUserDatabaseExportReceipt.filtered_rows}/{corporateUserDatabaseExportReceipt.total_access_grant_rows}</strong>
+            <small>Filtered rows</small>
+          </span>
+          <span>
+            <strong>{corporateUserDatabaseExportReceipt.shared_passport_records}</strong>
+            <small>Shared Passport rows</small>
+          </span>
+          <span>
+            <strong>{corporateUserDatabaseExportReceipt.review_attestations}</strong>
+            <small>Review attestations</small>
+          </span>
+          <span>
+            <strong>{corporateUserDatabaseExportReceipt.next_action}</strong>
+            <small>Required action</small>
+          </span>
         </div>
       </div>
       <div className="corporate-scope-review-command" aria-label="Corporate scope review command">

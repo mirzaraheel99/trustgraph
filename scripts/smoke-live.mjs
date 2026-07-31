@@ -642,6 +642,9 @@ assertIncludesAny(bundleText, ["every visible user row must be live, approved, s
 assertIncludesAny(bundleText, ["Corporate access next action"], "corporate access next action command");
 assertIncludesAny(bundleText, ["corporate_access_next_action_command"], "corporate access next action packet field");
 assertIncludesAny(bundleText, ["corporate_access_next_action_is_complete_only_when_live_rbac_context"], "corporate access next action acceptance rule");
+assertIncludesAny(bundleText, ["Corporate user database export receipt"], "Corporate user database export receipt");
+assertIncludesAny(bundleText, ["corporate_user_database_export_receipt"], "Corporate user database export receipt packet field");
+assertIncludesAny(bundleText, ["corporate_user_database_export_receipt_requires_live_rbac_rows_filters_scope_review_attestation_and_no_preview_data"], "Corporate user database export receipt acceptance rule");
 assertIncludesAny(bundleText, ["Corporate review handoff receipt"], "corporate review handoff receipt");
 assertIncludesAny(bundleText, ["corporate_review_handoff_receipt"], "corporate review handoff packet field");
 assertIncludesAny(bundleText, ["corporate_review_handoff_requires_request_approved_grant_scoped_rows_gap_resolution_attestation_and_export"], "corporate review handoff acceptance rule");
