@@ -12298,6 +12298,50 @@ function PublicSite({
       detail: "Use hosted recovery so the inbox link returns to TrustGraph instead of a local dev URL."
     }
   ];
+  const hostedAuthRedirectVerificationReceipt = {
+    mode: "hosted_auth_redirect_verification_receipt",
+    current_browser_url:
+      typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,
+    expected_return_url: authRedirectUrl,
+    github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
+    trustgraph_vps_redirect: TRUSTGRAPH_VPS_URL,
+    allowed_redirects_required: TRUSTGRAPH_ALLOWED_REDIRECTS,
+    localhost_redirect_accepted: false,
+    current_browser_is_localhost:
+      typeof window === "undefined" ? false : window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
+    repaired_link_ready: Boolean(repairedVerificationUrl),
+    rate_limit_note: "Supabase built-in email allows 2 emails per hour project-wide; wait 60+ minutes or configure custom SMTP.",
+    accepted_when:
+      "supabase_site_url_and_redirect_urls_include_github_pages_and_trustgraph_vps_and_email_links_return_to_hosted_app_not_localhost",
+    next_action:
+      typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "Open hosted TrustGraph before requesting another verification email."
+        : repairedVerificationUrl
+          ? "Copy the repaired hosted link, then open it in this browser."
+          : "Confirm Supabase Site URL and allowed redirects before resending email."
+  };
+  const hostedAuthRedirectCards = [
+    {
+      label: "Current browser",
+      value: hostedAuthRedirectVerificationReceipt.current_browser_is_localhost ? "Localhost" : "Hosted",
+      detail: hostedAuthRedirectVerificationReceipt.current_browser_url
+    },
+    {
+      label: "Return URL",
+      value: "TrustGraph hosted",
+      detail: authRedirectUrl
+    },
+    {
+      label: "Allowed redirects",
+      value: `${TRUSTGRAPH_ALLOWED_REDIRECTS.length} required`,
+      detail: TRUSTGRAPH_ALLOWED_REDIRECTS.join(", ")
+    },
+    {
+      label: "Link repair",
+      value: repairedVerificationUrl ? "Ready" : "Waiting",
+      detail: repairedVerificationUrl ? "Hosted replacement link is ready to copy." : "Paste a localhost email link to convert it."
+    }
+  ];
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
@@ -12354,6 +12398,7 @@ function PublicSite({
     })),
     portal_login_switchboard: portalLoginSwitchboard,
     login_issue_resolver: loginIssueResolver,
+    hosted_auth_redirect_verification_receipt: hostedAuthRedirectVerificationReceipt,
     auth_recovery_decision_path: authRecoveryDecisionPath,
     repaired_link_ready: Boolean(repairedVerificationUrl),
     portal_auth_outcome_summary: authOutcomePacket,
@@ -13553,6 +13598,23 @@ function PublicSite({
                 </article>
               ))}
             </div>
+          </div>
+          <div className="hosted-auth-redirect-verification" aria-label="Hosted auth redirect verification receipt">
+            <div>
+              <span className="status-chip neutral">Hosted auth redirect verification receipt</span>
+              <strong>Email links must return to the production TrustGraph app</strong>
+              <small>{hostedAuthRedirectVerificationReceipt.accepted_when}</small>
+            </div>
+            <div className="hosted-auth-redirect-grid">
+              {hostedAuthRedirectCards.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
+            <small>{hostedAuthRedirectVerificationReceipt.next_action}</small>
           </div>
           <div className="public-auth-recovery-command" aria-label="Public auth recovery command center">
             <div>

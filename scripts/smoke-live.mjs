@@ -677,6 +677,14 @@ assertIncludesAny(bundleText, ["Reset password"], "public portal password recove
 assertIncludesAny(bundleText, ["Auth recovery decision path"], "public auth recovery decision panel");
 assertIncludesAny(bundleText, ["auth_recovery_decision_path"], "registration auth recovery packet field");
 assertIncludesAny(bundleText, ["New account verification"], "auth recovery verification guidance");
+assertIncludesAny(bundleText, ["Hosted auth redirect verification receipt"], "hosted auth redirect verification receipt");
+assertIncludesAny(bundleText, ["hosted_auth_redirect_verification_receipt"], "hosted auth redirect verification packet field");
+assertIncludesAny(
+  bundleText,
+  ["supabase_site_url_and_redirect_urls_include_github_pages_and_trustgraph_vps_and_email_links_return_to_hosted_app_not_localhost"],
+  "hosted auth redirect acceptance contract"
+);
+assertIncludesAny(bundleText, ["Open hosted TrustGraph before requesting another verification email"], "localhost auth redirect next action");
 assertIncludesAny(bundleText, ["Migrations through 043"], "current database migration coverage copy");
 assertIncludesAny(bundleText, ["042 RLS repair expected"], "organization RLS recursion repair marker");
 assertIncludesAny(bundleText, ["migration 043 account context RPC"], "account context RPC migration marker");
