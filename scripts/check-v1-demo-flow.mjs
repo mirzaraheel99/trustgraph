@@ -119,6 +119,8 @@ const flowChecks = [
       "Corporate directory acceptance",
       "corporate_directory_acceptance",
       "Corporate access review queue",
+      "Request scope receipt",
+      "request_scope_receipt",
       "Export review queue",
       "Corporate Verify live access test",
       "Visible user rows"

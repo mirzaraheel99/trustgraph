@@ -224,6 +224,9 @@ assertIncludesAny(bundleText, ["Verify user data visible"], "corporate user data
 assertIncludesAny(bundleText, ["Corporate Verify live access test"], "corporate Verify live access test panel");
 assertIncludesAny(bundleText, ["corporate_verify_live_access_test"], "corporate Verify live access packet field");
 assertIncludesAny(bundleText, ["Corporate user-data request"], "corporate Verify guided request form");
+assertIncludesAny(bundleText, ["Request scope receipt"], "corporate access request scope receipt");
+assertIncludesAny(bundleText, ["one professional, one business purpose"], "corporate access request scope boundary");
+assertIncludesAny(bundleText, ["request_scope_receipt"], "corporate reviewer packet request scope receipt field");
 assertIncludesAny(bundleText, ["Professional email"], "corporate Verify professional email field label");
 assertIncludesAny(bundleText, ["Corporate user data proof"], "corporate Verify user data proof summary");
 assertIncludesAny(bundleText, ["user_data_proof"], "corporate Verify user data proof packet field");

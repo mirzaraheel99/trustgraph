@@ -8399,6 +8399,48 @@ p {
   text-transform: uppercase;
 }
 
+.request-scope-receipt {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.06), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.request-scope-receipt-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.request-scope-receipt-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.request-scope-receipt-grid span,
+.request-scope-receipt-grid strong,
+.request-scope-receipt-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.request-scope-receipt-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .verify-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -11571,6 +11613,7 @@ p {
   .vps-guard-strip,
   .vps-launch-grid,
   .rls-coverage-strip,
+  .request-scope-receipt-grid,
   .security-review-topline,
   .verify-reviewer-flow-header,
   .human-decision-list,

@@ -105,6 +105,7 @@ const requiredMobileStacks = [
   ".public-pricing-estimator-actions",
   ".public-session-handoff",
   ".real-database-policy-grid",
+  ".request-scope-receipt-grid",
   ".registration-path-grid",
   ".registration-decision-grid",
   ".selected-portal-command",

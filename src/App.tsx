@@ -1935,6 +1935,37 @@ function VerifyRequestsPanel({
       state: pendingGapCount ? "next" : sharedRecords.length ? "ready" : "blocked"
     }
   ];
+  const requestScopeReceipt = {
+    mode: "corporate_access_request_scope_receipt",
+    professional_email: subjectEmail.trim() || "not_entered",
+    business_purpose: purpose.trim(),
+    review_window_days: expiresInDays,
+    request_boundary: "one_professional_email_one_business_purpose_no_user_database_browse",
+    visible_after_approval: "approved_consent_scoped_passport_rows_only",
+    can_submit: Boolean(!disabled && subjectEmail.trim() && purpose.trim().length >= 12)
+  };
+  const requestScopeReceiptCards = [
+    {
+      label: "Professional email",
+      value: subjectEmail.trim() || "Required",
+      detail: "Request starts from one professional email."
+    },
+    {
+      label: "Business purpose",
+      value: purpose.trim().length >= 12 ? "Ready" : "Needs detail",
+      detail: purpose.trim() || "Explain why the reviewer needs Passport access."
+    },
+    {
+      label: "Review window",
+      value: `${expiresInDays} days`,
+      detail: "Access should expire after the review window."
+    },
+    {
+      label: "Browse boundary",
+      value: "No user browse",
+      detail: "Approval exposes only scoped shared Passport rows."
+    }
+  ];
   const corporateAccessBlockerMap = [
     {
       label: "Company context",
@@ -2064,6 +2095,7 @@ function VerifyRequestsPanel({
       detail: item.detail,
       ready: item.ready
     })),
+    request_scope_receipt: requestScopeReceipt,
     corporate_verify_access_lane: corporateVerifyAccessLane,
     corporate_access_blocker_map: corporateAccessBlockerMap,
     steps: verifyFlowSteps.map((step) => ({
@@ -2297,6 +2329,21 @@ function VerifyRequestsPanel({
           {lifecycle.map((item) => (
             <span key={item}>{item}</span>
           ))}
+        </div>
+        <div className="request-scope-receipt" aria-label="Corporate access request scope receipt">
+          <div className="directory-source-strip">
+            <span className="status-chip neutral">Request scope receipt</span>
+            <small>Confirms this request targets one professional, one business purpose, and no open user database browse.</small>
+          </div>
+          <div className="request-scope-receipt-grid">
+            {requestScopeReceiptCards.map((item) => (
+              <article key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <small>{item.detail}</small>
+              </article>
+            ))}
+          </div>
         </div>
       </form>
       <div className="grant-panel-top test-tool-strip">
