@@ -10410,6 +10410,60 @@ function BillingPanel({
       "export_pricing_decision_board_before_stripe_build"
     ]
   };
+  const pricingChoiceRail = {
+    mode: "pricing_choice_rail",
+    selected_plan: selectedProjectedPlan?.name ?? primaryPlan?.name ?? "Choose plan",
+    selected_seats: seats,
+    projected_monthly_usd: estimatedSeatTotal,
+    active_subscription_count: activeSubscriptions.length,
+    latest_quote_receipt_id: latestPricingQuoteReceipt?.id ?? "not_recorded",
+    stripe_checkout_status: "disabled_until_human_gate",
+    next_action: activeSubscriptions.length
+      ? latestPricingQuoteReceipt
+        ? "Export pricing packet"
+        : "Record pricing quote"
+      : "Activate pilot ledger",
+    accepted_when:
+      "pricing_choice_rail_shows_plan_seats_projected_total_live_ledger_quote_receipt_stripe_gate_and_export_before_billing_receipts"
+  };
+  const pricingChoiceRailItems = [
+    {
+      label: "Plan",
+      value: pricingChoiceRail.selected_plan,
+      detail: plans.length ? `${plans.length} configured pricing plans loaded.` : "Apply pricing migration to load plans.",
+      ready: plans.length > 0
+    },
+    {
+      label: "Seats",
+      value: `${seats}`,
+      detail: "Use this count for corporate pilot quote and ledger activation.",
+      ready: seats > 0
+    },
+    {
+      label: "Monthly",
+      value: estimatedSeatTotal ? `$${estimatedSeatTotal}` : "Pending",
+      detail: "Projected from configured plan catalog and selected seats.",
+      ready: estimatedSeatTotal > 0
+    },
+    {
+      label: "Ledger",
+      value: activeSubscriptions.length ? "Active" : "Needed",
+      detail: activeSubscriptions.length ? `${activeSubscriptions.length} Supabase subscription row${activeSubscriptions.length === 1 ? "" : "s"}.` : "Activate pilot ledger before pricing is accepted.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Quote",
+      value: latestPricingQuoteReceipt ? "Saved" : "Record",
+      detail: latestPricingQuoteReceipt ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month receipt saved.` : "Save a quote receipt for corporate review.",
+      ready: Boolean(latestPricingQuoteReceipt)
+    },
+    {
+      label: "Stripe",
+      value: "Gated",
+      detail: "Checkout, invoices, taxes, refunds, dunning, and webhooks stay disabled.",
+      ready: true
+    }
+  ];
   const pricingStructurePacket = {
     generated_at: new Date().toISOString(),
     mode: "pilot_subscription_ledger",
@@ -10428,6 +10482,10 @@ function BillingPanel({
     billing_ledger_evidence: billingLedgerEvidence,
     billing_activation_receipt: billingActivationReceipt,
     billing_operator_path: billingOperatorSteps,
+    pricing_choice_rail: {
+      ...pricingChoiceRail,
+      items: pricingChoiceRailItems.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
     stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
     pricing_decision_board: pricingDecisionBoard,
     projected_plans: projectedPlans,
@@ -10546,6 +10604,34 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="pricing-choice-rail" aria-label="Pricing choice rail">
+        <div className="pricing-choice-copy">
+          <span className={`status-chip ${activeSubscriptions.length ? "success" : "warning"}`}>Pricing choice</span>
+          <strong>{pricingChoiceRail.next_action}</strong>
+          <small>{pricingChoiceRail.accepted_when}</small>
+        </div>
+        <div className="pricing-choice-grid">
+          {pricingChoiceRailItems.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="pricing-choice-actions">
+          <label>
+            <span>Seats</span>
+            <input min={1} onChange={(event) => setSeats(Number(event.target.value))} type="number" value={seats} />
+          </label>
+          <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+            Record quote
+          </button>
+          <button className="secondary-action" onClick={() => downloadTextFile(pricingPacketName, JSON.stringify(pricingStructurePacket, null, 2), "application/json")} type="button">
+            Export pricing packet
+          </button>
+        </div>
+      </div>
       <div className="pricing-launch-command" aria-label="Pricing launch command">
         <div>
           <span className="status-chip warning">Pricing launch command</span>

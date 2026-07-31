@@ -229,6 +229,8 @@ const requiredMobileStacks = [
   ".public-pricing-estimator",
   ".public-pricing-estimator-grid",
   ".public-pricing-estimator-actions",
+  ".pricing-choice-grid",
+  ".pricing-choice-actions",
   ".pricing-quote-receipt-grid",
   ".pricing-quote-receipt-actions",
   ".pilot-owner-readiness-grid",
