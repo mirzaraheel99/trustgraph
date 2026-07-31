@@ -214,6 +214,9 @@ assertIncludesAny(bundleText, ["V1 portal launchpad"], "signed-in first-screen p
 assertIncludesAny(bundleText, ["V1 command cockpit"], "signed-in first-screen V1 command cockpit");
 assertIncludesAny(bundleText, ["v1_command_cockpit"], "V1 command cockpit packet field");
 assertIncludesAny(bundleText, ["Website, login, Professional Passport, Corporate Verify, pricing"], "V1 command cockpit plain-language launch path");
+assertIncludesAny(bundleText, ["Portal action dock"], "signed-in portal action dock");
+assertIncludesAny(bundleText, ["portal_action_dock"], "signed-in portal action dock packet field");
+assertIncludesAny(bundleText, ["passport_verify_company_pricing_and_account_are_visible_clickable_and_mobile_stacked_from_the_first_dashboard_screen"], "portal action dock acceptance rule");
 assertIncludesAny(bundleText, ["Portal welcome path"], "signed-in portal welcome path");
 assertIncludesAny(bundleText, ["portal_welcome_path"], "signed-in portal welcome packet field");
 assertIncludesAny(bundleText, ["Professional, Corporate admin, Corporate reviewer, pricing, and server save"], "portal welcome path role separation");

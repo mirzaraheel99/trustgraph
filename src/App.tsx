@@ -18670,6 +18670,44 @@ function App() {
     steps: portalWelcomePath.map(({ label, status, ready }) => ({ label, status, ready })),
     accepted_when: "first_dashboard_view_clearly_separates_professional_user_corporate_admin_corporate_reviewer_pricing_and_server_save_paths"
   };
+  const portalActionDock = [
+    {
+      label: "Passport",
+      detail: livePassportRecords.length ? `${livePassportRecords.length} records` : "Personal records",
+      target: "passport" as const,
+      ready: livePassportRecords.length > 0
+    },
+    {
+      label: "Verify",
+      detail: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} shared rows` : "Corporate review",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0
+    },
+    {
+      label: "Company",
+      detail: hasLiveCorporateContext ? activeOrganization.name : "Setup needed",
+      target: "corporate_setup" as const,
+      ready: hasLiveCorporateContext
+    },
+    {
+      label: "Pricing",
+      detail: organizationSubscriptions.length ? "Ledger active" : "Pilot plan",
+      target: "billing" as const,
+      ready: organizationSubscriptions.length > 0
+    },
+    {
+      label: "Account",
+      detail: authSession ? "Session and recovery" : "Login or register",
+      target: "account" as const,
+      ready: Boolean(authSession)
+    }
+  ];
+  const portalActionDockPacket = {
+    mode: "portal_action_dock",
+    current_workspace: workspace.id,
+    actions: portalActionDock.map(({ label, detail, ready }) => ({ label, detail, ready })),
+    accepted_when: "passport_verify_company_pricing_and_account_are_visible_clickable_and_mobile_stacked_from_the_first_dashboard_screen"
+  };
   const v1LaunchFlowCommand = {
     mode: "v1_launch_flow_command",
     current_portal: workspace.label,
@@ -19511,6 +19549,7 @@ function App() {
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,
     portal_welcome_path: portalWelcomePathPacket,
+    portal_action_dock: portalActionDockPacket,
     signed_in_portal_flow_contract: signedInPortalFlowContract,
     corporate_onboarding_pricing_cockpit: corporateOnboardingPricingCockpit,
     hosted_version_receipt: hostedVersionReceipt,
@@ -19751,6 +19790,49 @@ function App() {
             </button>
           </div>
         </header>
+
+        <nav className="portal-action-dock" aria-label="Portal action dock">
+          {portalActionDock.map((item) => (
+            <button
+              className={`${item.ready ? "ready" : ""} ${item.target === workspace.id ? "current" : ""}`}
+              key={item.label}
+              onClick={() => {
+                if (item.target === "passport" || item.target === "verify") {
+                  openWorkspaceOrSetup(item.target);
+                  return;
+                }
+                if (item.target === "corporate_setup") {
+                  openCorporateControls();
+                  return;
+                }
+                if (item.target === "billing") {
+                  setSetupView("billing");
+                  document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  return;
+                }
+                openAuthControls();
+              }}
+              type="button"
+            >
+              <strong>{item.label}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+          <button
+            className="export-dock"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-portal-action-dock-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(portalActionDockPacket, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            <strong>Proof</strong>
+            <small>Export path</small>
+          </button>
+        </nav>
 
         <section className="v1-command-cockpit" aria-label="V1 command cockpit">
           <div className="v1-command-cockpit-hero">
