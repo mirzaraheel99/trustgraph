@@ -173,6 +173,8 @@ assertMigration(migrations, "041_", "corporate access review attestations");
 
 assertAll(readinessText, [
   "13-Track Product Coverage",
+  "V1 Operating Map",
+  "server commit matches the latest GitHub",
   "Corporate directory acceptance ledger",
   "Verification Loop"
 ], "V1 readiness checklist");
@@ -185,6 +187,9 @@ assertAll(runbookText, [
 
 assertAll(evidenceMapText, [
   "Live Database Proof Artifacts",
+  "V1 operating map packet",
+  "Server release save path packet",
+  "043_account_context_rpc.sql",
   "collapsible auth operator panels",
   "dashboard session command bar",
   "Remaining Human Gates"
@@ -193,6 +198,8 @@ assertAll(evidenceMapText, [
 assertAll(readmeText, [
   "Professional and Corporate portal entry",
   "Corporate registration collects organization name",
+  "V1 operating map",
+  "server release save path",
   "Export the working-data packet"
 ], "README");
 

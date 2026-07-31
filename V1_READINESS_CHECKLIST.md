@@ -18,6 +18,17 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 12. Advisory and notifications: deterministic advisory summary and workflow notification status controls are implemented.
 13. Pilot readiness: pilot acceptance script, runbook, deployment smoke checks, and human-decision boundaries are documented.
 
+## V1 Operating Map
+
+The signed-in dashboard now exposes one operator path for pilot use:
+
+1. Website: public positioning, pricing, and portal selection.
+2. Professional registration: hosted Supabase Auth, email verification, Passport records, and evidence.
+3. Corporate registration: employer/staffing workspace creation, RBAC activation, reviewer invites, and Corporate Verify setup.
+4. Pricing ledger: Supabase subscription ledger activation for the Corporate Verify pilot plan while Stripe remains human-gated.
+5. Corporate user database: approved, consent-scoped Passport rows visible only through Access Grants and active corporate RBAC.
+6. Deploy and save: GitHub remains the source of truth, the VPS pulls the green build, and the VFIX host stays isolated.
+
 ## Verification Loop
 
 1. Confirm the latest GitHub Actions deployment for `main` is green.
@@ -36,6 +47,8 @@ Use this checklist to keep the 13-track build aligned before a pilot user review
 14. Export team invitations and personal pending invitations for the pilot acceptance packet.
 15. Open Admin, create pilot cases if needed, resolve or restrict one case, export operations cases, export audit CSV/JSON, export release ledger, and export the security runbook.
 16. Confirm the CI responsive coverage guard passes before accepting mobile and narrow desktop layouts.
+17. Export the V1 operating map packet and confirm it matches the current pilot route before user testing.
+18. Export the server release save path packet before updating the VPS and confirm the server commit matches the latest GitHub `main`.
 
 ## Stop Conditions
 

@@ -15,6 +15,7 @@ This repository contains the first React + TypeScript application foundation for
 - Structured references, issuer credentials, missing-record requests, Connect controls, and source-grounded advisory summaries
 - Public website, Professional and Corporate portal entry, pricing tiers, subscription activation, team invitations, and corporate member-management foundation
 - Guarded TrustGraph-only VPS launch packet in Admin so server deployment stays separate from the existing VFIX app
+- V1 operating map that connects website, Professional registration, Corporate registration, pricing, Corporate Verify database access, and the GitHub-to-VPS release save path
 
 ## Tech Stack
 
@@ -48,7 +49,7 @@ VPS deployment target:
 https://trustgraph.5-75-224-110.sslip.io
 ```
 
-Use `SERVER_DEPLOYMENT.md` to install Docker, pull the GitHub repo, start Caddy HTTPS, and provision the VPS Postgres service. GitHub remains the primary source of truth; the server should update with `git pull --ff-only origin main` and `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`.
+Use `SERVER_DEPLOYMENT.md` to install Docker, pull the GitHub repo, start Caddy HTTPS, and provision the VPS Postgres service. GitHub remains the primary source of truth; the signed-in app exposes a server release save path packet, and the server should update with `bash tools/update-vps-from-github.sh` from `/opt/trustgraph`.
 
 For first server setup, `tools/bootstrap-vps.sh` performs the guarded `/opt/trustgraph` install and refuses the VFIX host/path.
 
@@ -115,7 +116,7 @@ Set `TRUSTGRAPH_SMOKE_URL` to smoke-check a different hosted URL.
 npm run check:v1-demo-flow
 ```
 
-This validates the end-to-end v1 demo path from public portal selection through registration, dashboard actions, professional records, Corporate Verify user database access, working database proof, billing boundary, and launch gates.
+This validates the end-to-end v1 demo path from public portal selection through registration, dashboard actions, professional records, Corporate Verify user database access, working database proof, V1 operating map, server release save path, billing boundary, and launch gates.
 
 ## Server Env Check
 
@@ -199,6 +200,8 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 24. Use the Launch checklist to seed a live pilot workspace when you need database-backed pilot data instead of front-end preview data.
 25. Review seed reconciliation to confirm seeded Passport, evidence, Access Grant, corporate review attestation, consent, subscription, and corporate member rows match the live repository loads.
 26. Export the working-data packet to prove the currently loaded Passport, Access Grant, corporate review attestation, consent, subscription, team, and invitation rows plus the live database repair queue.
+27. Export the V1 operating map packet to confirm the pilot path from public website through server release is understandable.
+28. Export the server release save path packet, then update the VPS from `/opt/trustgraph` with `bash tools/update-vps-from-github.sh`.
 
 ## Live Database Status
 
@@ -212,7 +215,7 @@ Unauthenticated visitors land on a public TrustGraph website with portal entry p
 - Corporate Verify: `$149/month` pilot tier for corporate RBAC, shared Passport review, missing-record requests, and audit.
 - TrustGraph Scale: custom/enterprise tier for issuer workflows, Connect API clients, webhooks, and compliance operations.
 
-Corporate registration collects organization name, domain, and type, then provisions an employer or staffing agency portal after Supabase account creation and verified hosted login. Pricing cards now show the database path for each portal so buyers can see what is written immediately and what remains human-gated. The billing architecture decision packet records the v1 choice to keep Supabase subscription ledger activation live while Stripe Checkout, customer portal, invoices, refunds, dunning, taxes, and payment webhooks wait for human approval.
+Corporate registration collects organization name, domain, and type, then provisions an employer or staffing agency portal after Supabase account creation and verified hosted login. Pricing cards now show the database path for each portal so buyers can see what is written immediately and what remains human-gated. The V1 operating map shows the sequence from website to Professional registration, Corporate registration, pricing ledger, Corporate Verify user database access, and server release. The billing architecture decision packet records the v1 choice to keep Supabase subscription ledger activation live while Stripe Checkout, customer portal, invoices, refunds, dunning, taxes, and payment webhooks wait for human approval.
 
 ## Product Planning
 
