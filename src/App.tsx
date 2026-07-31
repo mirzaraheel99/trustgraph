@@ -16682,6 +16682,41 @@ function App() {
       ? "Export V1 cockpit and working-data packets for pilot evidence."
       : "Open Account, seed or create live rows, reload the dashboard, then export the working-data packet again."
   };
+  const realDataAcceptanceLedger = {
+    mode: "real_data_acceptance_ledger",
+    accepted: livePilotRowProof.accepted,
+    source_policy: "Only signed-in Supabase repository rows count for V1. Preview, static, browser-memory, or unauthenticated rows are rejected.",
+    source: livePilotRowProof.source,
+    ready_groups: livePilotRowProof.readyGroups,
+    required_groups: livePilotRowProof.totalRequiredGroups,
+    missing_groups: livePilotRowProof.missingRequiredGroups,
+    accepted_when:
+      "hosted_auth_account_context_passport_evidence_corporate_access_consent_team_billing_review_and_release_rows_are_loaded_from_supabase_not_preview_data",
+    rows: livePilotRowProofRows.map((row) => ({
+      label: row.label,
+      table: row.table,
+      count: row.count,
+      ready: row.ready,
+      evidence: row.evidence
+    }))
+  };
+  const realDataAcceptanceSummary = [
+    {
+      label: "Source",
+      value: realDataAcceptanceLedger.source.replace(/_/g, " "),
+      detail: realDataAcceptanceLedger.source_policy
+    },
+    {
+      label: "Ready groups",
+      value: `${realDataAcceptanceLedger.ready_groups}/${realDataAcceptanceLedger.required_groups}`,
+      detail: realDataAcceptanceLedger.accepted_when
+    },
+    {
+      label: "Missing groups",
+      value: realDataAcceptanceLedger.missing_groups.length ? `${realDataAcceptanceLedger.missing_groups.length}` : "0",
+      detail: realDataAcceptanceLedger.missing_groups.length ? realDataAcceptanceLedger.missing_groups.join(", ") : "No missing live row groups."
+    }
+  ];
   const missingLiveRowCommands = livePilotRowProofRows
     .filter((row) => row.required && !row.ready)
     .map((row) => ({
@@ -17763,6 +17798,47 @@ function App() {
               </span>
             </div>
             <small>{liveDatabaseContract.operator_next_step}</small>
+          </div>
+          <div className="real-data-acceptance-ledger" aria-label="Real data acceptance ledger">
+            <div className="real-data-acceptance-header">
+              <div>
+                <span className={`status-chip ${realDataAcceptanceLedger.accepted ? "success" : "warning"}`}>Real data acceptance ledger</span>
+                <strong>{realDataAcceptanceLedger.accepted ? "Live Supabase row proof is accepted" : "Live Supabase row proof is still incomplete"}</strong>
+                <small>{realDataAcceptanceLedger.source_policy}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-real-data-acceptance-ledger-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(realDataAcceptanceLedger, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export ledger
+              </button>
+            </div>
+            <div className="real-data-acceptance-summary">
+              {realDataAcceptanceSummary.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="real-data-acceptance-grid">
+              {realDataAcceptanceLedger.rows.map((row) => (
+                <article className={row.ready ? "ready" : "missing"} key={row.label}>
+                  <span>{row.ready ? "loaded" : "needed"}</span>
+                  <strong>{row.label}</strong>
+                  <small>{row.table}</small>
+                  <small>{row.evidence}</small>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="live-row-completion-command" aria-label="Live row completion command">
             <div>

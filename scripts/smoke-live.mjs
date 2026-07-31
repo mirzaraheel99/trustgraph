@@ -513,6 +513,10 @@ assertIncludesAny(bundleText, ["Review database proof"], "database status strip 
 assertIncludesAny(bundleText, ["Real database acceptance matrix"], "real database acceptance matrix label");
 assertIncludesAny(bundleText, ["live_database_acceptance"], "real database acceptance packet field");
 assertIncludesAny(bundleText, ["unmet_requirements"], "real database unmet requirements packet field");
+assertIncludesAny(bundleText, ["Real data acceptance ledger"], "real data acceptance ledger label");
+assertIncludesAny(bundleText, ["real_data_acceptance_ledger"], "real data acceptance ledger packet field");
+assertIncludesAny(bundleText, ["hosted_auth_account_context_passport_evidence_corporate_access_consent_team_billing_review_and_release_rows_are_loaded_from_supabase_not_preview_data"], "real data acceptance ledger rule");
+assertIncludesAny(bundleText, ["Export ledger"], "real data acceptance ledger export");
 assertIncludesAny(bundleText, ["Hosted login and database handoff"], "hosted login database handoff label");
 assertIncludesAny(bundleText, ["Export login handoff"], "hosted login database handoff export");
 assertIncludesAny(bundleText, ["hosted_login_database_handoff"], "hosted login database handoff packet field");

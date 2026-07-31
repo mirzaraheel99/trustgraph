@@ -15995,6 +15995,108 @@ body {
   overflow-wrap: anywhere;
 }
 
+.real-data-acceptance-ledger {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.07), transparent 64%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.real-data-acceptance-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+}
+
+.real-data-acceptance-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.real-data-acceptance-ledger strong,
+.real-data-acceptance-ledger small,
+.real-data-acceptance-ledger span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.real-data-acceptance-header > div > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 26px);
+  line-height: 1.12;
+}
+
+.real-data-acceptance-ledger small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.real-data-acceptance-summary,
+.real-data-acceptance-grid {
+  display: grid;
+  gap: 9px;
+}
+
+.real-data-acceptance-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.real-data-acceptance-summary span,
+.real-data-acceptance-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.real-data-acceptance-summary small:first-child,
+.real-data-acceptance-grid article > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.real-data-acceptance-summary strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.12;
+}
+
+.real-data-acceptance-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr));
+}
+
+.real-data-acceptance-grid article {
+  min-height: 134px;
+}
+
+.real-data-acceptance-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.real-data-acceptance-grid article.missing {
+  border-color: rgba(248, 205, 106, 0.26);
+  background: rgba(248, 205, 106, 0.06);
+}
+
+.real-data-acceptance-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+}
+
 .portal-home-copy,
 .server-release-cockpit-header > div,
 .v1-operating-map-header > div,
