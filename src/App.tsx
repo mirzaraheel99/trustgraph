@@ -11754,6 +11754,28 @@ function PublicSite({
       state: portal === "corporate" ? "Corporate" : "Professional"
     }
   ];
+  const registrationFocusStrip = [
+    {
+      label: "Account",
+      value: portal === "corporate" ? "Corporate company" : "Professional user",
+      detail: selectedRegistrationPath.plan
+    },
+    {
+      label: "Action",
+      value: mode === "signup" ? "Register" : "Login",
+      detail: selectedPortalCommand.next
+    },
+    {
+      label: "First live write",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: selectedRegistrationPath.databaseWrites.join(", ")
+    },
+    {
+      label: "Landing",
+      value: portal === "corporate" ? "Company setup" : "Passport",
+      detail: portal === "corporate" ? "RBAC, billing, team, and Verify access requests." : "Records, evidence, consent, and sharing."
+    }
+  ];
   const accountTypeChooser = [
     {
       label: "Professional user",
@@ -12872,6 +12894,15 @@ function PublicSite({
             <span>{portal === "corporate" ? "Corporate company" : "Professional user"}</span>
             <strong>{mode === "signup" ? "Register" : "Login"}</strong>
             <small>{selectedRegistrationPath.nextAction}</small>
+          </div>
+          <div className="registration-focus-strip" aria-label="Registration focus strip">
+            {registrationFocusStrip.map((item) => (
+              <span key={item.label}>
+                <small>{item.label}</small>
+                <strong>{item.value}</strong>
+                <small>{item.detail}</small>
+              </span>
+            ))}
           </div>
           <div className="portal-handoff-checklist" aria-label="Portal handoff checklist">
             {portalHandoffChecklist.map((item) => (

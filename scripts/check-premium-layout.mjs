@@ -50,6 +50,7 @@ assert(app.includes('aria-label="Auth recovery command center"'), "account and p
 assert(app.includes('aria-label="Login issue resolver"'), "public auth must expose visible login issue resolver guidance.");
 assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public auth must expose a live onboarding acceptance contract.");
 assert(app.includes('aria-label="Public auth flow command"'), "public auth must expose a simple flow command for account type, mode, and database result.");
+assert(app.includes('aria-label="Registration focus strip"'), "public auth must expose a compact registration focus strip before form fields.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
 assert(app.includes('aria-label="Public server sync receipt"'), "public website must expose saved-build status before login.");
@@ -106,6 +107,7 @@ assert(premiumRepair.includes(".auth-recovery-command-grid") && premiumRepair.in
 assert(premiumRepair.includes(".login-issue-resolver") && premiumRepair.includes(".login-issue-resolver-grid"), "login issue resolver must be styled and bounded.");
 assert(css.includes(".live-onboarding-contract") && css.includes(".live-onboarding-contract-grid") && css.includes(".live-onboarding-sequence"), "live onboarding acceptance contract must be styled and bounded.");
 assert(css.includes(".public-auth-flow-command") && css.includes(".public-auth-flow-grid") && css.includes("Public auth simplification pass"), "public auth flow command must be styled and simplify the login/register surface.");
+assert(css.includes(".registration-focus-strip") && css.includes("grid-template-columns: repeat(2, minmax(0, 1fr))"), "registration focus strip must be styled and bounded.");
 assert(css.includes(".registration-outcome-command") && css.includes(".registration-outcome-grid"), "registration outcome command must be styled and bounded.");
 assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checkout-decision-grid") && css.includes(".stripe-checkout-decision-actions"), "Stripe checkout decision receipt must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");

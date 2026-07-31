@@ -127,6 +127,7 @@ const requiredMobileStacks = [
   ".real-database-policy-grid",
   ".request-scope-receipt-grid",
   ".registration-path-grid",
+  ".registration-focus-strip",
   ".registration-decision-grid",
   ".selected-portal-command",
   ".security-signoff-grid",

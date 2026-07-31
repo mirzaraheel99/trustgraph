@@ -499,6 +499,9 @@ assertIncludesAny(bundleText, ["Collect proof packets in order before calling th
 assertIncludesAny(bundleText, ["Authorized workspace report"], "authorized workspace report export card");
 assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");
 assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff checklist packet field");
+assertIncludesAny(bundleText, ["Registration focus strip"], "registration focus strip");
+assertIncludesAny(bundleText, ["First live write"], "registration focus first write");
+assertIncludesAny(bundleText, ["Company setup"], "registration focus corporate landing");
 assertIncludesAny(bundleText, ["Provision workspace"], "corporate portal handoff provisioning step");
 assertIncludesAny(bundleText, ["database_acceptance_requires_live_login"], "hosted login database live-login requirement");
 assertIncludesAny(bundleText, ["vps_deployment_requires_human_access"], "hosted login VPS human-access requirement");

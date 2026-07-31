@@ -1562,6 +1562,47 @@ button {
   background: rgba(95, 240, 201, 0.12);
 }
 
+.registration-focus-strip {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.07), rgba(134, 174, 246, 0.035)),
+    rgba(255, 255, 255, 0.025);
+}
+
+.registration-focus-strip span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.registration-focus-strip strong,
+.registration-focus-strip small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.registration-focus-strip strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.18;
+}
+
+.registration-focus-strip small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .portal-handoff-checklist {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12235,6 +12276,7 @@ p {
   .stripe-checkout-decision-grid,
   .stripe-checkout-decision-actions,
   .pending-registration-grid,
+  .registration-focus-strip,
   .registration-decision-grid,
   .live-seed-preflight-top,
   .live-seed-preflight-actions,
