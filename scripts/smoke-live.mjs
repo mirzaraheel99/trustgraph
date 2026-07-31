@@ -583,6 +583,13 @@ assertIncludesAny(bundleText, ["corporate_access_next_action_is_complete_only_wh
 assertIncludesAny(bundleText, ["Corporate review handoff receipt"], "corporate review handoff receipt");
 assertIncludesAny(bundleText, ["corporate_review_handoff_receipt"], "corporate review handoff packet field");
 assertIncludesAny(bundleText, ["corporate_review_handoff_requires_request_approved_grant_scoped_rows_gap_resolution_attestation_and_export"], "corporate review handoff acceptance rule");
+assertIncludesAny(bundleText, ["Corporate database access decision board"], "corporate database access decision board");
+assertIncludesAny(bundleText, ["corporate_database_access_decision_board"], "corporate database access decision packet field");
+assertIncludesAny(
+  bundleText,
+  ["corporate_database_access_decision_board_confirms_request_path_approved_rows_attestation_and_export_boundary"],
+  "corporate database access decision acceptance rule"
+);
 assertIncludesAny(bundleText, ["Request access by professional email"], "corporate access review queue empty action");
 assertIncludesAny(bundleText, ["reviewer_scan_board"], "Corporate user database scan board packet field");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");

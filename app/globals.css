@@ -9198,6 +9198,79 @@ p {
   text-transform: uppercase;
 }
 
+.corporate-database-access-decision-board {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.09), rgba(134, 174, 246, 0.045)),
+    rgba(0, 0, 0, 0.16);
+}
+
+.corporate-database-access-decision-board > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-database-access-decision-board strong,
+.corporate-database-access-decision-board small,
+.corporate-database-access-decision-board span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-database-access-decision-board > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.6vw, 24px);
+  line-height: 1.15;
+}
+
+.corporate-database-access-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 8px;
+}
+
+.corporate-database-access-decision-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 124px;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.corporate-database-access-decision-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.26);
+  background: rgba(95, 240, 201, 0.075);
+}
+
+.corporate-database-access-decision-grid article.warning {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.055);
+}
+
+.corporate-database-access-decision-grid span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-database-access-decision-grid small {
+  color: rgba(222, 239, 233, 0.66);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
 .corporate-review-handoff-receipt {
   display: grid;
   gap: 12px;
@@ -12828,6 +12901,7 @@ p {
   .corporate-operating-plan-grid,
   .corporate-data-access-path,
   .corporate-user-database-contract-grid,
+  .corporate-database-access-decision-grid,
   .corporate-access-review-grid,
   .corporate-visibility-grid,
   .corporate-verify-first-use-grid,

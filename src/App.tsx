@@ -3560,6 +3560,55 @@ function CorporateDirectoryPanel({
     acceptance_rule:
       "corporate_access_next_action_is_complete_only_when_live_rbac_context_approved_grants_shared_rows_gap_review_and_attestation_are_ready"
   };
+  const corporateDatabaseAccessDecisionBoard = {
+    mode: "corporate_database_access_decision_board",
+    can_request_access_by_email: isLiveCorporateDatabase,
+    can_view_user_rows: isLiveCorporateDatabase && approvedAccessCount > 0 && sharedRecords.length > 0,
+    can_record_review_attestation: isLiveCorporateDatabase && sharedRecords.length > 0 && openGapRequestCount === 0,
+    can_export_user_packet: corporateAccessNextAction.ready,
+    current_decision: corporateAccessNextAction.label,
+    required_next_action: corporateAccessNextAction.action,
+    approved_rows_visible: sharedRecords.length,
+    approved_grants: approvedAccessCount,
+    open_gaps: openGapRequestCount,
+    review_attestations: reviews.length,
+    accepted_when:
+      "corporate_database_access_decision_board_confirms_request_path_approved_rows_attestation_and_export_boundary"
+  };
+  const corporateDatabaseAccessDecisionCards = [
+    {
+      label: "Request access",
+      value: corporateDatabaseAccessDecisionBoard.can_request_access_by_email ? "Available" : "Role needed",
+      detail: corporateDatabaseAccessDecisionBoard.can_request_access_by_email
+        ? "Send one professional-email request with a clear business purpose."
+        : "Login or switch into a corporate reviewer role first.",
+      ready: corporateDatabaseAccessDecisionBoard.can_request_access_by_email
+    },
+    {
+      label: "View user rows",
+      value: corporateDatabaseAccessDecisionBoard.can_view_user_rows ? `${sharedRecords.length} visible` : "Locked",
+      detail: corporateDatabaseAccessDecisionBoard.can_view_user_rows
+        ? "Approved shared Passport rows are visible in this corporate context."
+        : "Rows unlock only after approved Access Grants and shared record sync.",
+      ready: corporateDatabaseAccessDecisionBoard.can_view_user_rows
+    },
+    {
+      label: "Attest review",
+      value: corporateDatabaseAccessDecisionBoard.can_record_review_attestation ? "Ready" : "Not ready",
+      detail: corporateDatabaseAccessDecisionBoard.can_record_review_attestation
+        ? "Reviewer can record reviewed or ready-handoff status."
+        : openGapRequestCount
+          ? "Resolve open missing-record gaps first."
+          : "Visible approved user rows are required before attestation.",
+      ready: corporateDatabaseAccessDecisionBoard.can_record_review_attestation
+    },
+    {
+      label: "Export packet",
+      value: corporateDatabaseAccessDecisionBoard.can_export_user_packet ? "Ready" : corporateAccessNextAction.action,
+      detail: "Export stays scoped to current RBAC, Access Grant, consent, filters, and review proof.",
+      ready: corporateDatabaseAccessDecisionBoard.can_export_user_packet
+    }
+  ];
   const corporateReviewHandoffSteps = [
     {
       label: "Request access by professional email",
@@ -3739,6 +3788,7 @@ function CorporateDirectoryPanel({
         corporateScopeReviewCommand.find((item) => !item.ready)?.label ?? "Export user packet or mark ready handoff",
       checks: corporateScopeReviewCommand
     },
+    corporate_database_access_decision_board: corporateDatabaseAccessDecisionBoard,
     corporate_access_next_action_command: corporateAccessNextActionCommand,
     corporate_review_handoff_receipt: corporateReviewHandoffReceipt,
     corporate_data_access_path: corporateAccessPath,
@@ -3922,6 +3972,24 @@ function CorporateDirectoryPanel({
             <small>Export ready</small>
             <strong>{corporateAccessNextAction.ready ? "Yes" : "Not yet"}</strong>
           </span>
+        </div>
+      </div>
+      <div className="corporate-database-access-decision-board" aria-label="Corporate database access decision board">
+        <div>
+          <span className={`status-chip ${corporateDatabaseAccessDecisionBoard.can_export_user_packet ? "success" : "warning"}`}>
+            Corporate database access decision board
+          </span>
+          <strong>{corporateDatabaseAccessDecisionBoard.current_decision}</strong>
+          <small>{corporateDatabaseAccessDecisionBoard.accepted_when}</small>
+        </div>
+        <div className="corporate-database-access-decision-grid">
+          {corporateDatabaseAccessDecisionCards.map((item) => (
+            <article className={item.ready ? "ready" : "warning"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <div className="corporate-directory-filter-receipt" aria-label="Corporate directory filter receipt">

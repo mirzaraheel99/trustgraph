@@ -118,6 +118,8 @@ assert(css.includes(".empty-verify-state-command") && css.includes(".empty-verif
 assert(css.includes(".corporate-scope-review-command") && css.includes(".corporate-scope-review-grid"), "Corporate scope review command must be styled and bounded.");
 assert(app.includes('aria-label="Corporate access next action command"'), "Corporate Verify must expose the next action required to unlock scoped user database proof.");
 assert(css.includes(".corporate-access-next-action") && css.includes(".corporate-access-next-action-grid"), "corporate access next action command must be styled and bounded.");
+assert(app.includes('aria-label="Corporate database access decision board"'), "Corporate Verify must expose a current access decision board for request, view, attest, and export actions.");
+assert(css.includes(".corporate-database-access-decision-board") && css.includes(".corporate-database-access-decision-grid"), "corporate database access decision board must be styled and bounded.");
 assert(app.includes('aria-label="Corporate review handoff receipt"'), "Corporate Verify must expose the end-to-end review handoff receipt.");
 assert(css.includes(".corporate-review-handoff-receipt") && css.includes(".corporate-review-handoff-grid"), "corporate review handoff receipt must be styled and bounded.");
 assert(css.includes(".request-scope-receipt") && css.includes(".request-scope-receipt-grid"), "Corporate Verify request scope receipt must be styled and bounded.");
