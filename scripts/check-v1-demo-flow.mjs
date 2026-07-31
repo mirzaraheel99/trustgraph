@@ -59,6 +59,8 @@ const flowChecks = [
     label: "Professional and corporate registration stays explicit",
     required: [
       "Selected portal command",
+      "Public auth flow command",
+      "public_auth_flow_command",
       "Registration decision receipt",
       "registration_decision_receipt",
       "Live onboarding acceptance contract",

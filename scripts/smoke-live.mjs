@@ -161,6 +161,8 @@ assertIncludesAny(bundleText, ["Live database handoff"], "portal auth live datab
 assertIncludesAny(bundleText, ["Corporate account path"], "corporate auth outcome path");
 assertIncludesAny(bundleText, ["Professional Passport path"], "professional auth outcome path");
 assertIncludesAny(bundleText, ["portal_auth_outcome_summary"], "portal auth outcome packet field");
+assertIncludesAny(bundleText, ["Public auth flow command"], "public auth flow command");
+assertIncludesAny(bundleText, ["public_auth_flow_command"], "public auth flow command packet field");
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");
 assertIncludesAny(bundleText, ["Personal Passport", "Corporate Verify", "Company Admin"], "dashboard portal path strip");

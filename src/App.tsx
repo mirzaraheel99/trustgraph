@@ -11271,6 +11271,31 @@ function PublicSite({
       pricing: "$149 pilot monthly"
     }
   ];
+  const publicAuthFlowCommand = {
+    label: "Public auth flow command",
+    selected_account: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_mode: mode === "signup" ? "Register" : "Login",
+    primary_action: selectedPortalCommand.headline,
+    next_step: selectedPortalCommand.next,
+    proof_required: "Hosted Supabase login plus live repository rows; localhost callbacks and preview data are not accepted."
+  };
+  const publicAuthFlowCards = [
+    {
+      label: "Account type",
+      value: publicAuthFlowCommand.selected_account,
+      action: portal === "corporate" ? "Company Verify workspace" : "Private Passport workspace"
+    },
+    {
+      label: "Action",
+      value: publicAuthFlowCommand.selected_mode,
+      action: publicAuthFlowCommand.primary_action
+    },
+    {
+      label: "Database result",
+      value: selectedRegistrationPath.primaryWrite,
+      action: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -11328,6 +11353,7 @@ function PublicSite({
     },
     active_redirect_url: authRedirectUrl,
     portal_entry_path: portalEntryPath,
+    public_auth_flow_command: publicAuthFlowCommand,
     registration_decision_receipt: registrationDecisionReceipt,
     live_onboarding_acceptance_contract: liveOnboardingAcceptanceContract,
     portal_handoff_checklist: portalHandoffChecklist,
@@ -12083,6 +12109,22 @@ function PublicSite({
                 <small>{step.detail}</small>
               </span>
             ))}
+          </div>
+          <div className="public-auth-flow-command" aria-label="Public auth flow command">
+            <div>
+              <span className="status-chip success">{publicAuthFlowCommand.label}</span>
+              <strong>{publicAuthFlowCommand.primary_action}</strong>
+              <small>{publicAuthFlowCommand.next_step}</small>
+            </div>
+            <div className="public-auth-flow-grid">
+              {publicAuthFlowCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.action}</small>
+                </span>
+              ))}
+            </div>
           </div>
           <div className="registration-decision-receipt" aria-label="Registration decision receipt">
             <div>
