@@ -1098,6 +1098,85 @@ button {
   white-space: normal;
 }
 
+.public-portal-launch-checklist {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(225, 184, 102, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.08), transparent 56%),
+    linear-gradient(225deg, rgba(82, 214, 196, 0.06), transparent 70%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.public-portal-launch-checklist > div:first-child {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-portal-launch-checklist strong,
+.public-portal-launch-checklist small,
+.public-portal-launch-checklist span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-launch-checklist > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.1;
+}
+
+.public-portal-launch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr));
+  gap: 8px;
+}
+
+.public-portal-launch-grid article {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-height: 142px;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-portal-launch-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.24);
+  background: rgba(95, 240, 201, 0.06);
+}
+
+.public-portal-launch-grid article.warning {
+  border-color: rgba(225, 184, 102, 0.28);
+  background: rgba(225, 184, 102, 0.07);
+}
+
+.public-portal-launch-grid span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-launch-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.public-portal-launch-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .registration-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12649,6 +12728,7 @@ p {
   .public-pricing-estimator,
   .public-pricing-estimator-grid,
   .public-pricing-estimator-actions,
+  .public-portal-launch-grid,
   .public-server-sync-receipt,
   .public-server-sync-grid,
   .stripe-checkout-decision-grid,

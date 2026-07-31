@@ -12073,6 +12073,50 @@ function PublicSite({
       }
     ]
   };
+  const publicPortalLaunchChecklist = {
+    mode: "public_portal_launch_checklist",
+    status: "code_ready_server_save_pending",
+    accepted_when:
+      "public_website_login_registration_pricing_corporate_database_path_hosted_auth_and_server_release_are_all_clear_before_v1_launch",
+    selected_portal: portal,
+    server_save_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    items: [
+      {
+        label: "Premium public website",
+        status: "ready",
+        detail: "Hero, portal routes, pricing, operating model, and database boundaries are visible before signup."
+      },
+      {
+        label: "Professional registration/login",
+        status: authReady ? "ready" : "needs_supabase_env",
+        detail: "Professional Passport starts from hosted Supabase Auth and writes owner-controlled Passport rows."
+      },
+      {
+        label: "Corporate registration/login",
+        status: authReady ? "ready" : "needs_supabase_env",
+        detail: "Corporate Verify starts from hosted auth, then creates company workspace, RBAC, billing, and Verify paths."
+      },
+      {
+        label: "Pricing structure",
+        status: "ready",
+        detail: "$0 Professional pilot and $149 Corporate Verify pilot ledger are visible; Stripe remains human-gated."
+      },
+      {
+        label: "Corporate user database access",
+        status: "scoped_only",
+        detail: "Corporate can request access by professional email and review only approved shared rows."
+      },
+      {
+        label: "Hosted server saved build",
+        status: serverSyncMonitor.status === "synced" ? "ready" : "server_update_required",
+        detail:
+          serverSyncMonitor.status === "synced"
+            ? "The VPS release stamp matches the saved build."
+            : "Run the VPS update command or add GitHub SSH secrets so the server saves latest main."
+      }
+    ]
+  };
   const publicServerUpdateReceipt = {
     mode: "public_server_update_receipt",
     command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
@@ -12214,6 +12258,7 @@ function PublicSite({
     portal_entry_path: portalEntryPath,
     public_auth_flow_command: publicAuthFlowCommand,
     public_portal_database_access_contract: portalDatabaseAccessContract,
+    public_portal_launch_checklist: publicPortalLaunchChecklist,
     registration_outcome_command: registrationOutcomeCommand,
     registration_decision_receipt: registrationDecisionReceipt,
     live_onboarding_acceptance_contract: liveOnboardingAcceptanceContract,
@@ -12936,6 +12981,22 @@ function PublicSite({
                 <strong>{lane.portal}</strong>
                 <small>{lane.live_write}</small>
                 <small>{lane.access_rule}</small>
+              </article>
+            ))}
+          </div>
+        </div>
+        <div className="public-portal-launch-checklist" aria-label="Public portal launch checklist">
+          <div>
+            <span className="status-chip warning">Public portal launch checklist</span>
+            <strong>Website, login, registration, pricing, scoped database access, and server save path are tracked together</strong>
+            <small>{publicPortalLaunchChecklist.accepted_when}</small>
+          </div>
+          <div className="public-portal-launch-grid">
+            {publicPortalLaunchChecklist.items.map((item) => (
+              <article className={item.status === "ready" ? "ready" : item.status === "server_update_required" ? "warning" : ""} key={item.label}>
+                <span>{item.status.replace(/_/g, " ")}</span>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
               </article>
             ))}
           </div>

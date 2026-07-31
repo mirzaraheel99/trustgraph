@@ -125,6 +125,8 @@ assert(premiumRepair.includes(".login-issue-resolver") && premiumRepair.includes
 assert(css.includes(".live-onboarding-contract") && css.includes(".live-onboarding-contract-grid") && css.includes(".live-onboarding-sequence"), "live onboarding acceptance contract must be styled and bounded.");
 assert(css.includes(".public-auth-flow-command") && css.includes(".public-auth-flow-grid") && css.includes("Public auth simplification pass"), "public auth flow command must be styled and simplify the login/register surface.");
 assert(css.includes(".registration-focus-strip") && css.includes("grid-template-columns: repeat(2, minmax(0, 1fr))"), "registration focus strip must be styled and bounded.");
+assert(app.includes('aria-label="Public portal launch checklist"'), "public website must expose the launch checklist for website, auth, pricing, database, and server readiness.");
+assert(css.includes(".public-portal-launch-checklist") && css.includes(".public-portal-launch-grid"), "public portal launch checklist must be styled and bounded.");
 assert(css.includes(".portal-submit-receipt") && css.includes(".portal-submit-receipt-grid"), "portal submit receipt must be styled and bounded.");
 assert(css.includes(".registration-outcome-command") && css.includes(".registration-outcome-grid"), "registration outcome command must be styled and bounded.");
 assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checkout-decision-grid") && css.includes(".stripe-checkout-decision-actions"), "Stripe checkout decision receipt must be styled and bounded.");
