@@ -271,6 +271,8 @@ assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect
 assertIncludesAny(bundleText, ["Auth recovery command center"], "visible auth recovery command center");
 assertIncludesAny(bundleText, ["Copy hosted redirect"], "hosted auth redirect copy action");
 assertIncludesAny(bundleText, ["Portal access command"], "professional and corporate auth access command");
+assertIncludesAny(bundleText, ["Registration outcome command"], "registration outcome command");
+assertIncludesAny(bundleText, ["registration_outcome_command"], "registration outcome packet field");
 assertIncludesAny(bundleText, ["One secure login, two clear portal paths"], "auth access command headline");
 assertIncludesAny(bundleText, ["The role and workspace you create after login decide what database rows you can see"], "auth role database scope guidance");
 assertIncludesAny(bundleText, ["Copy URL"], "auth redirect copy control");

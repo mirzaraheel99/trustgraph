@@ -11729,6 +11729,33 @@ function PublicSite({
       action: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
     }
   ];
+  const registrationOutcomeCommand = {
+    mode: "registration_outcome_command",
+    selected_portal: portal,
+    selected_mode: mode,
+    submit_label: mode === "signin" ? "Login" : "Create account",
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    next_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
+    acceptance_boundary:
+      "The UI is only accepted as live database proof after hosted login loads Supabase rows for the selected portal."
+  };
+  const registrationOutcomeCards = [
+    {
+      label: "You are doing",
+      value: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
+      detail: mode === "signup" ? "Creates or prepares account access." : "Uses the existing verified account."
+    },
+    {
+      label: "First database result",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "After success",
+      value: registrationOutcomeCommand.next_dashboard,
+      detail: selectedRegistrationPath.nextAction
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -11787,6 +11814,7 @@ function PublicSite({
     active_redirect_url: authRedirectUrl,
     portal_entry_path: portalEntryPath,
     public_auth_flow_command: publicAuthFlowCommand,
+    registration_outcome_command: registrationOutcomeCommand,
     registration_decision_receipt: registrationDecisionReceipt,
     live_onboarding_acceptance_contract: liveOnboardingAcceptanceContract,
     portal_handoff_checklist: portalHandoffChecklist,
@@ -12848,6 +12876,22 @@ function PublicSite({
           >
             {mode === "signin" ? "Login" : "Create account"}
           </button>
+          <div className="registration-outcome-command" aria-label="Registration outcome command">
+            <div>
+              <span className="status-chip success">Registration outcome command</span>
+              <strong>{registrationOutcomeCommand.submit_label} routes to {registrationOutcomeCommand.next_dashboard}</strong>
+              <small>{registrationOutcomeCommand.acceptance_boundary}</small>
+            </div>
+            <div className="registration-outcome-grid">
+              {registrationOutcomeCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+          </div>
           <details className="auth-operator-details">
             <summary>
               <span>Live database handoff proof</span>
