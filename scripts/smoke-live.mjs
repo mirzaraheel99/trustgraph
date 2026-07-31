@@ -210,7 +210,7 @@ assertIncludesAny(bundleText, ["Request approved user access for Corporate Verif
 assertIncludesAny(bundleText, ["V1 portal launchpad"], "signed-in first-screen portal launchpad");
 assertIncludesAny(bundleText, ["V1 command cockpit"], "signed-in first-screen V1 command cockpit");
 assertIncludesAny(bundleText, ["v1_command_cockpit"], "V1 command cockpit packet field");
-assertIncludesAny(bundleText, ["website, login, Professional Passport, Corporate Verify, pricing"], "V1 command cockpit plain-language launch path");
+assertIncludesAny(bundleText, ["Website, login, Professional Passport, Corporate Verify, pricing"], "V1 command cockpit plain-language launch path");
 assertIncludesAny(bundleText, ["Start here"], "portal launchpad start marker");
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
 assertIncludesAny(bundleText, ["Portal command deck"], "signed-in portal command deck");
