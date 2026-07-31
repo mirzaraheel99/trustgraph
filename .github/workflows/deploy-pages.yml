@@ -51,6 +51,9 @@ jobs:
       - name: Verify v1 demo flow
         run: pnpm check:v1-demo-flow
 
+      - name: Verify real-data readiness
+        run: pnpm check:real-data-readiness
+
       - name: Verify responsive coverage
         run: pnpm check:responsive
 
