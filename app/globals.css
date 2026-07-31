@@ -3169,6 +3169,70 @@ p,
   font-weight: 950;
 }
 
+.stripe-checkout-decision {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(225, 184, 102, 0.28);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.09), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+  overflow: hidden;
+}
+
+.stripe-checkout-decision > div:first-child,
+.stripe-checkout-decision-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.stripe-checkout-decision strong,
+.stripe-checkout-decision small,
+.stripe-checkout-decision span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.stripe-checkout-decision > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.16;
+}
+
+.stripe-checkout-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.stripe-checkout-decision-grid article {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.stripe-checkout-decision-grid span {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.stripe-checkout-decision-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
+  gap: 10px;
+  align-items: center;
+}
+
+.stripe-checkout-decision-actions button {
+  justify-content: center;
+  min-height: 36px;
+}
+
 .billing-ledger-acceptance {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
@@ -11717,6 +11781,8 @@ p {
   .public-pricing-estimator,
   .public-pricing-estimator-grid,
   .public-pricing-estimator-actions,
+  .stripe-checkout-decision-grid,
+  .stripe-checkout-decision-actions,
   .pending-registration-grid,
   .registration-decision-grid,
   .live-onboarding-contract-grid,

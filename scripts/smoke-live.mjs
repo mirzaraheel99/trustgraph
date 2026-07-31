@@ -640,6 +640,10 @@ assertIncludesAny(bundleText, ["live_subscription_ledger"], "live billing ledger
 assertIncludesAny(bundleText, ["Pricing launch command"], "billing pricing launch command surface");
 assertIncludesAny(bundleText, ["Use live pricing and ledger rows, keep payments gated"], "billing pricing launch command headline");
 assertIncludesAny(bundleText, ["Real payment collection waits for the Stripe human gate"], "billing Stripe gate guidance");
+assertIncludesAny(bundleText, ["Stripe checkout decision receipt"], "billing Stripe checkout decision receipt");
+assertIncludesAny(bundleText, ["stripe_checkout_decision_receipt"], "billing Stripe checkout decision receipt packet field");
+assertIncludesAny(bundleText, ["Export checkout decision"], "billing Stripe checkout decision export");
+assertIncludesAny(bundleText, ["live_supabase_subscription_ledger"], "billing Stripe decision ledger mode");
 assertIncludesAny(bundleText, ["Payment launch boundary"], "billing payment launch boundary");
 assertIncludesAny(bundleText, ["Billing architecture decision packet"], "billing architecture decision packet label");
 assertIncludesAny(bundleText, ["Export payment decision"], "billing architecture decision export control");

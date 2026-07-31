@@ -7559,6 +7559,49 @@ function BillingPanel({
       detail: "Checkout, invoices, tax, refunds, dunning, and payment webhooks remain disabled."
     }
   ];
+  const stripeCheckoutDecisionReceipt = {
+    mode: "stripe_checkout_decision_receipt",
+    current_billing_mode: activeSubscriptions.length ? "live_supabase_subscription_ledger" : "pricing_catalog_only",
+    payment_collection_live: false,
+    checkout_enabled: false,
+    customer_portal_enabled: false,
+    invoice_email_enabled: false,
+    required_before_checkout: billingGates.map((gate) => gate.label),
+    accepted_pilot_proof:
+      "configured_plan_catalog_selected_seats_active_subscription_rows_and_audit_exports",
+    blocked_flows: [
+      "stripe_checkout",
+      "stripe_customer_portal",
+      "invoice_emails",
+      "tax_calculation",
+      "refunds",
+      "dunning",
+      "payment_webhook_reconciliation"
+    ],
+    next_operator_action: activeSubscriptions.length ? "export_payment_decision_packet" : "activate_pilot_subscription_ledger"
+  };
+  const stripeCheckoutDecisionCards = [
+    {
+      label: "Live now",
+      value: activeSubscriptions.length ? "Pilot ledger active" : "Pricing catalog only",
+      detail: activeSubscriptions.length ? `${activeSubscriptions.length} Supabase subscription row${activeSubscriptions.length === 1 ? "" : "s"}.` : "Activate a Corporate Verify pilot plan first."
+    },
+    {
+      label: "Checkout",
+      value: "Disabled",
+      detail: "No real payment collection runs before Stripe product, tax, invoice, refund, dunning, and webhook decisions."
+    },
+    {
+      label: "Proof accepted",
+      value: "Ledger packet",
+      detail: "Pricing packet and payment decision packet prove pilot billing without external payment flow."
+    },
+    {
+      label: "Next action",
+      value: activeSubscriptions.length ? "Export decision" : "Activate ledger",
+      detail: activeSubscriptions.length ? "Export payment architecture decision before any Stripe build." : "Select a plan to write the pilot subscription row."
+    }
+  ];
   const pricingStructurePacket = {
     generated_at: new Date().toISOString(),
     mode: "pilot_subscription_ledger",
@@ -7576,6 +7619,7 @@ function BillingPanel({
     })),
     billing_ledger_evidence: billingLedgerEvidence,
     billing_operator_path: billingOperatorSteps,
+    stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
     projected_plans: projectedPlans,
     billing_launch_readiness: billingLaunchReadiness,
     billing_gates: billingGates,
@@ -7607,6 +7651,7 @@ function BillingPanel({
     active_subscription_count: activeSubscriptions.length,
     billing_ledger_evidence: billingLedgerEvidence,
     billing_operator_path: billingOperatorSteps,
+    stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
     projected_plans: projectedPlans
   };
 
@@ -7642,6 +7687,34 @@ function BillingPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="stripe-checkout-decision" aria-label="Stripe checkout decision receipt">
+        <div>
+          <span className="status-chip warning">Stripe checkout decision receipt</span>
+          <strong>Use the live ledger for pilot billing; keep checkout disabled</strong>
+          <small>
+            This receipt separates accepted pilot pricing evidence from real payment collection so corporate launch can proceed without pretending Stripe is connected.
+          </small>
+        </div>
+        <div className="stripe-checkout-decision-grid">
+          {stripeCheckoutDecisionCards.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="stripe-checkout-decision-actions">
+          <small>{stripeCheckoutDecisionReceipt.blocked_flows.length} payment flows remain human-gated before paid production launch.</small>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(paymentArchitecturePacketName, JSON.stringify(paymentArchitectureDecision, null, 2), "application/json")}
+            type="button"
+          >
+            Export checkout decision
+          </button>
         </div>
       </div>
       <div className="billing-operator-path" aria-label="Billing operator path">

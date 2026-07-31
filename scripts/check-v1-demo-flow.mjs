@@ -159,6 +159,8 @@ const flowChecks = [
     required: [
       "Billing architecture decision packet",
       "Stripe checkout",
+      "Stripe checkout decision receipt",
+      "stripe_checkout_decision_receipt",
       "intentionally_disabled_until_human_gate",
       "live_subscription_ledger",
       "Payment launch boundary"
