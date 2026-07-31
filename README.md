@@ -89,6 +89,8 @@ The public auth surface is intentionally split into a contained professional/cor
 
 The public login and registration page now keeps proof receipts out of the main form path: users first choose Professional or Corporate, pick Login or Register, complete the required fields, and use the visible recovery controls if hosted verification or password reset needs repair.
 
+The signed-in dashboard front door now exposes clickable cards for Professional Passport, Corporate Verify, Company Admin, Account and recovery, Pricing, Database proof, and Server sync. Pricing opens the billing setup panel, Database proof scrolls to the live-row proof cockpit, and Server sync exports the GitHub-to-VPS release packet.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text

@@ -41,6 +41,8 @@ assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in
 assert(authenticatedRender.includes('aria-label="Portal action dock"'), "signed-in dashboard must expose a compact portal action dock.");
 assert(authenticatedRender.includes('aria-label="Portal usability command"'), "signed-in dashboard must expose one clear personal, corporate, pricing, database, recovery, and server guide.");
 assert(authenticatedRender.includes('aria-label="Portal welcome path"'), "signed-in dashboard must expose a simple portal welcome path.");
+assert(app.includes('label: "Pricing"') && app.includes('label: "Database proof"') && app.includes('label: "Server sync"'), "dashboard front door must include clickable pricing, database proof, and server sync cards.");
+assert(authenticatedRender.includes('item.kind === "setup"') && authenticatedRender.includes('item.kind === "proof"') && authenticatedRender.includes('item.kind === "export"'), "dashboard front door pricing, database proof, and server sync cards must have wired click handlers.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
 assert(authenticatedRender.includes('aria-label="Live database contract"'), "V1 cockpit must expose the live database contract.");
 assert(authenticatedRender.includes('aria-label="Real data acceptance ledger"'), "V1 cockpit must expose a real-data acceptance ledger that rejects preview rows.");

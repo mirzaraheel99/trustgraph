@@ -20125,6 +20125,30 @@ function App() {
       action: "Open Account",
       target: "account" as const,
       kind: "account"
+    },
+    {
+      label: "Pricing",
+      detail: "Review Professional and Corporate pilot pricing, seat planning, and Stripe launch boundary.",
+      status: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "Pilot pricing ready",
+      action: "Open Pricing",
+      target: "billing" as const,
+      kind: "setup"
+    },
+    {
+      label: "Database proof",
+      detail: "Check live row groups, preview-data rejection, and working database repair actions.",
+      status: authSession && accountContext ? "Open live proof" : "Login required",
+      action: "Open Proof",
+      target: "proof" as const,
+      kind: "proof"
+    },
+    {
+      label: "Server sync",
+      detail: "Export the GitHub-to-VPS release packet and confirm the hosted server save path.",
+      status: serverSyncMonitor.status === "synced" ? "VPS synced" : "VPS pull needed",
+      action: "Export Server",
+      target: "server_packet" as const,
+      kind: "export"
     }
   ];
   const dashboardFrontDoor = {
@@ -21706,6 +21730,19 @@ function App() {
                 onClick={() => {
                   if (item.kind === "account") {
                     openAuthControls();
+                    return;
+                  }
+                  if (item.kind === "setup") {
+                    setSetupView("billing");
+                    document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (item.kind === "proof") {
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (item.kind === "export") {
+                    downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
                     return;
                   }
                   if (item.target === "passport" || item.target === "verify" || item.target === "admin") {
