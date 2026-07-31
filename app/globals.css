@@ -16644,6 +16644,7 @@ body {
 
 .topbar,
 .v1-launch-flow-command,
+.onboarding-handoff-command,
 .portal-command-deck,
 .signed-in-portal-flow-contract,
 .dashboard-next-action,
@@ -16821,6 +16822,103 @@ body {
   font-size: 12px;
   font-style: normal;
   font-weight: 850;
+}
+
+.onboarding-handoff-command {
+  display: grid;
+  gap: 13px;
+  padding: 18px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), transparent 62%),
+    rgba(8, 20, 22, 0.84);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.22);
+}
+
+.onboarding-handoff-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.onboarding-handoff-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.onboarding-handoff-command strong,
+.onboarding-handoff-command small,
+.onboarding-handoff-command span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.onboarding-handoff-header strong {
+  color: var(--text);
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.1;
+}
+
+.onboarding-handoff-header small {
+  max-width: 86ch;
+  color: rgba(222, 239, 233, 0.7);
+  line-height: 1.45;
+}
+
+.onboarding-handoff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 10px;
+}
+
+.onboarding-handoff-grid article {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 12px;
+  min-width: 0;
+  min-height: 172px;
+  padding: 14px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+}
+
+.onboarding-handoff-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.onboarding-handoff-grid article > div {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.onboarding-handoff-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.onboarding-handoff-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.12;
+}
+
+.onboarding-handoff-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.onboarding-handoff-grid button {
+  width: 100%;
 }
 
 .portal-command-deck {

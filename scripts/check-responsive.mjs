@@ -127,6 +127,8 @@ const requiredMobileStacks = [
   ".portal-choice-guide-grid",
   ".v1-launch-flow-command",
   ".v1-launch-flow-grid",
+  ".onboarding-handoff-header",
+  ".onboarding-handoff-grid",
   ".portal-command-deck-header",
   ".portal-command-deck-grid",
   ".signed-in-portal-flow-contract",

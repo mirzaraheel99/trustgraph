@@ -84,6 +84,8 @@ const flowChecks = [
       "Portal command deck",
       "V1 launch flow",
       "v1_launch_flow_command",
+      "Onboarding handoff",
+      "onboarding_handoff_command",
       "Portal choice guide",
       "portal_choice_guide",
       "Server release save path",

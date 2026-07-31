@@ -443,6 +443,10 @@ assertIncludesAny(bundleText, ["trustgraph_vps_cutover"], "TrustGraph VPS cutove
 assertIncludesAny(bundleText, ["external sign-off required"], "external security gate status");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 assertIncludesAny(bundleText, ["Guided onboarding wizard"], "guided onboarding wizard label");
+assertIncludesAny(bundleText, ["Onboarding handoff"], "top-level onboarding handoff command");
+assertIncludesAny(bundleText, ["onboarding_handoff_command"], "top-level onboarding handoff packet field");
+assertIncludesAny(bundleText, ["new_user_can_move_from_login_to_corporate_setup_live_row_completion_guided_seed_reconciliation_and_exported_proof_without_searching_the_dashboard"], "top-level onboarding handoff acceptance rule");
+assertIncludesAny(bundleText, ["Export handoff"], "top-level onboarding handoff export");
 assertIncludesAny(bundleText, ["Export setup evidence"], "guided onboarding export control");
 assertIncludesAny(bundleText, ["Export wizard packet"], "guided onboarding wizard packet export");
 assertIncludesAny(bundleText, ["Prepare live pilot workspace"], "guided onboarding live workspace control");

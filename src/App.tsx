@@ -16753,6 +16753,49 @@ function App() {
     commands: missingLiveRowCommands,
     accepted_when: "all_required_signed_in_supabase_row_groups_are_loaded_and_working_data_packet_is_exported"
   };
+  const onboardingHandoffCommand = {
+    mode: "onboarding_handoff_command",
+    signed_in: Boolean(authSession),
+    current_portal: workspace.label,
+    next_database_blocker: liveDatabaseContract.current_blocker,
+    next_corporate_step: nextCorporateSetupStep.label,
+    accepted_when:
+      "new_user_can_move_from_login_to_corporate_setup_live_row_completion_guided_seed_reconciliation_and_exported_proof_without_searching_the_dashboard",
+    lanes: [
+      {
+        label: "Account and recovery",
+        detail: authSession ? `Signed in as ${authSession.user.email}` : "Login or register with hosted Supabase Auth before live proof.",
+        status: authSession ? "Live session" : "Login needed",
+        action: authSession ? "Open account" : "Login or register",
+        target: "account" as const,
+        ready: Boolean(authSession)
+      },
+      {
+        label: "Corporate setup",
+        detail: nextCorporateSetupStep.detail,
+        status: nextCorporateSetupStep.status,
+        action: nextCorporateSetupStep.id === "verify" ? "Open Verify" : `Open ${nextCorporateSetupStep.label}`,
+        target: nextCorporateSetupStep.id === "verify" ? ("verify" as const) : ("corporate_setup" as const),
+        ready: nextCorporateSetupStep.done
+      },
+      {
+        label: "Live row proof",
+        detail: liveDatabaseContract.accepted ? "All signed-in Supabase row groups are loaded." : liveDatabaseContract.current_blocker,
+        status: liveDatabaseContract.accepted ? "Accepted" : `${liveRowCompletionCommand.missing_count} missing`,
+        action: liveDatabaseContract.accepted ? "Export report" : "Open missing rows",
+        target: liveDatabaseContract.accepted ? ("export" as const) : ("proof" as const),
+        ready: liveDatabaseContract.accepted
+      },
+      {
+        label: "Seed and reconciliation",
+        detail: "Run the guided pilot seed only after hosted login, then reload repository rows and export proof.",
+        status: authSession ? "Seed path ready" : "Login first",
+        action: "Open launch checklist",
+        target: "readiness" as const,
+        ready: Boolean(authSession && liveDatabaseContract.accepted)
+      }
+    ]
+  };
   const v1CompletionLanes = [
     {
       label: "Hosted login",
@@ -17303,6 +17346,70 @@ function App() {
                 <small>{lane.shortDetail}</small>
                 <em>{lane.status}</em>
               </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="onboarding-handoff-command" aria-label="Onboarding handoff command">
+          <div className="onboarding-handoff-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Onboarding handoff</span>
+              <strong>{authSession ? "Continue setup from the right place" : "Start with hosted login, then finish live setup"}</strong>
+              <small>{onboardingHandoffCommand.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-onboarding-handoff-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(onboardingHandoffCommand, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export handoff
+            </button>
+          </div>
+          <div className="onboarding-handoff-grid">
+            {onboardingHandoffCommand.lanes.map((lane) => (
+              <article className={lane.ready ? "ready" : ""} key={lane.label}>
+                <div>
+                  <span>{lane.status}</span>
+                  <strong>{lane.label}</strong>
+                  <small>{lane.detail}</small>
+                </div>
+                <button
+                  className={lane.ready ? "secondary-action" : "primary-action"}
+                  onClick={() => {
+                    if (lane.target === "account") {
+                      openAuthControls();
+                      return;
+                    }
+                    if (lane.target === "corporate_setup") {
+                      openCorporateControls();
+                      return;
+                    }
+                    if (lane.target === "verify") {
+                      openWorkspaceOrSetup("verify");
+                      return;
+                    }
+                    if (lane.target === "proof") {
+                      document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    if (lane.target === "readiness") {
+                      setSetupView("readiness");
+                      document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json");
+                  }}
+                  type="button"
+                >
+                  {lane.action}
+                </button>
+              </article>
             ))}
           </div>
         </section>
