@@ -4688,6 +4688,31 @@ function AuditTrailPanel({
       action: "Export admin readiness"
     }
   ];
+  const adminAuditExportCommand = {
+    mode: "admin_audit_export_command",
+    headline:
+      filteredEvents.length === 0
+        ? "No audit rows match the current filter"
+        : activeFilterLabels.length
+          ? "Export the filtered audit view with the filter receipt"
+          : "Export all visible audit events with readiness proof",
+    recommended_export:
+      filteredEvents.length === 0
+        ? "Clear filters or load audit events"
+        : highSignalCount || guardrailCount
+          ? "Export audit coverage packet"
+          : "Export CSV",
+    active_scope: activeFilterLabels.length ? activeFilterLabels.join(" / ") : "All audit events in scope",
+    export_boundary: "Filtered audit events and metadata only; raw private evidence files are excluded.",
+    counts: {
+      loaded_audit_events: events.length,
+      filtered_audit_events: filteredEvents.length,
+      guardrail_events: guardrailCount,
+      high_signal_events: highSignalCount,
+      actors: actorCount,
+      target_tables: targetTables.length
+    }
+  };
   const adminExportReadinessPacket = {
     generated_at: new Date().toISOString(),
     packet_mode: "admin_audit_export_readiness",
@@ -4729,6 +4754,7 @@ function AuditTrailPanel({
       corporate_access_reviews: corporateAccessReviews.length,
       release_ledger_records: schemaMigrationRuns.length
     },
+    admin_audit_export_command: adminAuditExportCommand,
     admin_audit_export_matrix: auditExportMatrix
   };
   const auditCoveragePacket = {
@@ -4792,6 +4818,7 @@ function AuditTrailPanel({
       commit_sha: run.commit_sha,
       applied_at: run.applied_at
     })),
+    admin_audit_export_command: adminAuditExportCommand,
     admin_audit_export_matrix: auditExportMatrix,
     events: filteredEvents
   };
@@ -4803,6 +4830,44 @@ function AuditTrailPanel({
         <strong>Audit trail</strong>
       </div>
       <small>{message}</small>
+      <div className="admin-audit-export-command" aria-label="Admin audit export command">
+        <div>
+          <span className={`status-chip ${filteredEvents.length ? "success" : "warning"}`}>Admin audit export command</span>
+          <strong>{adminAuditExportCommand.headline}</strong>
+          <small>{adminAuditExportCommand.export_boundary}</small>
+        </div>
+        <div className="admin-audit-export-command-grid">
+          <span>
+            <strong>{adminAuditExportCommand.recommended_export}</strong>
+            <small>Recommended export</small>
+          </span>
+          <span>
+            <strong>{adminAuditExportCommand.active_scope}</strong>
+            <small>Active filter scope</small>
+          </span>
+          <span>
+            <strong>{filteredEvents.length}/{events.length}</strong>
+            <small>Rows in export</small>
+          </span>
+        </div>
+        <div className="admin-audit-export-command-actions">
+          <button
+            className="primary-action"
+            disabled={!filteredEvents.length}
+            onClick={() => downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv")}
+            type="button"
+          >
+            Export recommended CSV
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(coveragePacketName, JSON.stringify(auditCoveragePacket, null, 2), "application/json")}
+            type="button"
+          >
+            Export coverage packet
+          </button>
+        </div>
+      </div>
       <div className="audit-summary-grid">
         <span>
           <strong>{events.length}</strong>

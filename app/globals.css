@@ -8806,6 +8806,76 @@ p {
   gap: 8px;
 }
 
+.admin-audit-export-command {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.25);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.095), transparent 60%),
+    linear-gradient(165deg, rgba(134, 174, 246, 0.06), transparent 76%),
+    rgba(255, 255, 255, 0.032);
+}
+
+.admin-audit-export-command > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.admin-audit-export-command strong,
+.admin-audit-export-command small,
+.admin-audit-export-command span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-audit-export-command > div:first-child > strong {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.12;
+}
+
+.admin-audit-export-command small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.admin-audit-export-command-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.45fr) minmax(0, 0.5fr);
+  gap: 8px;
+}
+
+.admin-audit-export-command-grid span {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.admin-audit-export-command-grid strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.admin-audit-export-command-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.admin-audit-export-command-actions button {
+  min-width: 0;
+  min-height: 42px;
+  white-space: normal;
+}
+
 .audit-summary-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -10958,6 +11028,8 @@ p {
   .selected-portal-command,
   .directory-controls,
   .directory-review-board,
+  .admin-audit-export-command-grid,
+  .admin-audit-export-command-actions,
   .admin-audit-export-grid,
   .audit-controls,
   .audit-summary-grid,
@@ -11458,6 +11530,7 @@ p {
 .signed-in-landing-actions,
 .dashboard-start-map,
 .proof-export-hub,
+.admin-audit-export-command,
 .workspace-admin-grid {
   border-color: rgba(201, 214, 207, 0.13);
   background:
@@ -11614,6 +11687,8 @@ p {
 .metric-card p,
 .corporate-task-hub small,
 .corporate-task-hub p,
+.admin-audit-export-command small,
+.admin-audit-export-command span,
 .workspace-command-strip small,
 .signed-in-landing-actions small,
 .dashboard-start-map small,
@@ -11639,8 +11714,41 @@ p {
 .signed-in-landing-grid,
 .dashboard-start-map-grid,
 .proof-export-hub-grid,
+.admin-audit-export-command-grid,
 .live-pilot-row-proof-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+}
+
+.admin-audit-export-command {
+  display: grid;
+  gap: 12px;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+}
+
+.admin-audit-export-command > div:first-child {
+  min-width: 0;
+}
+
+.admin-audit-export-command-grid,
+.admin-audit-export-command-actions {
+  min-width: 0;
+}
+
+.admin-audit-export-command-grid span {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.admin-audit-export-command-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 9px;
+}
+
+.admin-audit-export-command-actions button {
+  min-width: 0;
+  white-space: normal;
 }
 
 .workspace-admin-grid {
