@@ -10537,6 +10537,52 @@ function BillingPanel({
       ready: true
     }
   ];
+  const billingLaunchBoard = {
+    mode: "billing_launch_board",
+    status: activeSubscriptions.length ? "pilot_ledger_active" : "activate_pilot_ledger",
+    selected_plan: selectedProjectedPlan?.name ?? primaryPlan?.name ?? "Choose Corporate Verify plan",
+    selected_plan_id: selectedProjectedPlan?.plan_id ?? primaryPlan?.id ?? null,
+    selected_seats: seats,
+    projected_monthly_usd: estimatedSeatTotal,
+    quote_receipt_status: latestPricingQuoteReceipt ? "saved" : "not_recorded",
+    payment_decision_status: latestDecisionReceipt?.status ?? "not_recorded",
+    stripe_checkout_status: "disabled_until_human_gate",
+    next_action: !activeSubscriptions.length
+      ? "Activate the pilot ledger"
+      : !latestPricingQuoteReceipt
+        ? "Record the pricing quote"
+        : !latestDecisionReceipt
+          ? "Record the payment decision"
+          : "Export pricing and payment packets",
+    accepted_when:
+      "billing_launch_board_keeps_corporate_price_seats_pilot_ledger_quote_receipt_payment_decision_and_stripe_gate_visible_before_deep_receipts"
+  };
+  const billingLaunchBoardCards = [
+    {
+      label: "Pilot plan",
+      value: billingLaunchBoard.selected_plan,
+      detail: estimatedSeatTotal ? `$${estimatedSeatTotal}/month for ${seats} seats.` : "Load plans before quoting.",
+      ready: plans.length > 0
+    },
+    {
+      label: "Ledger",
+      value: activeSubscriptions.length ? "Live" : "Activate",
+      detail: activeSubscriptions.length ? `${activeSubscriptions.length} active Supabase row${activeSubscriptions.length === 1 ? "" : "s"}.` : "Write the corporate pilot subscription row.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Quote",
+      value: latestPricingQuoteReceipt ? "Saved" : "Record",
+      detail: latestPricingQuoteReceipt ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month saved.` : "Persist selected seats and projected monthly price.",
+      ready: Boolean(latestPricingQuoteReceipt)
+    },
+    {
+      label: "Payments",
+      value: "Stripe gated",
+      detail: "Checkout, invoices, tax, refunds, dunning, and webhooks stay off.",
+      ready: true
+    }
+  ];
   const pricingStructurePacket = {
     generated_at: new Date().toISOString(),
     mode: "pilot_subscription_ledger",
@@ -10677,6 +10723,58 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="billing-launch-board" aria-label="Billing launch board">
+        <div className="billing-launch-board-header">
+          <div>
+            <span className={`status-chip ${activeSubscriptions.length ? "success" : "warning"}`}>Billing launch board</span>
+            <strong>{billingLaunchBoard.next_action}</strong>
+            <small>{billingLaunchBoard.accepted_when}</small>
+          </div>
+          <span className="status-chip neutral">Stripe gated</span>
+        </div>
+        <div className="billing-launch-board-grid">
+          {billingLaunchBoardCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="billing-launch-board-actions">
+          <label>
+            <span>Seats</span>
+            <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
+          </label>
+          <button
+            className="primary-action"
+            disabled={disabled || !billingLaunchBoard.selected_plan_id || activeSubscriptions.length > 0 || Boolean(busyPlanId)}
+            onClick={() => billingLaunchBoard.selected_plan_id ? void activate(billingLaunchBoard.selected_plan_id) : undefined}
+            type="button"
+          >
+            Activate ledger
+          </button>
+          <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+            Record quote
+          </button>
+          <button className="secondary-action" disabled={disabled || decisionBusy} onClick={() => void recordDecisionReceipt()} type="button">
+            Record decision
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-billing-launch-board-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(billingLaunchBoard, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export board
+          </button>
+        </div>
+      </div>
       <div className="pricing-choice-rail" aria-label="Pricing choice rail">
         <div className="pricing-choice-copy">
           <span className={`status-chip ${activeSubscriptions.length ? "success" : "warning"}`}>Pricing choice</span>

@@ -4521,6 +4521,117 @@ p,
     rgba(255, 255, 255, 0.025);
 }
 
+.billing-launch-board {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.075), rgba(240, 198, 107, 0.035)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.billing-launch-board-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.billing-launch-board-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.billing-launch-board strong,
+.billing-launch-board small,
+.billing-launch-board span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.billing-launch-board-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.14;
+}
+
+.billing-launch-board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+}
+
+.billing-launch-board-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.billing-launch-board-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.25);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.billing-launch-board-grid article.next {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.05);
+}
+
+.billing-launch-board-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.billing-launch-board-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.12;
+}
+
+.billing-launch-board-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.32;
+}
+
+.billing-launch-board-actions {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.55fr) repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+}
+
+.billing-launch-board-actions label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.billing-launch-board-actions input,
+.billing-launch-board-actions button {
+  min-width: 0;
+  width: 100%;
+}
+
+.billing-launch-board-actions button {
+  justify-content: center;
+  white-space: normal;
+}
+
 .pricing-launch-command {
   display: grid;
   grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
@@ -16350,6 +16461,9 @@ p {
   .pricing-launch-command,
   .pricing-choice-grid,
   .pricing-choice-actions,
+  .billing-launch-board-header,
+  .billing-launch-board-grid,
+  .billing-launch-board-actions,
   .pricing-launch-command-grid,
   .billing-operator-path,
   .billing-gate-grid,
