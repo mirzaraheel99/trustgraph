@@ -47,7 +47,10 @@ with check (
   and production_traffic_allowed = false
   and (
     organization_id is null
-    or public.has_role(organization_id, array['trustgraph_admin', 'owner', 'admin'])
+    or public.has_role(
+      organization_id,
+      array['system_admin', 'compliance_admin', 'trustgraph_verifier', 'employer_admin', 'staffing_agency_admin']::role_key[]
+    )
   )
 );
 
@@ -86,7 +89,10 @@ begin
   end if;
 
   if input_organization_id is not null
-    and not public.has_role(input_organization_id, array['trustgraph_admin', 'owner', 'admin']) then
+    and not public.has_role(
+      input_organization_id,
+      array['system_admin', 'compliance_admin', 'trustgraph_verifier', 'employer_admin', 'staffing_agency_admin']::role_key[]
+    ) then
     raise exception 'Admin role required for security review receipts';
   end if;
 
