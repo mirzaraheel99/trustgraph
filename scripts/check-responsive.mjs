@@ -111,6 +111,8 @@ const requiredMobileStacks = [
   ".portal-choice-guide-grid",
   ".portal-command-deck-header",
   ".portal-command-deck-grid",
+  ".signed-in-portal-flow-contract",
+  ".signed-in-portal-flow-grid",
   ".portal-login-switchboard-grid",
   ".login-decision-path-grid",
   ".login-decision-next",
@@ -277,6 +279,10 @@ if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-co
 
 if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1fr)") || !css.includes(".workspace-command-actions") || !css.includes("grid-column: 1 / -1")) {
   throw new Error("Responsive check failed: premium shell repair must keep command actions from squeezing dashboard metrics.");
+}
+
+if (!css.includes(".signed-in-portal-flow-contract") || !css.includes("grid-template-columns: minmax(0, 0.74fr) minmax(0, 1.26fr)") || !css.includes(".signed-in-portal-flow-grid")) {
+  throw new Error("Responsive check failed: signed-in portal flow contract must be visible and bounded.");
 }
 
 if (!css.includes(".portal-home-command") || !css.includes("grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr)") || !css.includes(".portal-home-actions")) {

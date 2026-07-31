@@ -15347,6 +15347,35 @@ function App() {
       ready: Boolean(authSession)
     }
   ];
+  const signedInPortalFlowContract = {
+    mode: "signed_in_portal_flow_contract",
+    signed_in: Boolean(authSession),
+    active_role: activeRole.label,
+    active_organization: activeOrganization.name,
+    current_workspace: workspace.label,
+    accepted_when:
+      "signed_in_user_can_identify_personal_passport_corporate_verify_company_admin_next_action_and_database_boundary_without_guessing",
+    lanes: [
+      {
+        label: "Professional Passport",
+        state: livePassportRecords.length ? `${livePassportRecords.length} records` : "Create live record",
+        rule: "Professional owns records, evidence, consent, and Access Grant decisions.",
+        target: "passport" as const
+      },
+      {
+        label: "Corporate Verify",
+        state: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} shared rows` : "Request access",
+        rule: "Corporate reviewers see approved shared rows only; no open user browsing.",
+        target: "verify" as const
+      },
+      {
+        label: "Company Admin",
+        state: hasLiveCorporateContext ? nextCorporateSetupStep.label : "Create company workspace",
+        rule: "Admins manage RBAC, invitations, pricing ledger, launch gates, and exports.",
+        target: "admin" as const
+      }
+    ]
+  };
   const workspaceFlow = [
     {
       id: "passport" as const,
@@ -15980,6 +16009,7 @@ function App() {
     workspace_command_strip: workspaceCommandStrip,
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,
+    signed_in_portal_flow_contract: signedInPortalFlowContract,
     hosted_version_receipt: hostedVersionReceipt,
     vps_saved_update_verification: vpsSavedUpdateVerification,
     server_release_save_path: serverReleasePacket,
@@ -16215,6 +16245,26 @@ function App() {
                 <small>{item.intent}</small>
                 <em>{item.status}</em>
               </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="signed-in-portal-flow-contract" aria-label="Signed-in portal flow contract">
+          <div className="signed-in-portal-flow-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Signed-in portal flow contract</span>
+            <strong>Know which portal you are in, what database rows are allowed, and what to do next</strong>
+            <small>{signedInPortalFlowContract.accepted_when}</small>
+          </div>
+          <div className="signed-in-portal-flow-grid">
+            {signedInPortalFlowContract.lanes.map((lane) => (
+              <article key={lane.label}>
+                <span>{lane.label}</span>
+                <strong>{lane.state}</strong>
+                <small>{lane.rule}</small>
+                <button className="secondary-action" onClick={() => openWorkspaceOrSetup(lane.target)} type="button">
+                  Open {lane.label}
+                </button>
+              </article>
             ))}
           </div>
         </section>

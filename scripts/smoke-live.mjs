@@ -176,6 +176,9 @@ assertIncludesAny(bundleText, ["Request approved user access for Corporate Verif
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
 assertIncludesAny(bundleText, ["Portal command deck"], "signed-in portal command deck");
 assertIncludesAny(bundleText, ["Start with the right workspace"], "portal command deck headline");
+assertIncludesAny(bundleText, ["Signed-in portal flow contract"], "signed-in portal flow contract");
+assertIncludesAny(bundleText, ["signed_in_portal_flow_contract"], "authorized report signed-in portal flow field");
+assertIncludesAny(bundleText, ["signed_in_user_can_identify_personal_passport_corporate_verify_company_admin_next_action_and_database_boundary_without_guessing"], "signed-in portal flow acceptance rule");
 assertIncludesAny(bundleText, ["Portal home command center"], "signed-in portal home command center");
 assertIncludesAny(bundleText, ["Start with login, then choose the right portal"], "signed-in portal home guidance");
 assertIncludesAny(bundleText, ["Continue current portal"], "signed-in portal continuation action");
