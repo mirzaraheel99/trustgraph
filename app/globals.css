@@ -21715,10 +21715,151 @@ body {
   white-space: normal;
 }
 
+.professional-passport-progress-strip {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin-bottom: 16px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(20, 190, 168, 0.12), rgba(240, 198, 107, 0.055)),
+    rgba(8, 21, 21, 0.82);
+}
+
+.professional-passport-progress-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.professional-passport-progress-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.professional-passport-progress-strip strong,
+.professional-passport-progress-strip small,
+.professional-passport-progress-strip span,
+.professional-passport-progress-strip b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.professional-passport-progress-header > div:first-child > strong {
+  color: #f5fbf7;
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.1;
+}
+
+.professional-passport-progress-header > div:first-child > small {
+  color: rgba(222, 239, 233, 0.7);
+  line-height: 1.42;
+}
+
+.professional-passport-progress-meter {
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.professional-passport-progress-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #65f0d0, #f0c66b);
+}
+
+.professional-passport-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+  gap: 10px;
+}
+
+.professional-passport-progress-grid article {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+  min-height: 132px;
+  padding: 12px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+}
+
+.professional-passport-progress-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.professional-passport-progress-grid article.pending {
+  border-color: rgba(240, 198, 107, 0.18);
+}
+
+.professional-passport-progress-grid article > span {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  color: #06110f;
+  border-radius: 999px;
+  background: #65f0d0;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.professional-passport-progress-grid article > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.professional-passport-progress-grid strong {
+  color: #f5fbf7;
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.professional-passport-progress-grid small,
+.professional-passport-progress-proof small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.34;
+}
+
+.professional-passport-progress-grid b {
+  grid-column: 1 / -1;
+  color: #65f0d0;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.professional-passport-progress-proof {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.professional-passport-progress-proof span {
+  color: #b7f9e9;
+  font-size: 12px;
+  font-weight: 850;
+}
+
 @media (max-width: 980px) {
   .corporate-verify-live-command-header,
   .corporate-access-progress-strip-header,
-  .corporate-access-progress-proof {
+  .corporate-access-progress-proof,
+  .professional-passport-progress-header {
     grid-template-columns: 1fr;
   }
 }
@@ -21727,7 +21868,8 @@ body {
   .corporate-verify-live-command-grid,
   .empty-verify-state-grid,
   .empty-verify-state-actions,
-  .corporate-access-progress-grid {
+  .corporate-access-progress-grid,
+  .professional-passport-progress-grid {
     grid-template-columns: 1fr;
   }
 }

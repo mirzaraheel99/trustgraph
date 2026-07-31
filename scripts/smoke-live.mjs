@@ -660,6 +660,13 @@ assertIncludesAny(bundleText, ["Professional Passport", "Corporate Verify", "Pil
 assertIncludesAny(bundleText, ["V1 completion cockpit"], "v1 completion cockpit");
 assertIncludesAny(bundleText, ["v1_completion_cockpit"], "v1 completion packet field");
 assertIncludesAny(bundleText, ["Export V1 cockpit"], "v1 completion export control");
+assertIncludesAny(bundleText, ["Professional Passport progress"], "professional passport progress strip");
+assertIncludesAny(bundleText, ["professional_passport_progress_strip"], "professional passport progress packet field");
+assertIncludesAny(
+  bundleText,
+  ["professional_passport_progress_strip_shows_account_record_evidence_consent_sharing_export_and_rejects_preview_data"],
+  "professional passport progress acceptance rule"
+);
 assertIncludesAny(bundleText, ["Finish the missing live database lane"], "live database lane next-action copy");
 assertIncludesAny(bundleText, ["Live Data Verdict"], "live data verdict panel");
 assertIncludesAny(bundleText, ["Required row groups"], "live data verdict row-group metric");

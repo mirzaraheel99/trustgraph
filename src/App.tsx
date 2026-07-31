@@ -20159,8 +20159,64 @@ function App() {
               ? "Pilot ledger now; Stripe checkout after approval"
               : step.target === "verify"
                 ? "Approved grants and consent-scoped user rows"
-                : "GitHub source, VPS pull, release stamp, and VFIX guard"
+              : "GitHub source, VPS pull, release stamp, and VFIX guard"
   }));
+  const professionalPassportProgressReady = livePassportRecords.length > 0 && evidenceDocuments.length > 0;
+  const professionalPassportProgressSteps = [
+    {
+      label: "Account",
+      value: authSession && accountContext ? "Live" : "Login",
+      detail: authSession && accountContext ? "Hosted Supabase profile and workspace loaded." : "Sign in on the hosted TrustGraph URL first.",
+      ready: Boolean(authSession && accountContext)
+    },
+    {
+      label: "Record",
+      value: `${livePassportRecords.length}`,
+      detail: livePassportRecords.length ? "Passport rows are loaded from the user database." : "Create the first live Passport record.",
+      ready: livePassportRecords.length > 0
+    },
+    {
+      label: "Evidence",
+      value: `${evidenceDocuments.length}`,
+      detail: evidenceDocuments.length ? "Evidence metadata is attached to records." : "Attach evidence metadata before sharing.",
+      ready: evidenceDocuments.length > 0
+    },
+    {
+      label: "Consent",
+      value: `${consentAuthorizations.length}`,
+      detail: consentAuthorizations.length ? "Consent rules are available for sensitive records." : "Create scoped consent before restricted review.",
+      ready: consentAuthorizations.length > 0
+    },
+    {
+      label: "Sharing",
+      value: `${accessGrants.length}`,
+      detail: accessGrants.length ? "Access Grants control what Corporate can see." : "Approve or create a scoped Access Grant.",
+      ready: accessGrants.length > 0
+    },
+    {
+      label: "Export",
+      value: professionalPassportProgressReady ? "Ready" : "Pending",
+      detail: professionalPassportProgressReady ? "Passport proof can be exported from live rows." : "Requires at least one record and evidence row.",
+      ready: professionalPassportProgressReady
+    }
+  ];
+  const professionalPassportProgressComplete = professionalPassportProgressSteps.filter((step) => step.ready).length;
+  const professionalPassportProgressPacket = {
+    generated_at: new Date().toISOString(),
+    mode: "professional_passport_progress_strip",
+    source: authSession && accountContext ? "signed_in_supabase_repository_rows" : "locked_until_hosted_login",
+    preview_data_accepted: false,
+    completed_steps: professionalPassportProgressComplete,
+    total_steps: professionalPassportProgressSteps.length,
+    passport_records: livePassportRecords.length,
+    evidence_documents: evidenceDocuments.length,
+    consent_authorizations: consentAuthorizations.length,
+    access_grants: accessGrants.length,
+    next_required_step: professionalPassportProgressSteps.find((step) => !step.ready)?.label ?? "Export proof",
+    accepted_when:
+      "professional_passport_progress_strip_shows_account_record_evidence_consent_sharing_export_and_rejects_preview_data",
+    steps: professionalPassportProgressSteps
+  };
   const livePilotRowProofRows: LivePilotRowProof["rows"] = [
     {
       label: "Hosted auth session",
@@ -23467,6 +23523,51 @@ function App() {
 
         <section className="work-grid">
           <div className="records-panel">
+            {workspace.id === "passport" ? (
+              <div className="professional-passport-progress-strip" aria-label="Professional Passport progress strip">
+                <div className="professional-passport-progress-header">
+                  <div>
+                    <span className="eyebrow">Professional Passport progress</span>
+                    <strong>{professionalPassportProgressComplete}/{professionalPassportProgressSteps.length} live steps ready</strong>
+                    <small>
+                      Next: {professionalPassportProgressPacket.next_required_step}. Only signed-in Supabase rows count; preview data is rejected.
+                    </small>
+                  </div>
+                  <button
+                    className="secondary-action"
+                    onClick={() =>
+                      downloadTextFile(
+                        `trustgraph-professional-passport-progress-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify(professionalPassportProgressPacket, null, 2),
+                        "application/json"
+                      )
+                    }
+                    type="button"
+                  >
+                    Export Passport proof
+                  </button>
+                </div>
+                <div className="professional-passport-progress-meter" aria-hidden="true">
+                  <span style={{ width: `${(professionalPassportProgressComplete / professionalPassportProgressSteps.length) * 100}%` }} />
+                </div>
+                <div className="professional-passport-progress-grid">
+                  {professionalPassportProgressSteps.map((step, index) => (
+                    <article className={step.ready ? "ready" : "pending"} key={step.label}>
+                      <span>{index + 1}</span>
+                      <div>
+                        <strong>{step.label}</strong>
+                        <small>{step.detail}</small>
+                      </div>
+                      <b>{step.value}</b>
+                    </article>
+                  ))}
+                </div>
+                <div className="professional-passport-progress-proof">
+                  <span>{professionalPassportProgressPacket.accepted_when}</span>
+                  <small>Records {livePassportRecords.length} | Evidence {evidenceDocuments.length} | Consent {consentAuthorizations.length} | Grants {accessGrants.length}</small>
+                </div>
+              </div>
+            ) : null}
             <div className="panel-heading">
               <div>
                 <span className="eyebrow">Operational record surface</span>
