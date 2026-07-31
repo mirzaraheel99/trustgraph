@@ -257,6 +257,10 @@ assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup
 assertIncludesAny(bundleText, ["Corporate launch cockpit"], "corporate setup next-action cockpit");
 assertIncludesAny(bundleText, ["corporate_launch_cockpit"], "corporate launch cockpit packet mode");
 assertIncludesAny(bundleText, ["Export cockpit proof"], "corporate launch cockpit export");
+assertIncludesAny(bundleText, ["Corporate onboarding pricing cockpit"], "corporate onboarding pricing cockpit");
+assertIncludesAny(bundleText, ["corporate_onboarding_pricing_cockpit"], "corporate onboarding pricing cockpit packet mode");
+assertIncludesAny(bundleText, ["workspace, RBAC, team, pilot ledger, and scoped database access"], "corporate onboarding pricing flow guidance");
+assertIncludesAny(bundleText, ["Export onboarding proof"], "corporate onboarding pricing proof export");
 assertIncludesAny(bundleText, ["Team and billing handoff"], "team billing Verify handoff panel");
 assertIncludesAny(bundleText, ["team_billing_handoff"], "team billing handoff packet mode");
 assertIncludesAny(bundleText, ["Export handoff proof"], "team billing handoff export");

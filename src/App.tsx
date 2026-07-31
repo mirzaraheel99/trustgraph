@@ -18170,6 +18170,66 @@ function App() {
     steps: teamBillingHandoffSteps,
     accepted_when: "reviewer_invited_or_active_billing_ledger_live_and_corporate_verify_rows_visible"
   };
+  const corporateOnboardingPricingFlow = [
+    {
+      label: "Workspace",
+      detail: hasLiveCorporateContext ? activeOrganization.name : "Create the employer or staffing company account.",
+      status: hasLiveCorporateContext ? "Ready" : "Needs company row",
+      action: hasLiveCorporateContext ? "Review workspace" : "Create workspace",
+      target: "corporate" as const,
+      ready: hasLiveCorporateContext
+    },
+    {
+      label: "RBAC",
+      detail: canManageCorporateSetup ? `${activeRole.label} can manage setup.` : "Switch to an admin role before inviting reviewers.",
+      status: canManageCorporateSetup ? "Admin active" : "Admin needed",
+      action: "Open RBAC",
+      target: "corporate" as const,
+      ready: canManageCorporateSetup
+    },
+    {
+      label: "Team",
+      detail: teamMembers.length || teamInvitations.length ? `${teamMembers.length} active and ${teamInvitations.length} invited.` : "Invite the first reviewer for corporate Verify.",
+      status: teamMembers.length || teamInvitations.length ? "Team started" : "Invite first",
+      action: "Invite team",
+      target: "team" as const,
+      ready: Boolean(teamMembers.length || teamInvitations.length)
+    },
+    {
+      label: "Pricing",
+      detail: organizationSubscriptions.length ? `${organizationSubscriptions.length} pilot ledger row${organizationSubscriptions.length === 1 ? "" : "s"} active.` : "Choose the pilot ledger before client review.",
+      status: organizationSubscriptions.length ? "Ledger live" : "Select plan",
+      action: "Open pricing",
+      target: "billing" as const,
+      ready: Boolean(organizationSubscriptions.length)
+    },
+    {
+      label: "Database access",
+      detail: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped user row${sharedVerifyRecords.length === 1 ? "" : "s"} visible.` : "Request access and wait for scoped approval.",
+      status: sharedVerifyRecords.length ? "Rows visible" : "Grant needed",
+      action: "Open Verify",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0
+    }
+  ];
+  const nextCorporateOnboardingPricingStep = corporateOnboardingPricingFlow.find((step) => !step.ready) ?? corporateOnboardingPricingFlow[corporateOnboardingPricingFlow.length - 1];
+  const corporateOnboardingPricingCockpit = {
+    mode: "corporate_onboarding_pricing_cockpit",
+    generated_at: new Date().toISOString(),
+    active_organization: activeOrganization.name,
+    active_role: activeRole.label,
+    next_step: nextCorporateOnboardingPricingStep.label,
+    flow_ready: corporateOnboardingPricingFlow.filter((step) => step.ready).length,
+    flow_total: corporateOnboardingPricingFlow.length,
+    counts: {
+      team_members: teamMembers.length,
+      team_invitations: teamInvitations.length,
+      pilot_ledgers: organizationSubscriptions.length,
+      access_grants: accessGrants.length,
+      scoped_user_rows: sharedVerifyRecords.length
+    },
+    accepted_when: "workspace_rbac_team_pilot_ledger_and_scoped_database_rows_are_ready"
+  };
   const dashboardStartMap = [
     {
       label: "Personal Passport",
@@ -19399,6 +19459,7 @@ function App() {
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,
     signed_in_portal_flow_contract: signedInPortalFlowContract,
+    corporate_onboarding_pricing_cockpit: corporateOnboardingPricingCockpit,
     hosted_version_receipt: hostedVersionReceipt,
     vps_saved_update_verification: vpsSavedUpdateVerification,
     server_release_save_path: serverReleasePacket,
@@ -21035,6 +21096,82 @@ function App() {
                   </button>
                   <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
                     Public registration
+                  </button>
+                </div>
+              </div>
+              <div className="corporate-onboarding-pricing-cockpit" aria-label="Corporate onboarding pricing cockpit">
+                <div className="corporate-onboarding-pricing-header">
+                  <div>
+                    <span className={`status-chip ${corporateOnboardingPricingCockpit.flow_ready === corporateOnboardingPricingCockpit.flow_total ? "success" : "warning"}`}>
+                      Corporate onboarding pricing cockpit
+                    </span>
+                    <strong>{nextCorporateOnboardingPricingStep.ready ? "Corporate flow is ready for client review" : `${nextCorporateOnboardingPricingStep.label}: ${nextCorporateOnboardingPricingStep.status}`}</strong>
+                    <small>One operator path for workspace, RBAC, team, pilot ledger, and scoped database access.</small>
+                  </div>
+                  <button
+                    className="primary-action"
+                    onClick={() => {
+                      if (nextCorporateOnboardingPricingStep.target === "verify") {
+                        openWorkspaceOrSetup("verify");
+                        return;
+                      }
+                      setSetupView(nextCorporateOnboardingPricingStep.target);
+                    }}
+                    type="button"
+                  >
+                    {nextCorporateOnboardingPricingStep.action}
+                  </button>
+                </div>
+                <div className="corporate-onboarding-pricing-grid">
+                  {corporateOnboardingPricingFlow.map((step, index) => (
+                    <article className={step.ready ? "ready" : step.label === nextCorporateOnboardingPricingStep.label ? "next" : ""} key={step.label}>
+                      <span>{index + 1}</span>
+                      <div>
+                        <strong>{step.label}</strong>
+                        <small>{step.detail}</small>
+                        <em>{step.status}</em>
+                      </div>
+                      <button
+                        className={step.ready ? "secondary-action" : "primary-action"}
+                        onClick={() => {
+                          if (step.target === "verify") {
+                            openWorkspaceOrSetup("verify");
+                            return;
+                          }
+                          setSetupView(step.target);
+                        }}
+                        type="button"
+                      >
+                        {step.action}
+                      </button>
+                    </article>
+                  ))}
+                </div>
+                <div className="corporate-onboarding-pricing-actions">
+                  <span>
+                    <strong>{corporateOnboardingPricingCockpit.flow_ready}/{corporateOnboardingPricingCockpit.flow_total}</strong>
+                    <small>Launch steps ready</small>
+                  </span>
+                  <span>
+                    <strong>{organizationSubscriptions.length}</strong>
+                    <small>Pilot pricing rows</small>
+                  </span>
+                  <span>
+                    <strong>{sharedVerifyRecords.length}</strong>
+                    <small>Scoped database rows</small>
+                  </span>
+                  <button
+                    className="secondary-action"
+                    onClick={() =>
+                      downloadTextFile(
+                        `trustgraph-corporate-onboarding-pricing-cockpit-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify(corporateOnboardingPricingCockpit, null, 2),
+                        "application/json"
+                      )
+                    }
+                    type="button"
+                  >
+                    Export onboarding proof
                   </button>
                 </div>
               </div>

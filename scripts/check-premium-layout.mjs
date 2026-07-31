@@ -49,6 +49,7 @@ assert(authenticatedRender.includes('className="workspace-route-strip"'), "works
 assert(authenticatedRender.includes('className="workspace-flow-strip"'), "daily portal path strip must remain available after sidebar removal.");
 assert(authenticatedRender.includes('className="setup-route-deck"'), "corporate setup center must expose a clear clickable route deck.");
 assert(authenticatedRender.includes('aria-label="Corporate launch cockpit"'), "corporate setup center must expose a single next-action launch cockpit.");
+assert(authenticatedRender.includes('aria-label="Corporate onboarding pricing cockpit"'), "corporate setup center must expose one corporate onboarding and pricing cockpit.");
 assert(authenticatedRender.includes('aria-label="Team and billing handoff"'), "corporate setup center must connect team, billing, and Verify handoff.");
 assert(app.includes('aria-label="Corporate setup stepper"'), "corporate account panel must expose a guided setup stepper.");
 assert(app.includes('aria-label="Corporate Verify first-use wizard"'), "Corporate Verify must expose a guided first-use wizard for request, approval, review, and proof export.");
@@ -107,6 +108,7 @@ assert(css.includes(".login-decision-path") && css.includes(".login-decision-pat
 assert(css.includes(".public-portal-database-contract") && css.includes(".public-portal-database-contract-grid"), "public portal database access contract must be styled and bounded.");
 assert(css.includes(".public-buyer-launch-path") && css.includes(".public-buyer-launch-grid"), "public buyer launch path must be styled and bounded.");
 assert(css.includes(".registration-database-launch-order") && css.includes(".registration-database-launch-grid"), "registration database launch order must be styled and bounded.");
+assert(css.includes(".corporate-onboarding-pricing-cockpit") && css.includes(".corporate-onboarding-pricing-grid") && css.includes(".corporate-onboarding-pricing-actions"), "corporate onboarding pricing cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".vps-saved-update-verification") && premiumRepair.includes(".vps-saved-update-command-list"), "VPS saved update verification must be styled and bounded in the premium shell.");

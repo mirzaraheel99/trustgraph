@@ -15733,6 +15733,116 @@ p {
   overflow-wrap: anywhere;
 }
 
+.corporate-onboarding-pricing-cockpit {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.1), rgba(95, 240, 201, 0.045) 54%, rgba(240, 198, 107, 0.055)),
+    rgba(4, 13, 17, 0.78);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+}
+
+.corporate-onboarding-pricing-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.corporate-onboarding-pricing-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-onboarding-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 10px;
+}
+
+.corporate-onboarding-pricing-grid article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px 10px;
+  align-items: start;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.corporate-onboarding-pricing-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.26);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.corporate-onboarding-pricing-grid article.next {
+  border-color: rgba(240, 198, 107, 0.34);
+  background: rgba(240, 198, 107, 0.08);
+}
+
+.corporate-onboarding-pricing-grid article > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #c4d4ff;
+  border: 1px solid rgba(134, 174, 246, 0.32);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.corporate-onboarding-pricing-grid article > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.corporate-onboarding-pricing-grid button {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.corporate-onboarding-pricing-grid em {
+  color: var(--gold);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-onboarding-pricing-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.corporate-onboarding-pricing-actions span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.corporate-onboarding-pricing-cockpit strong,
+.corporate-onboarding-pricing-cockpit small,
+.corporate-onboarding-pricing-cockpit span,
+.corporate-onboarding-pricing-cockpit em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .corporate-launch-progress {
   height: 10px;
   overflow: hidden;
@@ -16281,6 +16391,7 @@ body {
 .signed-in-landing-grid article,
 .dashboard-start-map-grid article,
 .proof-export-hub-grid article,
+.corporate-onboarding-pricing-grid article,
 .workspace-command-metrics span,
 .corporate-operator-strip article,
 .setup-tabs button,
@@ -16403,6 +16514,7 @@ body {
   .portal-home-command,
   .hero,
   .corporate-launch-cockpit-top,
+  .corporate-onboarding-pricing-header,
   .corporate-setup-stepper-header,
   .corporate-verify-first-use-header,
   .team-billing-handoff-header,
@@ -16412,6 +16524,7 @@ body {
 
   .topbar-actions,
   .corporate-launch-cockpit-top > button,
+  .corporate-onboarding-pricing-header > button,
   .workspace-command-actions {
     justify-content: flex-start;
   }
@@ -17271,6 +17384,7 @@ body {
 .workspace-command-metrics,
 .setup-command-metrics,
 .corporate-operator-strip,
+.corporate-onboarding-pricing-actions,
 .team-billing-handoff-counts,
 .corporate-launch-counts {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
