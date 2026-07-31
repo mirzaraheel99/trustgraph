@@ -850,6 +850,88 @@ button {
   line-height: 1.38;
 }
 
+.public-buyer-launch-path {
+  display: grid;
+  grid-template-columns: minmax(0, 0.58fr) minmax(0, 1.42fr);
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.public-buyer-launch-copy {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-buyer-launch-path strong,
+.public-buyer-launch-path small,
+.public-buyer-launch-path span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-buyer-launch-copy > strong {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.16;
+}
+
+.public-buyer-launch-copy small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.public-buyer-launch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.public-buyer-launch-grid article {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-height: 154px;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.public-buyer-launch-grid article > span {
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  color: #65f0d0;
+  border: 1px solid rgba(95, 240, 201, 0.26);
+  border-radius: 999px;
+  background: rgba(95, 240, 201, 0.08);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.public-buyer-launch-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.16;
+}
+
+.public-buyer-launch-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .portal-route-grid article {
   min-height: 244px;
 }
@@ -13242,6 +13324,8 @@ p {
   .public-server-update-receipt,
   .public-saved-build-verification,
   .public-saved-build-grid,
+  .public-buyer-launch-path,
+  .public-buyer-launch-grid,
   .auth-choice-summary,
   .auth-operator-details,
   .auth-support-actions,

@@ -12604,6 +12604,56 @@ function PublicSite({
       }
     ]
   };
+  const publicBuyerLaunchPath = {
+    mode: "public_buyer_launch_path",
+    selected_portal: portal,
+    selected_mode: mode,
+    selected_price: selectedRegistrationPath.plan,
+    first_live_database_write: selectedRegistrationPath.primaryWrite,
+    accepted_when:
+      "public_buyer_can_follow_account_choice_hosted_verification_portal_landing_pricing_scoped_database_access_proof_export_and_server_save_before_signup",
+    lanes: [
+      {
+        step: "1",
+        label: "Choose account",
+        value: portal === "corporate" ? "Corporate company" : "Professional user",
+        detail: portal === "corporate" ? "Use Corporate Verify when a company reviews approved user rows." : "Use Professional Passport when you own the record."
+      },
+      {
+        step: "2",
+        label: "Hosted verification",
+        value: mode === "signup" ? "Verify email" : "Login verified account",
+        detail: `Email links must return to ${authRedirectUrl}; localhost links are repaired before proof.`
+      },
+      {
+        step: "3",
+        label: "Portal landing",
+        value: portal === "corporate" ? "Company setup" : "Personal Passport",
+        detail: selectedRegistrationPath.nextAction
+      },
+      {
+        step: "4",
+        label: "Pricing boundary",
+        value: selectedRegistrationPath.plan,
+        detail: selectedRegistrationPath.paymentStatus
+      },
+      {
+        step: "5",
+        label: "Database access",
+        value: selectedRegistrationPath.primaryWrite,
+        detail:
+          portal === "corporate"
+            ? "Request scoped user access by professional email; no open browsing."
+            : "Create records and decide which company receives each Access Grant."
+      },
+      {
+        step: "6",
+        label: "Proof and save",
+        value: serverSyncMonitor.status === "synced" ? "Server synced" : "GitHub saved",
+        detail: serverSyncMonitor.status === "synced" ? "VPS release stamp matches the saved build." : "GitHub Pages is current; VPS pull remains the server save handoff."
+      }
+    ]
+  };
   const publicServerUpdateReceipt = {
     mode: "public_server_update_receipt",
     command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
@@ -13606,6 +13656,23 @@ function PublicSite({
                 <strong>{lane.portal}</strong>
                 <small>{lane.live_write}</small>
                 <small>{lane.access_rule}</small>
+              </article>
+            ))}
+          </div>
+        </div>
+        <div className="public-buyer-launch-path" aria-label="Public buyer launch path">
+          <div className="public-buyer-launch-copy">
+            <span className="status-chip success">Public buyer launch path</span>
+            <strong>Follow the whole path before signup creates live rows</strong>
+            <small>{publicBuyerLaunchPath.accepted_when}</small>
+          </div>
+          <div className="public-buyer-launch-grid">
+            {publicBuyerLaunchPath.lanes.map((lane) => (
+              <article key={lane.step}>
+                <span>{lane.step}</span>
+                <strong>{lane.label}</strong>
+                <small>{lane.value}</small>
+                <small>{lane.detail}</small>
               </article>
             ))}
           </div>

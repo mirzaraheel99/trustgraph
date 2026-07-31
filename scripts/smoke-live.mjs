@@ -795,6 +795,9 @@ assertIncludesAny(bundleText, ["pricing_decision_strip"], "registration packet p
 assertIncludesAny(bundleText, ["Portal database access contract"], "public portal database access contract label");
 assertIncludesAny(bundleText, ["public_portal_database_access_contract"], "public portal database access contract packet field");
 assertIncludesAny(bundleText, ["professional_registration_corporate_registration_pricing_ledger_and_scoped_user_database_access_are_visible_before_signup"], "public portal database access contract acceptance rule");
+assertIncludesAny(bundleText, ["Public buyer launch path"], "public buyer launch path");
+assertIncludesAny(bundleText, ["public_buyer_launch_path"], "public buyer launch path packet field");
+assertIncludesAny(bundleText, ["public_buyer_can_follow_account_choice_hosted_verification_portal_landing_pricing_scoped_database_access_proof_export_and_server_save_before_signup"], "public buyer launch path acceptance rule");
 assertIncludesAny(bundleText, ["Public portal launch checklist"], "public portal launch checklist");
 assertIncludesAny(bundleText, ["public_portal_launch_checklist"], "public portal launch checklist packet field");
 assertIncludesAny(bundleText, ["public_website_login_registration_pricing_corporate_database_path_hosted_auth_and_server_release_are_all_clear_before_v1_launch"], "public portal launch checklist acceptance rule");

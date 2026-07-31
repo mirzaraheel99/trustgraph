@@ -139,6 +139,8 @@ const requiredMobileStacks = [
   ".portal-decision-grid",
   ".public-portal-database-contract",
   ".public-portal-database-contract-grid",
+  ".public-buyer-launch-path",
+  ".public-buyer-launch-grid",
   ".pricing-decision-strip",
   ".public-pricing-estimator",
   ".public-pricing-estimator-grid",
