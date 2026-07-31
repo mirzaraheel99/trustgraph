@@ -20141,6 +20141,14 @@ function App() {
     accepted_when:
       "signed_in_dashboard_starts_with_one_compact_front_door_for_passport_corporate_admin_account_pricing_database_and_server_without_horizontal_overflow"
   };
+  const pilotNamedRpcAliases = [
+    "prepare_pilot_user_access_request",
+    "ensure_pilot_employer_reviewer_membership",
+    "create_pilot_verification_cases",
+    "ensure_pilot_trustgraph_verifier_membership",
+    "ensure_pilot_credential_issuer_membership",
+    "create_pilot_connect_api_client"
+  ];
   const proofExportHub = [
     {
       label: "Working database proof",
@@ -21364,6 +21372,7 @@ function App() {
     portal_choice_guide: portalChoiceGuide,
     dashboard_next_action: dashboardNextActionPacket,
     dashboard_front_door: dashboardFrontDoor,
+    pilot_named_rpc_aliases: pilotNamedRpcAliases,
     workspace_command_strip: workspaceCommandStrip,
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,

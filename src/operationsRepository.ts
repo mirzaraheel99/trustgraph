@@ -59,11 +59,32 @@ export async function loadVerificationCases(accessToken: string): Promise<DbVeri
 }
 
 export async function createOperatorVerificationCases(accessToken: string): Promise<number> {
-  return supabaseRpc<number>("create_operator_verification_cases", {}, { accessToken });
+  try {
+    return await supabaseRpc<number>("create_pilot_verification_cases", {}, { accessToken });
+  } catch (error) {
+    if (!isMissingPilotAliasRpc(error, "create_pilot_verification_cases")) {
+      throw error;
+    }
+    return supabaseRpc<number>("create_operator_verification_cases", {}, { accessToken });
+  }
 }
 
 export async function ensureTrustGraphVerifierMembership(accessToken: string) {
-  return supabaseRpc<DbOrganizationMembership>("ensure_trustgraph_verifier_membership", {}, { accessToken });
+  try {
+    return await supabaseRpc<DbOrganizationMembership>("ensure_pilot_trustgraph_verifier_membership", {}, { accessToken });
+  } catch (error) {
+    if (!isMissingPilotAliasRpc(error, "ensure_pilot_trustgraph_verifier_membership")) {
+      throw error;
+    }
+    return supabaseRpc<DbOrganizationMembership>("ensure_trustgraph_verifier_membership", {}, { accessToken });
+  }
+}
+
+function isMissingPilotAliasRpc(error: unknown, functionName: string) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(`Could not find the function public.${functionName}`)
+    || message.includes(`function public.${functionName}`)
+    || message.includes("PGRST202");
 }
 
 export async function decideVerificationCase(input: {

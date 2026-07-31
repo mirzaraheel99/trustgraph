@@ -18,7 +18,21 @@ export async function loadIssuerCredentials(organizationId: string, accessToken:
 }
 
 export async function ensureCredentialIssuerMembership(accessToken: string) {
-  return supabaseRpc<DbOrganizationMembership>("ensure_credential_issuer_membership", {}, { accessToken });
+  try {
+    return await supabaseRpc<DbOrganizationMembership>("ensure_pilot_credential_issuer_membership", {}, { accessToken });
+  } catch (error) {
+    if (!isMissingPilotAliasRpc(error, "ensure_pilot_credential_issuer_membership")) {
+      throw error;
+    }
+    return supabaseRpc<DbOrganizationMembership>("ensure_credential_issuer_membership", {}, { accessToken });
+  }
+}
+
+function isMissingPilotAliasRpc(error: unknown, functionName: string) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(`Could not find the function public.${functionName}`)
+    || message.includes(`function public.${functionName}`)
+    || message.includes("PGRST202");
 }
 
 export async function issueCredentialRecord(input: {

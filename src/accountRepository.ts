@@ -132,7 +132,21 @@ export function accountContextOrganizations(context: AccountContext): Organizati
 }
 
 export async function ensureEmployerReviewerMembership(accessToken: string) {
-  return supabaseRpc("ensure_employer_reviewer_membership", {}, { accessToken });
+  try {
+    return await supabaseRpc("ensure_pilot_employer_reviewer_membership", {}, { accessToken });
+  } catch (error) {
+    if (!isMissingPilotAliasRpc(error, "ensure_pilot_employer_reviewer_membership")) {
+      throw error;
+    }
+    return supabaseRpc("ensure_employer_reviewer_membership", {}, { accessToken });
+  }
+}
+
+function isMissingPilotAliasRpc(error: unknown, functionName: string) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(`Could not find the function public.${functionName}`)
+    || message.includes(`function public.${functionName}`)
+    || message.includes("PGRST202");
 }
 
 export async function createCorporateAccount(input: {

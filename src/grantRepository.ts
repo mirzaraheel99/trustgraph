@@ -99,5 +99,19 @@ export async function syncAccessGrantRecords(grantId: string, accessToken: strin
 }
 
 export async function preparePilotAccessGrant(accessToken: string): Promise<DbAccessGrant> {
-  return supabaseRpc<DbAccessGrant>("prepare_pilot_access_grant_request", {}, { accessToken });
+  try {
+    return await supabaseRpc<DbAccessGrant>("prepare_pilot_user_access_request", {}, { accessToken });
+  } catch (error) {
+    if (!isMissingPilotAliasRpc(error, "prepare_pilot_user_access_request")) {
+      throw error;
+    }
+    return supabaseRpc<DbAccessGrant>("prepare_pilot_access_grant_request", {}, { accessToken });
+  }
+}
+
+function isMissingPilotAliasRpc(error: unknown, functionName: string) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(`Could not find the function public.${functionName}`)
+    || message.includes(`function public.${functionName}`)
+    || message.includes("PGRST202");
 }

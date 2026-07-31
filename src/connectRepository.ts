@@ -15,7 +15,21 @@ export async function loadWebhookSubscriptions(accessToken: string): Promise<DbW
 }
 
 export async function createPilotApiClient(accessToken: string): Promise<DbApiClient> {
-  return supabaseRpc<DbApiClient>("create_pilot_api_client", {}, { accessToken });
+  try {
+    return await supabaseRpc<DbApiClient>("create_pilot_connect_api_client", {}, { accessToken });
+  } catch (error) {
+    if (!isMissingPilotAliasRpc(error, "create_pilot_connect_api_client")) {
+      throw error;
+    }
+    return supabaseRpc<DbApiClient>("create_pilot_api_client", {}, { accessToken });
+  }
+}
+
+function isMissingPilotAliasRpc(error: unknown, functionName: string) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(`Could not find the function public.${functionName}`)
+    || message.includes(`function public.${functionName}`)
+    || message.includes("PGRST202");
 }
 
 export async function createWebhookSubscription(input: {
