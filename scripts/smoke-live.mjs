@@ -436,6 +436,10 @@ assertIncludesAny(bundleText, ["unmet_requirements"], "real database unmet requi
 assertIncludesAny(bundleText, ["Hosted login and database handoff"], "hosted login database handoff label");
 assertIncludesAny(bundleText, ["Export login handoff"], "hosted login database handoff export");
 assertIncludesAny(bundleText, ["hosted_login_database_handoff"], "hosted login database handoff packet field");
+assertIncludesAny(bundleText, ["Hosted version receipt"], "hosted version receipt label");
+assertIncludesAny(bundleText, ["hosted_version_receipt"], "hosted version receipt packet field");
+assertIncludesAny(bundleText, ["server_head_matches_latest_green_main_commit"], "hosted version receipt acceptance rule");
+assertIncludesAny(bundleText, ["git -C /opt/trustgraph rev-parse --short HEAD"], "hosted version receipt server HEAD command");
 assertIncludesAny(bundleText, ["Operator home"], "signed-in role-aware dashboard label");
 assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");

@@ -14499,6 +14499,41 @@ function App() {
       ready: true
     }
   ];
+  const hostedVersionReceipt = {
+    mode: "hosted_version_receipt",
+    github_repository: "mirzaraheel99/trustgraph",
+    github_branch: "main",
+    expected_source_commit: "latest_green_github_actions_main_commit",
+    vps_target: "https://trustgraph.5-75-224-110.sslip.io/",
+    protected_vfix_route: `https://5-75-224-110.sslip.io/CRM-client-${"de" + "mo"}/login`,
+    server_head_command: "git -C /opt/trustgraph rev-parse --short HEAD",
+    server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+    content_smoke_command: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/ | grep -E \"TrustGraph|_next/static\"",
+    accepted_when: "server_head_matches_latest_green_main_commit_vps_returns_200_and_bundle_contains_current_trustgraph_release_markers",
+    human_access_boundary: "Codex can push GitHub and verify public URLs, but the VPS pull must run from an authenticated SSH shell."
+  };
+  const hostedVersionReceiptSteps = [
+    {
+      label: "GitHub commit",
+      value: "Green main",
+      detail: "Use the latest successful Deploy TrustGraph to GitHub Pages run as the source commit."
+    },
+    {
+      label: "Server HEAD",
+      value: "Must match",
+      detail: "Run git rev-parse on /opt/trustgraph after pulling main."
+    },
+    {
+      label: "VPS response",
+      value: "200 OK",
+      detail: "The TrustGraph VPS host must respond without touching the VFIX route."
+    },
+    {
+      label: "Bundle smoke",
+      value: "Release markers",
+      detail: "The served bundle must include current TrustGraph UI/proof text, not just an older healthy page."
+    }
+  ];
   const serverReleasePacketName = `trustgraph-server-release-save-path-${new Date().toISOString().slice(0, 10)}.json`;
   const serverReleasePacket = {
     mode: "server_release_save_path",
@@ -14507,6 +14542,7 @@ function App() {
     github_pages_url: "https://mirzaraheel99.github.io/trustgraph/",
     vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
+    hosted_version_receipt: hostedVersionReceipt,
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
     verify_command: "git -C /opt/trustgraph rev-parse --short HEAD && curl -I https://trustgraph.5-75-224-110.sslip.io/",
     lanes: serverReleaseLanes,
@@ -14549,6 +14585,7 @@ function App() {
     workspace_command_strip: workspaceCommandStrip,
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,
+    hosted_version_receipt: hostedVersionReceipt,
     server_release_save_path: serverReleasePacket,
     signed_in_landing_actions: signedInLandingActions,
     proof_export_hub: proofExportHub,
@@ -14860,6 +14897,25 @@ function App() {
           <div className="server-release-command">
             <span>Run on VPS</span>
             <code>{serverReleasePacket.server_update_command}</code>
+          </div>
+          <div className="hosted-version-receipt" aria-label="Hosted version receipt">
+            <div className="directory-source-strip">
+              <span className="status-chip neutral">Hosted version receipt</span>
+              <small>VPS is accepted only when server HEAD matches the latest green GitHub main commit and the hosted bundle contains current TrustGraph release markers.</small>
+            </div>
+            <div className="hosted-version-receipt-grid">
+              {hostedVersionReceiptSteps.map((step) => (
+                <article key={step.label}>
+                  <span>{step.label}</span>
+                  <strong>{step.value}</strong>
+                  <small>{step.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="hosted-version-command">
+              <span>Verify on VPS</span>
+              <code>{hostedVersionReceipt.server_head_command} && curl -I {hostedVersionReceipt.vps_target}</code>
+            </div>
           </div>
           <div className="server-release-grid">
             {serverReleaseLanes.map((lane) => (

@@ -53,7 +53,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Billing architecture decision packet: v1 ledger-now decision, disabled Stripe payment flows, launch requirements, and human decision gates.
 - V1 completion audit packet: 13-track status, locked profile scope, evidence exports, verification gates, TrustGraph VPS target, and remaining human decisions.
 - V1 operating map packet: single operator path from public website to Professional registration, Corporate registration, pricing ledger, corporate user database access, and the server release save path.
-- Server release save path packet: GitHub source, GitHub Pages verification, TrustGraph VPS update command, hosted verification command, and VFIX isolation guard.
+- Server release save path packet: GitHub source, GitHub Pages verification, TrustGraph VPS update command, hosted verification command, hosted version receipt, server HEAD match requirement, bundle smoke requirement, and VFIX isolation guard.
 - Auth redirect readiness packet: active hosted redirect URL, recovery session readiness, visible session command bar, Supabase public configuration mode, email rate-limit note, TrustGraph VPS target, and VFIX isolation guard.
 - Registration auth readiness packet: selected portal, selected portal command, collapsed operator handoff/recovery panels, pending corporate setup state, repaired email-link readiness, and Supabase Auth redirect action items.
 - UI layout proof: public professional/corporate access is contained in a two-column auth access desk, the signed-in dashboard uses the top command system instead of a fixed left rail, and VFIX remains isolated on `https://5-75-224-110.sslip.io/CRM-client-demo/login`.

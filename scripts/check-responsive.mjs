@@ -15,6 +15,8 @@ const requiredMobileStacks = [
   ".auth-support-actions",
   ".hosted-callback-proof-grid",
   ".hosted-corporate-retest-grid",
+  ".hosted-version-command",
+  ".hosted-version-receipt-grid",
   ".account-operator-path",
   ".corporate-account-rbac-path",
   ".billing-operator-path",
