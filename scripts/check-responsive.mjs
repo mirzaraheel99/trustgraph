@@ -161,6 +161,7 @@ const requiredMobileStacks = [
   ".selected-portal-command",
   ".security-signoff-grid",
   ".security-signoff-header",
+  ".v1-security-review-grid",
   ".server-release-cockpit-header",
   ".server-release-command",
   ".server-release-grid",

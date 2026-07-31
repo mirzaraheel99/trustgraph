@@ -7160,8 +7160,50 @@ function SecurityReviewPanel({
       status: "separate_hosts_required"
     }
   };
+  const v1SecurityReviewReceipt = {
+    generated_at: new Date().toISOString(),
+    mode: "v1_security_rls_review_checklist_receipt",
+    view: "admin_security_review",
+    code_verified: {
+      rls_tables: rlsProtectedTables.length,
+      checks_ready: completed,
+      checks_total: checks.length,
+      migration_ledger_rows: schemaMigrationRuns.length,
+      audit_events_loaded: auditEvents.length
+    },
+    human_gated: {
+      open_security_items: openChecks.map((check) => check.label),
+      required_decisions: humanDecisions,
+      external_review_required: true
+    },
+    accepted_when:
+      "ci_rls_guard_passes_private_evidence_signed_url_flow_is_reviewed_rbac_membership_rows_are_loaded_audit_exports_are_available_and_external_security_signoff_is_recorded_before_production_traffic"
+  };
+  const v1SecurityReviewCards = [
+    {
+      label: "Code gates",
+      value: `${completed}/${checks.length}`,
+      detail: "Local and CI gates verify RLS, claims, responsive layout, pilot flow, and build before deployment."
+    },
+    {
+      label: "RLS tables",
+      value: `${rlsProtectedTables.length}`,
+      detail: "Protected tables are listed for external reviewer traceability."
+    },
+    {
+      label: "Live evidence",
+      value: evidenceDocuments.some((item) => item.storage_path) ? "Signed URLs" : "Metadata first",
+      detail: "Private storage signoff stays open until uploaded evidence is reviewed."
+    },
+    {
+      label: "Human gate",
+      value: "Required",
+      detail: "External security/RLS review must be recorded before production traffic."
+    }
+  ];
   const runbookName = `trustgraph-security-runbook-${new Date().toISOString().slice(0, 10)}.csv`;
   const signoffPacketName = `trustgraph-security-rls-signoff-${new Date().toISOString().slice(0, 10)}.json`;
+  const reviewReceiptName = `trustgraph-v1-security-rls-review-receipt-${new Date().toISOString().slice(0, 10)}.json`;
 
   return (
     <section className="security-review-panel">
@@ -7181,6 +7223,9 @@ function SecurityReviewPanel({
         <button className="secondary-action" onClick={() => downloadTextFile(signoffPacketName, JSON.stringify(securitySignoffPacket, null, 2), "application/json")} type="button">
           Export signoff packet
         </button>
+        <button className="secondary-action" onClick={() => downloadTextFile(reviewReceiptName, JSON.stringify(v1SecurityReviewReceipt, null, 2), "application/json")} type="button">
+          Export review receipt
+        </button>
       </div>
       <div className="security-signoff-packet" aria-label="Security RLS signoff packet">
         <div className="security-signoff-header">
@@ -7197,6 +7242,22 @@ function SecurityReviewPanel({
               <strong>{row.label}</strong>
               <small>{row.status.replace(/_/g, " ")}</small>
               <small>{row.detail}</small>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="v1-security-review-receipt" aria-label="V1 security RLS review checklist receipt">
+        <div>
+          <span className="status-chip warning">V1 security/RLS review checklist</span>
+          <strong>{openChecks.length ? "Production security signoff is still open" : "Ready to schedule external security review"}</strong>
+          <small>{v1SecurityReviewReceipt.accepted_when}</small>
+        </div>
+        <div className="v1-security-review-grid">
+          {v1SecurityReviewCards.map((card) => (
+            <article key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
             </article>
           ))}
         </div>

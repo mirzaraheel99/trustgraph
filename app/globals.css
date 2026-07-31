@@ -11461,6 +11461,74 @@ p {
   line-height: 1.4;
 }
 
+.v1-security-review-receipt {
+  display: grid;
+  gap: 11px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 202, 122, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 202, 122, 0.065), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.v1-security-review-receipt > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.v1-security-review-receipt strong,
+.v1-security-review-receipt small,
+.v1-security-review-receipt span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-security-review-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.9vw, 25px);
+  line-height: 1.12;
+}
+
+.v1-security-review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 9px;
+}
+
+.v1-security-review-grid article {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  min-height: 120px;
+  padding: 11px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.v1-security-review-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.v1-security-review-grid strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.v1-security-review-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.42;
+}
+
 .rls-coverage-strip {
   display: flex;
   align-items: center;
@@ -13230,6 +13298,7 @@ p {
   .auth-access-command-grid,
   .security-signoff-header,
   .security-signoff-grid,
+  .v1-security-review-grid,
   .billing-estimate-card,
   .billing-decision-card,
   .billing-ledger-acceptance,

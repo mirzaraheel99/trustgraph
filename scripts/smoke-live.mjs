@@ -400,6 +400,14 @@ assertIncludesAny(bundleText, ["Security review checklist"], "security review ch
 assertIncludesAny(bundleText, ["Security RLS signoff packet"], "security/RLS signoff packet");
 assertIncludesAny(bundleText, ["security_rls_signoff_packet"], "security/RLS signoff packet mode");
 assertIncludesAny(bundleText, ["Export signoff packet"], "security/RLS signoff export");
+assertIncludesAny(bundleText, ["V1 security/RLS review checklist"], "V1 security/RLS review checklist receipt");
+assertIncludesAny(bundleText, ["v1_security_rls_review_checklist_receipt"], "V1 security/RLS review checklist packet field");
+assertIncludesAny(bundleText, ["Export review receipt"], "V1 security/RLS review receipt export");
+assertIncludesAny(
+  bundleText,
+  ["ci_rls_guard_passes_private_evidence_signed_url_flow_is_reviewed_rbac_membership_rows_are_loaded_audit_exports_are_available_and_external_security_signoff_is_recorded_before_production_traffic"],
+  "V1 security/RLS review acceptance rule"
+);
 assertIncludesAny(bundleText, ["pilot_ready_not_unrestricted_production"], "security production boundary");
 assertIncludesAny(bundleText, ["protected tables"], "RLS protected table coverage summary");
 assertIncludesAny(bundleText, ["rls_protected_table"], "security runbook RLS table export rows");
