@@ -14354,6 +14354,44 @@ function App() {
     target: item.target,
     ready: item.ready
   }));
+  const portalCommandDeck = [
+    {
+      id: "passport",
+      label: "Professional Passport",
+      intent: "Manage personal records, evidence, consent, and recovery.",
+      status: livePassportRecords.length ? `${livePassportRecords.length} live record rows` : "Create or import first live row",
+      action: "Open Passport",
+      target: "passport" as const,
+      ready: Boolean(authSession && livePassportRecords.length)
+    },
+    {
+      id: "verify",
+      label: "Corporate Verify",
+      intent: "Review approved user rows after scoped Access Grants.",
+      status: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} shared rows visible` : "Request user access by email",
+      action: "Open Verify",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0
+    },
+    {
+      id: "admin",
+      label: "Company Admin",
+      intent: "Set up workspace, RBAC, team, billing ledger, and launch proof.",
+      status: hasLiveCorporateContext ? nextCorporateSetupStep.detail : "Create corporate workspace",
+      action: "Open Admin",
+      target: "admin" as const,
+      ready: hasLiveCorporateContext && canManageCorporateSetup
+    },
+    {
+      id: "account",
+      label: "Account and login",
+      intent: "Sign in, reset password, repair verification links, or sign out.",
+      status: authSession ? `Signed in as ${authSession.user.email}` : "Hosted login required",
+      action: authSession ? "Account tools" : "Login or register",
+      target: "account" as const,
+      ready: Boolean(authSession)
+    }
+  ];
   const workspaceFlow = [
     {
       id: "passport" as const,
@@ -15091,6 +15129,42 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="portal-command-deck" aria-label="Portal command deck">
+          <div className="portal-command-deck-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Portal command deck</span>
+              <strong>Start with the right workspace</strong>
+              <small>
+                Professional users manage their Passport. Corporate reviewers use Verify only after scoped access. Admins manage company setup, billing, RBAC, and launch proof.
+              </small>
+            </div>
+            <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+              Public website
+            </button>
+          </div>
+          <div className="portal-command-deck-grid">
+            {portalCommandDeck.map((item) => (
+              <button
+                className={`${item.ready ? "ready" : ""} ${item.target === "account" ? "account" : ""}`}
+                key={item.id}
+                onClick={() => {
+                  if (item.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  openWorkspaceOrSetup(item.target);
+                }}
+                type="button"
+              >
+                <span>{item.label}</span>
+                <strong>{item.action}</strong>
+                <small>{item.intent}</small>
+                <em>{item.status}</em>
+              </button>
+            ))}
+          </div>
+        </section>
 
         <section className="dashboard-next-action" aria-label="Dashboard next action">
           <div className="dashboard-next-action-copy">

@@ -14585,6 +14585,7 @@ body {
 }
 
 .topbar,
+.portal-command-deck,
 .dashboard-next-action,
 .portal-home-command,
 .portal-choice-guide,
@@ -14612,6 +14613,109 @@ body {
 
 .topbar p {
   max-width: 72ch;
+}
+
+.portal-command-deck {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(10, 23, 24, 0.82);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.28);
+}
+
+.portal-command-deck-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.portal-command-deck-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.portal-command-deck-header strong {
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.08;
+}
+
+.portal-command-deck-header small {
+  max-width: 82ch;
+  color: rgba(222, 239, 233, 0.7);
+  line-height: 1.48;
+}
+
+.portal-command-deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 10px;
+}
+
+.portal-command-deck-grid button {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  min-height: 172px;
+  padding: 15px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  box-shadow: none;
+}
+
+.portal-command-deck-grid button.ready {
+  border-color: rgba(92, 236, 193, 0.3);
+  background: rgba(82, 214, 196, 0.07);
+}
+
+.portal-command-deck-grid button.account {
+  border-color: rgba(134, 174, 246, 0.24);
+  background: rgba(134, 174, 246, 0.06);
+}
+
+.portal-command-deck-grid button:hover {
+  border-color: rgba(210, 231, 223, 0.24);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.portal-command-deck-grid span,
+.portal-command-deck-grid strong,
+.portal-command-deck-grid small,
+.portal-command-deck-grid em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.portal-command-deck-grid span {
+  color: #65f0d0;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.portal-command-deck-grid strong {
+  font-size: 20px;
+  line-height: 1.12;
+}
+
+.portal-command-deck-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.45;
+}
+
+.portal-command-deck-grid em {
+  align-self: end;
+  color: rgba(245, 251, 247, 0.82);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 800;
 }
 
 .topbar-actions {
@@ -14761,6 +14865,7 @@ body {
 
 @media (max-width: 1180px) {
   .dashboard-next-action,
+  .portal-command-deck-header,
   .portal-home-command,
   .workspace-command-strip,
   .work-grid {
@@ -14785,6 +14890,7 @@ body {
   .session-command-bar,
   .workspace-route-strip,
   .workspace-flow-strip,
+  .portal-command-deck-grid,
   .dashboard-next-action-metrics,
   .portal-choice-guide-grid,
   .v1-operating-map-grid,

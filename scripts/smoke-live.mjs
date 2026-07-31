@@ -172,6 +172,8 @@ assertIncludesAny(bundleText, ["dashboard_next_action"], "authorized report dash
 assertIncludesAny(bundleText, ["Login or register before live database work"], "dashboard next-action login state");
 assertIncludesAny(bundleText, ["Request approved user access for Corporate Verify"], "dashboard next-action corporate Verify state");
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
+assertIncludesAny(bundleText, ["Portal command deck"], "signed-in portal command deck");
+assertIncludesAny(bundleText, ["Start with the right workspace"], "portal command deck headline");
 assertIncludesAny(bundleText, ["Portal home command center"], "signed-in portal home command center");
 assertIncludesAny(bundleText, ["Start with login, then choose the right portal"], "signed-in portal home guidance");
 assertIncludesAny(bundleText, ["Continue current portal"], "signed-in portal continuation action");

@@ -96,6 +96,8 @@ const requiredMobileStacks = [
   ".portal-auth-outcome-grid",
   ".portal-choice-guide-header",
   ".portal-choice-guide-grid",
+  ".portal-command-deck-header",
+  ".portal-command-deck-grid",
   ".portal-login-switchboard-grid",
   ".portal-support-details",
   ".proof-export-hub-grid",
