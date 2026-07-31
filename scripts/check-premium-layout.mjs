@@ -57,6 +57,7 @@ assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: no
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".portal-choice-guide") && premiumRepair.includes(".portal-choice-guide-grid"), "portal choice guide must be styled and bounded in the premium shell.");
+assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");

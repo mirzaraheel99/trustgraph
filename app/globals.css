@@ -1849,6 +1849,95 @@ button {
   font-weight: 900;
 }
 
+.login-decision-path {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 64%),
+    linear-gradient(160deg, rgba(134, 174, 246, 0.05), transparent 74%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.login-decision-path > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.login-decision-path strong,
+.login-decision-path small,
+.login-decision-path span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.login-decision-path > div:first-child > strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.login-decision-path small,
+.login-decision-next span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.login-decision-path-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.login-decision-path-grid button {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 10px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.login-decision-path-grid button.active {
+  border-color: rgba(82, 214, 196, 0.48);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.13), rgba(134, 174, 246, 0.05)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.login-decision-path-grid button > span {
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 8px;
+  color: #cfe0ff;
+  border: 1px solid rgba(134, 174, 246, 0.28);
+  border-radius: 999px;
+  background: rgba(134, 174, 246, 0.1);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.login-decision-next {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
 .account-type-chooser {
   display: grid;
   gap: 12px;
@@ -11785,6 +11874,8 @@ p {
   .portal-choice-guide-header,
   .portal-choice-guide-grid,
   .portal-login-switchboard-grid,
+  .login-decision-path-grid,
+  .login-decision-next,
   .dashboard-start-map-grid,
   .dashboard-next-action,
   .dashboard-next-action-metrics,

@@ -101,6 +101,8 @@ const requiredMobileStacks = [
   ".portal-command-deck-header",
   ".portal-command-deck-grid",
   ".portal-login-switchboard-grid",
+  ".login-decision-path-grid",
+  ".login-decision-next",
   ".portal-support-details",
   ".proof-export-hub-grid",
   ".workspace-command-strip",
@@ -189,6 +191,10 @@ if (!css.includes(".sidebar .account-admin-row") || !css.includes(".sidebar .acc
 
 if (!css.includes(".portal-entry-path") || !css.includes(".auth-selected-route") || !css.includes(".portal-support-details summary::after")) {
   throw new Error("Responsive check failed: portal login needs a compact entry path and selected route summary.");
+}
+
+if (!css.includes(".login-decision-path") || !css.includes(".login-decision-path-grid") || !css.includes("grid-template-columns: repeat(2, minmax(0, 1fr))")) {
+  throw new Error("Responsive check failed: live auth needs a clear professional/corporate login decision path.");
 }
 
 if (!css.includes(".portal-auth-command") || !css.includes("grid-template-columns: minmax(0, 1fr) minmax(240px, 0.52fr)") || !css.includes(".portal-auth-command-actions")) {

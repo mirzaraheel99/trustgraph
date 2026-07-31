@@ -8747,6 +8747,7 @@ function AuthPanel({
   const [dataRightsScope, setDataRightsScope] = useState("all_eligible_profile_data");
   const [dataRightsReason, setDataRightsReason] = useState("");
   const [dataRightsStatus, setDataRightsStatus] = useState(dataRightsMessage);
+  const [selectedLoginPath, setSelectedLoginPath] = useState<"professional" | "corporate">("professional");
   const [busy, setBusy] = useState(false);
   const authRedirectUrl = hostedAuthRedirectUrl();
   const recoverySessionReady = Boolean(session && accountStatus.toLowerCase().includes("password recovery"));
@@ -8800,18 +8801,37 @@ function AuthPanel({
   };
   const authPaths = [
     {
+      id: "professional",
       label: "Professional",
       detail: "Create a Passport, add records, upload evidence, approve Access Grants.",
       route: "Personal Passport after login",
-      database: "Writes profile, personal organization, Passport records, evidence, grants, and consent rows."
+      database: "Writes profile, personal organization, Passport records, evidence, grants, and consent rows.",
+      next: "After login, open Professional Passport and add live records."
     },
     {
+      id: "corporate",
       label: "Corporate",
       detail: "Create employer or staffing workspace from Corporate account and RBAC.",
       route: "Company Admin then Corporate Verify",
-      database: "Writes organization, admin membership, reviewer roles, access requests, review attestations, and billing ledger rows."
+      database: "Writes organization, admin membership, reviewer roles, access requests, review attestations, and billing ledger rows.",
+      next: "After login, create or activate the company workspace, then open Corporate Verify."
     }
-  ];
+  ] as const;
+  const activeLoginPath = authPaths.find((path) => path.id === selectedLoginPath) ?? authPaths[0];
+  const loginDecisionPacketName = `trustgraph-login-decision-path-${new Date().toISOString().slice(0, 10)}.json`;
+  const loginDecisionPacket = {
+    generated_at: new Date().toISOString(),
+    mode: "login_decision_path",
+    selected_path: activeLoginPath.id,
+    selected_label: activeLoginPath.label,
+    route_after_login: activeLoginPath.route,
+    database_scope_after_login: activeLoginPath.database,
+    next_action_after_login: activeLoginPath.next,
+    shared_auth_system: "Both portal paths use the same Supabase verified email login; RBAC and workspace setup decide data access.",
+    hosted_redirect_url: authRedirectUrl,
+    recovery_redirect_ready: !authRedirectUrl.includes("localhost"),
+    corporate_database_boundary: "Corporate users can request access by professional email and review only approved scoped Passport rows."
+  };
   const authChecks = [
     {
       label: "Hosted redirect",
@@ -9156,6 +9176,37 @@ function AuthPanel({
                 <small>{path.detail}</small>
               </article>
             ))}
+          </div>
+          <div className="login-decision-path" aria-label="Login decision path">
+            <div>
+              <span className="status-chip success">Login decision path</span>
+              <strong>{activeLoginPath.label} account path selected</strong>
+              <small>{activeLoginPath.next}</small>
+            </div>
+            <div className="login-decision-path-grid">
+              {authPaths.map((path) => (
+                <button
+                  className={path.id === selectedLoginPath ? "active" : ""}
+                  key={path.id}
+                  onClick={() => setSelectedLoginPath(path.id)}
+                  type="button"
+                >
+                  <span>{path.label === "Corporate" ? "Company" : "User"}</span>
+                  <strong>{path.label}</strong>
+                  <small>{path.route}</small>
+                </button>
+              ))}
+            </div>
+            <div className="login-decision-next">
+              <span>{activeLoginPath.database}</span>
+              <button
+                className="secondary-action"
+                onClick={() => downloadTextFile(loginDecisionPacketName, JSON.stringify(loginDecisionPacket, null, 2), "application/json")}
+                type="button"
+              >
+                Export login path
+              </button>
+            </div>
           </div>
           <div className="auth-operator-path" aria-label="Login and recovery path">
             {authOperatorPath.map((item) => (

@@ -197,6 +197,10 @@ assertIncludesAny(bundleText, ["Open dashboard"], "public signed-in dashboard ac
 assertIncludesAny(bundleText, ["Organization name"], "Corporate registration organization field");
 assertIncludesAny(bundleText, ["Selected portal login path"], "public auth portal choice switchboard");
 assertIncludesAny(bundleText, ["Corporate company", "Professional user"], "public auth professional and corporate selectors");
+assertIncludesAny(bundleText, ["Login decision path"], "live auth login decision path");
+assertIncludesAny(bundleText, ["Professional account path selected"], "professional login path selection");
+assertIncludesAny(bundleText, ["Export login path"], "login decision path export control");
+assertIncludesAny(bundleText, ["login_decision_path"], "login decision path packet field");
 assertIncludesAny(bundleText, ["Corporate launch path"], "guided corporate setup path");
 assertIncludesAny(bundleText, ["Corporate launch cockpit"], "corporate setup next-action cockpit");
 assertIncludesAny(bundleText, ["corporate_launch_cockpit"], "corporate launch cockpit packet mode");
