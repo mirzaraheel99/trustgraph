@@ -10860,6 +10860,20 @@ function PublicSite({
         : ["email", "password"],
     after_success: selectedRegistrationPath.nextAction
   };
+  const registrationDecisionReceipt = {
+    mode: "registration_decision_receipt",
+    selected_portal: selectedRegistrationPath.portal,
+    selected_mode: mode,
+    pricing: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    required_fields: selectedPortalCommand.required_fields,
+    next_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
+    payment_boundary: selectedRegistrationPath.paymentStatus,
+    database_boundary:
+      portal === "corporate"
+        ? "Corporate teams cannot browse users; they request access by professional email and see only approved shared rows."
+        : "Professionals own Passport rows, evidence, consent, and every Access Grant decision."
+  };
   const authOutcomePacket = {
     mode: "portal_auth_outcome_summary",
     selected_portal: portal,
@@ -11015,6 +11029,7 @@ function PublicSite({
     },
     active_redirect_url: authRedirectUrl,
     portal_entry_path: portalEntryPath,
+    registration_decision_receipt: registrationDecisionReceipt,
     portal_handoff_checklist: portalHandoffChecklist,
     required_hosted_redirect: TRUSTGRAPH_VPS_URL,
     github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
@@ -11767,6 +11782,31 @@ function PublicSite({
                 <small>{step.detail}</small>
               </span>
             ))}
+          </div>
+          <div className="registration-decision-receipt" aria-label="Registration decision receipt">
+            <div>
+              <span className="status-chip success">Registration decision receipt</span>
+              <strong>{registrationDecisionReceipt.selected_portal}</strong>
+              <small>{registrationDecisionReceipt.database_boundary}</small>
+            </div>
+            <div className="registration-decision-grid">
+              <span>
+                <strong>{registrationDecisionReceipt.pricing}</strong>
+                <small>Pricing path</small>
+              </span>
+              <span>
+                <strong>{registrationDecisionReceipt.first_database_write}</strong>
+                <small>First database write</small>
+              </span>
+              <span>
+                <strong>{registrationDecisionReceipt.required_fields.length} fields</strong>
+                <small>{registrationDecisionReceipt.required_fields.join(", ").replace(/_/g, " ")}</small>
+              </span>
+              <span>
+                <strong>{registrationDecisionReceipt.next_dashboard}</strong>
+                <small>{registrationDecisionReceipt.payment_boundary}</small>
+              </span>
+            </div>
           </div>
           <div className="account-type-chooser" aria-label="Account type chooser">
             <div className="account-type-chooser-header">

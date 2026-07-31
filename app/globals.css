@@ -1088,6 +1088,48 @@ button {
   line-height: 1.4;
 }
 
+.registration-decision-receipt {
+  display: grid;
+  gap: 12px;
+  max-width: 720px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(82, 214, 196, 0.18);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.026);
+  overflow: hidden;
+}
+
+.registration-decision-receipt > div:first-child {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.registration-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.registration-decision-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.13);
+  overflow: hidden;
+}
+
+.registration-decision-receipt strong,
+.registration-decision-receipt small,
+.registration-decision-grid span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .portal-access-guide {
   display: grid;
   gap: 12px;
@@ -11370,6 +11412,7 @@ p {
   .public-pricing-estimator-grid,
   .public-pricing-estimator-actions,
   .pending-registration-grid,
+  .registration-decision-grid,
   .registration-grid,
   .selected-portal-command,
   .directory-controls,

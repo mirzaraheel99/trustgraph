@@ -100,6 +100,7 @@ const requiredMobileStacks = [
   ".public-session-handoff",
   ".real-database-policy-grid",
   ".registration-path-grid",
+  ".registration-decision-grid",
   ".selected-portal-command",
   ".security-signoff-grid",
   ".security-signoff-header",

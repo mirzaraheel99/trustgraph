@@ -59,6 +59,8 @@ const flowChecks = [
     label: "Professional and corporate registration stays explicit",
     required: [
       "Selected portal command",
+      "Registration decision receipt",
+      "registration_decision_receipt",
       "Create company admin account",
       "Create Professional Passport",
       "Live database handoff",
