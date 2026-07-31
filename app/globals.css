@@ -1252,6 +1252,95 @@ button {
   line-height: 1.45;
 }
 
+.public-pricing-access-summary {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.1), rgba(134, 174, 246, 0.06)),
+    rgba(255, 255, 255, 0.028);
+}
+
+.public-pricing-access-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-pricing-access-copy strong {
+  color: var(--text);
+  font-size: clamp(21px, 2.2vw, 32px);
+  line-height: 1.05;
+}
+
+.public-pricing-access-copy small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.public-pricing-access-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.public-pricing-access-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 122px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-pricing-access-grid span,
+.public-pricing-access-grid strong,
+.public-pricing-access-grid small,
+.public-pricing-access-copy strong,
+.public-pricing-access-copy small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-pricing-access-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-pricing-access-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.14;
+}
+
+.public-pricing-access-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.public-pricing-access-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 154px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-pricing-access-actions button {
+  min-width: 0;
+  white-space: normal;
+}
+
 .public-pricing-estimator {
   display: grid;
   grid-template-columns: minmax(0, 0.86fr) minmax(260px, 0.44fr) minmax(0, 0.7fr) minmax(220px, 0.42fr);
@@ -16059,6 +16148,8 @@ p {
   .workflow-grid,
   .pricing-grid,
   .pricing-decision-strip,
+  .public-pricing-access-grid,
+  .public-pricing-access-actions,
   .public-pricing-estimator,
   .public-pricing-estimator-grid,
   .public-pricing-estimator-actions,

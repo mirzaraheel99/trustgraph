@@ -15318,6 +15318,48 @@ function PublicSite({
     human_gate_required_for: ["Stripe Checkout", "customer portal", "invoice emails", "taxes", "refunds", "dunning", "payment webhooks"],
     database_path: "organization_subscriptions rows are accepted for pilot planning; external payment collection is not enabled"
   };
+  const publicPricingAccessSummary = {
+    mode: "public_pricing_access_summary",
+    selected_portal: portal,
+    professional_plan: "$0 Professional Passport pilot",
+    corporate_plan: "$149 Corporate Verify pilot monthly",
+    selected_plan: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    corporate_database_rule: "Corporate reviewers request access by professional email and see approved shared rows only.",
+    payment_boundary: "Supabase subscription ledger is live for pilot planning; Stripe Checkout remains human-gated.",
+    accepted_when:
+      "public_pricing_section_explains_professional_free_corporate_149_pilot_first_database_write_scoped_user_access_and_stripe_boundary_before_signup"
+  };
+  const publicPricingAccessCards = [
+    {
+      label: "Professional",
+      value: publicPricingAccessSummary.professional_plan,
+      detail: "Private Passport, records, evidence, consent, references, and Access Grant decisions."
+    },
+    {
+      label: "Corporate",
+      value: publicPricingAccessSummary.corporate_plan,
+      detail: "Company workspace, RBAC, team, billing ledger, Verify requests, and scoped review."
+    },
+    {
+      label: "Selected path",
+      value: publicPricingAccessSummary.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Access rule",
+      value: portal === "corporate" ? "Scoped rows only" : "Owner controlled",
+      detail:
+        portal === "corporate"
+          ? publicPricingAccessSummary.corporate_database_rule
+          : "Professional controls every Passport row, evidence item, consent decision, and corporate grant."
+    },
+    {
+      label: "Payment gate",
+      value: "Stripe off",
+      detail: publicPricingAccessSummary.payment_boundary
+    }
+  ];
   const portalLoginSwitchboard = [
     {
       label: "Professional user login",
@@ -17016,6 +17058,43 @@ function PublicSite({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+        <div className="public-pricing-access-summary" aria-label="Public pricing access summary">
+          <div className="public-pricing-access-copy">
+            <span className="status-chip success">Pricing and access</span>
+            <strong>{publicPricingAccessSummary.selected_plan}</strong>
+            <small>{publicPricingAccessSummary.accepted_when}</small>
+          </div>
+          <div className="public-pricing-access-grid">
+            {publicPricingAccessCards.map((item) => (
+              <article key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <small>{item.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="public-pricing-access-actions">
+            <button className="primary-action" onClick={() => openPortal("professional")} type="button">
+              Start Professional free
+            </button>
+            <button className="secondary-action" onClick={() => openPortal("corporate")} type="button">
+              Start Corporate pilot
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-public-pricing-access-summary-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(publicPricingAccessSummary, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export pricing access
+            </button>
+          </div>
         </div>
         <div className="public-pricing-estimator" aria-label="Public pricing pilot estimator">
           <div className="public-pricing-estimator-copy">

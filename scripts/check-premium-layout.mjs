@@ -85,6 +85,7 @@ assert(app.includes('aria-label="Public portal launchpad"'), "public website mus
 assert(app.includes('aria-label="Public portal database access contract"'), "public website must expose Professional, Corporate, pricing, and scoped database access before signup.");
 assert(app.includes('aria-label="Public buyer decision board"') && app.includes("public_buyer_decision_board"), "public website must expose a buyer decision board for Professional, Corporate, Scale, pricing, and database boundaries.");
 assert(app.includes('aria-label="Public buyer launch path"'), "public website must expose a plain-language buyer launch path before signup.");
+assert(app.includes('aria-label="Public pricing access summary"') && app.includes("public_pricing_access_summary"), "public pricing section must expose Professional free, Corporate $149 pilot, first database write, scoped user access, and Stripe boundary before signup.");
 assert(app.includes('aria-label="Registration database launch order"'), "public website must expose the selected registration-to-database launch order before signup.");
 assert(app.includes('aria-label="Registration focus strip"'), "public auth must expose a compact registration focus strip before form fields.");
 assert(app.includes('aria-label="Portal launch decision strip"'), "public auth must expose a plain-language portal launch decision strip.");
@@ -142,6 +143,7 @@ assert(css.includes(".registration-intent-review") && css.includes(".registratio
 assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
 assert(css.includes(".public-portal-database-contract") && css.includes(".public-portal-database-contract-grid"), "public portal database access contract must be styled and bounded.");
 assert(css.includes(".public-buyer-launch-path") && css.includes(".public-buyer-launch-grid"), "public buyer launch path must be styled and bounded.");
+assert(css.includes(".public-pricing-access-summary") && css.includes(".public-pricing-access-grid") && css.includes(".public-pricing-access-actions"), "public pricing access summary must be styled and bounded.");
 assert(css.includes(".registration-database-launch-order") && css.includes(".registration-database-launch-grid"), "registration database launch order must be styled and bounded.");
 assert(css.includes(".registration-pre-submit-checklist") && css.includes(".registration-pre-submit-grid"), "registration pre-submit checklist must be styled and bounded.");
 assert(app.includes('aria-label="Auth path summary"') && app.includes("auth_path_summary"), "login/register card must expose a compact selected auth path summary.");
