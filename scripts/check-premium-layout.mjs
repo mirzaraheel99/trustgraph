@@ -33,6 +33,7 @@ assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
 assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
 assert(app.includes('aria-label="Live pilot row proof"'), "v1 readiness must expose live pilot row proof.");
+assert(app.includes('aria-label="Live database acceptance lanes"'), "launch checklist must expose clear Professional, Corporate, and pilot ledger database lanes.");
 assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: none !important"), "final CSS layer must still suppress any legacy sidebar rail.");
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
@@ -40,6 +41,7 @@ assert(premiumRepair.includes(".dashboard-next-action") && premiumRepair.include
 assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");
 assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))"), "dense admin forms must auto-fit narrow screens.");
 assert(premiumRepair.includes(".live-pilot-row-proof") && premiumRepair.includes(".live-pilot-row-proof-grid"), "live pilot row proof must be styled as a bounded premium panel.");
+assert(premiumRepair.includes(".live-database-acceptance-lanes") && premiumRepair.includes(".live-database-acceptance-lane-grid"), "live database acceptance lanes must be styled and bounded.");
 assert(premiumRepair.includes(".setup-route-deck") && premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 230px), 1fr))"), "setup route deck must auto-fit without overflow.");
 assert(premiumRepair.includes(".corporate-launch-cockpit") && premiumRepair.includes(".corporate-launch-lanes"), "corporate launch cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".team-billing-handoff") && premiumRepair.includes(".team-billing-handoff-grid"), "team and billing handoff must be styled and bounded.");

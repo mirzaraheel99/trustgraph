@@ -388,6 +388,10 @@ assertIncludesAny(bundleText, ["Working database acceptance"], "working database
 assertIncludesAny(bundleText, ["Live account acceptance checklist"], "live account acceptance checklist");
 assertIncludesAny(bundleText, ["live_account_acceptance_checklist"], "live account acceptance packet field");
 assertIncludesAny(bundleText, ["human_or_live_data_action_required"], "live account acceptance human/live data action state");
+assertIncludesAny(bundleText, ["Live database acceptance lanes"], "live database acceptance lanes panel");
+assertIncludesAny(bundleText, ["live_database_acceptance_lanes"], "live database acceptance lanes packet field");
+assertIncludesAny(bundleText, ["Professional Passport", "Corporate Verify", "Pilot ledger"], "live database acceptance lane labels");
+assertIncludesAny(bundleText, ["Finish the missing live database lane"], "live database lane next-action copy");
 assertIncludesAny(bundleText, ["Live Data Verdict"], "live data verdict panel");
 assertIncludesAny(bundleText, ["Required row groups"], "live data verdict row-group metric");
 assertIncludesAny(bundleText, ["working_database_accepted"], "working database acceptance packet status");

@@ -9576,6 +9576,59 @@ function OnboardingChecklistPanel({
     open_items: liveAccountAcceptanceOpenItems.map((item) => item.label),
     checklist: liveAccountAcceptanceChecklist
   };
+  const professionalDatabaseReady = livePassportRecords.length > 0 && evidenceDocuments.length > 0;
+  const corporateDatabaseReady =
+    accessGrants.length > 0 &&
+    corporateAccessReviews.length > 0 &&
+    consentAuthorizations.length > 0 &&
+    (teamMembers.length > 0 || teamInvitations.length > 0);
+  const pilotLedgerReady = organizationSubscriptions.length > 0 && seedReconciliationComplete;
+  const liveDatabaseAcceptanceLanes = [
+    {
+      label: "Professional Passport",
+      status: professionalDatabaseReady ? "ready" : "needs records",
+      ready: professionalDatabaseReady,
+      detail: professionalDatabaseReady
+        ? "Passport and evidence rows are loaded from Supabase for this signed-in user."
+        : "Create a Passport record and attach evidence metadata before accepting the user database.",
+      metrics: [
+        `${livePassportRecords.length} records`,
+        `${evidenceDocuments.length} evidence`
+      ],
+      action: "Open Professional Passport",
+      target: "passport" as WorkspaceId
+    },
+    {
+      label: "Corporate Verify",
+      status: corporateDatabaseReady ? "ready" : "needs scoped access",
+      ready: corporateDatabaseReady,
+      detail: corporateDatabaseReady
+        ? "Corporate access, consent, reviewer/team, and review attestation rows are loaded."
+        : "Load a corporate workspace, request/approve scoped access, and record a review attestation.",
+      metrics: [
+        `${accessGrants.length} grants`,
+        `${corporateAccessReviews.length} reviews`,
+        `${teamMembers.length + teamInvitations.length} team`
+      ],
+      action: "Open Corporate Verify",
+      target: "verify" as WorkspaceId
+    },
+    {
+      label: "Pilot ledger",
+      status: pilotLedgerReady ? "ready" : "needs seed proof",
+      ready: pilotLedgerReady,
+      detail: pilotLedgerReady
+        ? "Pilot subscription ledger and seed reconciliation match the loaded repository rows."
+        : "Activate the pilot ledger, prepare live pilot rows, then reload and export proof.",
+      metrics: [
+        `${organizationSubscriptions.length} subscriptions`,
+        `${seedReconciliationPassing}/${seedReconciliationRows.length} seed match`
+      ],
+      action: authSession ? "Prepare live pilot workspace" : "Login first",
+      target: "verify" as WorkspaceId
+    }
+  ];
+  const liveDatabaseAcceptanceLaneReady = liveDatabaseAcceptanceLanes.filter((lane) => lane.ready).length;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -9630,6 +9683,7 @@ function OnboardingChecklistPanel({
     live_row_total: workingDataTotal,
     working_database_command_center: workingDatabaseCommandCenter,
     live_account_acceptance_checklist: liveAccountAcceptancePacket,
+    live_database_acceptance_lanes: liveDatabaseAcceptanceLanes,
     live_database_acceptance: {
       status: workingDatabaseAcceptanceStatus,
       passing: liveDatabaseAcceptancePassing,
@@ -9753,6 +9807,51 @@ function OnboardingChecklistPanel({
               <strong>{row.value}</strong>
               <small>{row.label}</small>
             </span>
+          ))}
+        </div>
+      </div>
+      <div className="live-database-acceptance-lanes" aria-label="Live database acceptance lanes">
+        <div className="live-database-acceptance-lanes-top">
+          <div>
+            <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : "warning"}`}>Real database gate</span>
+            <strong>{liveDatabaseAcceptanceComplete ? "All live database lanes are ready" : "Finish the missing live database lane"}</strong>
+            <small>Separate Professional, Corporate, and pilot ledger proof so users can see what is live, what is missing, and where to go next.</small>
+          </div>
+          <span className={`status-chip ${liveDatabaseAcceptanceLaneReady === liveDatabaseAcceptanceLanes.length ? "success" : "warning"}`}>
+            {liveDatabaseAcceptanceLaneReady}/{liveDatabaseAcceptanceLanes.length} lanes ready
+          </span>
+        </div>
+        <div className="live-database-acceptance-lane-grid">
+          {liveDatabaseAcceptanceLanes.map((lane) => (
+            <article className={lane.ready ? "ready" : ""} key={lane.label}>
+              <div>
+                <span className={`status-chip ${lane.ready ? "success" : "warning"}`}>{lane.status}</span>
+                <strong>{lane.label}</strong>
+                <small>{lane.detail}</small>
+              </div>
+              <div className="live-database-acceptance-lane-metrics">
+                {lane.metrics.map((metric) => (
+                  <span key={metric}>{metric}</span>
+                ))}
+              </div>
+              <button
+                className={lane.ready ? "secondary-action" : "primary-action"}
+                onClick={() => {
+                  if (lane.label === "Pilot ledger" && authSession) {
+                    void seedLiveData();
+                    return;
+                  }
+                  if (lane.label === "Pilot ledger" && !authSession) {
+                    onOpenHostedRegistration();
+                    return;
+                  }
+                  onOpenWorkspace(lane.target);
+                }}
+                type="button"
+              >
+                {lane.action}
+              </button>
+            </article>
           ))}
         </div>
       </div>
