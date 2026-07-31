@@ -38,6 +38,7 @@ import type {
   DbConsentAuthorization,
   DbCorporateAccessReview,
   DbCorporateDatabaseAccessReceipt,
+  DbCorporateDatabaseVisibilitySnapshot,
   DbDataExportPackage,
   DbDataRightsRequest,
   DbDataExportPackageReceipt,
@@ -64,6 +65,7 @@ import type {
   DbWebhookSubscription,
   CorporateAccessReviewStatus,
   CorporateDatabaseAccessReceiptStatus,
+  CorporateDatabaseVisibilitySnapshotStatus,
   ProductionGateStatus,
   PilotLaunchContactStatus,
   DataRightsRequestType,
@@ -129,6 +131,10 @@ import {
   loadCorporateDatabaseAccessReceipts,
   recordCorporateDatabaseAccessReceipt
 } from "./corporateDatabaseReceiptRepository";
+import {
+  loadCorporateDatabaseVisibilitySnapshots,
+  recordCorporateDatabaseVisibilitySnapshot
+} from "./corporateVisibilitySnapshotRepository";
 import {
   generateDataExportPackage,
   loadDataExportPackages,
@@ -1902,9 +1908,11 @@ function VerifyRequestsPanel({
   requests,
   reviews,
   corporateDatabaseReceipts,
+  corporateVisibilitySnapshots,
   sharedRecords,
   onCreateAccessRequest,
   onRecordCorporateDatabaseReceipt,
+  onRecordCorporateVisibilitySnapshot,
   onRecordAccessReview,
   onCreateIssuerRole,
   onCreateMissingRecordRequest,
@@ -1929,6 +1937,7 @@ function VerifyRequestsPanel({
   requests: VerifyAccessGrantView[];
   reviews: DbCorporateAccessReview[];
   corporateDatabaseReceipts: DbCorporateDatabaseAccessReceipt[];
+  corporateVisibilitySnapshots: DbCorporateDatabaseVisibilitySnapshot[];
   sharedRecords: RecordItem[];
   onCreateAccessRequest: (input: { subjectEmail: string; purpose: string; expiresInDays: number }) => Promise<void>;
   onRecordCorporateDatabaseReceipt: (input: {
@@ -1938,6 +1947,18 @@ function VerifyRequestsPanel({
     reviewAttestationCount: number;
     openGapCount: number;
     exportedPacketName: string;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
+  onRecordCorporateVisibilitySnapshot: (input: {
+    status: CorporateDatabaseVisibilitySnapshotStatus;
+    filteredProfessionalCount: number;
+    sharedRecordCount: number;
+    accessGrantCount: number;
+    reviewAttestationCount: number;
+    openGapCount: number;
+    activeFilters: Record<string, unknown>;
+    readinessBuckets: Array<Record<string, unknown>>;
+    rowInventory: Array<Record<string, unknown>>;
     metadata: Record<string, unknown>;
   }) => Promise<void>;
   onRecordAccessReview: (input: { accessGrantId: string; status: CorporateAccessReviewStatus; note: string }) => Promise<void>;
@@ -2761,7 +2782,9 @@ function VerifyRequestsPanel({
         databaseMode={disabled ? "locked_corporate_context" : "live_supabase_visibility"}
         missingRecordRequests={missingRecordRequests}
         corporateDatabaseReceipts={corporateDatabaseReceipts}
+        corporateVisibilitySnapshots={corporateVisibilitySnapshots}
         onRecordCorporateDatabaseReceipt={onRecordCorporateDatabaseReceipt}
+        onRecordCorporateVisibilitySnapshot={onRecordCorporateVisibilitySnapshot}
         onRecordAccessReview={onRecordAccessReview}
         requests={requests}
         reviews={reviews}
@@ -3382,7 +3405,9 @@ function CorporateDirectoryPanel({
   databaseMode,
   missingRecordRequests,
   corporateDatabaseReceipts,
+  corporateVisibilitySnapshots,
   onRecordCorporateDatabaseReceipt,
+  onRecordCorporateVisibilitySnapshot,
   onRecordAccessReview,
   requests,
   reviews,
@@ -3391,6 +3416,7 @@ function CorporateDirectoryPanel({
   databaseMode: "live_supabase_visibility" | "locked_corporate_context";
   missingRecordRequests: DbMissingRecordRequest[];
   corporateDatabaseReceipts: DbCorporateDatabaseAccessReceipt[];
+  corporateVisibilitySnapshots: DbCorporateDatabaseVisibilitySnapshot[];
   onRecordCorporateDatabaseReceipt: (input: {
     status: CorporateDatabaseAccessReceiptStatus;
     accessGrantCount: number;
@@ -3398,6 +3424,18 @@ function CorporateDirectoryPanel({
     reviewAttestationCount: number;
     openGapCount: number;
     exportedPacketName: string;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
+  onRecordCorporateVisibilitySnapshot: (input: {
+    status: CorporateDatabaseVisibilitySnapshotStatus;
+    filteredProfessionalCount: number;
+    sharedRecordCount: number;
+    accessGrantCount: number;
+    reviewAttestationCount: number;
+    openGapCount: number;
+    activeFilters: Record<string, unknown>;
+    readinessBuckets: Array<Record<string, unknown>>;
+    rowInventory: Array<Record<string, unknown>>;
     metadata: Record<string, unknown>;
   }) => Promise<void>;
   onRecordAccessReview: (input: { accessGrantId: string; status: CorporateAccessReviewStatus; note: string }) => Promise<void>;
@@ -3411,6 +3449,8 @@ function CorporateDirectoryPanel({
   const [reviewMessage, setReviewMessage] = useState("Record a live review attestation after checking visible user rows.");
   const [receiptMessage, setReceiptMessage] = useState("Record a server-side database access receipt after the scoped export is ready.");
   const [receiptBusy, setReceiptBusy] = useState(false);
+  const [snapshotMessage, setSnapshotMessage] = useState("Record the visible Corporate Verify database snapshot after filters and review queue are correct.");
+  const [snapshotBusy, setSnapshotBusy] = useState(false);
   const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "approved" | "declined" | "revoked">("all");
   const [readinessFilter, setReadinessFilter] = useState<"all" | "review_ready" | "waiting_for_consent" | "needs_gap_follow_up" | "not_available">("all");
   const latestReviewByGrant = reviews.reduce<Record<string, DbCorporateAccessReview>>((latest, review) => {
@@ -3900,6 +3940,49 @@ function CorporateDirectoryPanel({
   const corporateDatabaseAccessPersistedReceiptRule =
     "corporate_database_access_receipt_requires_active_corporate_rbac_approved_access_grants_shared_rows_review_attestation_export_and_no_preview_data";
   const latestCorporateDatabaseReceipt = corporateDatabaseReceipts[0] ?? null;
+  const corporateDatabaseVisibilitySnapshotRule =
+    "corporate_database_visibility_snapshot_requires_active_corporate_rbac_filtered_live_rows_readiness_buckets_review_attestation_and_no_raw_private_files";
+  const latestCorporateVisibilitySnapshot = corporateVisibilitySnapshots[0] ?? null;
+  const corporateVisibilitySnapshotStatus: CorporateDatabaseVisibilitySnapshotStatus = corporateAccessNextAction.ready
+    ? "handoff_ready"
+    : sharedRecords.length && reviews.length
+      ? "review_ready"
+      : "rows_missing";
+  const corporateDatabaseVisibilitySnapshotPacket = {
+    mode: "corporate_database_visibility_snapshot",
+    status: corporateVisibilitySnapshotStatus,
+    filtered_professional_count: filteredRows.length,
+    shared_record_count: sharedRecords.length,
+    access_grant_count: approvedAccessCount,
+    review_attestation_count: reviews.length,
+    open_gap_count: openGapRequestCount,
+    active_filters: corporateDirectoryFilterReceipt.active_filters,
+    readiness_buckets: directoryReviewBoard.map((bucket) => ({
+      label: bucket.label,
+      count: bucket.count,
+      professionals: bucket.focus.map((row) => ({
+        professional_name: row.name,
+        professional_email: row.detail,
+        readiness: row.readiness,
+        shared_record_count: row.sharedRecordCount,
+        open_gap_count: row.openGapCount
+      }))
+    })),
+    row_inventory: filteredRows.map((row) => ({
+      access_grant_id: row.id,
+      subject_profile_id: row.subjectProfileId,
+      professional_name: row.name,
+      grant_status: row.rawStatus,
+      readiness: row.readiness,
+      shared_record_count: row.sharedRecordCount,
+      open_gap_count: row.openGapCount,
+      latest_review_status: row.latestReview?.review_status ?? "not_recorded"
+    })),
+    raw_private_files_included: false,
+    preview_data_accepted: false,
+    latest_persisted_snapshot: latestCorporateVisibilitySnapshot,
+    accepted_when: corporateDatabaseVisibilitySnapshotRule
+  };
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -3955,6 +4038,7 @@ function CorporateDirectoryPanel({
       latest_receipt_status: latestCorporateDatabaseReceipt?.status ?? "not_recorded",
       preview_data_accepted_for_v1: false
     },
+    corporate_database_visibility_snapshot: corporateDatabaseVisibilitySnapshotPacket,
     corporate_scope_review_command: {
       ready_checks: corporateScopeReviewReady,
       total_checks: corporateScopeReviewCommand.length,
@@ -4059,6 +4143,35 @@ function CorporateDirectoryPanel({
       setReceiptMessage(error instanceof Error ? error.message : "Could not record corporate database access receipt");
     } finally {
       setReceiptBusy(false);
+    }
+  }
+
+  async function recordVisibilitySnapshot() {
+    setSnapshotBusy(true);
+    setSnapshotMessage("Recording corporate database visibility snapshot...");
+    try {
+      await onRecordCorporateVisibilitySnapshot({
+        status: corporateVisibilitySnapshotStatus,
+        filteredProfessionalCount: filteredRows.length,
+        sharedRecordCount: sharedRecords.length,
+        accessGrantCount: approvedAccessCount,
+        reviewAttestationCount: reviews.length,
+        openGapCount: openGapRequestCount,
+        activeFilters: { ...corporateDirectoryFilterReceipt.active_filters },
+        readinessBuckets: corporateDatabaseVisibilitySnapshotPacket.readiness_buckets,
+        rowInventory: corporateDatabaseVisibilitySnapshotPacket.row_inventory,
+        metadata: {
+          export_receipt: corporateUserDatabaseExportReceipt,
+          filter_receipt: corporateDirectoryFilterReceipt,
+          latest_database_receipt: latestCorporateDatabaseReceipt,
+          accepted_when: corporateDatabaseVisibilitySnapshotRule
+        }
+      });
+      setSnapshotMessage("Corporate database visibility snapshot saved to Supabase audit history.");
+    } catch (error) {
+      setSnapshotMessage(error instanceof Error ? error.message : "Could not record corporate database visibility snapshot");
+    } finally {
+      setSnapshotBusy(false);
     }
   }
 
@@ -4181,6 +4294,48 @@ function CorporateDirectoryPanel({
           type="button"
         >
           Record database receipt
+        </button>
+      </div>
+      <div className="corporate-database-visibility-snapshot" aria-label="Corporate database visibility snapshot">
+        <div>
+          <span className={`status-chip ${latestCorporateVisibilitySnapshot ? "success" : "warning"}`}>Corporate database visibility snapshot</span>
+          <strong>
+            {latestCorporateVisibilitySnapshot
+              ? `${latestCorporateVisibilitySnapshot.filtered_professional_count} filtered professionals saved`
+              : "No saved visibility snapshot yet"}
+          </strong>
+          <small>{corporateDatabaseVisibilitySnapshotPacket.accepted_when}</small>
+          <small>{snapshotMessage}</small>
+        </div>
+        <div className="corporate-database-visibility-grid">
+          <span>
+            <strong>{corporateDatabaseVisibilitySnapshotPacket.filtered_professional_count}</strong>
+            <small>Filtered professionals</small>
+          </span>
+          <span>
+            <strong>{corporateDatabaseVisibilitySnapshotPacket.shared_record_count}</strong>
+            <small>Visible shared records</small>
+          </span>
+          <span>
+            <strong>{corporateDatabaseVisibilitySnapshotPacket.review_attestation_count}</strong>
+            <small>Review attestations</small>
+          </span>
+          <span>
+            <strong>{corporateDatabaseVisibilitySnapshotPacket.open_gap_count}</strong>
+            <small>Open gaps</small>
+          </span>
+          <span>
+            <strong>{latestCorporateVisibilitySnapshot ? latestCorporateVisibilitySnapshot.status.replace(/_/g, " ") : corporateVisibilitySnapshotStatus.replace(/_/g, " ")}</strong>
+            <small>Snapshot status</small>
+          </span>
+        </div>
+        <button
+          className="secondary-action"
+          disabled={snapshotBusy || (!filteredRows.length && !sharedRecords.length)}
+          onClick={recordVisibilitySnapshot}
+          type="button"
+        >
+          Record visibility snapshot
         </button>
       </div>
       <div className="corporate-scope-review-command" aria-label="Corporate scope review command">
@@ -15540,6 +15695,7 @@ function App() {
   const [verifyRequests, setVerifyRequests] = useState<VerifyAccessGrantView[]>([]);
   const [corporateAccessReviews, setCorporateAccessReviews] = useState<DbCorporateAccessReview[]>([]);
   const [corporateDatabaseReceipts, setCorporateDatabaseReceipts] = useState<DbCorporateDatabaseAccessReceipt[]>([]);
+  const [corporateVisibilitySnapshots, setCorporateVisibilitySnapshots] = useState<DbCorporateDatabaseVisibilitySnapshot[]>([]);
   const [sharedVerifyRecords, setSharedVerifyRecords] = useState<RecordItem[]>([]);
   const [verifyStatus, setVerifyStatus] = useState("Switch to Verify role for live requests");
   const [operationsCases, setOperationsCases] = useState<DbVerificationCase[]>([]);
@@ -16031,6 +16187,7 @@ function App() {
       setVerifyRequests([]);
       setCorporateAccessReviews([]);
       setCorporateDatabaseReceipts([]);
+      setCorporateVisibilitySnapshots([]);
       setSharedVerifyRecords([]);
       setIssuerCredentials([]);
       setMissingRecordRequests([]);
@@ -16044,6 +16201,7 @@ function App() {
       setVerifyRequests([]);
       setCorporateAccessReviews([]);
       setCorporateDatabaseReceipts([]);
+      setCorporateVisibilitySnapshots([]);
       setSharedVerifyRecords([]);
       setIssuerCredentials([]);
       setMissingRecordRequests([]);
@@ -16062,17 +16220,19 @@ function App() {
       loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken),
       loadCorporateAccessReviews(activeMembership.organizationId, authSession.accessToken),
       loadCorporateDatabaseAccessReceipts(activeMembership.organizationId, authSession.accessToken).catch(() => []),
+      loadCorporateDatabaseVisibilitySnapshots(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadSharedVerifyRecords(authSession.accessToken),
       hasPermission(activeMembership.role, "record:issue_credential")
         ? loadIssuerCredentials(activeMembership.organizationId, authSession.accessToken)
         : Promise.resolve([]),
       loadVerifyMissingRecordRequests(activeMembership.organizationId, authSession.accessToken)
     ])
-      .then(([items, accessReviews, databaseReceipts, sharedRecords, credentials, missingRecords]) => {
+      .then(([items, accessReviews, databaseReceipts, visibilitySnapshots, sharedRecords, credentials, missingRecords]) => {
         if (cancelled) return;
         setVerifyRequests(items);
         setCorporateAccessReviews(accessReviews);
         setCorporateDatabaseReceipts(databaseReceipts);
+        setCorporateVisibilitySnapshots(visibilitySnapshots);
         setSharedVerifyRecords(sharedRecords);
         setIssuerCredentials(credentials);
         setMissingRecordRequests(missingRecords);
@@ -16097,6 +16257,7 @@ function App() {
         setVerifyRequests([]);
         setCorporateAccessReviews([]);
         setCorporateDatabaseReceipts([]);
+        setCorporateVisibilitySnapshots([]);
         setSharedVerifyRecords([]);
         setIssuerCredentials([]);
         setMissingRecordRequests([]);
@@ -16709,6 +16870,39 @@ function App() {
     setCorporateDatabaseReceipts(receipts);
     setAuditEvents(events);
     setVerifyStatus(`Corporate database access receipt recorded: ${receipt.status.replace(/_/g, " ")}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
+  async function recordLiveCorporateVisibilitySnapshot(input: {
+    status: CorporateDatabaseVisibilitySnapshotStatus;
+    filteredProfessionalCount: number;
+    sharedRecordCount: number;
+    accessGrantCount: number;
+    reviewAttestationCount: number;
+    openGapCount: number;
+    activeFilters: Record<string, unknown>;
+    readinessBuckets: Array<Record<string, unknown>>;
+    rowInventory: Array<Record<string, unknown>>;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in with a corporate role before recording a visibility snapshot.");
+    }
+
+    const snapshot = await recordCorporateDatabaseVisibilitySnapshot(
+      {
+        organizationId: activeMembership.organizationId,
+        ...input
+      },
+      authSession.accessToken
+    );
+    const [snapshots, events] = await Promise.all([
+      loadCorporateDatabaseVisibilitySnapshots(activeMembership.organizationId, authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setCorporateVisibilitySnapshots(snapshots);
+    setAuditEvents(events);
+    setVerifyStatus(`Corporate database visibility snapshot recorded: ${snapshot.filtered_professional_count} professionals`);
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
@@ -20759,6 +20953,7 @@ function App() {
                 missingRecordMessage={missingRecordStatus}
                 missingRecordRequests={missingRecordRequests}
                 corporateDatabaseReceipts={corporateDatabaseReceipts}
+                corporateVisibilitySnapshots={corporateVisibilitySnapshots}
                 reviews={corporateAccessReviews}
                 subscriptions={organizationSubscriptions}
                 teamInvitations={teamInvitations}
@@ -20766,6 +20961,7 @@ function App() {
                 onCreateAccessRequest={createLiveAccessGrantRequest}
                 onCreateMissingRecordRequest={createLiveMissingRecordRequest}
                 onRecordCorporateDatabaseReceipt={recordLiveCorporateDatabaseReceipt}
+                onRecordCorporateVisibilitySnapshot={recordLiveCorporateVisibilitySnapshot}
                 onRecordAccessReview={recordLiveCorporateAccessReview}
                 onCreateIssuerRole={createLiveCredentialIssuerRole}
                 onCreateReviewerRole={createPilotReviewerRole}

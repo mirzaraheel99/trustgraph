@@ -539,6 +539,15 @@ assertIncludesAny(bundleText, ["Record live receipt"], "V1 live database readine
 assertIncludesAny(bundleText, ["corporate_database_access_receipts"], "corporate database access receipt table");
 assertIncludesAny(bundleText, ["record_corporate_database_access_receipt"], "corporate database access receipt RPC");
 assertIncludesAny(bundleText, ["Record database receipt"], "corporate database access receipt action");
+assertIncludesAny(bundleText, ["corporate_database_visibility_snapshots"], "corporate database visibility snapshot table");
+assertIncludesAny(bundleText, ["record_corporate_database_visibility_snapshot"], "corporate database visibility snapshot RPC");
+assertIncludesAny(bundleText, ["Corporate database visibility snapshot"], "corporate database visibility snapshot panel");
+assertIncludesAny(bundleText, ["Record visibility snapshot"], "corporate database visibility snapshot action");
+assertIncludesAny(
+  bundleText,
+  ["corporate_database_visibility_snapshot_requires_active_corporate_rbac_filtered_live_rows_readiness_buckets_review_attestation_and_no_raw_private_files"],
+  "corporate database visibility snapshot acceptance rule"
+);
 assertIncludesAny(bundleText, ["evidence_access_receipts"], "evidence access receipt table");
 assertIncludesAny(bundleText, ["record_evidence_access_receipt"], "evidence access receipt RPC");
 assertIncludesAny(bundleText, ["evidence_access_receipt_requires_private_storage_short_lived_signed_url_no_raw_url_storage_owner_or_approved_scope_and_audit_event"], "evidence access receipt acceptance rule");

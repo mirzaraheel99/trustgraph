@@ -44,7 +44,8 @@ const requiredRlsTables = [
   "auth_recovery_receipts",
   "security_rls_review_receipts",
   "pilot_owner_readiness_receipts",
-  "real_database_completion_receipts"
+  "real_database_completion_receipts",
+  "corporate_database_visibility_snapshots"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -181,6 +182,44 @@ if (!corporateDatabaseReceiptMigration.includes("corporate_database_access.recei
 
 if (!corporateDatabaseReceiptMigration.includes("grant execute on function public.record_corporate_database_access_receipt")) {
   throw new Error("Corporate database access receipt RPC must be executable by authenticated users.");
+}
+
+const corporateDatabaseVisibilitySnapshotMigration = latestSqlByFile["059_corporate_database_visibility_snapshots.sql"] ?? "";
+const corporateDatabaseVisibilitySnapshotCompact = corporateDatabaseVisibilitySnapshotMigration.replace(/\s+/g, " ");
+if (!corporateDatabaseVisibilitySnapshotMigration.includes("create table if not exists public.corporate_database_visibility_snapshots")) {
+  throw new Error("Missing corporate database visibility snapshot table migration.");
+}
+
+if (!corporateDatabaseVisibilitySnapshotMigration.includes("alter table public.corporate_database_visibility_snapshots enable row level security")) {
+  throw new Error("Corporate database visibility snapshots must enable RLS.");
+}
+
+if (!corporateDatabaseVisibilitySnapshotMigration.includes("recorded_by_profile_id = public.current_profile_id()")) {
+  throw new Error("Corporate database visibility snapshot insert policy must bind snapshots to the current profile.");
+}
+
+if (!corporateDatabaseVisibilitySnapshotCompact.includes("public.has_role( organization_id")) {
+  throw new Error("Corporate database visibility snapshots must be scoped to active corporate RBAC roles.");
+}
+
+if (!corporateDatabaseVisibilitySnapshotMigration.includes("raw_private_files_included = false")) {
+  throw new Error("Corporate database visibility snapshots must reject raw private file inclusion.");
+}
+
+if (!corporateDatabaseVisibilitySnapshotMigration.includes("preview_data_accepted = false")) {
+  throw new Error("Corporate database visibility snapshots must reject preview data.");
+}
+
+if (!corporateDatabaseVisibilitySnapshotMigration.includes("create or replace function public.record_corporate_database_visibility_snapshot")) {
+  throw new Error("Missing corporate database visibility snapshot RPC.");
+}
+
+if (!corporateDatabaseVisibilitySnapshotMigration.includes("corporate_database.visibility_snapshot_recorded")) {
+  throw new Error("Corporate database visibility snapshot RPC must write audit history.");
+}
+
+if (!corporateDatabaseVisibilitySnapshotMigration.includes("grant execute on function public.record_corporate_database_visibility_snapshot")) {
+  throw new Error("Corporate database visibility snapshot RPC must be executable by authenticated users.");
 }
 
 const evidenceAccessReceiptMigration = latestSqlByFile["049_evidence_access_receipts.sql"] ?? "";

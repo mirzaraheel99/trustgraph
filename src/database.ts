@@ -68,6 +68,7 @@ export type CorporateDatabaseAccessReceiptStatus =
   | "access_rows_required"
   | "attestation_required"
   | "export_recorded";
+export type CorporateDatabaseVisibilitySnapshotStatus = "rows_missing" | "review_ready" | "handoff_ready";
 
 export interface DbOrganization {
   id: string;
@@ -627,6 +628,26 @@ export interface DbCorporateDatabaseAccessReceipt {
   open_gap_count: number;
   exported_packet_name: string;
   preview_data_accepted_for_v1: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface DbCorporateDatabaseVisibilitySnapshot {
+  id: string;
+  organization_id: string;
+  recorded_by_profile_id: string;
+  status: CorporateDatabaseVisibilitySnapshotStatus;
+  filtered_professional_count: number;
+  shared_record_count: number;
+  access_grant_count: number;
+  review_attestation_count: number;
+  open_gap_count: number;
+  active_filters: Record<string, unknown>;
+  readiness_buckets: Array<Record<string, unknown>>;
+  row_inventory: Array<Record<string, unknown>>;
+  raw_private_files_included: boolean;
+  preview_data_accepted: boolean;
   accepted_when: string;
   metadata: Record<string, unknown>;
   created_at: string;

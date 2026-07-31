@@ -9575,6 +9575,70 @@ p {
   width: min(100%, 280px);
 }
 
+.corporate-database-visibility-snapshot {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(126, 167, 255, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(126, 167, 255, 0.08), transparent 58%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-database-visibility-snapshot > div:first-child,
+.corporate-database-visibility-grid span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.corporate-database-visibility-snapshot strong,
+.corporate-database-visibility-snapshot small,
+.corporate-database-visibility-snapshot span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-database-visibility-snapshot > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.corporate-database-visibility-snapshot small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.corporate-database-visibility-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 136px), 1fr));
+  gap: 8px;
+}
+
+.corporate-database-visibility-grid span {
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.corporate-database-visibility-grid strong {
+  font-size: 14px;
+}
+
+.corporate-database-visibility-grid small {
+  font-size: 11px;
+}
+
+.corporate-database-visibility-snapshot > .secondary-action {
+  grid-column: 1 / -1;
+  width: min(100%, 280px);
+}
+
 .directory-source-strip,
 .team-source-strip {
   display: flex;
@@ -14070,6 +14134,8 @@ p {
   .corporate-data-access-path,
   .corporate-user-database-contract-grid,
   .corporate-database-access-decision-grid,
+  .corporate-database-visibility-snapshot,
+  .corporate-database-visibility-grid,
   .corporate-access-review-grid,
   .corporate-visibility-grid,
   .corporate-verify-first-use-grid,

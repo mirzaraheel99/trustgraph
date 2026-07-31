@@ -64,6 +64,7 @@ const requiredMobileStacks = [
   ".directory-source-strip",
   ".corporate-directory-filter-receipt",
   ".corporate-directory-filter-grid",
+  ".corporate-database-visibility-grid",
   ".corporate-scope-review-grid",
   ".corporate-access-next-action-grid",
   ".corporate-review-handoff-grid",

@@ -165,6 +165,9 @@ assert(css.includes(".corporate-database-access-decision-board") && css.includes
 assert(app.includes('aria-label="Corporate user database export receipt"'), "Corporate Verify must expose an export receipt for scoped user database packets.");
 assert(css.includes(".corporate-user-database-export-receipt") && css.includes(".corporate-user-database-export-grid"), "corporate user database export receipt must be styled and bounded.");
 assert(app.includes("Record database receipt"), "Corporate Verify must expose a database access receipt save action.");
+assert(app.includes('aria-label="Corporate database visibility snapshot"'), "Corporate Verify must expose a persisted visibility snapshot for filtered database rows.");
+assert(css.includes(".corporate-database-visibility-snapshot") && css.includes(".corporate-database-visibility-grid"), "corporate database visibility snapshot must be styled and bounded.");
+assert(app.includes("Record visibility snapshot"), "Corporate Verify must expose a visibility snapshot save action.");
 assert(app.includes('aria-label="Corporate review handoff receipt"'), "Corporate Verify must expose the end-to-end review handoff receipt.");
 assert(css.includes(".corporate-review-handoff-receipt") && css.includes(".corporate-review-handoff-grid"), "corporate review handoff receipt must be styled and bounded.");
 assert(app.includes('aria-label="Missing record lifecycle receipt"'), "Corporate Verify missing-record requests must expose lifecycle receipt.");
