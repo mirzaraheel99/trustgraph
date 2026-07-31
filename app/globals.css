@@ -22912,3 +22912,77 @@ body {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Corporate Verify operator flow repair: one quick start, one progress strip, then the real form and live rows. */
+.verify-panel .verify-summary-grid,
+.verify-panel .corporate-verify-live-command,
+.verify-panel .empty-verify-state-command,
+.verify-panel .corporate-verify-first-use,
+.verify-panel .verify-reviewer-flow,
+.verify-panel .corporate-verify-access-lane,
+.verify-panel .corporate-access-blocker-map {
+  display: none !important;
+}
+
+.verify-panel {
+  gap: 14px;
+}
+
+.verify-panel .corporate-portal-quick-start,
+.verify-panel .corporate-access-progress-strip,
+.verify-panel .verify-request-form,
+.verify-panel .grant-list,
+.verify-panel .verify-user-data-proof,
+.verify-panel .shared-record-grid,
+.verify-panel .corporate-directory-panel,
+.verify-panel .issuer-panel,
+.verify-panel .missing-record-panel {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.verify-panel .corporate-portal-quick-start-grid,
+.verify-panel .corporate-access-progress-grid,
+.verify-panel .request-scope-receipt-grid,
+.verify-panel .verify-user-data-proof-grid,
+.verify-panel .shared-record-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr));
+}
+
+.verify-panel .record-form-grid.verify-request-fields {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(120px, 0.36fr);
+}
+
+.verify-panel .corporate-portal-quick-start-header,
+.verify-panel .corporate-access-progress-strip-header,
+.verify-panel .verify-request-header,
+.verify-panel .record-form-footer {
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
+}
+
+.verify-panel button,
+.verify-panel input,
+.verify-panel select,
+.verify-panel textarea,
+.verify-panel article,
+.verify-panel span,
+.verify-panel strong,
+.verify-panel small,
+.verify-panel p {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.verify-panel button {
+  white-space: normal;
+}
+
+@media (max-width: 860px) {
+  .verify-panel .record-form-grid.verify-request-fields,
+  .verify-panel .corporate-portal-quick-start-header,
+  .verify-panel .corporate-access-progress-strip-header,
+  .verify-panel .verify-request-header,
+  .verify-panel .record-form-footer {
+    grid-template-columns: 1fr;
+  }
+}

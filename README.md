@@ -91,6 +91,8 @@ The public login and registration page now keeps proof receipts out of the main 
 
 The signed-in dashboard front door now exposes clickable cards for Professional Passport, Corporate Verify, Company Admin, Account and recovery, Pricing, Database proof, and Server sync. Pricing opens the billing setup panel, Database proof scrolls to the live-row proof cockpit, and Server sync exports the GitHub-to-VPS release packet.
 
+Corporate Verify now keeps the visible operator path focused on the quick start, progress strip, request form, request list, user-data proof, and scoped directory. Duplicate wizard/command/blocker panels remain in the bundle for proof exports and tests, but they do not crowd the working reviewer flow.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text
