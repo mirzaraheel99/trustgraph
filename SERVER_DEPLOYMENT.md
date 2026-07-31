@@ -84,7 +84,7 @@ bash tools/preflight-vps.sh
 bash tools/update-vps-from-github.sh
 ```
 
-The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-release.json`, and refuses a 200 OK page that does not contain the current bundle marker `corporate_database_visibility_snapshot`.
+The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-release.json`, and refuses a 200 OK page that does not contain the current bundle marker `dashboard_front_door`.
 
 From the repo, run the freshness check after every server update:
 
