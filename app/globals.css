@@ -14698,6 +14698,72 @@ body {
   overflow-wrap: anywhere;
 }
 
+.vps-saved-update-verification {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(260px, 0.7fr);
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 199, 102, 0.25);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 199, 102, 0.1), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.vps-saved-update-verification > div {
+  min-width: 0;
+}
+
+.vps-saved-update-verification > div:first-child {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.vps-saved-update-verification strong,
+.vps-saved-update-verification small,
+.vps-saved-update-verification span,
+.vps-saved-update-verification code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.vps-saved-update-verification > div:first-child > strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.vps-saved-update-command-list {
+  display: grid;
+  gap: 8px;
+}
+
+.vps-saved-update-command-list code,
+.vps-saved-update-next code {
+  display: block;
+  padding: 10px;
+  color: var(--text);
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.vps-saved-update-next {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 7px;
+  padding-top: 2px;
+}
+
+.vps-saved-update-next span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .server-sync-monitor {
   display: grid;
   gap: 12px;

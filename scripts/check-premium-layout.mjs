@@ -70,6 +70,7 @@ assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-c
 assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
+assert(premiumRepair.includes(".vps-saved-update-verification") && premiumRepair.includes(".vps-saved-update-command-list"), "VPS saved update verification must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".server-sync-monitor") && premiumRepair.includes(".server-sync-monitor-grid") && premiumRepair.includes(".server-sync-next"), "server sync monitor must be styled and bounded in the premium shell.");
 assert(css.includes(".public-server-sync-receipt") && css.includes(".public-server-sync-grid"), "public saved-build receipt must be styled and bounded.");
 assert(app.includes('aria-label="Public server update receipt"'), "public saved-build receipt must expose the VPS update command when the host is stale.");

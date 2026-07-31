@@ -15847,6 +15847,18 @@ function App() {
       detail: "The VPS updater writes /trustgraph-release.json with the deployed Git commit after every rebuild."
     }
   ];
+  const vpsSavedUpdateVerification = {
+    mode: "vps_saved_update_verification",
+    headline: "Server is saved only when the VPS stamp proves the current GitHub build",
+    acceptance_rule: "vps_saved_update_requires_latest_main_server_head_vps_200_and_trustgraph_release_json_commit_match",
+    commands: [
+      "git -C /opt/trustgraph rev-parse --short HEAD",
+      "curl -I https://trustgraph.5-75-224-110.sslip.io/",
+      "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json"
+    ],
+    stale_action: hostedVersionReceipt.server_update_command,
+    protected_boundary: "Do not edit or restart the VFIX app route while refreshing TrustGraph."
+  };
   const serverSyncMonitorTone =
     serverSyncMonitor.status === "synced"
       ? "success"
@@ -15877,6 +15889,7 @@ function App() {
     vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     hosted_version_receipt: hostedVersionReceipt,
+    vps_saved_update_verification: vpsSavedUpdateVerification,
     server_sync_monitor: serverSyncMonitorPacket,
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
     verify_command: "git -C /opt/trustgraph rev-parse --short HEAD && curl -I https://trustgraph.5-75-224-110.sslip.io/ && curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
@@ -15923,6 +15936,7 @@ function App() {
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,
     hosted_version_receipt: hostedVersionReceipt,
+    vps_saved_update_verification: vpsSavedUpdateVerification,
     server_release_save_path: serverReleasePacket,
     signed_in_landing_actions: signedInLandingActions,
     proof_export_hub: proofExportHub,
@@ -16356,6 +16370,25 @@ function App() {
                 <code>{hostedVersionReceipt.server_update_command}</code>
               </div>
             )}
+          </div>
+          <div className="vps-saved-update-verification" aria-label="VPS saved update verification">
+            <div>
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>VPS saved update verification</span>
+              <strong>{vpsSavedUpdateVerification.headline}</strong>
+              <small>{vpsSavedUpdateVerification.acceptance_rule}</small>
+              <small>{vpsSavedUpdateVerification.protected_boundary}</small>
+            </div>
+            <div className="vps-saved-update-command-list">
+              {vpsSavedUpdateVerification.commands.map((command) => (
+                <code key={command}>{command}</code>
+              ))}
+            </div>
+            {serverSyncMonitor.status !== "synced" ? (
+              <div className="vps-saved-update-next">
+                <span>When stale, run</span>
+                <code>{vpsSavedUpdateVerification.stale_action}</code>
+              </div>
+            ) : null}
           </div>
           <div className="server-release-grid">
             {serverReleaseLanes.map((lane) => (

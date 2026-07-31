@@ -484,6 +484,9 @@ assertIncludesAny(bundleText, ["Hosted version receipt"], "hosted version receip
 assertIncludesAny(bundleText, ["hosted_version_receipt"], "hosted version receipt packet field");
 assertIncludesAny(bundleText, ["server_head_matches_latest_green_main_commit"], "hosted version receipt acceptance rule");
 assertIncludesAny(bundleText, ["git -C /opt/trustgraph rev-parse --short HEAD"], "hosted version receipt server HEAD command");
+assertIncludesAny(bundleText, ["VPS saved update verification"], "VPS saved update verification label");
+assertIncludesAny(bundleText, ["vps_saved_update_verification"], "VPS saved update verification packet field");
+assertIncludesAny(bundleText, ["vps_saved_update_requires_latest_main_server_head_vps_200_and_trustgraph_release_json_commit_match"], "VPS saved update acceptance rule");
 assertIncludesAny(bundleText, ["Server sync monitor"], "server sync monitor label");
 assertIncludesAny(bundleText, ["server_sync_monitor"], "server sync monitor packet field");
 assertIncludesAny(bundleText, ["vps_release_stamp_returns_commit_json"], "server sync monitor acceptance rule");

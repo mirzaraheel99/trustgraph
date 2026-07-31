@@ -17,6 +17,9 @@ const requiredMobileStacks = [
   ".hosted-corporate-retest-grid",
   ".hosted-version-command",
   ".hosted-version-receipt-grid",
+  ".vps-saved-update-verification",
+  ".vps-saved-update-command-list",
+  ".vps-saved-update-next",
   ".account-operator-path",
   ".corporate-account-rbac-path",
   ".billing-operator-path",
@@ -280,6 +283,10 @@ if (!css.includes(".portal-home-command") || !css.includes("grid-template-column
 
 if (!css.includes(".server-release-cockpit") || !css.includes(".server-release-command") || !css.includes(".server-release-grid")) {
   throw new Error("Responsive check failed: server release save path must be visible and bounded.");
+}
+
+if (!css.includes(".vps-saved-update-verification") || !css.includes("grid-template-columns: minmax(0, 0.86fr) minmax(260px, 0.7fr)") || !css.includes(".vps-saved-update-command-list")) {
+  throw new Error("Responsive check failed: VPS saved update verification must be visible and bounded.");
 }
 
 if (!css.includes(".v1-operating-map") || !css.includes(".v1-operating-map-grid") || !css.includes("grid-template-columns: 30px minmax(0, 1fr)")) {
