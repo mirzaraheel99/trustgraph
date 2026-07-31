@@ -144,7 +144,7 @@ assert(css.includes(".release-sync-command") && css.includes(".release-sync-comm
 assert(app.includes('aria-label="Stale VPS recovery runbook"'), "release sync must expose a stale VPS recovery runbook for 200-but-old bundle cases.");
 assert(css.includes(".stale-vps-recovery-runbook") && css.includes(".stale-vps-recovery-grid"), "stale VPS recovery runbook must be styled and bounded.");
 assert(premiumRepair.includes(".dashboard-next-action") && premiumRepair.includes(".dashboard-next-action-metrics"), "dashboard next action command must be styled and bounded in the premium shell.");
-assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");
+assert(consoleLayout.includes("display: grid !important") && consoleLayout.includes("overflow-x: clip"), "workspace route strips must stack instead of horizontal scrolling.");
 assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))"), "dense admin forms must auto-fit narrow screens.");
 assert(consoleLayout.includes("Signed-in console layout contract"), "final signed-in console layout contract must be present.");
 assert(consoleLayout.includes("width: min(100%, 1460px)") && consoleLayout.includes("overflow-x: clip"), "signed-in console must use the available width without page-level horizontal overflow.");

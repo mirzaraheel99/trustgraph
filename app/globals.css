@@ -18334,8 +18334,10 @@ body {
 
   .workspace-route-strip,
   .workspace-flow-strip {
-    display: flex !important;
+    display: grid !important;
+    grid-template-columns: 1fr;
     padding: 6px;
+    overflow-x: clip;
   }
 
   .workspace-route-strip button,

@@ -19908,8 +19908,9 @@ function App() {
     route_count: workspaces.length,
     allowed_routes: workspaces.filter((item) => canAccessWorkspace(activeMembership.role, item.id)).length,
     visible_controls: authSession ? ["account", "corporate_setup", "public_site", "sign_out"] : ["login_or_register", "public_site"],
+    mobile_route_behavior: "stacked_grid_no_horizontal_scroll",
     accepted_when:
-      "top_command_bar_routes_account_logout_and_corporate_setup_are_visible_bounded_and_mobile_stacked_without_legacy_sidebar_overflow"
+      "top_command_bar_routes_account_logout_corporate_setup_and_workspace_routes_are_bounded_mobile_stacked_and_never_horizontal_scrollers"
   };
   const consoleLayoutCards = [
     {
@@ -19931,6 +19932,11 @@ function App() {
       label: "Next control",
       value: authSession ? "Sign out visible" : "Login visible",
       detail: consoleLayoutReceipt.accepted_when
+    },
+    {
+      label: "Mobile layout",
+      value: "Stacked routes",
+      detail: "Workspace routes and portal paths use full-width grid rows on narrow screens."
     }
   ];
 

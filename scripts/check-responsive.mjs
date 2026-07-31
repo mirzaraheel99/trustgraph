@@ -362,8 +362,8 @@ if (!css.includes(".v1-operating-map") || !css.includes(".v1-operating-map-grid"
   throw new Error("Responsive check failed: V1 operating map must be visible and bounded.");
 }
 
-if (!css.includes(".session-command-bar") || !css.includes("width: fit-content") || !css.includes(".workspace-route-strip,\n.workspace-flow-strip") || !css.includes("display: flex !important")) {
-  throw new Error("Responsive check failed: account/logout controls and workspace routes must wrap inside the premium shell.");
+if (!css.includes(".session-command-bar") || !css.includes("width: fit-content") || !css.includes(".workspace-route-strip,\n  .workspace-flow-strip") || !css.includes("display: grid !important") || !css.includes("overflow-x: clip")) {
+  throw new Error("Responsive check failed: account/logout controls and workspace routes must stack without horizontal scrolling.");
 }
 
 if (!css.includes(".account-admin-row,\n.team-controls,\n.directory-controls,\n.audit-controls,\n.evidence-controls") || !css.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))")) {
@@ -406,8 +406,8 @@ if (!flexStackCss.includes(".audit-controls button") || !flexStackCss.includes("
   throw new Error("Responsive check failed: dense mobile controls need stable touch targets.");
 }
 
-if (!flexStackCss.includes(".workspace-route-strip") || !flexStackCss.includes(".workspace-flow-strip") || !flexStackCss.includes("display: none")) {
-  throw new Error("Responsive check failed: mobile workspace routing must stay compact.");
+if (!flexStackCss.includes(".workspace-route-strip") || !flexStackCss.includes(".workspace-flow-strip") || !flexStackCss.includes("display: grid !important")) {
+  throw new Error("Responsive check failed: mobile workspace routing must stay stacked and visible.");
 }
 
 if (!flexStackCss.includes(".hero-value") || !flexStackCss.includes("font-size: 52px")) {

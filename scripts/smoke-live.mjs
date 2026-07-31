@@ -229,9 +229,11 @@ assertIncludesAny(bundleText, ["Console layout"], "signed-in console layout rece
 assertIncludesAny(bundleText, ["signed_in_console_layout_receipt"], "signed-in console layout receipt packet field");
 assertIncludesAny(
   bundleText,
-  ["top_command_bar_routes_account_logout_and_corporate_setup_are_visible_bounded_and_mobile_stacked_without_legacy_sidebar_overflow"],
+  ["top_command_bar_routes_account_logout_corporate_setup_and_workspace_routes_are_bounded_mobile_stacked_and_never_horizontal_scrollers"],
   "signed-in console layout acceptance rule"
 );
+assertIncludesAny(bundleText, ["stacked_grid_no_horizontal_scroll"], "signed-in console mobile route behavior");
+assertIncludesAny(bundleText, ["Stacked routes"], "signed-in console stacked route copy");
 assertIncludesAny(bundleText, ["Signed-in portal flow contract"], "signed-in portal flow contract");
 assertIncludesAny(bundleText, ["signed_in_portal_flow_contract"], "authorized report signed-in portal flow field");
 assertIncludesAny(bundleText, ["signed_in_user_can_identify_personal_passport_corporate_verify_company_admin_next_action_and_database_boundary_without_guessing"], "signed-in portal flow acceptance rule");
