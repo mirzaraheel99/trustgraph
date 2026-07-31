@@ -76,6 +76,8 @@ const requiredMobileStacks = [
   ".real-database-policy-grid",
   ".registration-path-grid",
   ".selected-portal-command",
+  ".security-signoff-grid",
+  ".security-signoff-header",
   ".reference-source-strip",
   ".release-source-strip",
   ".session-command-bar",

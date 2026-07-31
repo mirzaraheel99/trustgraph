@@ -314,6 +314,10 @@ assertIncludesAny(bundleText, ["Export advisory packet"], "advisory packet expor
 assertIncludesAny(bundleText, ["Human approval required before production traffic"], "production human approval boundary");
 assertIncludesAny(bundleText, ["human_decision_gate"], "security runbook human decision export rows");
 assertIncludesAny(bundleText, ["Security review checklist"], "security review checklist label");
+assertIncludesAny(bundleText, ["Security RLS signoff packet"], "security/RLS signoff packet");
+assertIncludesAny(bundleText, ["security_rls_signoff_packet"], "security/RLS signoff packet mode");
+assertIncludesAny(bundleText, ["Export signoff packet"], "security/RLS signoff export");
+assertIncludesAny(bundleText, ["pilot_ready_not_unrestricted_production"], "security production boundary");
 assertIncludesAny(bundleText, ["protected tables"], "RLS protected table coverage summary");
 assertIncludesAny(bundleText, ["rls_protected_table"], "security runbook RLS table export rows");
 assertIncludesAny(bundleText, ["13-track v1 alignment"], "v1 plan alignment register");

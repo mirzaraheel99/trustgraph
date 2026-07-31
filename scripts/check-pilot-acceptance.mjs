@@ -55,7 +55,7 @@ const acceptanceChecks = [
     id: "admin_security_exports",
     label: "Admin audit, security, and release exports",
     source: appSource,
-    required: ["Admin export readiness", "Audit filter receipt", "audit_filter_receipt", "Full audit and verification history packet", "Export releases", "Security review checklist"]
+    required: ["Admin export readiness", "Audit filter receipt", "audit_filter_receipt", "Full audit and verification history packet", "Export releases", "Security review checklist", "Security RLS signoff packet", "security_rls_signoff_packet"]
   },
   {
     id: "pilot_readiness",

@@ -9015,6 +9015,81 @@ p {
   line-height: 1.35;
 }
 
+.security-signoff-packet {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(95, 240, 201, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.055), rgba(255, 255, 255, 0.018)),
+    rgba(8, 17, 20, 0.68);
+}
+
+.security-signoff-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.security-signoff-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.security-signoff-header strong,
+.security-signoff-header small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.security-signoff-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.1;
+}
+
+.security-signoff-header small {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.security-signoff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 9px;
+}
+
+.security-signoff-grid article {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+}
+
+.security-signoff-grid strong,
+.security-signoff-grid small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.security-signoff-grid strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.security-signoff-grid small {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .rls-coverage-strip {
   display: flex;
   align-items: center;
@@ -10521,6 +10596,8 @@ p {
   .auth-path-grid,
   .auth-access-command,
   .auth-access-command-grid,
+  .security-signoff-header,
+  .security-signoff-grid,
   .billing-estimate-card,
   .billing-decision-card,
   .billing-ledger-acceptance,

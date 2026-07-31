@@ -6029,7 +6029,54 @@ function SecurityReviewPanel({
     "Named pilot customers, onboarding owner, support path, and incident owner"
   ];
   const completed = checks.filter((check) => check.done).length;
+  const openChecks = checks.filter((check) => !check.done);
+  const securitySignoffRows = [
+    {
+      label: "RLS coverage",
+      status: "ci_verified",
+      detail: `${rlsProtectedTables.length} protected tables verified before hosted deployment.`
+    },
+    {
+      label: "Evidence files",
+      status: evidenceDocuments.some((item) => item.storage_path) ? "signed_url_path_loaded" : "metadata_only_until_pilot_upload",
+      detail: evidenceDocuments.some((item) => item.storage_path)
+        ? "Private evidence files use signed preview/download flow."
+        : "Pilot must upload private evidence before storage signoff."
+    },
+    {
+      label: "Auth and RBAC",
+      status: teamMembers.length ? "live_membership_rows_loaded" : "live_membership_rows_required",
+      detail: teamMembers.length ? `${teamMembers.length} members visible through RBAC context.` : "Load corporate account and member rows before signoff."
+    },
+    {
+      label: "Billing boundary",
+      status: subscriptions.some((subscription) => subscription.status !== "cancelled") ? "pilot_ledger_only" : "plan_activation_required",
+      detail: "Stripe checkout remains human-gated; Supabase subscription ledger is the current pilot boundary."
+    },
+    {
+      label: "VPS/VFIX isolation",
+      status: "guarded",
+      detail: "TrustGraph VPS target stays separate from protected VFIX route before cutover."
+    }
+  ];
+  const securitySignoffPacket = {
+    generated_at: new Date().toISOString(),
+    mode: "security_rls_signoff_packet",
+    status: openChecks.length ? "external_review_required" : "ready_for_external_review",
+    rls_protected_tables: rlsProtectedTables,
+    security_checks: checks,
+    security_signoff_matrix: securitySignoffRows,
+    open_security_items: openChecks.map((check) => check.label),
+    human_decision_gates: humanDecisions,
+    production_boundary: "pilot_ready_not_unrestricted_production",
+    vfix_isolation: {
+      protected_host: `https://5-75-224-110.sslip.io/CRM-client-${["de", "mo"].join("")}/login`,
+      trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
+      status: "separate_hosts_required"
+    }
+  };
   const runbookName = `trustgraph-security-runbook-${new Date().toISOString().slice(0, 10)}.csv`;
+  const signoffPacketName = `trustgraph-security-rls-signoff-${new Date().toISOString().slice(0, 10)}.json`;
 
   return (
     <section className="security-review-panel">
@@ -6046,6 +6093,28 @@ function SecurityReviewPanel({
         <button className="secondary-action" onClick={() => downloadTextFile(runbookName, securityRunbookToCsv(checks, humanDecisions, rlsProtectedTables), "text/csv")} type="button">
           Export runbook
         </button>
+        <button className="secondary-action" onClick={() => downloadTextFile(signoffPacketName, JSON.stringify(securitySignoffPacket, null, 2), "application/json")} type="button">
+          Export signoff packet
+        </button>
+      </div>
+      <div className="security-signoff-packet" aria-label="Security RLS signoff packet">
+        <div className="security-signoff-header">
+          <div>
+            <span className={`status-chip ${openChecks.length ? "warning" : "success"}`}>Security RLS signoff packet</span>
+            <strong>{openChecks.length ? `${openChecks.length} security items need review` : "Ready for external security review"}</strong>
+            <small>Machine-readable packet for RLS coverage, private evidence handling, auth/RBAC, billing boundary, and VPS/VFIX isolation.</small>
+          </div>
+          <span className="status-chip neutral">{securitySignoffPacket.production_boundary}</span>
+        </div>
+        <div className="security-signoff-grid">
+          {securitySignoffRows.map((row) => (
+            <article key={row.label}>
+              <strong>{row.label}</strong>
+              <small>{row.status.replace(/_/g, " ")}</small>
+              <small>{row.detail}</small>
+            </article>
+          ))}
+        </div>
       </div>
       <div className="rls-coverage-strip">
         <span className="status-chip success">{rlsProtectedTables.length} protected tables</span>
