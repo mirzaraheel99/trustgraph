@@ -223,6 +223,9 @@ assertIncludesAny(bundleText, ["Open next workspace"], "workspace command next a
 assertIncludesAny(bundleText, ["workspace_command_strip"], "authorized report workspace command strip field");
 assertIncludesAny(bundleText, ["Dashboard next action"], "signed-in dashboard next-action command");
 assertIncludesAny(bundleText, ["dashboard_next_action"], "authorized report dashboard next-action field");
+assertIncludesAny(bundleText, ["Dashboard front door"], "signed-in dashboard front door");
+assertIncludesAny(bundleText, ["dashboard_front_door"], "authorized report dashboard front-door field");
+assertIncludesAny(bundleText, ["signed_in_dashboard_starts_with_one_compact_front_door_for_passport_corporate_admin_account_pricing_database_and_server_without_horizontal_overflow"], "signed-in dashboard front door acceptance rule");
 assertIncludesAny(bundleText, ["Login or register before live database work"], "dashboard next-action login state");
 assertIncludesAny(bundleText, ["Request approved user access for Corporate Verify"], "dashboard next-action corporate Verify state");
 assertIncludesAny(bundleText, ["V1 portal launchpad"], "signed-in first-screen portal launchpad");

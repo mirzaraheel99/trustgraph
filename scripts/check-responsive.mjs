@@ -51,6 +51,8 @@ const requiredMobileStacks = [
   ".data-export-package-manifest-actions",
   ".v1-completion-lane-grid",
   ".dashboard-start-map-grid",
+  ".dashboard-front-door-grid",
+  ".dashboard-front-door-proof",
   ".dashboard-next-action",
   ".dashboard-next-action-metrics",
   ".dashboard-next-action-buttons",

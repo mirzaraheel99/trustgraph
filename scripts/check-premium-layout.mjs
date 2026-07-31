@@ -30,6 +30,7 @@ assert(authenticatedRender.includes('aria-label="V1 launch flow command"'), "sig
 assert(authenticatedRender.includes('aria-label="Onboarding handoff command"'), "signed-in dashboard must expose a top-level onboarding handoff command.");
 assert(authenticatedRender.includes('aria-label="Portal home command center"'), "signed-in dashboard must expose a simple portal home command center.");
 assert(authenticatedRender.includes('aria-label="Portal choice guide"'), "signed-in dashboard must expose a simple portal choice guide.");
+assert(authenticatedRender.includes('aria-label="Dashboard front door"') && app.includes("dashboard_front_door"), "signed-in dashboard must start with a compact front door for Passport, Corporate, Admin, Account, database, and server status.");
 assert(authenticatedRender.includes('aria-label="V1 proof collection command"'), "signed-in dashboard must expose a V1 proof collection command.");
 assert(authenticatedRender.includes('aria-label="Server release save path"'), "signed-in dashboard must expose the GitHub-to-VPS release save path.");
 assert(authenticatedRender.includes('aria-label="Hosted version receipt"'), "signed-in dashboard must expose the VPS hosted version receipt.");
@@ -117,6 +118,7 @@ assert(consoleLayout.includes(".v1-portal-launchpad") && consoleLayout.includes(
 assert(app.includes('aria-label="Portal readiness board"'), "signed-in dashboard must expose a portal readiness board for login, Professional, Corporate, pricing, database, and server save.");
 assert(app.includes("portal_readiness_board") && app.includes("preview_data_accepted: false"), "portal readiness board packet must reject preview data as completion proof.");
 assert(css.includes(".portal-readiness-board") && css.includes(".portal-readiness-board-header") && css.includes(".portal-readiness-board-grid"), "portal readiness board must be styled and bounded.");
+assert(css.includes(".dashboard-front-door") && css.includes(".dashboard-front-door-grid") && css.includes(".dashboard-front-door-proof"), "dashboard front door must be styled and bounded.");
 assert(consoleLayout.includes(".v1-command-cockpit") && consoleLayout.includes(".v1-command-cockpit-lanes") && consoleLayout.includes(".v1-command-cockpit-proof"), "V1 command cockpit must be styled and bounded.");
 assert(css.includes(".portal-welcome-path") && css.includes(".portal-welcome-path-grid") && css.includes(".portal-welcome-path-proof"), "portal welcome path must be styled and bounded.");
 assert(css.includes(".signed-in-portal-flow-contract") && css.includes(".signed-in-portal-flow-grid"), "signed-in portal flow contract must be styled and bounded.");

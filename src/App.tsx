@@ -20127,6 +20127,20 @@ function App() {
       kind: "account"
     }
   ];
+  const dashboardFrontDoor = {
+    generated_at: new Date().toISOString(),
+    mode: "dashboard_front_door",
+    signed_in: Boolean(authSession),
+    current_portal: workspace.label,
+    active_role: activeRole.label,
+    active_organization: activeOrganization.name,
+    primary_action: dashboardNextAction.primaryAction,
+    secondary_action: dashboardNextAction.secondaryAction,
+    server_status: serverSyncMonitor.status,
+    database_status: authSession && accountContext ? "signed_in_rows_loading_or_loaded" : "hosted_login_required",
+    accepted_when:
+      "signed_in_dashboard_starts_with_one_compact_front_door_for_passport_corporate_admin_account_pricing_database_and_server_without_horizontal_overflow"
+  };
   const proofExportHub = [
     {
       label: "Working database proof",
@@ -21349,6 +21363,7 @@ function App() {
     dashboard_start_map: dashboardStartMap,
     portal_choice_guide: portalChoiceGuide,
     dashboard_next_action: dashboardNextActionPacket,
+    dashboard_front_door: dashboardFrontDoor,
     workspace_command_strip: workspaceCommandStrip,
     v1_completion_cockpit: v1CompletionCockpit,
     v1_operating_map: v1OperatingMapPacket,
@@ -21667,6 +21682,64 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="dashboard-front-door" aria-label="Dashboard front door">
+          <div className="dashboard-front-door-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Dashboard front door</span>
+            <strong>{dashboardNextAction.headline}</strong>
+            <small>{dashboardNextAction.detail}</small>
+          </div>
+          <div className="dashboard-front-door-grid">
+            {signedInLandingActions.map((item) => (
+              <button
+                className={item.target === workspace.id || (item.target === "account" && setupView === "account") ? "active" : ""}
+                key={item.label}
+                onClick={() => {
+                  if (item.kind === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (item.target === "passport" || item.target === "verify" || item.target === "admin") {
+                    openWorkspaceOrSetup(item.target);
+                  }
+                }}
+                type="button"
+              >
+                <span>{item.label}</span>
+                <strong>{item.action}</strong>
+                <small>{item.status}</small>
+                <small>{item.detail}</small>
+              </button>
+            ))}
+          </div>
+          <div className="dashboard-front-door-proof">
+            <span>
+              <strong>{workspace.label}</strong>
+              <small>Current portal</small>
+            </span>
+            <span>
+              <strong>{authSession && accountContext ? "Live rows active" : "Login required"}</strong>
+              <small>Database status</small>
+            </span>
+            <span>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+              <small>Server save</small>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-dashboard-front-door-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(dashboardFrontDoor, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export front door
+            </button>
+          </div>
+        </section>
 
         <section className="today-command-center" aria-label="Today command center">
           <div className="today-command-copy">
