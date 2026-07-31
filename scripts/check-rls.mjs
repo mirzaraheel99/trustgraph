@@ -33,7 +33,8 @@ const requiredRlsTables = [
   "schema_migration_runs",
   "production_gate_decisions",
   "pilot_launch_contacts",
-  "v1_live_database_readiness_receipts"
+  "v1_live_database_readiness_receipts",
+  "corporate_database_access_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -141,6 +142,35 @@ if (!v1ReadinessMigration.includes("accepted v1 live database readiness requires
 
 if (!v1ReadinessMigration.includes("grant execute on function public.record_v1_live_database_readiness_receipt")) {
   throw new Error("RLS check failed: V1 live database readiness RPC must be executable by authenticated users.");
+}
+
+const corporateDatabaseReceiptMigration = latestSqlByFile["048_corporate_database_access_receipts.sql"] ?? "";
+if (!corporateDatabaseReceiptMigration.includes("create table if not exists public.corporate_database_access_receipts")) {
+  throw new Error("Missing corporate database access receipt table migration.");
+}
+
+if (!corporateDatabaseReceiptMigration.includes("alter table public.corporate_database_access_receipts enable row level security")) {
+  throw new Error("Corporate database access receipts must enable RLS.");
+}
+
+if (!corporateDatabaseReceiptMigration.includes("recorded_by_profile_id = public.current_profile_id()")) {
+  throw new Error("Corporate database access receipt insert policy must bind receipts to the current profile.");
+}
+
+if (!corporateDatabaseReceiptMigration.includes("preview_data_accepted_for_v1 = false")) {
+  throw new Error("Corporate database access receipts must reject preview data for V1.");
+}
+
+if (!corporateDatabaseReceiptMigration.includes("create or replace function public.record_corporate_database_access_receipt")) {
+  throw new Error("Missing corporate database access receipt RPC.");
+}
+
+if (!corporateDatabaseReceiptMigration.includes("corporate_database_access.receipt_recorded")) {
+  throw new Error("Corporate database access receipt RPC must write audit history.");
+}
+
+if (!corporateDatabaseReceiptMigration.includes("grant execute on function public.record_corporate_database_access_receipt")) {
+  throw new Error("Corporate database access receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

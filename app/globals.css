@@ -9289,6 +9289,11 @@ p {
   font-size: 11px;
 }
 
+.corporate-user-database-export-receipt > .secondary-action {
+  grid-column: 1 / -1;
+  width: min(100%, 280px);
+}
+
 .directory-source-strip,
 .team-source-strip {
   display: flex;

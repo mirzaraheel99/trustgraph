@@ -62,6 +62,11 @@ export type PilotLaunchContactStatus = "missing" | "identified" | "confirmed";
 export type DataRightsRequestType = "data_export" | "account_closure";
 export type DataRightsRequestStatus = "requested" | "in_review" | "ready" | "blocked" | "completed" | "cancelled";
 export type CorporateAccessReviewStatus = "reviewed" | "needs_follow_up" | "ready_for_handoff" | "closed";
+export type CorporateDatabaseAccessReceiptStatus =
+  | "ready_for_review"
+  | "access_rows_required"
+  | "attestation_required"
+  | "export_recorded";
 
 export interface DbOrganization {
   id: string;
@@ -432,6 +437,22 @@ export interface DbV1LiveDatabaseReadinessReceipt {
   preview_data_accepted_for_v1: boolean;
   accepted_when: string;
   server_save_status: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface DbCorporateDatabaseAccessReceipt {
+  id: string;
+  organization_id: string;
+  recorded_by_profile_id: string;
+  status: CorporateDatabaseAccessReceiptStatus;
+  access_grant_count: number;
+  shared_record_count: number;
+  review_attestation_count: number;
+  open_gap_count: number;
+  exported_packet_name: string;
+  preview_data_accepted_for_v1: boolean;
+  accepted_when: string;
   metadata: Record<string, unknown>;
   created_at: string;
 }

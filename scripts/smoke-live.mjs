@@ -495,6 +495,9 @@ assertIncludesAny(bundleText, ["v1_live_database_readiness_receipt"], "V1 live d
 assertIncludesAny(bundleText, ["v1_live_database_readiness_receipts"], "V1 live database readiness receipt table");
 assertIncludesAny(bundleText, ["record_v1_live_database_readiness_receipt"], "V1 live database readiness receipt RPC");
 assertIncludesAny(bundleText, ["Record live receipt"], "V1 live database readiness record action");
+assertIncludesAny(bundleText, ["corporate_database_access_receipts"], "corporate database access receipt table");
+assertIncludesAny(bundleText, ["record_corporate_database_access_receipt"], "corporate database access receipt RPC");
+assertIncludesAny(bundleText, ["Record database receipt"], "corporate database access receipt action");
 assertIncludesAny(
   bundleText,
   ["v1_live_database_readiness_requires_signed_in_supabase_rows_for_professional_corporate_access_evidence_consent_billing_team_review_registration_release_and_no_preview_data"],
@@ -676,6 +679,7 @@ assertIncludesAny(bundleText, ["corporate_access_next_action_is_complete_only_wh
 assertIncludesAny(bundleText, ["Corporate user database export receipt"], "Corporate user database export receipt");
 assertIncludesAny(bundleText, ["corporate_user_database_export_receipt"], "Corporate user database export receipt packet field");
 assertIncludesAny(bundleText, ["corporate_user_database_export_receipt_requires_live_rbac_rows_filters_scope_review_attestation_and_no_preview_data"], "Corporate user database export receipt acceptance rule");
+assertIncludesAny(bundleText, ["corporate_database_access_receipt_requires_active_corporate_rbac_approved_access_grants_shared_rows_review_attestation_export_and_no_preview_data"], "corporate database access persisted receipt acceptance rule");
 assertIncludesAny(bundleText, ["Corporate review handoff receipt"], "corporate review handoff receipt");
 assertIncludesAny(bundleText, ["corporate_review_handoff_receipt"], "corporate review handoff packet field");
 assertIncludesAny(bundleText, ["corporate_review_handoff_requires_request_approved_grant_scoped_rows_gap_resolution_attestation_and_export"], "corporate review handoff acceptance rule");

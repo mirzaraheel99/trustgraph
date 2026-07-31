@@ -35,6 +35,7 @@ import type {
   DbApiClient,
   DbConsentAuthorization,
   DbCorporateAccessReview,
+  DbCorporateDatabaseAccessReceipt,
   DbDataRightsRequest,
   DbEvidenceDocument,
   DbIssuerCredential,
@@ -53,6 +54,7 @@ import type {
   DbVerificationCase,
   DbWebhookSubscription,
   CorporateAccessReviewStatus,
+  CorporateDatabaseAccessReceiptStatus,
   ProductionGateStatus,
   PilotLaunchContactStatus,
   DataRightsRequestType,
@@ -109,6 +111,10 @@ import {
   markWebhookSubscriptionStatus
 } from "./connectRepository";
 import { createConsentAuthorization, loadConsentAuthorizations, revokeConsentAuthorization } from "./consentRepository";
+import {
+  loadCorporateDatabaseAccessReceipts,
+  recordCorporateDatabaseAccessReceipt
+} from "./corporateDatabaseReceiptRepository";
 import { loadDataRightsRequests, markDataRightsRequestStatus, requestDataRightsAction } from "./dataRightsRepository";
 import {
   createAccessGrantRequest,
@@ -1849,8 +1855,10 @@ function VerifyRequestsPanel({
   missingRecordRequests,
   requests,
   reviews,
+  corporateDatabaseReceipts,
   sharedRecords,
   onCreateAccessRequest,
+  onRecordCorporateDatabaseReceipt,
   onRecordAccessReview,
   onCreateIssuerRole,
   onCreateMissingRecordRequest,
@@ -1874,8 +1882,18 @@ function VerifyRequestsPanel({
   missingRecordRequests: DbMissingRecordRequest[];
   requests: VerifyAccessGrantView[];
   reviews: DbCorporateAccessReview[];
+  corporateDatabaseReceipts: DbCorporateDatabaseAccessReceipt[];
   sharedRecords: RecordItem[];
   onCreateAccessRequest: (input: { subjectEmail: string; purpose: string; expiresInDays: number }) => Promise<void>;
+  onRecordCorporateDatabaseReceipt: (input: {
+    status: CorporateDatabaseAccessReceiptStatus;
+    accessGrantCount: number;
+    sharedRecordCount: number;
+    reviewAttestationCount: number;
+    openGapCount: number;
+    exportedPacketName: string;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
   onRecordAccessReview: (input: { accessGrantId: string; status: CorporateAccessReviewStatus; note: string }) => Promise<void>;
   onCreateIssuerRole: () => Promise<void>;
   onIssueCredential: (input: {
@@ -2696,6 +2714,8 @@ function VerifyRequestsPanel({
       <CorporateDirectoryPanel
         databaseMode={disabled ? "locked_corporate_context" : "live_supabase_visibility"}
         missingRecordRequests={missingRecordRequests}
+        corporateDatabaseReceipts={corporateDatabaseReceipts}
+        onRecordCorporateDatabaseReceipt={onRecordCorporateDatabaseReceipt}
         onRecordAccessReview={onRecordAccessReview}
         requests={requests}
         reviews={reviews}
@@ -3315,6 +3335,8 @@ function CorporateDailyTaskHub({
 function CorporateDirectoryPanel({
   databaseMode,
   missingRecordRequests,
+  corporateDatabaseReceipts,
+  onRecordCorporateDatabaseReceipt,
   onRecordAccessReview,
   requests,
   reviews,
@@ -3322,6 +3344,16 @@ function CorporateDirectoryPanel({
 }: {
   databaseMode: "live_supabase_visibility" | "locked_corporate_context";
   missingRecordRequests: DbMissingRecordRequest[];
+  corporateDatabaseReceipts: DbCorporateDatabaseAccessReceipt[];
+  onRecordCorporateDatabaseReceipt: (input: {
+    status: CorporateDatabaseAccessReceiptStatus;
+    accessGrantCount: number;
+    sharedRecordCount: number;
+    reviewAttestationCount: number;
+    openGapCount: number;
+    exportedPacketName: string;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
   onRecordAccessReview: (input: { accessGrantId: string; status: CorporateAccessReviewStatus; note: string }) => Promise<void>;
   requests: VerifyAccessGrantView[];
   reviews: DbCorporateAccessReview[];
@@ -3331,6 +3363,8 @@ function CorporateDirectoryPanel({
   const [reviewBusyId, setReviewBusyId] = useState("");
   const [reviewNote, setReviewNote] = useState("Scoped corporate review completed against visible Passport rows and open gaps.");
   const [reviewMessage, setReviewMessage] = useState("Record a live review attestation after checking visible user rows.");
+  const [receiptMessage, setReceiptMessage] = useState("Record a server-side database access receipt after the scoped export is ready.");
+  const [receiptBusy, setReceiptBusy] = useState(false);
   const [statusFilter, setStatusFilter] = useState<"all" | "requested" | "approved" | "declined" | "revoked">("all");
   const [readinessFilter, setReadinessFilter] = useState<"all" | "review_ready" | "waiting_for_consent" | "needs_gap_follow_up" | "not_available">("all");
   const latestReviewByGrant = reviews.reduce<Record<string, DbCorporateAccessReview>>((latest, review) => {
@@ -3817,6 +3851,7 @@ function CorporateDirectoryPanel({
     accepted_when:
       "corporate_user_database_export_receipt_requires_live_rbac_rows_filters_scope_review_attestation_and_no_preview_data"
   };
+  const latestCorporateDatabaseReceipt = corporateDatabaseReceipts[0] ?? null;
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -3938,6 +3973,38 @@ function CorporateDirectoryPanel({
     note: "Corporate Verify can only export professional rows and shared Passport records visible through approved role, organization, Access Grant, and consent scope."
   };
 
+  async function recordDatabaseReceipt() {
+    setReceiptBusy(true);
+    setReceiptMessage("Recording corporate database access receipt...");
+    const status: CorporateDatabaseAccessReceiptStatus = corporateAccessNextAction.ready
+      ? "export_recorded"
+      : reviews.length
+        ? "access_rows_required"
+        : "attestation_required";
+    try {
+      await onRecordCorporateDatabaseReceipt({
+        status,
+        accessGrantCount: approvedAccessCount,
+        sharedRecordCount: sharedRecords.length,
+        reviewAttestationCount: reviews.length,
+        openGapCount: openGapRequestCount,
+        exportedPacketName: packetName,
+        metadata: {
+          export_receipt: corporateUserDatabaseExportReceipt,
+          filter_receipt: corporateDirectoryFilterReceipt,
+          source_counts: corporateUserDatabasePacket.source_counts,
+          active_database_mode: databaseModeLabel,
+          preview_data_accepted_for_v1: false
+        }
+      });
+      setReceiptMessage("Corporate database access receipt saved to Supabase audit history.");
+    } catch (error) {
+      setReceiptMessage(error instanceof Error ? error.message : "Could not record corporate database access receipt");
+    } finally {
+      setReceiptBusy(false);
+    }
+  }
+
   async function recordReview(accessGrantId: string, status: CorporateAccessReviewStatus) {
     setReviewBusyId(`${accessGrantId}-${status}`);
     setReviewMessage("Recording corporate access review attestation...");
@@ -4026,6 +4093,7 @@ function CorporateDirectoryPanel({
           <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Corporate user database export receipt</span>
           <strong>{corporateAccessNextAction.ready ? "Scoped export is ready" : "Export is blocked by next action"}</strong>
           <small>{corporateUserDatabaseExportReceipt.accepted_when}</small>
+          <small>{receiptMessage}</small>
         </div>
         <div className="corporate-user-database-export-grid">
           <span>
@@ -4044,7 +4112,19 @@ function CorporateDirectoryPanel({
             <strong>{corporateUserDatabaseExportReceipt.next_action}</strong>
             <small>Required action</small>
           </span>
+          <span>
+            <strong>{latestCorporateDatabaseReceipt ? latestCorporateDatabaseReceipt.status.replace(/_/g, " ") : "Not recorded"}</strong>
+            <small>Latest server receipt</small>
+          </span>
         </div>
+        <button
+          className="secondary-action"
+          disabled={receiptBusy || (!filteredRows.length && !sharedRecords.length)}
+          onClick={recordDatabaseReceipt}
+          type="button"
+        >
+          Record database receipt
+        </button>
       </div>
       <div className="corporate-scope-review-command" aria-label="Corporate scope review command">
         <div className="directory-source-strip">
@@ -14672,6 +14752,7 @@ function App() {
   const [consentStatus, setConsentStatus] = useState("Sign in to review consent authorizations");
   const [verifyRequests, setVerifyRequests] = useState<VerifyAccessGrantView[]>([]);
   const [corporateAccessReviews, setCorporateAccessReviews] = useState<DbCorporateAccessReview[]>([]);
+  const [corporateDatabaseReceipts, setCorporateDatabaseReceipts] = useState<DbCorporateDatabaseAccessReceipt[]>([]);
   const [sharedVerifyRecords, setSharedVerifyRecords] = useState<RecordItem[]>([]);
   const [verifyStatus, setVerifyStatus] = useState("Switch to Verify role for live requests");
   const [operationsCases, setOperationsCases] = useState<DbVerificationCase[]>([]);
@@ -15127,6 +15208,7 @@ function App() {
     if (!authSession || !accountContext || workspaceId !== "verify") {
       setVerifyRequests([]);
       setCorporateAccessReviews([]);
+      setCorporateDatabaseReceipts([]);
       setSharedVerifyRecords([]);
       setIssuerCredentials([]);
       setMissingRecordRequests([]);
@@ -15139,6 +15221,7 @@ function App() {
     if (!canAccessWorkspace(activeMembership.role, "verify")) {
       setVerifyRequests([]);
       setCorporateAccessReviews([]);
+      setCorporateDatabaseReceipts([]);
       setSharedVerifyRecords([]);
       setIssuerCredentials([]);
       setMissingRecordRequests([]);
@@ -15156,16 +15239,18 @@ function App() {
     Promise.all([
       loadVerifyAccessGrants(activeMembership.organizationId, authSession.accessToken),
       loadCorporateAccessReviews(activeMembership.organizationId, authSession.accessToken),
+      loadCorporateDatabaseAccessReceipts(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadSharedVerifyRecords(authSession.accessToken),
       hasPermission(activeMembership.role, "record:issue_credential")
         ? loadIssuerCredentials(activeMembership.organizationId, authSession.accessToken)
         : Promise.resolve([]),
       loadVerifyMissingRecordRequests(activeMembership.organizationId, authSession.accessToken)
     ])
-      .then(([items, accessReviews, sharedRecords, credentials, missingRecords]) => {
+      .then(([items, accessReviews, databaseReceipts, sharedRecords, credentials, missingRecords]) => {
         if (cancelled) return;
         setVerifyRequests(items);
         setCorporateAccessReviews(accessReviews);
+        setCorporateDatabaseReceipts(databaseReceipts);
         setSharedVerifyRecords(sharedRecords);
         setIssuerCredentials(credentials);
         setMissingRecordRequests(missingRecords);
@@ -15189,6 +15274,7 @@ function App() {
         if (cancelled) return;
         setVerifyRequests([]);
         setCorporateAccessReviews([]);
+        setCorporateDatabaseReceipts([]);
         setSharedVerifyRecords([]);
         setIssuerCredentials([]);
         setMissingRecordRequests([]);
@@ -15745,6 +15831,36 @@ function App() {
     setVerifyStatus(`Corporate access review recorded: ${review.review_status.replace(/_/g, " ")}`);
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
     setNotificationStatus(notifications.length ? `Live notifications: ${notifications.length} recent` : "No workflow notifications yet");
+  }
+
+  async function recordLiveCorporateDatabaseReceipt(input: {
+    status: CorporateDatabaseAccessReceiptStatus;
+    accessGrantCount: number;
+    sharedRecordCount: number;
+    reviewAttestationCount: number;
+    openGapCount: number;
+    exportedPacketName: string;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in with a corporate role before recording a database access receipt.");
+    }
+
+    const receipt = await recordCorporateDatabaseAccessReceipt(
+      {
+        organizationId: activeMembership.organizationId,
+        ...input
+      },
+      authSession.accessToken
+    );
+    const [receipts, events] = await Promise.all([
+      loadCorporateDatabaseAccessReceipts(activeMembership.organizationId, authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setCorporateDatabaseReceipts(receipts);
+    setAuditEvents(events);
+    setVerifyStatus(`Corporate database access receipt recorded: ${receipt.status.replace(/_/g, " ")}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
   async function createPilotReviewerRole() {
@@ -19162,12 +19278,14 @@ function App() {
                 message={verifyStatus}
                 missingRecordMessage={missingRecordStatus}
                 missingRecordRequests={missingRecordRequests}
+                corporateDatabaseReceipts={corporateDatabaseReceipts}
                 reviews={corporateAccessReviews}
                 subscriptions={organizationSubscriptions}
                 teamInvitations={teamInvitations}
                 teamMembers={teamMembers}
                 onCreateAccessRequest={createLiveAccessGrantRequest}
                 onCreateMissingRecordRequest={createLiveMissingRecordRequest}
+                onRecordCorporateDatabaseReceipt={recordLiveCorporateDatabaseReceipt}
                 onRecordAccessReview={recordLiveCorporateAccessReview}
                 onCreateIssuerRole={createLiveCredentialIssuerRole}
                 onCreateReviewerRole={createPilotReviewerRole}
