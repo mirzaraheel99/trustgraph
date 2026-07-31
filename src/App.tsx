@@ -8318,6 +8318,24 @@ function AuthPanel({
             </div>
             <span className="micro-pill">{email ? "email ready" : "email needed"}</span>
           </div>
+          <div className="auth-recovery-command" aria-label="Auth recovery command center">
+            <div>
+              <span className="status-chip neutral">Auth recovery command center</span>
+              <strong>Use the hosted TrustGraph link for every verification and recovery email</strong>
+              <small>{authRedirectUrl}</small>
+            </div>
+            <div className="auth-recovery-command-grid">
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
+                Copy hosted redirect
+              </button>
+            </div>
+          </div>
           <div className="auth-readiness-packet">
             <div>
               <strong>Auth redirect readiness packet</strong>
@@ -10978,6 +10996,24 @@ function PublicSite({
             <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
               Reset password
             </button>
+          </div>
+          <div className="public-auth-recovery-command" aria-label="Public auth recovery command center">
+            <div>
+              <span className="status-chip neutral">Auth recovery command center</span>
+              <strong>Verification emails must return to hosted TrustGraph</strong>
+              <small>{authRedirectUrl}</small>
+            </div>
+            <div className="public-auth-recovery-actions">
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
+                Copy hosted link
+              </button>
+            </div>
           </div>
           <details className="auth-operator-details">
             <summary>

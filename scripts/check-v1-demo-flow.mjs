@@ -62,7 +62,9 @@ const flowChecks = [
       "Create company admin account",
       "Create Professional Passport",
       "Live database handoff",
-      "Verification, recovery, and link repair"
+      "Verification, recovery, and link repair",
+      "Auth recovery command center",
+      "Copy hosted redirect"
     ]
   },
   {

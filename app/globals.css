@@ -2397,6 +2397,48 @@ p,
   background: rgba(255, 255, 255, 0.03);
 }
 
+.auth-recovery-command,
+.public-auth-recovery-command {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(134, 174, 246, 0.075), rgba(255, 255, 255, 0.018)),
+    rgba(255, 255, 255, 0.024);
+}
+
+.auth-recovery-command > div:first-child,
+.public-auth-recovery-command > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.auth-recovery-command strong,
+.auth-recovery-command small,
+.auth-recovery-command span,
+.public-auth-recovery-command strong,
+.public-auth-recovery-command small,
+.public-auth-recovery-command span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.auth-recovery-command-grid,
+.public-auth-recovery-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.auth-recovery-command-grid button,
+.public-auth-recovery-actions button {
+  min-width: 0;
+  white-space: normal;
+}
+
 .auth-access-command-grid span {
   color: var(--teal);
   font-size: 11px;
@@ -11112,6 +11154,8 @@ p {
 .consent-controls,
 .reference-controls,
 .billing-controls,
+.auth-recovery-command-grid,
+.public-auth-recovery-actions,
 .pilot-contact-form,
 .production-gate-form {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
@@ -11157,6 +11201,8 @@ p {
 .consent-controls button,
 .reference-controls button,
 .billing-controls button,
+.auth-recovery-command-grid button,
+.public-auth-recovery-actions button,
 .pilot-contact-form button,
 .production-gate-form button {
   min-width: 0;

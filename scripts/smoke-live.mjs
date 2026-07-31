@@ -218,6 +218,8 @@ assertIncludesAny(bundleText, ["After registration"], "registration outcome sect
 assertIncludesAny(bundleText, ["Set new password"], "password recovery update control");
 assertIncludesAny(bundleText, ["Password recovery session ready"], "password recovery session ready state");
 assertIncludesAny(bundleText, ["Recovery redirect"], "password recovery redirect guidance");
+assertIncludesAny(bundleText, ["Auth recovery command center"], "visible auth recovery command center");
+assertIncludesAny(bundleText, ["Copy hosted redirect"], "hosted auth redirect copy action");
 assertIncludesAny(bundleText, ["Portal access command"], "professional and corporate auth access command");
 assertIncludesAny(bundleText, ["One secure login, two clear portal paths"], "auth access command headline");
 assertIncludesAny(bundleText, ["The role and workspace you create after login decide what database rows you can see"], "auth role database scope guidance");
