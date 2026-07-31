@@ -1,5 +1,11 @@
 import type { DbRegistrationIntent, RegistrationIntentMode, RegistrationIntentPortal } from "./database";
-import { supabaseRpc } from "./supabase";
+import { supabaseRest, supabaseRpc } from "./supabase";
+
+export async function loadRegistrationIntents(accessToken: string): Promise<DbRegistrationIntent[]> {
+  return supabaseRest<DbRegistrationIntent[]>("registration_intents?select=*&order=created_at.desc&limit=10", {
+    accessToken
+  });
+}
 
 export async function recordRegistrationIntent(input: {
   accessToken: string;

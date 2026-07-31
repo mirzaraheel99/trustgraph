@@ -46,6 +46,7 @@ import type {
   DbPilotLaunchContact,
   DbProductionGateDecision,
   DbReferenceRequest,
+  DbRegistrationIntent,
   DbSchemaMigrationRun,
   DbSubscriptionPlan,
   DbVerificationCase,
@@ -129,7 +130,7 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
-import { recordRegistrationIntent } from "./registrationRepository";
+import { loadRegistrationIntents, recordRegistrationIntent } from "./registrationRepository";
 import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
 import { loadPilotLaunchContacts, recordPilotLaunchContact } from "./pilotLaunchRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
@@ -14504,6 +14505,8 @@ function App() {
   const [missingRecordStatus, setMissingRecordStatus] = useState("Switch to Verify role for missing-record requests");
   const [passportMissingRecordRequests, setPassportMissingRecordRequests] = useState<DbMissingRecordRequest[]>([]);
   const [passportMissingRecordStatus, setPassportMissingRecordStatus] = useState("Sign in to review requested Passport records");
+  const [registrationIntents, setRegistrationIntents] = useState<DbRegistrationIntent[]>([]);
+  const [registrationIntentStatus, setRegistrationIntentStatus] = useState("Sign in to load registration intent rows");
   const [serverSyncMonitor, setServerSyncMonitor] = useState<ServerSyncMonitorState>({
     status: "checking",
     headline: "Checking saved build",
@@ -14666,6 +14669,8 @@ function App() {
       setAccountStatus("Preview account context");
       setSubscriptionPlans([]);
       setOrganizationSubscriptions([]);
+      setRegistrationIntents([]);
+      setRegistrationIntentStatus("Sign in to load registration intent rows");
       setBillingStatus("Sign in to manage billing plans");
       setTeamInvitations([]);
       setTeamStatus("Sign in to invite corporate team members");
@@ -14713,13 +14718,15 @@ function App() {
     Promise.all([
       loadSubscriptionPlans(authSession.accessToken),
       loadOrganizationSubscriptions(authSession.accessToken).catch(() => []),
+      loadRegistrationIntents(authSession.accessToken).catch(() => []),
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, invitations, members]) => {
+      .then(([plans, subscriptions, intents, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
+        setRegistrationIntents(intents);
         setTeamInvitations(invitations);
         setTeamMembers(members);
         setBillingStatus(
@@ -14727,14 +14734,17 @@ function App() {
         );
         setTeamStatus(invitations.length ? `Team invitations: ${invitations.length}` : "No team invitations yet");
         setMemberStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
+        setRegistrationIntentStatus(intents.length ? `Registration intents: ${intents.length}` : "No registration intent rows yet");
       })
       .catch((error) => {
         if (cancelled) return;
         setSubscriptionPlans([]);
         setOrganizationSubscriptions([]);
+        setRegistrationIntents([]);
         setTeamInvitations([]);
         setTeamMembers([]);
         setBillingStatus(operatorErrorMessage(error, "Could not load billing plans"));
+        setRegistrationIntentStatus(operatorErrorMessage(error, "Could not load registration intents"));
         setTeamStatus(operatorErrorMessage(error, "Could not load team invitations"));
         setMemberStatus(operatorErrorMessage(error, "Could not load team members"));
       });
@@ -16703,6 +16713,14 @@ function App() {
       required: true,
       ready: Boolean(accountContext),
       evidence: accountContext ? `${accountContext.memberships.length} membership rows loaded` : "Account context must load without policy recursion"
+    },
+    {
+      label: "Registration intent handoff",
+      table: "registration_intents",
+      count: registrationIntents.length,
+      required: true,
+      ready: registrationIntents.length > 0,
+      evidence: registrationIntentStatus
     },
     {
       label: "Passport records",
