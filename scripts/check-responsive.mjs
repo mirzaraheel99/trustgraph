@@ -69,6 +69,9 @@ const requiredMobileStacks = [
   ".live-database-repair-command-top",
   ".live-database-repair-actions",
   ".live-database-repair-grid",
+  ".live-seed-preflight-top",
+  ".live-seed-preflight-actions",
+  ".live-seed-preflight-grid",
   ".live-onboarding-contract-grid",
   ".live-onboarding-sequence",
   ".live-database-acceptance-lanes-top",
@@ -223,6 +226,10 @@ if (!css.includes(".v1-audit-command") || !css.includes("grid-template-columns: 
 
 if (!css.includes(".release-sync-command") || !css.includes("grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr)") || !css.includes(".release-sync-command-grid")) {
   throw new Error("Responsive check failed: v1 completion panel needs a clear release sync command surface.");
+}
+
+if (!css.includes(".live-seed-preflight") || !css.includes(".live-seed-preflight-grid") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr))")) {
+  throw new Error("Responsive check failed: live seed preflight needs a bounded responsive grid.");
 }
 
 if (!css.includes("grid-template-columns: minmax(0, 1fr) auto") || !css.includes(".topbar-session-card") || !css.includes("display: none !important")) {

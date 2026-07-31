@@ -9721,6 +9721,7 @@ function OnboardingChecklistPanel({
   const workingDataExportName = `trustgraph-working-database-proof-${new Date().toISOString().slice(0, 10)}.json`;
   const hostedLoginHandoffExportName = `trustgraph-hosted-login-database-handoff-${new Date().toISOString().slice(0, 10)}.json`;
   const hostedCorporateRetestExportName = `trustgraph-hosted-corporate-retest-${new Date().toISOString().slice(0, 10)}.json`;
+  const liveSeedPreflightExportName = `trustgraph-live-seed-preflight-${new Date().toISOString().slice(0, 10)}.json`;
   const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
   const workingDataRows = [
     { label: "Passport records", count: livePassportRecords.length },
@@ -10176,6 +10177,58 @@ function OnboardingChecklistPanel({
     }
   ];
   const liveDatabaseAcceptanceLaneReady = liveDatabaseAcceptanceLanes.filter((lane) => lane.ready).length;
+  const liveSeedPreflightChecks = [
+    {
+      label: "Hosted Supabase session",
+      ok: Boolean(authSession),
+      required: "Sign in or verify email from the hosted TrustGraph app before seed.",
+      evidence: authSession ? authSession.user.email : "No live session loaded"
+    },
+    {
+      label: "Account context",
+      ok: Boolean(accountContext),
+      required: "Profile, active organization, and RBAC context must load before seed.",
+      evidence: accountContext ? `${accountContext.memberships.length} memberships available` : "No account context loaded"
+    },
+    {
+      label: "Seed creates user database rows",
+      ok: true,
+      required: "Seed writes Passport, evidence, Access Grant, consent, corporate workspace, billing ledger, member, and review rows.",
+      evidence: "seedPilotWorkspace plus Corporate Verify review attestation"
+    },
+    {
+      label: "Preview data boundary",
+      ok: true,
+      required: "Browser preview records cannot satisfy v1 database acceptance.",
+      evidence: "Accepted only after repository rows reload and reconcile"
+    }
+  ];
+  const liveSeedPreflightReady = liveSeedPreflightChecks.filter((check) => check.ok).length;
+  const liveSeedPreflightPacket = {
+    generated_at: new Date().toISOString(),
+    mode: "live_seed_preflight",
+    ready_checks: liveSeedPreflightReady,
+    total_checks: liveSeedPreflightChecks.length,
+    seed_button_enabled: Boolean(authSession && !seedBusy),
+    next_action: authSession ? "Prepare live pilot workspace" : "Login or register first",
+    creates_live_rows: [
+      "passport_records",
+      "evidence_documents",
+      "access_grants",
+      "consent_authorizations",
+      "corporate_organization",
+      "organization_membership",
+      "organization_subscription",
+      "corporate_access_review"
+    ],
+    accepted_only_after: [
+      "repository_rows_reload",
+      "seed_ids_reconcile",
+      "working_data_packet_exported",
+      "corporate_verify_shared_rows_visible"
+    ],
+    checks: liveSeedPreflightChecks
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -10548,6 +10601,37 @@ function OnboardingChecklistPanel({
                 <strong>{item.value}</strong>
                 <small>{item.label}</small>
                 <small>{item.detail}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="live-seed-preflight" aria-label="Live seed preflight">
+        <div className="live-seed-preflight-top">
+          <div>
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Live seed preflight</span>
+            <strong>{authSession ? "Seed can write real pilot database rows" : "Login before creating live pilot rows"}</strong>
+            <small>Use this check before pressing Prepare live pilot workspace. It explains what will be written and what still must reload before acceptance.</small>
+          </div>
+          <div className="live-seed-preflight-actions">
+            <span className="status-chip neutral">{liveSeedPreflightReady}/{liveSeedPreflightChecks.length} checks ready</span>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(liveSeedPreflightExportName, JSON.stringify(liveSeedPreflightPacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export seed preflight
+            </button>
+          </div>
+        </div>
+        <div className="live-seed-preflight-grid">
+          {liveSeedPreflightChecks.map((check) => (
+            <article className={check.ok ? "ready" : ""} key={check.label}>
+              <span className={`status-dot ${check.ok ? "on" : ""}`} />
+              <div>
+                <strong>{check.label}</strong>
+                <small>{check.required}</small>
+                <small>{check.evidence}</small>
               </div>
             </article>
           ))}
