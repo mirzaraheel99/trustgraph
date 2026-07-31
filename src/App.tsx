@@ -19059,6 +19059,38 @@ function App() {
     accepted_when: "server_head_matches_latest_green_main_commit_vps_returns_200_bundle_contains_current_trustgraph_release_markers_and_release_stamp_matches_commit",
     human_access_boundary: "Codex can push GitHub and verify public URLs, but the VPS pull must run from an authenticated SSH shell."
   };
+  const vpsDeploySecretsChecklist = {
+    mode: "vps_deploy_secrets_checklist",
+    workflow: "Deploy TrustGraph to VPS",
+    last_known_blocker: "repository secret TRUSTGRAPH_VPS_USER is required",
+    required_repository_secrets: [
+      {
+        name: "TRUSTGRAPH_VPS_USER",
+        purpose: "SSH username for the TrustGraph VPS, usually root or the deploy user.",
+        status: "required"
+      },
+      {
+        name: "TRUSTGRAPH_VPS_SSH_KEY",
+        purpose: "Private SSH key that can access /opt/trustgraph on 5.75.224.110.",
+        status: "required"
+      }
+    ],
+    approved_target_host: "5.75.224.110",
+    approved_public_url: "https://trustgraph.5-75-224-110.sslip.io",
+    remote_path: "/opt/trustgraph",
+    protected_vfix_route: hostedVersionReceipt.protected_vfix_route,
+    manual_fallback: hostedVersionReceipt.server_update_command,
+    accepted_when:
+      "github_actions_vps_deploy_has_trustgraph_vps_user_and_ssh_key_or_manual_ssh_runs_update_script_release_stamp_matches_latest_main_and_vfix_route_is_untouched"
+  };
+  const vpsDeployChecklistRows = [
+    ...vpsDeploySecretsChecklist.required_repository_secrets,
+    {
+      name: "Manual SSH fallback",
+      purpose: vpsDeploySecretsChecklist.manual_fallback,
+      status: "available"
+    }
+  ];
   const hostedVersionReceiptSteps = [
     {
       label: "GitHub commit",
@@ -19128,6 +19160,7 @@ function App() {
     vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     hosted_version_receipt: hostedVersionReceipt,
+    vps_deploy_secrets_checklist: vpsDeploySecretsChecklist,
     vps_saved_update_verification: vpsSavedUpdateVerification,
     server_sync_monitor: serverSyncMonitorPacket,
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
@@ -19927,6 +19960,26 @@ function App() {
                 <code>{vpsSavedUpdateVerification.stale_action}</code>
               </div>
             ) : null}
+          </div>
+          <div className="vps-deploy-secrets-checklist" aria-label="VPS deploy secrets checklist">
+            <div>
+              <span className="status-chip warning">VPS deploy secrets checklist</span>
+              <strong>Automatic server save needs GitHub SSH secrets</strong>
+              <small>{vpsDeploySecretsChecklist.accepted_when}</small>
+            </div>
+            <div className="vps-deploy-secrets-grid">
+              {vpsDeployChecklistRows.map((item) => (
+                <article className={item.status === "available" ? "ready" : "next"} key={item.name}>
+                  <span>{item.status}</span>
+                  <strong>{item.name}</strong>
+                  <small>{item.purpose}</small>
+                </article>
+              ))}
+            </div>
+            <div className="vps-deploy-secrets-command">
+              <span>Workflow target</span>
+              <code>{vpsDeploySecretsChecklist.workflow}: {vpsDeploySecretsChecklist.approved_target_host} - {vpsDeploySecretsChecklist.remote_path}</code>
+            </div>
           </div>
           <div className="server-release-grid">
             {serverReleaseLanes.map((lane) => (

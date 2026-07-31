@@ -653,6 +653,9 @@ assertIncludesAny(bundleText, ["git -C /opt/trustgraph rev-parse --short HEAD"],
 assertIncludesAny(bundleText, ["VPS saved update verification"], "VPS saved update verification label");
 assertIncludesAny(bundleText, ["vps_saved_update_verification"], "VPS saved update verification packet field");
 assertIncludesAny(bundleText, ["vps_saved_update_requires_latest_main_server_head_vps_200_and_trustgraph_release_json_commit_match"], "VPS saved update acceptance rule");
+assertIncludesAny(bundleText, ["VPS deploy secrets checklist"], "VPS deploy secrets checklist label");
+assertIncludesAny(bundleText, ["vps_deploy_secrets_checklist"], "VPS deploy secrets checklist packet field");
+assertIncludesAny(bundleText, ["TRUSTGRAPH_VPS_USER"], "VPS SSH user secret requirement");
 assertIncludesAny(bundleText, ["Server sync monitor"], "server sync monitor label");
 assertIncludesAny(bundleText, ["server_sync_monitor"], "server sync monitor packet field");
 assertIncludesAny(bundleText, ["vps_release_stamp_returns_commit_json"], "server sync monitor acceptance rule");

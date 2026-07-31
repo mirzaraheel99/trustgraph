@@ -16702,6 +16702,93 @@ body {
   text-transform: uppercase;
 }
 
+.vps-deploy-secrets-checklist {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 199, 102, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 199, 102, 0.08), rgba(135, 166, 255, 0.055)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.vps-deploy-secrets-checklist > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.vps-deploy-secrets-checklist strong,
+.vps-deploy-secrets-checklist small,
+.vps-deploy-secrets-checklist span,
+.vps-deploy-secrets-checklist code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.vps-deploy-secrets-checklist > div:first-child > strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.18;
+}
+
+.vps-deploy-secrets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 9px;
+}
+
+.vps-deploy-secrets-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+  overflow: hidden;
+}
+
+.vps-deploy-secrets-grid article.next {
+  border-color: rgba(255, 199, 102, 0.26);
+  background: rgba(255, 199, 102, 0.055);
+}
+
+.vps-deploy-secrets-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.24);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.vps-deploy-secrets-grid span {
+  color: #f5d487;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.vps-deploy-secrets-command {
+  display: grid;
+  gap: 7px;
+}
+
+.vps-deploy-secrets-command span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.vps-deploy-secrets-command code {
+  display: block;
+  padding: 10px;
+  color: var(--text);
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
 .server-sync-monitor {
   display: grid;
   gap: 12px;

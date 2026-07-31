@@ -2,6 +2,7 @@ import fs from "node:fs";
 
 const workflowPath = ".github/workflows/deploy-vps.yml";
 const workflow = fs.readFileSync(workflowPath, "utf8");
+const app = fs.readFileSync("src/App.tsx", "utf8");
 const compose = fs.readFileSync("docker-compose.server.yml", "utf8");
 const dockerfile = fs.readFileSync("Dockerfile", "utf8");
 const caddyfile = fs.readFileSync("Caddyfile", "utf8");
@@ -73,6 +74,18 @@ const requiredSnippets = [
 ];
 
 const runtimeSnippets = [
+  {
+    source: app,
+    path: "src/App.tsx",
+    snippet: "vps_deploy_secrets_checklist",
+    label: "app exposes the VPS deploy secrets checklist"
+  },
+  {
+    source: app,
+    path: "src/App.tsx",
+    snippet: "TRUSTGRAPH_VPS_USER",
+    label: "app names the missing VPS user secret"
+  },
   {
     source: compose,
     path: "docker-compose.server.yml",

@@ -33,6 +33,7 @@ assert(authenticatedRender.includes('aria-label="V1 proof collection command"'),
 assert(authenticatedRender.includes('aria-label="Server release save path"'), "signed-in dashboard must expose the GitHub-to-VPS release save path.");
 assert(authenticatedRender.includes('aria-label="Hosted version receipt"'), "signed-in dashboard must expose the VPS hosted version receipt.");
 assert(authenticatedRender.includes('aria-label="Server sync monitor"'), "signed-in dashboard must expose a live server sync monitor.");
+assert(authenticatedRender.includes('aria-label="VPS deploy secrets checklist"'), "signed-in dashboard must expose the VPS deploy secrets checklist when automatic server save is blocked.");
 assert(app.includes("trustgraph-release.json"), "signed-in dashboard must expose the VPS release stamp verification command.");
 assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in dashboard must expose the end-to-end V1 operating map.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
@@ -105,6 +106,7 @@ assert(css.includes(".registration-database-launch-order") && css.includes(".reg
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".vps-saved-update-verification") && premiumRepair.includes(".vps-saved-update-command-list"), "VPS saved update verification must be styled and bounded in the premium shell.");
+assert(css.includes(".vps-deploy-secrets-checklist") && css.includes(".vps-deploy-secrets-grid") && css.includes(".vps-deploy-secrets-command"), "VPS deploy secrets checklist must be styled and bounded.");
 assert(premiumRepair.includes(".server-sync-monitor") && premiumRepair.includes(".server-sync-monitor-grid") && premiumRepair.includes(".server-sync-next"), "server sync monitor must be styled and bounded in the premium shell.");
 assert(css.includes(".public-server-sync-receipt") && css.includes(".public-server-sync-grid"), "public saved-build receipt must be styled and bounded.");
 assert(app.includes('aria-label="Public server update receipt"'), "public saved-build receipt must expose the VPS update command when the host is stale.");
