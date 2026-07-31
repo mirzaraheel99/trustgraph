@@ -5932,6 +5932,41 @@ function PlanAlignmentPanel({
         notes: contact.notes ?? ""
       }))
     : fallbackPilotContacts;
+  const confirmedPilotContacts = pilotContacts.filter((contact) => contact.status === "confirmed").length;
+  const identifiedPilotContacts = pilotContacts.filter((contact) => contact.status === "identified").length;
+  const missingPilotContacts = pilotContacts.filter((contact) => contact.status === "missing");
+  const pilotOwnerReadinessReceipt = {
+    mode: "pilot_owner_readiness_receipt",
+    confirmed_contacts: confirmedPilotContacts,
+    identified_contacts: identifiedPilotContacts,
+    missing_contacts: missingPilotContacts.map((contact) => contact.label),
+    total_required_contacts: pilotContacts.length,
+    source: pilotLaunchContacts.length ? "live_supabase_pilot_launch_contacts" : "fallback_until_live_contact_rows_are_recorded",
+    accepted_when:
+      "pilot_customer_roster_onboarding_owner_support_owner_and_incident_owner_are_confirmed_from_live_supabase_contact_rows_before_pilot_launch"
+  };
+  const pilotOwnerReadinessCards = [
+    {
+      label: "Confirmed",
+      value: `${confirmedPilotContacts}/${pilotContacts.length}`,
+      detail: "Owners recorded with confirmed status."
+    },
+    {
+      label: "Identified",
+      value: `${identifiedPilotContacts}`,
+      detail: "Known owners still waiting for confirmation."
+    },
+    {
+      label: "Missing",
+      value: `${missingPilotContacts.length}`,
+      detail: missingPilotContacts.map((contact) => contact.label).join(", ") || "No missing pilot owners."
+    },
+    {
+      label: "Source",
+      value: pilotLaunchContacts.length ? "Live rows" : "Fallback",
+      detail: pilotOwnerReadinessReceipt.source
+    }
+  ];
   const pilotContactsExportName = `trustgraph-pilot-launch-contacts-${new Date().toISOString().slice(0, 10)}.csv`;
   const launchGatePacketName = `trustgraph-launch-gate-packet-${new Date().toISOString().slice(0, 10)}.json`;
   const v1CompletionPacketName = `trustgraph-v1-completion-audit-${new Date().toISOString().slice(0, 10)}.json`;
@@ -6167,13 +6202,14 @@ function PlanAlignmentPanel({
       approved_production_gates: approvedProductionGateCount,
       open_production_gates: openProductionGateCount,
       pilot_contacts: pilotContacts.length,
-      confirmed_pilot_contacts: pilotContacts.filter((contact) => contact.status === "confirmed").length
+      confirmed_pilot_contacts: confirmedPilotContacts
     },
     stop_conditions: openProductionGateCount
       ? "Human gates still prevent live payments, regulated employment decisions, and unrestricted production traffic."
       : "All visible production gates are recorded as approved for production.",
     production_gates: productionGates,
     required_cutover_gates: ["stripe_billing_launch", "external_rls_storage_review", "legal_employment_language", "pilot_operations_owner", "trustgraph_vps_cutover"],
+    pilot_owner_readiness_receipt: pilotOwnerReadinessReceipt,
     pilot_contacts: pilotContacts
   };
 
@@ -6437,6 +6473,22 @@ function PlanAlignmentPanel({
           <button className="secondary-action" onClick={() => downloadTextFile(pilotContactsExportName, pilotLaunchContactsToCsv(pilotContacts), "text/csv")} type="button">
             Export pilot contacts
           </button>
+        </div>
+        <div className="pilot-owner-readiness-receipt" aria-label="Pilot owner readiness receipt">
+          <div>
+            <span className={`status-chip ${confirmedPilotContacts === pilotContacts.length ? "success" : "warning"}`}>Pilot owner readiness</span>
+            <strong>{confirmedPilotContacts === pilotContacts.length ? "Pilot ownership is confirmed" : "Pilot ownership still needs names"}</strong>
+            <small>{pilotOwnerReadinessReceipt.accepted_when}</small>
+          </div>
+          <div className="pilot-owner-readiness-grid">
+            {pilotOwnerReadinessCards.map((card) => (
+              <article key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
         </div>
         <div className="production-gate-register">
           <span className="eyebrow">Pilot operations register</span>

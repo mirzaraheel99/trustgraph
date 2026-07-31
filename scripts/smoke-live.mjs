@@ -714,6 +714,13 @@ assertIncludesAny(bundleText, ["migration 043 account context RPC"], "account co
 assertIncludesAny(bundleText, ["RLS repair"], "database strip RLS repair proof");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
 assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact intake");
+assertIncludesAny(bundleText, ["Pilot owner readiness"], "pilot owner readiness receipt");
+assertIncludesAny(bundleText, ["pilot_owner_readiness_receipt"], "pilot owner readiness packet field");
+assertIncludesAny(
+  bundleText,
+  ["pilot_customer_roster_onboarding_owner_support_owner_and_incident_owner_are_confirmed_from_live_supabase_contact_rows_before_pilot_launch"],
+  "pilot owner readiness acceptance rule"
+);
 assertIncludesAny(bundleText, ["Stop conditions"], "production stop condition summary");
 assertIncludesAny(bundleText, ["Allowed mode"], "production allowed-mode summary");
 assertIncludesAny(bundleText, ["Preview context only"], "signed-out preview context label");
