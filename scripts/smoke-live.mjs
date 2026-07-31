@@ -481,6 +481,10 @@ assertIncludesAny(bundleText, ["Hosted version receipt"], "hosted version receip
 assertIncludesAny(bundleText, ["hosted_version_receipt"], "hosted version receipt packet field");
 assertIncludesAny(bundleText, ["server_head_matches_latest_green_main_commit"], "hosted version receipt acceptance rule");
 assertIncludesAny(bundleText, ["git -C /opt/trustgraph rev-parse --short HEAD"], "hosted version receipt server HEAD command");
+assertIncludesAny(bundleText, ["Server sync monitor"], "server sync monitor label");
+assertIncludesAny(bundleText, ["server_sync_monitor"], "server sync monitor packet field");
+assertIncludesAny(bundleText, ["vps_release_stamp_returns_commit_json"], "server sync monitor acceptance rule");
+assertIncludesAny(bundleText, ["The host is alive, but the release stamp returned the app shell"], "server sync stale-host guidance");
 assertIncludesAny(bundleText, ["Operator home"], "signed-in role-aware dashboard label");
 assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");

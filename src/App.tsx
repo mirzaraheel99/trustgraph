@@ -184,6 +184,16 @@ type LivePilotRowProof = {
   }>;
 };
 
+type ServerSyncMonitorState = {
+  status: "checking" | "synced" | "needs_update" | "pages_bundle" | "unreachable";
+  headline: string;
+  detail: string;
+  checkedAt: string | null;
+  commit: string | null;
+  source: string;
+  stampUrl: string;
+};
+
 const toneLabels: Record<Tone, string> = {
   success: "success",
   warning: "warning",
@@ -13185,6 +13195,15 @@ function App() {
   const [missingRecordStatus, setMissingRecordStatus] = useState("Switch to Verify role for missing-record requests");
   const [passportMissingRecordRequests, setPassportMissingRecordRequests] = useState<DbMissingRecordRequest[]>([]);
   const [passportMissingRecordStatus, setPassportMissingRecordStatus] = useState("Sign in to review requested Passport records");
+  const [serverSyncMonitor, setServerSyncMonitor] = useState<ServerSyncMonitorState>({
+    status: "checking",
+    headline: "Checking saved build",
+    detail: "Looking for the release stamp on the current host.",
+    checkedAt: null,
+    commit: null,
+    source: "current_host",
+    stampUrl: "/trustgraph-release.json"
+  });
   const accountUser = accountContext ? accountContextToSessionUser(accountContext) : sessionUser;
   const organizationList = accountContext ? accountContextOrganizations(accountContext) : organizations;
   const activeMembership =
@@ -13197,6 +13216,90 @@ function App() {
   const teamManagementReady = Boolean(
     authSession && accountContext && teamMembers.length && !memberStatus.toLowerCase().includes("failed")
   );
+
+  useEffect(() => {
+    let cancelled = false;
+    const stampUrl =
+      typeof window === "undefined"
+        ? "/trustgraph-release.json"
+        : new URL("/trustgraph-release.json", window.location.origin).toString();
+
+    async function checkServerSync() {
+      setServerSyncMonitor((current) => ({
+        ...current,
+        status: "checking",
+        headline: "Checking saved build",
+        detail: "Reading the release stamp from the current host.",
+        stampUrl
+      }));
+
+      try {
+        const response = await fetch(`${stampUrl}?checked=${Date.now()}`, {
+          cache: "no-store",
+          headers: { Accept: "application/json" }
+        });
+        const contentType = response.headers.get("content-type") ?? "";
+        const body = await response.text();
+        const checkedAt = new Date().toISOString();
+
+        if (cancelled) return;
+
+        if (!response.ok) {
+          setServerSyncMonitor({
+            status: "pages_bundle",
+            headline: "Release stamp not served here",
+            detail: "GitHub Pages can still be current, but the VPS saved-build check needs the server updater.",
+            checkedAt,
+            commit: null,
+            source: "http_status",
+            stampUrl
+          });
+          return;
+        }
+
+        if (!contentType.includes("application/json") || body.trim().startsWith("<!DOCTYPE html")) {
+          setServerSyncMonitor({
+            status: "needs_update",
+            headline: "VPS needs the GitHub updater",
+            detail: "The host is alive, but the release stamp returned the app shell instead of commit JSON.",
+            checkedAt,
+            commit: null,
+            source: "html_instead_of_release_stamp",
+            stampUrl
+          });
+          return;
+        }
+
+        const stamp = JSON.parse(body) as { commit?: string; short_commit?: string; source?: string; generated_at?: string };
+        setServerSyncMonitor({
+          status: "synced",
+          headline: "Saved build stamp found",
+          detail: `Server reports commit ${stamp.short_commit ?? stamp.commit ?? "unknown"} from ${stamp.source ?? "GitHub main"}.`,
+          checkedAt: stamp.generated_at ?? checkedAt,
+          commit: stamp.short_commit ?? stamp.commit ?? null,
+          source: stamp.source ?? "release_stamp",
+          stampUrl
+        });
+      } catch (error) {
+        if (cancelled) return;
+        setServerSyncMonitor({
+          status: "unreachable",
+          headline: "Saved build check could not connect",
+          detail: error instanceof Error ? error.message : "The release stamp request failed.",
+          checkedAt: new Date().toISOString(),
+          commit: null,
+          source: "fetch_error",
+          stampUrl
+        });
+      }
+    }
+
+    void checkServerSync();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -15477,6 +15580,27 @@ function App() {
       detail: "The VPS updater writes /trustgraph-release.json with the deployed Git commit after every rebuild."
     }
   ];
+  const serverSyncMonitorTone =
+    serverSyncMonitor.status === "synced"
+      ? "success"
+      : serverSyncMonitor.status === "checking"
+        ? "neutral"
+        : serverSyncMonitor.status === "pages_bundle"
+          ? "info"
+          : "warning";
+  const serverSyncMonitorPacket = {
+    mode: "server_sync_monitor",
+    generated_at: new Date().toISOString(),
+    current_status: serverSyncMonitor.status,
+    headline: serverSyncMonitor.headline,
+    detail: serverSyncMonitor.detail,
+    checked_at: serverSyncMonitor.checkedAt,
+    reported_commit: serverSyncMonitor.commit,
+    source: serverSyncMonitor.source,
+    release_stamp_url: serverSyncMonitor.stampUrl,
+    server_update_command: hostedVersionReceipt.server_update_command,
+    accepted_when: "vps_release_stamp_returns_commit_json_for_the_current_green_github_main_build"
+  };
   const serverReleasePacketName = `trustgraph-server-release-save-path-${new Date().toISOString().slice(0, 10)}.json`;
   const serverReleasePacket = {
     mode: "server_release_save_path",
@@ -15486,6 +15610,7 @@ function App() {
     vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
     protected_vfix_host: "https://5-75-224-110.sslip.io",
     hosted_version_receipt: hostedVersionReceipt,
+    server_sync_monitor: serverSyncMonitorPacket,
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
     verify_command: "git -C /opt/trustgraph rev-parse --short HEAD && curl -I https://trustgraph.5-75-224-110.sslip.io/ && curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
     release_stamp_url: "https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
@@ -15933,6 +16058,36 @@ function App() {
               <span>Release stamp</span>
               <code>{hostedVersionReceipt.release_stamp_command}</code>
             </div>
+          </div>
+          <div className="server-sync-monitor" aria-label="Server sync monitor">
+            <div>
+              <span className={`status-chip ${serverSyncMonitorTone}`}>Server sync monitor</span>
+              <strong>{serverSyncMonitor.headline}</strong>
+              <small>{serverSyncMonitor.detail}</small>
+            </div>
+            <div className="server-sync-monitor-grid">
+              <article className={serverSyncMonitor.status === "synced" ? "ready" : "next"}>
+                <span>Status</span>
+                <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+                <small>{serverSyncMonitor.checkedAt ? `Checked ${serverSyncMonitor.checkedAt}` : "Waiting for browser check"}</small>
+              </article>
+              <article>
+                <span>Reported commit</span>
+                <strong>{serverSyncMonitor.commit ?? "Not proven"}</strong>
+                <small>Accepted only when the stamp returns commit JSON.</small>
+              </article>
+              <article>
+                <span>Release stamp URL</span>
+                <strong>trustgraph-release.json</strong>
+                <small>{serverSyncMonitor.stampUrl}</small>
+              </article>
+            </div>
+            {serverSyncMonitor.status !== "synced" && (
+              <div className="server-sync-next">
+                <span>Next server action</span>
+                <code>{hostedVersionReceipt.server_update_command}</code>
+              </div>
+            )}
           </div>
           <div className="server-release-grid">
             {serverReleaseLanes.map((lane) => (

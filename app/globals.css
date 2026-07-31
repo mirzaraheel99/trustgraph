@@ -12123,6 +12123,8 @@ p {
   .server-release-cockpit-header,
   .server-release-command,
   .server-release-grid,
+  .server-sync-monitor-grid,
+  .server-sync-next,
   .v1-operating-map-header,
   .v1-operating-map-grid,
   .workspace-command-strip,
@@ -14410,6 +14412,87 @@ body {
 .hosted-version-command code {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.server-sync-monitor {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.server-sync-monitor > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.server-sync-monitor strong,
+.server-sync-monitor small,
+.server-sync-monitor span,
+.server-sync-monitor code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.server-sync-monitor > div:first-child > strong {
+  color: var(--ink);
+  font-size: clamp(20px, 2.2vw, 30px);
+  line-height: 1.04;
+}
+
+.server-sync-monitor small {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.server-sync-monitor-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+}
+
+.server-sync-monitor-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.server-sync-monitor-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.34);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.server-sync-monitor-grid article.next {
+  border-color: rgba(248, 205, 106, 0.28);
+  background: rgba(248, 205, 106, 0.07);
+}
+
+.server-sync-monitor-grid span,
+.server-sync-next span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.server-sync-next {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(248, 205, 106, 0.24);
+  border-radius: 8px;
+  background: rgba(248, 205, 106, 0.06);
 }
 
 .v1-operating-map {

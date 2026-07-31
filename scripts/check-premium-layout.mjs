@@ -26,6 +26,7 @@ assert(authenticatedRender.includes('aria-label="Portal choice guide"'), "signed
 assert(authenticatedRender.includes('aria-label="V1 proof collection command"'), "signed-in dashboard must expose a V1 proof collection command.");
 assert(authenticatedRender.includes('aria-label="Server release save path"'), "signed-in dashboard must expose the GitHub-to-VPS release save path.");
 assert(authenticatedRender.includes('aria-label="Hosted version receipt"'), "signed-in dashboard must expose the VPS hosted version receipt.");
+assert(authenticatedRender.includes('aria-label="Server sync monitor"'), "signed-in dashboard must expose a live server sync monitor.");
 assert(app.includes("trustgraph-release.json"), "signed-in dashboard must expose the VPS release stamp verification command.");
 assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in dashboard must expose the end-to-end V1 operating map.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
@@ -65,6 +66,7 @@ assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-c
 assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
+assert(premiumRepair.includes(".server-sync-monitor") && premiumRepair.includes(".server-sync-monitor-grid") && premiumRepair.includes(".server-sync-next"), "server sync monitor must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");
