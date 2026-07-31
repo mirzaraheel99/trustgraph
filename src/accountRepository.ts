@@ -13,6 +13,20 @@ export interface AccountContext {
 }
 
 export async function loadAccountContext(profileId: string, accessToken?: string): Promise<AccountContext> {
+  if (accessToken) {
+    try {
+      const context = await supabaseRpc<AccountContext>("get_account_context", {}, { accessToken });
+      if (context.profile.id !== profileId) {
+        throw new Error(`Profile mismatch: expected ${profileId}, received ${context.profile.id}`);
+      }
+      return context;
+    } catch (error) {
+      if (!isMissingAccountContextRpc(error)) {
+        throw error;
+      }
+    }
+  }
+
   const [profile] = await supabaseRest<DbProfile[]>(
     `profiles?id=eq.${encodeURIComponent(profileId)}&select=*`,
     { accessToken }
@@ -35,6 +49,13 @@ export async function loadAccountContext(profileId: string, accessToken?: string
     profile,
     memberships
   };
+}
+
+function isMissingAccountContextRpc(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("Could not find the function public.get_account_context")
+    || message.includes("function public.get_account_context")
+    || message.includes("PGRST202");
 }
 
 export async function requestAccessGrant(input: {

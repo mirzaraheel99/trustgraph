@@ -52,4 +52,17 @@ if (operatorFunctionBody.includes("from public.organizations") || operatorFuncti
   throw new Error("RLS check failed: is_trustgraph_operator must not query organizations from an organizations policy.");
 }
 
+const accountContextRpc = latestSqlByFile["043_account_context_rpc.sql"] ?? "";
+if (!accountContextRpc.includes("create or replace function public.get_account_context()")) {
+  throw new Error("Missing account context RPC migration for non-recursive corporate login.");
+}
+
+if (!accountContextRpc.includes("security definer") || !accountContextRpc.includes("auth.uid()")) {
+  throw new Error("RLS check failed: account context RPC must use an authenticated security-definer boundary.");
+}
+
+if (!accountContextRpc.includes("grant execute on function public.get_account_context() to authenticated")) {
+  throw new Error("RLS check failed: account context RPC must be executable by authenticated users.");
+}
+
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);
