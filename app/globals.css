@@ -823,6 +823,124 @@ button {
   line-height: 1.45;
 }
 
+.public-pricing-estimator {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(260px, 0.44fr) minmax(0, 0.7fr) minmax(220px, 0.42fr);
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 14px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.08), transparent 58%),
+    linear-gradient(225deg, rgba(134, 174, 246, 0.06), transparent 70%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.public-pricing-estimator-copy,
+.public-pricing-estimator-controls,
+.public-pricing-estimator-grid,
+.public-pricing-estimator-actions {
+  min-width: 0;
+}
+
+.public-pricing-estimator-copy {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.public-pricing-estimator strong,
+.public-pricing-estimator small,
+.public-pricing-estimator span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-pricing-estimator-copy > strong {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.public-pricing-estimator-copy small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.public-pricing-estimator-controls {
+  display: grid;
+  gap: 10px;
+  align-content: center;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.public-pricing-estimator-controls label {
+  display: grid;
+  gap: 6px;
+}
+
+.public-pricing-estimator-controls label span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-pricing-estimator-controls input[type="number"] {
+  min-height: 42px;
+  width: 100%;
+}
+
+.public-pricing-estimator-controls input[type="range"] {
+  width: 100%;
+  accent-color: var(--teal);
+}
+
+.public-pricing-estimator-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.public-pricing-estimator-grid span {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-pricing-estimator-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.public-pricing-estimator-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.public-pricing-estimator-actions {
+  display: grid;
+  gap: 8px;
+  align-content: center;
+}
+
+.public-pricing-estimator-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .registration-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -11120,6 +11238,9 @@ p {
   .workflow-grid,
   .pricing-grid,
   .pricing-decision-strip,
+  .public-pricing-estimator,
+  .public-pricing-estimator-grid,
+  .public-pricing-estimator-actions,
   .pending-registration-grid,
   .registration-grid,
   .selected-portal-command,

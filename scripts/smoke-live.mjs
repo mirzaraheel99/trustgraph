@@ -588,6 +588,11 @@ assertIncludesAny(bundleText, ["Export gates"], "billing decision gate export co
 assertIncludesAny(bundleText, ["Export launch packet"], "billing launch packet export control");
 assertIncludesAny(bundleText, ["Pricing structure packet"], "pricing structure packet label");
 assertIncludesAny(bundleText, ["Export pricing packet"], "pricing structure packet export control");
+assertIncludesAny(bundleText, ["Pilot pricing estimator"], "public pilot pricing estimator");
+assertIncludesAny(bundleText, ["Estimate Corporate Verify seats before signup"], "public pricing estimator headline");
+assertIncludesAny(bundleText, ["public_pricing_pilot_estimator"], "public pricing estimator packet mode");
+assertIncludesAny(bundleText, ["stripe_checkout_disabled_until_human_gate"], "public pricing estimator Stripe gate field");
+assertIncludesAny(bundleText, ["Export pricing estimate"], "public pricing estimate export control");
 assertIncludesAny(bundleText, ["Supabase ledger"], "public pricing live ledger decision");
 assertIncludesAny(bundleText, ["Stripe checkout"], "public pricing human-gated Stripe decision");
 assertIncludesAny(bundleText, ["pricing_decision_strip"], "registration packet pricing decision field");

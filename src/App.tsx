@@ -10546,6 +10546,7 @@ function PublicSite({
   const [organizationName, setOrganizationName] = useState("");
   const [organizationDomain, setOrganizationDomain] = useState("");
   const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
+  const [pilotSeatCount, setPilotSeatCount] = useState(5);
   const [message, setMessage] = useState("Create an account. Email verification may be required; Supabase built-in email allows 2 messages per hour.");
   const [hasPendingCorporateRegistration, setHasPendingCorporateRegistration] = useState(false);
   const [verificationLinkInput, setVerificationLinkInput] = useState("");
@@ -10664,6 +10665,22 @@ function PublicSite({
       detail: "Real payment collection waits for product, tax, invoice, refund, dunning, and webhook decisions."
     }
   ];
+  const pilotSeatPrice = 149;
+  const normalizedPilotSeats = Math.min(250, Math.max(1, Number.isFinite(pilotSeatCount) ? pilotSeatCount : 1));
+  const pilotMonthlyEstimate = normalizedPilotSeats * pilotSeatPrice;
+  const pilotAnnualPlanningEstimate = pilotMonthlyEstimate * 12;
+  const pricingEstimatorPacket = {
+    mode: "public_pricing_pilot_estimator",
+    selected_portal: portal,
+    corporate_seats: normalizedPilotSeats,
+    pilot_monthly_price_per_seat: pilotSeatPrice,
+    pilot_monthly_ledger_estimate: pilotMonthlyEstimate,
+    annualized_planning_estimate: pilotAnnualPlanningEstimate,
+    live_now: "Supabase organization_subscriptions ledger activation",
+    payment_collection: "stripe_checkout_disabled_until_human_gate",
+    human_gate_required_for: ["Stripe Checkout", "customer portal", "invoice emails", "taxes", "refunds", "dunning", "payment webhooks"],
+    database_path: "organization_subscriptions rows are accepted for pilot planning; external payment collection is not enabled"
+  };
   const portalLoginSwitchboard = [
     {
       label: "Professional user login",
@@ -11359,6 +11376,65 @@ function PublicSite({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+        <div className="public-pricing-estimator" aria-label="Public pricing pilot estimator">
+          <div className="public-pricing-estimator-copy">
+            <span className="status-chip neutral">Pilot pricing estimator</span>
+            <strong>Estimate Corporate Verify seats before signup</strong>
+            <small>Use this for pilot ledger planning only. TrustGraph writes subscription intent to Supabase; Stripe payment collection stays off until the human billing gate is approved.</small>
+          </div>
+          <div className="public-pricing-estimator-controls">
+            <label>
+              <span>Corporate seats</span>
+              <input
+                max="250"
+                min="1"
+                onChange={(event) => setPilotSeatCount(Number(event.target.value))}
+                type="number"
+                value={normalizedPilotSeats}
+              />
+            </label>
+            <input
+              aria-label="Corporate pilot seats"
+              max="250"
+              min="1"
+              onChange={(event) => setPilotSeatCount(Number(event.target.value))}
+              type="range"
+              value={normalizedPilotSeats}
+            />
+          </div>
+          <div className="public-pricing-estimator-grid">
+            <span>
+              <strong>${pilotSeatPrice}</strong>
+              <small>pilot monthly per seat</small>
+            </span>
+            <span>
+              <strong>${pilotMonthlyEstimate.toLocaleString()}</strong>
+              <small>monthly ledger estimate</small>
+            </span>
+            <span>
+              <strong>${pilotAnnualPlanningEstimate.toLocaleString()}</strong>
+              <small>annualized planning estimate</small>
+            </span>
+          </div>
+          <div className="public-pricing-estimator-actions">
+            <button className="primary-action" onClick={() => openPortal("corporate")} type="button">
+              Start Corporate with {normalizedPilotSeats} seats
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-public-pricing-estimator-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(pricingEstimatorPacket, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export pricing estimate
+            </button>
+          </div>
         </div>
         <div className="pilot-signal-row">
           {pilotSignals.map((signal) => (
