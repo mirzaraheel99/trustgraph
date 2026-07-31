@@ -4063,6 +4063,69 @@ function CorporateDirectoryPanel({
       tone: openGapRequestCount ? "warning" : "ready"
     }
   ];
+  const classificationCounts = {
+    public_profile: uniqueProfessionalCount,
+    professional_controlled: sharedRecords.filter((record) => record.sensitivity === "standard" && !record.consentRequired).length,
+    sensitive_or_restricted: sensitiveSharedRecordCount,
+    consent_required: consentRequiredSharedRecordCount,
+    blocked_or_unavailable: unavailableRequestCount
+  };
+  const corporateClassificationHandlingContract = {
+    mode: "corporate_classification_handling_contract",
+    source_planning_document: "docs/07-data-classification-and-privacy-model.md",
+    active_database_mode: databaseMode,
+    accepted_when:
+      "corporate_verify_rows_show_classification_access_consent_retention_export_deletion_and_audit_boundaries_before_review_or_export",
+    status_visibility_can_differ_from_evidence_visibility: true,
+    raw_private_files_included: false,
+    preview_data_accepted: false,
+    access_checks: [
+      "active corporate RBAC role",
+      "approved Access Grant",
+      "professional consent scope",
+      "record classification",
+      "record status",
+      "legal restriction"
+    ],
+    classification_counts: classificationCounts
+  };
+  const corporateClassificationRules = [
+    {
+      label: "Public profile",
+      value: `${classificationCounts.public_profile}`,
+      detail: "Name and shared profile context can appear only inside the approved corporate request scope.",
+      rule: "Status visible",
+      ready: uniqueProfessionalCount > 0
+    },
+    {
+      label: "Professional controlled",
+      value: `${classificationCounts.professional_controlled}`,
+      detail: "Work, credential, training, and responsibility rows need professional sharing approval.",
+      rule: "Grant required",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Sensitive or restricted",
+      value: `${classificationCounts.sensitive_or_restricted}`,
+      detail: "Sensitive records need explicit scope and separate evidence authorization before preview or download.",
+      rule: "Separate evidence access",
+      ready: sensitiveSharedRecordCount === 0 || consentRequiredSharedRecordCount > 0
+    },
+    {
+      label: "Blocked or unavailable",
+      value: `${classificationCounts.blocked_or_unavailable}`,
+      detail: "Requested, declined, revoked, or expired grants cannot expose user rows.",
+      rule: "Do not export",
+      ready: unavailableRequestCount === 0
+    },
+    {
+      label: "Audit and export",
+      value: "Metadata only",
+      detail: "Exports carry filtered row metadata and review proof; raw private files stay excluded.",
+      rule: "Audit required",
+      ready: true
+    }
+  ];
   const activeDirectoryFilters = [
     statusFilter !== "all" ? `status:${statusFilter}` : "",
     readinessFilter !== "all" ? `readiness:${readinessFilter}` : "",
@@ -4276,6 +4339,7 @@ function CorporateDirectoryPanel({
       preview_data_accepted_for_v1: false
     },
     corporate_database_visibility_snapshot: corporateDatabaseVisibilitySnapshotPacket,
+    corporate_classification_handling_contract: corporateClassificationHandlingContract,
     reviewer_database_readiness_board: reviewerDatabaseReadinessPacket,
     corporate_scope_review_command: {
       ready_checks: corporateScopeReviewReady,
@@ -4764,6 +4828,36 @@ function CorporateDirectoryPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="corporate-classification-contract" aria-label="Corporate classification handling contract">
+        <div className="directory-source-strip">
+          <span className="status-chip neutral">Classification handling contract</span>
+          <small>{corporateClassificationHandlingContract.accepted_when}</small>
+        </div>
+        <div className="corporate-classification-grid">
+          {corporateClassificationRules.map((item) => (
+            <article className={item.ready ? "ready" : "warning"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+              <em>{item.rule}</em>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-classification-boundary">
+          <span>
+            <strong>Status visibility</strong>
+            <small>Record status may be visible through an approved grant even when underlying restricted Evidence stays hidden.</small>
+          </span>
+          <span>
+            <strong>Access checks</strong>
+            <small>{corporateClassificationHandlingContract.access_checks.join(", ")}</small>
+          </span>
+          <span>
+            <strong>No raw files</strong>
+            <small>Corporate Verify exports metadata, scope, and audit proof only; private evidence files are excluded.</small>
+          </span>
         </div>
       </div>
       <div className="corporate-directory-acceptance" aria-label="Corporate directory acceptance">

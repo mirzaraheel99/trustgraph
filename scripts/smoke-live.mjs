@@ -807,6 +807,11 @@ assertIncludesAny(bundleText, ["Ready handoff"], "corporate access handoff actio
 assertIncludesAny(bundleText, ["Corporate visibility ledger"], "corporate visibility ledger panel");
 assertIncludesAny(bundleText, ["corporate_visibility_ledger"], "corporate visibility ledger packet field");
 assertIncludesAny(bundleText, ["Visible user records"], "corporate visibility visible records count");
+assertIncludesAny(bundleText, ["Classification handling contract"], "corporate classification handling contract panel");
+assertIncludesAny(bundleText, ["corporate_classification_handling_contract"], "corporate classification handling contract packet field");
+assertIncludesAny(bundleText, ["status_visibility_can_differ_from_evidence_visibility"], "corporate classification status/evidence boundary");
+assertIncludesAny(bundleText, ["corporate_verify_rows_show_classification_access_consent_retention_export_deletion_and_audit_boundaries"], "corporate classification acceptance rule");
+assertIncludesAny(bundleText, ["No raw files"], "corporate classification raw file exclusion");
 assertIncludesAny(bundleText, ["Corporate scope review command"], "corporate scope review command panel");
 assertIncludesAny(bundleText, ["corporate_scope_review_command"], "corporate scope review packet field");
 assertIncludesAny(bundleText, ["every visible user row must be live, approved, scoped, gap-reviewed, and attested"], "corporate scope review boundary copy");

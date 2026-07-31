@@ -196,6 +196,9 @@ assert(app.includes("Record database receipt"), "Corporate Verify must expose a 
 assert(app.includes('aria-label="Corporate database visibility snapshot"'), "Corporate Verify must expose a persisted visibility snapshot for filtered database rows.");
 assert(css.includes(".corporate-database-visibility-snapshot") && css.includes(".corporate-database-visibility-grid"), "corporate database visibility snapshot must be styled and bounded.");
 assert(app.includes("Record visibility snapshot"), "Corporate Verify must expose a visibility snapshot save action.");
+assert(app.includes('aria-label="Corporate classification handling contract"'), "Corporate Verify must expose Step 07 classification handling before review/export.");
+assert(app.includes("corporate_classification_handling_contract") && app.includes("status_visibility_can_differ_from_evidence_visibility"), "Corporate Verify classification packet must encode the status/evidence visibility boundary.");
+assert(css.includes(".corporate-classification-contract") && css.includes(".corporate-classification-grid") && css.includes(".corporate-classification-boundary"), "corporate classification handling contract must be styled and bounded.");
 assert(app.includes('aria-label="Reviewer database readiness board"'), "Corporate Verify must expose a reviewer database readiness board before filters.");
 assert(css.includes(".reviewer-database-readiness-board") && css.includes(".reviewer-database-readiness-grid"), "reviewer database readiness board must be styled and bounded.");
 assert(css.includes("Corporate portal usability repair") && css.includes(".corporate-directory-panel .directory-controls"), "Corporate Verify must include the final usability repair for directory controls.");

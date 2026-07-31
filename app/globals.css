@@ -10417,6 +10417,7 @@ p {
 }
 
 .corporate-visibility-ledger,
+.corporate-classification-contract,
 .corporate-review-attestations {
   display: grid;
   gap: 10px;
@@ -10500,6 +10501,83 @@ p {
   color: var(--muted);
   font-size: 11px;
   line-height: 1.35;
+}
+
+.corporate-classification-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-classification-grid article,
+.corporate-classification-boundary span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.corporate-classification-grid article.ready {
+  border-color: rgba(112, 224, 178, 0.24);
+  background: rgba(112, 224, 178, 0.05);
+}
+
+.corporate-classification-grid article.warning {
+  border-color: rgba(225, 184, 102, 0.24);
+  background: rgba(225, 184, 102, 0.06);
+}
+
+.corporate-classification-grid span,
+.corporate-classification-grid strong,
+.corporate-classification-grid small,
+.corporate-classification-grid em,
+.corporate-classification-boundary strong,
+.corporate-classification-boundary small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-classification-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-classification-grid strong {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.06;
+}
+
+.corporate-classification-grid small,
+.corporate-classification-boundary small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.corporate-classification-grid em {
+  align-self: end;
+  color: rgba(171, 247, 224, 0.82);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.corporate-classification-boundary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-classification-boundary strong {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.16;
 }
 
 .corporate-scope-review-command {
@@ -14729,6 +14807,9 @@ p {
   .reviewer-database-readiness-board,
   .reviewer-database-readiness-header,
   .reviewer-database-readiness-grid,
+  .corporate-classification-contract,
+  .corporate-classification-grid,
+  .corporate-classification-boundary,
   .v1-operating-map-header,
   .v1-operating-map-grid,
   .workspace-command-strip,
@@ -20691,6 +20772,8 @@ body {
 .directory-metrics,
 .corporate-user-database-export-grid,
 .corporate-database-visibility-grid,
+.corporate-classification-grid,
+.corporate-classification-boundary,
 .corporate-scope-review-grid,
 .corporate-access-next-action-grid,
 .corporate-database-access-decision-grid,
