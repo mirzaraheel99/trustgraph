@@ -208,6 +208,8 @@ const requiredMobileStacks = [
   ".public-portal-database-contract-grid",
   ".public-buyer-launch-path",
   ".public-buyer-launch-grid",
+  ".portal-front-door-grid",
+  ".portal-front-door-proof",
   ".public-portal-launchpad-grid",
   ".public-portal-launchpad-proof",
   ".pricing-decision-strip",

@@ -15597,6 +15597,8 @@ p {
   .public-pricing-estimator,
   .public-pricing-estimator-grid,
   .public-pricing-estimator-actions,
+  .portal-front-door-grid,
+  .portal-front-door-proof,
   .public-portal-launch-grid,
   .public-server-sync-receipt,
   .public-server-sync-grid,
@@ -21255,6 +21257,128 @@ body {
 
 .portal-start-desk-next button {
   width: 100%;
+}
+
+.portal-front-door {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 900px);
+  margin-top: 18px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(236, 240, 226, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(240, 198, 107, 0.055) 54%, transparent),
+    rgba(8, 17, 18, 0.9);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+}
+
+.portal-front-door-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.portal-front-door strong,
+.portal-front-door small,
+.portal-front-door span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.portal-front-door-copy > strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1.08;
+}
+
+.portal-front-door-copy small {
+  color: rgba(222, 239, 233, 0.74);
+  line-height: 1.42;
+}
+
+.portal-front-door-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 9px;
+}
+
+.portal-front-door-grid button {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  min-height: 136px;
+  padding: 12px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+  box-shadow: none;
+  white-space: normal;
+}
+
+.portal-front-door-grid button.active {
+  border-color: rgba(95, 240, 201, 0.4);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.12), rgba(134, 174, 246, 0.045)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.portal-front-door-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.portal-front-door-grid strong {
+  font-size: 16px;
+  line-height: 1.16;
+}
+
+.portal-front-door-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.portal-front-door-proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(170px, auto);
+  align-items: stretch;
+  gap: 9px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(210, 231, 223, 0.1);
+}
+
+.portal-front-door-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.portal-front-door-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.18;
+}
+
+.portal-front-door-proof small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.portal-front-door-proof button {
+  min-width: 0;
+  white-space: normal;
 }
 
 .public-portal-launchpad {

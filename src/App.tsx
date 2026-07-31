@@ -16055,6 +16055,50 @@ function PublicSite({
       portal_outcome: portalOutcome
     }))
   };
+  const portalFrontDoor = {
+    generated_at: new Date().toISOString(),
+    mode: "portal_front_door",
+    selected_portal: portal,
+    selected_mode: mode,
+    primary_action: selectedPortalCommand.headline,
+    pricing: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    next_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
+    database_boundary: registrationDecisionReceipt.database_boundary,
+    server_saved_status: serverSyncMonitor.status,
+    accepted_when:
+      "public_front_door_shows_professional_login_corporate_login_registration_pricing_database_boundary_recovery_and_server_status_before_dense_content"
+  };
+  const portalFrontDoorActions = [
+    {
+      label: "Professional user",
+      value: portal === "professional" ? selectedPortalCommand.headline : "Create or login to Passport",
+      detail: "Own your Passport, evidence, consent, and sharing approvals.",
+      portal: "professional" as const,
+      mode: "signup" as const
+    },
+    {
+      label: "Corporate team",
+      value: portal === "corporate" ? selectedPortalCommand.headline : "Create or login to company",
+      detail: "Request approved user records. No open browsing of the user database.",
+      portal: "corporate" as const,
+      mode: "signup" as const
+    },
+    {
+      label: "Login",
+      value: "Existing account",
+      detail: "Use hosted TrustGraph login, then land in the right portal.",
+      portal,
+      mode: "signin" as const
+    },
+    {
+      label: "Pricing",
+      value: portal === "corporate" ? "$149 pilot" : "$0 pilot",
+      detail: selectedRegistrationPath.paymentStatus,
+      portal,
+      mode
+    }
+  ];
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -16102,6 +16146,62 @@ function PublicSite({
             <button className="secondary-action" onClick={() => openPortal("corporate")}>
               Corporate portal
             </button>
+          </div>
+          <div className="portal-front-door" aria-label="Portal front door">
+            <div className="portal-front-door-copy">
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Portal front door</span>
+              <strong>{selectedPortalCommand.headline}</strong>
+              <small>{portalFrontDoor.accepted_when}</small>
+            </div>
+            <div className="portal-front-door-grid">
+              {portalFrontDoorActions.map((item) => (
+                <button
+                  className={portal === item.portal && mode === item.mode ? "active" : ""}
+                  key={`${item.label}-${item.mode}`}
+                  onClick={() => {
+                    setPortal(item.portal);
+                    setMode(item.mode);
+                    if (item.label === "Pricing") {
+                      document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" });
+                      return;
+                    }
+                    window.requestAnimationFrame(() => document.getElementById("portal-auth")?.scrollIntoView({ behavior: "smooth" }));
+                  }}
+                  type="button"
+                >
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="portal-front-door-proof">
+              <span>
+                <strong>{portalFrontDoor.pricing}</strong>
+                <small>Selected pricing</small>
+              </span>
+              <span>
+                <strong>{portalFrontDoor.first_database_write}</strong>
+                <small>First live database write</small>
+              </span>
+              <span>
+                <strong>{portalFrontDoor.server_saved_status.replaceAll("_", " ")}</strong>
+                <small>Server saved status</small>
+              </span>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-portal-front-door-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(portalFrontDoor, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export front door
+              </button>
+            </div>
           </div>
           <div className="public-portal-launchpad" aria-label="Public portal launchpad">
             <div className="public-portal-launchpad-copy">

@@ -151,6 +151,10 @@ assertIncludesAny(bundleText, ["gated production decisions"], "Scale pricing hum
 assertIncludesAny(bundleText, ["Corporate portal access"], "Corporate portal registration/login entry");
 assertIncludesAny(bundleText, ["Professional Passport access"], "Professional portal registration/login entry");
 assertIncludesAny(bundleText, ["Public portal launchpad"], "public first-screen portal launchpad");
+assertIncludesAny(bundleText, ["Portal front door"], "public first-screen portal front door");
+assertIncludesAny(bundleText, ["portal_front_door"], "public portal front door packet field");
+assertIncludesAny(bundleText, ["public_front_door_shows_professional_login_corporate_login_registration_pricing_database_boundary_recovery_and_server_status_before_dense_content"], "public portal front door acceptance rule");
+assertIncludesAny(bundleText, ["Export front door"], "public portal front door export action");
 assertIncludesAny(bundleText, ["Choose your path"], "public portal launchpad chooser");
 assertIncludesAny(bundleText, ["Review price and database path before signup"], "public launchpad pricing and database proof");
 assertIncludesAny(bundleText, ["Portal launch map"], "public hero portal launch map");
