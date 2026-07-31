@@ -5642,6 +5642,101 @@ p,
   line-height: 1.35;
 }
 
+.onboarding-next-action-rail {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.08), rgba(225, 184, 102, 0.045)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.onboarding-next-action-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.onboarding-next-action-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.onboarding-next-action-rail strong,
+.onboarding-next-action-rail small,
+.onboarding-next-action-rail span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.onboarding-next-action-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.onboarding-next-action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.onboarding-next-action-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 118px;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.onboarding-next-action-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.35);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.onboarding-next-action-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.onboarding-next-action-grid strong {
+  font-size: 16px;
+  line-height: 1.14;
+}
+
+.onboarding-next-action-grid small,
+.onboarding-next-action-proof small,
+.onboarding-next-action-header small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.onboarding-next-action-proof {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.onboarding-next-action-proof span {
+  color: #b7f9e9;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .onboarding-wizard-receipt {
   display: grid;
   gap: 12px;
@@ -17436,6 +17531,9 @@ p {
   }
 
   .auth-recovery-database-grid,
+  .onboarding-next-action-header,
+  .onboarding-next-action-grid,
+  .onboarding-next-action-proof,
   .onboarding-wizard-receipt-grid {
     grid-template-columns: 1fr;
   }

@@ -13412,6 +13412,51 @@ function OnboardingChecklistPanel({
     live_database_proof: workingDatabaseProof,
     seed_reconciliation_complete: seedReconciliationComplete
   };
+  const onboardingNextActionRail = {
+    generated_at: new Date().toISOString(),
+    mode: "onboarding_next_action_rail",
+    current_step: nextItem.label,
+    current_step_done: nextItem.done,
+    primary_action: nextItem.done ? "Export working-data proof" : nextItem.actionLabel,
+    live_database_rows: workingDataTotal,
+    preview_data_accepted: false,
+    accepted_when:
+      "onboarding_next_action_rail_shows_login_passport_corporate_pricing_database_proof_and_export_route_without_dashboard_hunting",
+    route:
+      !authSession
+        ? "hosted_registration"
+        : nextItem.label === "Corporate workspace" || nextItem.label === "Team and plan" || nextItem.label === "Sharing loop"
+          ? "corporate_verify_or_setup"
+          : nextItem.done
+            ? "working_database_export"
+            : "professional_passport",
+    proof_exports: [
+      "guided onboarding wizard packet",
+      "working-data packet",
+      "hosted login database handoff",
+      "live seed preflight"
+    ]
+  };
+  const onboardingNextActionCards = [
+    {
+      label: "Next click",
+      value: onboardingNextActionRail.primary_action,
+      detail: nextItem.done ? "Export proof or review launch gates." : nextItem.detail,
+      ready: nextItem.done
+    },
+    {
+      label: "Database requirement",
+      value: authSession && accountContext ? "Live rows" : "Hosted login",
+      detail: authSession && accountContext ? `${workingDataTotal} Supabase rows loaded in this context.` : "Preview rows do not count for v1.",
+      ready: Boolean(authSession && accountContext)
+    },
+    {
+      label: "Completion proof",
+      value: `${completed}/${checklist.length}`,
+      detail: "Progress must include Professional, Corporate, pricing, user database, and export proof.",
+      ready: completed === checklist.length
+    }
+  ];
 
   async function saveOnboardingReceipt() {
     setReceiptBusy(true);
@@ -13463,6 +13508,41 @@ function OnboardingChecklistPanel({
         <span className="status-chip neutral">current step</span>
         <strong>{nextItem.label}</strong>
         <small>{nextItem.done ? "Review live account, records, corporate access, team, and sharing evidence before production gates." : nextItem.detail}</small>
+      </div>
+      <div className="onboarding-next-action-rail" aria-label="Onboarding next action rail">
+        <div className="onboarding-next-action-header">
+          <div>
+            <span className={`status-chip ${nextItem.done ? "success" : "warning"}`}>Onboarding next action</span>
+            <strong>{onboardingNextActionRail.primary_action}</strong>
+            <small>{onboardingNextActionRail.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-onboarding-next-action-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(onboardingNextActionRail, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export next action
+          </button>
+        </div>
+        <div className="onboarding-next-action-grid">
+          {onboardingNextActionCards.map((card) => (
+            <article className={card.ready ? "ready" : ""} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="onboarding-next-action-proof">
+          <span>{onboardingNextActionRail.route}</span>
+          <small>{onboardingNextActionRail.proof_exports.join(" | ")}</small>
+        </div>
       </div>
       <div className="onboarding-wizard-receipt" aria-label="Onboarding wizard database receipt">
         <div>

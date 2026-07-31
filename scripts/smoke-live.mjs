@@ -534,6 +534,14 @@ assertIncludesAny(bundleText, ["onboarding_wizard_receipts"], "onboarding wizard
 assertIncludesAny(bundleText, ["record_onboarding_wizard_receipt"], "onboarding wizard receipt RPC");
 assertIncludesAny(bundleText, ["Onboarding wizard database receipt"], "onboarding wizard database receipt label");
 assertIncludesAny(bundleText, ["Record onboarding receipt"], "onboarding wizard receipt record action");
+assertIncludesAny(bundleText, ["Onboarding next action"], "onboarding next action rail label");
+assertIncludesAny(bundleText, ["onboarding_next_action_rail"], "onboarding next action rail packet field");
+assertIncludesAny(bundleText, ["Export next action"], "onboarding next action rail export");
+assertIncludesAny(
+  bundleText,
+  ["onboarding_next_action_rail_shows_login_passport_corporate_pricing_database_proof_and_export_route_without_dashboard_hunting"],
+  "onboarding next action rail acceptance rule"
+);
 assertIncludesAny(
   bundleText,
   ["onboarding_wizard_receipt_requires_hosted_login_account_context_registration_corporate_setup_pricing_user_database_and_preview_data_rejected"],
