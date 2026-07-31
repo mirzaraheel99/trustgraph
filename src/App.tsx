@@ -2362,6 +2362,57 @@ function VerifyRequestsPanel({
       ready: reviews.length > 0 && pendingGapCount === 0
     }
   ];
+  const corporateAccessProgressStrip = {
+    mode: "corporate_access_progress_strip",
+    status: sharedRecords.length ? "shared_rows_visible" : approvedCount ? "approval_ready_reload_rows" : requests.length ? "waiting_for_professional_approval" : disabled ? "corporate_role_required" : "request_access_first",
+    next_action: firstUseNextAction,
+    completed_steps:
+      (disabled ? 0 : 1) +
+      (requests.length ? 1 : 0) +
+      (approvedCount ? 1 : 0) +
+      (sharedRecords.length ? 1 : 0) +
+      (reviews.length && pendingGapCount === 0 ? 1 : 0),
+    total_steps: 5,
+    accepted_when:
+      "corporate_verify_access_progress_strip_shows_role_request_approval_visible_rows_review_export_and_no_open_user_database_browse"
+  };
+  const corporateAccessProgressSteps = [
+    {
+      label: "Role",
+      value: disabled ? "Needed" : "Active",
+      detail: disabled ? "Create or switch to a company reviewer role." : activeOrganization.name,
+      ready: !disabled,
+      target: "company-admin"
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length} sent` : "Send first",
+      detail: "Request one professional by email and purpose.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: "Rows stay hidden until the professional approves.",
+      ready: approvedCount > 0,
+      target: "corporate-verify-request-list"
+    },
+    {
+      label: "Rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Hidden",
+      detail: "Only scoped Passport rows load for this company.",
+      ready: sharedRecords.length > 0,
+      target: sharedRecords.length ? "corporate-access-review-queue" : "corporate-verify-request-list"
+    },
+    {
+      label: "Proof",
+      value: reviews.length && pendingGapCount === 0 ? "Ready" : "Export after review",
+      detail: pendingGapCount ? `${pendingGapCount} missing-record follow-ups remain.` : "Record attestation, then export the packet.",
+      ready: reviews.length > 0 && pendingGapCount === 0,
+      target: "corporate-access-review-queue"
+    }
+  ];
   const corporatePortalQuickStart = {
     mode: "corporate_portal_quick_start",
     headline: disabled
@@ -2556,6 +2607,52 @@ function VerifyRequestsPanel({
               </button>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="corporate-access-progress-strip" aria-label="Corporate Verify access progress strip">
+        <div className="corporate-access-progress-strip-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Corporate access progress</span>
+            <strong>{corporateAccessProgressStrip.next_action}</strong>
+            <small>{corporateAccessProgressStrip.accepted_when}</small>
+          </div>
+          <div className="corporate-access-progress-meter">
+            <strong>{corporateAccessProgressStrip.completed_steps}/{corporateAccessProgressStrip.total_steps}</strong>
+            <small>steps ready</small>
+          </div>
+        </div>
+        <div className="corporate-access-progress-grid">
+          {corporateAccessProgressSteps.map((step) => (
+            <button
+              className={step.ready ? "ready" : "next"}
+              key={step.label}
+              onClick={() => document.getElementById(step.target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              type="button"
+            >
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-access-progress-proof">
+          <span>
+            <strong>No open user browse</strong>
+            <small>Corporate Verify only shows approved, consent-scoped rows for the active RBAC context.</small>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-access-progress-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateAccessProgressStrip, steps: corporateAccessProgressSteps }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export progress proof
+          </button>
         </div>
       </div>
       <div className="verify-summary-grid">

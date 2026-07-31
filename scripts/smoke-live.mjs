@@ -787,6 +787,13 @@ assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify re
 assertIncludesAny(bundleText, ["Corporate Verify first-use wizard"], "Corporate Verify first-use wizard label");
 assertIncludesAny(bundleText, ["corporate_verify_first_use_wizard"], "Corporate Verify first-use packet mode");
 assertIncludesAny(bundleText, ["Export first-use proof"], "Corporate Verify first-use proof export");
+assertIncludesAny(bundleText, ["Corporate access progress"], "Corporate Verify access progress strip");
+assertIncludesAny(bundleText, ["corporate_access_progress_strip"], "Corporate Verify access progress packet field");
+assertIncludesAny(
+  bundleText,
+  ["corporate_verify_access_progress_strip_shows_role_request_approval_visible_rows_review_export_and_no_open_user_database_browse"],
+  "Corporate Verify access progress acceptance rule"
+);
 assertIncludesAny(bundleText, ["Corporate Verify live access command"], "Corporate Verify live access command");
 assertIncludesAny(bundleText, ["corporate_verify_live_access_command"], "Corporate Verify live access command packet field");
 assertIncludesAny(bundleText, ["Export access command"], "Corporate Verify live access command export");

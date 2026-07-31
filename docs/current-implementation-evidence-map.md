@@ -44,7 +44,7 @@ The app exposes these operator exports to prove live database state after sign-i
 
 - Portal access packet: signed-in profile, active membership, organization, role, workspace route, and hosted redirect.
 - Corporate provisioning packet: created organization, membership, role, and database write evidence.
-- Corporate user database packet and review queue CSV: filtered professional access rows, shared record scope, structured responsibilities, skills, source counts, missing-record gap focus, latest review attestation state, next action, corporate directory acceptance checks, Step 07 classification handling contract, and `corporate_access.review_recorded` audit expectation visible to the active Verify workspace.
+- Corporate user database packet and review queue CSV: filtered professional access rows, shared record scope, structured responsibilities, skills, source counts, missing-record gap focus, latest review attestation state, next action, corporate access progress strip, corporate directory acceptance checks, Step 07 classification handling contract, and `corporate_access.review_recorded` audit expectation visible to the active Verify workspace.
 - Corporate reviewer action bar packet: request access, review rows, record attestation, export packet, and locked reason stay visible before directory filters so corporate users are not dropped into an unclear table.
 - Renewal readiness packet: visible Passport or Verify records grouped by expired, 45-day due-soon, dated, and missing-expiration review states.
 - Confidentiality review packet: visible performance reviews, references, restricted records, and explicit-consent records scoped to the active Passport or Verify view.
