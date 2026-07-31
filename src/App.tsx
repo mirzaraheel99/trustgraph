@@ -130,7 +130,12 @@ import {
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
-import { loadRegistrationIntents, markRegistrationIntentWorkspaceCreated, recordRegistrationIntent } from "./registrationRepository";
+import {
+  loadRegistrationIntents,
+  markRegistrationIntentPassportInitialized,
+  markRegistrationIntentWorkspaceCreated,
+  recordRegistrationIntent
+} from "./registrationRepository";
 import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
 import { loadPilotLaunchContacts, recordPilotLaunchContact } from "./pilotLaunchRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
@@ -14690,10 +14695,27 @@ function App() {
       email: authSession.user.email,
       accessToken: authSession.accessToken
     })
-      .then((context) => {
+      .then(async (context) => {
+        const intents = await loadRegistrationIntents(authSession.accessToken).catch(() => []);
+        const capturedProfessionalIntent = intents.find(
+          (intent) => intent.selected_portal === "professional" && intent.status === "captured"
+        );
+        if (capturedProfessionalIntent) {
+          await markRegistrationIntentPassportInitialized({
+            accessToken: authSession.accessToken,
+            intentId: capturedProfessionalIntent.id
+          });
+        }
+        const refreshedIntents = capturedProfessionalIntent
+          ? await loadRegistrationIntents(authSession.accessToken).catch(() => intents)
+          : intents;
         if (cancelled) return;
         setAccountContext(context);
         setActiveMembershipId(context.memberships[0]?.id ?? sessionUser.activeMembershipId);
+        setRegistrationIntents(refreshedIntents);
+        setRegistrationIntentStatus(
+          refreshedIntents.length ? `Registration intents: ${refreshedIntents.length}` : "No registration intent rows yet"
+        );
         setAccountStatus("Live Supabase account context");
       })
       .catch((error) => {
@@ -16917,8 +16939,10 @@ function App() {
     table: "registration_intents",
     rpc: "record_registration_intent",
     completion_rpc: "mark_registration_intent_workspace_created",
+    professional_completion_rpc: "mark_registration_intent_passport_initialized",
     loaded_count: registrationIntents.length,
     workspace_created_count: registrationIntents.filter((intent) => intent.status === "workspace_created").length,
+    passport_initialized_count: registrationIntents.filter((intent) => intent.status === "passport_initialized").length,
     latest_intent: latestRegistrationIntent,
     accepted_when:
       "registration_intents_are_written_after_hosted_auth_loaded_from_supabase_and_visible_in_live_row_proof_before_pilot_acceptance"
@@ -16941,8 +16965,8 @@ function App() {
     },
     {
       label: "Completed",
-      value: `${registrationIntentReviewPacket.workspace_created_count}`,
-      detail: "Corporate workspace creation marks matching captured intents as workspace_created."
+      value: `${registrationIntentReviewPacket.workspace_created_count + registrationIntentReviewPacket.passport_initialized_count}`,
+      detail: "Corporate workspaces and Professional Passports mark matching captured intents as completed."
     }
   ];
   const onboardingHandoffCommand = {

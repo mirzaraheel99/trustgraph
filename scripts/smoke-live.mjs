@@ -470,6 +470,8 @@ assertIncludesAny(bundleText, ["Registration intent review"], "registration inte
 assertIncludesAny(bundleText, ["registration_intent_review_packet"], "registration intent review packet field");
 assertIncludesAny(bundleText, ["mark_registration_intent_workspace_created"], "registration intent workspace-created RPC marker");
 assertIncludesAny(bundleText, ["workspace_created"], "registration intent completed status marker");
+assertIncludesAny(bundleText, ["mark_registration_intent_passport_initialized"], "registration intent passport-initialized RPC marker");
+assertIncludesAny(bundleText, ["passport_initialized"], "registration intent professional completed status marker");
 assertIncludesAny(bundleText, ["registration_intents_are_written_after_hosted_auth_loaded_from_supabase_and_visible_in_live_row_proof_before_pilot_acceptance"], "registration intent review acceptance rule");
 assertIncludesAny(bundleText, ["Export intent review"], "registration intent review export control");
 assertIncludesAny(bundleText, ["Working database command center"], "working database command center panel");
@@ -817,6 +819,7 @@ assertIncludesAny(bundleText, ["Registration database launch order"], "registrat
 assertIncludesAny(bundleText, ["registration_database_launch_order"], "registration database launch order packet field");
 assertIncludesAny(bundleText, ["registration_intents"], "registration intent table marker");
 assertIncludesAny(bundleText, ["record_registration_intent"], "registration intent RPC marker");
+assertIncludesAny(bundleText, ["mark_registration_intent_passport_initialized"], "registration intent professional completion RPC marker");
 assertIncludesAny(bundleText, ["Apply migration 044 to record registration intent rows"], "registration intent migration guidance");
 assertIncludesAny(bundleText, ["registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit"], "registration database launch order acceptance rule");
 assertIncludesAny(bundleText, ["Export registration order"], "registration database launch order export");

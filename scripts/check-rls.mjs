@@ -100,4 +100,21 @@ if (!registrationIntentStatusMigration.includes("grant execute on function publi
   throw new Error("RLS check failed: registration intent status RPC must be executable by authenticated users.");
 }
 
+const registrationIntentProfessionalStatusMigration = latestSqlByFile["046_registration_intent_professional_status.sql"] ?? "";
+if (!registrationIntentProfessionalStatusMigration.includes("create or replace function public.mark_registration_intent_passport_initialized")) {
+  throw new Error("Missing registration intent passport-initialized status RPC.");
+}
+
+if (!registrationIntentProfessionalStatusMigration.includes("intent.profile_id = current_id")) {
+  throw new Error("RLS check failed: professional registration intent status update must be owner-scoped.");
+}
+
+if (!registrationIntentProfessionalStatusMigration.includes("intent.selected_portal = 'professional'")) {
+  throw new Error("RLS check failed: professional registration intent status update must only complete professional intents.");
+}
+
+if (!registrationIntentProfessionalStatusMigration.includes("grant execute on function public.mark_registration_intent_passport_initialized")) {
+  throw new Error("RLS check failed: professional registration intent status RPC must be executable by authenticated users.");
+}
+
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

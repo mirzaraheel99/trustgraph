@@ -70,6 +70,8 @@ const flowChecks = [
       "Registration intent review",
       "registration_intent_review_packet",
       "mark_registration_intent_workspace_created",
+      "mark_registration_intent_passport_initialized",
+      "passport_initialized",
       "registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit",
       "Live onboarding acceptance contract",
       "live_onboarding_acceptance_contract",

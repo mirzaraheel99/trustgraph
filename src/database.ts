@@ -50,7 +50,7 @@ export type OrganizationInvitationStatus = "pending" | "accepted" | "cancelled" 
 export type ConsentAuthorizationStatus = "active" | "revoked" | "expired";
 export type RegistrationIntentPortal = "professional" | "corporate";
 export type RegistrationIntentMode = "signin" | "signup";
-export type RegistrationIntentStatus = "captured" | "workspace_created" | "cancelled";
+export type RegistrationIntentStatus = "captured" | "workspace_created" | "passport_initialized" | "cancelled";
 export type ProductionGateStatus =
   | "human_decision_required"
   | "external_signoff_required"

@@ -50,3 +50,16 @@ export async function markRegistrationIntentWorkspaceCreated(input: {
     { accessToken: input.accessToken }
   );
 }
+
+export async function markRegistrationIntentPassportInitialized(input: {
+  accessToken: string;
+  intentId: string;
+}): Promise<DbRegistrationIntent> {
+  return supabaseRpc<DbRegistrationIntent>(
+    "mark_registration_intent_passport_initialized",
+    {
+      target_intent_id: input.intentId
+    },
+    { accessToken: input.accessToken }
+  );
+}
