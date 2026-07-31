@@ -6,6 +6,7 @@ const compose = fs.readFileSync("docker-compose.server.yml", "utf8");
 const dockerfile = fs.readFileSync("Dockerfile", "utf8");
 const caddyfile = fs.readFileSync("Caddyfile", "utf8");
 const preflight = fs.readFileSync("tools/preflight-vps.sh", "utf8");
+const updateVps = fs.readFileSync("tools/update-vps-from-github.sh", "utf8");
 const envValidator = fs.readFileSync("tools/validate-server-env.sh", "utf8");
 
 const requiredSnippets = [
@@ -89,6 +90,24 @@ const runtimeSnippets = [
     path: "tools/preflight-vps.sh",
     snippet: "PROTECTED_VFIX_HOST=\"5-75-224-110.sslip.io\"",
     label: "preflight knows the protected VFIX host"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "git pull --ff-only origin main",
+    label: "manual VPS update pulls the GitHub main branch"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "bash tools/preflight-vps.sh",
+    label: "manual VPS update runs preflight before build"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "5-75-224-110.sslip.io|5.75.224.110|*/CRM-client-demo*",
+    label: "manual VPS update refuses VFIX host and CRM route"
   },
   {
     source: envValidator,

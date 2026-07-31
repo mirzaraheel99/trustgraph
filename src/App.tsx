@@ -9343,6 +9343,7 @@ function OnboardingChecklistPanel({
   const seedEvidenceExportName = `trustgraph-live-pilot-seed-evidence-${new Date().toISOString().slice(0, 10)}.json`;
   const workingDataExportName = `trustgraph-working-database-proof-${new Date().toISOString().slice(0, 10)}.json`;
   const hostedLoginHandoffExportName = `trustgraph-hosted-login-database-handoff-${new Date().toISOString().slice(0, 10)}.json`;
+  const hostedCorporateRetestExportName = `trustgraph-hosted-corporate-retest-${new Date().toISOString().slice(0, 10)}.json`;
   const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
   const workingDataRows = [
     { label: "Passport records", count: livePassportRecords.length },
@@ -9853,6 +9854,88 @@ function OnboardingChecklistPanel({
       "Run the TrustGraph VPS workflow only against the TrustGraph host and keep the VFIX host isolated."
     ]
   };
+  const hostedCorporateRetestSteps = [
+    {
+      label: "Open hosted app",
+      required: "Start from https://mirzaraheel99.github.io/trustgraph/ or the TrustGraph VPS host, not localhost.",
+      status: "Ready to test",
+      ok: true,
+      evidence: "Hosted GitHub Pages URL is the primary source of truth."
+    },
+    {
+      label: "Email link returns hosted",
+      required: "Supabase verification and recovery links must return to the hosted URL.",
+      status: hostedAuthRedirectUrl().includes("localhost") ? "Fix redirect" : "Hosted redirect",
+      ok: !hostedAuthRedirectUrl().includes("localhost"),
+      evidence: hostedAuthRedirectUrl()
+    },
+    {
+      label: "Login session accepted",
+      required: "A hosted Supabase session is present after login or verification.",
+      status: authSession ? "Signed in" : "Login required",
+      ok: Boolean(authSession),
+      evidence: authSession ? authSession.user.email : "No session loaded"
+    },
+    {
+      label: "Account RPC and RBAC loaded",
+      required: "Profile, memberships, organizations, and active role load without organization policy recursion.",
+      status: accountContext ? "Context loaded" : "Context missing",
+      ok: Boolean(accountContext),
+      evidence: accountContext ? `${accountContext.memberships.length} memberships loaded through account context` : "No account context"
+    },
+    {
+      label: "Corporate workspace active",
+      required: "Employer or staffing workspace is created or selected for Corporate Verify.",
+      status: hasCorporateContext ? "Corporate ready" : "Corporate setup needed",
+      ok: hasCorporateContext,
+      evidence: hasCorporateContext ? "Corporate membership is present in account context" : "Create corporate account"
+    },
+    {
+      label: "Pricing ledger active",
+      required: "Corporate Verify pilot plan writes a live organization subscription row.",
+      status: activeSubscription ? "Ledger live" : "Ledger needed",
+      ok: activeSubscription,
+      evidence: `${organizationSubscriptions.length} subscription rows loaded`
+    },
+    {
+      label: "User database visible",
+      required: "Corporate Verify can see Access Grant and shared Passport rows only after approval.",
+      status: accessGrants.some((grant) => grant.status === "approved") ? "Approved access" : "Access needed",
+      ok: accessGrants.some((grant) => grant.status === "approved") && liveDatabaseAcceptanceRows.some((row) => row.label === "Corporate access database" && row.ok),
+      evidence: `${accessGrants.length} grants, ${corporateAccessReviews.length} review attestations`
+    },
+    {
+      label: "Proof exports available",
+      required: "Operator can export hosted login handoff, working-data packet, V1 cockpit, and corporate user packet.",
+      status: liveAccountAcceptanceReady || liveDatabaseAcceptancePassing > 0 ? "Exportable" : "Needs live rows",
+      ok: liveAccountAcceptanceReady || liveDatabaseAcceptancePassing > 0,
+      evidence: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length} database groups ready`
+    }
+  ];
+  const hostedCorporateRetestReady = hostedCorporateRetestSteps.filter((step) => step.ok).length;
+  const hostedCorporateRetestNextStep = hostedCorporateRetestSteps.find((step) => !step.ok) ?? hostedCorporateRetestSteps[hostedCorporateRetestSteps.length - 1];
+  const hostedCorporateRetestPacket = {
+    mode: "hosted_corporate_retest",
+    generated_at: new Date().toISOString(),
+    hosted_app_url: "https://mirzaraheel99.github.io/trustgraph/",
+    trustgraph_vps_target: "https://trustgraph.5-75-224-110.sslip.io",
+    protected_vfix_host: "https://5-75-224-110.sslip.io",
+    ready_steps: hostedCorporateRetestReady,
+    total_steps: hostedCorporateRetestSteps.length,
+    next_step: hostedCorporateRetestNextStep.label,
+    next_required: hostedCorporateRetestNextStep.required,
+    no_localhost_callback_required: true,
+    account_context_rpc_required: "public.get_account_context",
+    corporate_database_access_policy: "Corporate Verify can read user rows only after approved Access Grants, consent, RBAC, and review attestation.",
+    steps: hostedCorporateRetestSteps,
+    exports_to_collect: [
+      "hosted login/database handoff packet",
+      "working-data packet",
+      "V1 completion cockpit packet",
+      "corporate user database packet"
+    ],
+    accepted_when: "hosted_login_rbac_context_corporate_workspace_pricing_ledger_and_approved_user_rows_are_visible_without_localhost_redirects"
+  };
   const guidedOnboardingWizard = {
     generated_at: new Date().toISOString(),
     mode: authSession && accountContext ? "live_supabase" : "product_preview",
@@ -10280,9 +10363,9 @@ function OnboardingChecklistPanel({
             Export working-data packet
           </button>
         </div>
-        <div className="seed-evidence-card">
-          <span className={`status-chip ${hostedLoginDatabaseReady ? "success" : "warning"}`}>
-            {hostedLoginDatabaseReady ? "hosted login verified" : "hosted login handoff"}
+          <div className="seed-evidence-card">
+            <span className={`status-chip ${hostedLoginDatabaseReady ? "success" : "warning"}`}>
+              {hostedLoginDatabaseReady ? "hosted login verified" : "hosted login handoff"}
           </span>
           <strong>Hosted login and database handoff</strong>
           <small>
@@ -10293,6 +10376,37 @@ function OnboardingChecklistPanel({
             <button className="secondary-action" onClick={() => downloadTextFile(hostedLoginHandoffExportName, JSON.stringify(hostedLoginDatabaseHandoff, null, 2), "application/json")} type="button">
               Export login handoff
             </button>
+          </div>
+        </div>
+        <div className="hosted-corporate-retest" aria-label="Hosted corporate retest checklist">
+          <div className="hosted-corporate-retest-top">
+            <div>
+              <span className={`status-chip ${hostedCorporateRetestReady === hostedCorporateRetestSteps.length ? "success" : "warning"}`}>
+                Hosted corporate retest
+              </span>
+              <strong>{hostedCorporateRetestReady}/{hostedCorporateRetestSteps.length} hosted corporate checks ready</strong>
+              <small>{hostedCorporateRetestNextStep.required}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(hostedCorporateRetestExportName, JSON.stringify(hostedCorporateRetestPacket, null, 2), "application/json")}
+              type="button"
+            >
+              Export hosted retest
+            </button>
+          </div>
+          <div className="hosted-corporate-retest-grid">
+            {hostedCorporateRetestSteps.map((step) => (
+              <article className={step.ok ? "ready" : ""} key={step.label}>
+                <span className={`status-dot ${step.ok ? "on" : ""}`} />
+                <div>
+                  <strong>{step.label}</strong>
+                  <small>{step.required}</small>
+                  <small>{step.evidence}</small>
+                </div>
+                <span>{step.status}</span>
+              </article>
+            ))}
           </div>
         </div>
       </div>

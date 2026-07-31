@@ -30,6 +30,7 @@ assert(app.includes('aria-label="Corporate setup stepper"'), "corporate account 
 assert(app.includes('aria-label="Corporate Verify first-use wizard"'), "Corporate Verify must expose a guided first-use wizard for request, approval, review, and proof export.");
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
+assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readiness must expose hosted corporate retest checklist.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
 assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
@@ -51,6 +52,7 @@ assert(premiumRepair.includes(".corporate-setup-stepper") && premiumRepair.inclu
 assert(premiumRepair.includes(".corporate-verify-first-use") && premiumRepair.includes(".corporate-verify-first-use-grid"), "Corporate Verify first-use wizard must be styled and bounded.");
 assert(premiumRepair.includes(".auth-recovery-command-grid") && premiumRepair.includes(".public-auth-recovery-actions"), "auth recovery command buttons must be included in overflow guards.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
+assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");
 assert(premiumRepair.includes(".admin-audit-export-command") && premiumRepair.includes(".admin-audit-export-command-grid"), "admin audit export command must be bounded in the premium shell.");
 assert(premiumRepair.includes(".audit-filter-receipt"), "audit filter receipt must be bounded in the premium shell.");

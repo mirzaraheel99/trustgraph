@@ -275,6 +275,9 @@ assertIncludesAny(bundleText, ["not localhost"], "hosted auth redirect localhost
 assertIncludesAny(bundleText, ["https://mirzaraheel99.github.io/trustgraph/"], "hosted auth redirect URL");
 assertIncludesAny(bundleText, ["allowed_production_redirects"], "hosted auth production redirect list");
 assertIncludesAny(bundleText, ["Hosted email verification accepted"], "hosted auth callback success status");
+assertIncludesAny(bundleText, ["Hosted corporate retest"], "hosted corporate retest checklist");
+assertIncludesAny(bundleText, ["hosted_corporate_retest"], "hosted corporate retest packet");
+assertIncludesAny(bundleText, ["Export hosted retest"], "hosted corporate retest export");
 assertIncludesAny(bundleText, ["Signed evidence links"], "private evidence signed URL label");
 assertIncludesAny(bundleText, ["Export evidence manifest"], "evidence manifest export control");
 assertIncludesAny(bundleText, ["Passport record creation path"], "Passport record creation path label");

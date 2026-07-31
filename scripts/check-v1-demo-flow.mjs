@@ -111,6 +111,9 @@ const flowChecks = [
     label: "Working database acceptance rejects preview-only evidence",
     required: [
       "Working database command center",
+      "Hosted corporate retest",
+      "hosted_corporate_retest",
+      "Export hosted retest",
       "Live account acceptance checklist",
       "live_account_acceptance_checklist",
       "Live pilot row proof",
