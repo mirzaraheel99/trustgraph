@@ -11920,6 +11920,33 @@ function PublicSite({
     next_step: selectedPortalCommand.next,
     proof_required: "Hosted Supabase login plus live repository rows; localhost callbacks and preview data are not accepted."
   };
+  const portalDatabaseAccessContract = {
+    mode: "public_portal_database_access_contract",
+    selected_portal: portal,
+    headline: "Professional rows stay owner-controlled; Corporate rows are scoped by request, consent, and RBAC.",
+    accepted_when:
+      "professional_registration_corporate_registration_pricing_ledger_and_scoped_user_database_access_are_visible_before_signup",
+    lanes: [
+      {
+        label: "Professional registration",
+        portal: "Professional Passport",
+        live_write: "profile, personal organization, membership, Passport records, evidence metadata",
+        access_rule: "Professional owns records and approves every Access Grant before a company can review rows."
+      },
+      {
+        label: "Corporate registration",
+        portal: "Corporate Verify",
+        live_write: "company organization, admin membership, subscription ledger, team invitations",
+        access_rule: "Company reviewers request one professional by email and see only approved shared rows."
+      },
+      {
+        label: "Pricing structure",
+        portal: "Pilot ledger",
+        live_write: "$0 Professional pilot and $149 Corporate Verify pilot planning rows",
+        access_rule: "Supabase ledger is live for packaging; Stripe payment collection stays human-gated."
+      }
+    ]
+  };
   const publicServerUpdateReceipt = {
     mode: "public_server_update_receipt",
     command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
@@ -12060,6 +12087,7 @@ function PublicSite({
     active_redirect_url: authRedirectUrl,
     portal_entry_path: portalEntryPath,
     public_auth_flow_command: publicAuthFlowCommand,
+    public_portal_database_access_contract: portalDatabaseAccessContract,
     registration_outcome_command: registrationOutcomeCommand,
     registration_decision_receipt: registrationDecisionReceipt,
     live_onboarding_acceptance_contract: liveOnboardingAcceptanceContract,
@@ -12767,6 +12795,23 @@ function PublicSite({
               <strong>Corporate company</strong>
               <small>Start with Corporate Verify at $149 pilot monthly, then provision RBAC, team seats, and review workflows.</small>
             </span>
+          </div>
+        </div>
+        <div className="public-portal-database-contract" aria-label="Public portal database access contract">
+          <div className="public-portal-database-contract-copy">
+            <span className="status-chip success">Portal database access contract</span>
+            <strong>{portalDatabaseAccessContract.headline}</strong>
+            <small>{portalDatabaseAccessContract.accepted_when}</small>
+          </div>
+          <div className="public-portal-database-contract-grid">
+            {portalDatabaseAccessContract.lanes.map((lane) => (
+              <article key={lane.label}>
+                <span>{lane.label}</span>
+                <strong>{lane.portal}</strong>
+                <small>{lane.live_write}</small>
+                <small>{lane.access_rule}</small>
+              </article>
+            ))}
           </div>
         </div>
         <div className="portal-route-grid">

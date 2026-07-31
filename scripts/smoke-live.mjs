@@ -694,6 +694,9 @@ assertIncludesAny(bundleText, ["Export pricing estimate"], "public pricing estim
 assertIncludesAny(bundleText, ["Supabase ledger"], "public pricing live ledger decision");
 assertIncludesAny(bundleText, ["Stripe checkout"], "public pricing human-gated Stripe decision");
 assertIncludesAny(bundleText, ["pricing_decision_strip"], "registration packet pricing decision field");
+assertIncludesAny(bundleText, ["Portal database access contract"], "public portal database access contract label");
+assertIncludesAny(bundleText, ["public_portal_database_access_contract"], "public portal database access contract packet field");
+assertIncludesAny(bundleText, ["professional_registration_corporate_registration_pricing_ledger_and_scoped_user_database_access_are_visible_before_signup"], "public portal database access contract acceptance rule");
 assertIncludesAny(bundleText, ["Billing operator path"], "billing operator path label");
 assertIncludesAny(bundleText, ["Activate pilot ledger"], "billing operator pilot ledger step");
 assertIncludesAny(bundleText, ["billing_operator_path"], "billing operator path packet field");

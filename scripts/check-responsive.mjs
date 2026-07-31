@@ -120,6 +120,8 @@ const requiredMobileStacks = [
   ".workspace-command-metrics",
   ".portal-decision-panel",
   ".portal-decision-grid",
+  ".public-portal-database-contract",
+  ".public-portal-database-contract-grid",
   ".pricing-decision-strip",
   ".public-pricing-estimator",
   ".public-pricing-estimator-grid",
@@ -279,6 +281,10 @@ if (!css.includes(".workspace-command-strip") || !css.includes("grid-template-co
 
 if (!css.includes(".portal-home-command") || !css.includes("grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr)") || !css.includes(".portal-home-actions")) {
   throw new Error("Responsive check failed: signed-in portal home must provide a clear account/corporate command center.");
+}
+
+if (!css.includes(".public-portal-database-contract") || !css.includes("grid-template-columns: minmax(0, 0.66fr) minmax(0, 1.34fr)") || !css.includes(".public-portal-database-contract-grid")) {
+  throw new Error("Responsive check failed: public portal database access contract must be visible and bounded.");
 }
 
 if (!css.includes(".server-release-cockpit") || !css.includes(".server-release-command") || !css.includes(".server-release-grid")) {

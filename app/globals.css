@@ -716,6 +716,74 @@ button {
   line-height: 1.45;
 }
 
+.public-portal-database-contract {
+  display: grid;
+  grid-template-columns: minmax(0, 0.66fr) minmax(0, 1.34fr);
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 199, 102, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 199, 102, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.public-portal-database-contract-copy {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-portal-database-contract strong,
+.public-portal-database-contract small,
+.public-portal-database-contract span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-database-contract-copy > strong {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.16;
+}
+
+.public-portal-database-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.public-portal-database-contract-grid article {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-height: 174px;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-portal-database-contract-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-database-contract-grid strong {
+  font-size: 16px;
+}
+
+.public-portal-database-contract-grid small {
+  color: var(--muted);
+  line-height: 1.38;
+}
+
 .portal-route-grid article {
   min-height: 244px;
 }
@@ -12410,6 +12478,8 @@ p {
   .workspace-command-metrics,
   .portal-decision-panel,
   .portal-decision-grid,
+  .public-portal-database-contract,
+  .public-portal-database-contract-grid,
   .portal-support-details,
   .auth-path-grid,
   .auth-access-command,

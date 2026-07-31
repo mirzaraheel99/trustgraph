@@ -51,6 +51,7 @@ assert(app.includes('aria-label="Auth recovery command center"'), "account and p
 assert(app.includes('aria-label="Login issue resolver"'), "public auth must expose visible login issue resolver guidance.");
 assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public auth must expose a live onboarding acceptance contract.");
 assert(app.includes('aria-label="Public auth flow command"'), "public auth must expose a simple flow command for account type, mode, and database result.");
+assert(app.includes('aria-label="Public portal database access contract"'), "public website must expose Professional, Corporate, pricing, and scoped database access before signup.");
 assert(app.includes('aria-label="Registration focus strip"'), "public auth must expose a compact registration focus strip before form fields.");
 assert(app.includes('aria-label="Portal submit receipt"'), "public auth must show the selected portal submit path at the form action point.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
@@ -68,6 +69,7 @@ assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(
 assert(premiumRepair.includes(".portal-choice-guide") && premiumRepair.includes(".portal-choice-guide-grid"), "portal choice guide must be styled and bounded in the premium shell.");
 assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-collection-grid"), "V1 proof collection command must be styled and bounded.");
 assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
+assert(css.includes(".public-portal-database-contract") && css.includes(".public-portal-database-contract-grid"), "public portal database access contract must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".vps-saved-update-verification") && premiumRepair.includes(".vps-saved-update-command-list"), "VPS saved update verification must be styled and bounded in the premium shell.");
