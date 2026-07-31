@@ -843,6 +843,9 @@ assertIncludesAny(
   ["corporate_database_access_decision_board_confirms_request_path_approved_rows_attestation_and_export_boundary"],
   "corporate database access decision acceptance rule"
 );
+assertIncludesAny(bundleText, ["Corporate database path"], "corporate database path strip");
+assertIncludesAny(bundleText, ["corporate_database_path_strip"], "corporate database path strip packet field");
+assertIncludesAny(bundleText, ["corporate_database_path_strip_shows_request_by_email_approval_scoped_rows_review_snapshot_export_and_no_open_user_browse_before_controls"], "corporate database path strip acceptance rule");
 assertIncludesAny(bundleText, ["Request access by professional email"], "corporate access review queue empty action");
 assertIncludesAny(bundleText, ["reviewer_scan_board"], "Corporate user database scan board packet field");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");

@@ -4317,6 +4317,59 @@ function CorporateDirectoryPanel({
     checks: reviewerDatabaseReadinessBoard.map(({ label, value, ready }) => ({ label, value, ready })),
     accepted_when: "corporate_reviewer_can_see_request_grant_scoped_rows_review_attestation_visibility_snapshot_and_export_readiness_before_filtering_user_rows"
   };
+  const corporateDatabasePathStrip = {
+    mode: "corporate_database_path_strip",
+    current_action: corporateAccessNextAction.label,
+    ready_steps: reviewerDatabaseReadinessPacket.ready_checks,
+    total_steps: reviewerDatabaseReadinessPacket.total_checks,
+    can_browse_all_users: false,
+    accepted_when:
+      "corporate_database_path_strip_shows_request_by_email_approval_scoped_rows_review_snapshot_export_and_no_open_user_browse_before_controls"
+  };
+  const corporateDatabasePathSteps = [
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "Start",
+      detail: "Professional email and business purpose.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Approval",
+      value: approvedAccessCount ? `${approvedAccessCount}` : "Waiting",
+      detail: "Professional grants scoped access.",
+      ready: approvedAccessCount > 0,
+      target: "corporate-verify-request-list"
+    },
+    {
+      label: "Rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Locked",
+      detail: "Only approved shared Passport rows.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Review",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: "Reviewer attestation audit proof.",
+      ready: reviews.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Snapshot",
+      value: latestCorporateVisibilitySnapshot ? "Saved" : "Save",
+      detail: "Filtered visibility proof.",
+      ready: Boolean(latestCorporateVisibilitySnapshot),
+      target: "corporate-database-visibility-snapshot"
+    },
+    {
+      label: "Export",
+      value: corporateAccessNextAction.ready ? "Ready" : "Blocked",
+      detail: "Metadata-only scoped packet.",
+      ready: corporateAccessNextAction.ready,
+      target: "export"
+    }
+  ];
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -4531,6 +4584,58 @@ function CorporateDirectoryPanel({
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className="corporate-database-path-strip" aria-label="Corporate database path strip">
+        <div>
+          <span className={`status-chip ${corporateDatabasePathStrip.ready_steps === corporateDatabasePathStrip.total_steps ? "success" : "warning"}`}>
+            Corporate database path
+          </span>
+          <strong>{corporateDatabasePathStrip.current_action}</strong>
+          <small>{corporateDatabasePathStrip.accepted_when}</small>
+        </div>
+        <div className="corporate-database-path-grid">
+          {corporateDatabasePathSteps.map((step) => (
+            <button
+              className={step.ready ? "ready" : "next"}
+              key={step.label}
+              onClick={() => {
+                if (step.target === "export") {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                document.getElementById(step.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-database-path-proof">
+          <span>
+            <strong>{corporateDatabasePathStrip.ready_steps}/{corporateDatabasePathStrip.total_steps}</strong>
+            <small>Ready steps</small>
+          </span>
+          <span>
+            <strong>No open browse</strong>
+            <small>Corporate requests users by professional email only.</small>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-database-path-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateDatabasePathStrip, steps: corporateDatabasePathSteps }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export path
+          </button>
+        </div>
       </div>
       <div className="corporate-database-action-cockpit" aria-label="Corporate database action cockpit">
         <div className="corporate-database-action-copy">
@@ -4748,7 +4853,7 @@ function CorporateDirectoryPanel({
           Record database receipt
         </button>
       </div>
-      <div className="corporate-database-visibility-snapshot" aria-label="Corporate database visibility snapshot">
+      <div className="corporate-database-visibility-snapshot" id="corporate-database-visibility-snapshot" aria-label="Corporate database visibility snapshot">
         <div>
           <span className={`status-chip ${latestCorporateVisibilitySnapshot ? "success" : "warning"}`}>Corporate database visibility snapshot</span>
           <strong>

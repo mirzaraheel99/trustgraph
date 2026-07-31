@@ -204,6 +204,8 @@ assert(app.includes('aria-label="Corporate database access decision board"'), "C
 assert(app.includes('aria-label="Corporate database action cockpit"'), "Corporate Verify must expose a first-screen database action cockpit before directory filters and exports.");
 assert(app.includes('aria-label="Corporate reviewer action bar"'), "Corporate Verify must expose one compact reviewer action bar before directory filters.");
 assert(css.includes(".corporate-database-access-decision-board") && css.includes(".corporate-database-access-decision-grid"), "corporate database access decision board must be styled and bounded.");
+assert(app.includes('aria-label="Corporate database path strip"') && app.includes("corporate_database_path_strip"), "Corporate Verify must expose a clear database path strip before directory filters.");
+assert(css.includes(".corporate-database-path-strip") && css.includes(".corporate-database-path-grid") && css.includes(".corporate-database-path-proof"), "corporate database path strip must be styled and bounded.");
 assert(css.includes(".corporate-database-action-cockpit") && css.includes(".corporate-database-action-grid") && css.includes(".corporate-database-action-proof"), "corporate database action cockpit must be styled and bounded.");
 assert(app.includes('aria-label="Corporate user database export receipt"'), "Corporate Verify must expose an export receipt for scoped user database packets.");
 assert(css.includes(".corporate-user-database-export-receipt") && css.includes(".corporate-user-database-export-grid"), "corporate user database export receipt must be styled and bounded.");
