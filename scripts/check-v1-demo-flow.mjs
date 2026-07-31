@@ -111,6 +111,8 @@ const flowChecks = [
     label: "Working database acceptance rejects preview-only evidence",
     required: [
       "Working database command center",
+      "Live account acceptance checklist",
+      "live_account_acceptance_checklist",
       "Live pilot row proof",
       "live_pilot_row_proof",
       "Preview data is not accepted for v1 database proof",

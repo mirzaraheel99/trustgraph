@@ -9070,6 +9070,68 @@ function OnboardingChecklistPanel({
     packet_export_required: true,
     accepted_source: "signed_in_supabase_repository_rows"
   };
+  const liveAccountAcceptanceChecklist = [
+    {
+      label: "Hosted auth session",
+      required: "User signs in from GitHub Pages or TrustGraph VPS, not localhost.",
+      ok: Boolean(authSession),
+      evidence: authSession ? authSession.user.email : "No hosted session loaded"
+    },
+    {
+      label: "RBAC account context",
+      required: "Profile, organization, membership, and active role load from Supabase.",
+      ok: Boolean(accountContext),
+      evidence: accountContext ? `${accountContext.memberships.length} memberships loaded` : "Account context missing"
+    },
+    {
+      label: "Real database row groups",
+      required: "All required Passport, evidence, corporate, consent, team, and billing rows load.",
+      ok: liveDatabaseAcceptanceComplete,
+      evidence: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length} row groups ready`
+    },
+    {
+      label: "Seed evidence reconciliation",
+      required: "Latest pilot seed IDs reconcile with rows currently loaded from repositories.",
+      ok: seedReconciliationComplete,
+      evidence: visibleSeedEvidence ? `${seedReconciliationPassing}/${seedReconciliationRows.length} seed rows matched` : "Seed not run"
+    },
+    {
+      label: "RLS repair proof",
+      required: "Migration 042 is applied or explicitly proven through release ledger / workflow evidence.",
+      ok: organizationRlsRepairEvidence.applied,
+      evidence: organizationRlsRepairEvidence.ledger_status
+    },
+    {
+      label: "VPS and VFIX boundary",
+      required: "TrustGraph host stays separate from protected VFIX route before production cutover.",
+      ok: true,
+      evidence: "trustgraph.5-75-224-110.sslip.io target; VFIX route preserved"
+    }
+  ];
+  const liveAccountAcceptanceReady = liveAccountAcceptanceChecklist.every((item) => item.ok);
+  const liveAccountAcceptanceOpenItems = liveAccountAcceptanceChecklist.filter((item) => !item.ok);
+  const nextLiveAccountAcceptanceAction =
+    liveAccountAcceptanceOpenItems[0]?.label === "Hosted auth session"
+      ? "Login on hosted TrustGraph"
+      : liveAccountAcceptanceOpenItems[0]?.label === "RBAC account context"
+        ? "Create or switch account context"
+        : liveAccountAcceptanceOpenItems[0]?.label === "Real database row groups"
+          ? nextDatabaseRepair?.action ?? "Prepare live pilot workspace"
+          : liveAccountAcceptanceOpenItems[0]?.label === "Seed evidence reconciliation"
+            ? "Run seed and reload rows"
+            : liveAccountAcceptanceOpenItems[0]?.label === "RLS repair proof"
+              ? "Verify migration 042 release ledger"
+              : "Export working-data packet";
+  const liveAccountAcceptancePacket = {
+    label: "Live account acceptance checklist",
+    status: liveAccountAcceptanceReady ? "accepted" : "human_or_live_data_action_required",
+    accepted_source: "signed_in_supabase_repository_rows",
+    preview_data_accepted: false,
+    next_action: nextLiveAccountAcceptanceAction,
+    ready: liveAccountAcceptanceReady,
+    open_items: liveAccountAcceptanceOpenItems.map((item) => item.label),
+    checklist: liveAccountAcceptanceChecklist
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -9123,6 +9185,7 @@ function OnboardingChecklistPanel({
     live_rows_currently_loaded: workingDataRows,
     live_row_total: workingDataTotal,
     working_database_command_center: workingDatabaseCommandCenter,
+    live_account_acceptance_checklist: liveAccountAcceptancePacket,
     live_database_acceptance: {
       status: workingDatabaseAcceptanceStatus,
       passing: liveDatabaseAcceptancePassing,
@@ -9170,6 +9233,7 @@ function OnboardingChecklistPanel({
     profile_email: authSession?.user.email ?? null,
     account_context_loaded: Boolean(accountContext),
     hosted_login_database_ready: hostedLoginDatabaseReady,
+    live_account_acceptance_checklist: liveAccountAcceptancePacket,
     live_database_acceptance: workingDatabaseProof.live_database_acceptance,
     seed_reconciliation_complete: seedReconciliationComplete,
     next_operator_steps: [
@@ -9245,6 +9309,30 @@ function OnboardingChecklistPanel({
               <strong>{row.value}</strong>
               <small>{row.label}</small>
             </span>
+          ))}
+        </div>
+      </div>
+      <div className="live-account-acceptance-checklist" aria-label="Live account acceptance checklist">
+        <div className="live-account-acceptance-top">
+          <div>
+            <span className={`status-chip ${liveAccountAcceptanceReady ? "success" : "warning"}`}>Live account acceptance checklist</span>
+            <strong>{liveAccountAcceptanceReady ? "Live account backend accepted" : nextLiveAccountAcceptanceAction}</strong>
+            <small>Acceptance requires signed-in Supabase repository rows. Preview data and browser-only seed memory do not count.</small>
+          </div>
+          <span className={`status-chip ${liveAccountAcceptanceReady ? "success" : "warning"}`}>
+            {liveAccountAcceptanceChecklist.length - liveAccountAcceptanceOpenItems.length}/{liveAccountAcceptanceChecklist.length} ready
+          </span>
+        </div>
+        <div className="live-account-acceptance-grid">
+          {liveAccountAcceptanceChecklist.map((item) => (
+            <article className={item.ok ? "ready" : ""} key={item.label}>
+              <span className={`status-dot ${item.ok ? "on" : ""}`} />
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.required}</small>
+                <small>{item.evidence}</small>
+              </div>
+            </article>
           ))}
         </div>
       </div>

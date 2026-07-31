@@ -356,6 +356,9 @@ assertIncludesAny(bundleText, ["Working database command center"], "working data
 assertIncludesAny(bundleText, ["working_database_command_center"], "working database command center packet field");
 assertIncludesAny(bundleText, ["Working-data packet export"], "working database command packet export label");
 assertIncludesAny(bundleText, ["Working database acceptance"], "working database acceptance summary");
+assertIncludesAny(bundleText, ["Live account acceptance checklist"], "live account acceptance checklist");
+assertIncludesAny(bundleText, ["live_account_acceptance_checklist"], "live account acceptance packet field");
+assertIncludesAny(bundleText, ["human_or_live_data_action_required"], "live account acceptance human/live data action state");
 assertIncludesAny(bundleText, ["Live Data Verdict"], "live data verdict panel");
 assertIncludesAny(bundleText, ["Required row groups"], "live data verdict row-group metric");
 assertIncludesAny(bundleText, ["working_database_accepted"], "working database acceptance packet status");

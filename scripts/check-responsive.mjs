@@ -46,6 +46,8 @@ const requiredMobileStacks = [
   ".invitation-handoff-strip",
   ".live-database-repair-grid",
   ".live-data-verdict",
+  ".live-account-acceptance-grid",
+  ".live-account-acceptance-top",
   ".live-data-verdict-grid",
   ".missing-source-strip",
   ".notification-source-strip",

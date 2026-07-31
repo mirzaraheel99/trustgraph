@@ -3813,6 +3813,94 @@ p,
   font-size: 11px;
 }
 
+.live-account-acceptance-checklist {
+  display: grid;
+  gap: 12px;
+  padding: clamp(14px, 2vw, 18px);
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.06), rgba(255, 255, 255, 0.018)),
+    rgba(8, 17, 20, 0.74);
+}
+
+.live-account-acceptance-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.live-account-acceptance-top > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.live-account-acceptance-top strong,
+.live-account-acceptance-top small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-account-acceptance-top strong {
+  color: var(--text);
+  font-size: clamp(19px, 2vw, 26px);
+  line-height: 1.1;
+}
+
+.live-account-acceptance-top small {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.live-account-acceptance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 10px;
+}
+
+.live-account-acceptance-grid article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.live-account-acceptance-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.075);
+}
+
+.live-account-acceptance-grid article > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.live-account-acceptance-grid strong,
+.live-account-acceptance-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-account-acceptance-grid strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.live-account-acceptance-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .readiness-score-card span,
 .readiness-score-card strong,
 .readiness-score-card small,
@@ -10522,6 +10610,8 @@ p {
   .onboarding-current-step,
   .seed-result-grid,
   .seed-reconciliation-grid,
+  .live-account-acceptance-top,
+  .live-account-acceptance-grid,
   .live-database-repair-grid,
   .live-database-repair-grid article,
   .live-data-verdict,
