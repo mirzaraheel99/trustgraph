@@ -23,6 +23,7 @@ assert(authenticatedRender.includes('className="workspace-flow-strip"'), "daily 
 assert(authenticatedRender.includes('className="setup-route-deck"'), "corporate setup center must expose a clear clickable route deck.");
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
+assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
 assert(app.includes('aria-label="Live pilot row proof"'), "v1 readiness must expose live pilot row proof.");
 assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: none !important"), "final CSS layer must still suppress any legacy sidebar rail.");
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
@@ -32,6 +33,7 @@ assert(premiumRepair.includes(".live-pilot-row-proof") && premiumRepair.includes
 assert(premiumRepair.includes(".setup-route-deck") && premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 230px), 1fr))"), "setup route deck must auto-fit without overflow.");
 assert(premiumRepair.includes(".auth-recovery-command-grid") && premiumRepair.includes(".public-auth-recovery-actions"), "auth recovery command buttons must be included in overflow guards.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");
+assert(premiumRepair.includes(".audit-filter-receipt"), "audit filter receipt must be bounded in the premium shell.");
 assert(premiumRepair.includes(".pilot-contact-form") && premiumRepair.includes(".consent-controls"), "corporate/admin form controls must be included in overflow guards.");
 assert(!premiumRepair.includes("radial-gradient"), "premium shell repair must avoid decorative orb-style backgrounds.");
 

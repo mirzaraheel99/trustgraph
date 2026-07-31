@@ -8418,6 +8418,30 @@ p {
   line-height: 1.4;
 }
 
+.audit-filter-receipt {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.06), rgba(255, 255, 255, 0.018)),
+    rgba(255, 255, 255, 0.024);
+}
+
+.audit-filter-receipt > div,
+.audit-filter-receipt strong,
+.audit-filter-receipt small,
+.audit-filter-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.audit-filter-receipt > div {
+  display: grid;
+  gap: 6px;
+}
+
 .admin-audit-export-matrix {
   display: grid;
   gap: 10px;
@@ -11103,6 +11127,11 @@ p {
 }
 
 .last-signed-evidence-link {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.audit-filter-receipt {
   max-width: 100%;
   overflow: hidden;
 }

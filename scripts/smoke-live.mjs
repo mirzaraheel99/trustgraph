@@ -290,6 +290,8 @@ assertIncludesAny(bundleText, ["All signal levels"], "audit signal filter");
 assertIncludesAny(bundleText, ["Clear filters"], "audit clear filters control");
 assertIncludesAny(bundleText, ["Export JSON"], "audit JSON export control");
 assertIncludesAny(bundleText, ["Admin export readiness"], "admin export readiness packet label");
+assertIncludesAny(bundleText, ["Audit filter receipt"], "admin audit filter receipt label");
+assertIncludesAny(bundleText, ["audit_filter_receipt"], "admin audit filter receipt packet field");
 assertIncludesAny(bundleText, ["Export admin readiness"], "admin export readiness export control");
 assertIncludesAny(bundleText, ["admin_audit_export_readiness"], "admin export readiness packet mode");
 assertIncludesAny(bundleText, ["Admin audit export matrix"], "admin audit export matrix label");

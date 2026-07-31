@@ -4594,6 +4594,13 @@ function AuditTrailPanel({
       raw_private_evidence_files_excluded: true,
       reviewer_note: "Use this packet before sharing Admin exports outside the operating team."
     },
+    audit_filter_receipt: {
+      label: "Audit filter receipt",
+      active: activeFilterLabels.length > 0,
+      labels: activeFilterLabels,
+      exported_event_count: filteredEvents.length,
+      raw_private_evidence_files_excluded: true
+    },
     counts: {
       loaded_audit_events: events.length,
       filtered_audit_events: filteredEvents.length,
@@ -4816,6 +4823,13 @@ function AuditTrailPanel({
               <p>{item.proves}</p>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="audit-filter-receipt" aria-label="Audit filter receipt">
+        <div>
+          <span className={`status-chip ${activeFilterLabels.length ? "success" : "neutral"}`}>Audit filter receipt</span>
+          <strong>{activeFilterLabels.length ? activeFilterLabels.join(" / ") : "All audit events in scope"}</strong>
+          <small>{filteredEvents.length} event rows will export from the current view. Private evidence files stay excluded; only evidence metadata is included.</small>
         </div>
       </div>
       <div className="audit-coverage-note">
