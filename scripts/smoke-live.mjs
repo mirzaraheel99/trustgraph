@@ -673,6 +673,13 @@ assertIncludesAny(bundleText, ["Collect proof packets in order before calling th
 assertIncludesAny(bundleText, ["Live row completion command"], "live row completion command");
 assertIncludesAny(bundleText, ["live_row_completion_command"], "live row completion packet field");
 assertIncludesAny(bundleText, ["all_required_signed_in_supabase_row_groups_are_loaded"], "live row completion acceptance rule");
+assertIncludesAny(bundleText, ["Real database completion plan"], "real database completion plan label");
+assertIncludesAny(bundleText, ["real_database_completion_plan"], "real database completion packet field");
+assertIncludesAny(
+  bundleText,
+  ["hosted_login_registration_corporate_workspace_pricing_user_database_access_evidence_consent_team_review_release_and_owner_receipts_are_loaded_from_live_supabase_rows"],
+  "real database completion plan acceptance rule"
+);
 assertIncludesAny(bundleText, ["Live data load receipt"], "live data load receipt");
 assertIncludesAny(bundleText, ["live_data_load_receipt"], "live data load receipt packet field");
 assertIncludesAny(bundleText, ["hosted_session_row_groups_loaded_seed_ids_reconciled_and_no_preview_or_fixture_rows_are_used_for_acceptance"], "live data load receipt acceptance rule");

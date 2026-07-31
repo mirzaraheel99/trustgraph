@@ -102,6 +102,8 @@ const requiredMobileStacks = [
   ".real-data-acceptance-summary",
   ".real-data-acceptance-grid",
   ".live-row-completion-grid",
+  ".real-database-completion-top",
+  ".real-database-completion-grid",
   ".live-data-load-receipt",
   ".live-data-load-grid",
   ".live-data-verdict",

@@ -17314,6 +17314,97 @@ body {
   white-space: normal;
 }
 
+.real-database-completion-plan {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(143, 178, 255, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(143, 178, 255, 0.08), transparent 60%),
+    rgba(16, 28, 38, 0.72);
+}
+
+.real-database-completion-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.real-database-completion-top > div,
+.real-database-next-step {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.real-database-completion-plan strong,
+.real-database-completion-plan small,
+.real-database-completion-plan span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.real-database-next-step {
+  padding: 12px;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.06);
+}
+
+.real-database-next-step span,
+.real-database-completion-grid > article > span:first-child {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.real-database-completion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.real-database-completion-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 174px;
+  padding: 12px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.real-database-completion-grid article.complete {
+  border-color: rgba(95, 240, 201, 0.26);
+}
+
+.real-database-completion-grid article.needed {
+  border-color: rgba(242, 190, 92, 0.24);
+}
+
+.real-database-completion-grid article > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.real-database-completion-grid button,
+.real-database-completion-top button {
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
 .v1-completion-lane-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));

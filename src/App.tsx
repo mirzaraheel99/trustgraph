@@ -18478,6 +18478,35 @@ function App() {
     commands: missingLiveRowCommands,
     accepted_when: "all_required_signed_in_supabase_row_groups_are_loaded_and_working_data_packet_is_exported"
   };
+  const realDatabaseCompletionSteps = livePilotRowProofRows
+    .filter((row) => row.required)
+    .map((row, index) => {
+      const missingCommand = missingLiveRowCommands.find((command) => command.label === row.label);
+      return {
+        step: index + 1,
+        label: row.label,
+        table: row.table,
+        status: row.ready ? "complete" : "needs_live_rows",
+        count: row.count,
+        evidence: row.evidence,
+        action: missingCommand?.action ?? "Review proof",
+        target: missingCommand?.target ?? "proof"
+      };
+    });
+  const nextRealDatabaseStep = realDatabaseCompletionSteps.find((step) => step.status !== "complete") ?? realDatabaseCompletionSteps[0];
+  const realDatabaseCompletionPlan = {
+    mode: "real_database_completion_plan",
+    current_host: typeof window === "undefined" ? "server_render" : window.location.origin,
+    signed_in: Boolean(authSession && accountContext),
+    preview_data_accepted: false,
+    completed_steps: realDatabaseCompletionSteps.filter((step) => step.status === "complete").length,
+    total_steps: realDatabaseCompletionSteps.length,
+    next_step: nextRealDatabaseStep,
+    accepted_when:
+      "hosted_login_registration_corporate_workspace_pricing_user_database_access_evidence_consent_team_review_release_and_owner_receipts_are_loaded_from_live_supabase_rows",
+    server_save_rule: "GitHub main remains the source; VPS acceptance requires the freshness stamp to match the latest deployed commit.",
+    steps: realDatabaseCompletionSteps
+  };
   const latestRegistrationIntent = registrationIntents[0] ?? null;
   const registrationIntentReviewPacket = {
     mode: "registration_intent_review_packet",
@@ -19866,6 +19895,74 @@ function App() {
                   </button>
                 </article>
               )}
+            </div>
+          </div>
+          <div className="real-database-completion-plan" aria-label="Real database completion plan">
+            <div className="real-database-completion-top">
+              <div>
+                <span className={`status-chip ${realDatabaseCompletionPlan.completed_steps === realDatabaseCompletionPlan.total_steps ? "success" : "warning"}`}>
+                  Real database completion plan
+                </span>
+                <strong>
+                  {realDatabaseCompletionPlan.completed_steps}/{realDatabaseCompletionPlan.total_steps} live row groups complete
+                </strong>
+                <small>{realDatabaseCompletionPlan.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-real-database-completion-plan-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(realDatabaseCompletionPlan, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export plan
+              </button>
+            </div>
+            <div className="real-database-next-step">
+              <span>Next live database step</span>
+              <strong>{nextRealDatabaseStep?.label ?? "All live row groups complete"}</strong>
+              <small>{nextRealDatabaseStep?.evidence ?? "Export the working-data and V1 readiness packets."}</small>
+            </div>
+            <div className="real-database-completion-grid">
+              {realDatabaseCompletionSteps.map((step) => (
+                <article className={step.status === "complete" ? "complete" : "needed"} key={step.label}>
+                  <span>Step {step.step}</span>
+                  <strong>{step.label}</strong>
+                  <small>{step.table}</small>
+                  <small>{step.evidence}</small>
+                  <div>
+                    <span className={`status-chip ${step.status === "complete" ? "success" : "warning"}`}>
+                      {step.status === "complete" ? `${step.count} loaded` : "needs live rows"}
+                    </span>
+                    <button
+                      className="secondary-action"
+                      onClick={() => {
+                        if (step.target === "account") {
+                          openAuthControls();
+                          return;
+                        }
+                        if (step.target === "billing" || step.target === "readiness") {
+                          setSetupView(step.target);
+                          document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          return;
+                        }
+                        if (step.target === "proof") {
+                          document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          return;
+                        }
+                        openWorkspaceOrSetup(step.target as WorkspaceId);
+                      }}
+                      type="button"
+                    >
+                      {step.status === "complete" ? "Review proof" : step.action}
+                    </button>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
           <div className="v1-completion-lane-grid">
