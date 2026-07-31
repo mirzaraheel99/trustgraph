@@ -4064,6 +4064,64 @@ p,
   font-weight: 950;
 }
 
+.pricing-quote-receipt {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.085), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.pricing-quote-receipt > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.pricing-quote-receipt strong,
+.pricing-quote-receipt small,
+.pricing-quote-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pricing-quote-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.pricing-quote-receipt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+}
+
+.pricing-quote-receipt-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.pricing-quote-receipt-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 8px;
+}
+
+.pricing-quote-receipt-actions button {
+  justify-content: center;
+  width: 100%;
+}
+
 .stripe-checkout-decision {
   display: grid;
   gap: 12px;
@@ -13847,6 +13905,8 @@ p {
   .public-portal-launch-grid,
   .public-server-sync-receipt,
   .public-server-sync-grid,
+  .pricing-quote-receipt-grid,
+  .pricing-quote-receipt-actions,
   .stripe-checkout-decision-grid,
   .stripe-checkout-decision-actions,
   .billing-architecture-receipt-grid,

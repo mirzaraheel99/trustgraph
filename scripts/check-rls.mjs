@@ -38,7 +38,8 @@ const requiredRlsTables = [
   "evidence_access_receipts",
   "data_export_package_receipts",
   "data_export_packages",
-  "billing_architecture_decision_receipts"
+  "billing_architecture_decision_receipts",
+  "pricing_quote_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -273,6 +274,32 @@ if (!billingArchitectureDecisionMigration.includes("billing.architecture_decisio
 }
 if (!billingArchitectureDecisionMigration.includes("grant execute on function public.record_billing_architecture_decision_receipt")) {
   throw new Error("Billing architecture decision receipt RPC must be executable by authenticated users.");
+}
+
+const pricingQuoteReceiptMigration = latestSqlByFile["053_pricing_quote_receipts.sql"] ?? "";
+if (!pricingQuoteReceiptMigration.includes("create table if not exists public.pricing_quote_receipts")) {
+  throw new Error("Missing pricing quote receipt table migration.");
+}
+if (!pricingQuoteReceiptMigration.includes("alter table public.pricing_quote_receipts enable row level security")) {
+  throw new Error("Pricing quote receipts must enable RLS.");
+}
+if (!pricingQuoteReceiptMigration.includes("recorded_by_profile_id = public.current_profile_id()")) {
+  throw new Error("Pricing quote receipt insert policy must bind receipts to the current profile.");
+}
+if (!pricingQuoteReceiptMigration.includes("payment_collection_live = false")) {
+  throw new Error("Pricing quote receipts must reject live payment collection.");
+}
+if (!pricingQuoteReceiptMigration.includes("stripe_checkout_enabled = false")) {
+  throw new Error("Pricing quote receipts must keep Stripe checkout disabled.");
+}
+if (!pricingQuoteReceiptMigration.includes("create or replace function public.record_pricing_quote_receipt")) {
+  throw new Error("Missing pricing quote receipt RPC.");
+}
+if (!pricingQuoteReceiptMigration.includes("billing.pricing_quote_recorded")) {
+  throw new Error("Pricing quote receipt RPC must write audit history.");
+}
+if (!pricingQuoteReceiptMigration.includes("grant execute on function public.record_pricing_quote_receipt")) {
+  throw new Error("Pricing quote receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

@@ -916,6 +916,15 @@ assertIncludesAny(bundleText, ["billing_architecture_decision_receipts"], "billi
 assertIncludesAny(bundleText, ["record_billing_architecture_decision_receipt"], "billing architecture decision receipt RPC");
 assertIncludesAny(bundleText, ["Billing decision database receipt"], "billing architecture decision database receipt label");
 assertIncludesAny(bundleText, ["Record payment decision"], "billing architecture decision record action");
+assertIncludesAny(bundleText, ["pricing_quote_receipts"], "pricing quote receipt table");
+assertIncludesAny(bundleText, ["record_pricing_quote_receipt"], "pricing quote receipt RPC");
+assertIncludesAny(bundleText, ["Pricing quote database receipt"], "pricing quote database receipt label");
+assertIncludesAny(bundleText, ["Record pricing quote"], "pricing quote record action");
+assertIncludesAny(
+  bundleText,
+  ["pricing_quote_receipt_requires_live_pricing_catalog_selected_seats_projected_total_corporate_admin_rbac_and_stripe_checkout_disabled"],
+  "pricing quote receipt acceptance rule"
+);
 assertIncludesAny(
   bundleText,
   ["billing_architecture_decision_receipt_requires_live_pricing_or_subscription_ledger_checkout_customer_portal_invoice_tax_refund_dunning_and_payment_webhooks_disabled_until_human_gate"],

@@ -48,6 +48,7 @@ import type {
   DbOrganizationInvitation,
   DbOrganizationSubscription,
   DbPilotLaunchContact,
+  DbPricingQuoteReceipt,
   DbProductionGateDecision,
   DbReferenceRequest,
   DbRegistrationIntent,
@@ -97,8 +98,10 @@ import {
   activateOrganizationSubscription,
   loadBillingArchitectureDecisionReceipts,
   loadOrganizationSubscriptions,
+  loadPricingQuoteReceipts,
   loadSubscriptionPlans,
-  recordBillingArchitectureDecisionReceipt
+  recordBillingArchitectureDecisionReceipt,
+  recordPricingQuoteReceipt
 } from "./billingRepository";
 import {
   ensureCredentialIssuerMembership,
@@ -8538,7 +8541,9 @@ function BillingPanel({
   message,
   onActivate,
   onRecordDecisionReceipt,
+  onRecordPricingQuoteReceipt,
   plans,
+  pricingQuoteReceipts,
   subscriptions
 }: {
   decisionReceipts: DbBillingArchitectureDecisionReceipt[];
@@ -8551,14 +8556,25 @@ function BillingPanel({
     status: DbBillingArchitectureDecisionReceipt["status"];
     metadata: Record<string, unknown>;
   }) => Promise<void>;
+  onRecordPricingQuoteReceipt: (input: {
+    selectedPlanId: string | null;
+    selectedSeats: number;
+    plansLoaded: number;
+    activeSubscriptionCount: number;
+    projectedMonthlyUsd: number;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
   plans: DbSubscriptionPlan[];
+  pricingQuoteReceipts: DbPricingQuoteReceipt[];
   subscriptions: DbOrganizationSubscription[];
 }) {
   const [seats, setSeats] = useState(5);
   const [busyPlanId, setBusyPlanId] = useState<string | null>(null);
   const [decisionBusy, setDecisionBusy] = useState(false);
+  const [quoteBusy, setQuoteBusy] = useState(false);
   const activeSubscriptions = subscriptions.filter((item) => item.status !== "cancelled");
   const latestDecisionReceipt = decisionReceipts[0] ?? null;
+  const latestPricingQuoteReceipt = pricingQuoteReceipts[0] ?? null;
   const activePlanIds = new Set(activeSubscriptions.map((item) => item.plan_id));
   const primarySubscription = activeSubscriptions[0] ?? null;
   const primaryPlan = primarySubscription?.plan ?? plans.find((plan) => plan.id === primarySubscription?.plan_id) ?? null;
@@ -8616,6 +8632,11 @@ function BillingPanel({
       active: activePlanIds.has(plan.id)
     };
   });
+  const selectedProjectedPlan =
+    projectedPlans.reduce<(typeof projectedPlans)[number] | null>(
+      (best, plan) => (!best || plan.projected_monthly_usd < best.projected_monthly_usd ? plan : best),
+      null
+    ) ?? null;
   const billingOperatorSteps = [
     {
       label: "Choose team size",
@@ -8743,6 +8764,23 @@ function BillingPanel({
     billing_gates: billingGates,
     payment_boundary: "No checkout, invoice, refund, dunning, tax, or payment webhook flow is live until the Stripe production gate is approved."
   };
+  const pricingQuoteReceipt = {
+    mode: "pricing_quote_receipt",
+    receipt_table: "pricing_quote_receipts",
+    receipt_rpc: "record_pricing_quote_receipt",
+    latest_receipt_id: latestPricingQuoteReceipt?.id ?? "not_recorded",
+    selected_plan_id: selectedProjectedPlan?.plan_id ?? primaryPlan?.id ?? null,
+    selected_seats: seats,
+    plans_loaded: plans.length,
+    active_subscription_count: activeSubscriptions.length,
+    projected_monthly_usd: estimatedSeatTotal,
+    projected_annual_usd: estimatedSeatTotal * 12,
+    payment_collection_live: false,
+    stripe_checkout_enabled: false,
+    accepted_when:
+      "pricing_quote_receipt_requires_live_pricing_catalog_selected_seats_projected_total_corporate_admin_rbac_and_stripe_checkout_disabled",
+    pricing_structure_packet: pricingStructurePacket
+  };
   const paymentArchitectureDecision = {
     generated_at: new Date().toISOString(),
     mode: "billing_architecture_decision",
@@ -8799,6 +8837,27 @@ function BillingPanel({
     }
   }
 
+  async function recordPricingQuote() {
+    setQuoteBusy(true);
+    try {
+      await onRecordPricingQuoteReceipt({
+        selectedPlanId: selectedProjectedPlan?.plan_id ?? primaryPlan?.id ?? null,
+        selectedSeats: seats,
+        plansLoaded: plans.length,
+        activeSubscriptionCount: activeSubscriptions.length,
+        projectedMonthlyUsd: estimatedSeatTotal,
+        metadata: {
+          pricing_quote_receipt: pricingQuoteReceipt,
+          pricing_structure_packet: pricingStructurePacket,
+          stripe_checkout_enabled: false,
+          payment_collection_live: false
+        }
+      });
+    } finally {
+      setQuoteBusy(false);
+    }
+  }
+
   async function activate(planId: string) {
     setBusyPlanId(planId);
     try {
@@ -8831,6 +8890,46 @@ function BillingPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="pricing-quote-receipt" aria-label="Pricing quote database receipt">
+        <div>
+          <span className={`status-chip ${latestPricingQuoteReceipt ? "success" : "warning"}`}>Pricing quote database receipt</span>
+          <strong>{latestPricingQuoteReceipt ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month saved` : "Save the current pricing quote"}</strong>
+          <small>
+            Persists selected seats, projected monthly and annual pricing, active ledger count, and the Stripe checkout-off boundary for corporate pricing review.
+          </small>
+        </div>
+        <div className="pricing-quote-receipt-grid">
+          <span>
+            <strong>{pricingQuoteReceipts.length}</strong>
+            <small>Quote rows</small>
+          </span>
+          <span>
+            <strong>{latestPricingQuoteReceipt?.selected_seats ?? seats}</strong>
+            <small>Selected seats</small>
+          </span>
+          <span>
+            <strong>${latestPricingQuoteReceipt?.projected_monthly_usd ?? estimatedSeatTotal}</strong>
+            <small>Monthly quote</small>
+          </span>
+          <span>
+            <strong>{latestPricingQuoteReceipt?.stripe_checkout_enabled ? "Enabled" : "Disabled"}</strong>
+            <small>Stripe checkout</small>
+          </span>
+        </div>
+        <div className="pricing-quote-receipt-actions">
+          <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+            Record pricing quote
+          </button>
+          <button
+            className="secondary-action"
+            disabled={!plans.length}
+            onClick={() => downloadTextFile(`trustgraph-pricing-quote-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(pricingQuoteReceipt, null, 2), "application/json")}
+            type="button"
+          >
+            Export quote
+          </button>
         </div>
       </div>
       <div className="stripe-checkout-decision" aria-label="Stripe checkout decision receipt">
@@ -15040,6 +15139,7 @@ function App() {
   const [subscriptionPlans, setSubscriptionPlans] = useState<DbSubscriptionPlan[]>([]);
   const [organizationSubscriptions, setOrganizationSubscriptions] = useState<DbOrganizationSubscription[]>([]);
   const [billingDecisionReceipts, setBillingDecisionReceipts] = useState<DbBillingArchitectureDecisionReceipt[]>([]);
+  const [pricingQuoteReceipts, setPricingQuoteReceipts] = useState<DbPricingQuoteReceipt[]>([]);
   const [billingStatus, setBillingStatus] = useState("Sign in to manage billing plans");
   const [teamInvitations, setTeamInvitations] = useState<DbOrganizationInvitation[]>([]);
   const [teamStatus, setTeamStatus] = useState("Sign in to invite corporate team members");
@@ -15251,6 +15351,7 @@ function App() {
       setSubscriptionPlans([]);
       setOrganizationSubscriptions([]);
       setBillingDecisionReceipts([]);
+      setPricingQuoteReceipts([]);
       setRegistrationIntents([]);
       setRegistrationIntentStatus("Sign in to load registration intent rows");
       setBillingStatus("Sign in to manage billing plans");
@@ -15318,16 +15419,18 @@ function App() {
       loadSubscriptionPlans(authSession.accessToken),
       loadOrganizationSubscriptions(authSession.accessToken).catch(() => []),
       loadBillingArchitectureDecisionReceipts(authSession.accessToken).catch(() => []),
+      loadPricingQuoteReceipts(authSession.accessToken).catch(() => []),
       loadRegistrationIntents(authSession.accessToken).catch(() => []),
       loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => []),
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, decisionReceipts, intents, readinessReceipts, invitations, members]) => {
+      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, readinessReceipts, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
         setBillingDecisionReceipts(decisionReceipts);
+        setPricingQuoteReceipts(quoteReceipts);
         setRegistrationIntents(intents);
         setV1ReadinessReceipts(readinessReceipts);
         setTeamInvitations(invitations);
@@ -15345,6 +15448,7 @@ function App() {
         setSubscriptionPlans([]);
         setOrganizationSubscriptions([]);
         setBillingDecisionReceipts([]);
+        setPricingQuoteReceipts([]);
         setRegistrationIntents([]);
         setV1ReadinessReceipts([]);
         setTeamInvitations([]);
@@ -16639,13 +16743,15 @@ function App() {
       planId,
       seats
     });
-    const [subscriptions, decisionReceipts, events] = await Promise.all([
+    const [subscriptions, decisionReceipts, quoteReceipts, events] = await Promise.all([
       loadOrganizationSubscriptions(authSession.accessToken),
       loadBillingArchitectureDecisionReceipts(authSession.accessToken).catch(() => billingDecisionReceipts),
+      loadPricingQuoteReceipts(authSession.accessToken).catch(() => pricingQuoteReceipts),
       loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
     ]);
     setOrganizationSubscriptions(subscriptions);
     setBillingDecisionReceipts(decisionReceipts);
+    setPricingQuoteReceipts(quoteReceipts);
     setAuditEvents(events);
     setBillingStatus(`Plan activated: ${subscription.plan_id}`);
   }
@@ -16686,6 +16792,42 @@ function App() {
     setBillingDecisionReceipts(receipts);
     setAuditEvents(events);
     setBillingStatus(`Billing decision receipt recorded: ${receipt.status.replace(/_/g, " ")}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
+  async function recordLivePricingQuoteReceipt(input: {
+    selectedPlanId: string | null;
+    selectedSeats: number;
+    plansLoaded: number;
+    activeSubscriptionCount: number;
+    projectedMonthlyUsd: number;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before recording a pricing quote.");
+    }
+
+    const receipt = await recordPricingQuoteReceipt({
+      accessToken: authSession.accessToken,
+      selectedPlanId: input.selectedPlanId,
+      selectedSeats: input.selectedSeats,
+      plansLoaded: input.plansLoaded,
+      activeSubscriptionCount: input.activeSubscriptionCount,
+      projectedMonthlyUsd: input.projectedMonthlyUsd,
+      metadata: {
+        ...input.metadata,
+        source: "signed_in_supabase_pricing_catalog",
+        payment_collection_live: false,
+        stripe_checkout_enabled: false
+      }
+    });
+    const [receipts, events] = await Promise.all([
+      loadPricingQuoteReceipts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setPricingQuoteReceipts(receipts);
+    setAuditEvents(events);
+    setBillingStatus(`Pricing quote receipt recorded: $${receipt.projected_monthly_usd}/month`);
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
@@ -19658,7 +19800,9 @@ function App() {
                     message={billingStatus}
                     onActivate={activateLiveSubscription}
                     onRecordDecisionReceipt={recordLiveBillingArchitectureDecisionReceipt}
+                    onRecordPricingQuoteReceipt={recordLivePricingQuoteReceipt}
                     plans={subscriptionPlans}
+                    pricingQuoteReceipts={pricingQuoteReceipts}
                     subscriptions={organizationSubscriptions}
                   />
                 ) : null}

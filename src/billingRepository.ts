@@ -1,4 +1,4 @@
-import type { DbBillingArchitectureDecisionReceipt, DbOrganizationSubscription, DbSubscriptionPlan } from "./database";
+import type { DbBillingArchitectureDecisionReceipt, DbOrganizationSubscription, DbPricingQuoteReceipt, DbSubscriptionPlan } from "./database";
 import { supabaseRest, supabaseRpc } from "./supabase";
 
 export async function loadSubscriptionPlans(accessToken?: string): Promise<DbSubscriptionPlan[]> {
@@ -49,6 +49,36 @@ export async function recordBillingArchitectureDecisionReceipt(input: {
       input_selected_seats: input.selectedSeats,
       input_active_subscription_count: input.activeSubscriptionCount,
       input_status: input.status,
+      input_metadata: input.metadata
+    },
+    { accessToken: input.accessToken }
+  );
+}
+
+export async function loadPricingQuoteReceipts(accessToken: string): Promise<DbPricingQuoteReceipt[]> {
+  return supabaseRest<DbPricingQuoteReceipt[]>(
+    "pricing_quote_receipts?select=*&order=created_at.desc&limit=5",
+    { accessToken }
+  );
+}
+
+export async function recordPricingQuoteReceipt(input: {
+  accessToken: string;
+  selectedPlanId: string | null;
+  selectedSeats: number;
+  plansLoaded: number;
+  activeSubscriptionCount: number;
+  projectedMonthlyUsd: number;
+  metadata: Record<string, unknown>;
+}): Promise<DbPricingQuoteReceipt> {
+  return supabaseRpc<DbPricingQuoteReceipt>(
+    "record_pricing_quote_receipt",
+    {
+      input_selected_plan_id: input.selectedPlanId,
+      input_selected_seats: input.selectedSeats,
+      input_plans_loaded: input.plansLoaded,
+      input_active_subscription_count: input.activeSubscriptionCount,
+      input_projected_monthly_usd: input.projectedMonthlyUsd,
       input_metadata: input.metadata
     },
     { accessToken: input.accessToken }

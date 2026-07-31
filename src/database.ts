@@ -406,6 +406,23 @@ export interface DbBillingArchitectureDecisionReceipt {
   created_at: string;
 }
 
+export interface DbPricingQuoteReceipt {
+  id: string;
+  organization_id: string;
+  recorded_by_profile_id: string;
+  selected_plan_id: string | null;
+  selected_seats: number;
+  plans_loaded: number;
+  active_subscription_count: number;
+  projected_monthly_usd: number;
+  projected_annual_usd: number;
+  payment_collection_live: boolean;
+  stripe_checkout_enabled: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbRegistrationIntent {
   id: string;
   profile_id: string;
