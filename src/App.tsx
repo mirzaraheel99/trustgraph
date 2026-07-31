@@ -14930,6 +14930,38 @@ function PublicSite({
       detail: registrationPreSubmitChecklist.next_dashboard
     }
   ];
+  const authPathSummary = {
+    mode: "auth_path_summary",
+    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    pricing: selectedRegistrationPath.plan,
+    first_write: selectedRegistrationPath.primaryWrite,
+    landing: portal === "corporate" ? "Company setup and Corporate Verify" : "Professional Passport",
+    accepted_when:
+      "login_register_card_shows_account_type_pricing_first_database_write_landing_and_required_fields_before_user_types"
+  };
+  const authPathSummaryCards = [
+    {
+      label: "Account",
+      value: authPathSummary.selected_portal,
+      detail: selectedPortalCommand.headline
+    },
+    {
+      label: "Pricing",
+      value: selectedRegistrationPath.plan,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First database write",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "After success",
+      value: authPathSummary.landing,
+      detail: selectedRegistrationPath.nextAction
+    }
+  ];
   const portalStartDesk = {
     mode: "portal_start_desk",
     selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
@@ -16417,6 +16449,22 @@ function PublicSite({
                 <small>{item.detail}</small>
               </span>
             ))}
+          </div>
+          <div className="auth-path-summary" aria-label="Auth path summary">
+            <div>
+              <span className="status-chip success">Selected path</span>
+              <strong>{authPathSummary.selected_action} for {authPathSummary.selected_portal}</strong>
+              <small>{authPathSummary.accepted_when}</small>
+            </div>
+            <div className="auth-path-summary-grid">
+              {authPathSummaryCards.map((card) => (
+                <span key={card.label}>
+                  <small>{card.label}</small>
+                  <strong>{card.value}</strong>
+                  <small>{card.detail}</small>
+                </span>
+              ))}
+            </div>
           </div>
           <div className="portal-tabs">
             <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">

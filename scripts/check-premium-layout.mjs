@@ -125,6 +125,8 @@ assert(css.includes(".public-portal-database-contract") && css.includes(".public
 assert(css.includes(".public-buyer-launch-path") && css.includes(".public-buyer-launch-grid"), "public buyer launch path must be styled and bounded.");
 assert(css.includes(".registration-database-launch-order") && css.includes(".registration-database-launch-grid"), "registration database launch order must be styled and bounded.");
 assert(css.includes(".registration-pre-submit-checklist") && css.includes(".registration-pre-submit-grid"), "registration pre-submit checklist must be styled and bounded.");
+assert(app.includes('aria-label="Auth path summary"') && app.includes("auth_path_summary"), "login/register card must expose a compact selected auth path summary.");
+assert(css.includes(".auth-path-summary") && css.includes(".auth-path-summary-grid"), "auth path summary must be styled and bounded.");
 assert(css.includes(".corporate-onboarding-pricing-cockpit") && css.includes(".corporate-onboarding-pricing-grid") && css.includes(".corporate-onboarding-pricing-actions"), "corporate onboarding pricing cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");

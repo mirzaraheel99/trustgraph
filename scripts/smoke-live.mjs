@@ -197,6 +197,9 @@ assertIncludesAny(bundleText, ["Public auth flow command"], "public auth flow co
 assertIncludesAny(bundleText, ["Portal access cockpit"], "public auth portal access cockpit");
 assertIncludesAny(bundleText, ["portal_access_cockpit"], "public auth portal access cockpit packet");
 assertIncludesAny(bundleText, ["Create the company account first, then Verify users by permission"], "corporate login/register cockpit guidance");
+assertIncludesAny(bundleText, ["Auth path summary"], "public auth selected path summary");
+assertIncludesAny(bundleText, ["auth_path_summary"], "public auth path summary packet field");
+assertIncludesAny(bundleText, ["login_register_card_shows_account_type_pricing_first_database_write_landing_and_required_fields_before_user_types"], "auth path summary acceptance rule");
 assertIncludesAny(bundleText, ["Portal start desk"], "public auth portal start desk");
 assertIncludesAny(bundleText, ["portal_start_desk"], "public auth portal start desk packet");
 assertIncludesAny(bundleText, ["public_auth_flow_command"], "public auth flow command packet field");
