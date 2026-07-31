@@ -52,6 +52,7 @@ const requiredMobileStacks = [
   ".directory-source-strip",
   ".corporate-directory-filter-receipt",
   ".corporate-directory-filter-grid",
+  ".corporate-scope-review-grid",
   ".directory-review-board",
   ".admin-audit-export-command-grid",
   ".admin-audit-export-command-actions",
@@ -230,6 +231,10 @@ if (!css.includes(".release-sync-command") || !css.includes("grid-template-colum
 
 if (!css.includes(".live-seed-preflight") || !css.includes(".live-seed-preflight-grid") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr))")) {
   throw new Error("Responsive check failed: live seed preflight needs a bounded responsive grid.");
+}
+
+if (!css.includes(".corporate-scope-review-command") || !css.includes(".corporate-scope-review-grid") || !css.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr))")) {
+  throw new Error("Responsive check failed: corporate scope review command needs a bounded responsive grid.");
 }
 
 if (!css.includes("grid-template-columns: minmax(0, 1fr) auto") || !css.includes(".topbar-session-card") || !css.includes("display: none !important")) {

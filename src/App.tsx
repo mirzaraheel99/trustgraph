@@ -3402,6 +3402,39 @@ function CorporateDirectoryPanel({
       tone: readyForHandoffReviewCount ? "ready" : ""
     }
   ];
+  const corporateScopeReviewCommand = [
+    {
+      label: "Live source",
+      value: isLiveCorporateDatabase ? "Live Supabase" : "Locked",
+      detail: isLiveCorporateDatabase ? "Rows are loaded through the active corporate RBAC context." : "Corporate login and RBAC context are required.",
+      ready: isLiveCorporateDatabase
+    },
+    {
+      label: "Approved access",
+      value: `${approvedAccessCount}`,
+      detail: "Only approved Access Grants can expose scoped Passport rows.",
+      ready: approvedAccessCount > 0
+    },
+    {
+      label: "Shared rows",
+      value: `${sharedRecords.length}`,
+      detail: "Visible user rows must come from approved shared Passport scope.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Open gaps",
+      value: `${openGapRequestCount}`,
+      detail: "Open missing-record requests should be resolved or marked as follow-up.",
+      ready: openGapRequestCount === 0 && sharedRecords.length > 0
+    },
+    {
+      label: "Review proof",
+      value: `${reviews.length}`,
+      detail: "Corporate review attestations prove a reviewer inspected visible rows.",
+      ready: reviews.length > 0
+    }
+  ];
+  const corporateScopeReviewReady = corporateScopeReviewCommand.filter((item) => item.ready).length;
   const corporateVisibilityLedger = [
     {
       label: "Visible user records",
@@ -3523,6 +3556,13 @@ function CorporateDirectoryPanel({
       accepted_only_when: "live_corporate_rbac_context_loads_access_grants_shared_passport_rows_review_ready_people_and_review_attestations",
       preview_data_accepted: false,
       checks: corporateDirectoryAcceptanceChecks
+    },
+    corporate_scope_review_command: {
+      ready_checks: corporateScopeReviewReady,
+      total_checks: corporateScopeReviewCommand.length,
+      next_action:
+        corporateScopeReviewCommand.find((item) => !item.ready)?.label ?? "Export user packet or mark ready handoff",
+      checks: corporateScopeReviewCommand
     },
     corporate_data_access_path: corporateAccessPath,
     corporate_review_attestation_ledger: corporateReviewAttestationLedger,
@@ -3669,6 +3709,21 @@ function CorporateDirectoryPanel({
         <div>
           <strong>{reviewReadyCount}</strong>
           <small>Review-ready people</small>
+        </div>
+      </div>
+      <div className="corporate-scope-review-command" aria-label="Corporate scope review command">
+        <div className="directory-source-strip">
+          <span className={`status-chip ${corporateScopeReviewReady === corporateScopeReviewCommand.length ? "success" : "warning"}`}>Corporate scope review command</span>
+          <small>Use this before exporting or marking handoff: every visible user row must be live, approved, scoped, gap-reviewed, and attested.</small>
+        </div>
+        <div className="corporate-scope-review-grid">
+          {corporateScopeReviewCommand.map((item) => (
+            <article className={item.ready ? "ready" : "warning"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <div className="corporate-directory-filter-receipt" aria-label="Corporate directory filter receipt">

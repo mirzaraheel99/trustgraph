@@ -533,6 +533,9 @@ assertIncludesAny(bundleText, ["Ready handoff"], "corporate access handoff actio
 assertIncludesAny(bundleText, ["Corporate visibility ledger"], "corporate visibility ledger panel");
 assertIncludesAny(bundleText, ["corporate_visibility_ledger"], "corporate visibility ledger packet field");
 assertIncludesAny(bundleText, ["Visible user records"], "corporate visibility visible records count");
+assertIncludesAny(bundleText, ["Corporate scope review command"], "corporate scope review command panel");
+assertIncludesAny(bundleText, ["corporate_scope_review_command"], "corporate scope review packet field");
+assertIncludesAny(bundleText, ["every visible user row must be live, approved, scoped, gap-reviewed, and attested"], "corporate scope review boundary copy");
 assertIncludesAny(bundleText, ["Request access by professional email"], "corporate access review queue empty action");
 assertIncludesAny(bundleText, ["reviewer_scan_board"], "Corporate user database scan board packet field");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");

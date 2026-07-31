@@ -41,6 +41,7 @@ assert(app.includes('aria-label="Corporate Verify first-use wizard"'), "Corporat
 assert(app.includes('aria-label="Corporate Verify live access command"'), "Corporate Verify must expose a compact live access command for request, approval, shared rows, and review proof.");
 assert(app.includes('aria-label="Corporate access request scope receipt"'), "Corporate Verify must expose a request scope receipt before access requests are submitted.");
 assert(app.includes('aria-label="Corporate user database access contract"'), "Corporate Verify must expose the exact corporate user database access boundary.");
+assert(app.includes('aria-label="Corporate scope review command"'), "Corporate Verify must expose a scope review command before export or handoff.");
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
 assert(app.includes('aria-label="Login issue resolver"'), "public auth must expose visible login issue resolver guidance.");
 assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public auth must expose a live onboarding acceptance contract.");
@@ -89,6 +90,7 @@ assert(premiumRepair.includes(".team-billing-handoff") && premiumRepair.includes
 assert(premiumRepair.includes(".corporate-setup-stepper") && premiumRepair.includes(".corporate-setup-stepper-grid"), "corporate setup stepper must be styled and bounded.");
 assert(premiumRepair.includes(".corporate-verify-first-use") && premiumRepair.includes(".corporate-verify-first-use-grid"), "Corporate Verify first-use wizard must be styled and bounded.");
 assert(css.includes(".corporate-verify-live-command") && css.includes(".corporate-verify-live-command-grid") && css.includes("Corporate Verify live access command"), "Corporate Verify live access command must be styled and bounded.");
+assert(css.includes(".corporate-scope-review-command") && css.includes(".corporate-scope-review-grid"), "Corporate scope review command must be styled and bounded.");
 assert(css.includes(".request-scope-receipt") && css.includes(".request-scope-receipt-grid"), "Corporate Verify request scope receipt must be styled and bounded.");
 assert(premiumRepair.includes(".corporate-user-database-contract") && premiumRepair.includes(".corporate-user-database-contract-grid"), "corporate user database access contract must be styled and bounded.");
 assert(premiumRepair.includes(".auth-recovery-command-grid") && premiumRepair.includes(".public-auth-recovery-actions"), "auth recovery command buttons must be included in overflow guards.");
