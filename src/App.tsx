@@ -6203,9 +6203,9 @@ function PlanAlignmentPanel({
       <article className="plan-migration-card">
         <div>
           <strong>Live database migrations applied</strong>
-          <small>Migrations through 041 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, the organization RLS recursion repair, issuer credential lifecycle, data-rights requests, the TrustGraph VPS cutover gate, and corporate review attestations.</small>
+          <small>Migrations through 043 are active, including member controls, corporate Access Grant requests, first-class record types, consent authorizations, sensitive-record controls, release ledger, live pilot workspace seeding, production gate tracking, pilot launch contacts, issuer credential lifecycle, dispute and data-rights workflows, the TrustGraph VPS cutover gate, corporate review attestations, the migration 042 organization RLS recursion repair, and the migration 043 account context RPC.</small>
         </div>
-        <span className="status-chip success">034 RLS repair expected</span>
+        <span className="status-chip success">042 RLS repair expected</span>
       </article>
       <div className="production-gate-panel">
         <div className="production-stop-summary">
@@ -11227,7 +11227,7 @@ function OnboardingChecklistPanel({
         <div className="migration-repair-card">
           <div>
             <span className={`status-chip ${organizationRlsRepairEvidence.applied ? "success" : "warning"}`}>
-              {organizationRlsRepairEvidence.applied ? "034 ledger verified" : "034 proof needed"}
+              {organizationRlsRepairEvidence.applied ? "042 ledger verified" : "042 proof needed"}
             </span>
             <strong>Organization RLS recursion repair</strong>
             <small>{organizationRlsRepairEvidence.operator_note}</small>
@@ -11242,7 +11242,7 @@ function OnboardingChecklistPanel({
               <small>Workflow run proof</small>
             </span>
             <span>
-              <strong>034</strong>
+                <strong>042</strong>
               <small>Required before corporate account context acceptance</small>
             </span>
           </div>

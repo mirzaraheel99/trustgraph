@@ -164,10 +164,15 @@ Supabase-ready migrations live in `supabase/migrations/`:
 - `032_operator_named_pilot_rpcs.sql`: operator-named pilot RPC aliases so the app uses live workflow language instead of sample function names.
 - `033_pilot_launch_contacts.sql`: protected pilot launch contact register for customer roster, onboarding owner, support owner, and incident owner evidence.
 - `034_fix_organization_policy_recursion.sql`: first organization RLS recursion repair attempt for corporate account context.
-- `042_fix_operator_policy_self_reference.sql`: final organization policy self-reference repair so corporate account context can load without Supabase `42P17` policy recursion failures.
 - `035_revoke_issuer_credentials.sql`: issuer-scoped credential revocation RPC with audit event and professional notification evidence.
 - `036_update_issuer_credential_expiry.sql`: issuer-scoped expiration correction RPC with audit event and professional notification evidence.
+- `037_record_dispute_workflow.sql`: professional dispute and correction workflow for contested Passport records.
+- `038_data_rights_requests.sql`: authenticated data export and account closure request workflow.
+- `039_data_rights_status_controls.sql`: admin status controls for data-rights request review.
+- `040_vps_cutover_production_gate.sql`: TrustGraph VPS cutover production gate.
 - `041_corporate_access_review_attestations.sql`: corporate reviewer attestations for scoped user-database review, with RLS, audit events, and professional notifications.
+- `042_fix_operator_policy_self_reference.sql`: final organization policy self-reference repair so corporate account context can load without Supabase `42P17` policy recursion failures.
+- `043_account_context_rpc.sql`: account-context RPC for signed-in profile, organization membership, and active role loading after hosted login.
 
 TypeScript mirrors for database rows live in `src/database.ts`.
 The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused repositories for account context, Passport records, Access Grants, evidence, references, credentials, missing records, notifications, Connect controls, operations cases, and audit events.
@@ -205,7 +210,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 
 ## Live Database Status
 
-Live Supabase migrations are applied through `041_corporate_access_review_attestations.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, the organization RLS recursion repair required for corporate account context, issuer credential update/revocation lifecycle, data export/account closure review, the TrustGraph VPS cutover gate, and corporate user-database review attestations.
+Live Supabase migrations are applied through `043_account_context_rpc.sql`, including corporate member-management controls, corporate Access Grant requests by professional email, first-class locked-scope record categories, consent authorization records, sensitive-record privacy controls, the Admin release migration ledger, authenticated pilot workspace seeding, database-backed production gate tracking, constrained gate decision statuses, operator-named pilot workflow RPCs, a protected pilot launch contact register, issuer credential update/revocation lifecycle, dispute and data-rights workflows, the TrustGraph VPS cutover gate, corporate user-database review attestations, the migration 042 organization RLS recursion repair required for corporate account context, and the migration 043 account-context RPC required after hosted login.
 
 ## Public Website and Pricing
 

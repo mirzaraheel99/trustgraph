@@ -674,8 +674,9 @@ assertIncludesAny(bundleText, ["Reset password"], "public portal password recove
 assertIncludesAny(bundleText, ["Auth recovery decision path"], "public auth recovery decision panel");
 assertIncludesAny(bundleText, ["auth_recovery_decision_path"], "registration auth recovery packet field");
 assertIncludesAny(bundleText, ["New account verification"], "auth recovery verification guidance");
-assertIncludesAny(bundleText, ["Migrations through 041"], "current database migration coverage copy");
-assertIncludesAny(bundleText, ["034 RLS repair expected"], "organization RLS recursion repair marker");
+assertIncludesAny(bundleText, ["Migrations through 043"], "current database migration coverage copy");
+assertIncludesAny(bundleText, ["042 RLS repair expected"], "organization RLS recursion repair marker");
+assertIncludesAny(bundleText, ["migration 043 account context RPC"], "account context RPC migration marker");
 assertIncludesAny(bundleText, ["RLS repair"], "database strip RLS repair proof");
 assertIncludesAny(bundleText, ["Pilot launch contacts"], "pilot launch contact register");
 assertIncludesAny(bundleText, ["Record pilot contact"], "pilot launch contact intake");
