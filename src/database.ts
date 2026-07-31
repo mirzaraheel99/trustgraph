@@ -490,6 +490,22 @@ export interface DbPilotOwnerReadinessReceipt {
   created_at: string;
 }
 
+export interface DbRealDatabaseCompletionReceipt {
+  id: string;
+  profile_id: string;
+  organization_id: string | null;
+  status: "live_rows_missing" | "ready_for_v1_review" | "accepted_for_pilot";
+  completed_steps: number;
+  total_steps: number;
+  missing_groups: string[];
+  live_row_groups: Array<Record<string, unknown>>;
+  preview_data_accepted: boolean;
+  production_traffic_allowed: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbRegistrationIntent {
   id: string;
   profile_id: string;

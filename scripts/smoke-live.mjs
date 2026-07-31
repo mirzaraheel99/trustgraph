@@ -675,9 +675,12 @@ assertIncludesAny(bundleText, ["live_row_completion_command"], "live row complet
 assertIncludesAny(bundleText, ["all_required_signed_in_supabase_row_groups_are_loaded"], "live row completion acceptance rule");
 assertIncludesAny(bundleText, ["Real database completion plan"], "real database completion plan label");
 assertIncludesAny(bundleText, ["real_database_completion_plan"], "real database completion packet field");
+assertIncludesAny(bundleText, ["real_database_completion_receipts"], "real database completion receipt table");
+assertIncludesAny(bundleText, ["record_real_database_completion_receipt"], "real database completion receipt RPC");
+assertIncludesAny(bundleText, ["Record database receipt"], "real database completion receipt record action");
 assertIncludesAny(
   bundleText,
-  ["hosted_login_registration_corporate_workspace_pricing_user_database_access_evidence_consent_team_review_release_and_owner_receipts_are_loaded_from_live_supabase_rows"],
+  ["real_database_completion_receipt_requires_hosted_login_registration_corporate_workspace_pricing_user_database_access_evidence_consent_team_review_release_owner_receipts_and_no_preview_data"],
   "real database completion plan acceptance rule"
 );
 assertIncludesAny(bundleText, ["Live data load receipt"], "live data load receipt");

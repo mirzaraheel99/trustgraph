@@ -43,7 +43,8 @@ const requiredRlsTables = [
   "onboarding_wizard_receipts",
   "auth_recovery_receipts",
   "security_rls_review_receipts",
-  "pilot_owner_readiness_receipts"
+  "pilot_owner_readiness_receipts",
+  "real_database_completion_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -396,6 +397,29 @@ if (!pilotOwnerReadinessReceiptMigration.includes("pilot.owner_readiness_receipt
 }
 if (!pilotOwnerReadinessReceiptMigration.includes("grant execute on function public.record_pilot_owner_readiness_receipt")) {
   throw new Error("Pilot owner readiness receipt RPC must be executable by authenticated users.");
+}
+
+const realDatabaseCompletionReceiptMigration = latestSqlByFile["058_real_database_completion_receipts.sql"] ?? "";
+if (!realDatabaseCompletionReceiptMigration.includes("create table if not exists public.real_database_completion_receipts")) {
+  throw new Error("Missing real database completion receipt table migration.");
+}
+if (!realDatabaseCompletionReceiptMigration.includes("alter table public.real_database_completion_receipts enable row level security")) {
+  throw new Error("Real database completion receipts must enable RLS.");
+}
+if (!realDatabaseCompletionReceiptMigration.includes("profile_id = public.current_profile_id()")) {
+  throw new Error("Real database completion receipts must be owner-scoped.");
+}
+if (!realDatabaseCompletionReceiptMigration.includes("preview_data_accepted = false")) {
+  throw new Error("Real database completion receipts must reject preview data.");
+}
+if (!realDatabaseCompletionReceiptMigration.includes("create or replace function public.record_real_database_completion_receipt")) {
+  throw new Error("Missing real database completion receipt RPC.");
+}
+if (!realDatabaseCompletionReceiptMigration.includes("database.real_completion_receipt_recorded")) {
+  throw new Error("Real database completion receipt RPC must write audit history.");
+}
+if (!realDatabaseCompletionReceiptMigration.includes("grant execute on function public.record_real_database_completion_receipt")) {
+  throw new Error("Real database completion receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

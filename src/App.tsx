@@ -54,6 +54,7 @@ import type {
   DbPricingQuoteReceipt,
   DbProductionGateDecision,
   DbReferenceRequest,
+  DbRealDatabaseCompletionReceipt,
   DbRegistrationIntent,
   DbSchemaMigrationRun,
   DbSecurityRlsReviewReceipt,
@@ -166,6 +167,7 @@ import {
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
 import { loadOnboardingWizardReceipts, recordOnboardingWizardReceipt } from "./onboardingRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
+import { loadRealDatabaseCompletionReceipts, recordRealDatabaseCompletionReceipt } from "./realDatabaseCompletionRepository";
 import {
   loadRegistrationIntents,
   markRegistrationIntentPassportInitialized,
@@ -222,6 +224,8 @@ const SECURITY_RLS_REVIEW_RECEIPT_ACCEPTANCE_RULE =
   "security_rls_review_receipt_requires_ci_rls_guard_private_evidence_signed_url_review_rbac_audit_exports_and_external_signoff_before_production_traffic";
 const PILOT_OWNER_READINESS_RECEIPT_ACCEPTANCE_RULE =
   "pilot_owner_readiness_receipt_requires_named_pilot_customer_onboarding_support_incident_owner_live_contacts_and_no_production_traffic_without_human_signoff";
+const REAL_DATABASE_COMPLETION_RECEIPT_ACCEPTANCE_RULE =
+  "real_database_completion_receipt_requires_hosted_login_registration_corporate_workspace_pricing_user_database_access_evidence_consent_team_review_release_owner_receipts_and_no_preview_data";
 
 type LivePilotRowProof = {
   source: "signed_in_supabase_rows" | "preview_or_logged_out";
@@ -15571,6 +15575,7 @@ function App() {
   const [authRecoveryReceipts, setAuthRecoveryReceipts] = useState<DbAuthRecoveryReceipt[]>([]);
   const [onboardingReceipts, setOnboardingReceipts] = useState<DbOnboardingWizardReceipt[]>([]);
   const [v1ReadinessReceipts, setV1ReadinessReceipts] = useState<DbV1LiveDatabaseReadinessReceipt[]>([]);
+  const [realDatabaseCompletionReceipts, setRealDatabaseCompletionReceipts] = useState<DbRealDatabaseCompletionReceipt[]>([]);
   const [v1ReadinessStatus, setV1ReadinessStatus] = useState("Sign in to record V1 live database readiness receipts");
   const [serverSyncMonitor, setServerSyncMonitor] = useState<ServerSyncMonitorState>({
     status: "checking",
@@ -15739,6 +15744,7 @@ function App() {
       setRegistrationIntents([]);
       setAuthRecoveryReceipts([]);
       setOnboardingReceipts([]);
+      setRealDatabaseCompletionReceipts([]);
       setRegistrationIntentStatus("Sign in to load registration intent rows");
       setBillingStatus("Sign in to manage billing plans");
       setTeamInvitations([]);
@@ -15810,10 +15816,11 @@ function App() {
       loadAuthRecoveryReceipts(authSession.accessToken).catch(() => []),
       loadOnboardingWizardReceipts(authSession.accessToken).catch(() => []),
       loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => []),
+      loadRealDatabaseCompletionReceipts(authSession.accessToken).catch(() => []),
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, authReceipts, onboardingRows, readinessReceipts, invitations, members]) => {
+      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, authReceipts, onboardingRows, readinessReceipts, realDatabaseReceipts, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
@@ -15823,6 +15830,7 @@ function App() {
         setAuthRecoveryReceipts(authReceipts);
         setOnboardingReceipts(onboardingRows);
         setV1ReadinessReceipts(readinessReceipts);
+        setRealDatabaseCompletionReceipts(realDatabaseReceipts);
         setTeamInvitations(invitations);
         setTeamMembers(members);
         setBillingStatus(
@@ -15843,6 +15851,7 @@ function App() {
         setAuthRecoveryReceipts([]);
         setOnboardingReceipts([]);
         setV1ReadinessReceipts([]);
+        setRealDatabaseCompletionReceipts([]);
         setTeamInvitations([]);
         setTeamMembers([]);
         setBillingStatus(operatorErrorMessage(error, "Could not load billing plans"));
@@ -18391,6 +18400,44 @@ function App() {
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
+  async function recordLiveRealDatabaseCompletionReceipt(input: {
+    status: DbRealDatabaseCompletionReceipt["status"];
+    completedSteps: number;
+    totalSteps: number;
+    missingGroups: string[];
+    liveRowGroups: Array<Record<string, unknown>>;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Login first to record real database completion proof.");
+    }
+
+    const receipt = await recordRealDatabaseCompletionReceipt({
+      accessToken: authSession.accessToken,
+      organizationId: activeMembership.organizationId || null,
+      status: input.status,
+      completedSteps: input.completedSteps,
+      totalSteps: input.totalSteps,
+      missingGroups: input.missingGroups,
+      liveRowGroups: input.liveRowGroups,
+      metadata: {
+        ...input.metadata,
+        source: "signed_in_supabase_real_database_completion",
+        accepted_when: REAL_DATABASE_COMPLETION_RECEIPT_ACCEPTANCE_RULE,
+        preview_data_accepted: false,
+        production_traffic_allowed: false
+      }
+    });
+    const [receipts, events] = await Promise.all([
+      loadRealDatabaseCompletionReceipts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setRealDatabaseCompletionReceipts(receipts);
+    setAuditEvents(events);
+    setV1ReadinessStatus(`Real database completion receipt recorded: ${receipt.completed_steps}/${receipt.total_steps} groups`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
   const liveDatabaseContract = {
     mode: "live_database_contract",
     accepted: livePilotRowProof.accepted,
@@ -18494,16 +18541,18 @@ function App() {
       };
     });
   const nextRealDatabaseStep = realDatabaseCompletionSteps.find((step) => step.status !== "complete") ?? realDatabaseCompletionSteps[0];
+  const latestRealDatabaseCompletionReceipt = realDatabaseCompletionReceipts[0] ?? null;
   const realDatabaseCompletionPlan = {
     mode: "real_database_completion_plan",
+    latest_persisted_receipt: latestRealDatabaseCompletionReceipt,
     current_host: typeof window === "undefined" ? "server_render" : window.location.origin,
     signed_in: Boolean(authSession && accountContext),
     preview_data_accepted: false,
+    persisted_receipts_loaded: realDatabaseCompletionReceipts.length,
     completed_steps: realDatabaseCompletionSteps.filter((step) => step.status === "complete").length,
     total_steps: realDatabaseCompletionSteps.length,
     next_step: nextRealDatabaseStep,
-    accepted_when:
-      "hosted_login_registration_corporate_workspace_pricing_user_database_access_evidence_consent_team_review_release_and_owner_receipts_are_loaded_from_live_supabase_rows",
+    accepted_when: REAL_DATABASE_COMPLETION_RECEIPT_ACCEPTANCE_RULE,
     server_save_rule: "GitHub main remains the source; VPS acceptance requires the freshness stamp to match the latest deployed commit.",
     steps: realDatabaseCompletionSteps
   };
@@ -19921,11 +19970,41 @@ function App() {
               >
                 Export plan
               </button>
+              <button
+                className="secondary-action"
+                disabled={!authSession || !accountContext}
+                onClick={() =>
+                  void recordLiveRealDatabaseCompletionReceipt({
+                    status:
+                      realDatabaseCompletionPlan.completed_steps === realDatabaseCompletionPlan.total_steps
+                        ? "ready_for_v1_review"
+                        : "live_rows_missing",
+                    completedSteps: realDatabaseCompletionPlan.completed_steps,
+                    totalSteps: realDatabaseCompletionPlan.total_steps,
+                    missingGroups: realDatabaseCompletionSteps
+                      .filter((step) => step.status !== "complete")
+                      .map((step) => step.label),
+                    liveRowGroups: realDatabaseCompletionSteps,
+                    metadata: {
+                      current_host: realDatabaseCompletionPlan.current_host,
+                      next_step: realDatabaseCompletionPlan.next_step,
+                      server_save_rule: realDatabaseCompletionPlan.server_save_rule
+                    }
+                  })
+                }
+                type="button"
+              >
+                Record database receipt
+              </button>
             </div>
             <div className="real-database-next-step">
               <span>Next live database step</span>
               <strong>{nextRealDatabaseStep?.label ?? "All live row groups complete"}</strong>
-              <small>{nextRealDatabaseStep?.evidence ?? "Export the working-data and V1 readiness packets."}</small>
+              <small>
+                {latestRealDatabaseCompletionReceipt
+                  ? `Latest saved receipt: ${latestRealDatabaseCompletionReceipt.completed_steps}/${latestRealDatabaseCompletionReceipt.total_steps} groups, ${latestRealDatabaseCompletionReceipt.status.replace(/_/g, " ")}.`
+                  : nextRealDatabaseStep?.evidence ?? "Export the working-data and V1 readiness packets."}
+              </small>
             </div>
             <div className="real-database-completion-grid">
               {realDatabaseCompletionSteps.map((step) => (
