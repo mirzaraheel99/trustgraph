@@ -4733,6 +4733,75 @@ p,
   line-height: 1.35;
 }
 
+.live-row-source-receipt {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.065), transparent 68%),
+    rgba(255, 255, 255, 0.024);
+  overflow: hidden;
+}
+
+.live-row-source-receipt > div:first-child,
+.live-row-source-grid article > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.live-row-source-receipt strong,
+.live-row-source-receipt small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-row-source-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.16;
+}
+
+.live-row-source-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 8px;
+}
+
+.live-row-source-grid article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.live-row-source-grid article.matched {
+  border-color: rgba(82, 214, 196, 0.26);
+  background: rgba(82, 214, 196, 0.06);
+}
+
+.live-row-source-next {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  gap: 10px;
+  align-items: center;
+}
+
+.live-row-source-next button {
+  justify-content: center;
+  min-height: 36px;
+  text-transform: capitalize;
+}
+
 .real-database-policy-card {
   display: grid;
   gap: 10px;
@@ -11683,6 +11752,8 @@ p {
   .invitation-handoff-strip,
   .live-database-acceptance-lanes-top,
   .live-database-acceptance-lane-grid,
+  .live-row-source-grid,
+  .live-row-source-next,
   .missing-controls,
   .missing-summary-grid,
   .notification-summary-grid,

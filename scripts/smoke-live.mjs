@@ -411,6 +411,10 @@ assertIncludesAny(bundleText, ["Working-data packet export"], "working database 
 assertIncludesAny(bundleText, ["Working database acceptance"], "working database acceptance summary");
 assertIncludesAny(bundleText, ["Live account acceptance checklist"], "live account acceptance checklist");
 assertIncludesAny(bundleText, ["live_account_acceptance_checklist"], "live account acceptance packet field");
+assertIncludesAny(bundleText, ["Live row source receipt"], "working database live row source receipt");
+assertIncludesAny(bundleText, ["live_row_source_receipt"], "working database live row source receipt packet field");
+assertIncludesAny(bundleText, ["signed_in_supabase_repository_rows"], "working database accepted row source");
+assertIncludesAny(bundleText, ["missing_live_supabase_row"], "working database missing row source state");
 assertIncludesAny(bundleText, ["human_or_live_data_action_required"], "live account acceptance human/live data action state");
 assertIncludesAny(bundleText, ["Live database acceptance lanes"], "live database acceptance lanes panel");
 assertIncludesAny(bundleText, ["live_database_acceptance_lanes"], "live database acceptance lanes packet field");

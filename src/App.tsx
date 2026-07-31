@@ -9538,6 +9538,24 @@ function OnboardingChecklistPanel({
           ? "Open Corporate Verify"
           : "Open Professional Passport"
     }));
+  const liveRowSourceReceipt = {
+    mode: "live_row_source_receipt",
+    accepted_source: authSession && accountContext ? "signed_in_supabase_repository_rows" : "product_preview_only",
+    preview_data_accepted: false,
+    row_groups_ready: liveDatabaseAcceptancePassing,
+    row_groups_required: liveDatabaseAcceptanceRows.length,
+    row_groups_missing: liveDatabaseAcceptanceRows.length - liveDatabaseAcceptancePassing,
+    next_repair_action:
+      liveDatabaseAcceptanceComplete
+        ? "export_working_data_packet"
+        : liveDatabaseRepairQueue[0]?.action ?? "login_or_seed_live_rows",
+    rows: liveDatabaseAcceptanceRows.map((row) => ({
+      label: row.label,
+      source: row.ok ? "live_supabase_row_loaded" : "missing_live_supabase_row",
+      required: row.required,
+      evidence: row.evidence
+    }))
+  };
   const hostedLoginDatabaseReady = Boolean(authSession && accountContext && liveDatabaseAcceptanceComplete);
   const workingDatabaseAcceptanceStatus = liveDatabaseAcceptanceComplete
     ? "working_database_accepted"
@@ -9890,6 +9908,7 @@ function OnboardingChecklistPanel({
     working_database_command_center: workingDatabaseCommandCenter,
     live_account_acceptance_checklist: liveAccountAcceptancePacket,
     live_database_acceptance_lanes: liveDatabaseAcceptanceLanes,
+    live_row_source_receipt: liveRowSourceReceipt,
     live_database_acceptance: {
       status: workingDatabaseAcceptanceStatus,
       passing: liveDatabaseAcceptancePassing,
@@ -10292,6 +10311,49 @@ function OnboardingChecklistPanel({
               <strong>{workingDatabaseCommandCenter.packet_export_required ? "Required" : "Optional"}</strong>
               <small>Working-data packet export</small>
             </span>
+          </div>
+        </div>
+        <div className="live-row-source-receipt" aria-label="Live row source receipt">
+          <div>
+            <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : authSession && accountContext ? "warning" : "neutral"}`}>
+              Live row source receipt
+            </span>
+            <strong>{liveRowSourceReceipt.row_groups_ready}/{liveRowSourceReceipt.row_groups_required} required row groups are live</strong>
+            <small>
+              Accepted source: {liveRowSourceReceipt.accepted_source.replace(/_/g, " ")}. Preview data accepted: {liveRowSourceReceipt.preview_data_accepted ? "yes" : "no"}.
+            </small>
+          </div>
+          <div className="live-row-source-grid">
+            {liveRowSourceReceipt.rows.map((row) => (
+              <article className={row.source === "live_supabase_row_loaded" ? "matched" : ""} key={row.label}>
+                <span className={`status-dot ${row.source === "live_supabase_row_loaded" ? "on" : ""}`} />
+                <div>
+                  <strong>{row.label}</strong>
+                  <small>{row.source.replace(/_/g, " ")}</small>
+                  <small>{row.evidence}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="live-row-source-next">
+            <small>{liveRowSourceReceipt.row_groups_missing} missing row group{liveRowSourceReceipt.row_groups_missing === 1 ? "" : "s"} before acceptance.</small>
+            <button
+              className="secondary-action"
+              onClick={() => {
+                if (liveRowSourceReceipt.next_repair_action === "Open Corporate Verify") {
+                  onOpenWorkspace("verify");
+                  return;
+                }
+                if (liveRowSourceReceipt.next_repair_action === "Open Professional Passport") {
+                  onOpenWorkspace("passport");
+                  return;
+                }
+                downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json");
+              }}
+              type="button"
+            >
+              {liveRowSourceReceipt.next_repair_action.replace(/_/g, " ")}
+            </button>
           </div>
         </div>
         <div className="working-database-acceptance-card">
