@@ -9910,6 +9910,81 @@ p {
   line-height: 1.35;
 }
 
+.corporate-reviewer-action-bar {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(143, 178, 255, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(143, 178, 255, 0.08), rgba(95, 240, 201, 0.055) 62%, transparent),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-reviewer-action-bar > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-reviewer-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr));
+  gap: 8px;
+}
+
+.corporate-reviewer-action-grid button {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 126px;
+  padding: 12px;
+  justify-items: start;
+  text-align: left;
+  white-space: normal;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.corporate-reviewer-action-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.3);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.corporate-reviewer-action-grid button.locked {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.05);
+}
+
+.corporate-reviewer-action-grid button.proof {
+  border-color: rgba(143, 178, 255, 0.26);
+  background: rgba(143, 178, 255, 0.065);
+}
+
+.corporate-reviewer-action-bar strong,
+.corporate-reviewer-action-bar small,
+.corporate-reviewer-action-bar span,
+.corporate-reviewer-action-bar em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-reviewer-action-bar > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 26px);
+  line-height: 1.12;
+}
+
+.corporate-reviewer-action-grid em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
 .reviewer-database-readiness-board {
   display: grid;
   gap: 12px;
@@ -14960,6 +15035,8 @@ p {
   .corporate-classification-contract,
   .corporate-classification-grid,
   .corporate-classification-boundary,
+  .corporate-reviewer-action-bar,
+  .corporate-reviewer-action-grid,
   .v1-operating-map-header,
   .v1-operating-map-grid,
   .workspace-command-strip,

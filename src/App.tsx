@@ -3987,6 +3987,40 @@ function CorporateDirectoryPanel({
     accepted_when:
       "corporate_database_first_screen_shows_live_rbac_request_access_approved_rows_gap_review_attestation_export_and_no_open_user_browsing"
   };
+  const corporateReviewerActionBar = {
+    mode: "corporate_reviewer_action_bar",
+    source: isLiveCorporateDatabase ? "signed_in_supabase_rows_visible_to_active_corporate_rbac_context" : "locked_until_corporate_rbac_login",
+    preview_data_accepted: false,
+    next_action: corporateAccessNextAction.label,
+    actions: [
+      {
+        label: "Request access",
+        target: "corporate-verify-request-form",
+        enabled: isLiveCorporateDatabase,
+        detail: "Ask for one professional by email; no open user browsing."
+      },
+      {
+        label: "Review rows",
+        target: "corporate-access-review-queue",
+        enabled: sharedRecords.length > 0,
+        detail: "Inspect approved shared Passport rows and gaps."
+      },
+      {
+        label: "Record attestation",
+        target: "corporate-access-review-queue",
+        enabled: corporateDatabaseAccessDecisionBoard.can_record_review_attestation,
+        detail: "Save reviewed or ready-handoff proof after visible rows load."
+      },
+      {
+        label: "Export packet",
+        target: "export",
+        enabled: filteredRows.length > 0 || sharedRecords.length > 0,
+        detail: "Export metadata-only scoped user database proof."
+      }
+    ],
+    accepted_when:
+      "corporate_reviewer_action_bar_keeps_request_review_attestation_export_and_locked_reason_visible_before_directory_filters"
+  };
   const corporateReviewHandoffSteps = [
     {
       label: "Request access by professional email",
@@ -4531,6 +4565,49 @@ function CorporateDirectoryPanel({
             <strong>{corporateDatabaseActionCockpit.review_attestations}</strong>
             <small>Review attestations</small>
           </span>
+        </div>
+      </div>
+      <div className="corporate-reviewer-action-bar" aria-label="Corporate reviewer action bar">
+        <div>
+          <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Reviewer actions</span>
+          <strong>{corporateAccessNextAction.ready ? "Corporate user database proof is ready" : corporateAccessNextAction.label}</strong>
+          <small>{corporateReviewerActionBar.accepted_when}</small>
+        </div>
+        <div className="corporate-reviewer-action-grid">
+          {corporateReviewerActionBar.actions.map((action) => (
+            <button
+              className={action.enabled ? "ready" : "locked"}
+              disabled={!action.enabled && action.target !== "corporate-verify-request-form"}
+              key={action.label}
+              onClick={() => {
+                if (action.target === "export") {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                document.getElementById(action.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              <strong>{action.label}</strong>
+              <small>{action.detail}</small>
+              <em>{action.enabled ? "Available" : corporateAccessNextAction.label}</em>
+            </button>
+          ))}
+          <button
+            className="proof"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-reviewer-action-bar-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(corporateReviewerActionBar, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            <strong>Export action bar</strong>
+            <small>Proof that request, review, attestation, export, and lock reason are visible.</small>
+            <em>Metadata only</em>
+          </button>
         </div>
       </div>
       <div className="reviewer-database-readiness-board" aria-label="Reviewer database readiness board">
