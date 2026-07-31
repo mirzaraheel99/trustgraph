@@ -13074,6 +13074,16 @@ function App() {
       status: organizationSubscriptions.length ? "Ledger live" : "Needed",
       done: Boolean(organizationSubscriptions.length),
       target: "billing" as const
+    },
+    {
+      id: "verify",
+      label: "Verify users",
+      detail: sharedVerifyRecords.length
+        ? `${sharedVerifyRecords.length} scoped user database row${sharedVerifyRecords.length === 1 ? "" : "s"} visible to Corporate Verify.`
+        : "Request and approve Access Grants so Corporate Verify can load user Passport rows.",
+      status: sharedVerifyRecords.length ? "Rows visible" : "Needs shared rows",
+      done: sharedVerifyRecords.length > 0,
+      target: "readiness" as const
     }
   ];
   const corporateSetupComplete = corporateSetupSteps.filter((step) => step.done).length;
@@ -13096,6 +13106,51 @@ function App() {
       value: nextCorporateSetupStep.label,
       detail: nextCorporateSetupStep.detail,
       tone: nextCorporateSetupStep.done ? "success" : "warning"
+    }
+  ];
+  const corporateLaunchCockpit = {
+    mode: "corporate_launch_cockpit",
+    signed_in: Boolean(authSession),
+    live_corporate_context: hasLiveCorporateContext,
+    setup_complete: corporateSetupComplete,
+    setup_total: corporateSetupSteps.length,
+    next_step: nextCorporateSetupStep.label,
+    next_detail: nextCorporateSetupStep.detail,
+    can_manage_workspace: canManageCorporateSetup,
+    live_counts: {
+      team_members: teamMembers.length,
+      invitations: teamInvitations.length,
+      subscription_ledgers: organizationSubscriptions.length,
+      access_grants: accessGrants.length,
+      verify_requests: verifyRequests.length,
+      shared_user_rows: sharedVerifyRecords.length
+    },
+    accepted_when: "signed_in_corporate_workspace_rbac_team_billing_and_shared_user_rows_visible"
+  };
+  const corporateLaunchLanes = [
+    {
+      label: "1. Create company",
+      detail: hasLiveCorporateContext ? activeOrganization.name : "Register or create the employer/staffing workspace.",
+      status: hasLiveCorporateContext ? "Ready" : "Needed",
+      action: hasLiveCorporateContext ? "Open company admin" : "Create workspace",
+      target: "corporate" as const,
+      ready: hasLiveCorporateContext
+    },
+    {
+      label: "2. Invite operators",
+      detail: teamMembers.length || teamInvitations.length ? `${teamMembers.length} members, ${teamInvitations.length} invites` : "Invite reviewers and admins who will use Verify.",
+      status: teamMembers.length || teamInvitations.length ? "Started" : "Needed",
+      action: "Open team",
+      target: "team" as const,
+      ready: Boolean(teamMembers.length || teamInvitations.length)
+    },
+    {
+      label: "3. Verify users",
+      detail: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} shared rows visible` : "Request user Passport access and review approved rows.",
+      status: sharedVerifyRecords.length ? "Rows visible" : "Needs grants",
+      action: "Open Verify",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0
     }
   ];
   const dashboardStartMap = [
@@ -13813,6 +13868,84 @@ function App() {
                 <span className="eyebrow">Setup center</span>
                 <h2>Account, corporate access, and rollout controls</h2>
                 <p>Follow the corporate setup path in order: login, workspace, RBAC, team, billing, then readiness. Each action opens the exact panel needed for the next live database step.</p>
+              </div>
+              <div className="corporate-launch-cockpit" aria-label="Corporate launch cockpit">
+                <div className="corporate-launch-cockpit-top">
+                  <div>
+                    <span className={`status-chip ${corporateSetupComplete === corporateSetupSteps.length ? "success" : "warning"}`}>
+                      Corporate launch cockpit
+                    </span>
+                    <strong>{nextCorporateSetupStep.done ? "Corporate portal is ready for Verify work" : nextCorporateSetupStep.label}</strong>
+                    <small>{nextCorporateSetupStep.detail}</small>
+                  </div>
+                  <button
+                    className="primary-action"
+                    onClick={() => {
+                      if (nextCorporateSetupStep.id === "verify") {
+                        openWorkspaceOrSetup("verify");
+                        return;
+                      }
+                      setSetupView(nextCorporateSetupStep.target);
+                    }}
+                    type="button"
+                  >
+                    {nextCorporateSetupStep.id === "verify" ? "Open Verify" : `Open ${nextCorporateSetupStep.label}`}
+                  </button>
+                </div>
+                <div className="corporate-launch-progress" aria-label="Corporate launch progress">
+                  <span style={{ width: `${Math.round((corporateSetupComplete / corporateSetupSteps.length) * 100)}%` }} />
+                </div>
+                <div className="corporate-launch-lanes">
+                  {corporateLaunchLanes.map((lane) => (
+                    <article className={lane.ready ? "ready" : ""} key={lane.label}>
+                      <div>
+                        <strong>{lane.label}</strong>
+                        <small>{lane.detail}</small>
+                        <span>{lane.status}</span>
+                      </div>
+                      <button
+                        className={lane.ready ? "secondary-action" : "primary-action"}
+                        onClick={() => {
+                          if (lane.target === "verify") {
+                            openWorkspaceOrSetup("verify");
+                            return;
+                          }
+                          setSetupView(lane.target);
+                        }}
+                        type="button"
+                      >
+                        {lane.action}
+                      </button>
+                    </article>
+                  ))}
+                </div>
+                <div className="corporate-launch-counts">
+                  <span>
+                    <strong>{corporateLaunchCockpit.live_counts.team_members}</strong>
+                    <small>Team members</small>
+                  </span>
+                  <span>
+                    <strong>{corporateLaunchCockpit.live_counts.subscription_ledgers}</strong>
+                    <small>Billing rows</small>
+                  </span>
+                  <span>
+                    <strong>{corporateLaunchCockpit.live_counts.shared_user_rows}</strong>
+                    <small>User rows visible</small>
+                  </span>
+                </div>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(
+                      `trustgraph-corporate-launch-cockpit-${new Date().toISOString().slice(0, 10)}.json`,
+                      JSON.stringify(corporateLaunchCockpit, null, 2),
+                      "application/json"
+                    )
+                  }
+                  type="button"
+                >
+                  Export cockpit proof
+                </button>
               </div>
               <div className="corporate-operator-strip" aria-label="Corporate operator status">
                 {corporateOperatorStatus.map((item) => (

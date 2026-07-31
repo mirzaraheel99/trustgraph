@@ -11586,6 +11586,90 @@ p {
   background: rgba(0, 0, 0, 0.16);
 }
 
+.corporate-launch-cockpit {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.09), rgba(255, 255, 255, 0.02)),
+    rgba(3, 12, 15, 0.74);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+}
+
+.corporate-launch-cockpit-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.corporate-launch-cockpit-top > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-launch-cockpit strong,
+.corporate-launch-cockpit small,
+.corporate-launch-cockpit span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-launch-progress {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.corporate-launch-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5ff0c9, #f0c66b);
+}
+
+.corporate-launch-lanes,
+.corporate-launch-counts {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.corporate-launch-lanes article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+}
+
+.corporate-launch-lanes article.ready {
+  border-color: rgba(95, 240, 201, 0.26);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.corporate-launch-lanes article > div,
+.corporate-launch-counts span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.corporate-launch-counts span {
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
 @media (max-width: 980px) {
   .workspace {
     padding-inline: 16px;
@@ -11898,11 +11982,13 @@ body {
   .topbar,
   .portal-home-command,
   .hero,
+  .corporate-launch-cockpit-top,
   .workspace-command-strip {
     grid-template-columns: 1fr;
   }
 
   .topbar-actions,
+  .corporate-launch-cockpit-top > button,
   .workspace-command-actions {
     justify-content: flex-start;
   }
@@ -11948,12 +12034,14 @@ body {
 
   .signed-in-landing-grid article,
   .dashboard-start-map-grid article,
+  .corporate-launch-lanes article,
   .proof-export-hub-grid article {
     grid-template-columns: 1fr;
   }
 
   .signed-in-landing-grid button,
   .dashboard-start-map-grid button,
+  .corporate-launch-cockpit button,
   .proof-export-hub-grid button,
   .session-command-bar button,
   .portal-home-actions button {
