@@ -9005,6 +9005,71 @@ p {
   text-transform: uppercase;
 }
 
+.corporate-review-handoff-receipt {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(149, 184, 255, 0.2);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(30, 50, 75, 0.62), rgba(10, 20, 24, 0.72));
+}
+
+.corporate-review-handoff-receipt > div:first-child {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-review-handoff-receipt strong,
+.corporate-review-handoff-receipt small,
+.corporate-review-handoff-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-review-handoff-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.6vw, 24px);
+  line-height: 1.15;
+}
+
+.corporate-review-handoff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 8px;
+}
+
+.corporate-review-handoff-grid span {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+  min-height: 132px;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.corporate-review-handoff-grid span.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.corporate-review-handoff-grid small {
+  color: rgba(222, 239, 233, 0.66);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.corporate-review-handoff-grid small:first-child {
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
 .directory-review-board {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12604,6 +12669,7 @@ p {
   .corporate-directory-filter-grid,
   .corporate-scope-review-grid,
   .corporate-access-next-action-grid,
+  .corporate-review-handoff-grid,
   .directory-review-board,
   .admin-audit-export-command-grid,
   .admin-audit-export-command-actions,

@@ -3560,6 +3560,56 @@ function CorporateDirectoryPanel({
     acceptance_rule:
       "corporate_access_next_action_is_complete_only_when_live_rbac_context_approved_grants_shared_rows_gap_review_and_attestation_are_ready"
   };
+  const corporateReviewHandoffSteps = [
+    {
+      label: "Request access by professional email",
+      value: requests.length ? `${requests.length} request rows` : "Not started",
+      detail: "Corporate starts with a named professional and business purpose.",
+      ready: requests.length > 0
+    },
+    {
+      label: "Professional approves scoped Access Grant",
+      value: approvedAccessCount ? `${approvedAccessCount} approved` : "Waiting",
+      detail: "No Passport rows appear before the professional approves scope.",
+      ready: approvedAccessCount > 0
+    },
+    {
+      label: "Load approved shared user rows",
+      value: sharedRecords.length ? `${sharedRecords.length} rows` : "No rows",
+      detail: "Visible rows must come from live RBAC, consent, and Access Grant scope.",
+      ready: isLiveCorporateDatabase && sharedRecords.length > 0
+    },
+    {
+      label: "Resolve missing-record gaps",
+      value: openGapRequestCount ? `${openGapRequestCount} open` : "Clear",
+      detail: "Open gaps must be resolved or marked as follow-up before handoff.",
+      ready: openGapRequestCount === 0 && sharedRecords.length > 0
+    },
+    {
+      label: "Record corporate review attestation",
+      value: reviews.length ? `${reviews.length} attestations` : "Not recorded",
+      detail: "Reviewer action writes corporate_access_reviews audit proof.",
+      ready: reviews.length > 0
+    },
+    {
+      label: "Export corporate user packet",
+      value: corporateAccessNextAction.ready ? "Ready" : corporateAccessNextAction.action,
+      detail: "The packet carries source counts, filters, scope rows, gaps, and review proof.",
+      ready: corporateAccessNextAction.ready
+    }
+  ];
+  const corporateReviewHandoffReadyCount = corporateReviewHandoffSteps.filter((step) => step.ready).length;
+  const corporateReviewHandoffReceipt = {
+    mode: "corporate_review_handoff_receipt",
+    status: corporateAccessNextAction.ready ? "ready_for_corporate_user_packet_export" : "handoff_steps_open",
+    ready_steps: corporateReviewHandoffReadyCount,
+    total_steps: corporateReviewHandoffSteps.length,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_review_handoff_requires_request_approved_grant_scoped_rows_gap_resolution_attestation_and_export",
+    current_action: corporateAccessNextAction.label,
+    steps: corporateReviewHandoffSteps
+  };
   const corporateVisibilityLedger = [
     {
       label: "Visible user records",
@@ -3690,6 +3740,7 @@ function CorporateDirectoryPanel({
       checks: corporateScopeReviewCommand
     },
     corporate_access_next_action_command: corporateAccessNextActionCommand,
+    corporate_review_handoff_receipt: corporateReviewHandoffReceipt,
     corporate_data_access_path: corporateAccessPath,
     corporate_review_attestation_ledger: corporateReviewAttestationLedger,
     corporate_review_attestations: reviews.map((review) => ({
@@ -3948,6 +3999,23 @@ function CorporateDirectoryPanel({
               <strong>{item.value}</strong>
               <small>{item.detail}</small>
             </article>
+          ))}
+        </div>
+      </div>
+      <div className="corporate-review-handoff-receipt" aria-label="Corporate review handoff receipt">
+        <div>
+          <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Corporate review handoff receipt</span>
+          <strong>{corporateAccessNextAction.ready ? "Approved user rows are ready for export" : corporateAccessNextAction.label}</strong>
+          <small>Accepted only when request, approved grant, scoped rows, gap resolution, review attestation, and export are all ready.</small>
+        </div>
+        <div className="corporate-review-handoff-grid">
+          {corporateReviewHandoffSteps.map((step, index) => (
+            <span className={step.ready ? "ready" : ""} key={step.label}>
+              <small>Step {index + 1}</small>
+              <strong>{step.label}</strong>
+              <small>{step.value}</small>
+              <small>{step.detail}</small>
+            </span>
           ))}
         </div>
       </div>
