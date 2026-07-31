@@ -3312,6 +3312,37 @@ function CorporateDirectoryPanel({
   const databaseModeDetail = isLiveCorporateDatabase
     ? "Reads corporate visibility from Supabase Access Grants, shared Passport records, professional profiles, and missing-record requests."
     : "Login with a corporate reviewer role or create a corporate workspace before treating this panel as live database evidence.";
+  const corporateUserDatabaseAccessContract = {
+    mode: "corporate_user_database_access_contract",
+    can_browse_users: false,
+    request_path: "request_by_professional_email",
+    visible_rows_source: "approved_access_grants_and_shared_passport_records",
+    consent_scope_required: true,
+    active_database_mode: databaseModeLabel,
+    accepted_when: "corporate_reviewer_has_live_rbac_context_approved_grants_visible_shared_rows_and_review_attestations"
+  };
+  const corporateUserDatabaseAccessContractCards = [
+    {
+      label: "Access method",
+      value: "Request by email",
+      detail: "Corporate starts with a professional email request, not an open user search."
+    },
+    {
+      label: "Visible rows",
+      value: "Approved shared rows",
+      detail: "Records appear only after Access Grant approval and consent scope."
+    },
+    {
+      label: "Browse users",
+      value: "No",
+      detail: "The portal must not expose a full user directory or unrestricted database browse."
+    },
+    {
+      label: "Consent/RBAC scope",
+      value: "Required",
+      detail: "Organization role, Access Grant, and professional consent filter every row."
+    }
+  ];
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -3327,6 +3358,7 @@ function CorporateDirectoryPanel({
       query: directoryQuery.trim()
     },
     filter_receipt: corporateDirectoryFilterReceipt,
+    corporate_user_database_access_contract: corporateUserDatabaseAccessContract,
     source_counts: {
       access_grants: requests.length,
       filtered_professionals: filteredRows.length,
@@ -3523,6 +3555,21 @@ function CorporateDirectoryPanel({
             <strong>{directoryQuery.trim() || "No search"}</strong>
             <small>Search query</small>
           </span>
+        </div>
+      </div>
+      <div className="corporate-user-database-contract" aria-label="Corporate user database access contract">
+        <div className="directory-source-strip">
+          <span className="status-chip neutral">Corporate user database access contract</span>
+          <small>Corporate cannot browse users. It can request access by professional email and review only approved shared Passport rows.</small>
+        </div>
+        <div className="corporate-user-database-contract-grid">
+          {corporateUserDatabaseAccessContractCards.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <div className="corporate-data-access-path" aria-label="Corporate data access path">

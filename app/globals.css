@@ -7829,6 +7829,60 @@ p {
   gap: 8px;
 }
 
+.corporate-user-database-contract {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-user-database-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.corporate-user-database-contract-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.corporate-user-database-contract-grid span,
+.corporate-user-database-contract-grid strong,
+.corporate-user-database-contract-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-user-database-contract-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-user-database-contract-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+}
+
+.corporate-user-database-contract-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .corporate-data-access-path article {
   display: flex;
   align-items: flex-start;
@@ -11397,6 +11451,7 @@ p {
   .corporate-live-retest-grid,
   .corporate-operating-plan-grid,
   .corporate-data-access-path,
+  .corporate-user-database-contract-grid,
   .corporate-access-review-grid,
   .corporate-visibility-grid,
   .corporate-verify-first-use-grid,
@@ -12839,6 +12894,42 @@ p {
 .corporate-verify-first-use strong,
 .corporate-verify-first-use small,
 .corporate-verify-first-use span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-user-database-contract {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(134, 174, 246, 0.075), rgba(95, 240, 201, 0.025)),
+    rgba(0, 0, 0, 0.16);
+}
+
+.corporate-user-database-contract-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+}
+
+.corporate-user-database-contract-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.corporate-user-database-contract-grid span,
+.corporate-user-database-contract-grid strong,
+.corporate-user-database-contract-grid small {
   min-width: 0;
   overflow-wrap: anywhere;
 }

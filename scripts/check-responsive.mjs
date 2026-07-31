@@ -31,6 +31,7 @@ const requiredMobileStacks = [
   ".connect-source-strip",
   ".connect-export-actions",
   ".corporate-data-access-path",
+  ".corporate-user-database-contract-grid",
   ".corporate-launch-cockpit-top",
   ".corporate-launch-lanes",
   ".corporate-launch-counts",

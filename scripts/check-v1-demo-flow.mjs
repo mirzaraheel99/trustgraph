@@ -106,6 +106,9 @@ const flowChecks = [
     label: "Corporate Verify proves user database visibility through RBAC and grants",
     required: [
       "Corporate user database packet",
+      "Corporate user database access contract",
+      "corporate_user_database_access_contract",
+      "can_browse_users: false",
       "Corporate directory acceptance",
       "corporate_directory_acceptance",
       "Corporate access review queue",
