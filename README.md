@@ -113,6 +113,8 @@ The public pricing section now includes a Pricing and access summary before the 
 
 Corporate Verify now includes a request-to-row rail before directory filters, showing the reviewer exactly where they are across request, professional approval, scoped rows, attestation, visibility snapshot, and metadata-only export.
 
+Corporate Verify’s database action cockpit now includes direct controls for requesting access, reviewing scoped rows, saving the visibility snapshot, recording the database access receipt, and exporting the scoped metadata packet before reviewers reach dense filters.
+
 Billing now starts with a pricing choice rail that summarizes selected plan, seats, projected monthly price, live pilot ledger state, saved quote receipt, Stripe gate, and pricing packet export before the deeper billing receipts.
 
 Passport record detail now starts evidence work with an evidence access desk: preview, download, metadata manifest export, access packet export, signed URL expiry, metadata-only boundaries, and last-link proof are visible before deeper evidence receipts.

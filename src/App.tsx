@@ -4302,6 +4302,43 @@ function CorporateDirectoryPanel({
     accepted_when:
       "corporate_database_first_screen_shows_live_rbac_request_access_approved_rows_gap_review_attestation_export_and_no_open_user_browsing"
   };
+  const corporateDatabaseActionButtons = [
+    {
+      label: "Request access",
+      detail: "Ask one professional by email.",
+      enabled: isLiveCorporateDatabase,
+      action: "scroll",
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Review rows",
+      detail: "Open filtered scoped rows.",
+      enabled: sharedRecords.length > 0 || requests.length > 0,
+      action: "scroll",
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Save snapshot",
+      detail: "Persist filtered visibility proof.",
+      enabled: isLiveCorporateDatabase,
+      action: "snapshot",
+      target: "corporate-database-visibility-snapshot"
+    },
+    {
+      label: "Record receipt",
+      detail: "Persist database access receipt.",
+      enabled: isLiveCorporateDatabase,
+      action: "receipt",
+      target: "corporate-user-database-export-receipt"
+    },
+    {
+      label: "Export packet",
+      detail: "Download scoped metadata-only packet.",
+      enabled: corporateAccessNextAction.ready,
+      action: "export",
+      target: "export"
+    }
+  ];
   const corporateReviewerActionBar = {
     mode: "corporate_reviewer_action_bar",
     source: isLiveCorporateDatabase ? "signed_in_supabase_rows_visible_to_active_corporate_rbac_context" : "locked_until_corporate_rbac_login",
@@ -4814,7 +4851,15 @@ function CorporateDirectoryPanel({
       checks: corporateScopeReviewCommand
     },
     corporate_database_access_decision_board: corporateDatabaseAccessDecisionBoard,
-    corporate_database_action_cockpit: corporateDatabaseActionCockpit,
+    corporate_database_action_cockpit: {
+      ...corporateDatabaseActionCockpit,
+      actions: corporateDatabaseActionButtons.map((button) => ({
+        label: button.label,
+        enabled: button.enabled,
+        action: button.action,
+        target: button.target
+      }))
+    },
     corporate_request_to_row_rail: {
       ...corporateRequestToRowRail,
       steps: corporateRequestToRowSteps.map(({ label, value, ready }) => ({ label, value, ready }))
@@ -5033,6 +5078,34 @@ function CorporateDirectoryPanel({
               <strong>{card.value}</strong>
               <small>{card.detail}</small>
             </article>
+          ))}
+        </div>
+        <div className="corporate-database-action-buttons" aria-label="Corporate database action buttons">
+          {corporateDatabaseActionButtons.map((button) => (
+            <button
+              className={button.enabled ? "ready" : "locked"}
+              disabled={!button.enabled && button.action !== "scroll"}
+              key={button.label}
+              onClick={() => {
+                if (button.action === "export") {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                if (button.action === "snapshot") {
+                  void recordVisibilitySnapshot();
+                  return;
+                }
+                if (button.action === "receipt") {
+                  void recordDatabaseReceipt();
+                  return;
+                }
+                document.getElementById(button.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              <strong>{button.label}</strong>
+              <small>{button.detail}</small>
+            </button>
           ))}
         </div>
         <div className="corporate-database-action-proof">
@@ -5633,7 +5706,7 @@ function CorporateDirectoryPanel({
         <small>Exports filtered professional access rows, per-professional shared records, structured responsibilities, skills, source counts, and gap focus for the active Verify workspace.</small>
         <small>{sharedResponsibilityCount} shared responsibilities and {sharedSkillCount} shared skills visible through approved scope.</small>
       </div>
-      <div className="directory-list">
+      <div className="directory-list" id="corporate-directory-list">
         {filteredRows.length ? (
           filteredRows.slice(0, 8).map((row) => (
             <article className="directory-card" key={row.id}>

@@ -228,7 +228,7 @@ assert(css.includes(".corporate-access-next-action") && css.includes(".corporate
 assert(app.includes('aria-label="Issuer provenance receipt"'), "issuer workflow must expose source, owner, expiration, revocation, and audit provenance.");
 assert(css.includes(".issuer-provenance-receipt") && css.includes(".issuer-provenance-grid"), "issuer provenance receipt must be styled and bounded.");
 assert(app.includes('aria-label="Corporate database access decision board"'), "Corporate Verify must expose a current access decision board for request, view, attest, and export actions.");
-assert(app.includes('aria-label="Corporate database action cockpit"'), "Corporate Verify must expose a first-screen database action cockpit before directory filters and exports.");
+assert(app.includes('aria-label="Corporate database action cockpit"') && app.includes('aria-label="Corporate database action buttons"'), "Corporate Verify must expose a first-screen database action cockpit with direct request, review, snapshot, receipt, and export buttons before directory filters.");
 assert(app.includes('aria-label="Corporate reviewer action bar"'), "Corporate Verify must expose one compact reviewer action bar before directory filters.");
 assert(css.includes(".corporate-database-access-decision-board") && css.includes(".corporate-database-access-decision-grid"), "corporate database access decision board must be styled and bounded.");
 assert(app.includes('aria-label="Corporate database path strip"') && app.includes("corporate_database_path_strip"), "Corporate Verify must expose a clear database path strip before directory filters.");
@@ -239,7 +239,7 @@ assert(app.includes('aria-label="Corporate Verify access progress strip"') && ap
 assert(css.includes(".corporate-access-progress-strip") && css.includes(".corporate-access-progress-grid") && css.includes(".corporate-access-progress-proof"), "corporate access progress strip must be styled and bounded.");
 assert(app.includes('aria-label="Professional Passport progress strip"') && app.includes("professional_passport_progress_strip"), "Professional Passport must expose a simple progress strip for account, record, evidence, consent, sharing, and proof.");
 assert(css.includes(".professional-passport-progress-strip") && css.includes(".professional-passport-progress-grid") && css.includes(".professional-passport-progress-proof"), "professional passport progress strip must be styled and bounded.");
-assert(css.includes(".corporate-database-action-cockpit") && css.includes(".corporate-database-action-grid") && css.includes(".corporate-database-action-proof"), "corporate database action cockpit must be styled and bounded.");
+assert(css.includes(".corporate-database-action-cockpit") && css.includes(".corporate-database-action-grid") && css.includes(".corporate-database-action-buttons") && css.includes(".corporate-database-action-proof"), "corporate database action cockpit must be styled, actionable, and bounded.");
 assert(app.includes('aria-label="Corporate user database export receipt"'), "Corporate Verify must expose an export receipt for scoped user database packets.");
 assert(css.includes(".corporate-user-database-export-receipt") && css.includes(".corporate-user-database-export-grid"), "corporate user database export receipt must be styled and bounded.");
 assert(app.includes("Record database receipt"), "Corporate Verify must expose a database access receipt save action.");
