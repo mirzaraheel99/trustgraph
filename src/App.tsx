@@ -16884,6 +16884,34 @@ function App() {
     commands: missingLiveRowCommands,
     accepted_when: "all_required_signed_in_supabase_row_groups_are_loaded_and_working_data_packet_is_exported"
   };
+  const latestRegistrationIntent = registrationIntents[0] ?? null;
+  const registrationIntentReviewPacket = {
+    mode: "registration_intent_review_packet",
+    status: registrationIntents.length ? "live_registration_intents_loaded" : authSession ? "no_registration_intents_loaded" : "hosted_login_required",
+    table: "registration_intents",
+    rpc: "record_registration_intent",
+    loaded_count: registrationIntents.length,
+    latest_intent: latestRegistrationIntent,
+    accepted_when:
+      "registration_intents_are_written_after_hosted_auth_loaded_from_supabase_and_visible_in_live_row_proof_before_pilot_acceptance"
+  };
+  const registrationIntentReviewCards = [
+    {
+      label: "Loaded rows",
+      value: `${registrationIntents.length}`,
+      detail: registrationIntentStatus
+    },
+    {
+      label: "Latest portal",
+      value: latestRegistrationIntent?.selected_portal ?? "None",
+      detail: latestRegistrationIntent ? `${latestRegistrationIntent.selected_mode} - ${latestRegistrationIntent.first_database_write}` : "Register or login from the hosted public site."
+    },
+    {
+      label: "Pricing",
+      value: latestRegistrationIntent?.pricing_plan_id ?? "No plan",
+      detail: latestRegistrationIntent?.next_dashboard ?? "Professional and Corporate selections write intent rows after hosted auth."
+    }
+  ];
   const onboardingHandoffCommand = {
     mode: "onboarding_handoff_command",
     signed_in: Boolean(authSession),
@@ -18293,6 +18321,37 @@ function App() {
                   <span>{item.step}</span>
                   <strong>{item.label}</strong>
                   <small>{item.status}</small>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="registration-intent-review" aria-label="Registration intent review">
+            <div className="registration-intent-review-header">
+              <div>
+                <span className={`status-chip ${registrationIntents.length ? "success" : "warning"}`}>Registration intent review</span>
+                <strong>{registrationIntents.length ? "Registration handoff rows are visible" : "Registration handoff rows are still missing"}</strong>
+                <small>{registrationIntentReviewPacket.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-registration-intent-review-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(registrationIntentReviewPacket, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export intent review
+              </button>
+            </div>
+            <div className="registration-intent-review-grid">
+              {registrationIntentReviewCards.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
                   <small>{item.detail}</small>
                 </article>
               ))}

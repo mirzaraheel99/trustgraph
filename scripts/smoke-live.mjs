@@ -465,6 +465,11 @@ assertIncludesAny(bundleText, ["Working database proof"], "working database proo
 assertIncludesAny(bundleText, ["Live pilot row proof"], "top-level live pilot row proof panel");
 assertIncludesAny(bundleText, ["required Supabase row groups loaded"], "top-level live pilot row proof counter");
 assertIncludesAny(bundleText, ["live_pilot_row_proof"], "v1 completion live pilot row proof packet field");
+assertIncludesAny(bundleText, ["Registration intent handoff"], "live pilot row proof registration intent group");
+assertIncludesAny(bundleText, ["Registration intent review"], "registration intent review panel");
+assertIncludesAny(bundleText, ["registration_intent_review_packet"], "registration intent review packet field");
+assertIncludesAny(bundleText, ["registration_intents_are_written_after_hosted_auth_loaded_from_supabase_and_visible_in_live_row_proof_before_pilot_acceptance"], "registration intent review acceptance rule");
+assertIncludesAny(bundleText, ["Export intent review"], "registration intent review export control");
 assertIncludesAny(bundleText, ["Working database command center"], "working database command center panel");
 assertIncludesAny(bundleText, ["working_database_command_center"], "working database command center packet field");
 assertIncludesAny(bundleText, ["Working-data packet export"], "working database command packet export label");

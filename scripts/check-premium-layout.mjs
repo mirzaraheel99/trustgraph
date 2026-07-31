@@ -73,6 +73,7 @@ assert(app.includes('aria-label="Admin audit export command"'), "admin audit exp
 assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
 assert(app.includes('aria-label="V1 security RLS review checklist receipt"'), "security review must expose a V1 security/RLS checklist receipt.");
 assert(app.includes('aria-label="Live pilot row proof"'), "v1 readiness must expose live pilot row proof.");
+assert(app.includes('aria-label="Registration intent review"'), "proof hub must expose registration intent rows loaded from Supabase.");
 assert(app.includes('aria-label="Live database acceptance lanes"'), "launch checklist must expose clear Professional, Corporate, and pilot ledger database lanes.");
 assert(app.includes('aria-label="Pilot owner readiness receipt"'), "launch checklist must expose pilot customer, onboarding, support, and incident owner readiness.");
 assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: none !important"), "final CSS layer must still suppress any legacy sidebar rail.");
@@ -81,6 +82,7 @@ assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(
 assert(css.includes(".signed-in-portal-flow-contract") && css.includes(".signed-in-portal-flow-grid"), "signed-in portal flow contract must be styled and bounded.");
 assert(premiumRepair.includes(".portal-choice-guide") && premiumRepair.includes(".portal-choice-guide-grid"), "portal choice guide must be styled and bounded in the premium shell.");
 assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-collection-grid"), "V1 proof collection command must be styled and bounded.");
+assert(css.includes(".registration-intent-review") && css.includes(".registration-intent-review-grid"), "registration intent review must be styled and bounded.");
 assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
 assert(css.includes(".public-portal-database-contract") && css.includes(".public-portal-database-contract-grid"), "public portal database access contract must be styled and bounded.");
 assert(css.includes(".public-buyer-launch-path") && css.includes(".public-buyer-launch-grid"), "public buyer launch path must be styled and bounded.");
