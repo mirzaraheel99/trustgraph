@@ -11848,6 +11848,38 @@ function PublicSite({
       detail: selectedRegistrationPath.nextAction
     }
   ];
+  const portalSubmitReceipt = {
+    mode: "portal_submit_receipt",
+    selected_portal: portal === "corporate" ? "Corporate company portal" : "Professional user portal",
+    submit_action: mode === "signin" ? "Login existing account" : "Register new account",
+    required_before_submit:
+      portal === "corporate" && mode === "signup"
+        ? "Email, password, organization name, company domain, and company type"
+        : "Email and password",
+    first_live_database_write: selectedRegistrationPath.primaryWrite,
+    landing_dashboard: portal === "corporate" ? "Corporate Verify, company setup, billing, team, and access requests" : "Professional Passport, records, evidence, consent, and sharing",
+    acceptance_boundary:
+      portal === "corporate"
+        ? "Corporate visibility is accepted only after RBAC loads approved shared user rows."
+        : "Professional proof is accepted only after signed-in Passport rows load from Supabase."
+  };
+  const portalSubmitReceiptCards = [
+    {
+      label: "Submit action",
+      value: portalSubmitReceipt.submit_action,
+      detail: portalSubmitReceipt.required_before_submit
+    },
+    {
+      label: "Live write",
+      value: portalSubmitReceipt.first_live_database_write,
+      detail: selectedRegistrationPath.databaseWrites.join(", ")
+    },
+    {
+      label: "Dashboard",
+      value: portal === "corporate" ? "Corporate Verify" : "Professional Passport",
+      detail: portalSubmitReceipt.landing_dashboard
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -12974,6 +13006,22 @@ function PublicSite({
             <div className="selected-portal-command-fields">
               {selectedPortalCommand.required_fields.map((field) => (
                 <span key={field}>{field.replace(/_/g, " ")}</span>
+              ))}
+            </div>
+          </div>
+          <div className="portal-submit-receipt" aria-label="Portal submit receipt">
+            <div>
+              <span className="status-chip success">Portal submit receipt</span>
+              <strong>{portalSubmitReceipt.selected_portal}</strong>
+              <small>{portalSubmitReceipt.acceptance_boundary}</small>
+            </div>
+            <div className="portal-submit-receipt-grid">
+              {portalSubmitReceiptCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
               ))}
             </div>
           </div>

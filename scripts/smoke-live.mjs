@@ -642,6 +642,9 @@ assertIncludesAny(bundleText, ["selected_registration_path"], "registration path
 assertIncludesAny(bundleText, ["Selected portal command"], "registration selected portal command strip");
 assertIncludesAny(bundleText, ["selected_portal_command"], "registration selected portal command packet field");
 assertIncludesAny(bundleText, ["Create company admin account"], "corporate registration command headline");
+assertIncludesAny(bundleText, ["Portal submit receipt"], "portal submit receipt");
+assertIncludesAny(bundleText, ["portal_submit_receipt"], "portal submit receipt packet field");
+assertIncludesAny(bundleText, ["Corporate visibility is accepted only after RBAC loads approved shared user rows"], "corporate portal submit acceptance boundary");
 assertIncludesAny(bundleText, ["protected_vfix_host"], "auth packet VFIX isolation field");
 assertIncludesAny(bundleText, ["trustgraph_vps_target"], "auth packet TrustGraph VPS field");
 assertIncludesAny(bundleText, ["github_pages_redirect"], "auth packet GitHub Pages redirect field");

@@ -1603,6 +1603,59 @@ button {
   line-height: 1.35;
 }
 
+.portal-submit-receipt {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.06);
+}
+
+.portal-submit-receipt > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.portal-submit-receipt strong,
+.portal-submit-receipt small,
+.portal-submit-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.portal-submit-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.portal-submit-receipt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.portal-submit-receipt-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.portal-submit-receipt-grid small:first-child {
+  color: #65f0d0;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .portal-handoff-checklist {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12204,6 +12257,7 @@ p {
   .account-type-chooser-header,
   .account-type-chooser-grid,
   .account-type-chooser-actions,
+  .portal-submit-receipt-grid,
   .portal-handoff-checklist,
   .portal-auth-summary-grid,
   .portal-access-steps,
