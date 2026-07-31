@@ -36,6 +36,7 @@ import type {
   DbConsentAuthorization,
   DbCorporateAccessReview,
   DbCorporateDatabaseAccessReceipt,
+  DbDataExportPackage,
   DbDataRightsRequest,
   DbDataExportPackageReceipt,
   DbEvidenceDocument,
@@ -117,8 +118,11 @@ import {
   recordCorporateDatabaseAccessReceipt
 } from "./corporateDatabaseReceiptRepository";
 import {
+  generateDataExportPackage,
+  loadDataExportPackages,
   loadDataExportPackageReceipts,
   loadDataRightsRequests,
+  markDataExportPackageDownloaded,
   markDataRightsRequestStatus,
   recordDataExportPackageReceipt,
   requestDataRightsAction
@@ -9696,8 +9700,11 @@ function AuthPanel({
   hostedCallbackProof,
   dataRightsMessage,
   dataRightsRequests,
+  dataExportPackages,
   dataExportReceipts,
   onDataRightsRequest,
+  onGenerateDataExportPackage,
+  onMarkDataExportPackageDownloaded,
   onRecordDataExportReceipt,
   onSession
 }: {
@@ -9706,8 +9713,16 @@ function AuthPanel({
   hostedCallbackProof: HostedAuthCallbackProof;
   dataRightsMessage: string;
   dataRightsRequests: DbDataRightsRequest[];
+  dataExportPackages: DbDataExportPackage[];
   dataExportReceipts: DbDataExportPackageReceipt[];
   onDataRightsRequest: (input: { requestType: DataRightsRequestType; requestedScope: string; reason: string }) => Promise<void>;
+  onGenerateDataExportPackage: (input: {
+    dataRightsRequestId: string;
+    packageReceiptId: string | null;
+    packageScope: string;
+    manifest: Record<string, unknown>;
+  }) => Promise<DbDataExportPackage>;
+  onMarkDataExportPackageDownloaded: (packageId: string) => Promise<DbDataExportPackage>;
   onRecordDataExportReceipt: (input: {
     dataRightsRequestId: string | null;
     status: DbDataExportPackageReceipt["status"];
@@ -9724,6 +9739,7 @@ function AuthPanel({
   const [dataRightsScope, setDataRightsScope] = useState("all_eligible_profile_data");
   const [dataRightsReason, setDataRightsReason] = useState("");
   const [dataRightsStatus, setDataRightsStatus] = useState(dataRightsMessage);
+  const [exportPackageBusy, setExportPackageBusy] = useState(false);
   const [exportReceiptBusy, setExportReceiptBusy] = useState(false);
   const [selectedLoginPath, setSelectedLoginPath] = useState<"professional" | "corporate">("professional");
   const [busy, setBusy] = useState(false);
@@ -9848,6 +9864,7 @@ function AuthPanel({
   const openDataRightsRequests = dataRightsRequests.filter((request) => ["requested", "in_review"].includes(request.status));
   const completedDataRightsRequests = dataRightsRequests.filter((request) => ["completed", "rejected", "cancelled"].includes(request.status));
   const latestDataRightsRequest = dataRightsRequests[0] ?? null;
+  const latestDataExportPackage = dataExportPackages[0] ?? null;
   const latestDataExportReceipt = dataExportReceipts[0] ?? null;
   const latestDataExportRequest = dataRightsRequests.find((request) => request.request_type === "data_export") ?? null;
   const dataRightsReviewLanes = [
@@ -9888,8 +9905,14 @@ function AuthPanel({
     supported_requests: ["data_export", "account_closure"],
     export_receipt_table: "data_export_package_receipts",
     export_receipt_rpc: "record_data_export_package_receipt",
+    export_package_table: "data_export_packages",
+    export_package_rpc: "generate_data_export_package",
+    export_package_download_rpc: "mark_data_export_package_downloaded",
+    export_package_accepted_when:
+      "data_export_package_manifest_requires_owner_data_export_request_metadata_only_no_raw_private_files_no_download_url_storage_and_audit_event",
     export_receipt_accepted_when:
       "data_export_package_receipt_requires_signed_in_owner_live_rows_review_request_metadata_only_raw_private_files_excluded_and_no_preview_data",
+    latest_export_package_status: latestDataExportPackage?.status ?? "not_generated",
     latest_export_receipt_status: latestDataExportReceipt?.status ?? "not_recorded",
     raw_private_files_included: false,
     preview_data_accepted_for_v1: false,
@@ -9914,6 +9937,14 @@ function AuthPanel({
       status: request.status,
       requested_scope: request.requested_scope,
       due_at: request.due_at
+    })),
+    loaded_export_packages: dataExportPackages.map((item) => ({
+      id: item.id,
+      status: item.status,
+      package_scope: item.package_scope,
+      expires_at: item.expires_at,
+      raw_private_files_included: item.raw_private_files_included,
+      download_url_stored: item.download_url_stored
     }))
   };
 
@@ -9941,6 +9972,63 @@ function AuthPanel({
       setDataRightsStatus(error instanceof Error ? error.message : "Could not record data export package receipt");
     } finally {
       setExportReceiptBusy(false);
+    }
+  }
+
+  async function generateExportPackage() {
+    if (!latestDataExportRequest) {
+      setDataRightsStatus("Create a data export request before generating a package manifest.");
+      return;
+    }
+
+    setExportPackageBusy(true);
+    setDataRightsStatus("Generating metadata-only data export package...");
+    try {
+      const item = await onGenerateDataExportPackage({
+        dataRightsRequestId: latestDataExportRequest.id,
+        packageReceiptId: latestDataExportReceipt?.id ?? null,
+        packageScope: latestDataExportRequest.requested_scope,
+        manifest: {
+          data_rights_packet: dataRightsPacket,
+          accepted_when:
+            "data_export_package_manifest_requires_owner_data_export_request_metadata_only_no_raw_private_files_no_download_url_storage_and_audit_event"
+        }
+      });
+      setDataRightsStatus(`Data export package generated: ${item.status}`);
+    } catch (error) {
+      setDataRightsStatus(error instanceof Error ? error.message : "Could not generate data export package");
+    } finally {
+      setExportPackageBusy(false);
+    }
+  }
+
+  async function downloadLatestExportPackage() {
+    if (!latestDataExportPackage) {
+      setDataRightsStatus("Generate a data export package before downloading the manifest.");
+      return;
+    }
+
+    setExportPackageBusy(true);
+    try {
+      const marked = await onMarkDataExportPackageDownloaded(latestDataExportPackage.id);
+      downloadTextFile(
+        `trustgraph-data-export-package-${marked.id.slice(0, 8)}.json`,
+        JSON.stringify(
+          {
+            ...marked,
+            download_url_stored: false,
+            raw_private_files_included: false
+          },
+          null,
+          2
+        ),
+        "application/json"
+      );
+      setDataRightsStatus(`Data export package marked ${marked.status} and manifest downloaded.`);
+    } catch (error) {
+      setDataRightsStatus(error instanceof Error ? error.message : "Could not download data export package manifest");
+    } finally {
+      setExportPackageBusy(false);
     }
   }
 
@@ -10170,6 +10258,51 @@ function AuthPanel({
               <button className="secondary-action" disabled={exportReceiptBusy} onClick={() => void recordExportReceipt()} type="button">
                 Record export receipt
               </button>
+            </div>
+            <div className="data-export-package-manifest" aria-label="Data export package manifest">
+              <div>
+                <span className={`status-chip ${latestDataExportPackage ? "success" : "warning"}`}>Data export package manifest</span>
+                <strong>{latestDataExportPackage ? latestDataExportPackage.status.replace(/_/g, " ") : "Not generated"}</strong>
+                <small>
+                  Package rows store only manifest metadata and counts. Raw private files and signed download URLs are never stored in this table.
+                </small>
+              </div>
+              <div className="data-export-package-manifest-grid">
+                <span>
+                  <strong>{dataExportPackages.length}</strong>
+                  <small>Package rows</small>
+                </span>
+                <span>
+                  <strong>{latestDataExportPackage?.passport_record_count ?? 0}</strong>
+                  <small>Passport records</small>
+                </span>
+                <span>
+                  <strong>{latestDataExportPackage?.evidence_metadata_count ?? 0}</strong>
+                  <small>Evidence metadata</small>
+                </span>
+                <span>
+                  <strong>{latestDataExportPackage?.download_url_stored ? "Yes" : "No"}</strong>
+                  <small>URL stored</small>
+                </span>
+              </div>
+              <div className="data-export-package-manifest-actions">
+                <button
+                  className="secondary-action"
+                  disabled={exportPackageBusy || !latestDataExportRequest}
+                  onClick={() => void generateExportPackage()}
+                  type="button"
+                >
+                  Generate package
+                </button>
+                <button
+                  className="secondary-action"
+                  disabled={exportPackageBusy || !latestDataExportPackage}
+                  onClick={() => void downloadLatestExportPackage()}
+                  type="button"
+                >
+                  Download manifest
+                </button>
+              </div>
             </div>
             <small>
               Closure requests do not delete data automatically. TrustGraph reviews retention, legal hold, active grants, and open disputes before closure.
@@ -14870,6 +15003,7 @@ function App() {
   const [notificationEvents, setNotificationEvents] = useState<DbNotificationEvent[]>([]);
   const [notificationStatus, setNotificationStatus] = useState("Sign in for live workflow notifications");
   const [dataRightsRequests, setDataRightsRequests] = useState<DbDataRightsRequest[]>([]);
+  const [dataExportPackages, setDataExportPackages] = useState<DbDataExportPackage[]>([]);
   const [dataExportReceipts, setDataExportReceipts] = useState<DbDataExportPackageReceipt[]>([]);
   const [dataRightsStatus, setDataRightsStatus] = useState("Sign in to request data export or closure");
   const [referenceRequests, setReferenceRequests] = useState<DbReferenceRequest[]>([]);
@@ -15233,6 +15367,7 @@ function App() {
       setNotificationEvents([]);
       setNotificationStatus("Sign in for live workflow notifications");
       setDataRightsRequests([]);
+      setDataExportPackages([]);
       setDataExportReceipts([]);
       setDataRightsStatus("Sign in to request data export or closure");
       setReferenceRequests([]);
@@ -15257,17 +15392,19 @@ function App() {
       loadEvidenceDocuments(authSession.accessToken),
       loadNotificationEvents(authSession.accessToken),
       loadDataRightsRequests(authSession.accessToken),
+      loadDataExportPackages(authSession.accessToken).catch(() => []),
       loadDataExportPackageReceipts(authSession.accessToken).catch(() => []),
       loadReferenceRequests(authSession.accessToken),
       loadConsentAuthorizations(authSession.accessToken),
       loadPassportMissingRecordRequests(accountContext.profile.id, authSession.accessToken)
     ])
-      .then(([items, documents, notifications, dataRightsRows, dataExportRows, references, consents, missingRecords]) => {
+      .then(([items, documents, notifications, dataRightsRows, dataExportPackageRows, dataExportRows, references, consents, missingRecords]) => {
         if (cancelled) return;
         setLivePassportRecords(items);
         setEvidenceDocuments(documents);
         setNotificationEvents(notifications);
         setDataRightsRequests(dataRightsRows);
+        setDataExportPackages(dataExportPackageRows);
         setDataExportReceipts(dataExportRows);
         setReferenceRequests(references);
         setConsentAuthorizations(consents);
@@ -15292,6 +15429,7 @@ function App() {
         setEvidenceDocuments([]);
         setNotificationEvents([]);
         setDataRightsRequests([]);
+        setDataExportPackages([]);
         setDataExportReceipts([]);
         setReferenceRequests([]);
         setConsentAuthorizations([]);
@@ -16277,6 +16415,63 @@ function App() {
     setAuditEvents(events);
     setDataRightsStatus(`Data export package receipt recorded: ${receipt.status.replace(/_/g, " ")}`);
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
+  async function generateLiveDataExportPackage(input: {
+    dataRightsRequestId: string;
+    packageReceiptId: string | null;
+    packageScope: string;
+    manifest: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before generating a data export package.");
+    }
+
+    const item = await generateDataExportPackage({
+      accessToken: authSession.accessToken,
+      dataRightsRequestId: input.dataRightsRequestId,
+      packageReceiptId: input.packageReceiptId,
+      packageScope: input.packageScope,
+      passportRecordCount: livePassportRecords.length,
+      evidenceMetadataCount: evidenceDocuments.length,
+      accessGrantCount: accessGrants.length + verifyRequests.length,
+      auditEventCount: auditEvents.length,
+      manifest: {
+        ...input.manifest,
+        source: "signed_in_supabase_rows",
+        raw_private_files_included: false,
+        download_url_stored: false
+      }
+    });
+    const [packages, events] = await Promise.all([
+      loadDataExportPackages(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setDataExportPackages(packages);
+    setAuditEvents(events);
+    setDataRightsStatus(`Data export package generated: ${item.status}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+    return item;
+  }
+
+  async function markLiveDataExportPackageDownloaded(packageId: string) {
+    if (!authSession || !accountContext) {
+      throw new Error("Sign in before downloading a data export package.");
+    }
+
+    const item = await markDataExportPackageDownloaded({
+      accessToken: authSession.accessToken,
+      packageId
+    });
+    const [packages, events] = await Promise.all([
+      loadDataExportPackages(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setDataExportPackages(packages);
+    setAuditEvents(events);
+    setDataRightsStatus(`Data export package marked ${item.status}`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+    return item;
   }
 
   async function seedLivePilotWorkspace() {
@@ -19220,11 +19415,14 @@ function App() {
                     <AuthPanel
                       accountStatus={accountStatus}
                       dataRightsMessage={dataRightsStatus}
+                      dataExportPackages={dataExportPackages}
                       dataExportReceipts={dataExportReceipts}
                       dataRightsRequests={dataRightsRequests}
                       hostedCallbackProof={hostedCallbackProof}
                       session={authSession}
                       onDataRightsRequest={createLiveDataRightsRequest}
+                      onGenerateDataExportPackage={generateLiveDataExportPackage}
+                      onMarkDataExportPackageDownloaded={markLiveDataExportPackageDownloaded}
                       onRecordDataExportReceipt={recordLiveDataExportPackageReceipt}
                       onSession={setAuthSession}
                     />

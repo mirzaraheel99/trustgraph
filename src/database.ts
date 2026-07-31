@@ -262,6 +262,27 @@ export interface DbDataExportPackageReceipt {
   created_at: string;
 }
 
+export interface DbDataExportPackage {
+  id: string;
+  profile_id: string;
+  data_rights_request_id: string;
+  package_receipt_id: string | null;
+  status: "ready" | "downloaded" | "expired";
+  package_scope: string;
+  manifest: Record<string, unknown>;
+  passport_record_count: number;
+  evidence_metadata_count: number;
+  access_grant_count: number;
+  audit_event_count: number;
+  raw_private_files_included: boolean;
+  download_url_stored: boolean;
+  generated_at: string;
+  expires_at: string;
+  downloaded_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DbReferenceRequest {
   id: string;
   subject_profile_id: string;

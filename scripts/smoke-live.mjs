@@ -509,6 +509,17 @@ assertIncludesAny(
   ["data_export_package_receipt_requires_signed_in_owner_live_rows_review_request_metadata_only_raw_private_files_excluded_and_no_preview_data"],
   "data export package receipt acceptance rule"
 );
+assertIncludesAny(bundleText, ["data_export_packages"], "data export package table");
+assertIncludesAny(bundleText, ["generate_data_export_package"], "data export package generation RPC");
+assertIncludesAny(bundleText, ["mark_data_export_package_downloaded"], "data export package download marker RPC");
+assertIncludesAny(bundleText, ["Data export package manifest"], "data export package manifest panel");
+assertIncludesAny(bundleText, ["Generate package"], "data export package generate action");
+assertIncludesAny(bundleText, ["Download manifest"], "data export package download action");
+assertIncludesAny(
+  bundleText,
+  ["data_export_package_manifest_requires_owner_data_export_request_metadata_only_no_raw_private_files_no_download_url_storage_and_audit_event"],
+  "data export package manifest acceptance rule"
+);
 assertIncludesAny(
   bundleText,
   ["v1_live_database_readiness_requires_signed_in_supabase_rows_for_professional_corporate_access_evidence_consent_billing_team_review_registration_release_and_no_preview_data"],

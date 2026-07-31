@@ -36,7 +36,8 @@ const requiredRlsTables = [
   "v1_live_database_readiness_receipts",
   "corporate_database_access_receipts",
   "evidence_access_receipts",
-  "data_export_package_receipts"
+  "data_export_package_receipts",
+  "data_export_packages"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -216,6 +217,35 @@ if (!dataExportPackageReceiptMigration.includes("data_export.package_receipt_rec
 }
 if (!dataExportPackageReceiptMigration.includes("grant execute on function public.record_data_export_package_receipt")) {
   throw new Error("Data export package receipt RPC must be executable by authenticated users.");
+}
+
+const dataExportPackageMigration = latestSqlByFile["051_data_export_packages.sql"] ?? "";
+if (!dataExportPackageMigration.includes("create table if not exists public.data_export_packages")) {
+  throw new Error("Missing data export packages table migration.");
+}
+if (!dataExportPackageMigration.includes("alter table public.data_export_packages enable row level security")) {
+  throw new Error("Data export packages must enable RLS.");
+}
+if (!dataExportPackageMigration.includes("raw_private_files_included = false")) {
+  throw new Error("Data export packages must reject raw private file inclusion.");
+}
+if (!dataExportPackageMigration.includes("download_url_stored = false")) {
+  throw new Error("Data export packages must reject signed download URL storage.");
+}
+if (!dataExportPackageMigration.includes("create or replace function public.generate_data_export_package")) {
+  throw new Error("Missing data export package generation RPC.");
+}
+if (!dataExportPackageMigration.includes("data_export.package_generated")) {
+  throw new Error("Data export package generation RPC must write audit history.");
+}
+if (!dataExportPackageMigration.includes("create or replace function public.mark_data_export_package_downloaded")) {
+  throw new Error("Missing data export package download marker RPC.");
+}
+if (!dataExportPackageMigration.includes("data_export.package_download_marked")) {
+  throw new Error("Data export package download marker RPC must write audit history.");
+}
+if (!dataExportPackageMigration.includes("grant execute on function public.generate_data_export_package")) {
+  throw new Error("Data export package generation RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

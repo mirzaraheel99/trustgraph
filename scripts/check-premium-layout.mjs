@@ -71,6 +71,7 @@ assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readines
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
 assert(app.includes('aria-label="Signed evidence access audit receipt"'), "evidence preview/download must expose signed access audit receipt state.");
 assert(app.includes('aria-label="Data export package receipt"'), "Account data rights must expose data export package receipt state.");
+assert(app.includes('aria-label="Data export package manifest"'), "Account data rights must expose data export package manifest state.");
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
 assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
 assert(app.includes('aria-label="V1 security RLS review checklist receipt"'), "security review must expose a V1 security/RLS checklist receipt.");
@@ -180,6 +181,7 @@ assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.inclu
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");
 assert(css.includes(".signed-evidence-access-audit") && css.includes(".signed-evidence-access-grid"), "signed evidence access audit receipt must be styled and bounded.");
 assert(css.includes(".data-export-package-receipt") && css.includes(".data-export-package-grid"), "data export package receipt must be styled and bounded.");
+assert(css.includes(".data-export-package-manifest") && css.includes(".data-export-package-manifest-grid"), "data export package manifest must be styled and bounded.");
 assert(premiumRepair.includes(".admin-audit-export-command") && premiumRepair.includes(".admin-audit-export-command-grid"), "admin audit export command must be bounded in the premium shell.");
 assert(premiumRepair.includes(".audit-filter-receipt"), "audit filter receipt must be bounded in the premium shell.");
 assert(css.includes(".v1-security-review-receipt") && css.includes(".v1-security-review-grid"), "V1 security/RLS review checklist receipt must be styled and bounded.");

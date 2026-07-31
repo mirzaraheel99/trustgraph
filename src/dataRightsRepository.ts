@@ -1,4 +1,10 @@
-import type { DbDataExportPackageReceipt, DbDataRightsRequest, DataRightsRequestStatus, DataRightsRequestType } from "./database";
+import type {
+  DbDataExportPackage,
+  DbDataExportPackageReceipt,
+  DbDataRightsRequest,
+  DataRightsRequestStatus,
+  DataRightsRequestType
+} from "./database";
 import { supabaseRest, supabaseRpc } from "./supabase";
 
 export async function loadDataRightsRequests(accessToken: string): Promise<DbDataRightsRequest[]> {
@@ -71,6 +77,51 @@ export async function recordDataExportPackageReceipt(input: {
       input_audit_event_count: input.auditEventCount,
       input_metadata: input.metadata
     },
+    { accessToken: input.accessToken }
+  );
+}
+
+export async function loadDataExportPackages(accessToken: string): Promise<DbDataExportPackage[]> {
+  return supabaseRest<DbDataExportPackage[]>(
+    "data_export_packages?select=*&order=created_at.desc&limit=5",
+    { accessToken }
+  );
+}
+
+export async function generateDataExportPackage(input: {
+  accessToken: string;
+  dataRightsRequestId: string;
+  packageReceiptId: string | null;
+  packageScope: string;
+  passportRecordCount: number;
+  evidenceMetadataCount: number;
+  accessGrantCount: number;
+  auditEventCount: number;
+  manifest: Record<string, unknown>;
+}): Promise<DbDataExportPackage> {
+  return supabaseRpc<DbDataExportPackage>(
+    "generate_data_export_package",
+    {
+      input_data_rights_request_id: input.dataRightsRequestId,
+      input_package_receipt_id: input.packageReceiptId,
+      input_package_scope: input.packageScope,
+      input_passport_record_count: input.passportRecordCount,
+      input_evidence_metadata_count: input.evidenceMetadataCount,
+      input_access_grant_count: input.accessGrantCount,
+      input_audit_event_count: input.auditEventCount,
+      input_manifest: input.manifest
+    },
+    { accessToken: input.accessToken }
+  );
+}
+
+export async function markDataExportPackageDownloaded(input: {
+  accessToken: string;
+  packageId: string;
+}): Promise<DbDataExportPackage> {
+  return supabaseRpc<DbDataExportPackage>(
+    "mark_data_export_package_downloaded",
+    { input_package_id: input.packageId },
     { accessToken: input.accessToken }
   );
 }

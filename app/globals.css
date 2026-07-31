@@ -3906,6 +3906,66 @@ p,
   width: min(100%, 280px);
 }
 
+.data-export-package-manifest {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 12px;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.data-export-package-manifest > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.data-export-package-manifest strong,
+.data-export-package-manifest small,
+.data-export-package-manifest span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.data-export-package-manifest > div:first-child > strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+  text-transform: capitalize;
+}
+
+.data-export-package-manifest small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.data-export-package-manifest-grid,
+.data-export-package-manifest-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+}
+
+.data-export-package-manifest-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.data-export-package-manifest-actions button {
+  width: 100%;
+}
+
 .data-rights-review-lane-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -14064,6 +14124,8 @@ p {
   .data-rights-summary-grid,
   .data-rights-review-lane-grid,
   .data-export-package-grid,
+  .data-export-package-manifest-grid,
+  .data-export-package-manifest-actions,
   .data-rights-actions,
   .workspace-admin-grid,
   .setup-panel-grid,
