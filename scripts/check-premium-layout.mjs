@@ -113,6 +113,7 @@ assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: no
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(css.includes(".portal-action-dock") && css.includes(".export-dock"), "portal action dock must be styled and bounded.");
+assert(css.includes("Consolidated operator home") && css.includes(".today-command-center,\n.portal-usability-command") && css.includes("display: none !important"), "signed-in dashboard must consolidate older command receipts so the first screen stays understandable.");
 assert(css.includes(".portal-usability-command") && css.includes(".portal-usability-command-grid") && app.includes("first_signed_in_screen_has_one_clear_personal_corporate_pricing_database_account_and_server_command_without_sidebar_or_horizontal_overflow"), "portal usability command must be styled, bounded, and acceptance checked.");
 assert(consoleLayout.includes(".v1-portal-launchpad") && consoleLayout.includes(".v1-portal-launchpad-grid") && consoleLayout.includes(".v1-portal-launchpad-proof"), "V1 portal launchpad must be styled and bounded.");
 assert(app.includes('aria-label="Portal readiness board"'), "signed-in dashboard must expose a portal readiness board for login, Professional, Corporate, pricing, database, and server save.");
