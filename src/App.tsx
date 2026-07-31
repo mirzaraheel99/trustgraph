@@ -18845,6 +18845,73 @@ function App() {
           </div>
         </header>
 
+        <section className="v1-portal-launchpad" aria-label="V1 portal launchpad">
+          <div className="v1-portal-launchpad-main">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Start here</span>
+            <strong>{dashboardNextAction.headline}</strong>
+            <small>{dashboardNextAction.detail}</small>
+            <div className="v1-portal-launchpad-actions">
+              <button
+                className="primary-action"
+                onClick={() => {
+                  if (dashboardNextAction.primaryTarget === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (dashboardNextAction.primaryTarget === "corporate_setup") {
+                    openCorporateControls();
+                    return;
+                  }
+                  openWorkspaceOrSetup(dashboardNextAction.primaryTarget);
+                }}
+                type="button"
+              >
+                {dashboardNextAction.primaryAction}
+              </button>
+              <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+                Public site
+              </button>
+            </div>
+          </div>
+          <div className="v1-portal-launchpad-grid">
+            {portalCommandDeck.map((item) => (
+              <button
+                className={`${item.ready ? "ready" : ""} ${item.target === workspace.id ? "current" : ""}`}
+                key={item.id}
+                onClick={() => {
+                  if (item.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  openWorkspaceOrSetup(item.target);
+                }}
+                type="button"
+              >
+                <span>{item.label}</span>
+                <strong>{item.action}</strong>
+                <small>{item.status}</small>
+              </button>
+            ))}
+          </div>
+          <div className="v1-portal-launchpad-proof">
+            <span>
+              <strong>{authSession ? "Live database mode" : "Preview until login"}</strong>
+              <small>{authSession ? authSession.user.email : "Hosted login is required before V1 proof."}</small>
+            </span>
+            <span>
+              <strong>{hasLiveCorporateContext ? "Corporate ready" : "Corporate setup needed"}</strong>
+              <small>{hasLiveCorporateContext ? activeOrganization.name : nextCorporateSetupStep.detail}</small>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json")}
+              type="button"
+            >
+              Export proof
+            </button>
+          </div>
+        </section>
+
         <section className="role-workspace-switchboard" aria-label="Role workspace switchboard">
           <div className="role-workspace-switchboard-copy">
             <span className={`status-chip ${authSession ? "success" : "warning"}`}>Workspace switchboard</span>

@@ -17358,6 +17358,7 @@ body {
 }
 
 .topbar,
+.v1-portal-launchpad,
 .role-workspace-switchboard,
 .v1-launch-flow-command,
 .onboarding-handoff-command,
@@ -17390,6 +17391,144 @@ body {
 
 .topbar p {
   max-width: 72ch;
+}
+
+.v1-portal-launchpad {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 12px;
+  align-items: stretch;
+  padding: 16px;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.095), rgba(134, 174, 246, 0.045) 58%, transparent),
+    rgba(7, 18, 20, 0.88);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.26);
+}
+
+.v1-portal-launchpad-main,
+.v1-portal-launchpad-proof {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  min-width: 0;
+}
+
+.v1-portal-launchpad-main strong,
+.v1-portal-launchpad-main small,
+.v1-portal-launchpad-proof strong,
+.v1-portal-launchpad-proof small,
+.v1-portal-launchpad-grid span,
+.v1-portal-launchpad-grid strong,
+.v1-portal-launchpad-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-portal-launchpad-main > strong {
+  color: var(--text);
+  font-size: clamp(24px, 2.2vw, 34px);
+  line-height: 1.08;
+}
+
+.v1-portal-launchpad-main > small {
+  max-width: 64ch;
+  color: rgba(222, 239, 233, 0.74);
+  line-height: 1.45;
+}
+
+.v1-portal-launchpad-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.v1-portal-launchpad-actions button,
+.v1-portal-launchpad-proof button,
+.v1-portal-launchpad-grid button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.v1-portal-launchpad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.v1-portal-launchpad-grid button {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-height: 112px;
+  padding: 12px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  box-shadow: none;
+}
+
+.v1-portal-launchpad-grid button.ready {
+  border-color: rgba(92, 236, 193, 0.3);
+  background: rgba(82, 214, 196, 0.07);
+}
+
+.v1-portal-launchpad-grid button.current {
+  border-color: rgba(240, 198, 107, 0.38);
+  background:
+    linear-gradient(135deg, rgba(240, 198, 107, 0.095), transparent 62%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.v1-portal-launchpad-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.v1-portal-launchpad-grid strong {
+  font-size: 16px;
+  line-height: 1.14;
+}
+
+.v1-portal-launchpad-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 12px;
+  line-height: 1.34;
+}
+
+.v1-portal-launchpad-proof {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: 10px;
+  border-top: 1px solid rgba(210, 231, 223, 0.1);
+}
+
+.v1-portal-launchpad-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.v1-portal-launchpad-proof strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.v1-portal-launchpad-proof small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .role-workspace-switchboard {
@@ -18064,6 +18203,7 @@ body {
 }
 
 .dashboard-next-action-metrics,
+.v1-portal-launchpad-grid,
 .role-workspace-switchboard-grid,
 .portal-choice-guide-grid,
 .v1-operating-map-grid,
@@ -18151,6 +18291,7 @@ body {
 
 @media (max-width: 1180px) {
   .dashboard-next-action,
+  .v1-portal-launchpad,
   .role-workspace-switchboard,
   .portal-command-deck-header,
   .portal-home-command,
@@ -18177,6 +18318,9 @@ body {
   .session-command-bar,
   .workspace-route-strip,
   .workspace-flow-strip,
+  .v1-portal-launchpad-grid,
+  .v1-portal-launchpad-proof,
+  .v1-portal-launchpad-actions,
   .role-workspace-switchboard-grid,
   .portal-command-deck-grid,
   .dashboard-next-action-metrics,

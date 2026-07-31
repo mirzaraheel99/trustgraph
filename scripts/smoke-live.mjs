@@ -202,6 +202,8 @@ assertIncludesAny(bundleText, ["Dashboard next action"], "signed-in dashboard ne
 assertIncludesAny(bundleText, ["dashboard_next_action"], "authorized report dashboard next-action field");
 assertIncludesAny(bundleText, ["Login or register before live database work"], "dashboard next-action login state");
 assertIncludesAny(bundleText, ["Request approved user access for Corporate Verify"], "dashboard next-action corporate Verify state");
+assertIncludesAny(bundleText, ["V1 portal launchpad"], "signed-in first-screen portal launchpad");
+assertIncludesAny(bundleText, ["Start here"], "portal launchpad start marker");
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
 assertIncludesAny(bundleText, ["Portal command deck"], "signed-in portal command deck");
 assertIncludesAny(bundleText, ["Start with the right workspace"], "portal command deck headline");

@@ -19,6 +19,7 @@ const consoleLayout = consoleLayoutStart >= 0 ? css.slice(consoleLayoutStart) : 
 assert(authenticatedRenderStart >= 0, "authenticated app render block was not found.");
 assert(!authenticatedRender.includes('<aside className="sidebar">'), "legacy sidebar rail must not render in the authenticated workspace.");
 assert(authenticatedRender.includes('className="session-command-bar"'), "session command bar must be the primary account/logout control surface.");
+assert(authenticatedRender.includes('aria-label="V1 portal launchpad"'), "signed-in dashboard must expose a compact first-screen portal launchpad.");
 assert(authenticatedRender.includes('aria-label="Dashboard next action"'), "signed-in dashboard must expose a single role-aware next-action command.");
 assert(authenticatedRender.includes('aria-label="Role workspace switchboard"'), "signed-in dashboard must expose a first-screen role workspace switchboard.");
 assert(authenticatedRender.includes('aria-label="Portal command deck"'), "signed-in dashboard must expose a consolidated portal command deck.");
@@ -89,6 +90,7 @@ assert(app.includes('aria-label="Pilot owner readiness receipt"'), "launch check
 assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: none !important"), "final CSS layer must still suppress any legacy sidebar rail.");
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
+assert(consoleLayout.includes(".v1-portal-launchpad") && consoleLayout.includes(".v1-portal-launchpad-grid") && consoleLayout.includes(".v1-portal-launchpad-proof"), "V1 portal launchpad must be styled and bounded.");
 assert(css.includes(".signed-in-portal-flow-contract") && css.includes(".signed-in-portal-flow-grid"), "signed-in portal flow contract must be styled and bounded.");
 assert(premiumRepair.includes(".portal-choice-guide") && premiumRepair.includes(".portal-choice-guide-grid"), "portal choice guide must be styled and bounded in the premium shell.");
 assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-collection-grid"), "V1 proof collection command must be styled and bounded.");
