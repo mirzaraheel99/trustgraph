@@ -20692,6 +20692,75 @@ function App() {
     accepted_when:
       "signed_in_dashboard_starts_with_one_compact_front_door_for_passport_corporate_admin_account_pricing_database_and_server_without_horizontal_overflow"
   };
+  const portalDailyNavigator = {
+    generated_at: new Date().toISOString(),
+    mode: "portal_daily_navigator",
+    signed_in: Boolean(authSession),
+    current_portal: workspace.label,
+    active_role: activeRole.label,
+    account: authSession ? authSession.user.email : "hosted_login_required",
+    next_action: dashboardNextAction.primaryAction,
+    recovery_visible: true,
+    logout_visible: Boolean(authSession),
+    accepted_when:
+      "daily_dashboard_has_one_clear_role_aware_navigator_for_professional_corporate_admin_pricing_database_recovery_and_logout_before_dense_tools"
+  };
+  const portalDailyNavigatorCards = [
+    {
+      label: "Personal",
+      title: "Professional Passport",
+      detail: "Records, evidence, consent, references, and sharing approvals for the signed-in user.",
+      metric: livePassportRecords.length ? `${livePassportRecords.length} live records` : "Start first record",
+      action: "Open Passport",
+      target: "passport" as const,
+      ready: Boolean(authSession && livePassportRecords.length)
+    },
+    {
+      label: "Corporate",
+      title: "Corporate Verify",
+      detail: "Request scoped access, review approved user rows, and export reviewer proof.",
+      metric: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} shared rows` : "Request access",
+      action: hasLiveCorporateContext ? "Open Verify" : "Setup company",
+      target: hasLiveCorporateContext ? ("verify" as const) : ("corporate_setup" as const),
+      ready: hasLiveCorporateContext && sharedVerifyRecords.length > 0
+    },
+    {
+      label: "Admin",
+      title: "Company setup",
+      detail: "Organization profile, RBAC roles, team invitations, billing ledger, and launch checks.",
+      metric: hasLiveCorporateContext ? nextCorporateSetupStep.label : "Workspace needed",
+      action: "Open Admin",
+      target: "admin" as const,
+      ready: hasLiveCorporateContext && canManageCorporateSetup
+    },
+    {
+      label: "Account",
+      title: authSession ? "Login and recovery" : "Hosted access",
+      detail: "Session status, password reset, verification-link repair, and visible logout.",
+      metric: authSession ? "Signed in" : "Login required",
+      action: authSession ? "Account tools" : "Login or register",
+      target: "account" as const,
+      ready: Boolean(authSession)
+    },
+    {
+      label: "Pricing",
+      title: "Plan and seats",
+      detail: "Professional free tier, Corporate Verify pilot pricing, quote receipts, and Stripe boundary.",
+      metric: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "Pilot quote ready",
+      action: "Review pricing",
+      target: "billing" as const,
+      ready: true
+    },
+    {
+      label: "Proof",
+      title: "Live database",
+      detail: "Confirm real Supabase rows, scoped Corporate access, preview-data rejection, and repair path.",
+      metric: authSession && accountContext ? "Live proof ready" : "Login needed",
+      action: "Open proof",
+      target: "proof" as const,
+      ready: Boolean(authSession && accountContext)
+    }
+  ];
   const pilotNamedRpcAliases = [
     "prepare_pilot_user_access_request",
     "ensure_pilot_employer_reviewer_membership",
@@ -22449,6 +22518,97 @@ function App() {
             >
               Export front door
             </button>
+          </div>
+        </section>
+
+        <section className="portal-daily-navigator" aria-label="Portal daily navigator">
+          <div className="portal-daily-navigator-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Daily navigator</span>
+              <strong>{dashboardNextAction.headline}</strong>
+              <small>
+                Start here for Professional Passport, Corporate Verify, Company Admin, pricing, live database proof, recovery, and logout.
+              </small>
+            </div>
+            <div className="portal-daily-navigator-actions">
+              <button className="secondary-action" onClick={openAuthControls} type="button">
+                <KeyRound size={16} />
+                {authSession ? "Account" : "Login"}
+              </button>
+              {authSession ? (
+                <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Sign out
+                </button>
+              ) : null}
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-portal-daily-navigator-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...portalDailyNavigator, cards: portalDailyNavigatorCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export
+              </button>
+            </div>
+          </div>
+          <div className="portal-daily-navigator-grid">
+            {portalDailyNavigatorCards.map((card) => (
+              <button
+                className={`${card.ready ? "ready" : "next"} ${card.target === workspace.id || (card.target === "account" && setupView === "account") ? "current" : ""}`}
+                key={card.label}
+                onClick={() => {
+                  if (card.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (card.target === "corporate_setup") {
+                    openCorporateControls();
+                    return;
+                  }
+                  if (card.target === "billing") {
+                    setSetupView("billing");
+                    document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (card.target === "proof") {
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  openWorkspaceOrSetup(card.target);
+                }}
+                type="button"
+              >
+                <span>{card.label}</span>
+                <strong>{card.title}</strong>
+                <small>{card.detail}</small>
+                <em>{card.metric}</em>
+                <b>{card.action}</b>
+              </button>
+            ))}
+          </div>
+          <div className="portal-daily-navigator-proof">
+            <span>
+              <strong>{workspace.label}</strong>
+              <small>Current portal</small>
+            </span>
+            <span>
+              <strong>{activeRole.label}</strong>
+              <small>Active role</small>
+            </span>
+            <span>
+              <strong>{authSession ? "Recovery ready" : "Hosted login first"}</strong>
+              <small>{portalDailyNavigator.account}</small>
+            </span>
+            <span>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+              <small>Server save</small>
+            </span>
           </div>
         </section>
 
