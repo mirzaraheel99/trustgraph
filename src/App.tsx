@@ -3997,6 +3997,52 @@ function CorporateDirectoryPanel({
     latest_persisted_snapshot: latestCorporateVisibilitySnapshot,
     accepted_when: corporateDatabaseVisibilitySnapshotRule
   };
+  const reviewerDatabaseReadinessBoard = [
+    {
+      label: "Requests",
+      value: requests.length,
+      detail: requests.length ? "Access requests loaded for this corporate context." : "Request professional access by email first.",
+      ready: requests.length > 0
+    },
+    {
+      label: "Approved grants",
+      value: approvedAccessCount,
+      detail: approvedAccessCount ? "Approved Access Grants can expose scoped rows." : "No approved grants are ready for review.",
+      ready: approvedAccessCount > 0
+    },
+    {
+      label: "Scoped user rows",
+      value: sharedRecords.length,
+      detail: sharedRecords.length ? "Shared Passport records are visible through consent scope." : "Shared rows appear only after approval and consent.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Review attestations",
+      value: reviews.length,
+      detail: reviews.length ? "Reviewer attestations are in the audit trail." : "Record an attestation after checking rows.",
+      ready: reviews.length > 0
+    },
+    {
+      label: "Visibility snapshot",
+      value: corporateVisibilitySnapshots.length,
+      detail: latestCorporateVisibilitySnapshot ? "Filtered-row visibility proof is saved." : "Save a snapshot before handoff.",
+      ready: Boolean(latestCorporateVisibilitySnapshot)
+    },
+    {
+      label: "Export proof",
+      value: corporateAccessNextAction.ready ? "Ready" : "Blocked",
+      detail: corporateAccessNextAction.detail,
+      ready: corporateAccessNextAction.ready
+    }
+  ];
+  const reviewerDatabaseReadinessPacket = {
+    mode: "reviewer_database_readiness_board",
+    ready_checks: reviewerDatabaseReadinessBoard.filter((item) => item.ready).length,
+    total_checks: reviewerDatabaseReadinessBoard.length,
+    next_action: reviewerDatabaseReadinessBoard.find((item) => !item.ready)?.label ?? "Export user packet",
+    checks: reviewerDatabaseReadinessBoard.map(({ label, value, ready }) => ({ label, value, ready })),
+    accepted_when: "corporate_reviewer_can_see_request_grant_scoped_rows_review_attestation_visibility_snapshot_and_export_readiness_before_filtering_user_rows"
+  };
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -4053,6 +4099,7 @@ function CorporateDirectoryPanel({
       preview_data_accepted_for_v1: false
     },
     corporate_database_visibility_snapshot: corporateDatabaseVisibilitySnapshotPacket,
+    reviewer_database_readiness_board: reviewerDatabaseReadinessPacket,
     corporate_scope_review_command: {
       ready_checks: corporateScopeReviewReady,
       total_checks: corporateScopeReviewCommand.length,
@@ -4243,6 +4290,43 @@ function CorporateDirectoryPanel({
             <strong>{corporateDatabaseActionCockpit.review_attestations}</strong>
             <small>Review attestations</small>
           </span>
+        </div>
+      </div>
+      <div className="reviewer-database-readiness-board" aria-label="Reviewer database readiness board">
+        <div className="reviewer-database-readiness-header">
+          <div>
+            <span className={`status-chip ${reviewerDatabaseReadinessPacket.ready_checks === reviewerDatabaseReadinessPacket.total_checks ? "success" : "warning"}`}>
+              Reviewer database readiness board
+            </span>
+            <strong>
+              {reviewerDatabaseReadinessPacket.ready_checks === reviewerDatabaseReadinessPacket.total_checks
+                ? "Corporate reviewer can export scoped user proof"
+                : `Next: ${reviewerDatabaseReadinessPacket.next_action}`}
+            </strong>
+            <small>{reviewerDatabaseReadinessPacket.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-reviewer-database-readiness-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(reviewerDatabaseReadinessPacket, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export readiness
+          </button>
+        </div>
+        <div className="reviewer-database-readiness-grid">
+          {reviewerDatabaseReadinessBoard.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <div className="directory-controls">

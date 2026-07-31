@@ -764,6 +764,9 @@ assertIncludesAny(bundleText, ["signed_in_supabase_rows_visible_to_active_corpor
 assertIncludesAny(bundleText, ["Corporate database action cockpit"], "Corporate user database action cockpit");
 assertIncludesAny(bundleText, ["corporate_database_action_cockpit"], "Corporate user database action cockpit packet field");
 assertIncludesAny(bundleText, ["no open user browsing"], "Corporate user database no-open-browsing boundary");
+assertIncludesAny(bundleText, ["Reviewer database readiness board"], "Corporate reviewer database readiness board");
+assertIncludesAny(bundleText, ["reviewer_database_readiness_board"], "Corporate reviewer database readiness packet field");
+assertIncludesAny(bundleText, ["corporate_reviewer_can_see_request_grant_scoped_rows_review_attestation_visibility_snapshot_and_export_readiness_before_filtering_user_rows"], "Corporate reviewer database readiness acceptance rule");
 assertIncludesAny(bundleText, ["Professionals in view"], "Corporate user database professional count");
 assertIncludesAny(bundleText, ["Approved Access Grants"], "Corporate user database approval count");
 assertIncludesAny(bundleText, ["Ready to review"], "Corporate user database review-ready bucket");

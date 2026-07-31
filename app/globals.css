@@ -9706,6 +9706,78 @@ p {
   line-height: 1.35;
 }
 
+.reviewer-database-readiness-board {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.075), rgba(95, 240, 201, 0.04) 64%),
+    rgba(0, 0, 0, 0.16);
+}
+
+.reviewer-database-readiness-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.reviewer-database-readiness-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.reviewer-database-readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 9px;
+}
+
+.reviewer-database-readiness-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 11px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.reviewer-database-readiness-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.24);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.reviewer-database-readiness-grid article.next {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.055);
+}
+
+.reviewer-database-readiness-board strong,
+.reviewer-database-readiness-board small,
+.reviewer-database-readiness-board span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.reviewer-database-readiness-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.reviewer-database-readiness-grid strong {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.05;
+}
+
 .directory-metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
@@ -14396,6 +14468,9 @@ p {
   .server-sync-monitor-grid,
   .server-sync-next,
   .stale-vps-recovery-grid,
+  .reviewer-database-readiness-board,
+  .reviewer-database-readiness-header,
+  .reviewer-database-readiness-grid,
   .v1-operating-map-header,
   .v1-operating-map-grid,
   .workspace-command-strip,
