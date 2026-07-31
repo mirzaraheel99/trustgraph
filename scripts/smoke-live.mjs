@@ -162,6 +162,10 @@ assertIncludesAny(bundleText, ["Personal Passport", "Corporate Verify", "Company
 assertIncludesAny(bundleText, ["Workspace command strip"], "signed-in workspace command strip");
 assertIncludesAny(bundleText, ["Open next workspace"], "workspace command next action");
 assertIncludesAny(bundleText, ["workspace_command_strip"], "authorized report workspace command strip field");
+assertIncludesAny(bundleText, ["Dashboard next action"], "signed-in dashboard next-action command");
+assertIncludesAny(bundleText, ["dashboard_next_action"], "authorized report dashboard next-action field");
+assertIncludesAny(bundleText, ["Login or register before live database work"], "dashboard next-action login state");
+assertIncludesAny(bundleText, ["Request approved user access for Corporate Verify"], "dashboard next-action corporate Verify state");
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
 assertIncludesAny(bundleText, ["Portal home command center"], "signed-in portal home command center");
 assertIncludesAny(bundleText, ["Start with login, then choose the right portal"], "signed-in portal home guidance");

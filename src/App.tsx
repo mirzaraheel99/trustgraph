@@ -13528,6 +13528,81 @@ function App() {
     role: activeRole.label,
     organization: activeOrganization.name
   };
+  const dashboardNextAction =
+    !authSession
+      ? {
+          mode: "login_required",
+          headline: "Login or register before live database work",
+          detail: "Use the hosted auth flow, then return here so TrustGraph can load real Supabase rows.",
+          primaryAction: "Open account",
+          primaryTarget: "account" as const,
+          secondaryAction: "Public registration",
+          secondaryTarget: "public" as const,
+          proof: "Preview data does not count for v1 acceptance."
+        }
+      : activeOrganization.type === "professional" && !livePassportRecords.length
+        ? {
+            mode: "professional_start",
+            headline: "Build the first Professional Passport record",
+            detail: "Create a live record and evidence metadata before approving corporate access requests.",
+            primaryAction: "Open Passport",
+            primaryTarget: "passport" as const,
+            secondaryAction: "Account and recovery",
+            secondaryTarget: "account" as const,
+            proof: "Passport records and evidence rows are required for working database acceptance."
+          }
+        : !hasLiveCorporateContext
+          ? {
+              mode: "corporate_workspace_needed",
+              headline: "Create or switch into a corporate workspace",
+              detail: "Corporate Verify needs an employer or staffing organization before reviewers can see user rows.",
+              primaryAction: "Open corporate setup",
+              primaryTarget: "corporate_setup" as const,
+              secondaryAction: "Public registration",
+              secondaryTarget: "public" as const,
+              proof: "Company organization and admin membership rows unlock corporate RBAC."
+            }
+          : !sharedVerifyRecords.length
+            ? {
+                mode: "verify_access_needed",
+                headline: "Request approved user access for Corporate Verify",
+                detail: "Send an Access Grant request, wait for professional approval, then review visible Passport rows.",
+                primaryAction: "Open Verify",
+                primaryTarget: "verify" as const,
+                secondaryAction: "Open setup",
+                secondaryTarget: "corporate_setup" as const,
+                proof: "Corporate portal database access is accepted only after approved shared rows are visible."
+              }
+            : {
+                mode: "continue_current_workspace",
+                headline: `Continue ${workspace.label}`,
+                detail: workspace.subtitle,
+                primaryAction: "Continue current portal",
+                primaryTarget: workspace.id,
+                secondaryAction: "Export proof",
+                secondaryTarget: "export" as const,
+                proof: `${sharedVerifyRecords.length} shared rows, ${livePassportRecords.length} Passport records, ${accessGrants.length} grants in scope.`
+              };
+  const dashboardNextActionPacket = {
+    mode: "dashboard_next_action",
+    selected_mode: dashboardNextAction.mode,
+    signed_in: Boolean(authSession),
+    active_role: activeRole.label,
+    active_organization: activeOrganization.name,
+    active_workspace: workspace.id,
+    headline: dashboardNextAction.headline,
+    detail: dashboardNextAction.detail,
+    primary_action: dashboardNextAction.primaryAction,
+    secondary_action: dashboardNextAction.secondaryAction,
+    proof: dashboardNextAction.proof,
+    counts: {
+      passport_records: livePassportRecords.length,
+      shared_verify_records: sharedVerifyRecords.length,
+      access_grants: accessGrants.length,
+      team_members: teamMembers.length,
+      subscription_ledgers: organizationSubscriptions.length
+    }
+  };
   const signedInLandingActions = [
     {
       label: "Personal Passport",
@@ -13717,6 +13792,7 @@ function App() {
       production_gate_decisions: productionGateDecisions.length
     },
     dashboard_start_map: dashboardStartMap,
+    dashboard_next_action: dashboardNextActionPacket,
     workspace_command_strip: workspaceCommandStrip,
     signed_in_landing_actions: signedInLandingActions,
     proof_export_hub: proofExportHub,
@@ -13916,6 +13992,71 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="dashboard-next-action" aria-label="Dashboard next action">
+          <div className="dashboard-next-action-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Dashboard next action</span>
+            <strong>{dashboardNextAction.headline}</strong>
+            <small>{dashboardNextAction.detail}</small>
+            <small>{dashboardNextAction.proof}</small>
+          </div>
+          <div className="dashboard-next-action-metrics">
+            <span>
+              <strong>{activeRole.label}</strong>
+              <small>Active role</small>
+            </span>
+            <span>
+              <strong>{activeOrganization.name}</strong>
+              <small>{activeOrganization.type.replace("_", " ")}</small>
+            </span>
+            <span>
+              <strong>{workspace.label}</strong>
+              <small>Current portal</small>
+            </span>
+          </div>
+          <div className="dashboard-next-action-buttons">
+            <button
+              className="primary-action"
+              onClick={() => {
+                if (dashboardNextAction.primaryTarget === "account") {
+                  openAuthControls();
+                  return;
+                }
+                if (dashboardNextAction.primaryTarget === "corporate_setup") {
+                  openCorporateControls();
+                  return;
+                }
+                openWorkspaceOrSetup(dashboardNextAction.primaryTarget);
+              }}
+              type="button"
+            >
+              {dashboardNextAction.primaryAction}
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() => {
+                if (dashboardNextAction.secondaryTarget === "account") {
+                  openAuthControls();
+                  return;
+                }
+                if (dashboardNextAction.secondaryTarget === "corporate_setup") {
+                  openCorporateControls();
+                  return;
+                }
+                if (dashboardNextAction.secondaryTarget === "public") {
+                  setShowPublicSite(true);
+                  return;
+                }
+                if (dashboardNextAction.secondaryTarget === "export") {
+                  downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json");
+                }
+              }}
+              type="button"
+            >
+              {dashboardNextAction.secondaryAction}
+            </button>
+          </div>
+        </section>
 
         <section className="portal-home-command" aria-label="Portal home command center">
           <div className="portal-home-copy">
