@@ -41,6 +41,12 @@ const appRequirements = [
   ["live_database_contract", "live database contract packet mode"],
   ["Live row completion command", "live row completion command label"],
   ["live_row_completion_command", "live row completion command packet mode"],
+  ["Live database repair guide", "live database repair guide label"],
+  ["live_database_repair_guide", "live database repair guide packet mode"],
+  [
+    "live_database_repair_guide_requires_hosted_login_seed_or_create_rows_reload_supabase_repositories_export_working_data_packet_and_reject_preview_data",
+    "live database repair guide acceptance rule"
+  ],
   ["Live pilot row proof", "live pilot row proof label"],
   ["live_pilot_row_proof", "live pilot row proof packet mode"],
   ["Working database proof ready", "working database ready state"],

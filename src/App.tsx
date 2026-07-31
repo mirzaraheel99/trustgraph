@@ -19977,6 +19977,52 @@ function App() {
     commands: missingLiveRowCommands,
     accepted_when: "all_required_signed_in_supabase_row_groups_are_loaded_and_working_data_packet_is_exported"
   };
+  const primaryLiveDatabaseRepair = missingLiveRowCommands[0] ?? null;
+  const liveDatabaseRepairGuide = {
+    mode: "live_database_repair_guide",
+    source: authSession && accountContext ? "signed_in_supabase_context" : "hosted_login_required",
+    accepted: livePilotRowProof.accepted,
+    preview_data_accepted: false,
+    missing_count: missingLiveRowCommands.length,
+    next_group: primaryLiveDatabaseRepair?.label ?? "All required groups loaded",
+    next_action: livePilotRowProof.accepted
+      ? "Export working-data packet"
+      : authSession && accountContext
+        ? "Run live pilot seed and reload proof"
+        : "Login from hosted TrustGraph first",
+    accepted_when:
+      "live_database_repair_guide_requires_hosted_login_seed_or_create_rows_reload_supabase_repositories_export_working_data_packet_and_reject_preview_data"
+  };
+  const liveDatabaseRepairGuideActions = [
+    {
+      label: authSession && accountContext ? "Run live seed" : "Login first",
+      detail: authSession && accountContext ? "Create the pilot Passport, Corporate Verify, billing, consent, evidence, and review rows." : "Hosted auth must exist before any live database row can count.",
+      status: authSession && accountContext ? "Enabled" : "Required",
+      target: "seed" as const,
+      primary: true
+    },
+    {
+      label: "Open next missing group",
+      detail: primaryLiveDatabaseRepair ? `${primaryLiveDatabaseRepair.label}: ${primaryLiveDatabaseRepair.evidence}` : "All required live groups are loaded.",
+      status: primaryLiveDatabaseRepair?.action ?? "Review proof",
+      target: primaryLiveDatabaseRepair?.target ?? ("proof" as const),
+      primary: false
+    },
+    {
+      label: "Reload proof view",
+      detail: "After seed or manual row creation, refresh the live database proof area and export again.",
+      status: livePilotRowProof.accepted ? "Proof ready" : "Reload after seed",
+      target: "proof" as const,
+      primary: false
+    },
+    {
+      label: "Export working-data packet",
+      detail: "Use the packet only after live Supabase rows are loaded; preview data is rejected.",
+      status: livePilotRowProof.accepted ? "Ready" : "Wait for live rows",
+      target: "export" as const,
+      primary: false
+    }
+  ];
   const realDatabaseCompletionSteps = livePilotRowProofRows
     .filter((row) => row.required)
     .map((row, index) => {
@@ -21730,6 +21776,85 @@ function App() {
                   <small>{row.table}</small>
                   <small>{row.evidence}</small>
                 </article>
+              ))}
+            </div>
+          </div>
+          <div className="live-database-repair-guide" aria-label="Live database repair guide">
+            <div className="live-database-repair-guide-header">
+              <div>
+                <span className={`status-chip ${liveDatabaseRepairGuide.accepted ? "success" : "warning"}`}>Live database repair guide</span>
+                <strong>{liveDatabaseRepairGuide.accepted ? "Live database proof is ready to export" : liveDatabaseRepairGuide.next_action}</strong>
+                <small>{liveDatabaseRepairGuide.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-live-database-repair-guide-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...liveDatabaseRepairGuide, actions: liveDatabaseRepairGuideActions }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export repair guide
+              </button>
+            </div>
+            <div className="live-database-repair-guide-summary">
+              <span>
+                <small>Source</small>
+                <strong>{liveDatabaseRepairGuide.source.replace(/_/g, " ")}</strong>
+              </span>
+              <span>
+                <small>Next group</small>
+                <strong>{liveDatabaseRepairGuide.next_group}</strong>
+              </span>
+              <span>
+                <small>Preview accepted</small>
+                <strong>{liveDatabaseRepairGuide.preview_data_accepted ? "Yes" : "No"}</strong>
+              </span>
+            </div>
+            <div className="live-database-repair-guide-grid">
+              {liveDatabaseRepairGuideActions.map((action) => (
+                <button
+                  className={action.primary ? "primary" : ""}
+                  key={action.label}
+                  onClick={() => {
+                    if (action.target === "seed") {
+                      if (!authSession || !accountContext) {
+                        openAuthControls();
+                        return;
+                      }
+                      void seedLivePilotWorkspace().catch((error) => {
+                        setV1ReadinessStatus(error instanceof Error ? error.message : "Could not run live pilot seed.");
+                      });
+                      return;
+                    }
+                    if (action.target === "account") {
+                      openAuthControls();
+                      return;
+                    }
+                    if (action.target === "billing" || action.target === "readiness") {
+                      setSetupView(action.target);
+                      document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    if (action.target === "proof") {
+                      document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    if (action.target === "export") {
+                      downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json");
+                      return;
+                    }
+                    openWorkspaceOrSetup(action.target as WorkspaceId);
+                  }}
+                  type="button"
+                >
+                  <strong>{action.label}</strong>
+                  <small>{action.detail}</small>
+                  <em>{action.status}</em>
+                </button>
               ))}
             </div>
           </div>

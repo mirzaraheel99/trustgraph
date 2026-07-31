@@ -44,6 +44,7 @@ assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "sign
 assert(authenticatedRender.includes('aria-label="Live database contract"'), "V1 cockpit must expose the live database contract.");
 assert(authenticatedRender.includes('aria-label="Real data acceptance ledger"'), "V1 cockpit must expose a real-data acceptance ledger that rejects preview rows.");
 assert(authenticatedRender.includes('aria-label="Live row completion command"'), "V1 cockpit must expose a live row completion command.");
+assert(authenticatedRender.includes('aria-label="Live database repair guide"'), "V1 cockpit must expose a guided repair action for missing live Supabase row groups.");
 assert(app.includes('aria-label="Live row source receipt"'), "working database proof must expose a live row source receipt.");
 assert(app.includes('aria-label="Live database repair command"'), "working database proof must expose a live database repair command.");
 assert(app.includes('aria-label="Real database proof cockpit"'), "working database proof must expose a first-screen real database proof cockpit that rejects demo data.");
@@ -137,6 +138,7 @@ assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.include
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".real-data-acceptance-ledger") && premiumRepair.includes(".real-data-acceptance-grid"), "real data acceptance ledger must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-row-completion-command") && premiumRepair.includes(".live-row-completion-grid"), "live row completion command must be styled and bounded in the premium shell.");
+assert(css.includes(".live-database-repair-guide") && css.includes(".live-database-repair-guide-grid"), "live database repair guide must be styled and bounded.");
 assert(app.includes('aria-label="Real database completion plan"'), "real database completion plan must expose a guided live-row path.");
 assert(premiumRepair.includes(".real-database-completion-plan") && premiumRepair.includes(".real-database-completion-grid"), "real database completion plan must be styled and bounded in the premium shell.");
 assert(css.includes(".live-row-source-receipt") && css.includes(".live-row-source-grid") && css.includes(".live-row-source-next"), "live row source receipt must be styled and bounded.");

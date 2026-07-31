@@ -14939,6 +14939,10 @@ p {
   .v1-proof-collection-grid,
   .registration-intent-review-header,
   .registration-intent-review-grid,
+  .live-database-repair-guide,
+  .live-database-repair-guide-header,
+  .live-database-repair-guide-summary,
+  .live-database-repair-guide-grid,
   .live-row-completion-grid,
   .server-release-cockpit-header,
   .server-release-command,
@@ -18553,6 +18557,92 @@ body {
 
 .live-database-contract-grid strong {
   overflow-wrap: anywhere;
+}
+
+.live-database-repair-guide {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 111, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 111, 0.08), rgba(95, 240, 201, 0.05) 62%, transparent),
+    rgba(255, 255, 255, 0.026);
+}
+
+.live-database-repair-guide-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.live-database-repair-guide-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.live-database-repair-guide-summary,
+.live-database-repair-guide-grid {
+  display: grid;
+  gap: 9px;
+}
+
+.live-database-repair-guide-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.live-database-repair-guide-summary span,
+.live-database-repair-guide-grid button {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.live-database-repair-guide-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.live-database-repair-guide-grid button {
+  min-height: 130px;
+  justify-items: start;
+  text-align: left;
+  white-space: normal;
+}
+
+.live-database-repair-guide-grid button.primary {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.075);
+}
+
+.live-database-repair-guide strong,
+.live-database-repair-guide small,
+.live-database-repair-guide span,
+.live-database-repair-guide em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-database-repair-guide-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 26px);
+  line-height: 1.12;
+}
+
+.live-database-repair-guide-summary small:first-child,
+.live-database-repair-guide-grid em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 950;
+  text-transform: uppercase;
 }
 
 .live-row-completion-command {

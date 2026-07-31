@@ -36,7 +36,7 @@ GitHub Pages remains the verified static review target, while the guarded TrustG
 | Admin operations | Operations queue, audit exports, full audit and verification history packet, release ledger, security runbook, production gates, production gate cockpit, pilot contacts, pilot owner readiness receipts, real database completion receipts, organization RLS recursion repair, database policy repair guidance, regulated employment boundary packet, account-context RPC marker, VPS cutover gate | `supabase/migrations/010`, `011`, `027`, `030`, `031`, `033`, `034`, `040`, `042`, `043`, `057`, `058` |
 | Connect surface | `src/connectRepository.ts`, API clients, webhook subscriptions, status controls, exports | `supabase/migrations/018` |
 | Advisory and notifications | `src/aiAdvisor.ts`, notification status controls, deterministic advisory packet, and review-only fraud signal packet with no automated hiring decisions | `supabase/migrations/010`, `012`, `016` |
-| Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, v1 completion audit packet, end-to-end demo-flow gate, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md`, `scripts/check-v1-demo-flow.mjs` |
+| Pilot readiness | Launch checklist, seed evidence, seed reconciliation, working database packet, live database repair queue, live database repair guide, v1 completion audit packet, end-to-end demo-flow gate, VPS launch guard | `supabase/migrations/029`, `032`, `PILOT_RUNBOOK.md`, `V1_READINESS_CHECKLIST.md`, `scripts/check-v1-demo-flow.mjs` |
 
 ## Live Database Proof Artifacts
 
@@ -64,6 +64,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Portal usability command packet: one signed-in guide for Personal Passport, Corporate Verify, Corporate setup, Pricing, Database proof, Account recovery, and Server sync before dense forms or operator panels appear.
 - Hosted login/database handoff packet: active Supabase return URL, current login state, live database acceptance requirements, TrustGraph VPS target, and VFIX isolation guard.
 - Working-data packet: currently loaded Passport, Access Grant, corporate review attestation, consent, subscription, team member, and invitation counts plus the live database repair queue and database policy repair guidance for missing required row groups or migration 042 proof.
+- Live database repair guide packet: first missing live row group, seed/login/reload/export actions, source mode, and the rule that preview data cannot satisfy v1 acceptance.
 - V1 live database readiness receipt: single owner-facing packet and Supabase row for Professional rows, Corporate RBAC/access rows, evidence, consent, billing, team, review, registration, release proof, required exports, missing groups, and the rule that preview data is not accepted.
 - Real database completion receipt: persisted live-row completion plan for hosted login, registration, corporate workspace, pricing, user database access, evidence, consent, team, review, release, owner receipts, and preview-data rejection.
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC, including the corporate review attestation created from the approved Access Grant.
