@@ -13296,6 +13296,7 @@ p {
   .auth-path-grid,
   .auth-access-command,
   .auth-access-command-grid,
+  .email-verification-delivery-grid,
   .security-signoff-header,
   .security-signoff-grid,
   .v1-security-review-grid,
@@ -14429,6 +14430,60 @@ p {
 .hosted-auth-redirect-verification span {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.email-verification-delivery-receipt {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 202, 122, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 202, 122, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.email-verification-delivery-receipt > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.email-verification-delivery-receipt strong,
+.email-verification-delivery-receipt small,
+.email-verification-delivery-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.email-verification-delivery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 9px;
+}
+
+.email-verification-delivery-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.email-verification-delivery-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.email-verification-delivery-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.15;
 }
 
 .hosted-callback-proof > div:first-child {

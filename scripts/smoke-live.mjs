@@ -738,6 +738,14 @@ assertIncludesAny(bundleText, ["auth_recovery_decision_path"], "registration aut
 assertIncludesAny(bundleText, ["New account verification"], "auth recovery verification guidance");
 assertIncludesAny(bundleText, ["Hosted auth redirect verification receipt"], "hosted auth redirect verification receipt");
 assertIncludesAny(bundleText, ["hosted_auth_redirect_verification_receipt"], "hosted auth redirect verification packet field");
+assertIncludesAny(bundleText, ["Email verification delivery receipt"], "email verification delivery receipt");
+assertIncludesAny(bundleText, ["email_verification_delivery_receipt"], "email verification delivery packet field");
+assertIncludesAny(bundleText, ["Use one hosted email path before asking Supabase for another link"], "email verification delivery guidance");
+assertIncludesAny(
+  bundleText,
+  ["verification_and_recovery_emails_use_hosted_redirect_rate_limit_is_visible_localhost_links_can_be_repaired_and_after_verification_user_returns_to_the_selected_portal"],
+  "email verification delivery acceptance rule"
+);
 assertIncludesAny(
   bundleText,
   ["supabase_site_url_and_redirect_urls_include_github_pages_and_trustgraph_vps_and_email_links_return_to_hosted_app_not_localhost"],

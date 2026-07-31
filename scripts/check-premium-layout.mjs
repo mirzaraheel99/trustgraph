@@ -151,6 +151,8 @@ assert(css.includes(".portal-submit-receipt") && css.includes(".portal-submit-re
 assert(css.includes(".registration-outcome-command") && css.includes(".registration-outcome-grid"), "registration outcome command must be styled and bounded.");
 assert(app.includes('aria-label="Hosted auth redirect verification receipt"'), "public auth must expose the hosted redirect verification receipt.");
 assert(premiumRepair.includes(".hosted-auth-redirect-verification") && premiumRepair.includes(".hosted-auth-redirect-grid"), "hosted auth redirect verification must be styled and bounded.");
+assert(app.includes('aria-label="Email verification delivery receipt"'), "public auth must expose email verification delivery receipt.");
+assert(css.includes(".email-verification-delivery-receipt") && css.includes(".email-verification-delivery-grid"), "email verification delivery receipt must be styled and bounded.");
 assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checkout-decision-grid") && css.includes(".stripe-checkout-decision-actions"), "Stripe checkout decision receipt must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");

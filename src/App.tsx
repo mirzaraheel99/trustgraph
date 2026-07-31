@@ -12798,6 +12798,47 @@ function PublicSite({
       detail: repairedVerificationUrl ? "Hosted replacement link is ready to copy." : "Paste a localhost email link to convert it."
     }
   ];
+  const emailVerificationDeliveryReceipt = {
+    mode: "email_verification_delivery_receipt",
+    selected_portal: selectedRegistrationPath.portal,
+    selected_mode: mode,
+    active_redirect_url: authRedirectUrl,
+    localhost_redirect_accepted: false,
+    repaired_link_ready: Boolean(repairedVerificationUrl),
+    email_rate_limit_note: "Supabase built-in email allows 2 messages per hour project-wide unless custom SMTP is configured.",
+    next_user_action:
+      mode === "signup"
+        ? "Open the newest verification email, confirm it returns to hosted TrustGraph, then login here."
+        : "If login fails, request hosted password recovery and return here to set a new password.",
+    support_action:
+      repairedVerificationUrl
+        ? "Copy the repaired hosted link and open it in this browser."
+        : "If an email opens localhost, paste it into the repair field before requesting more email.",
+    accepted_when:
+      "verification_and_recovery_emails_use_hosted_redirect_rate_limit_is_visible_localhost_links_can_be_repaired_and_after_verification_user_returns_to_the_selected_portal"
+  };
+  const emailVerificationDeliveryCards = [
+    {
+      label: "Email path",
+      value: mode === "signup" ? "Verify email" : "Recover login",
+      detail: emailVerificationDeliveryReceipt.next_user_action
+    },
+    {
+      label: "Return URL",
+      value: emailVerificationDeliveryReceipt.active_redirect_url.includes("localhost") ? "Fix needed" : "Hosted",
+      detail: emailVerificationDeliveryReceipt.active_redirect_url
+    },
+    {
+      label: "Rate limit",
+      value: "2/hour",
+      detail: emailVerificationDeliveryReceipt.email_rate_limit_note
+    },
+    {
+      label: "Localhost repair",
+      value: repairedVerificationUrl ? "Ready" : "Available",
+      detail: emailVerificationDeliveryReceipt.support_action
+    }
+  ];
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
@@ -12856,6 +12897,7 @@ function PublicSite({
     portal_login_switchboard: portalLoginSwitchboard,
     login_issue_resolver: loginIssueResolver,
     hosted_auth_redirect_verification_receipt: hostedAuthRedirectVerificationReceipt,
+    email_verification_delivery_receipt: emailVerificationDeliveryReceipt,
     auth_recovery_decision_path: authRecoveryDecisionPath,
     repaired_link_ready: Boolean(repairedVerificationUrl),
     portal_auth_outcome_summary: authOutcomePacket,
@@ -14097,6 +14139,22 @@ function PublicSite({
               ))}
             </div>
             <small>{hostedAuthRedirectVerificationReceipt.next_action}</small>
+          </div>
+          <div className="email-verification-delivery-receipt" aria-label="Email verification delivery receipt">
+            <div>
+              <span className="status-chip warning">Email verification delivery receipt</span>
+              <strong>Use one hosted email path before asking Supabase for another link</strong>
+              <small>{emailVerificationDeliveryReceipt.accepted_when}</small>
+            </div>
+            <div className="email-verification-delivery-grid">
+              {emailVerificationDeliveryCards.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="public-auth-recovery-command" aria-label="Public auth recovery command center">
             <div>
