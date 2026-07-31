@@ -5,6 +5,7 @@ TRUSTGRAPH_REMOTE_PATH="${TRUSTGRAPH_REMOTE_PATH:-/opt/trustgraph}"
 TRUSTGRAPH_HOST="${TRUSTGRAPH_HOST:-trustgraph.5-75-224-110.sslip.io}"
 PUBLIC_URL="${PUBLIC_URL:-https://trustgraph.5-75-224-110.sslip.io/}"
 EXPECTED_ORIGIN="${EXPECTED_ORIGIN:-https://github.com/mirzaraheel99/trustgraph.git}"
+EXPECTED_BUNDLE_MARKER="${EXPECTED_BUNDLE_MARKER:-Email verification delivery receipt}"
 
 fail() {
   echo "TrustGraph VPS update failed: $*" >&2
@@ -56,10 +57,12 @@ JSON
 
 curl --fail --location --silent --show-error "$PUBLIC_URL" >/tmp/trustgraph-vps-smoke.html
 grep -q "TrustGraph" /tmp/trustgraph-vps-smoke.html || fail "public smoke did not contain TrustGraph"
+grep -q "$EXPECTED_BUNDLE_MARKER" /tmp/trustgraph-vps-smoke.html || fail "public smoke did not contain latest bundle marker: $EXPECTED_BUNDLE_MARKER"
 curl --fail --location --silent --show-error "${PUBLIC_URL%/}/trustgraph-release.json" >/tmp/trustgraph-vps-release.json
 grep -q "$commit_short" /tmp/trustgraph-vps-release.json || fail "release stamp does not match current commit"
 
 echo "TrustGraph VPS updated from GitHub."
 echo "Commit: $commit_short"
+echo "Bundle marker: $EXPECTED_BUNDLE_MARKER"
 echo "Release stamp: ${PUBLIC_URL%/}/trustgraph-release.json"
 echo "Open: $PUBLIC_URL"

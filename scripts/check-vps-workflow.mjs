@@ -51,8 +51,16 @@ const requiredSnippets = [
     label: "remote deploy runs the guarded VPS update script"
   },
   {
+    snippet: 'export EXPECTED_BUNDLE_MARKER="Email verification delivery receipt"',
+    label: "remote deploy requires the current V1 bundle marker"
+  },
+  {
     snippet: 'curl --fail --location --silent --show-error "$PUBLIC_URL"',
     label: "smoke check uses the public URL input"
+  },
+  {
+    snippet: 'grep -q "Email verification delivery receipt" /tmp/trustgraph-vps.html',
+    label: "smoke check refuses stale VPS bundles"
   },
   {
     snippet: 'curl --fail --location --silent --show-error "${PUBLIC_URL%/}/trustgraph-release.json"',
@@ -136,6 +144,18 @@ const runtimeSnippets = [
     path: "tools/update-vps-from-github.sh",
     snippet: "grep -q \"$commit_short\" /tmp/trustgraph-vps-release.json",
     label: "manual VPS update verifies release stamp matches current commit"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "EXPECTED_BUNDLE_MARKER",
+    label: "manual VPS update has a configurable latest bundle marker"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "public smoke did not contain latest bundle marker",
+    label: "manual VPS update refuses stale public bundles"
   },
   {
     source: updateVps,
