@@ -10968,6 +10968,59 @@ function PublicSite({
         ? "Corporate teams cannot browse users; they request access by professional email and see only approved shared rows."
         : "Professionals own Passport rows, evidence, consent, and every Access Grant decision."
   };
+  const liveOnboardingAcceptanceContract = {
+    mode: "live_onboarding_acceptance_contract",
+    selected_portal: selectedRegistrationPath.portal,
+    hosted_auth_required: true,
+    preview_data_accepted: false,
+    localhost_redirect_accepted: false,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    pricing_boundary: selectedRegistrationPath.paymentStatus,
+    corporate_user_database_boundary:
+      portal === "corporate"
+        ? "company reviewers request one professional by email and see approved shared rows only"
+        : "professional owner controls Passport records, evidence, consent, and Access Grants",
+    acceptance_sequence:
+      portal === "corporate"
+        ? [
+            "hosted_email_verified",
+            "corporate_admin_logged_in",
+            "organization_membership_created",
+            "subscription_ledger_active",
+            "scoped_access_request_submitted",
+            "approved_shared_rows_visible"
+          ]
+        : [
+            "hosted_email_verified",
+            "professional_logged_in",
+            "passport_workspace_created",
+            "real_records_or_evidence_loaded",
+            "consent_or_access_grant_ready"
+          ],
+    export_packet: registrationPacketName
+  };
+  const liveOnboardingContractCards = [
+    {
+      label: "Hosted auth",
+      value: authReady ? "Configured" : "Missing",
+      detail: `Redirect must return to ${authRedirectUrl}`
+    },
+    {
+      label: "Preview data",
+      value: "Not accepted",
+      detail: "V1 proof requires signed-in Supabase rows, not product preview data."
+    },
+    {
+      label: "First database write",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: selectedRegistrationPath.databaseWrites.join(", ")
+    },
+    {
+      label: portal === "corporate" ? "Corporate database boundary" : "Passport boundary",
+      value: portal === "corporate" ? "Scoped rows only" : "Owner controlled",
+      detail: liveOnboardingAcceptanceContract.corporate_user_database_boundary
+    }
+  ];
   const authOutcomePacket = {
     mode: "portal_auth_outcome_summary",
     selected_portal: portal,
@@ -11141,6 +11194,7 @@ function PublicSite({
     active_redirect_url: authRedirectUrl,
     portal_entry_path: portalEntryPath,
     registration_decision_receipt: registrationDecisionReceipt,
+    live_onboarding_acceptance_contract: liveOnboardingAcceptanceContract,
     portal_handoff_checklist: portalHandoffChecklist,
     required_hosted_redirect: TRUSTGRAPH_VPS_URL,
     github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
@@ -11918,6 +11972,32 @@ function PublicSite({
                 <strong>{registrationDecisionReceipt.next_dashboard}</strong>
                 <small>{registrationDecisionReceipt.payment_boundary}</small>
               </span>
+            </div>
+          </div>
+          <div className="live-onboarding-contract" aria-label="Live onboarding acceptance contract">
+            <div>
+              <span className="status-chip success">Live onboarding acceptance contract</span>
+              <strong>{selectedRegistrationPath.portal} must prove hosted login and real rows</strong>
+              <small>
+                Preview mode, localhost email redirects, and unapproved corporate browsing are not accepted for v1 database proof.
+              </small>
+            </div>
+            <div className="live-onboarding-contract-grid">
+              {liveOnboardingContractCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="live-onboarding-sequence">
+              {liveOnboardingAcceptanceContract.acceptance_sequence.map((step, index) => (
+                <span key={step}>
+                  <small>{index + 1}</small>
+                  <strong>{step.replace(/_/g, " ")}</strong>
+                </span>
+              ))}
             </div>
           </div>
           <div className="account-type-chooser" aria-label="Account type chooser">

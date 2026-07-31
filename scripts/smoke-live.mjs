@@ -148,6 +148,11 @@ assertIncludesAny(bundleText, ["First live database write"], "auth first databas
 assertIncludesAny(bundleText, ["Portal decision matrix"], "portal registration decision matrix");
 assertIncludesAny(bundleText, ["One login system, two clean registration paths"], "portal registration decision copy");
 assertIncludesAny(bundleText, ["portal_decision_matrix"], "portal registration decision packet field");
+assertIncludesAny(bundleText, ["Live onboarding acceptance contract"], "live onboarding acceptance contract");
+assertIncludesAny(bundleText, ["live_onboarding_acceptance_contract"], "live onboarding acceptance contract packet field");
+assertIncludesAny(bundleText, ["preview_data_accepted"], "live onboarding rejects preview data");
+assertIncludesAny(bundleText, ["localhost_redirect_accepted"], "live onboarding rejects localhost redirects");
+assertIncludesAny(bundleText, ["approved_shared_rows_visible"], "corporate live onboarding access proof step");
 assertIncludesAny(bundleText, ["Portal login switchboard"], "portal login switchboard panel");
 assertIncludesAny(bundleText, ["Professional user login"], "professional login switchboard route");
 assertIncludesAny(bundleText, ["Corporate company login"], "corporate login switchboard route");

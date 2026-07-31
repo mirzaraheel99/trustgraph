@@ -39,6 +39,7 @@ assert(app.includes('aria-label="Corporate access request scope receipt"'), "Cor
 assert(app.includes('aria-label="Corporate user database access contract"'), "Corporate Verify must expose the exact corporate user database access boundary.");
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
 assert(app.includes('aria-label="Login issue resolver"'), "public auth must expose visible login issue resolver guidance.");
+assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public auth must expose a live onboarding acceptance contract.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
 assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readiness must expose hosted corporate retest checklist.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
@@ -79,6 +80,7 @@ assert(css.includes(".request-scope-receipt") && css.includes(".request-scope-re
 assert(premiumRepair.includes(".corporate-user-database-contract") && premiumRepair.includes(".corporate-user-database-contract-grid"), "corporate user database access contract must be styled and bounded.");
 assert(premiumRepair.includes(".auth-recovery-command-grid") && premiumRepair.includes(".public-auth-recovery-actions"), "auth recovery command buttons must be included in overflow guards.");
 assert(premiumRepair.includes(".login-issue-resolver") && premiumRepair.includes(".login-issue-resolver-grid"), "login issue resolver must be styled and bounded.");
+assert(css.includes(".live-onboarding-contract") && css.includes(".live-onboarding-contract-grid") && css.includes(".live-onboarding-sequence"), "live onboarding acceptance contract must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");

@@ -67,6 +67,8 @@ const requiredMobileStacks = [
   ".issuer-source-strip",
   ".invitation-handoff-strip",
   ".live-database-repair-grid",
+  ".live-onboarding-contract-grid",
+  ".live-onboarding-sequence",
   ".live-database-acceptance-lanes-top",
   ".live-database-acceptance-lane-grid",
   ".live-database-contract-grid",

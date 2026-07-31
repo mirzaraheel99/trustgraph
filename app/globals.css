@@ -1130,6 +1130,103 @@ button {
   overflow-wrap: anywhere;
 }
 
+.live-onboarding-contract {
+  display: grid;
+  gap: 12px;
+  max-width: 720px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.075), transparent 62%),
+    rgba(8, 18, 20, 0.62);
+  overflow: hidden;
+}
+
+.live-onboarding-contract > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.live-onboarding-contract strong,
+.live-onboarding-contract small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-onboarding-contract > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.1;
+}
+
+.live-onboarding-contract small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.live-onboarding-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.live-onboarding-contract-grid span,
+.live-onboarding-sequence span {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  overflow: hidden;
+}
+
+.live-onboarding-contract-grid span {
+  display: grid;
+  gap: 5px;
+}
+
+.live-onboarding-contract-grid span small:first-child {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.live-onboarding-sequence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.live-onboarding-sequence span {
+  flex: 1 1 150px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.live-onboarding-sequence small {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: #04110f;
+  border-radius: 999px;
+  background: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.live-onboarding-sequence strong {
+  color: var(--text);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
 .portal-access-guide {
   display: grid;
   gap: 12px;
@@ -11553,6 +11650,8 @@ p {
   .public-pricing-estimator-actions,
   .pending-registration-grid,
   .registration-decision-grid,
+  .live-onboarding-contract-grid,
+  .live-onboarding-sequence,
   .registration-grid,
   .selected-portal-command,
   .directory-controls,
