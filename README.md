@@ -105,6 +105,8 @@ The signed-in app now opens with a premium launch console that separates Persona
 
 The public login/register form now shows a visible auth route summary immediately before the input fields, so Professional users and Corporate admins can confirm account type, login/register mode, pricing path, first database write, and landing portal before submitting.
 
+Corporate Verify now includes a request-to-row rail before directory filters, showing the reviewer exactly where they are across request, professional approval, scoped rows, attestation, visibility snapshot, and metadata-only export.
+
 Passport record detail now starts evidence work with an evidence access desk: preview, download, metadata manifest export, access packet export, signed URL expiry, metadata-only boundaries, and last-link proof are visible before deeper evidence receipts.
 
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:

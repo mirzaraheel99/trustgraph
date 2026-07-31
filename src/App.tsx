@@ -4685,6 +4685,69 @@ function CorporateDirectoryPanel({
       target: "export"
     }
   ];
+  const corporateRequestToRowRail = {
+    mode: "corporate_request_to_row_rail",
+    current_action: corporateAccessNextAction.label,
+    next_step:
+      requests.length === 0
+        ? "Request access"
+        : approvedAccessCount === 0
+          ? "Wait for professional approval"
+          : sharedRecords.length === 0
+            ? "Load approved rows"
+            : reviews.length === 0
+              ? "Record review attestation"
+              : latestCorporateVisibilitySnapshot
+                ? "Export scoped packet"
+                : "Save visibility snapshot",
+    accepted_when:
+      "corporate_request_to_row_rail_shows_request_approval_scoped_rows_attestation_snapshot_and_export_before_directory_filters",
+    preview_data_accepted: false
+  };
+  const corporateRequestToRowSteps = [
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "Start",
+      detail: "Ask for one professional by email and purpose.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Approval",
+      value: approvedAccessCount ? `${approvedAccessCount}` : "Waiting",
+      detail: "Rows stay locked until the professional approves scope.",
+      ready: approvedAccessCount > 0,
+      target: "corporate-verify-request-list"
+    },
+    {
+      label: "Scoped rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Locked",
+      detail: "Only approved Passport rows appear for the company.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Attest",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: "Record reviewer proof after checking rows and gaps.",
+      ready: reviews.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Snapshot",
+      value: latestCorporateVisibilitySnapshot ? "Saved" : "Needed",
+      detail: "Save filtered visibility proof before handoff.",
+      ready: Boolean(latestCorporateVisibilitySnapshot),
+      target: "corporate-database-visibility-snapshot"
+    },
+    {
+      label: "Export",
+      value: corporateAccessNextAction.ready ? "Ready" : "Blocked",
+      detail: "Export metadata-only corporate user packet.",
+      ready: corporateAccessNextAction.ready,
+      target: "export"
+    }
+  ];
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -4752,6 +4815,10 @@ function CorporateDirectoryPanel({
     },
     corporate_database_access_decision_board: corporateDatabaseAccessDecisionBoard,
     corporate_database_action_cockpit: corporateDatabaseActionCockpit,
+    corporate_request_to_row_rail: {
+      ...corporateRequestToRowRail,
+      steps: corporateRequestToRowSteps.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
     corporate_access_next_action_command: corporateAccessNextActionCommand,
     corporate_review_handoff_receipt: corporateReviewHandoffReceipt,
     corporate_data_access_path: corporateAccessPath,
@@ -5065,6 +5132,56 @@ function CorporateDirectoryPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="corporate-request-to-row-rail" aria-label="Corporate request to row rail">
+        <div className="corporate-request-to-row-copy">
+          <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Request to row</span>
+          <strong>{corporateRequestToRowRail.next_step}</strong>
+          <small>{corporateRequestToRowRail.accepted_when}</small>
+        </div>
+        <div className="corporate-request-to-row-grid">
+          {corporateRequestToRowSteps.map((step) => (
+            <button
+              className={step.ready ? "ready" : "next"}
+              key={step.label}
+              onClick={() => {
+                if (step.target === "export") {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                document.getElementById(step.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-request-to-row-proof">
+          <span>
+            <strong>{corporateRequestToRowSteps.filter((step) => step.ready).length}/{corporateRequestToRowSteps.length}</strong>
+            <small>Steps ready</small>
+          </span>
+          <span>
+            <strong>No open browse</strong>
+            <small>Users are requested by email and scoped approval.</small>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-request-to-row-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateRequestToRowRail, steps: corporateRequestToRowSteps }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export rail proof
+          </button>
         </div>
       </div>
       <div className="directory-controls">

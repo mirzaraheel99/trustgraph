@@ -10677,6 +10677,107 @@ p {
   line-height: 1.05;
 }
 
+.corporate-request-to-row-rail {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.08), rgba(240, 198, 107, 0.055) 58%, transparent),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-request-to-row-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-request-to-row-copy strong,
+.corporate-request-to-row-copy small,
+.corporate-request-to-row-grid span,
+.corporate-request-to-row-grid strong,
+.corporate-request-to-row-grid small,
+.corporate-request-to-row-proof strong,
+.corporate-request-to-row-proof small {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-request-to-row-copy strong {
+  color: var(--text);
+  font-size: clamp(19px, 1.8vw, 27px);
+  line-height: 1.1;
+}
+
+.corporate-request-to-row-copy small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.4;
+}
+
+.corporate-request-to-row-grid,
+.corporate-request-to-row-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.corporate-request-to-row-grid button,
+.corporate-request-to-row-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 11px;
+  justify-items: start;
+  text-align: left;
+  white-space: normal;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.corporate-request-to-row-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.corporate-request-to-row-grid button.next {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.052);
+}
+
+.corporate-request-to-row-grid span,
+.corporate-request-to-row-proof small {
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-request-to-row-grid strong,
+.corporate-request-to-row-proof strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.12;
+}
+
+.corporate-request-to-row-grid small {
+  color: rgba(222, 239, 233, 0.64);
+  font-size: 11px;
+  line-height: 1.34;
+}
+
+.corporate-request-to-row-proof button {
+  min-width: 0;
+  width: 100%;
+  white-space: normal;
+}
+
 .directory-metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
@@ -15785,6 +15886,8 @@ p {
   .corporate-reviewer-action-grid,
   .corporate-database-path-grid,
   .corporate-database-path-proof,
+  .corporate-request-to-row-grid,
+  .corporate-request-to-row-proof,
   .v1-operating-map-header,
   .v1-operating-map-grid,
   .workspace-command-strip,
