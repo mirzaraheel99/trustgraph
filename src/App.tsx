@@ -13416,6 +13416,49 @@ function PublicSite({
         : ["email", "password"],
     after_success: selectedRegistrationPath.nextAction
   };
+  const portalAccessCockpit = {
+    mode: "portal_access_cockpit",
+    selected_portal: portal,
+    selected_mode: mode,
+    headline:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create the company account first, then Verify users by permission"
+          : "Login to the company workspace before opening Corporate Verify"
+        : mode === "signup"
+          ? "Create your Passport first, then decide what companies can see"
+          : "Login to your personal Passport workspace",
+    primary_database_write: selectedRegistrationPath.primaryWrite,
+    pricing: selectedRegistrationPath.plan,
+    boundary:
+      portal === "corporate"
+        ? "Corporate users do not browse an open user database. They request access by email and see approved rows only."
+        : "Professional users own records, evidence, consent, and every Access Grant decision.",
+    accepted_when:
+      "public_login_registration_page_starts_with_one_cockpit_for_portal_mode_pricing_first_database_write_next_dashboard_and_database_boundary"
+  };
+  const portalAccessCockpitCards = [
+    {
+      label: "Account type",
+      value: portal === "corporate" ? "Corporate company" : "Professional user",
+      detail: mode === "signup" ? "Register new account" : "Login existing account"
+    },
+    {
+      label: "Pricing",
+      value: selectedRegistrationPath.plan,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First write",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Next dashboard",
+      value: portal === "corporate" ? "Company setup" : "Passport",
+      detail: selectedRegistrationPath.nextAction
+    }
+  ];
   const registrationDecisionReceipt = {
     mode: "registration_decision_receipt",
     selected_portal: selectedRegistrationPath.portal,
@@ -15082,6 +15125,40 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className="portal-access-cockpit" aria-label="Portal access cockpit">
+            <div className="portal-access-cockpit-copy">
+              <span className="status-chip success">Portal access cockpit</span>
+              <strong>{portalAccessCockpit.headline}</strong>
+              <small>{portalAccessCockpit.boundary}</small>
+            </div>
+            <div className="portal-access-cockpit-actions">
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                <Fingerprint size={16} />
+                Professional
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                <BriefcaseBusiness size={16} />
+                Corporate
+              </button>
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                <UserPlus size={16} />
+                Register
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                <LogIn size={16} />
+                Login
+              </button>
+            </div>
+            <div className="portal-access-cockpit-grid">
+              {portalAccessCockpitCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+          </div>
           <div className="portal-auth-command" aria-label="Portal auth landing command">
             <div>
               <span className="status-chip success">Auth landing command</span>

@@ -18842,6 +18842,110 @@ body {
 }
 
 /* Public auth simplification pass: make login/register and account type unmistakable. */
+.portal-access-cockpit {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 820px);
+  padding: 16px;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.055) 58%, transparent),
+    rgba(7, 18, 21, 0.88);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.26);
+  overflow: hidden;
+}
+
+.portal-access-cockpit-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.portal-access-cockpit strong,
+.portal-access-cockpit small,
+.portal-access-cockpit span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.portal-access-cockpit-copy > strong {
+  color: var(--text);
+  font-size: clamp(24px, 2.4vw, 38px);
+  line-height: 1.05;
+}
+
+.portal-access-cockpit-copy > small {
+  max-width: 68ch;
+  color: rgba(222, 239, 233, 0.72);
+  line-height: 1.46;
+}
+
+.portal-access-cockpit-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.portal-access-cockpit-actions button {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 12px;
+  color: rgba(238, 248, 244, 0.84);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  box-shadow: none;
+  white-space: normal;
+}
+
+.portal-access-cockpit-actions button.active {
+  color: #061412;
+  border-color: rgba(92, 236, 193, 0.62);
+  background: linear-gradient(135deg, #5cecc1, #b9e7c3);
+}
+
+.portal-access-cockpit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.portal-access-cockpit-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 110px;
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+  overflow: hidden;
+}
+
+.portal-access-cockpit-grid small:first-child {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.portal-access-cockpit-grid strong {
+  color: #f6fbf8;
+  font-size: 15px;
+  line-height: 1.16;
+}
+
+.portal-access-cockpit-grid small:last-child {
+  color: rgba(222, 239, 233, 0.66);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .public-auth-flow-command {
   display: grid;
   gap: 12px;
@@ -19493,6 +19597,8 @@ body {
 
   .public-auth-flow-grid,
   .portal-start-desk-switches,
+  .portal-access-cockpit-actions,
+  .portal-access-cockpit-grid,
   .portal-start-desk-grid,
   .portal-start-desk-next,
   .public-auth-card .portal-tabs {
