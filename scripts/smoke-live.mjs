@@ -485,6 +485,9 @@ assertIncludesAny(bundleText, ["Server sync monitor"], "server sync monitor labe
 assertIncludesAny(bundleText, ["server_sync_monitor"], "server sync monitor packet field");
 assertIncludesAny(bundleText, ["vps_release_stamp_returns_commit_json"], "server sync monitor acceptance rule");
 assertIncludesAny(bundleText, ["The host is alive, but the release stamp returned the app shell"], "server sync stale-host guidance");
+assertIncludesAny(bundleText, ["Public server sync receipt"], "public server sync receipt");
+assertIncludesAny(bundleText, ["Saved build"], "public saved build label");
+assertIncludesAny(bundleText, ["Release stamp commit"], "public release stamp commit proof");
 assertIncludesAny(bundleText, ["Operator home"], "signed-in role-aware dashboard label");
 assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing actions packet field");
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");

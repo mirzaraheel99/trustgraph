@@ -160,6 +160,65 @@ button {
   color: var(--muted);
 }
 
+.public-server-sync-receipt {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.42fr);
+  align-items: stretch;
+  gap: 10px;
+  max-width: 760px;
+  margin-top: 18px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: var(--radius);
+  background: rgba(8, 13, 15, 0.72);
+  box-shadow: var(--shadow-tight);
+}
+
+.public-server-sync-receipt > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.public-server-sync-receipt strong,
+.public-server-sync-receipt small,
+.public-server-sync-receipt span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-server-sync-receipt > div:first-child > strong {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.public-server-sync-receipt small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.public-server-sync-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.public-server-sync-grid span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-server-sync-grid strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
 .public-session-actions {
   display: flex;
   flex-wrap: wrap;
@@ -12171,6 +12230,8 @@ p {
   .public-pricing-estimator,
   .public-pricing-estimator-grid,
   .public-pricing-estimator-actions,
+  .public-server-sync-receipt,
+  .public-server-sync-grid,
   .stripe-checkout-decision-grid,
   .stripe-checkout-decision-actions,
   .pending-registration-grid,

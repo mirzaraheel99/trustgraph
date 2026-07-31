@@ -52,6 +52,7 @@ assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public
 assert(app.includes('aria-label="Public auth flow command"'), "public auth must expose a simple flow command for account type, mode, and database result.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
+assert(app.includes('aria-label="Public server sync receipt"'), "public website must expose saved-build status before login.");
 assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readiness must expose hosted corporate retest checklist.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
@@ -67,6 +68,7 @@ assert(css.includes(".login-decision-path") && css.includes(".login-decision-pat
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".server-sync-monitor") && premiumRepair.includes(".server-sync-monitor-grid") && premiumRepair.includes(".server-sync-next"), "server sync monitor must be styled and bounded in the premium shell.");
+assert(css.includes(".public-server-sync-receipt") && css.includes(".public-server-sync-grid"), "public saved-build receipt must be styled and bounded.");
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");

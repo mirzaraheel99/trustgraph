@@ -11481,7 +11481,8 @@ function PublicSite({
   onCorporateSession,
   onOpenProductPreview,
   onSignOut,
-  onSession
+  onSession,
+  serverSyncMonitor
 }: {
   currentSession: AuthSession | null;
   currentSessionContext: string;
@@ -11493,6 +11494,7 @@ function PublicSite({
   onOpenProductPreview: () => void;
   onSignOut: () => void;
   onSession: (session: AuthSession) => void;
+  serverSyncMonitor: ServerSyncMonitorState;
 }) {
   const [portal, setPortal] = useState<"professional" | "corporate">("professional");
   const [mode, setMode] = useState<"signin" | "signup">("signup");
@@ -12282,6 +12284,25 @@ function PublicSite({
             <button className="secondary-action" onClick={() => openPortal("corporate")}>
               Corporate portal
             </button>
+          </div>
+          <div className="public-server-sync-receipt" aria-label="Public server sync receipt">
+            <div>
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : serverSyncMonitor.status === "checking" ? "neutral" : "warning"}`}>
+                Saved build
+              </span>
+              <strong>{serverSyncMonitor.headline}</strong>
+              <small>{serverSyncMonitor.detail}</small>
+            </div>
+            <div className="public-server-sync-grid">
+              <span>
+                <strong>{serverSyncMonitor.commit ?? "Not proven"}</strong>
+                <small>Release stamp commit</small>
+              </span>
+              <span>
+                <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+                <small>Current host status</small>
+              </span>
+            </div>
           </div>
           {currentSession ? (
             <div className="public-session-handoff" aria-label="Public session handoff">
@@ -15730,6 +15751,7 @@ function App() {
           setHostedCallbackProof(readHostedAuthCallbackProof("callback_session_accepted"));
           setShowPublicSite(false);
         }}
+        serverSyncMonitor={serverSyncMonitor}
       />
     );
   }
