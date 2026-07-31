@@ -194,6 +194,8 @@ assertIncludesAny(bundleText, ["Corporate account path"], "corporate auth outcom
 assertIncludesAny(bundleText, ["Professional Passport path"], "professional auth outcome path");
 assertIncludesAny(bundleText, ["portal_auth_outcome_summary"], "portal auth outcome packet field");
 assertIncludesAny(bundleText, ["Public auth flow command"], "public auth flow command");
+assertIncludesAny(bundleText, ["Portal start desk"], "public auth portal start desk");
+assertIncludesAny(bundleText, ["portal_start_desk"], "public auth portal start desk packet");
 assertIncludesAny(bundleText, ["public_auth_flow_command"], "public auth flow command packet field");
 assertIncludesAny(bundleText, ["Professional user portal"], "Professional database portal route");
 assertIncludesAny(bundleText, ["Corporate company portal"], "Corporate database portal route");

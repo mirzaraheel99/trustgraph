@@ -62,6 +62,8 @@ const flowChecks = [
       "Selected portal command",
       "Public auth flow command",
       "public_auth_flow_command",
+      "Portal start desk",
+      "portal_start_desk",
       "Registration decision receipt",
       "registration_decision_receipt",
       "registration_database_launch_order",

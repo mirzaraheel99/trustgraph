@@ -13934,6 +13934,46 @@ function PublicSite({
       detail: portalSubmitReceipt.landing_dashboard
     }
   ];
+  const portalStartDesk = {
+    mode: "portal_start_desk",
+    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    primary_action:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create the company admin account"
+          : "Open Corporate Verify"
+        : mode === "signup"
+          ? "Create the Professional Passport account"
+          : "Open Professional Passport",
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    pricing_boundary: selectedRegistrationPath.paymentStatus,
+    next_dashboard: portal === "corporate" ? "Company setup, billing, team, and Verify" : "Passport records, evidence, consent, and sharing",
+    accepted_when:
+      "portal_start_desk_shows_account_type_mode_pricing_first_database_write_next_dashboard_and_no_preview_rows_before_submit"
+  };
+  const portalStartDeskSteps = [
+    {
+      label: "Account",
+      value: portalStartDesk.selected_portal,
+      detail: portal === "corporate" ? "Company workspace and RBAC" : "Private Passport owner"
+    },
+    {
+      label: "Action",
+      value: portalStartDesk.selected_action,
+      detail: portalStartDesk.primary_action
+    },
+    {
+      label: "First write",
+      value: portalStartDesk.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "Boundary",
+      value: portal === "corporate" ? selectedRegistrationPath.plan : "$0 pilot",
+      detail: portalStartDesk.pricing_boundary
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -14078,6 +14118,7 @@ function PublicSite({
     portal_entry_path: portalEntryPath,
     portal_launch_decision_strip: portalLaunchDecisionStrip,
     public_auth_flow_command: publicAuthFlowCommand,
+    portal_start_desk: portalStartDesk,
     public_portal_database_access_contract: portalDatabaseAccessContract,
     public_portal_launch_checklist: publicPortalLaunchChecklist,
     registration_outcome_command: registrationOutcomeCommand,
@@ -15056,6 +15097,46 @@ function PublicSite({
               </button>
               <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
                 I already verified email
+              </button>
+            </div>
+          </div>
+          <div className="portal-start-desk" aria-label="Portal start desk">
+            <div className="portal-start-desk-copy">
+              <span className="status-chip success">Portal start desk</span>
+              <strong>{portalStartDesk.primary_action}</strong>
+              <small>{portalStartDesk.accepted_when}</small>
+            </div>
+            <div className="portal-start-desk-switches">
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                <Fingerprint size={16} />
+                <span>Professional</span>
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                <BriefcaseBusiness size={16} />
+                <span>Corporate</span>
+              </button>
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                <UserPlus size={16} />
+                <span>Register</span>
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                <LogIn size={16} />
+                <span>Login</span>
+              </button>
+            </div>
+            <div className="portal-start-desk-grid">
+              {portalStartDeskSteps.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="portal-start-desk-next">
+              <span>{portalStartDesk.next_dashboard}</span>
+              <button className="secondary-action" onClick={() => document.querySelector(".public-auth-card")?.scrollIntoView({ behavior: "smooth", block: "center" })} type="button">
+                Continue to form
               </button>
             </div>
           </div>
