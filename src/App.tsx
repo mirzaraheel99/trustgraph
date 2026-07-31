@@ -5662,6 +5662,50 @@ function PlanAlignmentPanel({
       detail: "Stripe, legal/security, pilot ownership, and VPS production cutover stay outside automated completion."
     }
   ];
+  const releaseSyncCommand = [
+    {
+      label: "Source saved",
+      value: "GitHub main",
+      detail: "Every approved slice is committed and pushed to mirzaraheel99/trustgraph before server rollout."
+    },
+    {
+      label: "Hosted review",
+      value: "Pages smoke",
+      detail: "GitHub Actions builds, deploys, and smoke-checks the static hosted review URL."
+    },
+    {
+      label: "VPS target",
+      value: "Manual pull",
+      detail: "The server should pull GitHub main and run the TrustGraph VPS updater; VFIX stays on its protected host."
+    }
+  ];
+  const releaseSyncPacketName = `trustgraph-release-sync-command-${new Date().toISOString().slice(0, 10)}.json`;
+  const releaseSyncPacket = {
+    generated_at: new Date().toISOString(),
+    source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
+    github_pages_review_url: "https://mirzaraheel99.github.io/trustgraph/",
+    trustgraph_vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
+    protected_vfix_host: "https://5-75-224-110.sslip.io",
+    release_sync_command: {
+      current_rule: "GitHub main is the source of truth; VPS must only update by pulling GitHub main and running the TrustGraph updater.",
+      server_commands: [
+        "cd /opt/trustgraph",
+        "git fetch origin main",
+        "git checkout main",
+        "git pull --ff-only origin main",
+        "bash tools/update-vps-from-github.sh"
+      ],
+      protected_boundaries: [
+        "Do not modify /opt/fixflow or the VFIX nginx route.",
+        "Do not replace the existing VFIX client application route.",
+        "TrustGraph serves from trustgraph.5-75-224-110.sslip.io."
+      ]
+    },
+    v1_audit_command: v1AuditCommand,
+    completion_open_items: completionAuditOpenItems,
+    production_gates_open: openProductionGateCount,
+    live_database_proof: livePilotRowProof.accepted ? "accepted" : "runtime_login_required"
+  };
   const v1CompletionPacket = {
     generated_at: new Date().toISOString(),
     source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
@@ -5683,6 +5727,7 @@ function PlanAlignmentPanel({
     completion_audit_requirements: completionAuditRequirements,
     completion_audit_open_items: completionAuditOpenItems,
     v1_audit_command: v1AuditCommand,
+    release_sync_command: releaseSyncPacket.release_sync_command,
     live_pilot_row_proof: livePilotRowProof,
     evidence_exports: [
       "portal_access_packet",
@@ -5826,6 +5871,31 @@ function PlanAlignmentPanel({
         </div>
         <div className="v1-audit-command-grid">
           {v1AuditCommand.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="release-sync-command" aria-label="Release sync command">
+        <div>
+          <span className="status-chip success">Release sync command</span>
+          <strong>Save in GitHub first, then rebuild the TrustGraph VPS from main</strong>
+          <small>
+            This keeps the server deployment traceable while protecting the existing VFIX route and certificate setup.
+          </small>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(releaseSyncPacketName, JSON.stringify(releaseSyncPacket, null, 2), "application/json")}
+            type="button"
+          >
+            Export release sync packet
+          </button>
+        </div>
+        <div className="release-sync-command-grid">
+          {releaseSyncCommand.map((item) => (
             <article key={item.label}>
               <span>{item.label}</span>
               <strong>{item.value}</strong>

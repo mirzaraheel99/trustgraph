@@ -64,6 +64,7 @@ assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.include
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");
 assert(css.includes(".live-row-source-receipt") && css.includes(".live-row-source-grid") && css.includes(".live-row-source-next"), "live row source receipt must be styled and bounded.");
 assert(css.includes(".live-database-repair-command") && css.includes(".live-database-repair-actions") && css.includes(".live-database-repair-grid"), "live database repair command must be styled and bounded.");
+assert(css.includes(".release-sync-command") && css.includes(".release-sync-command-grid"), "release sync command must be styled and bounded.");
 assert(premiumRepair.includes(".dashboard-next-action") && premiumRepair.includes(".dashboard-next-action-metrics"), "dashboard next action command must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");
 assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))"), "dense admin forms must auto-fit narrow screens.");

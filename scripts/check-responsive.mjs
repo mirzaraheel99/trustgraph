@@ -215,6 +215,10 @@ if (!css.includes(".v1-audit-command") || !css.includes("grid-template-columns: 
   throw new Error("Responsive check failed: v1 completion panel needs a clear audit command surface.");
 }
 
+if (!css.includes(".release-sync-command") || !css.includes("grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr)") || !css.includes(".release-sync-command-grid")) {
+  throw new Error("Responsive check failed: v1 completion panel needs a clear release sync command surface.");
+}
+
 if (!css.includes("grid-template-columns: minmax(0, 1fr) auto") || !css.includes(".topbar-session-card") || !css.includes("display: none !important")) {
   throw new Error("Responsive check failed: premium shell must remove duplicate session cards and preserve workspace width.");
 }

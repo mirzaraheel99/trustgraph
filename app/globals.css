@@ -10572,6 +10572,65 @@ p {
   font-weight: 950;
 }
 
+.release-sync-command {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(99, 255, 184, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(99, 255, 184, 0.075), transparent 56%),
+    linear-gradient(160deg, rgba(134, 174, 246, 0.05), transparent 72%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.release-sync-command > div:first-child,
+.release-sync-command-grid article {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.release-sync-command strong,
+.release-sync-command small,
+.release-sync-command span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.release-sync-command > div:first-child > strong {
+  font-size: 16px;
+  line-height: 1.18;
+}
+
+.release-sync-command small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.release-sync-command-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.release-sync-command-grid article {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.release-sync-command-grid span {
+  color: var(--mint);
+  font-size: 11px;
+  font-weight: 950;
+}
+
 .plan-migration-card {
   display: flex;
   justify-content: space-between;
