@@ -51,7 +51,7 @@ const requiredSnippets = [
     label: "remote deploy runs the guarded VPS update script"
   },
   {
-    snippet: 'export EXPECTED_BUNDLE_MARKER="billing_activation_receipt"',
+    snippet: 'export EXPECTED_BUNDLE_MARKER="corporate_database_visibility_snapshot"',
     label: "remote deploy requires the current V1 bundle marker"
   },
   {
@@ -59,7 +59,7 @@ const requiredSnippets = [
     label: "smoke check uses the public URL input"
   },
   {
-    snippet: 'grep -q "billing_activation_receipt" /tmp/trustgraph-vps.html',
+    snippet: 'grep -q "corporate_database_visibility_snapshot" /tmp/trustgraph-vps.html',
     label: "smoke check refuses stale VPS bundles"
   },
   {

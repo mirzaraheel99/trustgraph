@@ -6529,6 +6529,7 @@ function PlanAlignmentPanel({
       "portal_access_packet",
       "corporate_provisioning_packet",
       "corporate_user_database_packet",
+      "corporate_database_visibility_snapshot",
       "pricing_structure_packet",
       "billing_activation_receipt",
       "working_database_packet",
@@ -18415,6 +18416,7 @@ function App() {
             "registration_intent_review_packet",
             "portal_access_packet",
             "corporate_user_database_packet",
+            "corporate_database_visibility_snapshot",
             "pricing_structure_packet",
             "billing_activation_receipt",
             "working_database_packet"
