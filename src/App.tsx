@@ -10778,6 +10778,24 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className="portal-auth-command" aria-label="Portal auth landing command">
+            <div>
+              <span className="status-chip success">Auth landing command</span>
+              <strong>{selectedPortalCommand.headline}</strong>
+              <small>{selectedPortalCommand.next}</small>
+            </div>
+            <div className="portal-auth-command-actions">
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                Professional Passport
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                Corporate Verify
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                I already verified email
+              </button>
+            </div>
+          </div>
           <div className="portal-entry-path" aria-label="Portal entry path">
             {portalEntryPath.map((step) => (
               <span key={step.label}>

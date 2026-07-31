@@ -132,6 +132,8 @@ assertIncludesAny(bundleText, ["Profile and personal organization"], "profession
 assertIncludesAny(bundleText, ["Corporate registration sequence"], "Corporate registration guided sequence");
 assertIncludesAny(bundleText, ["Professional registration sequence"], "Professional registration guided sequence");
 assertIncludesAny(bundleText, ["Provision live workspace"], "Corporate registration provisioning step");
+assertIncludesAny(bundleText, ["Auth landing command"], "public auth landing command");
+assertIncludesAny(bundleText, ["I already verified email"], "public auth verified-email shortcut");
 assertIncludesAny(bundleText, ["Selected portal route"], "auth selected portal route summary");
 assertIncludesAny(bundleText, ["Portal entry path"], "portal compact entry path");
 assertIncludesAny(bundleText, ["1. Pick portal"], "portal first step copy");
