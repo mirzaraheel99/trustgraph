@@ -17132,6 +17132,7 @@ body {
 }
 
 .topbar,
+.role-workspace-switchboard,
 .v1-launch-flow-command,
 .onboarding-handoff-command,
 .portal-command-deck,
@@ -17163,6 +17164,125 @@ body {
 
 .topbar p {
   max-width: 72ch;
+}
+
+.role-workspace-switchboard {
+  display: grid;
+  grid-template-columns: minmax(0, 0.48fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  padding: 18px;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.09), transparent 58%),
+    rgba(7, 18, 20, 0.86);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.24);
+}
+
+.role-workspace-switchboard-copy {
+  display: grid;
+  align-content: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.role-workspace-switchboard-copy strong,
+.role-workspace-switchboard-copy small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.role-workspace-switchboard-copy strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.1vw, 32px);
+  line-height: 1.08;
+}
+
+.role-workspace-switchboard-copy small {
+  max-width: 54ch;
+  color: rgba(222, 239, 233, 0.72);
+  line-height: 1.5;
+}
+
+.role-workspace-switchboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.role-workspace-switchboard-grid button {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  gap: 7px;
+  min-width: 0;
+  min-height: 178px;
+  padding: 14px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  box-shadow: none;
+}
+
+.role-workspace-switchboard-grid button.ready {
+  border-color: rgba(92, 236, 193, 0.3);
+  background: rgba(82, 214, 196, 0.07);
+}
+
+.role-workspace-switchboard-grid button.current {
+  border-color: rgba(240, 198, 107, 0.4);
+  background:
+    linear-gradient(135deg, rgba(240, 198, 107, 0.1), transparent 62%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.role-workspace-switchboard-grid button:hover {
+  border-color: rgba(210, 231, 223, 0.25);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.role-workspace-switchboard-grid span,
+.role-workspace-switchboard-grid strong,
+.role-workspace-switchboard-grid small,
+.role-workspace-switchboard-grid em,
+.role-workspace-switchboard-grid b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.role-workspace-switchboard-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.role-workspace-switchboard-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.12;
+}
+
+.role-workspace-switchboard-grid small,
+.role-workspace-switchboard-grid em {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.role-workspace-switchboard-grid em {
+  padding-top: 6px;
+  border-top: 1px solid rgba(210, 231, 223, 0.1);
+  font-style: normal;
+}
+
+.role-workspace-switchboard-grid b {
+  align-self: end;
+  color: #f5fbf7;
+  font-size: 12px;
+  font-weight: 950;
 }
 
 .v1-launch-flow-command {
@@ -17718,6 +17838,7 @@ body {
 }
 
 .dashboard-next-action-metrics,
+.role-workspace-switchboard-grid,
 .portal-choice-guide-grid,
 .v1-operating-map-grid,
 .server-release-grid {
@@ -17804,6 +17925,7 @@ body {
 
 @media (max-width: 1180px) {
   .dashboard-next-action,
+  .role-workspace-switchboard,
   .portal-command-deck-header,
   .portal-home-command,
   .workspace-command-strip,
@@ -17829,6 +17951,7 @@ body {
   .session-command-bar,
   .workspace-route-strip,
   .workspace-flow-strip,
+  .role-workspace-switchboard-grid,
   .portal-command-deck-grid,
   .dashboard-next-action-metrics,
   .portal-choice-guide-grid,
@@ -17853,6 +17976,7 @@ body {
   }
 
   .dashboard-next-action-buttons button,
+  .role-workspace-switchboard-grid button,
   .portal-home-actions button,
   .workspace-command-actions button,
   .setup-command-actions button {

@@ -144,6 +144,8 @@ const requiredMobileStacks = [
   ".proof-export-hub-grid",
   ".registration-intent-review-header",
   ".registration-intent-review-grid",
+  ".role-workspace-switchboard",
+  ".role-workspace-switchboard-grid",
   ".workspace-command-strip",
   ".workspace-command-metrics",
   ".portal-decision-panel",

@@ -20,6 +20,7 @@ assert(authenticatedRenderStart >= 0, "authenticated app render block was not fo
 assert(!authenticatedRender.includes('<aside className="sidebar">'), "legacy sidebar rail must not render in the authenticated workspace.");
 assert(authenticatedRender.includes('className="session-command-bar"'), "session command bar must be the primary account/logout control surface.");
 assert(authenticatedRender.includes('aria-label="Dashboard next action"'), "signed-in dashboard must expose a single role-aware next-action command.");
+assert(authenticatedRender.includes('aria-label="Role workspace switchboard"'), "signed-in dashboard must expose a first-screen role workspace switchboard.");
 assert(authenticatedRender.includes('aria-label="Portal command deck"'), "signed-in dashboard must expose a consolidated portal command deck.");
 assert(authenticatedRender.includes('aria-label="Signed-in portal flow contract"'), "signed-in dashboard must expose a clear portal flow and database boundary contract.");
 assert(authenticatedRender.includes('aria-label="Signed-in console layout receipt"'), "signed-in dashboard must expose a visible console layout receipt.");
@@ -123,6 +124,7 @@ assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))")
 assert(consoleLayout.includes("Signed-in console layout contract"), "final signed-in console layout contract must be present.");
 assert(consoleLayout.includes("width: min(100%, 1460px)") && consoleLayout.includes("overflow-x: clip"), "signed-in console must use the available width without page-level horizontal overflow.");
 assert(consoleLayout.includes(".topbar {\n  grid-template-columns: minmax(0, 1fr)") && consoleLayout.includes(".topbar-actions {\n  width: 100%"), "topbar must use one calm command row instead of a squeezed two-column header.");
+assert(app.includes("Choose the portal you need now") && consoleLayout.includes(".role-workspace-switchboard") && consoleLayout.includes(".role-workspace-switchboard-grid"), "role workspace switchboard must make Professional, Corporate, Admin, and Account choices obvious.");
 assert(consoleLayout.includes(".portal-command-deck") && consoleLayout.includes(".portal-command-deck-grid") && consoleLayout.includes("min-height: 172px"), "portal command deck must make Professional, Corporate, Admin, and account actions obvious.");
 assert(consoleLayout.includes(".console-layout-receipt") && consoleLayout.includes(".console-layout-receipt-grid"), "console layout receipt must be styled and bounded.");
 assert(consoleLayout.includes(".v1-launch-flow-command") && consoleLayout.includes(".v1-launch-flow-grid"), "V1 launch flow command must be styled and bounded.");

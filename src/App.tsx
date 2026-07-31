@@ -17218,6 +17218,29 @@ function App() {
       ready: Boolean(authSession)
     }
   ];
+  const roleWorkspaceSwitchboard = portalCommandDeck.map((item) => ({
+    ...item,
+    databaseBoundary:
+      item.id === "passport"
+        ? "profiles, trust_records, evidence_documents, consent_authorizations"
+        : item.id === "verify"
+          ? "access_grants, shared trust_records, corporate_access_reviews"
+          : item.id === "admin"
+            ? "organizations, memberships, invitations, subscriptions, audit_events"
+            : "auth session, account context, recovery, hosted callback proof",
+    current:
+      item.id === "account"
+        ? setupView === "account"
+        : item.target === workspace.id,
+    shortcut:
+      item.id === "passport"
+        ? "Professional"
+        : item.id === "verify"
+          ? "Corporate"
+          : item.id === "admin"
+            ? "Admin"
+            : "Account"
+  }));
   const signedInPortalFlowContract = {
     mode: "signed_in_portal_flow_contract",
     signed_in: Boolean(authSession),
@@ -18308,6 +18331,38 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="role-workspace-switchboard" aria-label="Role workspace switchboard">
+          <div className="role-workspace-switchboard-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Workspace switchboard</span>
+            <strong>{authSession ? "Choose the portal you need now" : "Login first, then choose Professional or Corporate"}</strong>
+            <small>
+              Keep personal Passport work, Corporate Verify review, company administration, and account recovery separate so the dashboard stays understandable.
+            </small>
+          </div>
+          <div className="role-workspace-switchboard-grid">
+            {roleWorkspaceSwitchboard.map((item) => (
+              <button
+                className={`${item.ready ? "ready" : ""} ${item.current ? "current" : ""}`}
+                key={item.id}
+                onClick={() => {
+                  if (item.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  openWorkspaceOrSetup(item.target);
+                }}
+                type="button"
+              >
+                <span>{item.shortcut}</span>
+                <strong>{item.label}</strong>
+                <small>{item.intent}</small>
+                <em>{item.databaseBoundary}</em>
+                <b>{item.current ? "Current" : item.action}</b>
+              </button>
+            ))}
+          </div>
+        </section>
 
         <section className="console-layout-receipt" aria-label="Signed-in console layout receipt">
           <div>
