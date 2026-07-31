@@ -472,6 +472,24 @@ export interface DbSecurityRlsReviewReceipt {
   created_at: string;
 }
 
+export interface DbPilotOwnerReadinessReceipt {
+  id: string;
+  profile_id: string;
+  organization_id: string | null;
+  status: "owners_missing" | "ready_for_pilot_review" | "approved_for_pilot";
+  contacts_ready: number;
+  contacts_total: number;
+  missing_contacts: string[];
+  pilot_customer_count: number;
+  onboarding_owner_recorded: boolean;
+  support_owner_recorded: boolean;
+  incident_owner_recorded: boolean;
+  production_traffic_allowed: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbRegistrationIntent {
   id: string;
   profile_id: string;

@@ -169,6 +169,7 @@ const requiredMobileStacks = [
   ".pricing-quote-receipt-grid",
   ".pricing-quote-receipt-actions",
   ".pilot-owner-readiness-grid",
+  ".pilot-owner-readiness-database-grid",
   ".v1-live-database-readiness-grid",
   ".public-portal-launch-grid",
   ".public-server-sync-receipt",

@@ -84,7 +84,7 @@ for (const [phrase, label] of runbookRequirements) {
 
 assertIncludes(evidenceMap, "Working-data packet", "evidence map working-data export");
 assertIncludes(evidenceMap, "Seed reconciliation", "evidence map seed reconciliation");
-assertIncludes(evidenceMap, "Live Supabase migrations currently run through `056_security_rls_review_receipts.sql`", "evidence map current migration boundary");
+assertIncludes(evidenceMap, "Live Supabase migrations currently run through `057_pilot_owner_readiness_receipts.sql`", "evidence map current migration boundary");
 assertIncludes(evidenceMap, "043_account_context_rpc.sql", "evidence map account-context migration history");
 assertIncludes(evidenceMap, "passport_initialized", "evidence map professional registration completion status");
 assertIncludes(evidenceMap, "persisted V1 live database readiness receipts", "evidence map persisted readiness receipt");
@@ -93,6 +93,7 @@ assertMigration(migrationFiles, "017_", "private evidence storage");
 assertMigration(migrationFiles, "029_", "pilot workspace seed");
 assertMigration(migrationFiles, "041_", "corporate access review attestations");
 assertMigration(migrationFiles, "042_", "organization RLS recursion repair");
+assertMigration(migrationFiles, "057_", "pilot owner readiness receipts");
 assertMigration(migrationFiles, "043_", "account context RPC");
 assertMigration(migrationFiles, "044_", "registration intent rows");
 assertMigration(migrationFiles, "045_", "corporate registration intent completion");

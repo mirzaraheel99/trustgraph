@@ -500,6 +500,15 @@ assertIncludesAny(
   ["security_rls_review_receipt_requires_ci_rls_guard_private_evidence_signed_url_review_rbac_audit_exports_and_external_signoff_before_production_traffic"],
   "security RLS review receipt acceptance rule"
 );
+assertIncludesAny(bundleText, ["pilot_owner_readiness_receipts"], "pilot owner readiness receipt table");
+assertIncludesAny(bundleText, ["record_pilot_owner_readiness_receipt"], "pilot owner readiness receipt RPC");
+assertIncludesAny(bundleText, ["Pilot owner database receipt"], "pilot owner readiness database receipt label");
+assertIncludesAny(bundleText, ["Record pilot owner receipt"], "pilot owner readiness receipt record action");
+assertIncludesAny(
+  bundleText,
+  ["pilot_owner_readiness_receipt_requires_named_pilot_customer_onboarding_support_incident_owner_live_contacts_and_no_production_traffic_without_human_signoff"],
+  "pilot owner readiness database receipt acceptance rule"
+);
 assertIncludesAny(bundleText, ["Onboarding handoff"], "top-level onboarding handoff command");
 assertIncludesAny(bundleText, ["onboarding_handoff_command"], "top-level onboarding handoff packet field");
 assertIncludesAny(bundleText, ["new_user_can_move_from_login_to_corporate_setup_live_row_completion_guided_seed_reconciliation_and_exported_proof_without_searching_the_dashboard"], "top-level onboarding handoff acceptance rule");
@@ -878,7 +887,7 @@ assertIncludesAny(bundleText, ["Pilot owner readiness"], "pilot owner readiness 
 assertIncludesAny(bundleText, ["pilot_owner_readiness_receipt"], "pilot owner readiness packet field");
 assertIncludesAny(
   bundleText,
-  ["pilot_customer_roster_onboarding_owner_support_owner_and_incident_owner_are_confirmed_from_live_supabase_contact_rows_before_pilot_launch"],
+  ["pilot_owner_readiness_receipt_requires_named_pilot_customer_onboarding_support_incident_owner_live_contacts_and_no_production_traffic_without_human_signoff"],
   "pilot owner readiness acceptance rule"
 );
 assertIncludesAny(bundleText, ["Stop conditions"], "production stop condition summary");

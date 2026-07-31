@@ -42,7 +42,8 @@ const requiredRlsTables = [
   "pricing_quote_receipts",
   "onboarding_wizard_receipts",
   "auth_recovery_receipts",
-  "security_rls_review_receipts"
+  "security_rls_review_receipts",
+  "pilot_owner_readiness_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -372,6 +373,29 @@ if (!securityRlsReviewReceiptMigration.includes("security.rls_review_receipt_rec
 }
 if (!securityRlsReviewReceiptMigration.includes("grant execute on function public.record_security_rls_review_receipt")) {
   throw new Error("Security RLS review receipt RPC must be executable by authenticated users.");
+}
+
+const pilotOwnerReadinessReceiptMigration = latestSqlByFile["057_pilot_owner_readiness_receipts.sql"] ?? "";
+if (!pilotOwnerReadinessReceiptMigration.includes("create table if not exists public.pilot_owner_readiness_receipts")) {
+  throw new Error("Missing pilot owner readiness receipt table migration.");
+}
+if (!pilotOwnerReadinessReceiptMigration.includes("alter table public.pilot_owner_readiness_receipts enable row level security")) {
+  throw new Error("Pilot owner readiness receipts must enable RLS.");
+}
+if (!pilotOwnerReadinessReceiptMigration.includes("profile_id = public.current_profile_id()")) {
+  throw new Error("Pilot owner readiness receipts must be owner-scoped.");
+}
+if (!pilotOwnerReadinessReceiptMigration.includes("production_traffic_allowed = false")) {
+  throw new Error("Pilot owner readiness receipts must keep production traffic blocked until human signoff.");
+}
+if (!pilotOwnerReadinessReceiptMigration.includes("create or replace function public.record_pilot_owner_readiness_receipt")) {
+  throw new Error("Missing pilot owner readiness receipt RPC.");
+}
+if (!pilotOwnerReadinessReceiptMigration.includes("pilot.owner_readiness_receipt_recorded")) {
+  throw new Error("Pilot owner readiness receipt RPC must write audit history.");
+}
+if (!pilotOwnerReadinessReceiptMigration.includes("grant execute on function public.record_pilot_owner_readiness_receipt")) {
+  throw new Error("Pilot owner readiness receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

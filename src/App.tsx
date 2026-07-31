@@ -50,6 +50,7 @@ import type {
   DbOrganizationSubscription,
   DbOnboardingWizardReceipt,
   DbPilotLaunchContact,
+  DbPilotOwnerReadinessReceipt,
   DbPricingQuoteReceipt,
   DbProductionGateDecision,
   DbReferenceRequest,
@@ -173,6 +174,7 @@ import {
 } from "./registrationRepository";
 import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
 import { loadPilotLaunchContacts, recordPilotLaunchContact } from "./pilotLaunchRepository";
+import { loadPilotOwnerReadinessReceipts, recordPilotOwnerReadinessReceipt } from "./pilotReadinessRepository";
 import { loadSchemaMigrationRuns } from "./releaseRepository";
 import { loadSecurityRlsReviewReceipts, recordSecurityRlsReviewReceipt } from "./securityRepository";
 import { isSupabaseConfigured } from "./supabase";
@@ -218,6 +220,8 @@ const AUTH_RECOVERY_RECEIPT_ACCEPTANCE_RULE =
   "auth_recovery_receipt_requires_hosted_redirect_email_rate_limit_guidance_localhost_link_repair_and_signed_in_owner_scope";
 const SECURITY_RLS_REVIEW_RECEIPT_ACCEPTANCE_RULE =
   "security_rls_review_receipt_requires_ci_rls_guard_private_evidence_signed_url_review_rbac_audit_exports_and_external_signoff_before_production_traffic";
+const PILOT_OWNER_READINESS_RECEIPT_ACCEPTANCE_RULE =
+  "pilot_owner_readiness_receipt_requires_named_pilot_customer_onboarding_support_incident_owner_live_contacts_and_no_production_traffic_without_human_signoff";
 
 type LivePilotRowProof = {
   source: "signed_in_supabase_rows" | "preview_or_logged_out";
@@ -6176,7 +6180,9 @@ function PlanAlignmentPanel({
   livePilotRowProof,
   v1ReadinessReceipts,
   v1ReadinessStatus,
+  pilotOwnerReadinessReceipts,
   onRecordV1ReadinessReceipt,
+  onRecordPilotOwnerReadinessReceipt,
   onRecordPilotLaunchContact,
   onRecordGateDecision,
   pilotLaunchContacts,
@@ -6186,7 +6192,19 @@ function PlanAlignmentPanel({
   livePilotRowProof: LivePilotRowProof;
   v1ReadinessReceipts: DbV1LiveDatabaseReadinessReceipt[];
   v1ReadinessStatus: string;
+  pilotOwnerReadinessReceipts: DbPilotOwnerReadinessReceipt[];
   onRecordV1ReadinessReceipt: () => Promise<void>;
+  onRecordPilotOwnerReadinessReceipt: (input: {
+    status: DbPilotOwnerReadinessReceipt["status"];
+    contactsReady: number;
+    contactsTotal: number;
+    missingContacts: string[];
+    pilotCustomerCount: number;
+    onboardingOwnerRecorded: boolean;
+    supportOwnerRecorded: boolean;
+    incidentOwnerRecorded: boolean;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
   onRecordPilotLaunchContact: (input: {
     contactKey: string;
     status: PilotLaunchContactStatus;
@@ -6213,6 +6231,8 @@ function PlanAlignmentPanel({
   const [pilotContactNotes, setPilotContactNotes] = useState("");
   const [pilotContactBusy, setPilotContactBusy] = useState(false);
   const [pilotContactMessage, setPilotContactMessage] = useState("Record pilot launch owners after the human roster decision is available.");
+  const [pilotOwnerReceiptBusy, setPilotOwnerReceiptBusy] = useState(false);
+  const [pilotOwnerReceiptMessage, setPilotOwnerReceiptMessage] = useState("Record a database receipt after pilot owners are named from live contact rows.");
   const deployedCount = foundationTracks.filter((track) => track.status === "deployed").length;
   const foundationCount = foundationTracks.filter((track) => track.status === "foundation").length;
   const plannedCount = foundationTracks.filter((track) => track.status === "planned").length;
@@ -6281,15 +6301,25 @@ function PlanAlignmentPanel({
   const confirmedPilotContacts = pilotContacts.filter((contact) => contact.status === "confirmed").length;
   const identifiedPilotContacts = pilotContacts.filter((contact) => contact.status === "identified").length;
   const missingPilotContacts = pilotContacts.filter((contact) => contact.status === "missing");
+  const latestPilotOwnerReadinessReceipt = pilotOwnerReadinessReceipts[0] ?? null;
+  const pilotCustomerCount = pilotContacts.filter(
+    (contact) => contact.label === "Pilot customer roster" && contact.status === "confirmed"
+  ).length;
+  const onboardingOwnerRecorded = pilotContacts.some((contact) => contact.label === "Onboarding owner" && contact.status === "confirmed");
+  const supportOwnerRecorded = pilotContacts.some((contact) => contact.label === "Support owner" && contact.status === "confirmed");
+  const incidentOwnerRecorded = pilotContacts.some((contact) => contact.label === "Incident response owner" && contact.status === "confirmed");
+  const pilotOwnerReadinessStatus: DbPilotOwnerReadinessReceipt["status"] =
+    confirmedPilotContacts === pilotContacts.length ? "ready_for_pilot_review" : "owners_missing";
   const pilotOwnerReadinessReceipt = {
     mode: "pilot_owner_readiness_receipt",
+    status: pilotOwnerReadinessStatus,
     confirmed_contacts: confirmedPilotContacts,
     identified_contacts: identifiedPilotContacts,
     missing_contacts: missingPilotContacts.map((contact) => contact.label),
     total_required_contacts: pilotContacts.length,
     source: pilotLaunchContacts.length ? "live_supabase_pilot_launch_contacts" : "fallback_until_live_contact_rows_are_recorded",
-    accepted_when:
-      "pilot_customer_roster_onboarding_owner_support_owner_and_incident_owner_are_confirmed_from_live_supabase_contact_rows_before_pilot_launch"
+    latest_persisted_receipt: latestPilotOwnerReadinessReceipt,
+    accepted_when: PILOT_OWNER_READINESS_RECEIPT_ACCEPTANCE_RULE
   };
   const pilotOwnerReadinessCards = [
     {
@@ -6664,6 +6694,35 @@ function PlanAlignmentPanel({
     }
   }
 
+  async function submitPilotOwnerReadinessReceipt() {
+    setPilotOwnerReceiptBusy(true);
+    setPilotOwnerReceiptMessage("Recording pilot owner readiness receipt...");
+    try {
+      await onRecordPilotOwnerReadinessReceipt({
+        status: pilotOwnerReadinessStatus,
+        contactsReady: confirmedPilotContacts,
+        contactsTotal: pilotContacts.length,
+        missingContacts: missingPilotContacts.map((contact) => contact.label),
+        pilotCustomerCount,
+        onboardingOwnerRecorded,
+        supportOwnerRecorded,
+        incidentOwnerRecorded,
+        metadata: {
+          source: pilotOwnerReadinessReceipt.source,
+          accepted_when: PILOT_OWNER_READINESS_RECEIPT_ACCEPTANCE_RULE,
+          pilot_contacts: pilotContacts,
+          identified_contacts: identifiedPilotContacts,
+          production_traffic_allowed: false
+        }
+      });
+      setPilotOwnerReceiptMessage("Pilot owner readiness receipt saved to Supabase.");
+    } catch (error) {
+      setPilotOwnerReceiptMessage(error instanceof Error ? error.message : "Could not record pilot owner readiness receipt");
+    } finally {
+      setPilotOwnerReceiptBusy(false);
+    }
+  }
+
   return (
     <section className="plan-panel">
       <div className="mini-heading">
@@ -6927,6 +6986,47 @@ function PlanAlignmentPanel({
                 <small>{card.detail}</small>
               </article>
             ))}
+          </div>
+        </div>
+        <div className="pilot-owner-readiness-database-receipt" aria-label="Pilot owner readiness database receipt">
+          <div>
+            <span className={`status-chip ${latestPilotOwnerReadinessReceipt ? "success" : "warning"}`}>Pilot owner database receipt</span>
+            <strong>
+              {latestPilotOwnerReadinessReceipt
+                ? `${latestPilotOwnerReadinessReceipt.contacts_ready}/${latestPilotOwnerReadinessReceipt.contacts_total} owners saved`
+                : "No saved pilot owner receipt yet"}
+            </strong>
+            <small>{latestPilotOwnerReadinessReceipt?.accepted_when ?? PILOT_OWNER_READINESS_RECEIPT_ACCEPTANCE_RULE}</small>
+            <button
+              className="secondary-action"
+              disabled={disabled || pilotOwnerReceiptBusy}
+              onClick={() => void submitPilotOwnerReadinessReceipt()}
+              type="button"
+            >
+              Record pilot owner receipt
+            </button>
+          </div>
+          <div className="pilot-owner-readiness-database-grid">
+            <article>
+              <span>Latest status</span>
+              <strong>{latestPilotOwnerReadinessReceipt?.status.replace(/_/g, " ") ?? pilotOwnerReadinessStatus.replace(/_/g, " ")}</strong>
+              <small>{pilotOwnerReceiptMessage}</small>
+            </article>
+            <article>
+              <span>Missing owners</span>
+              <strong>{latestPilotOwnerReadinessReceipt?.missing_contacts.length ?? missingPilotContacts.length}</strong>
+              <small>{(latestPilotOwnerReadinessReceipt?.missing_contacts ?? missingPilotContacts.map((contact) => contact.label)).join(", ") || "No missing owner rows."}</small>
+            </article>
+            <article>
+              <span>Pilot customer</span>
+              <strong>{latestPilotOwnerReadinessReceipt?.pilot_customer_count ?? pilotCustomerCount}</strong>
+              <small>Named pilot customer roster must be confirmed before pilot launch.</small>
+            </article>
+            <article>
+              <span>Production traffic</span>
+              <strong>{latestPilotOwnerReadinessReceipt?.production_traffic_allowed ? "Allowed" : "Blocked"}</strong>
+              <small>Production traffic remains blocked until human sign-off is recorded.</small>
+            </article>
           </div>
         </div>
         <div className="production-gate-register">
@@ -15446,6 +15546,7 @@ function App() {
   const [securityRlsReviewReceipts, setSecurityRlsReviewReceipts] = useState<DbSecurityRlsReviewReceipt[]>([]);
   const [productionGateDecisions, setProductionGateDecisions] = useState<DbProductionGateDecision[]>([]);
   const [pilotLaunchContacts, setPilotLaunchContacts] = useState<DbPilotLaunchContact[]>([]);
+  const [pilotOwnerReadinessReceipts, setPilotOwnerReadinessReceipts] = useState<DbPilotOwnerReadinessReceipt[]>([]);
   const [releaseStatus, setReleaseStatus] = useState("Switch to Admin role for release ledger");
   const [apiClients, setApiClients] = useState<DbApiClient[]>([]);
   const [webhookSubscriptions, setWebhookSubscriptions] = useState<DbWebhookSubscription[]>([]);
@@ -16037,6 +16138,7 @@ function App() {
       setSecurityRlsReviewReceipts([]);
       setProductionGateDecisions([]);
       setPilotLaunchContacts([]);
+      setPilotOwnerReadinessReceipts([]);
       setReleaseStatus("Switch to Admin role for release ledger");
       setApiClients([]);
       setWebhookSubscriptions([]);
@@ -16053,6 +16155,7 @@ function App() {
       setSecurityRlsReviewReceipts([]);
       setProductionGateDecisions([]);
       setPilotLaunchContacts([]);
+      setPilotOwnerReadinessReceipts([]);
       setReleaseStatus("Active role cannot access release ledger");
       setApiClients([]);
       setWebhookSubscriptions([]);
@@ -16073,10 +16176,11 @@ function App() {
       loadSecurityRlsReviewReceipts(authSession.accessToken).catch(() => []),
       loadProductionGateDecisions(authSession.accessToken).catch(() => []),
       loadPilotLaunchContacts(authSession.accessToken).catch(() => []),
+      loadPilotOwnerReadinessReceipts(authSession.accessToken).catch(() => []),
       loadApiClients(authSession.accessToken),
       loadWebhookSubscriptions(authSession.accessToken)
     ])
-      .then(([items, events, migrations, securityReceipts, gates, pilotContacts, clients, webhooks]) => {
+      .then(([items, events, migrations, securityReceipts, gates, pilotContacts, pilotReadinessReceipts, clients, webhooks]) => {
         if (cancelled) return;
         setOperationsCases(items);
         setAuditEvents(events);
@@ -16084,13 +16188,14 @@ function App() {
         setSecurityRlsReviewReceipts(securityReceipts);
         setProductionGateDecisions(gates);
         setPilotLaunchContacts(pilotContacts);
+        setPilotOwnerReadinessReceipts(pilotReadinessReceipts);
         setApiClients(clients);
         setWebhookSubscriptions(webhooks);
         setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No operations cases yet");
         setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
         setReleaseStatus(
-          migrations.length || gates.length || pilotContacts.length
-            ? `Release ledger: ${migrations.length} migrations, ${gates.length} production gates, ${pilotContacts.length} pilot contacts`
+          migrations.length || gates.length || pilotContacts.length || pilotReadinessReceipts.length
+            ? `Release ledger: ${migrations.length} migrations, ${gates.length} production gates, ${pilotContacts.length} pilot contacts, ${pilotReadinessReceipts.length} pilot receipts`
             : "No release ledger entries yet"
         );
         setConnectStatus(
@@ -16107,6 +16212,7 @@ function App() {
         setSecurityRlsReviewReceipts([]);
         setProductionGateDecisions([]);
         setPilotLaunchContacts([]);
+        setPilotOwnerReadinessReceipts([]);
         setApiClients([]);
         setWebhookSubscriptions([]);
         setOperationsStatus(operatorErrorMessage(error, "Could not load operations queue"));
@@ -18239,6 +18345,49 @@ function App() {
     setSecurityRlsReviewReceipts(receipts);
     setAuditEvents(events);
     setReleaseStatus(`Security RLS review receipt recorded: ${receipt.checks_ready}/${receipt.checks_total} checks`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
+  async function recordLivePilotOwnerReadinessReceipt(input: {
+    status: DbPilotOwnerReadinessReceipt["status"];
+    contactsReady: number;
+    contactsTotal: number;
+    missingContacts: string[];
+    pilotCustomerCount: number;
+    onboardingOwnerRecorded: boolean;
+    supportOwnerRecorded: boolean;
+    incidentOwnerRecorded: boolean;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Login first to record pilot owner readiness proof.");
+    }
+
+    const receipt = await recordPilotOwnerReadinessReceipt({
+      accessToken: authSession.accessToken,
+      organizationId: activeMembership.organizationId || null,
+      status: input.status,
+      contactsReady: input.contactsReady,
+      contactsTotal: input.contactsTotal,
+      missingContacts: input.missingContacts,
+      pilotCustomerCount: input.pilotCustomerCount,
+      onboardingOwnerRecorded: input.onboardingOwnerRecorded,
+      supportOwnerRecorded: input.supportOwnerRecorded,
+      incidentOwnerRecorded: input.incidentOwnerRecorded,
+      metadata: {
+        ...input.metadata,
+        source: "signed_in_supabase_pilot_owner_readiness",
+        accepted_when: PILOT_OWNER_READINESS_RECEIPT_ACCEPTANCE_RULE,
+        production_traffic_allowed: false
+      }
+    });
+    const [receipts, events] = await Promise.all([
+      loadPilotOwnerReadinessReceipts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setPilotOwnerReadinessReceipts(receipts);
+    setAuditEvents(events);
+    setReleaseStatus(`Pilot owner readiness receipt recorded: ${receipt.contacts_ready}/${receipt.contacts_total} owners`);
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
@@ -20516,7 +20665,9 @@ function App() {
                   livePilotRowProof={livePilotRowProof}
                   v1ReadinessReceipts={v1ReadinessReceipts}
                   v1ReadinessStatus={v1ReadinessStatus}
+                  pilotOwnerReadinessReceipts={pilotOwnerReadinessReceipts}
                   onRecordV1ReadinessReceipt={recordLiveDatabaseReadinessReceipt}
+                  onRecordPilotOwnerReadinessReceipt={recordLivePilotOwnerReadinessReceipt}
                   onRecordPilotLaunchContact={recordLivePilotLaunchContact}
                   onRecordGateDecision={recordLiveProductionGateDecision}
                   pilotLaunchContacts={pilotLaunchContacts}

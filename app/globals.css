@@ -12788,6 +12788,81 @@ p {
   line-height: 1.05;
 }
 
+.pilot-owner-readiness-database-receipt {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(143, 178, 255, 0.26);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(143, 178, 255, 0.08), transparent 64%),
+    rgba(18, 31, 42, 0.68);
+}
+
+.pilot-owner-readiness-database-receipt > div:first-child {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px 12px;
+  min-width: 0;
+}
+
+.pilot-owner-readiness-database-receipt > div:first-child > .status-chip,
+.pilot-owner-readiness-database-receipt > div:first-child > strong,
+.pilot-owner-readiness-database-receipt > div:first-child > small {
+  grid-column: 1;
+}
+
+.pilot-owner-readiness-database-receipt > div:first-child > button {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+}
+
+.pilot-owner-readiness-database-receipt strong,
+.pilot-owner-readiness-database-receipt small,
+.pilot-owner-readiness-database-receipt span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pilot-owner-readiness-database-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.pilot-owner-readiness-database-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.pilot-owner-readiness-database-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.pilot-owner-readiness-database-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.pilot-owner-readiness-database-grid strong {
+  font-size: 16px;
+  line-height: 1.15;
+}
+
 .button-cluster {
   display: flex;
   flex-wrap: wrap;
@@ -14085,6 +14160,8 @@ p {
   .policy-summary-grid,
   .production-gate-register,
   .pilot-owner-readiness-grid,
+  .pilot-owner-readiness-database-grid,
+  .pilot-owner-readiness-database-receipt > div:first-child,
   .production-gate-form,
   .production-stop-summary,
   .qa-check-grid,
@@ -14140,6 +14217,14 @@ p {
 
   .workspace-flow-strip button {
     flex-basis: min(230px, 58%);
+  }
+
+  .pilot-owner-readiness-database-receipt > div:first-child > .status-chip,
+  .pilot-owner-readiness-database-receipt > div:first-child > strong,
+  .pilot-owner-readiness-database-receipt > div:first-child > small,
+  .pilot-owner-readiness-database-receipt > div:first-child > button {
+    grid-column: 1;
+    grid-row: auto;
   }
 
   .setup-panel-grid {
