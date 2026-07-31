@@ -56,6 +56,7 @@ assert(authenticatedRender.includes('aria-label="Team and billing handoff"'), "c
 assert(app.includes('aria-label="Corporate setup stepper"'), "corporate account panel must expose a guided setup stepper.");
 assert(app.includes('aria-label="Corporate Verify first-use wizard"'), "Corporate Verify must expose a guided first-use wizard for request, approval, review, and proof export.");
 assert(app.includes('aria-label="Corporate Verify live access command"'), "Corporate Verify must expose a compact live access command for request, approval, shared rows, and review proof.");
+assert(app.includes('aria-label="Corporate portal quick start"'), "Corporate Verify must expose a simple quick-start path before dense request forms.");
 assert(app.includes('aria-label="Empty Corporate Verify state command"'), "Corporate Verify must expose a clear empty-state command before shared rows exist.");
 assert(app.includes('aria-label="Corporate access request scope receipt"'), "Corporate Verify must expose a request scope receipt before access requests are submitted.");
 assert(app.includes('aria-label="Corporate user database access contract"'), "Corporate Verify must expose the exact corporate user database access boundary.");
@@ -172,6 +173,7 @@ assert(premiumRepair.includes(".team-billing-handoff") && premiumRepair.includes
 assert(premiumRepair.includes(".corporate-setup-stepper") && premiumRepair.includes(".corporate-setup-stepper-grid"), "corporate setup stepper must be styled and bounded.");
 assert(premiumRepair.includes(".corporate-verify-first-use") && premiumRepair.includes(".corporate-verify-first-use-grid"), "Corporate Verify first-use wizard must be styled and bounded.");
 assert(css.includes(".corporate-verify-live-command") && css.includes(".corporate-verify-live-command-grid") && css.includes("Corporate Verify live access command"), "Corporate Verify live access command must be styled and bounded.");
+assert(css.includes(".corporate-portal-quick-start") && css.includes(".corporate-portal-quick-start-grid") && css.includes(".corporate-portal-quick-start-header"), "Corporate portal quick start must be styled and bounded.");
 assert(css.includes(".empty-verify-state-command") && css.includes(".empty-verify-state-grid") && css.includes(".empty-verify-state-actions"), "Corporate Verify empty-state command must be styled and bounded.");
 assert(css.includes(".corporate-scope-review-command") && css.includes(".corporate-scope-review-grid"), "Corporate scope review command must be styled and bounded.");
 assert(app.includes('aria-label="Corporate access next action command"'), "Corporate Verify must expose the next action required to unlock scoped user database proof.");

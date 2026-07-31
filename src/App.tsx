@@ -2260,6 +2260,49 @@ function VerifyRequestsPanel({
       ready: reviews.length > 0 && pendingGapCount === 0
     }
   ];
+  const corporatePortalQuickStart = {
+    mode: "corporate_portal_quick_start",
+    headline: disabled
+      ? "Corporate portal needs an active company role"
+      : sharedRecords.length
+        ? "Corporate portal can review approved shared rows"
+        : requests.length
+          ? "Corporate portal is waiting on approval"
+          : "Start Corporate Verify with one access request",
+    next_click_target: liveAccessCommandTarget,
+    no_open_database_browse: true,
+    accepted_when: "corporate_user_knows_next_click_role_state_request_approval_visible_rows_and_export_path"
+  };
+  const corporatePortalQuickStartCards = [
+    {
+      label: "Your role",
+      value: disabled ? "Set up company" : "Corporate reviewer",
+      detail: disabled ? "Open Company setup to create or switch roles." : activeOrganization.name,
+      target: liveAccessCommandTarget,
+      action: "Open next"
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length} sent` : "Send first",
+      detail: "Use one professional email and a clear business purpose.",
+      target: "corporate-verify-request-form",
+      action: "Request access"
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Not yet",
+      detail: approvedCount ? "Approved grants can expose scoped rows." : "No user rows appear before professional approval.",
+      target: "corporate-verify-request-list",
+      action: "Check grants"
+    },
+    {
+      label: "Rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Hidden",
+      detail: sharedRecords.length ? "Review approved Passport rows and gaps." : "Rows remain hidden until grant, role, and consent pass.",
+      target: sharedRecords.length ? "corporate-access-review-queue" : "corporate-verify-request-form",
+      action: sharedRecords.length ? "Review rows" : "Start request"
+    }
+  ];
   const emptyVerifyStateCommand = {
     mode: "empty_verify_state_command",
     visible_shared_rows: sharedRecords.length,
@@ -2381,6 +2424,38 @@ function VerifyRequestsPanel({
         teamInvitations={teamInvitations}
         teamMembers={teamMembers}
       />
+      <div className="corporate-portal-quick-start" aria-label="Corporate portal quick start">
+        <div className="corporate-portal-quick-start-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Corporate portal quick start</span>
+            <strong>{corporatePortalQuickStart.headline}</strong>
+            <small>One clean path: request by email, wait for approval, review scoped rows, export proof. Corporate cannot browse all users.</small>
+          </div>
+          <button
+            className="primary-action"
+            onClick={() => document.getElementById(corporatePortalQuickStart.next_click_target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            type="button"
+          >
+            Open next action
+          </button>
+        </div>
+        <div className="corporate-portal-quick-start-grid">
+          {corporatePortalQuickStartCards.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+              <button
+                className="secondary-action"
+                onClick={() => document.getElementById(item.target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                type="button"
+              >
+                {item.action}
+              </button>
+            </article>
+          ))}
+        </div>
+      </div>
       <div className="verify-summary-grid">
         <div>
           <span>Requested</span>

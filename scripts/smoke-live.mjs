@@ -746,6 +746,10 @@ assertIncludesAny(bundleText, ["Export first-use proof"], "Corporate Verify firs
 assertIncludesAny(bundleText, ["Corporate Verify live access command"], "Corporate Verify live access command");
 assertIncludesAny(bundleText, ["corporate_verify_live_access_command"], "Corporate Verify live access command packet field");
 assertIncludesAny(bundleText, ["Export access command"], "Corporate Verify live access command export");
+assertIncludesAny(bundleText, ["Corporate portal quick start"], "Corporate portal quick-start surface");
+assertIncludesAny(bundleText, ["corporate_portal_quick_start"], "Corporate portal quick-start packet field");
+assertIncludesAny(bundleText, ["Corporate cannot browse all users"], "Corporate portal quick-start database boundary");
+assertIncludesAny(bundleText, ["corporate_user_knows_next_click_role_state_request_approval_visible_rows_and_export_path"], "Corporate portal quick-start acceptance rule");
 assertIncludesAny(bundleText, ["Empty Corporate Verify state command"], "Corporate Verify empty-state command");
 assertIncludesAny(bundleText, ["empty_verify_state_command"], "Corporate Verify empty-state packet field");
 assertIncludesAny(bundleText, ["Export empty-state proof"], "Corporate Verify empty-state export");
