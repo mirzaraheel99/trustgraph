@@ -14290,6 +14290,22 @@ function App() {
     missingRequiredGroups: livePilotRowProofRows.filter((row) => row.required && !row.ready).map((row) => row.label),
     rows: livePilotRowProofRows
   };
+  const liveDatabaseContract = {
+    mode: "live_database_contract",
+    accepted: livePilotRowProof.accepted,
+    accepted_source: livePilotRowProof.source,
+    preview_data_accepted: false,
+    required_groups_loaded: livePilotRowProof.readyGroups,
+    required_groups_total: livePilotRowProof.totalRequiredGroups,
+    missing_required_groups: livePilotRowProof.missingRequiredGroups,
+    current_blocker: livePilotRowProof.accepted
+      ? "No database blocker remains for signed-in row proof."
+      : livePilotRowProof.missingRequiredGroups[0] ?? "Hosted login and account context proof",
+    acceptance_rule: "Only signed-in Supabase repository rows count. Preview rows, static copy, browser seed memory, and unauthenticated data cannot complete v1.",
+    operator_next_step: livePilotRowProof.accepted
+      ? "Export V1 cockpit and working-data packets for pilot evidence."
+      : "Open Account, seed or create live rows, reload the dashboard, then export the working-data packet again."
+  };
   const v1CompletionLanes = [
     {
       label: "Hosted login",
@@ -14360,6 +14376,7 @@ function App() {
     next_detail: nextV1CompletionLane.detail,
     lanes: v1CompletionLanes,
     live_pilot_row_proof: livePilotRowProof,
+    live_database_contract: liveDatabaseContract,
     human_gates: [
       "Stripe checkout and payment collection",
       "Production traffic approval",
@@ -14954,6 +14971,28 @@ function App() {
           </div>
           <div className="v1-completion-progress" aria-label="V1 completion progress">
             <span style={{ width: `${Math.round((v1CodeOwnedReadyLanes / v1CodeOwnedTotalLanes) * 100)}%` }} />
+          </div>
+          <div className="live-database-contract" aria-label="Live database contract">
+            <div>
+              <span className={`status-chip ${liveDatabaseContract.accepted ? "success" : "warning"}`}>Live database contract</span>
+              <strong>{liveDatabaseContract.required_groups_loaded}/{liveDatabaseContract.required_groups_total} required row groups loaded</strong>
+              <small>{liveDatabaseContract.acceptance_rule}</small>
+            </div>
+            <div className="live-database-contract-grid">
+              <span>
+                <strong>{liveDatabaseContract.accepted_source.replace(/_/g, " ")}</strong>
+                <small>Accepted source</small>
+              </span>
+              <span>
+                <strong>{liveDatabaseContract.preview_data_accepted ? "Yes" : "No"}</strong>
+                <small>Preview data accepted</small>
+              </span>
+              <span>
+                <strong>{liveDatabaseContract.current_blocker}</strong>
+                <small>Current blocker</small>
+              </span>
+            </div>
+            <small>{liveDatabaseContract.operator_next_step}</small>
           </div>
           <div className="v1-completion-lane-grid">
             {v1CompletionLanes.map((lane) => (

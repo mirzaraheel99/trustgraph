@@ -13804,6 +13804,44 @@ body {
   background: linear-gradient(90deg, #45dccb, #d5c46c);
 }
 
+.live-database-contract {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(255, 205, 111, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 205, 111, 0.06);
+  overflow: hidden;
+}
+
+.live-database-contract > div:first-child {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.live-database-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 10px;
+}
+
+.live-database-contract-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+}
+
+.live-database-contract-grid strong {
+  overflow-wrap: anywhere;
+}
+
 .v1-completion-lane-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));

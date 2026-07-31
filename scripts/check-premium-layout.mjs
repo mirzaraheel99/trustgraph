@@ -22,6 +22,7 @@ assert(authenticatedRender.includes('aria-label="Portal home command center"'), 
 assert(authenticatedRender.includes('aria-label="Server release save path"'), "signed-in dashboard must expose the GitHub-to-VPS release save path.");
 assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in dashboard must expose the end-to-end V1 operating map.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
+assert(authenticatedRender.includes('aria-label="Live database contract"'), "V1 cockpit must expose the live database contract.");
 assert(authenticatedRender.includes("Sign out"), "signed-in dashboard must expose a visible sign-out action.");
 assert(authenticatedRender.includes('className="workspace-route-strip"'), "workspace route strip must remain available after sidebar removal.");
 assert(authenticatedRender.includes('className="workspace-flow-strip"'), "daily portal path strip must remain available after sidebar removal.");
@@ -44,6 +45,7 @@ assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
+assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".dashboard-next-action") && premiumRepair.includes(".dashboard-next-action-metrics"), "dashboard next action command must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes("display: flex !important") && premiumRepair.includes("flex-wrap: wrap"), "workspace route strips must wrap instead of overflowing.");
 assert(premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))"), "dense admin forms must auto-fit narrow screens.");

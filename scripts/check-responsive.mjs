@@ -66,6 +66,7 @@ const requiredMobileStacks = [
   ".live-database-repair-grid",
   ".live-database-acceptance-lanes-top",
   ".live-database-acceptance-lane-grid",
+  ".live-database-contract-grid",
   ".live-data-verdict",
   ".live-account-acceptance-grid",
   ".live-account-acceptance-top",
