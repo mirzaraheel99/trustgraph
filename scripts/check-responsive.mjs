@@ -98,6 +98,8 @@ const requiredMobileStacks = [
   ".team-billing-handoff-counts",
   ".team-source-strip",
   ".corporate-access-blocker-grid",
+  ".corporate-verify-first-use-grid",
+  ".corporate-verify-first-use-counts",
   ".corporate-verify-access-lane-grid",
   ".verify-request-header",
   ".verify-reviewer-flow-header",

@@ -427,6 +427,11 @@ assertIncludesAny(bundleText, ["Corporate provisioning evidence"], "Corporate ac
 assertIncludesAny(bundleText, ["Export provisioning packet"], "Corporate provisioning export control");
 assertIncludesAny(bundleText, ["Create pilot request"], "live pilot Access Grant request control");
 assertIncludesAny(bundleText, ["Add Verify reviewer role"], "Corporate Verify reviewer role control");
+assertIncludesAny(bundleText, ["Corporate Verify first-use wizard"], "Corporate Verify first-use wizard label");
+assertIncludesAny(bundleText, ["corporate_verify_first_use_wizard"], "Corporate Verify first-use packet mode");
+assertIncludesAny(bundleText, ["Export first-use proof"], "Corporate Verify first-use proof export");
+assertIncludesAny(bundleText, ["Review visible user rows"], "Corporate Verify first-use review step");
+assertIncludesAny(bundleText, ["tokens_redacted"], "Corporate Verify first-use proof redacts tokens");
 assertIncludesAny(bundleText, ["Reviewer workflow"], "Corporate Verify reviewer workflow guide");
 assertIncludesAny(bundleText, ["Export reviewer packet"], "Corporate Verify reviewer packet export");
 assertIncludesAny(bundleText, ["live_verify_reviewer_flow"], "Corporate Verify reviewer live packet mode");

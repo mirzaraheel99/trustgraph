@@ -1970,6 +1970,76 @@ function VerifyRequestsPanel({
   const accessBlockedCount = corporateAccessBlockerMap.filter((item) => item.state === "blocked").length;
   const accessNextCount = corporateAccessBlockerMap.filter((item) => item.state === "next").length;
   const verifyFlowPacketName = `trustgraph-verify-reviewer-flow-${new Date().toISOString().slice(0, 10)}.json`;
+  const firstUseNextAction = disabled
+    ? "Login with a corporate reviewer role or create the company workspace."
+    : !requests.length
+      ? "Request access by email from one professional."
+      : !approvedCount
+        ? "Wait for professional approval before expecting any user rows."
+        : !sharedRecords.length
+          ? "Sync approved shared Passport rows into Corporate Verify."
+          : pendingGapCount
+            ? "Review visible rows and resolve missing-record gaps."
+            : "Record review attestation and export the first-use proof.";
+  const corporateVerifyFirstUseWizard = [
+    {
+      label: "1. Request access by email",
+      value: requests.length ? `${requests.length} request${requests.length === 1 ? "" : "s"}` : "Start here",
+      detail: "Enter the professional email and business purpose. Corporate cannot browse a public user database.",
+      state: requests.length ? "ready" : disabled ? "blocked" : "next",
+      action: "Open request form",
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "2. Professional approval",
+      value: approvedCount ? `${approvedCount} approved` : requestedCount ? `${requestedCount} waiting` : "Waiting",
+      detail: "The professional approves an Access Grant. Until then the reviewer sees no Passport rows.",
+      state: approvedCount ? "ready" : requests.length ? "next" : "blocked",
+      action: "Check requests",
+      target: "corporate-verify-request-list"
+    },
+    {
+      label: "3. Review visible user rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "No rows yet",
+      detail: "Only approved, consent-scoped rows appear for the active company and reviewer role.",
+      state: sharedRecords.length ? "ready" : approvedCount ? "next" : "blocked",
+      action: "Open review queue",
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "4. Export first-use proof",
+      value: sharedRecords.length && !pendingGapCount ? "Ready" : `${pendingGapCount} gaps`,
+      detail: "Export the packet after rows, gaps, consent, and review status are understandable.",
+      state: sharedRecords.length && !pendingGapCount ? "ready" : sharedRecords.length ? "next" : "blocked",
+      action: "Export proof",
+      target: ""
+    }
+  ];
+  const corporateVerifyFirstUsePacketName = `trustgraph-corporate-verify-first-use-${new Date().toISOString().slice(0, 10)}.json`;
+  const corporateVerifyFirstUsePacket = {
+    generated_at: new Date().toISOString(),
+    mode: "corporate_verify_first_use_wizard",
+    active_organization: {
+      id: activeOrganization.id,
+      name: activeOrganization.name,
+      type: activeOrganization.type
+    },
+    active_role: disabled ? "locked_or_missing_corporate_reviewer_role" : "active_corporate_reviewer_context",
+    next_action: firstUseNextAction,
+    counts: {
+      access_requests: requests.length,
+      requested_access_grants: requestedCount,
+      approved_access_grants: approvedCount,
+      inactive_access_grants: inactiveCount,
+      shared_user_rows: sharedRecords.length,
+      open_missing_record_requests: pendingGapCount,
+      sensitive_shared_records: sharedRecordsNeedingConsent.length,
+      covered_sensitive_records: coveredConsentRecords
+    },
+    accepted_when: "request_created_professional_approval_shared_rows_visible_review_attestation_exported",
+    tokens_redacted: true,
+    steps: corporateVerifyFirstUseWizard.map(({ label, value, detail, state }) => ({ label, value, detail, state }))
+  };
   const verifyFlowPacket = {
     generated_at: new Date().toISOString(),
     mode: disabled ? "locked_verify_reviewer_flow" : "live_verify_reviewer_flow",
@@ -2053,6 +2123,51 @@ function VerifyRequestsPanel({
           <strong>{inactiveCount}</strong>
         </div>
       </div>
+      <div className="corporate-verify-first-use" aria-label="Corporate Verify first-use wizard">
+        <div className="corporate-verify-first-use-header">
+          <div>
+            <span className="eyebrow">Corporate Verify first-use wizard</span>
+            <strong>{firstUseNextAction}</strong>
+            <small>Use this as the simple v1 flow: request access, wait for professional approval, review visible user rows, then export proof.</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(corporateVerifyFirstUsePacketName, JSON.stringify(corporateVerifyFirstUsePacket, null, 2), "application/json")}
+            type="button"
+          >
+            Export first-use proof
+          </button>
+        </div>
+        <div className="corporate-verify-first-use-grid">
+          {corporateVerifyFirstUseWizard.map((step) => (
+            <article className={step.state} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+              <button
+                className="secondary-action"
+                disabled={step.action !== "Export proof" && !step.target}
+                onClick={() => {
+                  if (step.action === "Export proof") {
+                    downloadTextFile(corporateVerifyFirstUsePacketName, JSON.stringify(corporateVerifyFirstUsePacket, null, 2), "application/json");
+                    return;
+                  }
+                  document.getElementById(step.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                type="button"
+              >
+                {step.action}
+              </button>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-verify-first-use-counts">
+          <span>{requests.length} requests</span>
+          <span>{approvedCount} approvals</span>
+          <span>{sharedRecords.length} shared rows</span>
+          <span>{pendingGapCount} open gaps</span>
+        </div>
+      </div>
       <div className="verify-reviewer-flow">
         <div className="verify-reviewer-flow-header">
           <div>
@@ -2127,7 +2242,7 @@ function VerifyRequestsPanel({
           ))}
         </div>
       </div>
-      <form className="verify-request-form" onSubmit={submitAccessRequest}>
+      <form className="verify-request-form" id="corporate-verify-request-form" onSubmit={submitAccessRequest}>
         <div className="verify-request-header">
           <div>
             <span className="status-chip neutral">Corporate user-data request</span>
@@ -2201,7 +2316,7 @@ function VerifyRequestsPanel({
           Add Verify reviewer role
         </button>
       </div>
-      <div className="grant-list">
+      <div className="grant-list" id="corporate-verify-request-list">
         {requests.length ? (
           requests.map((request) => (
             <article className="grant-card" key={request.id}>
@@ -3454,7 +3569,7 @@ function CorporateDirectoryPanel({
           </article>
         ))}
       </div>
-      <div className="corporate-access-review-queue" aria-label="Corporate access review queue">
+      <div className="corporate-access-review-queue" id="corporate-access-review-queue" aria-label="Corporate access review queue">
         <div className="directory-source-strip">
           <span className="status-chip neutral">Corporate access review queue</span>
           <small>Shows the exact professional rows this corporate workspace can act on after Access Grant and consent scope are applied.</small>
