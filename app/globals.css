@@ -15146,6 +15146,124 @@ p {
   line-height: 1.4;
 }
 
+.evidence-access-desk {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.11), rgba(134, 174, 246, 0.055)),
+    rgba(255, 255, 255, 0.028);
+}
+
+.evidence-access-desk-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.evidence-access-desk-copy strong {
+  color: var(--text);
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.08;
+}
+
+.evidence-access-desk-copy small {
+  color: var(--muted);
+  line-height: 1.38;
+  overflow-wrap: anywhere;
+}
+
+.evidence-access-desk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 8px;
+}
+
+.evidence-access-desk-grid button {
+  display: grid;
+  gap: 5px;
+  justify-items: start;
+  min-width: 0;
+  min-height: 112px;
+  padding: 11px;
+  color: var(--text);
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.095);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.13);
+  white-space: normal;
+}
+
+.evidence-access-desk-grid button.ready {
+  border-color: rgba(82, 214, 196, 0.3);
+  background: rgba(82, 214, 196, 0.065);
+}
+
+.evidence-access-desk-grid button.locked {
+  opacity: 0.58;
+}
+
+.evidence-access-desk-grid span,
+.evidence-access-desk-grid strong,
+.evidence-access-desk-grid small,
+.evidence-access-desk-grid em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.evidence-access-desk-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.evidence-access-desk-grid strong {
+  font-size: 17px;
+  line-height: 1.08;
+}
+
+.evidence-access-desk-grid small,
+.evidence-access-desk-grid em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.32;
+}
+
+.evidence-access-desk-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 112px), 1fr));
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.085);
+}
+
+.evidence-access-desk-proof span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.evidence-access-desk-proof strong,
+.evidence-access-desk-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.evidence-access-desk-proof button {
+  min-width: 0;
+  white-space: normal;
+}
+
 .evidence-preview-download-ledger {
   display: grid;
   gap: 10px;
@@ -15763,6 +15881,8 @@ p {
   .corporate-verify-access-lane-grid,
   .evidence-controls,
   .evidence-access-chain,
+  .evidence-access-desk-grid,
+  .evidence-access-desk-proof,
   .evidence-preview-download-grid,
   .signed-evidence-access-grid,
   .evidence-summary-grid,

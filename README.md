@@ -101,6 +101,8 @@ The public website and login/register card are also kept buyer-facing: portal ch
 
 The hosted login/register card now starts with a public auth front desk so Professional users and Corporate admins can switch account type, login/register mode, pricing review, and recovery from one compact surface before entering credentials.
 
+Passport record detail now starts evidence work with an evidence access desk: preview, download, metadata manifest export, access packet export, signed URL expiry, metadata-only boundaries, and last-link proof are visible before deeper evidence receipts.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text

@@ -110,6 +110,8 @@ const requiredMobileStacks = [
   ".admin-audit-export-grid",
   ".evidence-source-strip",
   ".evidence-access-chain",
+  ".evidence-access-desk-grid",
+  ".evidence-access-desk-proof",
   ".evidence-preview-download-grid",
   ".signed-evidence-access-grid",
   ".v1-proof-collection-grid",

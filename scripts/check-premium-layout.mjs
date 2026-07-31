@@ -96,6 +96,7 @@ assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account a
 assert(app.includes('aria-label="Public server sync receipt"'), "public website must expose saved-build status before login.");
 assert(app.includes('aria-label="Public saved build verification"'), "public website must expose GitHub, Pages, VPS stamp, and VFIX boundary proof before login.");
 assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readiness must expose hosted corporate retest checklist.");
+assert(app.includes('aria-label="Evidence access desk"') && app.includes("evidence_access_desk"), "evidence preview/download must expose one clear desk for preview, download, manifest, packet, and signed-link proof.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
 assert(app.includes('aria-label="Signed evidence access audit receipt"'), "evidence preview/download must expose signed access audit receipt state.");
 assert(app.includes('aria-label="Data export package receipt"'), "Account data rights must expose data export package receipt state.");
@@ -286,6 +287,7 @@ assert(css.includes(".claim-trust-taxonomy") && css.includes(".claim-trust-taxon
 assert(css.includes(".regulated-employment-boundary") && css.includes(".regulated-employment-metrics"), "regulated employment boundary must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
+assert(css.includes(".evidence-access-desk") && css.includes(".evidence-access-desk-grid") && css.includes(".evidence-access-desk-proof"), "evidence access desk must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");
 assert(css.includes(".signed-evidence-access-audit") && css.includes(".signed-evidence-access-grid"), "signed evidence access audit receipt must be styled and bounded.");
 assert(css.includes(".data-export-package-receipt") && css.includes(".data-export-package-grid"), "data export package receipt must be styled and bounded.");

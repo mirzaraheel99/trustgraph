@@ -610,6 +610,63 @@ function RecordDetail({
       evidence_summary: document.evidence_summary ?? ""
     }))
   };
+  const firstFileBackedEvidence = filteredEvidenceDocuments.find((document) => document.storage_path) ?? null;
+  const evidenceAccessDesk = {
+    mode: "evidence_access_desk",
+    record_id: record.id,
+    record_title: record.title,
+    headline: fileBackedEvidenceCount
+      ? "Preview or download private evidence with signed links"
+      : evidenceDocuments.length
+        ? "Evidence metadata is linked; attach a file to enable signed preview"
+        : "Add evidence metadata or upload a private file",
+    next_action: fileBackedEvidenceCount
+      ? "Open a short-lived preview, download a governed file, or export the evidence packet."
+      : "Upload a PDF, image, or text file when raw evidence is required.",
+    file_backed_documents: fileBackedEvidenceCount,
+    metadata_only_documents: metadataOnlyEvidenceCount,
+    filtered_documents: filteredEvidenceDocuments.length,
+    preview_expiry_seconds: 300,
+    download_expiry_seconds: 120,
+    raw_private_files_exposed_in_manifest: false,
+    accepted_when:
+      "evidence_access_desk_keeps_preview_download_manifest_export_signed_url_expiry_metadata_only_boundary_and_last_link_proof_visible"
+  };
+  const evidenceAccessDeskCards = [
+    {
+      label: "Preview",
+      value: firstFileBackedEvidence ? "Ready" : "No file",
+      detail: "Signed URL expires in 5 minutes.",
+      action: "Preview first file",
+      enabled: Boolean(firstFileBackedEvidence),
+      mode: "preview" as const
+    },
+    {
+      label: "Download",
+      value: firstFileBackedEvidence ? "Ready" : "No file",
+      detail: "Download URL expires in 2 minutes.",
+      action: "Download first file",
+      enabled: Boolean(firstFileBackedEvidence),
+      mode: "download" as const
+    },
+    {
+      label: "Manifest",
+      value: `${filteredEvidenceDocuments.length}`,
+      detail: "CSV exports metadata only.",
+      action: "Export manifest",
+      enabled: filteredEvidenceDocuments.length > 0,
+      mode: "manifest" as const
+    },
+    {
+      label: "Packet",
+      value: lastEvidenceLink ? "Link proof" : "No link yet",
+      detail: "JSON includes policy, counts, and last signed link metadata.",
+      action: "Export packet",
+      enabled: filteredEvidenceDocuments.length > 0,
+      mode: "packet" as const
+    }
+  ];
+  const evidenceAccessDeskPacketName = `trustgraph-evidence-access-desk-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`;
 
   useEffect(() => {
     setTitle(record.title);
@@ -773,6 +830,62 @@ function RecordDetail({
         <small>{record.access}</small>
         {evidenceDocuments.length ? (
           <>
+            <div className="evidence-access-desk" aria-label="Evidence access desk">
+              <div className="evidence-access-desk-copy">
+                <span className={`status-chip ${fileBackedEvidenceCount ? "success" : "neutral"}`}>Evidence access desk</span>
+                <strong>{evidenceAccessDesk.headline}</strong>
+                <small>{evidenceAccessDesk.next_action}</small>
+              </div>
+              <div className="evidence-access-desk-grid">
+                {evidenceAccessDeskCards.map((card) => (
+                  <button
+                    className={card.enabled ? "ready" : "locked"}
+                    disabled={!card.enabled || openingEvidenceId === firstFileBackedEvidence?.id}
+                    key={card.label}
+                    onClick={() => {
+                      if (card.mode === "preview" || card.mode === "download") {
+                        if (firstFileBackedEvidence) {
+                          void openEvidence(firstFileBackedEvidence, card.mode);
+                        }
+                        return;
+                      }
+                      if (card.mode === "manifest") {
+                        downloadTextFile(evidenceManifestName, evidenceDocumentsToCsv(filteredEvidenceDocuments), "text/csv");
+                        return;
+                      }
+                      downloadTextFile(evidenceAccessPacketName, JSON.stringify(evidenceAccessPacket, null, 2), "application/json");
+                    }}
+                    type="button"
+                  >
+                    <span>{card.label}</span>
+                    <strong>{card.value}</strong>
+                    <small>{card.detail}</small>
+                    <em>{card.action}</em>
+                  </button>
+                ))}
+              </div>
+              <div className="evidence-access-desk-proof">
+                <span>
+                  <strong>{evidenceAccessDesk.file_backed_documents}</strong>
+                  <small>File-backed</small>
+                </span>
+                <span>
+                  <strong>{evidenceAccessDesk.metadata_only_documents}</strong>
+                  <small>Metadata only</small>
+                </span>
+                <span>
+                  <strong>{lastEvidenceLink ? lastEvidenceLink.mode : "None"}</strong>
+                  <small>Last signed link</small>
+                </span>
+                <button
+                  className="secondary-action"
+                  onClick={() => downloadTextFile(evidenceAccessDeskPacketName, JSON.stringify(evidenceAccessDesk, null, 2), "application/json")}
+                  type="button"
+                >
+                  Export desk
+                </button>
+              </div>
+            </div>
             <div className="evidence-summary-grid">
               <div>
                 <span>Linked</span>
