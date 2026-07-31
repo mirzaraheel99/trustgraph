@@ -17484,6 +17484,26 @@ function PublicSite({
               </button>
             </div>
           ) : null}
+          <div className="auth-route-summary" aria-label="Auth route summary">
+            <div>
+              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>{authPathSummary.selected_portal}</span>
+              <strong>{authPathSummary.selected_action} into {authPathSummary.landing}</strong>
+              <small>
+                {mode === "signup"
+                  ? "Create the right account type first; live database proof starts only after hosted verification and login."
+                  : "Use the verified account for this portal; recovery stays available from the same card."}
+              </small>
+            </div>
+            <div className="auth-route-summary-grid">
+              {authPathSummaryCards.map((card) => (
+                <span key={card.label}>
+                  <small>{card.label}</small>
+                  <strong>{card.value}</strong>
+                  <small>{card.detail}</small>
+                </span>
+              ))}
+            </div>
+          </div>
           <div className="selected-portal-command" aria-label="Selected portal command">
             <div>
               <span className="status-chip success">{selectedPortalCommand.label}</span>
