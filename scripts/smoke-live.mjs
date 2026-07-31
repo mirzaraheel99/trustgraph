@@ -839,6 +839,9 @@ assertIncludesAny(bundleText, ["billing_operator_path"], "billing operator path 
 assertIncludesAny(bundleText, ["Billing ledger acceptance"], "billing ledger acceptance proof");
 assertIncludesAny(bundleText, ["billing_ledger_evidence"], "billing ledger acceptance packet field");
 assertIncludesAny(bundleText, ["live_subscription_ledger"], "live billing ledger mode");
+assertIncludesAny(bundleText, ["Billing activation receipt"], "billing activation receipt label");
+assertIncludesAny(bundleText, ["billing_activation_receipt"], "billing activation receipt packet field");
+assertIncludesAny(bundleText, ["billing_activation_receipt_requires_live_subscription_ledger_selected_seats_pricing_packet_and_stripe_human_gate"], "billing activation receipt acceptance rule");
 assertIncludesAny(bundleText, ["Pricing launch command"], "billing pricing launch command surface");
 assertIncludesAny(bundleText, ["Use live pricing and ledger rows, keep payments gated"], "billing pricing launch command headline");
 assertIncludesAny(bundleText, ["Real payment collection waits for the Stripe human gate"], "billing Stripe gate guidance");

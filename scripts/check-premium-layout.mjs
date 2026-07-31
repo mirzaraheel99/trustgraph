@@ -63,6 +63,7 @@ assert(app.includes('aria-label="Registration focus strip"'), "public auth must 
 assert(app.includes('aria-label="Portal launch decision strip"'), "public auth must expose a plain-language portal launch decision strip.");
 assert(app.includes('aria-label="Portal submit receipt"'), "public auth must show the selected portal submit path at the form action point.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
+assert(app.includes('aria-label="Billing activation receipt"'), "billing must expose a live ledger activation receipt.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
 assert(app.includes('aria-label="Public server sync receipt"'), "public website must expose saved-build status before login.");
 assert(app.includes('aria-label="Public saved build verification"'), "public website must expose GitHub, Pages, VPS stamp, and VFIX boundary proof before login.");
@@ -168,6 +169,7 @@ assert(premiumRepair.includes(".hosted-auth-redirect-verification") && premiumRe
 assert(app.includes('aria-label="Email verification delivery receipt"'), "public auth must expose email verification delivery receipt.");
 assert(css.includes(".email-verification-delivery-receipt") && css.includes(".email-verification-delivery-grid"), "email verification delivery receipt must be styled and bounded.");
 assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checkout-decision-grid") && css.includes(".stripe-checkout-decision-actions"), "Stripe checkout decision receipt must be styled and bounded.");
+assert(css.includes(".billing-activation-receipt") && css.includes(".billing-activation-grid"), "billing activation receipt must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");

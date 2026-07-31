@@ -8453,6 +8453,25 @@ function BillingPanel({
     ],
     next_operator_action: activeSubscriptions.length ? "export_payment_decision_packet" : "activate_pilot_subscription_ledger"
   };
+  const billingActivationReceipt = {
+    mode: "billing_activation_receipt",
+    status: activeSubscriptions.length ? "pilot_ledger_active" : "activation_required",
+    selected_seats: seats,
+    plans_loaded: plans.length,
+    active_subscription_count: activeSubscriptions.length,
+    active_plan: primaryPlan?.name ?? "none",
+    active_ledger_rows: activeSubscriptions.map((subscription) => ({
+      subscription_id: subscription.id,
+      plan_id: subscription.plan_id,
+      status: subscription.status,
+      seats: subscription.seats,
+      renews_at: subscription.renews_at
+    })),
+    next_action: activeSubscriptions.length ? "export_pricing_and_payment_boundary_packets" : "activate_corporate_verify_pilot_ledger",
+    stripe_payment_collection: "disabled_until_human_gate",
+    accepted_when:
+      "billing_activation_receipt_requires_live_subscription_ledger_selected_seats_pricing_packet_and_stripe_human_gate"
+  };
   const stripeCheckoutDecisionCards = [
     {
       label: "Live now",
@@ -8491,6 +8510,7 @@ function BillingPanel({
       created_at: subscription.created_at
     })),
     billing_ledger_evidence: billingLedgerEvidence,
+    billing_activation_receipt: billingActivationReceipt,
     billing_operator_path: billingOperatorSteps,
     stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
     projected_plans: projectedPlans,
@@ -8523,6 +8543,7 @@ function BillingPanel({
       "Keep the pilot subscription ledger live for account packaging and pricing validation. Connect Stripe only after product, price, tax, invoice, refund, dunning, webhook, and security decisions are recorded.",
     active_subscription_count: activeSubscriptions.length,
     billing_ledger_evidence: billingLedgerEvidence,
+    billing_activation_receipt: billingActivationReceipt,
     billing_operator_path: billingOperatorSteps,
     stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
     projected_plans: projectedPlans
@@ -8588,6 +8609,31 @@ function BillingPanel({
           >
             Export checkout decision
           </button>
+        </div>
+      </div>
+      <div className="billing-activation-receipt" aria-label="Billing activation receipt">
+        <div>
+          <span className={`status-chip ${activeSubscriptions.length ? "success" : "warning"}`}>Billing activation receipt</span>
+          <strong>{activeSubscriptions.length ? "Pilot billing ledger is active" : "Activate the Corporate Verify pilot ledger"}</strong>
+          <small>{billingActivationReceipt.accepted_when}</small>
+        </div>
+        <div className="billing-activation-grid">
+          <span>
+            <strong>{billingActivationReceipt.active_plan}</strong>
+            <small>Active plan</small>
+          </span>
+          <span>
+            <strong>{billingActivationReceipt.selected_seats}</strong>
+            <small>Selected seats</small>
+          </span>
+          <span>
+            <strong>{billingActivationReceipt.active_subscription_count}</strong>
+            <small>Ledger rows</small>
+          </span>
+          <span>
+            <strong>{billingActivationReceipt.stripe_payment_collection}</strong>
+            <small>Stripe status</small>
+          </span>
         </div>
       </div>
       <div className="billing-operator-path" aria-label="Billing operator path">

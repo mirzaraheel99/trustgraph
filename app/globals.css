@@ -4009,6 +4009,58 @@ p,
   min-height: 36px;
 }
 
+.billing-activation-receipt {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.085), transparent 58%),
+    rgba(255, 255, 255, 0.026);
+}
+
+.billing-activation-receipt > div:first-child,
+.billing-activation-grid span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.billing-activation-receipt strong,
+.billing-activation-receipt small,
+.billing-activation-receipt span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.billing-activation-receipt > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.16;
+}
+
+.billing-activation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+}
+
+.billing-activation-grid span {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.billing-activation-grid small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .billing-ledger-acceptance {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
