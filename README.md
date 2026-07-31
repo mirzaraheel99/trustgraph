@@ -53,7 +53,7 @@ Use `SERVER_DEPLOYMENT.md` to install Docker, pull the GitHub repo, start Caddy 
 
 For first server setup, `tools/bootstrap-vps.sh` performs the guarded `/opt/trustgraph` install and refuses the VFIX host/path.
 
-After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`.
+After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`, runs the same guarded `tools/update-vps-from-github.sh` path as the server shell command, and checks `trustgraph-release.json` so the VPS must prove the GitHub source it saved.
 
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 

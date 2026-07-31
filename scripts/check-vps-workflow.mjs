@@ -39,12 +39,20 @@ const requiredSnippets = [
     label: "remote preflight uses the TrustGraph host"
   },
   {
-    snippet: "bash tools/preflight-vps.sh",
-    label: "remote deploy runs the VPS preflight"
+    snippet: "bash tools/update-vps-from-github.sh",
+    label: "remote deploy runs the guarded VPS update script"
   },
   {
     snippet: 'curl --fail --location --silent --show-error "$PUBLIC_URL"',
     label: "smoke check uses the public URL input"
+  },
+  {
+    snippet: 'curl --fail --location --silent --show-error "${PUBLIC_URL%/}/trustgraph-release.json"',
+    label: "smoke check verifies the hosted release stamp"
+  },
+  {
+    snippet: 'grep -q \'"source": "https://github.com/mirzaraheel99/trustgraph"\' /tmp/trustgraph-vps-release.json',
+    label: "release stamp proves the GitHub source"
   }
 ];
 
