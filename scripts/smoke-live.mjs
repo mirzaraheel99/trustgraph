@@ -468,6 +468,15 @@ assertIncludesAny(bundleText, ["trustgraph_vps_cutover"], "TrustGraph VPS cutove
 assertIncludesAny(bundleText, ["external sign-off required"], "external security gate status");
 assertIncludesAny(bundleText, ["Professional Passport setup"], "13-step pilot acceptance script");
 assertIncludesAny(bundleText, ["Guided onboarding wizard"], "guided onboarding wizard label");
+assertIncludesAny(bundleText, ["onboarding_wizard_receipts"], "onboarding wizard receipt table");
+assertIncludesAny(bundleText, ["record_onboarding_wizard_receipt"], "onboarding wizard receipt RPC");
+assertIncludesAny(bundleText, ["Onboarding wizard database receipt"], "onboarding wizard database receipt label");
+assertIncludesAny(bundleText, ["Record onboarding receipt"], "onboarding wizard receipt record action");
+assertIncludesAny(
+  bundleText,
+  ["onboarding_wizard_receipt_requires_hosted_login_account_context_registration_corporate_setup_pricing_user_database_and_preview_data_rejected"],
+  "onboarding wizard receipt acceptance rule"
+);
 assertIncludesAny(bundleText, ["Onboarding handoff"], "top-level onboarding handoff command");
 assertIncludesAny(bundleText, ["onboarding_handoff_command"], "top-level onboarding handoff packet field");
 assertIncludesAny(bundleText, ["new_user_can_move_from_login_to_corporate_setup_live_row_completion_guided_seed_reconciliation_and_exported_proof_without_searching_the_dashboard"], "top-level onboarding handoff acceptance rule");

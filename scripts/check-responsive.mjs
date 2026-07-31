@@ -133,6 +133,7 @@ const requiredMobileStacks = [
   ".v1-launch-flow-grid",
   ".onboarding-handoff-header",
   ".onboarding-handoff-grid",
+  ".onboarding-wizard-receipt-grid",
   ".portal-command-deck-header",
   ".portal-command-deck-grid",
   ".signed-in-portal-flow-contract",

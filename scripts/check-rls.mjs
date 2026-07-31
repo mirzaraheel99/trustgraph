@@ -39,7 +39,8 @@ const requiredRlsTables = [
   "data_export_package_receipts",
   "data_export_packages",
   "billing_architecture_decision_receipts",
-  "pricing_quote_receipts"
+  "pricing_quote_receipts",
+  "onboarding_wizard_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -300,6 +301,29 @@ if (!pricingQuoteReceiptMigration.includes("billing.pricing_quote_recorded")) {
 }
 if (!pricingQuoteReceiptMigration.includes("grant execute on function public.record_pricing_quote_receipt")) {
   throw new Error("Pricing quote receipt RPC must be executable by authenticated users.");
+}
+
+const onboardingWizardReceiptMigration = latestSqlByFile["054_onboarding_wizard_receipts.sql"] ?? "";
+if (!onboardingWizardReceiptMigration.includes("create table if not exists public.onboarding_wizard_receipts")) {
+  throw new Error("Missing onboarding wizard receipt table migration.");
+}
+if (!onboardingWizardReceiptMigration.includes("alter table public.onboarding_wizard_receipts enable row level security")) {
+  throw new Error("Onboarding wizard receipts must enable RLS.");
+}
+if (!onboardingWizardReceiptMigration.includes("profile_id = public.current_profile_id()")) {
+  throw new Error("Onboarding wizard receipts must be owner-scoped.");
+}
+if (!onboardingWizardReceiptMigration.includes("preview_data_accepted_for_v1 = false")) {
+  throw new Error("Onboarding wizard receipts must reject preview data for V1.");
+}
+if (!onboardingWizardReceiptMigration.includes("create or replace function public.record_onboarding_wizard_receipt")) {
+  throw new Error("Missing onboarding wizard receipt RPC.");
+}
+if (!onboardingWizardReceiptMigration.includes("onboarding.wizard_receipt_recorded")) {
+  throw new Error("Onboarding wizard receipt RPC must write audit history.");
+}
+if (!onboardingWizardReceiptMigration.includes("grant execute on function public.record_onboarding_wizard_receipt")) {
+  throw new Error("Onboarding wizard receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

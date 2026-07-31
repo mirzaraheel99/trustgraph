@@ -47,6 +47,7 @@ import type {
   DbOrganizationMembership,
   DbOrganizationInvitation,
   DbOrganizationSubscription,
+  DbOnboardingWizardReceipt,
   DbPilotLaunchContact,
   DbPricingQuoteReceipt,
   DbProductionGateDecision,
@@ -159,6 +160,7 @@ import {
   markMissingRecordRequestStatus
 } from "./missingRecordRepository";
 import { loadNotificationEvents, markNotificationEvent } from "./notificationRepository";
+import { loadOnboardingWizardReceipts, recordOnboardingWizardReceipt } from "./onboardingRepository";
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
 import {
   loadRegistrationIntents,
@@ -205,6 +207,9 @@ import {
   type SessionUser,
   type Membership
 } from "./rbac";
+
+const ONBOARDING_WIZARD_RECEIPT_ACCEPTANCE_RULE =
+  "onboarding_wizard_receipt_requires_hosted_login_account_context_registration_corporate_setup_pricing_user_database_and_preview_data_rejected";
 
 type LivePilotRowProof = {
   source: "signed_in_supabase_rows" | "preview_or_logged_out";
@@ -10965,12 +10970,14 @@ function OnboardingChecklistPanel({
   corporateAccessReviews,
   evidenceDocuments,
   livePassportRecords,
+  onboardingReceipts,
   organizationSubscriptions,
   schemaMigrationRuns,
   teamInvitations,
   teamMembers,
   onOpenHostedRegistration,
   onOpenWorkspace,
+  onRecordOnboardingReceipt,
   onSeedPilotWorkspace
 }: {
   accessGrants: AccessGrantView[];
@@ -10980,12 +10987,22 @@ function OnboardingChecklistPanel({
   corporateAccessReviews: DbCorporateAccessReview[];
   evidenceDocuments: DbEvidenceDocument[];
   livePassportRecords: RecordItem[];
+  onboardingReceipts: DbOnboardingWizardReceipt[];
   organizationSubscriptions: DbOrganizationSubscription[];
   schemaMigrationRuns: DbSchemaMigrationRun[];
   teamInvitations: DbOrganizationInvitation[];
   teamMembers: OrganizationMemberView[];
   onOpenHostedRegistration: () => void;
   onOpenWorkspace: (workspaceId: WorkspaceId) => void;
+  onRecordOnboardingReceipt: (input: {
+    organizationId: string | null;
+    completedSteps: number;
+    totalSteps: number;
+    currentStepLabel: string;
+    currentStepStatus: DbOnboardingWizardReceipt["current_step_status"];
+    liveDatabaseRows: number;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
   onSeedPilotWorkspace: () => Promise<Awaited<ReturnType<typeof seedPilotWorkspace>>>;
 }) {
   type PilotSeedResult = Awaited<ReturnType<typeof seedPilotWorkspace>>;
@@ -10994,6 +11011,7 @@ function OnboardingChecklistPanel({
   const [seedResult, setSeedResult] = useState<PilotSeedResult | null>(null);
   const [savedSeedEvidence, setSavedSeedEvidence] = useState<SavedPilotSeedEvidence | null>(null);
   const [seedBusy, setSeedBusy] = useState(false);
+  const [receiptBusy, setReceiptBusy] = useState(false);
   const pilotSeedEvidenceKey = "trustgraph.lastPilotSeedEvidence";
   const hasCorporateContext = Boolean(
     accountContext?.memberships.some((membership) =>
@@ -11066,6 +11084,7 @@ function OnboardingChecklistPanel({
   const hostedCorporateRetestExportName = `trustgraph-hosted-corporate-retest-${new Date().toISOString().slice(0, 10)}.json`;
   const liveSeedPreflightExportName = `trustgraph-live-seed-preflight-${new Date().toISOString().slice(0, 10)}.json`;
   const visibleSeedEvidence = seedResult ?? savedSeedEvidence;
+  const latestOnboardingReceipt = onboardingReceipts[0] ?? null;
   const workingDataRows = [
     { label: "Passport records", count: livePassportRecords.length },
     { label: "Evidence documents", count: evidenceDocuments.length },
@@ -11882,6 +11901,28 @@ function OnboardingChecklistPanel({
     seed_reconciliation_complete: seedReconciliationComplete
   };
 
+  async function saveOnboardingReceipt() {
+    setReceiptBusy(true);
+    try {
+      await onRecordOnboardingReceipt({
+        organizationId: accountContext?.memberships[0]?.organization.id ?? null,
+        completedSteps: completed,
+        totalSteps: checklist.length,
+        currentStepLabel: nextItem.label,
+        currentStepStatus: nextItem.done ? "ready" : "needs_action",
+        liveDatabaseRows: workingDataTotal,
+        metadata: {
+          acceptance_rule: ONBOARDING_WIZARD_RECEIPT_ACCEPTANCE_RULE,
+          guided_onboarding_wizard: guidedOnboardingWizard,
+          live_database_proof: workingDatabaseProof,
+          preview_data_accepted_for_v1: false
+        }
+      });
+    } finally {
+      setReceiptBusy(false);
+    }
+  }
+
   return (
     <section className="onboarding-panel">
       <div className="mini-heading">
@@ -11910,6 +11951,40 @@ function OnboardingChecklistPanel({
         <span className="status-chip neutral">current step</span>
         <strong>{nextItem.label}</strong>
         <small>{nextItem.done ? "Review live account, records, corporate access, team, and sharing evidence before production gates." : nextItem.detail}</small>
+      </div>
+      <div className="onboarding-wizard-receipt" aria-label="Onboarding wizard database receipt">
+        <div>
+          <span className={`status-chip ${latestOnboardingReceipt ? "success" : "warning"}`}>Onboarding wizard database receipt</span>
+          <strong>
+            {latestOnboardingReceipt
+              ? `${latestOnboardingReceipt.completed_steps}/${latestOnboardingReceipt.total_steps} steps saved`
+              : "Save onboarding progress to Supabase"}
+          </strong>
+          <small>
+            Persists hosted login, account context, Professional, Corporate, pricing, user database, and preview-data rejection proof for the current onboarding path.
+          </small>
+        </div>
+        <div className="onboarding-wizard-receipt-grid">
+          <span>
+            <strong>{onboardingReceipts.length}</strong>
+            <small>Receipt rows</small>
+          </span>
+          <span>
+            <strong>{latestOnboardingReceipt?.completed_steps ?? completed}/{latestOnboardingReceipt?.total_steps ?? checklist.length}</strong>
+            <small>Steps complete</small>
+          </span>
+          <span>
+            <strong>{latestOnboardingReceipt?.live_database_rows ?? workingDataTotal}</strong>
+            <small>Live rows</small>
+          </span>
+          <span>
+            <strong>{latestOnboardingReceipt?.preview_data_accepted_for_v1 ? "Accepted" : "Rejected"}</strong>
+            <small>Preview data</small>
+          </span>
+        </div>
+        <button className="secondary-action" disabled={!authSession || receiptBusy} onClick={() => void saveOnboardingReceipt()} type="button">
+          Record onboarding receipt
+        </button>
       </div>
       <div className={`live-data-verdict ${liveDataVerdict.tone}`} aria-label="Live data verdict">
         <div>
@@ -15186,6 +15261,7 @@ function App() {
   const [passportMissingRecordStatus, setPassportMissingRecordStatus] = useState("Sign in to review requested Passport records");
   const [registrationIntents, setRegistrationIntents] = useState<DbRegistrationIntent[]>([]);
   const [registrationIntentStatus, setRegistrationIntentStatus] = useState("Sign in to load registration intent rows");
+  const [onboardingReceipts, setOnboardingReceipts] = useState<DbOnboardingWizardReceipt[]>([]);
   const [v1ReadinessReceipts, setV1ReadinessReceipts] = useState<DbV1LiveDatabaseReadinessReceipt[]>([]);
   const [v1ReadinessStatus, setV1ReadinessStatus] = useState("Sign in to record V1 live database readiness receipts");
   const [serverSyncMonitor, setServerSyncMonitor] = useState<ServerSyncMonitorState>({
@@ -15353,6 +15429,7 @@ function App() {
       setBillingDecisionReceipts([]);
       setPricingQuoteReceipts([]);
       setRegistrationIntents([]);
+      setOnboardingReceipts([]);
       setRegistrationIntentStatus("Sign in to load registration intent rows");
       setBillingStatus("Sign in to manage billing plans");
       setTeamInvitations([]);
@@ -15421,17 +15498,19 @@ function App() {
       loadBillingArchitectureDecisionReceipts(authSession.accessToken).catch(() => []),
       loadPricingQuoteReceipts(authSession.accessToken).catch(() => []),
       loadRegistrationIntents(authSession.accessToken).catch(() => []),
+      loadOnboardingWizardReceipts(authSession.accessToken).catch(() => []),
       loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => []),
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, readinessReceipts, invitations, members]) => {
+      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, onboardingRows, readinessReceipts, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
         setBillingDecisionReceipts(decisionReceipts);
         setPricingQuoteReceipts(quoteReceipts);
         setRegistrationIntents(intents);
+        setOnboardingReceipts(onboardingRows);
         setV1ReadinessReceipts(readinessReceipts);
         setTeamInvitations(invitations);
         setTeamMembers(members);
@@ -15450,6 +15529,7 @@ function App() {
         setBillingDecisionReceipts([]);
         setPricingQuoteReceipts([]);
         setRegistrationIntents([]);
+        setOnboardingReceipts([]);
         setV1ReadinessReceipts([]);
         setTeamInvitations([]);
         setTeamMembers([]);
@@ -17832,6 +17912,43 @@ function App() {
     }
   }
 
+  async function recordLiveOnboardingWizardReceipt(input: {
+    organizationId: string | null;
+    completedSteps: number;
+    totalSteps: number;
+    currentStepLabel: string;
+    currentStepStatus: DbOnboardingWizardReceipt["current_step_status"];
+    liveDatabaseRows: number;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Login first to record onboarding wizard progress.");
+    }
+
+    const receipt = await recordOnboardingWizardReceipt({
+      accessToken: authSession.accessToken,
+      organizationId: input.organizationId,
+      completedSteps: input.completedSteps,
+      totalSteps: input.totalSteps,
+      currentStepLabel: input.currentStepLabel,
+      currentStepStatus: input.currentStepStatus,
+      liveDatabaseRows: input.liveDatabaseRows,
+      metadata: {
+        ...input.metadata,
+        source: "signed_in_supabase_onboarding_wizard",
+        preview_data_accepted_for_v1: false
+      }
+    });
+    const [receipts, events] = await Promise.all([
+      loadOnboardingWizardReceipts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setOnboardingReceipts(receipts);
+    setAuditEvents(events);
+    setV1ReadinessStatus(`Onboarding wizard receipt recorded: ${receipt.completed_steps}/${receipt.total_steps} steps`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
   const liveDatabaseContract = {
     mode: "live_database_contract",
     accepted: livePilotRowProof.accepted,
@@ -19822,12 +19939,14 @@ function App() {
                       corporateAccessReviews={corporateAccessReviews}
                       evidenceDocuments={evidenceDocuments}
                       livePassportRecords={livePassportRecords}
+                      onboardingReceipts={onboardingReceipts}
                       organizationSubscriptions={organizationSubscriptions}
                       schemaMigrationRuns={schemaMigrationRuns}
                       teamInvitations={teamInvitations}
                       teamMembers={teamMembers}
                       onOpenHostedRegistration={() => setShowPublicSite(true)}
                       onOpenWorkspace={changeWorkspace}
+                      onRecordOnboardingReceipt={recordLiveOnboardingWizardReceipt}
                       onSeedPilotWorkspace={seedLivePilotWorkspace}
                     />
                     <PilotAcceptancePanel

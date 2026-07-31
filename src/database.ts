@@ -423,6 +423,21 @@ export interface DbPricingQuoteReceipt {
   created_at: string;
 }
 
+export interface DbOnboardingWizardReceipt {
+  id: string;
+  profile_id: string;
+  organization_id: string | null;
+  completed_steps: number;
+  total_steps: number;
+  current_step_label: string;
+  current_step_status: "ready" | "needs_action";
+  live_database_rows: number;
+  preview_data_accepted_for_v1: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbRegistrationIntent {
   id: string;
   profile_id: string;
