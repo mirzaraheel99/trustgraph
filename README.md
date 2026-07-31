@@ -95,6 +95,8 @@ Corporate Verify now keeps the visible operator path focused on the quick start,
 
 The signed-in console keeps the daily operator path lean: one dashboard front door, the setup center, and the active workspace surface. Release, readiness, and proof machinery stay exportable from their command buttons and packets without stacking into the first screen.
 
+The public website and login/register card are also kept buyer-facing: portal choice, pricing, first database write, required fields, and recovery actions stay visible first, while internal redirect/recovery receipts remain available in the bundle without crowding signup.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text
