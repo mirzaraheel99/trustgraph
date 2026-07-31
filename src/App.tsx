@@ -12206,6 +12206,31 @@ function PublicSite({
       detail: portal === "corporate" ? "RBAC, billing, team, and Verify access requests." : "Records, evidence, consent, and sharing."
     }
   ];
+  const portalLaunchDecisionStrip = [
+    {
+      label: "Choose this when",
+      value: portal === "corporate" ? "You review others" : "You own your record",
+      detail:
+        portal === "corporate"
+          ? "Employers and staffing teams request scoped Passport access by professional email."
+          : "Professionals create a private Passport and approve every sharing request."
+    },
+    {
+      label: "Creates first",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Pilot price",
+      value: selectedRegistrationPath.plan,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "After login",
+      value: portal === "corporate" ? "Company Verify workspace" : "Private Passport workspace",
+      detail: selectedRegistrationPath.nextAction
+    }
+  ];
   const accountTypeChooser = [
     {
       label: "Professional user",
@@ -12488,6 +12513,7 @@ function PublicSite({
     },
     active_redirect_url: authRedirectUrl,
     portal_entry_path: portalEntryPath,
+    portal_launch_decision_strip: portalLaunchDecisionStrip,
     public_auth_flow_command: publicAuthFlowCommand,
     public_portal_database_access_contract: portalDatabaseAccessContract,
     public_portal_launch_checklist: publicPortalLaunchChecklist,
@@ -13307,6 +13333,15 @@ function PublicSite({
                 <strong>{step.label}</strong>
                 <small>{step.detail}</small>
               </span>
+            ))}
+          </div>
+          <div className="portal-launch-decision-strip" aria-label="Portal launch decision strip">
+            {portalLaunchDecisionStrip.map((item) => (
+              <article key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <small>{item.detail}</small>
+              </article>
             ))}
           </div>
           <div className="public-auth-flow-command" aria-label="Public auth flow command">

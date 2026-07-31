@@ -54,6 +54,7 @@ assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public
 assert(app.includes('aria-label="Public auth flow command"'), "public auth must expose a simple flow command for account type, mode, and database result.");
 assert(app.includes('aria-label="Public portal database access contract"'), "public website must expose Professional, Corporate, pricing, and scoped database access before signup.");
 assert(app.includes('aria-label="Registration focus strip"'), "public auth must expose a compact registration focus strip before form fields.");
+assert(app.includes('aria-label="Portal launch decision strip"'), "public auth must expose a plain-language portal launch decision strip.");
 assert(app.includes('aria-label="Portal submit receipt"'), "public auth must show the selected portal submit path at the form action point.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
@@ -131,6 +132,7 @@ assert(premiumRepair.includes(".login-issue-resolver") && premiumRepair.includes
 assert(css.includes(".live-onboarding-contract") && css.includes(".live-onboarding-contract-grid") && css.includes(".live-onboarding-sequence"), "live onboarding acceptance contract must be styled and bounded.");
 assert(css.includes(".public-auth-flow-command") && css.includes(".public-auth-flow-grid") && css.includes("Public auth simplification pass"), "public auth flow command must be styled and simplify the login/register surface.");
 assert(css.includes(".registration-focus-strip") && css.includes("grid-template-columns: repeat(2, minmax(0, 1fr))"), "registration focus strip must be styled and bounded.");
+assert(css.includes(".portal-launch-decision-strip") && css.includes(".portal-launch-decision-strip article"), "portal launch decision strip must be styled and bounded.");
 assert(app.includes('aria-label="Public portal launch checklist"'), "public website must expose the launch checklist for website, auth, pricing, database, and server readiness.");
 assert(css.includes(".public-portal-launch-checklist") && css.includes(".public-portal-launch-grid"), "public portal launch checklist must be styled and bounded.");
 assert(css.includes(".portal-submit-receipt") && css.includes(".portal-submit-receipt-grid"), "portal submit receipt must be styled and bounded.");

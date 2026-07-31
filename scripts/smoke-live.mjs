@@ -148,6 +148,10 @@ assertIncludesAny(bundleText, ["First live database write"], "auth first databas
 assertIncludesAny(bundleText, ["Portal decision matrix"], "portal registration decision matrix");
 assertIncludesAny(bundleText, ["One login system, two clean registration paths"], "portal registration decision copy");
 assertIncludesAny(bundleText, ["portal_decision_matrix"], "portal registration decision packet field");
+assertIncludesAny(bundleText, ["Portal launch decision strip"], "portal launch decision strip");
+assertIncludesAny(bundleText, ["portal_launch_decision_strip"], "portal launch decision packet field");
+assertIncludesAny(bundleText, ["Choose this when"], "portal decision plain-language selector");
+assertIncludesAny(bundleText, ["You review others"], "corporate portal plain-language decision copy");
 assertIncludesAny(bundleText, ["Live onboarding acceptance contract"], "live onboarding acceptance contract");
 assertIncludesAny(bundleText, ["live_onboarding_acceptance_contract"], "live onboarding acceptance contract packet field");
 assertIncludesAny(bundleText, ["preview_data_accepted"], "live onboarding rejects preview data");

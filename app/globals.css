@@ -1780,6 +1780,55 @@ button {
   line-height: 1.35;
 }
 
+.portal-launch-decision-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.07), rgba(95, 240, 201, 0.03)),
+    rgba(255, 255, 255, 0.024);
+}
+
+.portal-launch-decision-strip article {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.portal-launch-decision-strip span,
+.portal-launch-decision-strip strong,
+.portal-launch-decision-strip small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.portal-launch-decision-strip span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.portal-launch-decision-strip strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.18;
+}
+
+.portal-launch-decision-strip small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .portal-submit-receipt {
   display: grid;
   gap: 10px;
@@ -12972,6 +13021,7 @@ p {
   .stripe-checkout-decision-actions,
   .pending-registration-grid,
   .registration-focus-strip,
+  .portal-launch-decision-strip,
   .registration-decision-grid,
   .live-seed-preflight-top,
   .live-seed-preflight-actions,
