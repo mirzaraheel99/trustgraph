@@ -106,6 +106,8 @@ assert(premiumRepair.includes(".corporate-verify-first-use") && premiumRepair.in
 assert(css.includes(".corporate-verify-live-command") && css.includes(".corporate-verify-live-command-grid") && css.includes("Corporate Verify live access command"), "Corporate Verify live access command must be styled and bounded.");
 assert(css.includes(".empty-verify-state-command") && css.includes(".empty-verify-state-grid") && css.includes(".empty-verify-state-actions"), "Corporate Verify empty-state command must be styled and bounded.");
 assert(css.includes(".corporate-scope-review-command") && css.includes(".corporate-scope-review-grid"), "Corporate scope review command must be styled and bounded.");
+assert(app.includes('aria-label="Corporate access next action command"'), "Corporate Verify must expose the next action required to unlock scoped user database proof.");
+assert(css.includes(".corporate-access-next-action") && css.includes(".corporate-access-next-action-grid"), "corporate access next action command must be styled and bounded.");
 assert(css.includes(".request-scope-receipt") && css.includes(".request-scope-receipt-grid"), "Corporate Verify request scope receipt must be styled and bounded.");
 assert(premiumRepair.includes(".corporate-user-database-contract") && premiumRepair.includes(".corporate-user-database-contract-grid"), "corporate user database access contract must be styled and bounded.");
 assert(premiumRepair.includes(".auth-recovery-command-grid") && premiumRepair.includes(".public-auth-recovery-actions"), "auth recovery command buttons must be included in overflow guards.");

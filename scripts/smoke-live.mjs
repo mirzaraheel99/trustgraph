@@ -562,6 +562,9 @@ assertIncludesAny(bundleText, ["Visible user records"], "corporate visibility vi
 assertIncludesAny(bundleText, ["Corporate scope review command"], "corporate scope review command panel");
 assertIncludesAny(bundleText, ["corporate_scope_review_command"], "corporate scope review packet field");
 assertIncludesAny(bundleText, ["every visible user row must be live, approved, scoped, gap-reviewed, and attested"], "corporate scope review boundary copy");
+assertIncludesAny(bundleText, ["Corporate access next action"], "corporate access next action command");
+assertIncludesAny(bundleText, ["corporate_access_next_action_command"], "corporate access next action packet field");
+assertIncludesAny(bundleText, ["corporate_access_next_action_is_complete_only_when_live_rbac_context"], "corporate access next action acceptance rule");
 assertIncludesAny(bundleText, ["Request access by professional email"], "corporate access review queue empty action");
 assertIncludesAny(bundleText, ["reviewer_scan_board"], "Corporate user database scan board packet field");
 assertIncludesAny(bundleText, ["shared records"], "Corporate user database shared-record row detail");

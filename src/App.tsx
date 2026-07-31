@@ -3503,6 +3503,63 @@ function CorporateDirectoryPanel({
     }
   ];
   const corporateScopeReviewReady = corporateScopeReviewCommand.filter((item) => item.ready).length;
+  const corporateAccessNextAction =
+    !isLiveCorporateDatabase
+      ? {
+          label: "Login corporate reviewer",
+          detail: "Use a live corporate RBAC session before reviewing user database rows.",
+          action: "Open Account",
+          target: "account",
+          ready: false
+        }
+      : approvedAccessCount === 0
+        ? {
+            label: "Request professional access",
+            detail: "Start with one professional email and a business purpose; no open user browsing.",
+            action: "Request access",
+            target: "request",
+            ready: false
+          }
+        : sharedRecords.length === 0
+          ? {
+              label: "Wait for approved shared rows",
+              detail: "The professional must approve scope before Corporate Verify can see Passport rows.",
+              action: "Refresh shared rows",
+              target: "refresh",
+              ready: false
+            }
+          : openGapRequestCount > 0
+            ? {
+                label: "Resolve missing-record gaps",
+                detail: "Review open gap requests before marking the user database ready for handoff.",
+                action: "Review gaps",
+                target: "gaps",
+                ready: false
+              }
+            : reviews.length === 0
+              ? {
+                  label: "Record reviewer attestation",
+                  detail: "A corporate reviewer must mark reviewed or ready handoff for approved shared rows.",
+                  action: "Open review queue",
+                  target: "queue",
+                  ready: false
+                }
+              : {
+                  label: "Export corporate user proof",
+                  detail: "Approved shared rows and review attestations are ready for the scoped user packet.",
+                  action: "Export user packet",
+                  target: "export",
+                  ready: true
+                };
+  const corporateAccessNextActionCommand = {
+    mode: "corporate_access_next_action_command",
+    current_action: corporateAccessNextAction.label,
+    action: corporateAccessNextAction.action,
+    target: corporateAccessNextAction.target,
+    ready_for_export: corporateAccessNextAction.ready,
+    acceptance_rule:
+      "corporate_access_next_action_is_complete_only_when_live_rbac_context_approved_grants_shared_rows_gap_review_and_attestation_are_ready"
+  };
   const corporateVisibilityLedger = [
     {
       label: "Visible user records",
@@ -3632,6 +3689,7 @@ function CorporateDirectoryPanel({
         corporateScopeReviewCommand.find((item) => !item.ready)?.label ?? "Export user packet or mark ready handoff",
       checks: corporateScopeReviewCommand
     },
+    corporate_access_next_action_command: corporateAccessNextActionCommand,
     corporate_data_access_path: corporateAccessPath,
     corporate_review_attestation_ledger: corporateReviewAttestationLedger,
     corporate_review_attestations: reviews.map((review) => ({
@@ -3792,6 +3850,27 @@ function CorporateDirectoryPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="corporate-access-next-action" aria-label="Corporate access next action command">
+        <div>
+          <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Corporate access next action</span>
+          <strong>{corporateAccessNextAction.label}</strong>
+          <small>{corporateAccessNextAction.detail}</small>
+        </div>
+        <div className="corporate-access-next-action-grid">
+          <span>
+            <small>Action</small>
+            <strong>{corporateAccessNextAction.action}</strong>
+          </span>
+          <span>
+            <small>Target</small>
+            <strong>{corporateAccessNextAction.target}</strong>
+          </span>
+          <span>
+            <small>Export ready</small>
+            <strong>{corporateAccessNextAction.ready ? "Yes" : "Not yet"}</strong>
+          </span>
         </div>
       </div>
       <div className="corporate-directory-filter-receipt" aria-label="Corporate directory filter receipt">

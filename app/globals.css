@@ -8782,6 +8782,59 @@ p {
   line-height: 1.35;
 }
 
+.corporate-access-next-action {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.corporate-access-next-action > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-access-next-action strong,
+.corporate-access-next-action small,
+.corporate-access-next-action span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-access-next-action > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.1;
+}
+
+.corporate-access-next-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.corporate-access-next-action-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.corporate-access-next-action-grid small {
+  color: rgba(222, 239, 233, 0.66);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .directory-review-board {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12375,6 +12428,7 @@ p {
   .corporate-directory-filter-receipt,
   .corporate-directory-filter-grid,
   .corporate-scope-review-grid,
+  .corporate-access-next-action-grid,
   .directory-review-board,
   .admin-audit-export-command-grid,
   .admin-audit-export-command-actions,
