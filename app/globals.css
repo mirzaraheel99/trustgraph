@@ -2769,6 +2769,47 @@ p,
   white-space: normal;
 }
 
+.login-issue-resolver {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(240, 198, 107, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(240, 198, 107, 0.075), rgba(255, 255, 255, 0.018)),
+    rgba(255, 255, 255, 0.024);
+}
+
+.login-issue-resolver > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.login-issue-resolver-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.login-issue-resolver-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.login-issue-resolver strong,
+.login-issue-resolver small,
+.login-issue-resolver span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .last-signed-evidence-link {
   display: grid;
   gap: 8px;
@@ -11542,6 +11583,7 @@ p {
   .live-database-repair-grid article,
   .live-data-verdict,
   .live-data-verdict-grid,
+  .login-issue-resolver-grid,
   .working-database-runbook-grid,
   .working-database-command-grid,
   .working-database-grid,
@@ -12407,6 +12449,7 @@ p {
 .billing-controls,
 .auth-recovery-command-grid,
 .hosted-callback-proof-grid,
+.login-issue-resolver-grid,
 .public-auth-recovery-actions,
 .pilot-contact-form,
 .production-gate-form {
@@ -12470,6 +12513,32 @@ p {
   background:
     linear-gradient(180deg, rgba(95, 240, 201, 0.07), rgba(255, 255, 255, 0.018)),
     rgba(255, 255, 255, 0.03);
+}
+
+.login-issue-resolver {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(240, 198, 107, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(240, 198, 107, 0.075), rgba(255, 255, 255, 0.018)),
+    rgba(255, 255, 255, 0.03);
+}
+
+.login-issue-resolver-grid {
+  display: grid;
+  gap: 9px;
+}
+
+.login-issue-resolver-grid article {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
 }
 
 .hosted-callback-proof > div:first-child {

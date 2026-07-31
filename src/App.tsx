@@ -11053,6 +11053,23 @@ function PublicSite({
       detail: "Paste Supabase links that point to localhost and convert them to the hosted TrustGraph URL."
     }
   ];
+  const loginIssueResolver = [
+    {
+      label: "Email rate limit",
+      action: "Wait 60+ minutes or configure SMTP",
+      detail: "Supabase built-in email can pause after 2 messages per hour across the project."
+    },
+    {
+      label: "Verification opens localhost",
+      action: "Paste link and copy hosted link",
+      detail: "Convert old localhost links to the active hosted TrustGraph redirect before opening them."
+    },
+    {
+      label: "Account exists but login fails",
+      action: "Reset password",
+      detail: "Use hosted recovery so the inbox link returns to TrustGraph instead of a local dev URL."
+    }
+  ];
   const registrationAuthPacket = {
     generated_at: new Date().toISOString(),
     selected_portal: portal,
@@ -11103,6 +11120,7 @@ function PublicSite({
       pricing: item.pricing
     })),
     portal_login_switchboard: portalLoginSwitchboard,
+    login_issue_resolver: loginIssueResolver,
     auth_recovery_decision_path: authRecoveryDecisionPath,
     repaired_link_ready: Boolean(repairedVerificationUrl),
     portal_auth_outcome_summary: authOutcomePacket,
@@ -12143,6 +12161,22 @@ function PublicSite({
             <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
               Reset password
             </button>
+          </div>
+          <div className="login-issue-resolver" aria-label="Login issue resolver">
+            <div>
+              <span className="status-chip neutral">Login issue resolver</span>
+              <strong>Fix verification, recovery, or rate-limit problems without guessing</strong>
+              <small>Use these when signup says email is limited, the inbox link opens localhost, or an existing account cannot login.</small>
+            </div>
+            <div className="login-issue-resolver-grid">
+              {loginIssueResolver.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.action}</strong>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="public-auth-recovery-command" aria-label="Public auth recovery command center">
             <div>

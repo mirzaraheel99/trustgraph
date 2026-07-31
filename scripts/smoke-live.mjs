@@ -244,6 +244,9 @@ assertIncludesAny(bundleText, ["Pending corporate workspace"], "pending Corporat
 assertIncludesAny(bundleText, ["Clear saved setup"], "pending Corporate setup reset control");
 assertIncludesAny(bundleText, ["Fix localhost email link"], "hosted auth link repair control");
 assertIncludesAny(bundleText, ["Copy hosted link"], "hosted auth link copy control");
+assertIncludesAny(bundleText, ["Login issue resolver"], "public login issue resolver");
+assertIncludesAny(bundleText, ["Fix verification, recovery, or rate-limit problems without guessing"], "login issue resolver headline");
+assertIncludesAny(bundleText, ["login_issue_resolver"], "registration auth packet login issue resolver field");
 assertIncludesAny(bundleText, ["Every portal connects to the live database foundation"], "live database registration outcome copy");
 assertIncludesAny(bundleText, ["After registration"], "registration outcome section");
 assertIncludesAny(bundleText, ["Set new password"], "password recovery update control");

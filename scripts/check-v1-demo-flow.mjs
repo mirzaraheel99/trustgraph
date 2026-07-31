@@ -66,6 +66,8 @@ const flowChecks = [
       "Live database handoff",
       "Verification, recovery, and link repair",
       "Auth recovery command center",
+      "Login issue resolver",
+      "login_issue_resolver",
       "Copy hosted redirect"
     ]
   },
