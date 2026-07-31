@@ -6533,6 +6533,66 @@ p {
   justify-content: center;
 }
 
+.v1-proof-collection-command {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.08), transparent 58%),
+    rgba(0, 0, 0, 0.12);
+}
+
+.v1-proof-collection-command > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.v1-proof-collection-command strong,
+.v1-proof-collection-command small,
+.v1-proof-collection-command span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-proof-collection-command > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(16px, 2vw, 22px);
+}
+
+.v1-proof-collection-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+}
+
+.v1-proof-collection-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.v1-proof-collection-grid article > span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: #9bfbe3;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
 .dashboard-start-map {
   display: grid;
   gap: 12px;
@@ -12059,6 +12119,7 @@ p {
   .dashboard-next-action-buttons,
   .signed-in-landing-grid,
   .proof-export-hub-grid,
+  .v1-proof-collection-grid,
   .server-release-cockpit-header,
   .server-release-command,
   .server-release-grid,

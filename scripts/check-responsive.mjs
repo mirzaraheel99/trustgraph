@@ -60,6 +60,7 @@ const requiredMobileStacks = [
   ".evidence-source-strip",
   ".evidence-access-chain",
   ".evidence-preview-download-grid",
+  ".v1-proof-collection-grid",
   ".fraud-review-strip",
   ".fraud-review-metrics",
   ".data-rights-review-strip",

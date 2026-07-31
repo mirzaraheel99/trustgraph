@@ -15139,6 +15139,22 @@ function App() {
       target: "export" as const
     }
   ];
+  const v1ProofCollectionCommand = {
+    mode: "v1_proof_collection_command",
+    signed_in: Boolean(authSession),
+    current_workspace: workspace.id,
+    required_order: proofExportHub.map((item) => item.label),
+    accepted_when: "working_database_proof_corporate_verify_packet_user_database_packet_and_authorized_workspace_report_are_collected_from_live_session",
+    preview_data_accepted: false
+  };
+  const v1ProofCollectionSteps = proofExportHub.map((item, index) => ({
+    step: `${index + 1}`,
+    label: item.label,
+    status: item.status,
+    detail: item.detail,
+    action: item.action,
+    target: item.target
+  }));
   const v1OperatingMap = [
     {
       step: "1",
@@ -16282,6 +16298,23 @@ function App() {
               <small>Use this when you need database proof, Corporate Verify proof, user database packets, or the scoped workspace report.</small>
             </div>
             <span className={`status-chip ${authSession ? "success" : "warning"}`}>{authSession ? "scope enforced" : "preview only"}</span>
+          </div>
+          <div className="v1-proof-collection-command" aria-label="V1 proof collection command">
+            <div>
+              <span className="status-chip success">V1 proof collection command</span>
+              <strong>Collect proof packets in order before calling the build accepted</strong>
+              <small>Use live session rows only. Preview data accepted: {v1ProofCollectionCommand.preview_data_accepted ? "yes" : "no"}.</small>
+            </div>
+            <div className="v1-proof-collection-grid">
+              {v1ProofCollectionSteps.map((item) => (
+                <article key={item.label}>
+                  <span>{item.step}</span>
+                  <strong>{item.label}</strong>
+                  <small>{item.status}</small>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="proof-export-hub-grid">
             {proofExportHub.map((item) => (

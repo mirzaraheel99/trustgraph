@@ -486,6 +486,9 @@ assertIncludesAny(bundleText, ["signed_in_landing_actions"], "signed-in landing 
 assertIncludesAny(bundleText, ["Account and recovery"], "signed-in account recovery action");
 assertIncludesAny(bundleText, ["Proof & exports", "Proof &amp; exports"], "proof and exports hub label");
 assertIncludesAny(bundleText, ["proof_export_hub"], "proof and exports hub packet field");
+assertIncludesAny(bundleText, ["V1 proof collection command"], "V1 proof collection command");
+assertIncludesAny(bundleText, ["v1_proof_collection_command"], "V1 proof collection packet field");
+assertIncludesAny(bundleText, ["Collect proof packets in order before calling the build accepted"], "V1 proof collection guidance");
 assertIncludesAny(bundleText, ["Authorized workspace report"], "authorized workspace report export card");
 assertIncludesAny(bundleText, ["Portal handoff checklist"], "portal handoff checklist label");
 assertIncludesAny(bundleText, ["portal_handoff_checklist"], "portal handoff checklist packet field");

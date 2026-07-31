@@ -23,6 +23,7 @@ assert(authenticatedRender.includes('aria-label="Dashboard next action"'), "sign
 assert(authenticatedRender.includes('aria-label="Portal command deck"'), "signed-in dashboard must expose a consolidated portal command deck.");
 assert(authenticatedRender.includes('aria-label="Portal home command center"'), "signed-in dashboard must expose a simple portal home command center.");
 assert(authenticatedRender.includes('aria-label="Portal choice guide"'), "signed-in dashboard must expose a simple portal choice guide.");
+assert(authenticatedRender.includes('aria-label="V1 proof collection command"'), "signed-in dashboard must expose a V1 proof collection command.");
 assert(authenticatedRender.includes('aria-label="Server release save path"'), "signed-in dashboard must expose the GitHub-to-VPS release save path.");
 assert(authenticatedRender.includes('aria-label="Hosted version receipt"'), "signed-in dashboard must expose the VPS hosted version receipt.");
 assert(app.includes("trustgraph-release.json"), "signed-in dashboard must expose the VPS release stamp verification command.");
@@ -60,6 +61,7 @@ assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: no
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".portal-choice-guide") && premiumRepair.includes(".portal-choice-guide-grid"), "portal choice guide must be styled and bounded in the premium shell.");
+assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-collection-grid"), "V1 proof collection command must be styled and bounded.");
 assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
