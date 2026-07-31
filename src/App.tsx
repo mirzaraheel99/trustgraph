@@ -533,6 +533,8 @@ function RecordDetail({
     },
     evidence_policy: {
       storage: "private_supabase_storage",
+      receipt_table: "evidence_access_receipts",
+      receipt_rpc: "record_evidence_access_receipt",
       preview_link_expiry_seconds: 300,
       download_link_expiry_seconds: 120,
       metadata_only_items_open_without_file_exposure: true,
