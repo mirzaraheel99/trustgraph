@@ -2,6 +2,12 @@ import { readdir, readFile } from "node:fs/promises";
 
 const targetUrl = process.env.TRUSTGRAPH_SMOKE_URL || "https://mirzaraheel99.github.io/trustgraph/";
 
+function wait(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function fetchText(url) {
   const response = await fetch(url, {
     headers: {
@@ -11,6 +17,21 @@ async function fetchText(url) {
 
   const text = await response.text();
   return { response, text };
+}
+
+async function fetchTextWithRetry(url, attempts = 4) {
+  let latest;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    latest = await fetchText(url);
+    if (latest.response.ok || attempt === attempts) {
+      return latest;
+    }
+
+    await wait(750 * attempt);
+  }
+
+  return latest;
 }
 
 function uniqueAssetUrls(html, baseUrl) {
@@ -90,7 +111,7 @@ async function assertRepoReadinessArtifacts() {
 }
 
 const pageUrl = `${targetUrl}?smoke=live-script`;
-const { response, text } = await fetchText(pageUrl);
+const { response, text } = await fetchTextWithRetry(pageUrl);
 
 await assertRepoReadinessArtifacts();
 
@@ -103,7 +124,7 @@ assert(assetUrls.length > 0, "Expected static asset references in hosted HTML");
 
 await Promise.all(
   assetUrls.map(async (assetUrl) => {
-    const { response: assetResponse } = await fetchText(assetUrl);
+    const { response: assetResponse } = await fetchTextWithRetry(assetUrl);
     assert(assetResponse.ok, `Expected asset ${assetUrl} to return 2xx, received ${assetResponse.status}`);
   })
 );
@@ -114,7 +135,7 @@ const bundleText = (
       .filter((assetUrl) => assetUrl.endsWith(".js"))
       .slice(0, 6)
       .map(async (assetUrl) => {
-        const { text: assetText } = await fetchText(assetUrl);
+        const { text: assetText } = await fetchTextWithRetry(assetUrl);
         return assetText;
       })
   )
