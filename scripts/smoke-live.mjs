@@ -508,6 +508,9 @@ assertIncludesAny(bundleText, ["Export first-use proof"], "Corporate Verify firs
 assertIncludesAny(bundleText, ["Corporate Verify live access command"], "Corporate Verify live access command");
 assertIncludesAny(bundleText, ["corporate_verify_live_access_command"], "Corporate Verify live access command packet field");
 assertIncludesAny(bundleText, ["Export access command"], "Corporate Verify live access command export");
+assertIncludesAny(bundleText, ["Empty Corporate Verify state command"], "Corporate Verify empty-state command");
+assertIncludesAny(bundleText, ["empty_verify_state_command"], "Corporate Verify empty-state packet field");
+assertIncludesAny(bundleText, ["Export empty-state proof"], "Corporate Verify empty-state export");
 assertIncludesAny(bundleText, ["Review visible user rows"], "Corporate Verify first-use review step");
 assertIncludesAny(bundleText, ["tokens_redacted"], "Corporate Verify first-use proof redacts tokens");
 assertIncludesAny(bundleText, ["Reviewer workflow"], "Corporate Verify reviewer workflow guide");

@@ -152,6 +152,8 @@ const requiredMobileStacks = [
   ".corporate-verify-live-command-header",
   ".corporate-verify-live-command-actions",
   ".corporate-verify-live-command-grid",
+  ".empty-verify-state-grid",
+  ".empty-verify-state-actions",
   ".corporate-verify-access-lane-grid",
   ".verify-request-header",
   ".verify-reviewer-flow-header",

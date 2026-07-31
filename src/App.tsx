@@ -2097,6 +2097,31 @@ function VerifyRequestsPanel({
       ready: reviews.length > 0 && pendingGapCount === 0
     }
   ];
+  const emptyVerifyStateCommand = {
+    mode: "empty_verify_state_command",
+    visible_shared_rows: sharedRecords.length,
+    next_action: firstUseNextAction,
+    route_target: liveAccessCommandTarget,
+    access_boundary: "Corporate reviewers cannot browse users; they must request one professional by email and wait for approval.",
+    accepted_when: "approved_access_grant_exists_and_shared_passport_rows_are_visible_for_active_corporate_rbac_context"
+  };
+  const emptyVerifyStateCards = [
+    {
+      label: "If no rows show",
+      value: sharedRecords.length ? "Rows loaded" : "Start with request",
+      detail: sharedRecords.length ? "Continue to review queue." : "Send an Access Grant request to one professional email."
+    },
+    {
+      label: "Approval rule",
+      value: approvedCount ? "Approved" : "Not approved yet",
+      detail: approvedCount ? "A grant can expose scoped rows." : "No Passport rows appear until the professional approves."
+    },
+    {
+      label: "Review source",
+      value: disabled ? "Role needed" : "Corporate RBAC",
+      detail: disabled ? "Create or switch into reviewer access." : "Rows load only for the active company and role."
+    }
+  ];
   const corporateVerifyFirstUsePacket = {
     generated_at: new Date().toISOString(),
     mode: "corporate_verify_first_use_wizard",
@@ -2118,6 +2143,7 @@ function VerifyRequestsPanel({
       covered_sensitive_records: coveredConsentRecords
     },
     live_access_command: corporateVerifyLiveAccessCommand,
+    empty_verify_state_command: emptyVerifyStateCommand,
     accepted_when: "request_created_professional_approval_shared_rows_visible_review_attestation_exported",
     tokens_redacted: true,
     steps: corporateVerifyFirstUseWizard.map(({ label, value, detail, state }) => ({ label, value, detail, state }))
@@ -2241,6 +2267,38 @@ function VerifyRequestsPanel({
               </div>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="empty-verify-state-command" aria-label="Empty Corporate Verify state command">
+        <div>
+          <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Empty Corporate Verify state command</span>
+          <strong>{sharedRecords.length ? "Corporate Verify has approved shared rows" : "No shared user rows yet: request access first"}</strong>
+          <small>{emptyVerifyStateCommand.access_boundary}</small>
+        </div>
+        <div className="empty-verify-state-grid">
+          {emptyVerifyStateCards.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="empty-verify-state-actions">
+          <button
+            className="primary-action"
+            onClick={() => document.getElementById(emptyVerifyStateCommand.route_target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            type="button"
+          >
+            Open required step
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(corporateVerifyFirstUsePacketName, JSON.stringify(corporateVerifyFirstUsePacket, null, 2), "application/json")}
+            type="button"
+          >
+            Export empty-state proof
+          </button>
         </div>
       </div>
       <div className="corporate-verify-first-use" aria-label="Corporate Verify first-use wizard">
