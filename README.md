@@ -105,6 +105,8 @@ The signed-in app now opens with a premium launch console that separates Persona
 
 The signed-in dashboard now adds a Portal daily navigator directly after the front door, with six plain actions for Personal, Corporate, Admin, Account, Pricing, and Database proof plus visible recovery, logout, and export controls. This gives operators one calm path before the deeper audit and database panels.
 
+Signed-in Account now has a recovery control strip that keeps hosted redirect copy, resend verification, password reset, password update, sign out, and an exportable account packet together. The actions use the current session email when the email field is empty, so hosted verification and recovery tests do not depend on retyping credentials.
+
 The public login/register form now shows a visible auth route summary immediately before the input fields, so Professional users and Corporate admins can confirm account type, login/register mode, pricing path, first database write, and landing portal before submitting.
 
 The public auth form also starts with a Registration route planner that keeps Professional versus Corporate, Register versus Login, price, first database write, next dashboard, recovery, and required proof in one compact operator view before the form fields.

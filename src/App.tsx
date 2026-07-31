@@ -12086,10 +12086,11 @@ function AuthPanel({
   }
 
   async function recoverPassword() {
+    const recoveryEmail = email || session?.user.email || "";
     setBusy(true);
     setMessage("Sending recovery email...");
     try {
-      await requestPasswordRecovery(email, authRedirectUrl);
+      await requestPasswordRecovery(recoveryEmail, authRedirectUrl);
       setMessage("Password recovery email requested. Use the inbox link to return to TrustGraph; wait 60+ minutes if Supabase rate-limits email.");
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not request password recovery."));
@@ -12099,10 +12100,11 @@ function AuthPanel({
   }
 
   async function resendVerification() {
+    const verificationEmail = email || session?.user.email || "";
     setBusy(true);
     setMessage("Sending verification email...");
     try {
-      await resendSignupConfirmation(email, authRedirectUrl);
+      await resendSignupConfirmation(verificationEmail, authRedirectUrl);
       setMessage("Verification email requested. If Supabase says rate limit exceeded, wait 60+ minutes or configure custom SMTP.");
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not resend verification email."));
@@ -12163,6 +12165,59 @@ function AuthPanel({
     hosted_redirect_url: authRedirectUrl,
     accepted_when: "signed_in_account_shows_logout_password_update_recovery_state_and_hosted_redirect_without_hidden_controls"
   };
+  const signedInRecoveryControlStrip = {
+    mode: "signed_in_recovery_control_strip",
+    generated_at: new Date().toISOString(),
+    session_email: session?.user.email ?? "signed_out",
+    session_state: session ? "signed_in" : "signed_out",
+    recovery_session_ready: recoverySessionReady,
+    hosted_redirect_url: authRedirectUrl,
+    visible_controls: [
+      "copy_hosted_redirect",
+      "resend_verification",
+      "request_password_reset",
+      "set_new_password",
+      "sign_out",
+      "export_recovery_packet"
+    ],
+    email_source: email ? "typed_email" : session?.user.email ? "current_session_email" : "missing_email",
+    accepted_when:
+      "signed_in_account_recovery_controls_show_session_logout_password_reset_verification_resend_hosted_redirect_and_export_without_hidden_actions"
+  };
+  const signedInRecoveryControlActions = [
+    {
+      label: "Copy redirect",
+      detail: "Use this URL in Supabase Auth so new email links return here.",
+      icon: <ClipboardCheck size={16} />,
+      disabled: false,
+      onClick: () => void copyRedirectUrl()
+    },
+    {
+      label: "Resend verify",
+      detail: "Sends to the current session email if the email field is empty.",
+      icon: <BadgeCheck size={16} />,
+      disabled: busy || !session,
+      onClick: () => void resendVerification()
+    },
+    {
+      label: "Reset password",
+      detail: "Sends a recovery link with the hosted TrustGraph redirect.",
+      icon: <KeyRound size={16} />,
+      disabled: busy || !session,
+      onClick: () => void recoverPassword()
+    },
+    {
+      label: "Sign out",
+      detail: "Clear this browser before switching accounts or testing Corporate.",
+      icon: <LogOut size={16} />,
+      disabled: false,
+      onClick: () => {
+        signOut();
+        onSession(null);
+        setMessage(authModeLabel());
+      }
+    }
+  ];
   const signedInRecoveryRouteCards = [
     {
       label: "Session",
@@ -12199,6 +12254,49 @@ function AuthPanel({
           <div className="auth-session-meta">
             <span>Live database access</span>
             <span>RBAC context loading</span>
+          </div>
+          <div className="signed-in-recovery-control-strip" aria-label="Signed-in recovery control strip">
+            <div>
+              <span className={`status-chip ${recoverySessionReady ? "success" : "neutral"}`}>Account recovery controls</span>
+              <strong>{recoverySessionReady ? "Finish password recovery now" : "Signed in account controls"}</strong>
+              <small>
+                {session.user.email} is active. Verification, recovery, logout, and hosted redirect proof are grouped here so account testing does not get lost.
+              </small>
+            </div>
+            <div className="signed-in-recovery-control-grid">
+              {signedInRecoveryControlActions.map((action) => (
+                <button
+                  className="secondary-action"
+                  disabled={action.disabled}
+                  key={action.label}
+                  onClick={action.onClick}
+                  type="button"
+                >
+                  {action.icon}
+                  <span>
+                    <strong>{action.label}</strong>
+                    <small>{action.detail}</small>
+                  </span>
+                </button>
+              ))}
+            </div>
+            <div className="signed-in-recovery-control-actions">
+              <code>{authRedirectUrl}</code>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-signed-in-recovery-controls-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(signedInRecoveryControlStrip, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export account packet
+              </button>
+            </div>
           </div>
           <div className="signed-in-recovery-route" aria-label="Signed-in recovery route">
             <div>
@@ -12238,16 +12336,6 @@ function AuthPanel({
               Set new password
             </button>
           </form>
-          <button
-            className="secondary-action"
-            onClick={() => {
-              signOut();
-              onSession(null);
-              setMessage(authModeLabel());
-            }}
-          >
-            Sign out
-          </button>
           <div className="data-rights-panel">
             <div className="mini-heading">
               <Database size={16} />
