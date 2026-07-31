@@ -22781,3 +22781,134 @@ body {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Public auth decision desk repair: make login/register usable before showing proof artifacts. */
+.public-auth-flow-command,
+.registration-decision-receipt,
+.live-onboarding-contract,
+.account-type-chooser,
+.auth-choice-summary,
+.portal-auth-summary-panel,
+.portal-support-details,
+.portal-outcome-list,
+.registration-focus-strip,
+.portal-handoff-checklist,
+.auth-path-summary,
+.public-auth-server-checkpoint,
+.registration-pre-submit-checklist,
+.portal-submit-receipt,
+.registration-outcome-command {
+  display: none !important;
+}
+
+.public-auth-section {
+  align-items: start;
+  gap: clamp(18px, 4vw, 42px);
+}
+
+.public-auth-section > div:first-child {
+  min-width: 0;
+}
+
+.public-auth-card {
+  position: relative !important;
+  top: auto !important;
+  gap: 12px;
+  max-height: none;
+  overflow: visible;
+  border: 1px solid rgba(210, 231, 223, 0.16);
+}
+
+.public-auth-card .portal-tabs,
+.auth-support-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+}
+
+.public-auth-card .portal-tabs button,
+.auth-support-actions .secondary-action,
+.public-auth-card > .primary-action,
+.public-auth-card > .secondary-action {
+  justify-content: center;
+  min-height: 44px;
+}
+
+.auth-card-heading,
+.auth-selected-route,
+.public-auth-card label,
+.public-auth-card input,
+.public-auth-card select,
+.public-auth-card textarea,
+.public-auth-card button {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.public-auth-card label {
+  display: grid;
+  gap: 6px;
+}
+
+.public-auth-card input,
+.public-auth-card select {
+  height: 44px;
+}
+
+.public-auth-card textarea {
+  min-height: 84px;
+}
+
+.auth-selected-route {
+  border-color: rgba(95, 240, 201, 0.22);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.portal-access-cockpit,
+.portal-start-desk,
+.portal-auth-command {
+  width: min(100%, 760px);
+}
+
+.portal-access-cockpit-actions,
+.portal-access-cockpit-grid,
+.portal-start-desk-switches,
+.portal-start-desk-grid,
+.portal-launch-decision-strip,
+.portal-entry-path {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+}
+
+.portal-start-desk-next {
+  grid-template-columns: 1fr;
+}
+
+.portal-start-desk-next button {
+  justify-self: start;
+  width: auto;
+}
+
+@media (max-width: 980px) {
+  .public-auth-section {
+    width: min(100%, 720px);
+  }
+}
+
+@media (max-width: 640px) {
+  .public-auth-section {
+    padding-inline: 12px;
+  }
+
+  .public-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-access-cockpit-actions,
+  .portal-access-cockpit-grid,
+  .portal-start-desk-switches,
+  .portal-start-desk-grid,
+  .portal-launch-decision-strip,
+  .portal-entry-path,
+  .public-auth-card .portal-tabs,
+  .auth-support-actions {
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -87,6 +87,8 @@ The hosted login/database handoff packet records the active Supabase return URL,
 
 The public auth surface is intentionally split into a contained professional/corporate access desk and a sticky login/register card. The signed-in dashboard intentionally uses the top command system instead of a fixed left rail, with one consolidated operator home instead of stacked duplicate command panels, so workspace routing, account recovery, logout, and corporate setup stay visible without horizontal overflow.
 
+The public login and registration page now keeps proof receipts out of the main form path: users first choose Professional or Corporate, pick Login or Register, complete the required fields, and use the visible recovery controls if hosted verification or password reset needs repair.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text
