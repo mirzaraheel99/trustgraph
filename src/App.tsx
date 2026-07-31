@@ -3851,6 +3851,8 @@ function CorporateDirectoryPanel({
     accepted_when:
       "corporate_user_database_export_receipt_requires_live_rbac_rows_filters_scope_review_attestation_and_no_preview_data"
   };
+  const corporateDatabaseAccessPersistedReceiptRule =
+    "corporate_database_access_receipt_requires_active_corporate_rbac_approved_access_grants_shared_rows_review_attestation_export_and_no_preview_data";
   const latestCorporateDatabaseReceipt = corporateDatabaseReceipts[0] ?? null;
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
@@ -3898,6 +3900,14 @@ function CorporateDirectoryPanel({
       accepted_only_when: "live_corporate_rbac_context_loads_access_grants_shared_passport_rows_review_ready_people_and_review_attestations",
       preview_data_accepted: false,
       checks: corporateDirectoryAcceptanceChecks
+    },
+    corporate_database_access_persisted_receipt: {
+      table: "corporate_database_access_receipts",
+      rpc: "record_corporate_database_access_receipt",
+      audit_event: "corporate_database_access.receipt_recorded",
+      accepted_when: corporateDatabaseAccessPersistedReceiptRule,
+      latest_receipt_status: latestCorporateDatabaseReceipt?.status ?? "not_recorded",
+      preview_data_accepted_for_v1: false
     },
     corporate_scope_review_command: {
       ready_checks: corporateScopeReviewReady,
@@ -3994,6 +4004,7 @@ function CorporateDirectoryPanel({
           filter_receipt: corporateDirectoryFilterReceipt,
           source_counts: corporateUserDatabasePacket.source_counts,
           active_database_mode: databaseModeLabel,
+          accepted_when: corporateDatabaseAccessPersistedReceiptRule,
           preview_data_accepted_for_v1: false
         }
       });
