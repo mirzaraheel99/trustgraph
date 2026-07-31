@@ -43,6 +43,7 @@ assert(authenticatedRender.includes('aria-label="Real data acceptance ledger"'),
 assert(authenticatedRender.includes('aria-label="Live row completion command"'), "V1 cockpit must expose a live row completion command.");
 assert(app.includes('aria-label="Live row source receipt"'), "working database proof must expose a live row source receipt.");
 assert(app.includes('aria-label="Live database repair command"'), "working database proof must expose a live database repair command.");
+assert(app.includes('aria-label="Real database proof cockpit"'), "working database proof must expose a first-screen real database proof cockpit that rejects demo data.");
 assert(authenticatedRender.includes("Sign out"), "signed-in dashboard must expose a visible sign-out action.");
 assert(authenticatedRender.includes('className="workspace-route-strip"'), "workspace route strip must remain available after sidebar removal.");
 assert(authenticatedRender.includes('className="workspace-flow-strip"'), "daily portal path strip must remain available after sidebar removal.");
@@ -153,6 +154,7 @@ assert(consoleLayout.includes(".work-grid") && consoleLayout.includes("grid-temp
 assert(consoleLayout.includes("@media (max-width: 1180px)") && consoleLayout.includes(".work-grid {\n    grid-template-columns: 1fr"), "console must stack before laptop/tablet widths get cramped.");
 assert(consoleLayout.includes("@media (max-width: 760px)") && consoleLayout.includes(".workspace-route-strip,\n  .workspace-flow-strip {\n    display: grid !important"), "mobile workspace routes must be vertical grids, not horizontal scrollers.");
 assert(premiumRepair.includes(".live-pilot-row-proof") && premiumRepair.includes(".live-pilot-row-proof-grid"), "live pilot row proof must be styled as a bounded premium panel.");
+assert(css.includes(".real-database-proof-cockpit") && css.includes(".real-database-proof-cockpit-grid"), "real database proof cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".v1-live-database-readiness") && premiumRepair.includes(".v1-live-database-readiness-grid"), "V1 live database readiness receipt must be styled as a bounded premium panel.");
 assert(premiumRepair.includes(".live-database-acceptance-lanes") && premiumRepair.includes(".live-database-acceptance-lane-grid"), "live database acceptance lanes must be styled and bounded.");
 assert(css.includes(".pilot-owner-readiness-receipt") && css.includes(".pilot-owner-readiness-grid"), "pilot owner readiness receipt must be styled and bounded.");

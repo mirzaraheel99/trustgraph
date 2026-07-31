@@ -11757,6 +11757,41 @@ function OnboardingChecklistPanel({
       "Working-data packet exported from live session"
     ]
   };
+  const realDatabaseProofCockpit = {
+    mode: "real_database_proof_cockpit",
+    status: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "live_database_accepted" : "live_database_proof_required",
+    next_action: liveDataLoadReceipt.next_action,
+    accepted_when:
+      "real_database_proof_cockpit_requires_hosted_auth_rbac_live_repository_rows_seed_reconciliation_corporate_review_proof_working_data_export_and_no_preview_or_fixture_data",
+    preview_data_accepted: false,
+    browser_seed_memory_accepted_without_reload: false
+  };
+  const realDatabaseProofCockpitCards = [
+    {
+      label: "Hosted auth",
+      value: authSession ? "Connected" : "Required",
+      detail: authSession ? authSession.user.email : "Login on hosted TrustGraph before live proof.",
+      ready: Boolean(authSession)
+    },
+    {
+      label: "Live row groups",
+      value: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length}`,
+      detail: liveDatabaseAcceptanceComplete ? "Required repository row groups are loaded." : "Load missing Passport, corporate, consent, team, billing, or proof rows.",
+      ready: liveDatabaseAcceptanceComplete
+    },
+    {
+      label: "Seed reconciliation",
+      value: seedReconciliationComplete ? "Matched" : visibleSeedEvidence ? `${seedReconciliationPassing}/${seedReconciliationRows.length}` : "Not run",
+      detail: seedReconciliationComplete ? "Seed IDs match reloaded Supabase rows." : "Run seed after login, reload rows, then compare IDs.",
+      ready: seedReconciliationComplete
+    },
+    {
+      label: "Acceptance source",
+      value: "No preview data",
+      detail: "Preview rows and browser-only seed memory cannot complete V1.",
+      ready: true
+    }
+  ];
   const workingDatabaseRunbookSteps = [
     {
       label: "1. Sign in on hosted TrustGraph",
@@ -12391,6 +12426,25 @@ function OnboardingChecklistPanel({
         <button className="secondary-action" disabled={!authSession || receiptBusy} onClick={() => void saveOnboardingReceipt()} type="button">
           Record onboarding receipt
         </button>
+      </div>
+      <div className="real-database-proof-cockpit" aria-label="Real database proof cockpit">
+        <div className="real-database-proof-cockpit-top">
+          <div>
+            <span className={`status-chip ${realDatabaseProofCockpit.status === "live_database_accepted" ? "success" : "warning"}`}>Real database proof cockpit</span>
+            <strong>{realDatabaseProofCockpit.next_action}</strong>
+            <small>{realDatabaseProofCockpit.accepted_when}</small>
+          </div>
+          <span className="status-chip neutral">preview data rejected</span>
+        </div>
+        <div className="real-database-proof-cockpit-grid">
+          {realDatabaseProofCockpitCards.map((card) => (
+            <article className={card.ready ? "ready" : "needed"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
       </div>
       <div className={`live-data-verdict ${liveDataVerdict.tone}`} aria-label="Live data verdict">
         <div>

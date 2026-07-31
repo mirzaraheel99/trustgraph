@@ -595,6 +595,9 @@ assertIncludesAny(bundleText, ["registration_intents_are_written_after_hosted_au
 assertIncludesAny(bundleText, ["Export intent review"], "registration intent review export control");
 assertIncludesAny(bundleText, ["Working database command center"], "working database command center panel");
 assertIncludesAny(bundleText, ["working_database_command_center"], "working database command center packet field");
+assertIncludesAny(bundleText, ["Real database proof cockpit"], "real database proof cockpit panel");
+assertIncludesAny(bundleText, ["real_database_proof_cockpit"], "real database proof cockpit packet field");
+assertIncludesAny(bundleText, ["No preview data"], "real database proof rejects preview data");
 assertIncludesAny(bundleText, ["Working-data packet export"], "working database command packet export label");
 assertIncludesAny(bundleText, ["Working database acceptance"], "working database acceptance summary");
 assertIncludesAny(bundleText, ["Live account acceptance checklist"], "live account acceptance checklist");
