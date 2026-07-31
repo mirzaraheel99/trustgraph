@@ -16801,6 +16801,40 @@ function App() {
   }
 
   const sessionSummary = authSession ? `${activeRole.label} at ${activeOrganization.name}` : "Preview mode";
+  const consoleLayoutReceipt = {
+    mode: "signed_in_console_layout_receipt",
+    view: "professional_corporate_admin_workspace",
+    source: authSession ? "live_session_console" : "preview_console",
+    active_workspace: workspace.label,
+    active_role: activeRole.label,
+    route_count: workspaces.length,
+    allowed_routes: workspaces.filter((item) => canAccessWorkspace(activeMembership.role, item.id)).length,
+    visible_controls: authSession ? ["account", "corporate_setup", "public_site", "sign_out"] : ["login_or_register", "public_site"],
+    accepted_when:
+      "top_command_bar_routes_account_logout_and_corporate_setup_are_visible_bounded_and_mobile_stacked_without_legacy_sidebar_overflow"
+  };
+  const consoleLayoutCards = [
+    {
+      label: "Active portal",
+      value: workspace.label,
+      detail: workspace.subtitle
+    },
+    {
+      label: "Session",
+      value: authSession ? "Live auth" : "Preview",
+      detail: authSession ? authSession.user.email : "Login/register opens from the top command bar."
+    },
+    {
+      label: "Routes",
+      value: `${consoleLayoutReceipt.allowed_routes}/${consoleLayoutReceipt.route_count}`,
+      detail: "Professional, Corporate, Admin, Account, and Readiness routes stay in one bounded grid."
+    },
+    {
+      label: "Next control",
+      value: authSession ? "Sign out visible" : "Login visible",
+      detail: consoleLayoutReceipt.accepted_when
+    }
+  ];
 
   if (showPublicSite) {
     return (
@@ -16947,6 +16981,23 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="console-layout-receipt" aria-label="Signed-in console layout receipt">
+          <div>
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Console layout</span>
+            <strong>{authSession ? "Portal controls are ready" : "Login and registration are ready"}</strong>
+            <small>{consoleLayoutReceipt.accepted_when}</small>
+          </div>
+          <div className="console-layout-receipt-grid">
+            {consoleLayoutCards.map((card) => (
+              <article key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <section className="portal-command-deck" aria-label="Portal command deck">
           <div className="portal-command-deck-header">

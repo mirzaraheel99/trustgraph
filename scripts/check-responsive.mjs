@@ -37,6 +37,7 @@ const requiredMobileStacks = [
   ".dashboard-next-action-buttons",
   ".connect-source-strip",
   ".connect-export-actions",
+  ".console-layout-receipt-grid",
   ".corporate-data-access-path",
   ".corporate-user-database-contract-grid",
   ".corporate-database-access-decision-grid",

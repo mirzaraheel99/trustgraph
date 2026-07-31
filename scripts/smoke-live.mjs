@@ -180,6 +180,13 @@ assertIncludesAny(bundleText, ["Request approved user access for Corporate Verif
 assertIncludesAny(bundleText, ["Session command bar"], "dashboard session command bar");
 assertIncludesAny(bundleText, ["Portal command deck"], "signed-in portal command deck");
 assertIncludesAny(bundleText, ["Start with the right workspace"], "portal command deck headline");
+assertIncludesAny(bundleText, ["Console layout"], "signed-in console layout receipt");
+assertIncludesAny(bundleText, ["signed_in_console_layout_receipt"], "signed-in console layout receipt packet field");
+assertIncludesAny(
+  bundleText,
+  ["top_command_bar_routes_account_logout_and_corporate_setup_are_visible_bounded_and_mobile_stacked_without_legacy_sidebar_overflow"],
+  "signed-in console layout acceptance rule"
+);
 assertIncludesAny(bundleText, ["Signed-in portal flow contract"], "signed-in portal flow contract");
 assertIncludesAny(bundleText, ["signed_in_portal_flow_contract"], "authorized report signed-in portal flow field");
 assertIncludesAny(bundleText, ["signed_in_user_can_identify_personal_passport_corporate_verify_company_admin_next_action_and_database_boundary_without_guessing"], "signed-in portal flow acceptance rule");

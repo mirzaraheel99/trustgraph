@@ -22,6 +22,7 @@ assert(authenticatedRender.includes('className="session-command-bar"'), "session
 assert(authenticatedRender.includes('aria-label="Dashboard next action"'), "signed-in dashboard must expose a single role-aware next-action command.");
 assert(authenticatedRender.includes('aria-label="Portal command deck"'), "signed-in dashboard must expose a consolidated portal command deck.");
 assert(authenticatedRender.includes('aria-label="Signed-in portal flow contract"'), "signed-in dashboard must expose a clear portal flow and database boundary contract.");
+assert(authenticatedRender.includes('aria-label="Signed-in console layout receipt"'), "signed-in dashboard must expose a visible console layout receipt.");
 assert(authenticatedRender.includes('aria-label="Portal home command center"'), "signed-in dashboard must expose a simple portal home command center.");
 assert(authenticatedRender.includes('aria-label="Portal choice guide"'), "signed-in dashboard must expose a simple portal choice guide.");
 assert(authenticatedRender.includes('aria-label="V1 proof collection command"'), "signed-in dashboard must expose a V1 proof collection command.");
@@ -106,6 +107,7 @@ assert(consoleLayout.includes("Signed-in console layout contract"), "final signe
 assert(consoleLayout.includes("width: min(100%, 1460px)") && consoleLayout.includes("overflow-x: clip"), "signed-in console must use the available width without page-level horizontal overflow.");
 assert(consoleLayout.includes(".topbar {\n  grid-template-columns: minmax(0, 1fr)") && consoleLayout.includes(".topbar-actions {\n  width: 100%"), "topbar must use one calm command row instead of a squeezed two-column header.");
 assert(consoleLayout.includes(".portal-command-deck") && consoleLayout.includes(".portal-command-deck-grid") && consoleLayout.includes("min-height: 172px"), "portal command deck must make Professional, Corporate, Admin, and account actions obvious.");
+assert(consoleLayout.includes(".console-layout-receipt") && consoleLayout.includes(".console-layout-receipt-grid"), "console layout receipt must be styled and bounded.");
 assert(consoleLayout.includes(".session-command-bar") && consoleLayout.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 154px), 1fr))"), "account, corporate setup, public site, and logout controls must auto-fit.");
 assert(consoleLayout.includes(".workspace-route-strip") && consoleLayout.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr))"), "workspace route strip must be grid bounded.");
 assert(consoleLayout.includes(".workspace-flow-strip") && consoleLayout.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr))"), "workspace flow strip must be grid bounded.");
