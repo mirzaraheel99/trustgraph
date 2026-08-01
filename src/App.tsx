@@ -25931,6 +25931,41 @@ function App() {
       ready: true
     }
   ];
+  const liveDataLoadingCommandRows = livePilotRowProofRows
+    .filter((row) => row.required)
+    .map((row) => ({
+      label: row.label,
+      table: row.table,
+      status: row.ready ? "loaded" : row.label === realRowAcceptanceGate.next_missing_group ? "next missing" : "waiting",
+      count: row.count,
+      evidence: row.evidence,
+      ready: row.ready
+    }));
+  const liveDataLoadingCommand = {
+    mode: "live_data_loading_command",
+    source: authSession && accountContext ? "signed_in_supabase_context" : "hosted_login_required",
+    accepted: realRowAcceptanceGate.accepted,
+    preview_data_accepted: false,
+    fixture_data_accepted_for_completion: false,
+    ready_groups: realRowAcceptanceGate.ready_groups,
+    required_groups: realRowAcceptanceGate.required_groups,
+    live_row_total: realRowAcceptanceGate.live_row_total,
+    next_missing_group: realRowAcceptanceGate.next_missing_group,
+    next_missing_table: realRowAcceptanceGate.next_missing_table,
+    next_action: realRowAcceptanceGate.accepted
+      ? "Export working-data proof and record the real database completion receipt."
+      : authSession && accountContext
+        ? "Run live pilot seed, reload repository rows, then export proof."
+        : "Login from the hosted TrustGraph URL before loading database rows.",
+    server_save_status: serverSyncMonitor.status,
+    accepted_when:
+      "live_data_loading_command_requires_signed_in_supabase_rows_registration_passport_evidence_corporate_access_consent_team_billing_review_visibility_release_rows_and_rejects_preview_or_fixture_data",
+    rows: liveDataLoadingCommandRows
+  };
+  const liveDataLoadingFeaturedRows = [
+    ...liveDataLoadingCommandRows.filter((row) => !row.ready).slice(0, 1),
+    ...liveDataLoadingCommandRows.filter((row) => row.ready).slice(0, 2)
+  ];
 
   async function recordLiveDatabaseReadinessReceipt() {
     if (!authSession || !accountContext) {
@@ -27713,6 +27748,79 @@ function App() {
             >
               <Download size={16} />
               Export operating proof
+            </button>
+          </div>
+        </section>
+
+        <section className={`live-data-loading-command ${liveDataLoadingCommand.accepted ? "ready" : "needed"}`} aria-label="Live data loading command">
+          <div className="live-data-loading-header">
+            <div>
+              <span className={`status-chip ${liveDataLoadingCommand.accepted ? "success" : "warning"}`}>Live data loading</span>
+              <strong>{liveDataLoadingCommand.accepted ? "Live database rows are loaded and ready to prove" : `Load next: ${liveDataLoadingCommand.next_missing_group}`}</strong>
+              <small>{liveDataLoadingCommand.accepted_when}</small>
+            </div>
+            <div className="live-data-loading-proof">
+              <span>
+                <strong>{liveDataLoadingCommand.ready_groups}/{liveDataLoadingCommand.required_groups}</strong>
+                <small>Required row groups</small>
+              </span>
+              <span>
+                <strong>{liveDataLoadingCommand.live_row_total}</strong>
+                <small>Live rows counted</small>
+              </span>
+              <span>
+                <strong>{liveDataLoadingCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+                <small>Preview or fixture data</small>
+              </span>
+            </div>
+          </div>
+          <div className="live-data-loading-grid">
+            {liveDataLoadingFeaturedRows.map((row) => (
+              <article className={row.ready ? "ready" : "next"} key={row.label}>
+                <span>{row.status}</span>
+                <strong>{row.label}</strong>
+                <small>{row.table}</small>
+                <em>{row.evidence}</em>
+              </article>
+            ))}
+          </div>
+          <div className="live-data-loading-actions">
+            <span>
+              <strong>{liveDataLoadingCommand.source.replace(/_/g, " ")}</strong>
+              <small>{liveDataLoadingCommand.next_action}</small>
+            </span>
+            <button
+              className={authSession && accountContext && !liveDataLoadingCommand.accepted ? "primary-action" : "secondary-action"}
+              disabled={Boolean(authSession && accountContext && liveDataLoadingCommand.accepted)}
+              onClick={() => {
+                if (!authSession || !accountContext) {
+                  openAuthControls();
+                  return;
+                }
+                void seedLivePilotWorkspace().catch((error) => {
+                  setV1ReadinessStatus(error instanceof Error ? error.message : "Could not run live pilot seed.");
+                });
+              }}
+              type="button"
+            >
+              {authSession && accountContext ? "Run live seed" : "Login first"}
+            </button>
+            <button
+              className={liveDataLoadingCommand.accepted ? "primary-action" : "secondary-action"}
+              onClick={() => {
+                if (liveDataLoadingCommand.accepted) {
+                  downloadTextFile(
+                    `trustgraph-live-data-loading-command-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(liveDataLoadingCommand, null, 2),
+                    "application/json"
+                  );
+                  return;
+                }
+                document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              {liveDataLoadingCommand.accepted ? "Export proof" : "Open proof"}
             </button>
           </div>
         </section>
