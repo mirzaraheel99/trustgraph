@@ -215,6 +215,8 @@ The signed-in database path now adds a Live data loading command before the real
 
 The public website login area now starts with a Public login command center. Professional versus Corporate, Register versus Login, price, first live database write, recovery, landing portal, scoped Corporate database boundary, and server-save status stay visible before credentials.
 
+The public login/register card now adds a visible Account access path before the older route shell. It gives four plain choices for Professional login, Corporate login, Professional registration, and Corporate registration, then keeps pricing, first database write, landing portal, recovery, and VPS server status in one bounded command surface before credentials.
+
 Billing also includes a Billing pilot acceptance checkpoint that ties the live pricing catalog, selected seats, projected totals, live subscription ledger, quote receipt, payment decision receipt, Stripe-off boundary, and preview-data rejection into one exportable packet before paid launch work.
 
 Corporate team setup now starts with a Team launch board that keeps admin readiness, first reviewer invite, pending acceptance, accepted roster review, filtered invitation export, and database handoff visible before the dense invitation table.

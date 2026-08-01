@@ -19520,6 +19520,94 @@ function PublicSite({
       }
     }
   ];
+  const publicAccountAccessPath = {
+    mode: "public_account_access_path",
+    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    primary_label:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create company account"
+          : "Login to company portal"
+        : mode === "signup"
+          ? "Create Professional Passport"
+          : "Login to Professional Passport",
+    pricing: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    landing_portal: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
+    recovery_available: Boolean(email),
+    hosted_redirect_url: authRedirectUrl,
+    server_save_status: serverSyncMonitor.status,
+    corporate_database_boundary: "corporate_accounts_request_access_then_view_approved_consent_scoped_user_rows_only",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_account_access_path_keeps_professional_login_corporate_login_professional_registration_corporate_registration_pricing_recovery_first_database_write_landing_and_server_status_visible_before_credentials"
+  };
+  const publicAccountAccessChoices = [
+    {
+      label: "Professional login",
+      detail: "Existing user opens private Passport records and evidence.",
+      active: portal === "professional" && mode === "signin",
+      action: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate login",
+      detail: "Existing company admin opens setup, team, billing, and Verify.",
+      active: portal === "corporate" && mode === "signin",
+      action: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Professional registration",
+      detail: "Create the free Professional Passport pilot account.",
+      active: portal === "professional" && mode === "signup",
+      action: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate registration",
+      detail: "Create the company admin and workspace path.",
+      active: portal === "corporate" && mode === "signup",
+      action: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    }
+  ];
+  const publicAccountAccessStatus = [
+    {
+      label: "Price",
+      value: publicAccountAccessPath.pricing,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First write",
+      value: publicAccountAccessPath.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Landing",
+      value: publicAccountAccessPath.landing_portal,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Recovery",
+      value: publicAccountAccessPath.recovery_available ? "Ready" : "Enter email",
+      detail: "Resend verification, reset password, or repair hosted links."
+    },
+    {
+      label: "Server",
+      value: publicAccountAccessPath.server_save_status.replace(/_/g, " "),
+      detail: "GitHub is source; VPS stamp proves the server build."
+    }
+  ];
   const authPathSummary = {
     mode: "auth_path_summary",
     selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
@@ -21709,6 +21797,66 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="public-account-access-path" aria-label="Public account access path">
+            <div className="public-account-access-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Account access path</span>
+                <strong>{publicAccountAccessPath.primary_label}</strong>
+                <small>
+                  Professional users, corporate admins, pricing, recovery, first database write, and server freshness stay visible before credentials.
+                </small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-account-access-choices">
+              {publicAccountAccessChoices.map((choice) => (
+                <button className={choice.active ? "active" : ""} key={choice.label} onClick={choice.action} type="button">
+                  <strong>{choice.label}</strong>
+                  <small>{choice.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-account-access-status">
+              {publicAccountAccessStatus.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-account-access-actions">
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-account-access-path-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...publicAccountAccessPath,
+                        choices: publicAccountAccessChoices.map(({ action: _action, ...choice }) => choice),
+                        status: publicAccountAccessStatus
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export access path
+              </button>
+            </div>
+          </div>
           <div className="public-portal-route-shell" aria-label="Public portal route shell">
             <div className="public-portal-route-shell-header">
               <div>

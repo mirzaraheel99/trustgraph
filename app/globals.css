@@ -29485,6 +29485,110 @@ body {
   overflow-wrap: anywhere;
 }
 
+.public-account-access-path {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  max-width: 100%;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(121, 190, 255, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(15, 33, 48, 0.96), rgba(8, 20, 19, 0.94)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+}
+
+.public-account-access-header,
+.public-account-access-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(132px, auto);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-account-access-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-account-access-header strong {
+  color: var(--text);
+  font-size: clamp(24px, 3vw, 42px);
+  line-height: 1.02;
+}
+
+.public-account-access-choices,
+.public-account-access-status {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-account-access-choices button,
+.public-account-access-status span {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.045);
+  text-align: left;
+  white-space: normal;
+}
+
+.public-account-access-choices button.active {
+  border-color: rgba(108, 240, 195, 0.42);
+  background: rgba(28, 171, 145, 0.14);
+}
+
+.public-account-access-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+}
+
+.public-account-access-actions button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.public-account-access-path strong,
+.public-account-access-path small,
+.public-account-access-path span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-account-access-status small:first-child {
+  color: #88f4d6;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-account-access-status strong,
+.public-account-access-choices strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.12;
+}
+
+.public-account-access-header small,
+.public-account-access-status small,
+.public-account-access-choices small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.34;
+}
+
 .public-auth-card .registration-pre-submit-checklist {
   padding: 10px;
 }
