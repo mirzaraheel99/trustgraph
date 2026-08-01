@@ -23520,6 +23520,36 @@ function App() {
     },
     accepted_when: "signed_in_corporate_workspace_rbac_team_billing_and_shared_user_rows_visible"
   };
+  const corporateSetupTriageBoard = {
+    mode: "corporate_setup_triage_board",
+    source: authSession && accountContext ? "signed_in_supabase_rows" : "locked_until_hosted_login_and_account_context",
+    blocker: nextCorporateSetupStep.label,
+    blocker_detail: nextCorporateSetupStep.detail,
+    live_corporate_context: hasLiveCorporateContext,
+    can_manage_workspace: canManageCorporateSetup,
+    preview_data_accepted: false,
+    ready_steps: corporateSetupComplete,
+    total_steps: corporateSetupSteps.length,
+    accepted_when:
+      "corporate_setup_triage_board_shows_login_workspace_rbac_team_billing_user_database_blocker_direct_action_and_rejects_preview_data"
+  };
+  const corporateSetupTriageCards = corporateSetupSteps.map((step) => ({
+    ...step,
+    value: step.done ? "Ready" : step.status,
+    current: step.id === nextCorporateSetupStep.id,
+    action:
+      step.id === "login"
+        ? "Open account"
+        : step.id === "workspace"
+          ? "Create workspace"
+          : step.id === "roles"
+            ? "Activate RBAC"
+            : step.id === "team"
+              ? "Invite team"
+              : step.id === "billing"
+                ? "Select plan"
+                : "Open Verify"
+  }));
   const corporateLaunchLanes = [
     {
       label: "1. Create company",
@@ -28315,6 +28345,94 @@ function App() {
                     <small>{item.detail}</small>
                   </article>
                 ))}
+              </div>
+              <div className="corporate-setup-triage-board" aria-label="Corporate setup triage board">
+                <div className="corporate-setup-triage-header">
+                  <div>
+                    <span className={`status-chip ${corporateSetupComplete === corporateSetupSteps.length ? "success" : "warning"}`}>
+                      Corporate setup triage
+                    </span>
+                    <strong>{corporateSetupComplete === corporateSetupSteps.length ? "Corporate portal is ready for user database review" : `Next blocker: ${corporateSetupTriageBoard.blocker}`}</strong>
+                    <small>{corporateSetupTriageBoard.accepted_when}</small>
+                  </div>
+                  <button
+                    className="primary-action"
+                    onClick={() => {
+                      if (nextCorporateSetupStep.id === "verify") {
+                        openWorkspaceOrSetup("verify");
+                        return;
+                      }
+                      setSetupView(nextCorporateSetupStep.target);
+                    }}
+                    type="button"
+                  >
+                    {nextCorporateSetupStep.id === "verify" ? "Open Verify" : corporateSetupTriageCards.find((card) => card.id === nextCorporateSetupStep.id)?.action ?? "Open next step"}
+                  </button>
+                </div>
+                <div className="corporate-setup-triage-grid">
+                  {corporateSetupTriageCards.map((card) => (
+                    <article className={`${card.done ? "ready" : ""} ${card.current ? "current" : ""}`.trim()} key={card.id}>
+                      <span>{card.label}</span>
+                      <strong>{card.value}</strong>
+                      <small>{card.detail}</small>
+                      <button
+                        className={card.current ? "primary-action" : "secondary-action"}
+                        onClick={() => {
+                          if (card.id === "verify") {
+                            openWorkspaceOrSetup("verify");
+                            return;
+                          }
+                          setSetupView(card.target);
+                        }}
+                        type="button"
+                      >
+                        {card.action}
+                      </button>
+                    </article>
+                  ))}
+                </div>
+                <div className="corporate-setup-triage-proof">
+                  <span>
+                    <small>Live source</small>
+                    <strong>{corporateSetupTriageBoard.source}</strong>
+                  </span>
+                  <span>
+                    <small>Ready</small>
+                    <strong>{corporateSetupTriageBoard.ready_steps}/{corporateSetupTriageBoard.total_steps}</strong>
+                  </span>
+                  <span>
+                    <small>Preview data</small>
+                    <strong>{corporateSetupTriageBoard.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+                  </span>
+                  <button
+                    className="secondary-action"
+                    onClick={() =>
+                      downloadTextFile(
+                        `trustgraph-corporate-setup-triage-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify(
+                          {
+                            ...corporateSetupTriageBoard,
+                            cards: corporateSetupTriageCards.map(({ id, label, value, detail, done, current, action }) => ({
+                              id,
+                              label,
+                              value,
+                              detail,
+                              done,
+                              current,
+                              action
+                            }))
+                          },
+                          null,
+                          2
+                        ),
+                        "application/json"
+                      )
+                    }
+                    type="button"
+                  >
+                    Export triage
+                  </button>
+                </div>
               </div>
               <div className="setup-command-bar" aria-label="Setup command bar">
                 <div>

@@ -18762,6 +18762,9 @@ p {
   .billing-operator-path,
   .billing-gate-grid,
   .corporate-operator-strip,
+  .corporate-setup-triage-header,
+  .corporate-setup-triage-grid,
+  .corporate-setup-triage-proof,
   .corporate-task-hub-header,
   .corporate-setup-guide,
   .setup-command-bar,
@@ -19412,9 +19415,107 @@ p {
 }
 
 #corporate-account-controls > .corporate-launch-cockpit,
+#corporate-account-controls > .corporate-setup-triage-board,
 #corporate-account-controls > .setup-command-bar,
 #corporate-account-controls > .setup-route-deck {
   border-radius: 8px;
+}
+
+.corporate-setup-triage-board {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(151, 204, 188, 0.22);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.055)),
+    rgba(8, 18, 20, 0.86);
+}
+
+.corporate-setup-triage-header,
+.corporate-setup-triage-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.28fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-setup-triage-header > div:first-child,
+.corporate-setup-triage-proof > span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-setup-triage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.corporate-setup-triage-grid article {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.corporate-setup-triage-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.075);
+}
+
+.corporate-setup-triage-grid article.current {
+  border-color: rgba(255, 209, 102, 0.46);
+  background: rgba(255, 209, 102, 0.08);
+}
+
+.corporate-setup-triage-board strong,
+.corporate-setup-triage-board small,
+.corporate-setup-triage-board span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-setup-triage-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.12;
+}
+
+.corporate-setup-triage-grid strong,
+.corporate-setup-triage-proof strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.18;
+}
+
+.corporate-setup-triage-grid > article > span,
+.corporate-setup-triage-proof small:first-child {
+  color: #9fead5;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-setup-triage-board small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.corporate-setup-triage-board button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
 }
 
 /* Corporate Verify simplification layer: keep reviewer home, request, list, and scoped database visible first. */
