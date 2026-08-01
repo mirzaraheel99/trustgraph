@@ -118,6 +118,12 @@ const appRequirements = [
     "persisted_corporate_database_acceptance_requires_live_rbac_approved_rows_review_attestation_access_receipt_visibility_snapshot_and_metadata_only_export",
     "persisted corporate database acceptance rule"
   ],
+  ["Corporate portal cockpit", "corporate portal cockpit label"],
+  ["corporate_portal_cockpit", "corporate portal cockpit packet mode"],
+  [
+    "corporate_portal_cockpit_keeps_role_request_approved_rows_review_export_next_action_no_open_user_database_and_preview_rejection_visible_before_dense_verify_proof",
+    "corporate portal cockpit acceptance rule"
+  ],
   ["Corporate persisted export gate", "corporate persisted export gate label"],
   ["corporate_persisted_export_gate", "corporate persisted export gate packet mode"],
   [

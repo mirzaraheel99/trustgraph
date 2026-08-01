@@ -299,6 +299,8 @@ Billing now also includes a paid-launch decision bridge before the acceptance ch
 
 The signed-in workspace now starts with a Portal daily command center that keeps login/logout, Professional Passport, Corporate Verify, Account, Pricing, live database proof, and VPS sync actions visible in one bounded mobile-stacked surface before the dense evidence panels.
 
+Corporate Verify now starts its user-database area with a Corporate portal cockpit. It keeps role status, access requests, approved rows, review/export, next action, no-open-user-database boundary, and preview-data rejection visible before dense proof panels.
+
 The signed-in database path now adds a Live data loading command before the real-row gate. It shows the next missing Supabase row group, live row counts, preview/fixture rejection, hosted login state, and direct actions for login, live pilot seed, proof view, or export.
 
 The signed-in database path now includes a Live row gap resolver. It turns the required Supabase row groups into a direct action queue for hosted login, live seed, proof reload, Corporate Verify review, real database completion receipt, working-data export, server proof, and preview-data rejection.

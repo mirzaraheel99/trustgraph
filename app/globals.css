@@ -21180,6 +21180,135 @@ p {
 }
 
 /* Corporate Verify hub: one readable path before dense database tools */
+.corporate-portal-cockpit {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(130, 169, 255, 0.32);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(22, 34, 54, 0.94), rgba(8, 14, 18, 0.96)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow: 0 22px 64px rgba(0, 0, 0, 0.28);
+}
+
+.corporate-portal-cockpit.ready_for_scoped_review {
+  border-color: rgba(95, 240, 201, 0.32);
+  background:
+    linear-gradient(135deg, rgba(18, 45, 39, 0.9), rgba(12, 22, 31, 0.94)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.corporate-portal-cockpit-header,
+.corporate-portal-cockpit-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.28fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-portal-cockpit-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-portal-cockpit-grid,
+.corporate-portal-cockpit-proof {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.corporate-portal-cockpit-grid button,
+.corporate-portal-cockpit-proof span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 78px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text);
+  text-align: left;
+}
+
+.corporate-portal-cockpit-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.corporate-portal-cockpit-grid button.next {
+  border-color: rgba(225, 184, 102, 0.32);
+}
+
+.corporate-portal-cockpit strong,
+.corporate-portal-cockpit small,
+.corporate-portal-cockpit span,
+.corporate-portal-cockpit em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-portal-cockpit-header strong {
+  color: var(--text);
+  font-size: clamp(1.4rem, 2.3vw, 2.12rem);
+  line-height: 1.04;
+}
+
+.corporate-portal-cockpit-grid strong,
+.corporate-portal-cockpit-proof strong {
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.16;
+}
+
+.corporate-portal-cockpit-grid span,
+.corporate-portal-cockpit-proof small:first-child {
+  color: #a6beff;
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-portal-cockpit.ready_for_scoped_review .corporate-portal-cockpit-grid span,
+.corporate-portal-cockpit.ready_for_scoped_review .corporate-portal-cockpit-proof small:first-child {
+  color: var(--accent);
+}
+
+.corporate-portal-cockpit small,
+.corporate-portal-cockpit em {
+  color: var(--muted);
+  font-style: normal;
+  line-height: 1.38;
+}
+
+.corporate-portal-cockpit-header button,
+.corporate-portal-cockpit-proof button {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  white-space: normal;
+}
+
+.corporate-directory-panel:has(.corporate-portal-cockpit) > .corporate-verify-hub,
+.corporate-directory-panel:has(.corporate-portal-cockpit) > .corporate-access-command-center,
+.corporate-directory-panel:has(.corporate-portal-cockpit) > .corporate-database-primary-desk,
+.corporate-directory-panel:has(.corporate-portal-cockpit) > .corporate-review-queue-runway,
+.corporate-directory-panel:has(.corporate-portal-cockpit) > .corporate-review-studio,
+.corporate-directory-panel:has(.corporate-portal-cockpit) > .corporate-scoped-access-journey,
+.corporate-directory-panel:has(.corporate-portal-cockpit) > .corporate-reviewer-workflow-strip,
+.corporate-directory-panel:has(.corporate-portal-cockpit) > .corporate-reviewer-task-command {
+  display: none !important;
+}
+
 .corporate-verify-hub {
   display: grid;
   gap: 14px;
@@ -21363,11 +21492,15 @@ p {
 }
 
 @media (max-width: 900px) {
+  .corporate-portal-cockpit-header,
+  .corporate-portal-cockpit-proof,
   .corporate-verify-hub-hero,
   .corporate-verify-hub-footer {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .corporate-portal-cockpit-grid,
+  .corporate-portal-cockpit-proof,
   .corporate-verify-hub-actions,
   .corporate-verify-hub-proof,
   .corporate-verify-hub-steps {
@@ -21376,6 +21509,8 @@ p {
 }
 
 @media (max-width: 580px) {
+  .corporate-portal-cockpit-grid,
+  .corporate-portal-cockpit-proof,
   .corporate-verify-hub-actions,
   .corporate-verify-hub-proof,
   .corporate-verify-hub-steps {

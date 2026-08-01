@@ -6915,6 +6915,58 @@ function CorporateDirectoryPanel({
       detail: "Record the reviewer attestation, then export metadata-only proof."
     }
   ];
+  const corporatePortalCockpit = {
+    mode: "corporate_portal_cockpit",
+    status: corporateAccessNextAction.ready ? "ready_for_scoped_review" : "needs_access_setup",
+    headline: corporateAccessNextAction.ready ? "Corporate can review approved user rows" : "Finish access before reviewing users",
+    next_action: corporateAccessNextAction.action,
+    source: databaseModeLabel,
+    active_rbac: isLiveCorporateDatabase,
+    pending_requests: requests.filter((request) => request.status === "requested").length,
+    approved_grants: approvedAccessCount,
+    visible_rows: filteredRows.length,
+    shared_records: sharedRecords.length,
+    review_attestations: reviews.length,
+    open_gaps: openGapRequestCount,
+    no_open_user_database: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_portal_cockpit_keeps_role_request_approved_rows_review_export_next_action_no_open_user_database_and_preview_rejection_visible_before_dense_verify_proof"
+  };
+  const corporatePortalCockpitCards = [
+    {
+      label: "Role",
+      value: isLiveCorporateDatabase ? "Corporate active" : "Login required",
+      detail: isLiveCorporateDatabase ? databaseModeDetail : "Use a Company Admin or Corporate Verify reviewer account.",
+      ready: isLiveCorporateDatabase,
+      target: "account",
+      action: "Open account"
+    },
+    {
+      label: "Request access",
+      value: requests.length ? `${requests.length} requests` : "Start request",
+      detail: "Ask one professional by email. Access stays scoped to approved rows.",
+      ready: requests.length > 0,
+      target: "request",
+      action: "Request"
+    },
+    {
+      label: "Approved rows",
+      value: filteredRows.length ? `${filteredRows.length} rows` : "Waiting",
+      detail: filteredRows.length ? `${sharedRecords.length} shared records visible.` : "Rows appear only after approval and consent.",
+      ready: filteredRows.length > 0,
+      target: "corporate-directory-list",
+      action: "Review rows"
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length} saved` : "Record",
+      detail: openGapRequestCount ? `${openGapRequestCount} open gaps need follow-up.` : "Export metadata-only proof after review.",
+      ready: reviews.length > 0 && openGapRequestCount === 0,
+      target: "corporate-access-review-queue",
+      action: reviews.length ? "Export" : "Record proof"
+    }
+  ];
 
   return (
     <section className="corporate-directory-panel">
@@ -6922,6 +6974,66 @@ function CorporateDirectoryPanel({
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className={`corporate-portal-cockpit ${corporatePortalCockpit.status}`} aria-label="Corporate portal cockpit">
+        <div className="corporate-portal-cockpit-header">
+          <div>
+            <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Corporate portal</span>
+            <strong>{corporatePortalCockpit.headline}</strong>
+            <small>{corporatePortalCockpit.accepted_when}</small>
+          </div>
+          <button className="primary-action" onClick={() => runCorporateReviewerTask()} type="button">
+            {corporatePortalCockpit.next_action}
+          </button>
+        </div>
+        <div className="corporate-portal-cockpit-grid">
+          {corporatePortalCockpitCards.map((card) => (
+            <button
+              className={card.ready ? "ready" : "next"}
+              key={card.label}
+              onClick={() => {
+                if (card.label === "Review proof" && reviews.length && openGapRequestCount === 0) {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                runCorporateReviewerTask(card.target);
+              }}
+              type="button"
+            >
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+              <em>{card.action}</em>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-portal-cockpit-proof">
+          <span>
+            <small>Boundary</small>
+            <strong>{corporatePortalCockpit.no_open_user_database ? "No open user database" : "Open access"}</strong>
+          </span>
+          <span>
+            <small>Source</small>
+            <strong>{corporatePortalCockpit.source}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporatePortalCockpit.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-portal-cockpit-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporatePortalCockpit, cards: corporatePortalCockpitCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export cockpit
+          </button>
+        </div>
       </div>
       <div className={`corporate-verify-hub ${corporateVerifyHub.status === "review_ready" ? "ready" : "needed"}`} aria-label="Corporate Verify hub">
         <div className="corporate-verify-hub-hero">
