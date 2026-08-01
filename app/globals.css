@@ -32257,6 +32257,10 @@ body {
   order: -80;
 }
 
+.public-auth-card .public-entry-sequence {
+  order: -78;
+}
+
 .public-auth-card .public-auth-experience-studio {
   order: -60;
 }
@@ -32296,6 +32300,7 @@ body {
 
 .public-auth-card .public-account-access-path,
 .public-auth-card .public-account-entry-launchpad,
+.public-auth-card .public-entry-sequence,
 .public-auth-card .public-auth-start-strip,
 .public-auth-card .public-auth-experience-studio,
 .public-auth-card .public-portal-switchboard,
@@ -32413,6 +32418,100 @@ body {
 }
 
 .public-access-command-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.public-entry-sequence {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 1.8vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(143, 178, 255, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(143, 178, 255, 0.09), rgba(95, 240, 201, 0.06) 54%, rgba(7, 18, 20, 0.94)),
+    rgba(255, 255, 255, 0.028);
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.22);
+}
+
+.public-entry-sequence-header,
+.public-entry-sequence-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-entry-sequence-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-entry-sequence-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-entry-sequence-grid article,
+.public-entry-sequence-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-entry-sequence strong,
+.public-entry-sequence small,
+.public-entry-sequence span,
+.public-entry-sequence b {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-entry-sequence-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.7vw, 24px);
+  line-height: 1.1;
+}
+
+.public-entry-sequence small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.public-entry-sequence-grid span,
+.public-entry-sequence-proof small {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-entry-sequence-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.public-entry-sequence-grid b,
+.public-entry-sequence-proof strong {
+  color: #9fffdc;
+  font-size: 13px;
+  line-height: 1.14;
+}
+
+.public-entry-sequence-header button {
   width: 100%;
   min-width: 0;
   white-space: normal;
@@ -32629,6 +32728,7 @@ body {
 .public-auth-card .public-auth-experience-header strong,
 .public-auth-card .public-auth-start-strip-header strong,
 .public-auth-card .public-account-entry-launchpad-header strong,
+.public-auth-card .public-entry-sequence-header strong,
 .public-auth-card .public-account-access-header strong,
 .public-auth-card .public-portal-switchboard-header strong,
 .public-auth-card .corporate-access-route-preview-header strong,
@@ -32638,6 +32738,8 @@ body {
 }
 
 .public-auth-card .public-auth-experience-switches,
+.public-auth-card .public-entry-sequence-grid,
+.public-auth-card .public-entry-sequence-proof,
 .public-auth-card .public-auth-start-routes,
 .public-auth-card .public-auth-start-status,
 .public-auth-card .public-auth-start-proof,
@@ -32688,6 +32790,9 @@ body {
   .public-access-command-routes,
   .public-access-command-proof,
   .public-access-command-actions,
+  .public-entry-sequence-header,
+  .public-entry-sequence-grid,
+  .public-entry-sequence-proof,
   .public-login-command-footer,
   .public-auth-start-strip-header,
   .public-auth-start-proof,
@@ -32705,6 +32810,7 @@ body {
 
   .public-login-command-footer button,
   .public-access-command-actions button,
+  .public-entry-sequence-header button,
   .public-auth-start-strip-header button,
   .public-auth-start-proof button,
   .public-account-access-actions button,

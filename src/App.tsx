@@ -20439,6 +20439,46 @@ function PublicSite({
       detail: "Resend, reset, or repair hosted email links from this card."
     }
   ];
+  const publicEntrySequence = {
+    mode: "public_entry_sequence",
+    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
+    selected_price: selectedRegistrationPath.plan,
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "No new row before login completes",
+    hosted_verification: "email_link_must_return_to_hosted_trustgraph_url_not_localhost",
+    landing_portal: publicAuthStartStrip.landing_portal,
+    corporate_database_boundary:
+      "corporate_portal_requests_access_by_professional_email_and_reviews_only_approved_scoped_rows",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_entry_sequence_requires_choose_route_credentials_hosted_verification_correct_portal_landing_corporate_scoped_database_request_and_no_preview_data_before_submit"
+  };
+  const publicEntrySequenceSteps = [
+    {
+      label: "Choose route",
+      value: publicEntrySequence.selected_route,
+      detail: "Professional and Corporate users start from separate register/login paths."
+    },
+    {
+      label: "Enter credentials",
+      value: selectedPortalCommand.headline,
+      detail: selectedPortalCommand.next
+    },
+    {
+      label: "Verify email",
+      value: "Hosted link",
+      detail: "Verification and recovery links must land on the hosted TrustGraph URL."
+    },
+    {
+      label: "Open portal",
+      value: publicEntrySequence.landing_portal,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Corporate access",
+      value: portal === "corporate" ? "Request scoped rows" : "Approve sharing",
+      detail: "Corporate reviewers do not browse the full user database."
+    }
+  ];
   const publicAccountRouteConfirmation = {
     mode: "public_account_route_confirmation",
     selected_route: `${publicAccountAccessPath.selected_portal} / ${publicAccountAccessPath.selected_action}`,
@@ -23490,6 +23530,56 @@ function PublicSite({
               >
                 Export route
               </button>
+            </div>
+          </div>
+          <div className="public-entry-sequence" aria-label="Public entry sequence">
+            <div className="public-entry-sequence-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Entry sequence</span>
+                <strong>{publicEntrySequence.selected_route}: one clear path before submit</strong>
+                <small>{publicEntrySequence.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-entry-sequence-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicEntrySequence, steps: publicEntrySequenceSteps }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export sequence
+              </button>
+            </div>
+            <div className="public-entry-sequence-grid">
+              {publicEntrySequenceSteps.map((step, index) => (
+                <article key={step.label}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{step.label}</strong>
+                  <b>{step.value}</b>
+                  <small>{step.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="public-entry-sequence-proof">
+              <span>
+                <small>Price</small>
+                <strong>{publicEntrySequence.selected_price}</strong>
+              </span>
+              <span>
+                <small>First database write</small>
+                <strong>{publicEntrySequence.first_database_write}</strong>
+              </span>
+              <span>
+                <small>Verification</small>
+                <strong>Hosted URL only</strong>
+              </span>
+              <span>
+                <small>Corporate database</small>
+                <strong>No open browse</strong>
+              </span>
             </div>
           </div>
           <div className="public-portal-switchboard" aria-label="Public portal switchboard">

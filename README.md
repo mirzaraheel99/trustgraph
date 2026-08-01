@@ -293,6 +293,8 @@ The signed-in dashboard now starts with a Portal UX command center. It gives sep
 
 The public login/register page now includes a Public access command center before credentials. It makes Professional registration, Professional login, Corporate registration, Corporate login, pricing, first database write, landing portal, and the no-open-user-browse Corporate boundary visible in one premium command surface.
 
+Public auth now includes a Public entry sequence after the access command. It shows the exact order from route choice to credentials, hosted email verification, correct portal landing, and Corporate scoped database access before submit.
+
 Corporate Verify now includes a reviewer workflow strip before directory rows. It gives reviewers one sequence for request, approval, scoped rows, review attestation, visibility snapshot, and metadata export while keeping open user browsing blocked.
 
 Billing now starts with a pilot package board that explains Professional Passport free pilot, Corporate Verify pilot pricing, Scale human quote, live ledger and quote proof, scoped Corporate database access, and the Stripe/payment human gate before payment work.
