@@ -24598,6 +24598,85 @@ function App() {
       onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
     }
   ];
+  const v1PortalOperatingLanes = [
+    {
+      label: "Professional",
+      title: "Passport owner",
+      detail: "Profile, evidence, references, consent, and sharing stay in the personal workspace.",
+      status: authSession ? `${livePassportRecords.length} live records` : "Login required",
+      ready: Boolean(authSession && livePassportRecords.length),
+      icon: Fingerprint,
+      action: "Open Passport",
+      onClick: () => openWorkspaceOrSetup("passport")
+    },
+    {
+      label: "Corporate",
+      title: "Verify reviewer",
+      detail: "Only approved, scoped user rows appear for corporate review and export.",
+      status: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Request access",
+      ready: Boolean(sharedVerifyRecords.length),
+      icon: BriefcaseBusiness,
+      action: "Open Verify",
+      onClick: () => openWorkspaceOrSetup("verify")
+    },
+    {
+      label: "Company",
+      title: "Admin setup",
+      detail: "Create the workspace, activate RBAC, invite team members, then hand off to Verify.",
+      status: hasLiveCorporateContext ? activeMembership.role : "Setup needed",
+      ready: hasLiveCorporateContext,
+      icon: Users,
+      action: "Setup company",
+      onClick: openCorporateControls
+    },
+    {
+      label: "Pricing",
+      title: "Pilot plan",
+      detail: "Professional stays free in pilot; Corporate Verify uses the live pilot ledger before Stripe.",
+      status: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "$149 pilot ready",
+      ready: Boolean(subscriptionPlans.length),
+      icon: BadgeCheck,
+      action: "Review pricing",
+      onClick: () => {
+        setSetupView("billing");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Account",
+      title: "Recovery and logout",
+      detail: "Verification repair, password reset, password update, and sign out stay together.",
+      status: authSession ? authSession.user.email : "Login desk",
+      ready: Boolean(authSession),
+      icon: KeyRound,
+      action: authSession ? "Open account" : "Login / register",
+      onClick: openAuthControls
+    },
+    {
+      label: "Database",
+      title: "Live proof",
+      detail: "Supabase row groups, scoped exports, receipts, and preview-data rejection are checked here.",
+      status: liveDatabaseContract.accepted ? "Live proof ready" : "Proof needed",
+      ready: liveDatabaseContract.accepted,
+      icon: Database,
+      action: "Check proof",
+      onClick: () => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  ];
+  const nextV1PortalLane = v1PortalOperatingLanes.find((lane) => !lane.ready) ?? v1PortalOperatingLanes[v1PortalOperatingLanes.length - 1];
+  const v1PortalOperatingCenter = {
+    mode: "v1_portal_operating_center",
+    current_portal: workspace.label,
+    account: authSession ? authSession.user.email : "hosted_login_required",
+    next_lane: nextV1PortalLane.label,
+    ready_lanes: v1PortalOperatingLanes.filter((lane) => lane.ready).length,
+    total_lanes: v1PortalOperatingLanes.length,
+    database_status: authSession && accountContext ? "live_supabase_context" : "hosted_login_required",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "v1_portal_operating_center_requires_professional_corporate_company_pricing_account_database_and_server_paths_visible_clickable_bounded_and_no_preview_data"
+  };
 
   if (showPublicSite) {
     return (
@@ -24746,6 +24825,81 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="v1-portal-operating-center" aria-label="V1 portal operating center">
+          <div className="v1-portal-operating-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>V1 portal operating center</span>
+            <strong>{authSession ? `Next: ${nextV1PortalLane.title}` : "Start with hosted login, then choose the right portal"}</strong>
+            <small>
+              One clean path for Professional users, Corporate reviewers, company admins, pricing, account recovery/logout, and live database proof.
+            </small>
+          </div>
+          <div className="v1-portal-operating-next">
+            <span>
+              <small>Next lane</small>
+              <strong>{nextV1PortalLane.label}</strong>
+            </span>
+            <button className="primary-action" onClick={nextV1PortalLane.onClick} type="button">
+              {nextV1PortalLane.action}
+            </button>
+          </div>
+          <div className="v1-portal-operating-grid">
+            {v1PortalOperatingLanes.map((lane) => {
+              const Icon = lane.icon;
+              return (
+                <button className={`${lane.ready ? "ready" : "next"} ${lane.label === workspace.label ? "current" : ""}`} key={lane.label} onClick={lane.onClick} type="button">
+                  <span>
+                    <Icon size={18} />
+                    {lane.label}
+                  </span>
+                  <strong>{lane.title}</strong>
+                  <small>{lane.detail}</small>
+                  <em>{lane.status}</em>
+                  <b>{lane.action}</b>
+                </button>
+              );
+            })}
+          </div>
+          <div className="v1-portal-operating-proof">
+            <span>
+              <strong>{v1PortalOperatingCenter.ready_lanes}/{v1PortalOperatingCenter.total_lanes}</strong>
+              <small>Ready lanes</small>
+            </span>
+            <span>
+              <strong>{v1PortalOperatingCenter.database_status.replaceAll("_", " ")}</strong>
+              <small>Database mode</small>
+            </span>
+            <span>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+              <small>Server save</small>
+            </span>
+            <span>
+              <strong>{v1PortalOperatingCenter.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+              <small>Preview data</small>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-v1-portal-operating-center-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      ...v1PortalOperatingCenter,
+                      lanes: v1PortalOperatingLanes.map(({ icon: _icon, onClick: _onClick, ...lane }) => lane)
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export operating proof
+            </button>
+          </div>
+        </section>
 
         <section className="premium-launch-console" aria-label="Premium launch console">
           <div className="premium-launch-console-copy">

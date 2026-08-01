@@ -115,6 +115,8 @@ The public auth form now includes a Public portal acceptance checkpoint before s
 
 The signed-in app now opens with a premium launch console that separates Personal Passport, Corporate Verify, Company Admin, Account, Pricing, Database proof, and Server sync into one bounded command surface. This is the working first screen; dense proof receipts remain exportable without taking over the daily dashboard.
 
+The first signed-in surface now also includes a V1 portal operating center before the dense boards. It gives Professional, Corporate Verify, Company Admin, Pricing, Account recovery/logout, and Database proof one visible next-action path with preview data rejected as completion proof.
+
 The signed-in dashboard now adds a Portal daily navigator directly after the front door, with six plain actions for Personal, Corporate, Admin, Account, Pricing, and Database proof plus visible recovery, logout, and export controls. This gives operators one calm path before the deeper audit and database panels.
 
 Signed-in Account now has a recovery control strip that keeps hosted redirect copy, resend verification, password reset, password update, sign out, and an exportable account packet together. The actions use the current session email when the email field is empty, so hosted verification and recovery tests do not depend on retyping credentials.

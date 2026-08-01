@@ -94,6 +94,12 @@ const appRequirements = [
     "corporate_visible_rows_handoff_requires_approved_grant_visible_scoped_rows_consent_scope_review_attestation_export_and_no_open_user_database_browse",
     "corporate visible rows handoff acceptance rule"
   ],
+  ["V1 portal operating center", "V1 portal operating center label"],
+  ["v1_portal_operating_center", "V1 portal operating center packet mode"],
+  [
+    "v1_portal_operating_center_requires_professional_corporate_company_pricing_account_database_and_server_paths_visible_clickable_bounded_and_no_preview_data",
+    "V1 portal operating center preview-data rejection rule"
+  ],
   ["Missing record cross-portal checkpoint", "missing-record cross-portal label"],
   ["missing_record_cross_portal_checkpoint", "missing-record cross-portal packet mode"],
   [
