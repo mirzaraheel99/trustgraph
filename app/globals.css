@@ -28444,6 +28444,154 @@ body {
     rgba(8, 21, 21, 0.82);
 }
 
+.professional-passport-first-use {
+  display: grid;
+  gap: 13px;
+  min-width: 0;
+  margin-bottom: 16px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.1), rgba(95, 240, 201, 0.055)),
+    rgba(7, 18, 22, 0.84);
+  box-shadow: 0 18px 58px rgba(0, 0, 0, 0.24);
+}
+
+.professional-passport-first-use.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+}
+
+.professional-passport-first-use-header,
+.professional-passport-first-use-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.professional-passport-first-use-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.professional-passport-first-use-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.professional-passport-first-use-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), 1fr));
+  gap: 10px;
+}
+
+.professional-passport-first-use-grid button {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  min-height: 146px;
+  padding: 12px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  white-space: normal;
+}
+
+.professional-passport-first-use-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.3);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.professional-passport-first-use-grid button.next {
+  border-color: rgba(240, 198, 107, 0.24);
+}
+
+.professional-passport-first-use strong,
+.professional-passport-first-use small,
+.professional-passport-first-use span,
+.professional-passport-first-use b {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.professional-passport-first-use-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 29px);
+  line-height: 1.08;
+}
+
+.professional-passport-first-use-header small,
+.professional-passport-first-use-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.38;
+}
+
+.professional-passport-first-use-grid span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: #06110f;
+  border-radius: 999px;
+  background: #8fb2ff;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.professional-passport-first-use-grid strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.12;
+}
+
+.professional-passport-first-use-grid b {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: auto;
+  padding: 6px 9px;
+  color: #07110f;
+  border-radius: 999px;
+  background: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  line-height: 1.15;
+}
+
+.professional-passport-first-use-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+}
+
+.professional-passport-first-use-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.professional-passport-first-use-proof small {
+  color: #9bd0ff;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.professional-passport-first-use-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.18;
+}
+
 .professional-passport-progress-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(150px, auto);

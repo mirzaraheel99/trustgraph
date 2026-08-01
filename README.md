@@ -69,6 +69,8 @@ The signed-in VPS workspace now has a final layout guard for the hosted SaaS she
 
 The server sync monitor now reads the same `trustgraph-release.json` contract that the VPS updater writes. It parses `commit_short`, shows the current `registration_handoff_command` bundle marker, and treats build-time placeholder JSON as a GitHub bundle stamp rather than proof that the VPS saved the latest commit.
 
+Professional Passport now starts with a first-use wizard before the record forms. It routes hosted login, first live record creation, evidence metadata, consent, Access Grants, and proof export while making the no-open-corporate-browse boundary clear for user-owned Passport data.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist

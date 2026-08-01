@@ -1565,7 +1565,7 @@ function PassportRecordForm({
   }
 
   return (
-    <form className="record-form" onSubmit={submitRecord}>
+    <form className="record-form passport-record-form" onSubmit={submitRecord}>
       <div className="mini-heading">
         <FileText size={16} />
         <strong>Add live Passport record</strong>
@@ -1861,7 +1861,7 @@ function SkillsEvidencePanel({
   };
 
   return (
-    <section className="skills-evidence-panel">
+    <section className="skills-evidence-panel evidence-panel">
       <div className="mini-heading">
         <Sparkles size={16} />
         <strong>Skills evidence packet</strong>
@@ -28346,6 +28346,84 @@ function App() {
       "professional_passport_progress_strip_shows_account_record_evidence_consent_sharing_export_and_rejects_preview_data",
     steps: professionalPassportProgressSteps
   };
+  const professionalPassportFirstUseWizard = {
+    generated_at: new Date().toISOString(),
+    mode: "professional_passport_first_use_wizard",
+    status:
+      professionalPassportProgressComplete === professionalPassportProgressSteps.length
+        ? "ready_to_share"
+        : "setup_in_progress",
+    headline:
+      professionalPassportProgressComplete === professionalPassportProgressSteps.length
+        ? "Passport is ready for controlled sharing"
+        : `Next: ${professionalPassportProgressPacket.next_required_step}`,
+    current_blocker: professionalPassportProgressSteps.find((step) => !step.ready)?.detail ?? "Export live Passport proof for review.",
+    first_live_database_write: "trust_records",
+    sharing_boundary: "Corporate users cannot browse open user rows; they need an approved Access Grant and consent scope.",
+    preview_data_accepted: false,
+    accepted_when:
+      "professional_passport_first_use_wizard_routes_login_record_evidence_consent_access_grant_export_and_no_open_corporate_browse_before_passport_forms"
+  };
+  const professionalPassportFirstUseSteps = [
+    {
+      label: "Login",
+      action: authSession && accountContext ? "Session ready" : "Open account",
+      detail: authSession && accountContext ? accountContext.profile.email : "Hosted Supabase login is required before live rows count.",
+      ready: Boolean(authSession && accountContext),
+      onClick: openAuthControls
+    },
+    {
+      label: "Create record",
+      action: livePassportRecords.length ? "Review records" : "Add record",
+      detail: livePassportRecords.length ? `${livePassportRecords.length} Passport row${livePassportRecords.length === 1 ? "" : "s"} loaded.` : "Write the first credential, employment, education, license, or reference row.",
+      ready: livePassportRecords.length > 0,
+      onClick: () => document.querySelector(".passport-record-form")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Attach evidence",
+      action: evidenceDocuments.length ? "Review evidence" : "Add evidence",
+      detail: evidenceDocuments.length ? `${evidenceDocuments.length} metadata row${evidenceDocuments.length === 1 ? "" : "s"} linked.` : "Attach private evidence metadata after selecting a live record.",
+      ready: evidenceDocuments.length > 0,
+      onClick: () => document.querySelector(".evidence-panel")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Set consent",
+      action: consentAuthorizations.length ? "Review consent" : "Create consent",
+      detail: consentAuthorizations.length ? `${consentAuthorizations.length} consent authorization${consentAuthorizations.length === 1 ? "" : "s"}.` : "Create scoped consent for sensitive or restricted records.",
+      ready: consentAuthorizations.length > 0,
+      onClick: () => document.querySelector(".consent-panel")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Control sharing",
+      action: accessGrants.length ? "Review grants" : "Prepare grant",
+      detail: accessGrants.length ? `${accessGrants.length} Access Grant${accessGrants.length === 1 ? "" : "s"} tracked.` : "Approve, decline, revoke, or create a scoped Corporate access request.",
+      ready: accessGrants.length > 0,
+      onClick: () => document.querySelector(".grant-list")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Export proof",
+      action: "Export wizard",
+      detail: "Export the first-use packet with live row counts and no-preview-data proof.",
+      ready: professionalPassportProgressReady,
+      onClick: () =>
+        downloadTextFile(
+          `trustgraph-professional-passport-first-use-${new Date().toISOString().slice(0, 10)}.json`,
+          JSON.stringify(
+            {
+              ...professionalPassportFirstUseWizard,
+              steps: professionalPassportProgressSteps,
+              records: livePassportRecords.length,
+              evidence: evidenceDocuments.length,
+              consent: consentAuthorizations.length,
+              grants: accessGrants.length
+            },
+            null,
+            2
+          ),
+          "application/json"
+        )
+    }
+  ];
   const livePilotRowProofRows: LivePilotRowProof["rows"] = [
     {
       label: "Hosted auth session",
@@ -34518,49 +34596,99 @@ function App() {
         <section className="work-grid">
           <div className="records-panel">
             {workspace.id === "passport" ? (
-              <div className="professional-passport-progress-strip" aria-label="Professional Passport progress strip">
-                <div className="professional-passport-progress-header">
-                  <div>
-                    <span className="eyebrow">Professional Passport progress</span>
-                    <strong>{professionalPassportProgressComplete}/{professionalPassportProgressSteps.length} live steps ready</strong>
-                    <small>
-                      Next: {professionalPassportProgressPacket.next_required_step}. Only signed-in Supabase rows count; preview data is rejected.
-                    </small>
+              <>
+                <div className={`professional-passport-first-use ${professionalPassportFirstUseWizard.status === "ready_to_share" ? "ready" : "next"}`} aria-label="Professional Passport first-use wizard">
+                  <div className="professional-passport-first-use-header">
+                    <div>
+                      <span className={`status-chip ${professionalPassportFirstUseWizard.status === "ready_to_share" ? "success" : "warning"}`}>
+                        Professional first-use wizard
+                      </span>
+                      <strong>{professionalPassportFirstUseWizard.headline}</strong>
+                      <small>{professionalPassportFirstUseWizard.current_blocker}</small>
+                    </div>
+                    <button
+                      className="secondary-action"
+                      onClick={() =>
+                        downloadTextFile(
+                          `trustgraph-professional-passport-first-use-${new Date().toISOString().slice(0, 10)}.json`,
+                          JSON.stringify({ ...professionalPassportFirstUseWizard, steps: professionalPassportFirstUseSteps.map(({ onClick: _onClick, ...step }) => step) }, null, 2),
+                          "application/json"
+                        )
+                      }
+                      type="button"
+                    >
+                      Export first-use packet
+                    </button>
                   </div>
-                  <button
-                    className="secondary-action"
-                    onClick={() =>
-                      downloadTextFile(
-                        `trustgraph-professional-passport-progress-${new Date().toISOString().slice(0, 10)}.json`,
-                        JSON.stringify(professionalPassportProgressPacket, null, 2),
-                        "application/json"
-                      )
-                    }
-                    type="button"
-                  >
-                    Export Passport proof
-                  </button>
-                </div>
-                <div className="professional-passport-progress-meter" aria-hidden="true">
-                  <span style={{ width: `${(professionalPassportProgressComplete / professionalPassportProgressSteps.length) * 100}%` }} />
-                </div>
-                <div className="professional-passport-progress-grid">
-                  {professionalPassportProgressSteps.map((step, index) => (
-                    <article className={step.ready ? "ready" : "pending"} key={step.label}>
-                      <span>{index + 1}</span>
-                      <div>
+                  <div className="professional-passport-first-use-grid">
+                    {professionalPassportFirstUseSteps.map((step, index) => (
+                      <button className={step.ready ? "ready" : "next"} key={step.label} onClick={step.onClick} type="button">
+                        <span>{String(index + 1).padStart(2, "0")}</span>
                         <strong>{step.label}</strong>
                         <small>{step.detail}</small>
-                      </div>
-                      <b>{step.value}</b>
-                    </article>
-                  ))}
+                        <b>{step.action}</b>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="professional-passport-first-use-proof">
+                    <span>
+                      <small>First live write</small>
+                      <strong>{professionalPassportFirstUseWizard.first_live_database_write}</strong>
+                    </span>
+                    <span>
+                      <small>Sharing boundary</small>
+                      <strong>{professionalPassportFirstUseWizard.sharing_boundary}</strong>
+                    </span>
+                    <span>
+                      <small>Preview data accepted</small>
+                      <strong>{professionalPassportFirstUseWizard.preview_data_accepted ? "Yes" : "No"}</strong>
+                    </span>
+                  </div>
                 </div>
-                <div className="professional-passport-progress-proof">
-                  <span>{professionalPassportProgressPacket.accepted_when}</span>
-                  <small>Records {livePassportRecords.length} | Evidence {evidenceDocuments.length} | Consent {consentAuthorizations.length} | Grants {accessGrants.length}</small>
+                <div className="professional-passport-progress-strip" aria-label="Professional Passport progress strip">
+                  <div className="professional-passport-progress-header">
+                    <div>
+                      <span className="eyebrow">Professional Passport progress</span>
+                      <strong>{professionalPassportProgressComplete}/{professionalPassportProgressSteps.length} live steps ready</strong>
+                      <small>
+                        Next: {professionalPassportProgressPacket.next_required_step}. Only signed-in Supabase rows count; preview data is rejected.
+                      </small>
+                    </div>
+                    <button
+                      className="secondary-action"
+                      onClick={() =>
+                        downloadTextFile(
+                          `trustgraph-professional-passport-progress-${new Date().toISOString().slice(0, 10)}.json`,
+                          JSON.stringify(professionalPassportProgressPacket, null, 2),
+                          "application/json"
+                        )
+                      }
+                      type="button"
+                    >
+                      Export Passport proof
+                    </button>
+                  </div>
+                  <div className="professional-passport-progress-meter" aria-hidden="true">
+                    <span style={{ width: `${(professionalPassportProgressComplete / professionalPassportProgressSteps.length) * 100}%` }} />
+                  </div>
+                  <div className="professional-passport-progress-grid">
+                    {professionalPassportProgressSteps.map((step, index) => (
+                      <article className={step.ready ? "ready" : "pending"} key={step.label}>
+                        <span>{index + 1}</span>
+                        <div>
+                          <strong>{step.label}</strong>
+                          <small>{step.detail}</small>
+                        </div>
+                        <b>{step.value}</b>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="professional-passport-progress-proof">
+                    <span>{professionalPassportProgressPacket.accepted_when}</span>
+                    <small>Records {livePassportRecords.length} | Evidence {evidenceDocuments.length} | Consent {consentAuthorizations.length} | Grants {accessGrants.length}</small>
+                  </div>
                 </div>
-              </div>
+              </>
             ) : null}
             <div className="panel-heading">
               <div>
