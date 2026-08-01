@@ -171,6 +171,8 @@ The public website now includes a hosted build source contract before login. It 
 
 The public pricing section now includes a Pricing and access summary before the seat estimator, connecting the free Professional pilot, `$149` Corporate Verify pilot, first database write, scoped Corporate user access, and Stripe-off billing boundary in one visible buyer decision point.
 
+The public pricing section now also includes a Pricing launch decision before the estimator. It shows the Professional free path, Corporate `$149` pilot path, selected first database write, and Stripe-off billing boundary with direct Professional, Corporate, and export actions before signup.
+
 Billing now starts with a Billing launch board that keeps the corporate pilot plan, selected seats, live Supabase subscription ledger, pricing quote receipt, payment decision receipt, and Stripe-off gate visible before deeper billing evidence panels.
 
 Billing also includes a Billing pilot acceptance checkpoint that ties the live pricing catalog, selected seats, projected totals, live subscription ledger, quote receipt, payment decision receipt, Stripe-off boundary, and preview-data rejection into one exportable packet before paid launch work.

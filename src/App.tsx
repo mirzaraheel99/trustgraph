@@ -17604,6 +17604,48 @@ function PublicSite({
       detail: publicPricingAccessSummary.payment_boundary
     }
   ];
+  const publicPricingLaunchDecision = {
+    mode: "public_pricing_launch_decision",
+    selected_portal: portal,
+    selected_mode: mode,
+    selected_price: selectedRegistrationPath.plan,
+    selected_first_write: selectedRegistrationPath.primaryWrite,
+    professional_outcome: "Professional Passport stays free for the pilot and writes owner-controlled profile, Passport, evidence, consent, and sharing rows after hosted login.",
+    corporate_outcome: "Corporate Verify uses the $149 pilot ledger for company workspace, RBAC, reviewer access, team setup, and scoped user-database requests.",
+    payment_boundary: "No card capture, Stripe Checkout, invoice email, refund flow, dunning, tax, or payment webhook is live before the human billing gate.",
+    accepted_when:
+      "public_pricing_launch_decision_makes_professional_free_corporate_149_pilot_database_writes_scoped_access_and_stripe_off_boundary_clear_before_signup"
+  };
+  const publicPricingLaunchCards = [
+    {
+      label: "User path",
+      value: "Professional free",
+      detail: publicPricingLaunchDecision.professional_outcome,
+      action: "Create Passport",
+      portal: "professional" as const
+    },
+    {
+      label: "Company path",
+      value: "$149 pilot",
+      detail: publicPricingLaunchDecision.corporate_outcome,
+      action: "Create company",
+      portal: "corporate" as const
+    },
+    {
+      label: "Selected write",
+      value: publicPricingLaunchDecision.selected_first_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 5).join(", "),
+      action: "Use selected path",
+      portal
+    },
+    {
+      label: "Billing gate",
+      value: "Stripe off",
+      detail: publicPricingLaunchDecision.payment_boundary,
+      action: "Export decision",
+      portal
+    }
+  ];
   const portalLoginSwitchboard = [
     {
       label: "Professional user login",
@@ -19655,6 +19697,39 @@ function PublicSite({
             >
               Export pricing access
             </button>
+          </div>
+        </div>
+        <div className="public-pricing-launch-decision" aria-label="Public pricing launch decision">
+          <div className="public-pricing-launch-decision-copy">
+            <span className="status-chip neutral">Before signup</span>
+            <strong>{publicPricingLaunchDecision.selected_price}</strong>
+            <small>{publicPricingLaunchDecision.accepted_when}</small>
+          </div>
+          <div className="public-pricing-launch-decision-grid">
+            {publicPricingLaunchCards.map((item) => (
+              <article key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <small>{item.detail}</small>
+                <button
+                  className={item.portal === "professional" ? "primary-action" : "secondary-action"}
+                  onClick={() => {
+                    if (item.label === "Billing gate") {
+                      downloadTextFile(
+                        `trustgraph-public-pricing-launch-decision-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify(publicPricingLaunchDecision, null, 2),
+                        "application/json"
+                      );
+                      return;
+                    }
+                    openPortal(item.portal);
+                  }}
+                  type="button"
+                >
+                  {item.action}
+                </button>
+              </article>
+            ))}
           </div>
         </div>
         <div className="public-pricing-estimator" aria-label="Public pricing pilot estimator">
