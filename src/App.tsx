@@ -5935,6 +5935,36 @@ function CorporateDirectoryPanel({
     accepted_when:
       "corporate_reviewer_workflow_strip_requires_request_approval_scoped_rows_review_attestation_snapshot_export_and_no_open_user_browse_before_directory_rows"
   };
+  const corporateScopedAccessJourney = {
+    mode: "corporate_scoped_access_journey",
+    current_step: currentCorporateReviewerStep.label,
+    next_action: corporateReviewerWorkflowStrip.current_action,
+    approved_grants: approvedAccessCount,
+    visible_user_rows: sharedRecords.length,
+    review_attestations: reviews.length,
+    visibility_snapshot_saved: Boolean(latestCorporateVisibilitySnapshot),
+    metadata_only_export: true,
+    no_open_user_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_scoped_access_journey_requires_request_professional_approval_visible_scoped_rows_review_attestation_visibility_snapshot_metadata_export_and_no_open_user_browse"
+  };
+  const corporateScopedAccessJourneySteps = corporateRequestToRowSteps.map((step, index) => ({
+    ...step,
+    number: String(index + 1).padStart(2, "0"),
+    headline:
+      step.label === "Request"
+        ? "Ask by professional email"
+        : step.label === "Approval"
+          ? "Professional approves scope"
+          : step.label === "Scoped rows"
+            ? "Rows appear only after approval"
+            : step.label === "Attest"
+              ? "Reviewer records proof"
+              : step.label === "Snapshot"
+                ? "Save filtered visibility"
+                : "Export metadata packet"
+  }));
   const corporateReviewerDatabaseWorkbench = {
     mode: "corporate_reviewer_database_workbench",
     headline:
@@ -6442,6 +6472,60 @@ function CorporateDirectoryPanel({
           >
             Export studio proof
           </button>
+        </div>
+      </div>
+      <div className="corporate-scoped-access-journey" aria-label="Corporate scoped access journey">
+        <div className="corporate-scoped-access-header">
+          <div>
+            <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Scoped access journey</span>
+            <strong>{corporateScopedAccessJourney.current_step}: {corporateScopedAccessJourney.next_action}</strong>
+            <small>{corporateScopedAccessJourney.accepted_when}</small>
+          </div>
+          <button
+            className="primary-action"
+            onClick={() => {
+              if (currentCorporateReviewerStep.target === "export") {
+                downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                return;
+              }
+              runCorporateReviewerTask(currentCorporateReviewerStep.target);
+            }}
+            type="button"
+          >
+            {corporateScopedAccessJourney.next_action}
+          </button>
+        </div>
+        <div className="corporate-scoped-access-grid">
+          {corporateScopedAccessJourneySteps.map((step) => (
+            <button className={step.ready ? "ready" : step.label === currentCorporateReviewerStep.label ? "next" : "locked"} key={step.label} onClick={() => runCorporateReviewerTask(step.target)} type="button">
+              <span>{step.number}</span>
+              <strong>{step.headline}</strong>
+              <small>{step.detail}</small>
+              <b>{step.value}</b>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-scoped-access-proof">
+          <span>
+            <small>Approved grants</small>
+            <strong>{corporateScopedAccessJourney.approved_grants}</strong>
+          </span>
+          <span>
+            <small>Visible rows</small>
+            <strong>{corporateScopedAccessJourney.visible_user_rows}</strong>
+          </span>
+          <span>
+            <small>Reviews</small>
+            <strong>{corporateScopedAccessJourney.review_attestations}</strong>
+          </span>
+          <span>
+            <small>Export</small>
+            <strong>{corporateScopedAccessJourney.metadata_only_export ? "Metadata only" : "Raw files"}</strong>
+          </span>
+          <span>
+            <small>Browse boundary</small>
+            <strong>{corporateScopedAccessJourney.no_open_user_browse ? "No open browse" : "Open browse"}</strong>
+          </span>
         </div>
       </div>
       <div className="corporate-reviewer-workflow-strip" aria-label="Corporate reviewer workflow strip">

@@ -29935,6 +29935,121 @@ body {
     rgba(255, 255, 255, 0.035);
 }
 
+.corporate-scoped-access-journey {
+  order: -74;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 1.8vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(143, 178, 255, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(21, 38, 56, 0.94), rgba(9, 39, 42, 0.9) 56%, rgba(12, 21, 26, 0.96)),
+    rgba(255, 255, 255, 0.035);
+  box-shadow: 0 20px 58px rgba(0, 0, 0, 0.24);
+}
+
+.corporate-scoped-access-header,
+.corporate-scoped-access-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-scoped-access-header > div,
+.corporate-scoped-access-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.corporate-scoped-access-grid,
+.corporate-scoped-access-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.corporate-scoped-access-grid button,
+.corporate-scoped-access-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.13);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.045);
+  text-align: left;
+  white-space: normal;
+}
+
+.corporate-scoped-access-grid button.ready {
+  border-color: rgba(108, 240, 195, 0.34);
+  background: rgba(26, 176, 145, 0.12);
+}
+
+.corporate-scoped-access-grid button.next {
+  border-color: rgba(255, 205, 111, 0.34);
+  background: rgba(255, 205, 111, 0.06);
+}
+
+.corporate-scoped-access-grid button.locked {
+  opacity: 0.76;
+}
+
+.corporate-scoped-access-journey strong,
+.corporate-scoped-access-journey small,
+.corporate-scoped-access-journey span,
+.corporate-scoped-access-journey b {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-scoped-access-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 26px);
+  line-height: 1.1;
+}
+
+.corporate-scoped-access-grid span,
+.corporate-scoped-access-proof small {
+  color: #9fc2ff;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-scoped-access-grid strong,
+.corporate-scoped-access-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.corporate-scoped-access-grid small,
+.corporate-scoped-access-header small {
+  color: rgba(226, 239, 233, 0.7);
+  line-height: 1.34;
+}
+
+.corporate-scoped-access-grid b {
+  color: #84f7dc;
+  font-size: 12px;
+}
+
+.corporate-scoped-access-header button {
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .corporate-reviewer-workflow-header,
 .corporate-reviewer-workflow-proof {
   display: grid;

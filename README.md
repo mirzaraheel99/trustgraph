@@ -299,6 +299,8 @@ Public auth now includes a Public entry sequence after the access command. It sh
 
 Corporate Verify now includes a reviewer workflow strip before directory rows. It gives reviewers one sequence for request, approval, scoped rows, review attestation, visibility snapshot, and metadata export while keeping open user browsing blocked.
 
+Corporate Verify now includes a scoped access journey before the workflow strip. It explains request by professional email, professional approval, visible scoped rows, review attestation, filtered visibility snapshot, metadata-only export, and no-open-user-browse in one board.
+
 Billing now starts with a pilot package board that explains Professional Passport free pilot, Corporate Verify pilot pricing, Scale human quote, live ledger and quote proof, scoped Corporate database access, and the Stripe/payment human gate before payment work.
 
 V1 readiness now includes a pilot route run checkpoint that proves the hosted path from website and auth through Professional rows, Corporate workspace, pricing ledger, scoped user database access, Admin proof exports, and VPS freshness before pilot acceptance.
