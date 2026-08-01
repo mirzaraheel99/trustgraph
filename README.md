@@ -335,6 +335,8 @@ Corporate Verify now includes a scoped access journey before the workflow strip.
 
 Billing now starts with a pilot package board that explains Professional Passport free pilot, Corporate Verify pilot pricing, Scale human quote, live ledger and quote proof, scoped Corporate database access, and the Stripe/payment human gate before payment work.
 
+Billing now starts with a Billing decision center above the package board. It gives one next action, selected package, seat count, projected price, live ledger state, quote receipt, payment decision, Stripe-off boundary, and export packet before the deeper proof receipts.
+
 V1 readiness now includes a pilot route run checkpoint that proves the hosted path from website and auth through Professional rows, Corporate workspace, pricing ledger, scoped user database access, Admin proof exports, and VPS freshness before pilot acceptance.
 
 V1 pilot route run receipts are now persisted in Supabase so the route checkpoint can be recorded as an audited live database row, not only exported as a local JSON packet.

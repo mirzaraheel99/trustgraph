@@ -13809,6 +13809,51 @@ function BillingPanel({
     { label: "Quote", value: latestPricingQuoteReceipt ? "Saved" : "Record", ready: Boolean(latestPricingQuoteReceipt) },
     { label: "Payments", value: "Stripe gated", ready: true }
   ];
+  const billingDecisionCenter = {
+    mode: "billing_decision_center",
+    selected_package: selectedProjectedPlan?.name ?? primaryPlan?.name ?? "Corporate Verify Pilot",
+    selected_seats: seats,
+    projected_monthly_usd: estimatedSeatTotal,
+    live_subscription_rows: activeSubscriptions.length,
+    quote_receipt_status: latestPricingQuoteReceipt ? "saved" : "not_recorded",
+    payment_decision_status: latestDecisionReceipt?.status ?? "not_recorded",
+    stripe_checkout_status: "disabled_until_human_gate",
+    next_action: !activeSubscriptions.length
+      ? "Activate pilot ledger"
+      : !latestPricingQuoteReceipt
+        ? "Record quote"
+        : !latestDecisionReceipt
+          ? "Record payment decision"
+          : "Export launch packet",
+    accepted_when:
+      "billing_decision_center_requires_one_visible_package_price_seats_live_ledger_quote_payment_decision_stripe_gate_and_export_before_deep_receipts"
+  };
+  const billingDecisionCenterCards = [
+    {
+      label: "Package",
+      value: billingDecisionCenter.selected_package,
+      detail: estimatedSeatTotal ? `$${estimatedSeatTotal}/month for ${seats} seats.` : "Load pricing plans before quoting.",
+      ready: plans.length > 0
+    },
+    {
+      label: "Database",
+      value: activeSubscriptions.length ? "Ledger active" : "Ledger needed",
+      detail: activeSubscriptions.length ? `${activeSubscriptions.length} live subscription row${activeSubscriptions.length === 1 ? "" : "s"}.` : "Write the Corporate Verify pilot subscription row.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Quote",
+      value: latestPricingQuoteReceipt ? "Saved" : "Not saved",
+      detail: latestPricingQuoteReceipt ? `Receipt stores $${latestPricingQuoteReceipt.projected_monthly_usd}/month.` : "Save the selected seat count and projected total.",
+      ready: Boolean(latestPricingQuoteReceipt)
+    },
+    {
+      label: "Payment",
+      value: "Stripe off",
+      detail: "No card capture, invoices, refunds, dunning, taxes, or webhooks until approval.",
+      ready: true
+    }
+  ];
   const billingLaunchBoard = {
     mode: "billing_launch_board",
     status: activeSubscriptions.length ? "pilot_ledger_active" : "activate_pilot_ledger",
@@ -14044,6 +14089,10 @@ function BillingPanel({
     billing_activation_receipt: billingActivationReceipt,
     billing_operator_path: billingOperatorSteps,
     billing_pilot_acceptance_checkpoint: billingPilotAcceptanceCheckpoint,
+    billing_decision_center: {
+      ...billingDecisionCenter,
+      cards: billingDecisionCenterCards.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
     pilot_package_board: {
       ...pilotPackageBoard,
       packages: pilotPackageCards.map(({ label, price, audience, proof }) => ({ label, price, audience, proof })),
@@ -14175,6 +14224,59 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="billing-decision-center" aria-label="Billing decision center">
+        <div className="billing-decision-center-copy">
+          <span className={`status-chip ${activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt ? "success" : "warning"}`}>
+            Billing decision
+          </span>
+          <strong>{billingDecisionCenter.next_action}</strong>
+          <small>
+            One package, one price path, one database proof path. Stripe payment collection stays gated until the human billing decision is approved.
+          </small>
+        </div>
+        <div className="billing-decision-center-grid">
+          {billingDecisionCenterCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="billing-decision-center-actions">
+          <label>
+            <span>Seats</span>
+            <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
+          </label>
+          <button
+            className="primary-action"
+            disabled={disabled || !billingLaunchBoard.selected_plan_id || activeSubscriptions.length > 0 || Boolean(busyPlanId)}
+            onClick={() => billingLaunchBoard.selected_plan_id ? void activate(billingLaunchBoard.selected_plan_id) : undefined}
+            type="button"
+          >
+            Activate ledger
+          </button>
+          <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+            Record quote
+          </button>
+          <button className="secondary-action" disabled={disabled || decisionBusy} onClick={() => void recordDecisionReceipt()} type="button">
+            Record decision
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-billing-decision-center-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...billingDecisionCenter, cards: billingDecisionCenterCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export packet
+          </button>
+        </div>
+      </div>
       <div className="pilot-package-board" aria-label="Pilot package board">
         <div className="pilot-package-board-header">
           <div>

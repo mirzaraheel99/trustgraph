@@ -34481,12 +34481,128 @@ body {
   }
 }
 
-/* Billing choice simplification: keep package choice, activation, launch, acceptance, and paid gate before proof receipts. */
+/* Billing choice simplification: keep one decision center before package, activation, launch, acceptance, and proof receipts. */
 .billing-panel {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: 12px;
+}
+
+.billing-decision-center {
+  order: -90;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(82, 214, 196, 0.28);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.16), rgba(122, 162, 255, 0.1)),
+    rgba(12, 24, 26, 0.92);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+}
+
+.billing-decision-center-copy {
+  display: grid;
+  gap: 8px;
+  max-width: 760px;
+}
+
+.billing-decision-center-copy strong,
+.billing-decision-center-copy small,
+.billing-decision-center-copy span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.billing-decision-center-copy strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.1vw, 32px);
+  line-height: 1.05;
+}
+
+.billing-decision-center-copy small {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.billing-decision-center-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 10px;
+}
+
+.billing-decision-center-grid article {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.billing-decision-center-grid article.ready {
+  border-color: rgba(82, 214, 196, 0.26);
+  background: rgba(82, 214, 196, 0.08);
+}
+
+.billing-decision-center-grid article.next {
+  border-color: rgba(210, 176, 95, 0.26);
+  background: rgba(210, 176, 95, 0.08);
+}
+
+.billing-decision-center-grid span,
+.billing-decision-center-grid strong,
+.billing-decision-center-grid small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.billing-decision-center-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.billing-decision-center-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.billing-decision-center-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.billing-decision-center-actions {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) repeat(4, minmax(132px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.billing-decision-center-actions label {
+  display: grid;
+  gap: 5px;
+}
+
+.billing-decision-center-actions label span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.billing-decision-center-actions input,
+.billing-decision-center-actions button {
+  width: 100%;
+  min-height: 44px;
 }
 
 .billing-panel .pilot-package-board {
@@ -34526,6 +34642,7 @@ body {
 }
 
 .billing-panel .pricing-choice-rail,
+.billing-panel .billing-decision-center,
 .billing-panel .pilot-package-board,
 .billing-panel .pricing-activation-workbench,
 .billing-panel .billing-launch-board,
@@ -34542,6 +34659,7 @@ body {
 }
 
 .billing-panel .pricing-choice-copy > strong,
+.billing-panel .billing-decision-center-copy > strong,
 .billing-panel .pilot-package-board-header strong,
 .billing-panel .pricing-activation-workbench strong,
 .billing-panel .billing-launch-board-header strong,
@@ -34555,6 +34673,7 @@ body {
 }
 
 .billing-panel .pricing-choice-grid,
+.billing-panel .billing-decision-center-grid,
 .billing-panel .pilot-package-board-grid,
 .billing-panel .pricing-activation-workbench-grid,
 .billing-panel .billing-launch-board-grid,
@@ -34569,6 +34688,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions,
+.billing-panel .billing-decision-center-actions,
 .billing-panel .pilot-package-board-proof,
 .billing-panel .pricing-activation-workbench-footer,
 .billing-panel .billing-launch-board-actions,
@@ -34582,6 +34702,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions button,
+.billing-panel .billing-decision-center-actions button,
 .billing-panel .pilot-package-board-proof button,
 .billing-panel .pricing-activation-workbench-footer button,
 .billing-panel .billing-launch-board-actions button,
@@ -34595,6 +34716,7 @@ body {
 
 @media (max-width: 780px) {
   .billing-panel .pricing-choice-actions,
+  .billing-panel .billing-decision-center-actions,
   .billing-panel .pilot-package-board-header,
   .billing-panel .pilot-package-board-proof,
   .billing-panel .pricing-activation-workbench-footer,
@@ -34609,6 +34731,16 @@ body {
     grid-template-columns: 1fr;
     align-items: stretch;
   }
+}
+
+.billing-panel .pricing-launch-command,
+.billing-panel .pricing-quote-receipt,
+.billing-panel .pricing-decision-board,
+.billing-panel .stripe-checkout-decision,
+.billing-panel .billing-architecture-receipt,
+.billing-panel .billing-activation-receipt,
+.billing-panel .billing-operator-path {
+  display: none;
 }
 
 /* VPS saved portal command: keep the live server page understandable before dense proof panels. */
