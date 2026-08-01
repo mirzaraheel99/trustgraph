@@ -18955,6 +18955,47 @@ function PublicSite({
       detail: publicSignupDecisionDesk.required_fields.join(", ").replace(/_/g, " ")
     }
   ];
+  const publicRegistrationPricingGate = {
+    mode: "public_registration_pricing_gate",
+    selected_portal: publicSignupDecisionDesk.selected_portal,
+    selected_action: publicSignupDecisionDesk.selected_action,
+    selected_pricing: publicSignupDecisionDesk.pricing,
+    pricing_plan_id: portal === "corporate" ? "corporate-verify-pilot-149" : "professional-free-pilot",
+    first_database_write: publicSignupDecisionDesk.first_live_database_write,
+    live_intent_table: "registration_intents",
+    stripe_checkout_status: portal === "corporate" ? "human_approved_quote_required_before_checkout" : "not_required_for_professional_pilot",
+    server_save_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_registration_pricing_gate_requires_selected_portal_register_or_login_price_plan_first_database_write_registration_intent_stripe_boundary_server_save_and_no_preview_data_before_credentials"
+  };
+  const publicRegistrationPricingGateRows = [
+    {
+      label: "Portal",
+      value: publicRegistrationPricingGate.selected_portal,
+      detail: mode === "signup" ? "Creates the matching live registration intent first." : "Logs into the selected hosted account type."
+    },
+    {
+      label: "Price",
+      value: publicRegistrationPricingGate.selected_pricing,
+      detail: publicRegistrationPricingGate.pricing_plan_id
+    },
+    {
+      label: "First row",
+      value: publicRegistrationPricingGate.first_database_write,
+      detail: publicRegistrationPricingGate.live_intent_table
+    },
+    {
+      label: "Stripe",
+      value: portal === "corporate" ? "Quote gate" : "No checkout",
+      detail: publicRegistrationPricingGate.stripe_checkout_status
+    },
+    {
+      label: "Server",
+      value: serverSyncMonitor.status === "synced" ? "Saved on VPS" : "GitHub saved",
+      detail: serverSyncMonitor.status === "synced" ? "Release stamp matches." : "Run the VPS sync command after GitHub goes green."
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -21456,6 +21497,52 @@ function PublicSite({
                 type="button"
               >
                 Export decision
+              </button>
+            </div>
+          </div>
+          <div className="public-registration-pricing-gate" aria-label="Public registration pricing gate">
+            <div className="public-registration-pricing-gate-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Registration pricing gate</span>
+                <strong>{publicRegistrationPricingGate.selected_action} with {publicRegistrationPricingGate.selected_pricing}</strong>
+                <small>{publicRegistrationPricingGate.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-registration-pricing-gate-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicRegistrationPricingGate, rows: publicRegistrationPricingGateRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export gate
+              </button>
+            </div>
+            <div className="public-registration-pricing-gate-grid">
+              {publicRegistrationPricingGateRows.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-registration-pricing-gate-footer">
+              <span>
+                <strong>{publicRegistrationPricingGate.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+                <small>Credentials are accepted only as the start of hosted Supabase rows and the saved GitHub-to-VPS build path.</small>
+              </span>
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                Professional
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                Corporate
+              </button>
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                Register
               </button>
             </div>
           </div>

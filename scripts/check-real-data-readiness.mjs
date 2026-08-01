@@ -142,6 +142,12 @@ const appRequirements = [
     "public_signup_decision_desk_keeps_portal_mode_price_first_database_write_required_fields_recovery_and_submit_action_visible_directly_above_form_fields",
     "public signup decision desk live-row form acceptance rule"
   ],
+  ["Public registration pricing gate", "public registration pricing gate label"],
+  ["public_registration_pricing_gate", "public registration pricing gate packet mode"],
+  [
+    "public_registration_pricing_gate_requires_selected_portal_register_or_login_price_plan_first_database_write_registration_intent_stripe_boundary_server_save_and_no_preview_data_before_credentials",
+    "public registration pricing gate no-preview-data acceptance rule"
+  ],
   ["Hosted auth recovery board", "hosted auth recovery board label"],
   ["hosted_auth_recovery_board", "hosted auth recovery board packet mode"],
   [
