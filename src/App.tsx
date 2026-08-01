@@ -29914,6 +29914,95 @@ function App() {
       ready: serverSyncMonitor.status === "synced"
     }
   ];
+  const liveRowsChecklist = {
+    mode: "live_rows_checklist",
+    status: livePilotRowProof.accepted && latestRealDatabaseCompletionReceipt && serverSyncMonitor.status === "synced" ? "ready" : "needs_operator_steps",
+    headline:
+      livePilotRowProof.accepted && latestRealDatabaseCompletionReceipt
+        ? "Live rows are loaded and receipt is ready"
+        : "Finish the live data path in order",
+    source: livePilotRowProof.source,
+    ready_steps:
+      [
+        Boolean(authSession && accountContext),
+        livePilotRowProof.source === "signed_in_supabase_rows",
+        livePilotRowProof.readyGroups > 0,
+        sharedVerifyRecords.length > 0,
+        Boolean(latestRealDatabaseCompletionReceipt),
+        realRowAcceptanceGate.live_row_total > 0,
+        serverSyncMonitor.status === "synced"
+      ].filter(Boolean).length,
+    total_steps: 7,
+    next_action:
+      !authSession || !accountContext
+        ? "Login or register from the hosted TrustGraph URL."
+        : livePilotRowProof.source !== "signed_in_supabase_rows" || livePilotRowProof.readyGroups === 0
+          ? "Run live seed or create live rows, then reload proof."
+          : sharedVerifyRecords.length === 0
+            ? "Open Corporate Verify and approve scoped access."
+            : !latestRealDatabaseCompletionReceipt
+              ? "Record the completion receipt."
+              : serverSyncMonitor.status !== "synced"
+                ? "Save the latest GitHub build to the VPS and confirm release JSON."
+                : "Export the working-data proof packet.",
+    preview_data_accepted: false,
+    accepted_when:
+      "live_rows_checklist_requires_hosted_login_live_supabase_rows_seed_or_manual_rows_reload_corporate_review_receipt_export_vps_release_json_and_rejects_preview_data"
+  };
+  const liveRowsChecklistSteps = [
+    {
+      label: "Hosted account",
+      detail: authSession && accountContext ? authSession.user.email : "Login or create account on the hosted URL.",
+      ready: Boolean(authSession && accountContext),
+      action: "Login",
+      target: "login"
+    },
+    {
+      label: "Live rows source",
+      detail:
+        livePilotRowProof.source === "signed_in_supabase_rows"
+          ? "Repository rows are loading from Supabase."
+          : "Run seed or add rows while signed in.",
+      ready: livePilotRowProof.source === "signed_in_supabase_rows",
+      action: "Seed",
+      target: "seed"
+    },
+    {
+      label: "Required groups",
+      detail: `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups} row groups ready.`,
+      ready: livePilotRowProof.accepted,
+      action: "Reload",
+      target: "proof"
+    },
+    {
+      label: "Corporate review",
+      detail: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped records available.` : "Approve access before corporate review counts.",
+      ready: sharedVerifyRecords.length > 0,
+      action: "Verify",
+      target: "verify"
+    },
+    {
+      label: "Receipt",
+      detail: latestRealDatabaseCompletionReceipt ? "Completion receipt is saved." : "Record receipt after live rows load.",
+      ready: Boolean(latestRealDatabaseCompletionReceipt),
+      action: "Record",
+      target: "receipt"
+    },
+    {
+      label: "Working export",
+      detail: realRowAcceptanceGate.live_row_total > 0 ? `${realRowAcceptanceGate.live_row_total} live rows ready for export.` : "Rows must exist before export.",
+      ready: realRowAcceptanceGate.live_row_total > 0,
+      action: "Export",
+      target: "export"
+    },
+    {
+      label: "VPS freshness",
+      detail: serverSyncMonitor.status === "synced" ? "Server release marker is current." : "Server save still needs release JSON proof.",
+      ready: serverSyncMonitor.status === "synced",
+      action: "Status",
+      target: "server"
+    }
+  ];
 
   async function recordLiveDatabaseReadinessReceipt() {
     if (!authSession || !accountContext) {
@@ -32543,6 +32632,103 @@ function App() {
               <small>Preview data</small>
               <strong>{realDataMissionControl.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
+          </div>
+          <div className={`live-rows-checklist ${liveRowsChecklist.status}`} aria-label="Live rows checklist">
+            <div className="live-rows-checklist-header">
+              <div>
+                <span className={`status-chip ${liveRowsChecklist.status === "ready" ? "success" : "warning"}`}>Live rows checklist</span>
+                <strong>{liveRowsChecklist.headline}</strong>
+                <small>{liveRowsChecklist.accepted_when}</small>
+              </div>
+              <span>
+                <small>Progress</small>
+                <strong>
+                  {liveRowsChecklist.ready_steps}/{liveRowsChecklist.total_steps}
+                </strong>
+              </span>
+            </div>
+            <div className="live-rows-checklist-grid">
+              {liveRowsChecklistSteps.map((step) => (
+                <article className={step.ready ? "ready" : "next"} key={step.label}>
+                  <span>{step.label}</span>
+                  <strong>{step.ready ? "Ready" : "Next"}</strong>
+                  <small>{step.detail}</small>
+                  <button
+                    className={step.ready ? "secondary-action" : "primary-action"}
+                    onClick={() => {
+                      if (step.target === "login") {
+                        openAuthControls();
+                        return;
+                      }
+                      if (step.target === "seed") {
+                        if (!authSession || !accountContext) {
+                          openAuthControls();
+                          return;
+                        }
+                        setV1ReadinessStatus("Running live pilot seed from checklist...");
+                        seedLivePilotWorkspace()
+                          .then(() => setV1ReadinessStatus("Live pilot seed completed. Reload proof and continue the checklist."))
+                          .catch((error) => {
+                            setV1ReadinessStatus(error instanceof Error ? error.message : "Could not run live pilot seed.");
+                          });
+                        return;
+                      }
+                      if (step.target === "proof") {
+                        document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        return;
+                      }
+                      if (step.target === "verify") {
+                        openWorkspaceOrSetup("verify");
+                        return;
+                      }
+                      if (step.target === "receipt") {
+                        void recordLiveRealDatabaseCompletionReceipt({
+                          status: livePilotRowProof.accepted ? "ready_for_v1_review" : "live_rows_missing",
+                          completedSteps: livePilotRowProof.readyGroups,
+                          totalSteps: livePilotRowProof.totalRequiredGroups,
+                          missingGroups: livePilotRowProof.missingRequiredGroups,
+                          liveRowGroups: livePilotRowProof.rows.map((row) => ({
+                            label: row.label,
+                            table: row.table,
+                            count: row.count,
+                            ready: row.ready,
+                            evidence: row.evidence
+                          })),
+                          metadata: {
+                            source: "live_rows_checklist",
+                            next_action: liveRowsChecklist.next_action,
+                            server_save_status: serverSyncMonitor.status
+                          }
+                        });
+                        return;
+                      }
+                      if (step.target === "export") {
+                        downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json");
+                        return;
+                      }
+                      window.open("https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json", "_blank", "noopener,noreferrer");
+                    }}
+                    type="button"
+                  >
+                    {step.action}
+                  </button>
+                </article>
+              ))}
+            </div>
+            <div className="live-rows-checklist-proof">
+              <span>
+                <small>Source</small>
+                <strong>{liveRowsChecklist.source.replace(/_/g, " ")}</strong>
+              </span>
+              <span>
+                <small>Next action</small>
+                <strong>{liveRowsChecklist.next_action}</strong>
+              </span>
+              <span>
+                <small>Preview data</small>
+                <strong>{liveRowsChecklist.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+              </span>
+            </div>
           </div>
         </section>
 

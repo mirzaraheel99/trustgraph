@@ -36,6 +36,12 @@ const appRequirements = [
     "live_database_proof_commander_requires_hosted_login_live_supabase_rows_seed_or_manual_rows_reload_export_completion_receipt_vps_freshness_and_rejects_demo_preview_data",
     "live database proof commander acceptance rule"
   ],
+  ["Live rows checklist", "live rows checklist label"],
+  ["live_rows_checklist", "live rows checklist packet mode"],
+  [
+    "live_rows_checklist_requires_hosted_login_live_supabase_rows_seed_or_manual_rows_reload_corporate_review_receipt_export_vps_release_json_and_rejects_preview_data",
+    "live rows checklist acceptance rule"
+  ],
   [
     "hosted_auth_account_context_passport_evidence_corporate_access_consent_team_billing_review_and_release_rows_are_loaded_from_supabase_not_preview_data",
     "real-data acceptance rule"

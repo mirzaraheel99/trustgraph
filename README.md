@@ -299,7 +299,9 @@ The signed-in workspace now starts with a Portal daily command center that keeps
 
 The signed-in database path now adds a Live data loading command before the real-row gate. It shows the next missing Supabase row group, live row counts, preview/fixture rejection, hosted login state, and direct actions for login, live pilot seed, proof view, or export.
 
-The signed-in database path now includes a Live row gap resolver. It turns the required Supabase row groups into a direct action queue for hosted login, live seed, proof reload, Corporate Verify review, real database completion receipt, working-data export, server proof, and demo-data rejection.
+The signed-in database path now includes a Live row gap resolver. It turns the required Supabase row groups into a direct action queue for hosted login, live seed, proof reload, Corporate Verify review, real database completion receipt, working-data export, server proof, and preview-data rejection.
+
+The signed-in database path now also includes a Live rows checklist inside the real database mission control. It gives the operator a seven-step flow for hosted login, live Supabase rows, proof reload, Corporate Verify review, completion receipt, working-data export, and VPS release JSON before accepting any preview data.
 
 The public website login area now starts with a Public login command center. Professional versus Corporate, Register versus Login, price, first live database write, recovery, landing portal, scoped Corporate database boundary, and server-save status stay visible before credentials.
 
