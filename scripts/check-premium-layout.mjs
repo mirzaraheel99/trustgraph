@@ -282,7 +282,9 @@ assert(app.includes('aria-label="Corporate review handoff receipt"'), "Corporate
 assert(css.includes(".corporate-review-handoff-receipt") && css.includes(".corporate-review-handoff-grid"), "corporate review handoff receipt must be styled and bounded.");
 assert(app.includes('aria-label="Missing record lifecycle receipt"'), "Corporate Verify missing-record requests must expose lifecycle receipt.");
 assert(app.includes('aria-label="Passport missing record handoff receipt"'), "Professional Passport missing-record inbox must expose handoff receipt.");
+assert(app.includes('aria-label="Missing record cross-portal checkpoint"') && app.includes("missing_record_cross_portal_checkpoint"), "Corporate Verify must expose a cross-portal missing-record checkpoint from request to Passport handoff and review export.");
 assert(css.includes(".missing-record-lifecycle-receipt") && css.includes(".missing-record-lifecycle-grid"), "missing record lifecycle receipt must be styled and bounded.");
+assert(css.includes(".missing-record-cross-portal-checkpoint") && css.includes(".missing-record-cross-portal-grid") && css.includes(".missing-record-cross-portal-proof"), "cross-portal missing-record checkpoint must be styled and bounded.");
 assert(css.includes(".passport-missing-handoff-receipt") && css.includes(".passport-missing-handoff-grid"), "passport missing record handoff receipt must be styled and bounded.");
 assert(css.includes(".request-scope-receipt") && css.includes(".request-scope-receipt-grid"), "Corporate Verify request scope receipt must be styled and bounded.");
 assert(premiumRepair.includes(".corporate-user-database-contract") && premiumRepair.includes(".corporate-user-database-contract-grid"), "corporate user database access contract must be styled and bounded.");

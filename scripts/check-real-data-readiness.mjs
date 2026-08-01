@@ -88,6 +88,12 @@ const appRequirements = [
     "corporate_live_row_proof_chain_requires_live_rbac_request_by_email_approved_grants_scoped_rows_review_attestation_visibility_snapshot_and_metadata_only_export",
     "corporate live row proof rule"
   ],
+  ["Missing record cross-portal checkpoint", "missing-record cross-portal label"],
+  ["missing_record_cross_portal_checkpoint", "missing-record cross-portal packet mode"],
+  [
+    "missing_record_cross_portal_checkpoint_requires_corporate_request_professional_passport_handoff_open_gap_status_review_attestation_metadata_export_and_no_preview_data",
+    "missing-record cross-portal acceptance rule"
+  ],
   ["Billing pilot acceptance checkpoint", "billing pilot acceptance label"],
   ["billing_pilot_acceptance_checkpoint", "billing pilot acceptance packet mode"],
   [

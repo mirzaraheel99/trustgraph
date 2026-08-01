@@ -4581,6 +4581,54 @@ function CorporateDirectoryPanel({
     current_action: corporateAccessNextAction.label,
     steps: corporateReviewHandoffSteps
   };
+  const missingRecordCrossPortalCheckpoint = {
+    mode: "missing_record_cross_portal_checkpoint",
+    active_database_mode: databaseMode,
+    corporate_requests_loaded: requests.length,
+    missing_record_requests_loaded: missingRecordRequests.length,
+    open_gap_requests: openGapRequestCount,
+    approved_access_grants: approvedAccessCount,
+    visible_shared_records: sharedRecords.length,
+    review_attestations: reviews.length,
+    professional_handoff_expected: openGapRequestCount > 0,
+    preview_data_accepted: false,
+    next_action:
+      openGapRequestCount > 0
+        ? "professional_reviews_or_resolves_missing_record_requests"
+        : sharedRecords.length && reviews.length
+          ? "export_corporate_user_packet"
+          : corporateAccessNextAction.label,
+    accepted_when:
+      "missing_record_cross_portal_checkpoint_requires_corporate_request_professional_passport_handoff_open_gap_status_review_attestation_metadata_export_and_no_preview_data"
+  };
+  const missingRecordCrossPortalCards = [
+    {
+      label: "Corporate request",
+      value: requests.length ? `${requests.length} access rows` : "Start request",
+      detail: "Corporate starts with a named professional email and approved purpose.",
+      ready: requests.length > 0
+    },
+    {
+      label: "Passport handoff",
+      value: openGapRequestCount ? `${openGapRequestCount} open gaps` : "No open gaps",
+      detail: openGapRequestCount
+        ? "Professional Passport inbox must resolve or respond to missing-record requests."
+        : "No missing-record handoff is blocking the current review.",
+      ready: openGapRequestCount === 0
+    },
+    {
+      label: "Scoped rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Locked",
+      detail: "Rows appear only after Access Grant, consent scope, and corporate RBAC pass.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length} saved` : "Record proof",
+      detail: "Corporate reviewer attestation closes the loop before export or handoff.",
+      ready: reviews.length > 0
+    }
+  ];
   const corporateVisibilityLedger = [
     {
       label: "Visible user records",
@@ -5141,6 +5189,7 @@ function CorporateDirectoryPanel({
     },
     corporate_access_next_action_command: corporateAccessNextActionCommand,
     corporate_review_handoff_receipt: corporateReviewHandoffReceipt,
+    missing_record_cross_portal_checkpoint: missingRecordCrossPortalCheckpoint,
     corporate_data_access_path: corporateAccessPath,
     corporate_review_attestation_ledger: corporateReviewAttestationLedger,
     corporate_review_attestations: reviews.map((review) => ({
@@ -5489,6 +5538,61 @@ function CorporateDirectoryPanel({
             <small>Proof that request, review, attestation, export, and lock reason are visible.</small>
             <em>Metadata only</em>
           </button>
+        </div>
+      </div>
+      <div className="missing-record-cross-portal-checkpoint" aria-label="Missing record cross-portal checkpoint">
+        <div className="missing-record-cross-portal-header">
+          <div>
+            <span className={`status-chip ${openGapRequestCount ? "warning" : sharedRecords.length && reviews.length ? "success" : "neutral"}`}>
+              Missing-record cross-portal checkpoint
+            </span>
+            <strong>{missingRecordCrossPortalCheckpoint.next_action.replace(/_/g, " ")}</strong>
+            <small>{missingRecordCrossPortalCheckpoint.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-missing-record-cross-portal-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(
+                  {
+                    ...missingRecordCrossPortalCheckpoint,
+                    cards: missingRecordCrossPortalCards.map(({ label, value, ready }) => ({ label, value, ready })),
+                    open_gap_titles: missingRecordRequests.filter((request) => request.status !== "fulfilled").map((request) => request.title).slice(0, 8)
+                  },
+                  null,
+                  2
+                ),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export gap checkpoint
+          </button>
+        </div>
+        <div className="missing-record-cross-portal-grid">
+          {missingRecordCrossPortalCards.map((card) => (
+            <article className={card.ready ? "ready" : "next"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="missing-record-cross-portal-proof">
+          <span>
+            <strong>{missingRecordCrossPortalCheckpoint.active_database_mode.replace(/_/g, " ")}</strong>
+            <small>Database mode</small>
+          </span>
+          <span>
+            <strong>{missingRecordCrossPortalCheckpoint.preview_data_accepted ? "yes" : "no"}</strong>
+            <small>Preview data accepted</small>
+          </span>
+          <span>
+            <strong>Metadata only</strong>
+            <small>Export boundary</small>
+          </span>
         </div>
       </div>
       <div className="reviewer-database-readiness-board" aria-label="Reviewer database readiness board">

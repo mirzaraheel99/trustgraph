@@ -11290,6 +11290,98 @@ p {
   text-transform: uppercase;
 }
 
+.missing-record-cross-portal-checkpoint {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(143, 178, 255, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(143, 178, 255, 0.075), rgba(82, 214, 196, 0.045)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.missing-record-cross-portal-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
+  gap: 10px;
+  align-items: start;
+}
+
+.missing-record-cross-portal-header > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.missing-record-cross-portal-checkpoint strong,
+.missing-record-cross-portal-checkpoint small,
+.missing-record-cross-portal-checkpoint span {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.missing-record-cross-portal-header > div:first-child > strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+  text-transform: capitalize;
+}
+
+.missing-record-cross-portal-header button {
+  justify-content: center;
+  width: 100%;
+  min-height: 38px;
+  white-space: normal;
+}
+
+.missing-record-cross-portal-grid,
+.missing-record-cross-portal-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.missing-record-cross-portal-grid article,
+.missing-record-cross-portal-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.missing-record-cross-portal-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.24);
+  background: rgba(95, 240, 201, 0.05);
+}
+
+.missing-record-cross-portal-grid article.next {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.045);
+}
+
+.missing-record-cross-portal-grid span,
+.missing-record-cross-portal-proof small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.missing-record-cross-portal-grid strong,
+.missing-record-cross-portal-proof strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.14;
+}
+
 .missing-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 140px 156px;
