@@ -19022,6 +19022,88 @@ function PublicSite({
       onClick: () => void recoverPassword()
     }
   ];
+  const publicAccountEntryLaunchpad = {
+    mode: "public_account_entry_launchpad",
+    selected_portal: portal,
+    selected_action: mode,
+    primary_label:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create corporate workspace"
+          : "Login to Corporate Verify"
+        : mode === "signup"
+          ? "Create user Passport"
+          : "Login to user Passport",
+    selected_price: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    landing_portal: portal === "corporate" ? "Company Admin and Corporate Verify" : "Professional Passport",
+    corporate_database_boundary: "Corporate reviewers request access by professional email and review approved scoped rows only.",
+    recovery_available: true,
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_account_entry_launchpad_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_database_boundary_submit_and_server_status_visible_before_credentials"
+  };
+  const publicAccountEntryRoutes = [
+    {
+      label: "User registration",
+      detail: "Create a Professional Passport and owner-controlled records.",
+      active: portal === "professional" && mode === "signup",
+      action: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "User login",
+      detail: "Return to Passport, evidence, consent, and sharing.",
+      active: portal === "professional" && mode === "signin",
+      action: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate registration",
+      detail: "Create company workspace, RBAC, pilot ledger, and Verify setup.",
+      active: portal === "corporate" && mode === "signup",
+      action: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate login",
+      detail: "Return to company admin, access requests, and scoped user review.",
+      active: portal === "corporate" && mode === "signin",
+      action: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    }
+  ];
+  const publicAccountEntryStatus = [
+    {
+      label: "Selected",
+      value: publicAccountEntryLaunchpad.primary_label,
+      detail: publicAccountEntryLaunchpad.landing_portal
+    },
+    {
+      label: "Pricing",
+      value: publicAccountEntryLaunchpad.selected_price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "Database",
+      value: publicAccountEntryLaunchpad.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Server",
+      value: publicAccountEntryLaunchpad.server_status.replaceAll("_", " "),
+      detail: "GitHub is source; VPS needs release-stamp proof."
+    }
+  ];
   const publicPortalFlowMapSteps = [
     {
       label: "Choose",
@@ -22236,6 +22318,79 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="public-account-entry-launchpad" aria-label="Public account entry launchpad">
+            <div className="public-account-entry-launchpad-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Account entry</span>
+                <strong>{publicAccountEntryLaunchpad.primary_label}</strong>
+                <small>
+                  Pick user or corporate, register or login, then continue to the same hosted form. Pricing, recovery, database boundary, and server status stay visible before credentials.
+                </small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-account-entry-routes">
+              {publicAccountEntryRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-account-entry-status">
+              {publicAccountEntryStatus.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-account-entry-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-account-entry-launchpad-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...publicAccountEntryLaunchpad,
+                        routes: publicAccountEntryRoutes.map(({ action: _action, ...route }) => route),
+                        status: publicAccountEntryStatus
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export entry proof
+              </button>
+            </div>
+            <div className="public-account-entry-proof">
+              <span>
+                <small>Corporate database</small>
+                <strong>No open user browse</strong>
+              </span>
+              <span>
+                <small>Preview data</small>
+                <strong>{publicAccountEntryLaunchpad.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+              </span>
+            </div>
+          </div>
           <div className="public-auth-start-strip" aria-label="Public auth start strip">
             <div className="public-auth-start-strip-header">
               <div>

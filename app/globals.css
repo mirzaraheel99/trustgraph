@@ -31778,6 +31778,10 @@ body {
   order: -70;
 }
 
+.public-auth-card .public-account-entry-launchpad {
+  order: -80;
+}
+
 .public-auth-card .public-auth-experience-studio {
   order: -60;
 }
@@ -31816,6 +31820,7 @@ body {
 }
 
 .public-auth-card .public-account-access-path,
+.public-auth-card .public-account-entry-launchpad,
 .public-auth-card .public-auth-start-strip,
 .public-auth-card .public-auth-experience-studio,
 .public-auth-card .public-portal-switchboard,
@@ -31823,6 +31828,114 @@ body {
 .public-auth-card .corporate-access-route-preview,
 .public-auth-card .public-submit-readiness {
   max-width: 100%;
+}
+
+.public-account-entry-launchpad {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 1.9vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.13), rgba(134, 174, 246, 0.075) 48%, rgba(255, 255, 255, 0.02)),
+    rgba(6, 15, 18, 0.94);
+  box-shadow: 0 20px 58px rgba(0, 0, 0, 0.26);
+}
+
+.public-account-entry-launchpad-header,
+.public-account-entry-actions,
+.public-account-entry-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-account-entry-launchpad-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-account-entry-launchpad strong,
+.public-account-entry-launchpad small,
+.public-account-entry-launchpad span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-account-entry-launchpad-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 1.9vw, 28px);
+  line-height: 1.08;
+}
+
+.public-account-entry-launchpad small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.public-account-entry-routes,
+.public-account-entry-status {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 136px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-account-entry-routes button,
+.public-account-entry-status span,
+.public-account-entry-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+  white-space: normal;
+}
+
+.public-account-entry-routes button.active {
+  border-color: rgba(95, 240, 201, 0.6);
+  background: rgba(95, 240, 201, 0.11);
+}
+
+.public-account-entry-status small:first-child,
+.public-account-entry-proof small {
+  color: #84f7dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-account-entry-status strong,
+.public-account-entry-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.public-account-entry-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  align-items: stretch;
+}
+
+.public-account-entry-actions button,
+.public-account-entry-launchpad-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.public-account-entry-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
 }
 
 .public-auth-start-strip {
@@ -31927,6 +32040,7 @@ body {
 
 .public-auth-card .public-auth-experience-header strong,
 .public-auth-card .public-auth-start-strip-header strong,
+.public-auth-card .public-account-entry-launchpad-header strong,
 .public-auth-card .public-account-access-header strong,
 .public-auth-card .public-portal-switchboard-header strong,
 .public-auth-card .corporate-access-route-preview-header strong,
