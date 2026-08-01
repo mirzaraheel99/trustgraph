@@ -37555,6 +37555,148 @@ body {
   white-space: normal;
 }
 
+.login-portal-desk {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(16px, 2.4vw, 22px);
+  overflow: hidden;
+  border: 1px solid rgba(113, 242, 203, 0.34);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(20, 46, 42, 0.96), rgba(9, 14, 18, 0.98)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+}
+
+.public-auth-card.corporate-mode .login-portal-desk {
+  border-color: rgba(130, 169, 255, 0.38);
+  background:
+    linear-gradient(135deg, rgba(24, 36, 56, 0.96), rgba(9, 14, 18, 0.98)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.login-portal-desk-header,
+.login-portal-desk-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.28fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.login-portal-desk-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.login-portal-desk-routes,
+.login-portal-desk-status {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.login-portal-desk-routes button,
+.login-portal-desk-status span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 72px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #dce9e3;
+  text-align: left;
+}
+
+.login-portal-desk-routes button.active {
+  border-color: rgba(113, 242, 203, 0.58);
+  background: rgba(113, 242, 203, 0.16);
+  color: #f4fbf7;
+}
+
+.public-auth-card.corporate-mode .login-portal-desk-routes button.active {
+  border-color: rgba(130, 169, 255, 0.58);
+  background: rgba(130, 169, 255, 0.16);
+}
+
+.login-portal-desk strong,
+.login-portal-desk small,
+.login-portal-desk span,
+.login-portal-desk em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.login-portal-desk-header strong {
+  color: #f4fbf7;
+  font-size: clamp(1.45rem, 2.5vw, 2.25rem);
+  line-height: 1.04;
+}
+
+.login-portal-desk-routes strong,
+.login-portal-desk-status strong {
+  color: #f4fbf7;
+  font-size: 0.98rem;
+  line-height: 1.16;
+}
+
+.login-portal-desk-routes small,
+.login-portal-desk-status em,
+.login-portal-desk-boundary,
+.login-portal-desk-header small {
+  color: rgba(224, 235, 229, 0.74);
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.login-portal-desk-status small {
+  color: rgba(113, 242, 203, 0.86);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.public-auth-card.corporate-mode .login-portal-desk-status small {
+  color: rgba(166, 190, 255, 0.9);
+}
+
+.login-portal-desk-actions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.login-portal-desk-actions button,
+.login-portal-desk-header button {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  white-space: normal;
+}
+
+.public-auth-card:has(.login-portal-desk) .public-access-hub,
+.public-auth-card:has(.login-portal-desk) .public-account-entry-launchpad,
+.public-auth-card:has(.login-portal-desk) .public-auth-start-strip,
+.public-auth-card:has(.login-portal-desk) .public-account-access-path,
+.public-auth-card:has(.login-portal-desk) .public-auth-experience-studio,
+.public-auth-card:has(.login-portal-desk) .public-account-path-chooser,
+.public-auth-card:has(.login-portal-desk) .public-conversion-runway,
+.public-auth-card:has(.login-portal-desk) .public-v1-access-runway,
+.public-auth-card:has(.login-portal-desk) .public-portal-route-shell,
+.public-auth-card:has(.login-portal-desk) .public-auth-front-desk,
+.public-auth-card:has(.login-portal-desk) .public-access-desk,
+.public-auth-card:has(.login-portal-desk) .registration-route-planner,
+.public-auth-card:has(.login-portal-desk) .corporate-access-route-preview,
+.public-auth-card:has(.login-portal-desk) .public-account-route-confirmation,
+.public-auth-card:has(.login-portal-desk) .public-submit-readiness {
+  display: none !important;
+}
+
 .public-auth-card:has(.public-access-hub) .public-account-entry-launchpad,
 .public-auth-card:has(.public-access-hub) .public-auth-start-strip,
 .public-auth-card:has(.public-access-hub) .public-account-access-path,
@@ -37573,6 +37715,16 @@ body {
 }
 
 @media (max-width: 920px) {
+  .login-portal-desk-header,
+  .login-portal-desk-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .login-portal-desk-routes,
+  .login-portal-desk-status {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .public-access-hub-hero,
   .public-access-hub-actions {
     grid-template-columns: minmax(0, 1fr);
@@ -37586,6 +37738,11 @@ body {
 }
 
 @media (max-width: 560px) {
+  .login-portal-desk-routes,
+  .login-portal-desk-status {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .public-access-hub-routes,
   .public-access-hub-proof,
   .public-access-hub-steps {

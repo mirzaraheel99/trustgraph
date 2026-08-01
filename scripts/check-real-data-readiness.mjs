@@ -94,6 +94,12 @@ const appRequirements = [
     "public_portal_acceptance_requires_account_choice_hosted_auth_pricing_first_database_write_landing_portal_scoped_access_and_saved_server_build_before_live_pilot_acceptance",
     "public portal acceptance rule"
   ],
+  ["Login portal desk", "login portal desk label"],
+  ["login_portal_desk", "login portal desk packet mode"],
+  [
+    "login_portal_desk_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_first_database_write_landing_and_scoped_database_rule_visible_before_credentials",
+    "login portal desk acceptance rule"
+  ],
   ["Signed evidence acceptance checkpoint", "signed evidence acceptance label"],
   ["signed_evidence_acceptance_checkpoint", "signed evidence acceptance packet mode"],
   [

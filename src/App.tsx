@@ -20498,6 +20498,51 @@ function PublicSite({
       }
     }
   ];
+  const loginPortalDesk = {
+    generated_at: new Date().toISOString(),
+    mode: "login_portal_desk",
+    selected_portal: portal,
+    selected_mode: mode,
+    selected_route: `${portal === "corporate" ? "Corporate" : "User"} ${mode === "signin" ? "login" : "registration"}`,
+    headline:
+      portal === "corporate"
+        ? mode === "signin"
+          ? "Corporate login for company reviewers"
+          : "Corporate registration for company admins"
+        : mode === "signin"
+          ? "User login for your Passport"
+          : "User registration for your Passport",
+    pricing: selectedRegistrationPath.plan,
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing account session opens first.",
+    landing_portal: publicAccessHub.landing,
+    recovery: publicAccessHub.recovery,
+    corporate_database_rule: "corporate_can_request_by_email_and_review_only_professional_approved_scoped_rows",
+    preview_data_accepted: false,
+    accepted_when:
+      "login_portal_desk_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_first_database_write_landing_and_scoped_database_rule_visible_before_credentials"
+  };
+  const loginPortalDeskStatus = [
+    {
+      label: "Price",
+      value: loginPortalDesk.pricing,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First database write",
+      value: mode === "signup" ? (portal === "corporate" ? "Company workspace" : "User profile") : "Login session",
+      detail: loginPortalDesk.first_database_write
+    },
+    {
+      label: "Landing",
+      value: loginPortalDesk.landing_portal,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Recovery",
+      value: loginPortalDesk.recovery,
+      detail: authRedirectUrl.includes("localhost") ? "Add hosted URL in Supabase redirects." : "Hosted redirect is configured."
+    }
+  ];
   const publicAccessHubProof = [
     {
       label: "Pricing",
@@ -24468,6 +24513,74 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="login-portal-desk" aria-label="Login portal desk">
+            <div className="login-portal-desk-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Choose portal</span>
+                <strong>{loginPortalDesk.headline}</strong>
+                <small>{loginPortalDesk.accepted_when}</small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="login-portal-desk-routes" aria-label="Choose login or registration route">
+              {publicAccessHubRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="login-portal-desk-status">
+              {loginPortalDeskStatus.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <em>{item.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="login-portal-desk-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-login-portal-desk-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...loginPortalDesk,
+                        routes: publicAccessHubRoutes.map(({ action: _action, ...route }) => route),
+                        status: loginPortalDeskStatus,
+                        credentials_follow: "email_password_fields",
+                        duplicate_auth_panels_hidden: true
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export route
+              </button>
+            </div>
+            <small className="login-portal-desk-boundary">
+              {portal === "corporate"
+                ? "Corporate database rule: request one professional by email, wait for approval, then review scoped rows only."
+                : "User database rule: your Passport stays private until you approve a scoped sharing request."}
+            </small>
+          </div>
           <div className="public-access-hub" aria-label="Public access hub">
             <div className="public-access-hub-hero">
               <div>
