@@ -106,6 +106,12 @@ const appRequirements = [
     "public_signup_decision_desk_keeps_portal_mode_price_first_database_write_required_fields_recovery_and_submit_action_visible_directly_above_form_fields",
     "public signup decision desk live-row form acceptance rule"
   ],
+  ["Corporate reviewer database home", "corporate reviewer database home label"],
+  ["corporate_reviewer_database_home", "corporate reviewer database home packet mode"],
+  [
+    "corporate_reviewer_database_home_requires_request_approval_visible_scoped_rows_review_attestation_export_and_no_open_user_browse",
+    "corporate reviewer database home no-open-browse acceptance rule"
+  ],
   ["Missing record cross-portal checkpoint", "missing-record cross-portal label"],
   ["missing_record_cross_portal_checkpoint", "missing-record cross-portal packet mode"],
   [

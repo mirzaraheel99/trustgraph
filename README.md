@@ -99,6 +99,8 @@ Corporate Verify now keeps the visible operator path focused on the quick start,
 
 Corporate Verify also includes a reviewer front desk that summarizes request, approval, scoped rows, review proof, and the next action before the reviewer reaches filters or export receipts. This keeps the corporate database path understandable on hosted desktop and mobile views while preserving metadata-only proof packets for audit.
 
+Corporate Verify now starts the reviewer work area with a Corporate reviewer database home. It shows the request, approval, visible scoped rows, review proof, export boundary, and no-open-user-browse rule before the reviewer reaches dense forms or directory filters.
+
 Corporate Verify now adds a review queue command before the dense user rows, showing queue rows, shared records, open gaps, attestations, the next reviewer action, and metadata-only queue export in one bounded control surface.
 
 The signed-in console keeps the daily operator path lean: one dashboard front door, the setup center, and the active workspace surface. Release, readiness, and proof machinery stay exportable from their command buttons and packets without stacking into the first screen.

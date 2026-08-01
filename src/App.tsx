@@ -2594,6 +2594,62 @@ function VerifyRequestsPanel({
       ready: reviews.length > 0 && pendingGapCount === 0
     }
   ];
+  const corporateReviewerDatabaseHome = {
+    mode: "corporate_reviewer_database_home",
+    active_organization: activeOrganization.name,
+    reviewer_context: disabled ? "corporate_role_required" : "corporate_rbac_active",
+    status: sharedRecords.length ? "scoped_user_rows_visible" : approvedCount ? "approval_ready_waiting_for_rows" : requests.length ? "waiting_for_professional_approval" : "request_access_first",
+    next_action: firstUseNextAction,
+    visible_rows: sharedRecords.length,
+    approved_grants: approvedCount,
+    open_gaps: pendingGapCount,
+    review_attestations: reviews.length,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_reviewer_database_home_requires_request_approval_visible_scoped_rows_review_attestation_export_and_no_open_user_browse"
+  };
+  const corporateReviewerDatabaseHomeCards = [
+    {
+      label: "Access request",
+      value: requests.length ? `${requests.length} sent` : "Start here",
+      detail: requests.length ? "Requests are tracked by professional email and purpose." : "Request one professional by email before rows can appear.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form",
+      action: "Request access"
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: approvedCount ? "Approved grants can expose scoped Passport rows." : "The professional must approve before Corporate Verify can see user rows.",
+      ready: approvedCount > 0,
+      target: "corporate-verify-request-list",
+      action: "Check approval"
+    },
+    {
+      label: "User rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Locked",
+      detail: sharedRecords.length ? "Rows are scoped to the active company, role, grant, and consent." : "No open directory browse is available.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue",
+      action: "Review rows"
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length} saved` : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} open gap follow-up${pendingGapCount === 1 ? "" : "s"}.` : "Attest after visible rows and gaps are reviewed.",
+      ready: reviews.length > 0 && pendingGapCount === 0,
+      target: "corporate-access-review-queue",
+      action: "Record proof"
+    },
+    {
+      label: "Export",
+      value: sharedRecords.length && reviews.length ? "Ready" : "After review",
+      detail: "Export metadata-only user database proof, never raw private files.",
+      ready: sharedRecords.length > 0 && reviews.length > 0,
+      target: "corporate-directory-list",
+      action: "Export packet"
+    }
+  ];
   const corporateAccessProgressStrip = {
     mode: "corporate_access_progress_strip",
     status: sharedRecords.length ? "shared_rows_visible" : approvedCount ? "approval_ready_reload_rows" : requests.length ? "waiting_for_professional_approval" : disabled ? "corporate_role_required" : "request_access_first",
@@ -2914,6 +2970,67 @@ function VerifyRequestsPanel({
         teamInvitations={teamInvitations}
         teamMembers={teamMembers}
       />
+      <div className="corporate-reviewer-database-home" aria-label="Corporate reviewer database home">
+        <div className="corporate-reviewer-database-home-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Reviewer database home</span>
+            <strong>{sharedRecords.length ? "Scoped user database rows are visible" : "Corporate user rows are locked until request and approval"}</strong>
+            <small>{corporateReviewerDatabaseHome.accepted_when}</small>
+          </div>
+          <button
+            className="primary-action"
+            onClick={() => document.getElementById(corporateReviewerFrontDesk.primary_target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            type="button"
+          >
+            Open next action
+          </button>
+        </div>
+        <div className="corporate-reviewer-database-home-grid">
+          {corporateReviewerDatabaseHomeCards.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => document.getElementById(item.target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              type="button"
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+              <b>{item.action}</b>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-reviewer-database-home-proof">
+          <span>
+            <strong>{corporateReviewerDatabaseHome.status.replace(/_/g, " ")}</strong>
+            <small>Current database status</small>
+          </span>
+          <span>
+            <strong>{corporateReviewerDatabaseHome.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            <small>Preview data</small>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-reviewer-database-home-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(
+                  {
+                    ...corporateReviewerDatabaseHome,
+                    cards: corporateReviewerDatabaseHomeCards.map(({ label, value, detail, ready }) => ({ label, value, detail, ready }))
+                  },
+                  null,
+                  2
+                ),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export database home
+          </button>
+        </div>
+      </div>
       <div className="corporate-portal-quick-start" aria-label="Corporate portal quick start">
         <div className="corporate-portal-quick-start-header">
           <div>
