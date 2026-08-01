@@ -133,6 +133,9 @@ assert(app.includes('aria-label="Billing pilot acceptance checkpoint"') && app.i
 assert(app.includes('aria-label="Pricing quote database receipt"'), "billing must expose a persisted pricing quote receipt.");
 assert(app.includes('aria-label="Pricing decision board"'), "billing must expose a clear pricing decision board.");
 assert(app.includes('aria-label="Pricing choice rail"') && app.includes("pricing_choice_rail"), "billing must expose a visible pricing choice rail before billing receipts.");
+assert(app.includes('aria-label="Pricing activation workbench"') && app.includes("pricing_activation_workbench"), "billing must expose a pricing activation workbench before billing receipts.");
+assert(app.includes("pricing_activation_workbench_requires_plan_seats_projected_price_live_ledger_quote_decision_stripe_gate_export_and_no_preview_data"), "pricing activation workbench must require plan, seats, projected price, live ledger, quote, decision, Stripe gate, export, and no preview data.");
+assert(css.includes(".pricing-activation-workbench") && css.includes(".pricing-activation-workbench-grid") && css.includes(".pricing-activation-workbench-footer"), "pricing activation workbench must be styled and bounded.");
 assert(app.includes('aria-label="Billing architecture decision database receipt"'), "billing must expose a persisted billing architecture decision receipt.");
 assert(app.includes('aria-label="Billing activation receipt"'), "billing must expose a live ledger activation receipt.");
 assert(app.includes('aria-label="Team launch board"') && app.includes("team_launch_board"), "team invitations must expose a clear launch board for admin access, invite, accept, roster review, and export.");

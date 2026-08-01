@@ -5341,6 +5341,116 @@ p,
   white-space: normal;
 }
 
+.pricing-activation-workbench {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 1.8vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(225, 184, 102, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.1), rgba(82, 214, 196, 0.07) 56%, rgba(7, 16, 18, 0.93)),
+    rgba(10, 22, 24, 0.96);
+}
+
+.pricing-activation-workbench-header,
+.pricing-activation-workbench-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pricing-activation-workbench-header > div:first-child,
+.pricing-activation-workbench-footer > span,
+.pricing-activation-workbench-footer label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.pricing-activation-workbench-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pricing-activation-workbench-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 10px;
+}
+
+.pricing-activation-workbench-grid article {
+  display: grid;
+  gap: 8px;
+  min-height: 126px;
+  padding: 13px;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pricing-activation-workbench-grid article.ready {
+  border-color: rgba(82, 214, 196, 0.34);
+  background: rgba(82, 214, 196, 0.07);
+}
+
+.pricing-activation-workbench-grid article.next {
+  border-color: rgba(225, 184, 102, 0.34);
+  background: rgba(225, 184, 102, 0.06);
+}
+
+.pricing-activation-workbench strong,
+.pricing-activation-workbench small,
+.pricing-activation-workbench span,
+.pricing-activation-workbench b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pricing-activation-workbench-header strong {
+  max-width: 40ch;
+  color: var(--text);
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1.04;
+}
+
+.pricing-activation-workbench-header small,
+.pricing-activation-workbench-grid small,
+.pricing-activation-workbench-footer small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.pricing-activation-workbench-grid span,
+.pricing-activation-workbench-footer label > span {
+  color: var(--gold);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.pricing-activation-workbench-grid b {
+  align-self: end;
+  color: #9fffdc;
+}
+
+.pricing-activation-workbench-footer {
+  flex-wrap: wrap;
+}
+
+.pricing-activation-workbench-footer input {
+  min-width: 0;
+  width: min(100%, 160px);
+  height: 40px;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
 .pricing-launch-command > div:first-child,
 .pricing-launch-command-grid article {
   display: grid;
@@ -18065,6 +18175,9 @@ p {
   .billing-estimate-card,
   .billing-decision-card,
   .billing-ledger-acceptance,
+  .pricing-activation-workbench-header,
+  .pricing-activation-workbench-grid,
+  .pricing-activation-workbench-footer,
   .pricing-launch-command,
   .pricing-choice-grid,
   .pricing-choice-actions,
@@ -25695,6 +25808,19 @@ body {
 }
 
 @media (max-width: 760px) {
+  .pricing-activation-workbench-header,
+  .pricing-activation-workbench-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pricing-activation-workbench-actions,
+  .pricing-activation-workbench-actions button,
+  .pricing-activation-workbench-footer button,
+  .pricing-activation-workbench-footer input {
+    width: 100%;
+  }
+
   .corporate-reviewer-database-workbench-header,
   .corporate-reviewer-database-workbench-proof {
     align-items: stretch;

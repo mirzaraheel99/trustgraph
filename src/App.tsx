@@ -11882,6 +11882,67 @@ function BillingPanel({
       ready: true
     }
   ];
+  const pricingActivationWorkbench = {
+    mode: "pricing_activation_workbench",
+    headline: activeSubscriptions.length
+      ? "Corporate pricing ledger is active for pilot review"
+      : "Activate the Corporate Verify pilot ledger before paid launch",
+    selected_plan: billingLaunchBoard.selected_plan,
+    selected_plan_id: billingLaunchBoard.selected_plan_id,
+    selected_seats: seats,
+    projected_monthly_usd: estimatedSeatTotal,
+    active_subscription_rows: activeSubscriptions.length,
+    quote_receipt_status: latestPricingQuoteReceipt ? "saved" : "not_recorded",
+    payment_decision_status: latestDecisionReceipt?.status ?? "not_recorded",
+    stripe_checkout_status: "disabled_until_human_gate",
+    preview_data_accepted: false,
+    accepted_when:
+      "pricing_activation_workbench_requires_plan_seats_projected_price_live_ledger_quote_decision_stripe_gate_export_and_no_preview_data"
+  };
+  const pricingActivationWorkbenchCards = [
+    {
+      label: "Plan",
+      value: billingLaunchBoard.selected_plan,
+      detail: plans.length ? `${plans.length} pricing plans loaded.` : "Pricing catalog needs live database rows.",
+      ready: plans.length > 0,
+      action: "Review plans"
+    },
+    {
+      label: "Seats",
+      value: `${seats}`,
+      detail: "Selected seats drive the corporate quote and pilot ledger.",
+      ready: seats > 0,
+      action: "Adjust seats"
+    },
+    {
+      label: "Monthly",
+      value: estimatedSeatTotal ? `$${estimatedSeatTotal}` : "Pending",
+      detail: "Projected from the configured pricing catalog.",
+      ready: estimatedSeatTotal > 0,
+      action: "Confirm quote"
+    },
+    {
+      label: "Ledger",
+      value: activeSubscriptions.length ? "Active" : "Activate",
+      detail: activeSubscriptions.length ? `${activeSubscriptions.length} Supabase subscription row${activeSubscriptions.length === 1 ? "" : "s"}.` : "Writes the live pilot subscription row.",
+      ready: activeSubscriptions.length > 0,
+      action: "Activate ledger"
+    },
+    {
+      label: "Quote receipt",
+      value: latestPricingQuoteReceipt ? "Saved" : "Record",
+      detail: latestPricingQuoteReceipt ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month saved.` : "Persist a database quote receipt.",
+      ready: Boolean(latestPricingQuoteReceipt),
+      action: "Record quote"
+    },
+    {
+      label: "Stripe gate",
+      value: "Disabled",
+      detail: "Checkout, portal, invoices, taxes, refunds, dunning, and webhooks stay gated.",
+      ready: true,
+      action: "Export gate"
+    }
+  ];
   const billingPilotAcceptanceCheckpoint = {
     mode: "billing_pilot_acceptance_checkpoint",
     selected_plan: billingLaunchBoard.selected_plan,
@@ -11958,6 +12019,10 @@ function BillingPanel({
     pricing_choice_rail: {
       ...pricingChoiceRail,
       items: pricingChoiceRailItems.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
+    pricing_activation_workbench: {
+      ...pricingActivationWorkbench,
+      cards: pricingActivationWorkbenchCards.map(({ label, value, ready }) => ({ label, value, ready }))
     },
     stripe_checkout_decision_receipt: stripeCheckoutDecisionReceipt,
     pricing_decision_board: pricingDecisionBoard,
@@ -12077,6 +12142,71 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="pricing-activation-workbench" aria-label="Pricing activation workbench">
+        <div className="pricing-activation-workbench-header">
+          <div>
+            <span className={`status-chip ${activeSubscriptions.length ? "success" : "warning"}`}>Pricing activation workbench</span>
+            <strong>{pricingActivationWorkbench.headline}</strong>
+            <small>{pricingActivationWorkbench.accepted_when}</small>
+          </div>
+          <div className="pricing-activation-workbench-actions">
+            <button
+              className="primary-action"
+              disabled={disabled || !billingLaunchBoard.selected_plan_id || activeSubscriptions.length > 0 || Boolean(busyPlanId)}
+              onClick={() => billingLaunchBoard.selected_plan_id ? void activate(billingLaunchBoard.selected_plan_id) : undefined}
+              type="button"
+            >
+              Activate ledger
+            </button>
+            <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+              Record quote
+            </button>
+            <button className="secondary-action" disabled={disabled || decisionBusy} onClick={() => void recordDecisionReceipt()} type="button">
+              Record decision
+            </button>
+          </div>
+        </div>
+        <div className="pricing-activation-workbench-grid">
+          {pricingActivationWorkbenchCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+              <b>{item.action}</b>
+            </article>
+          ))}
+        </div>
+        <div className="pricing-activation-workbench-footer">
+          <label>
+            <span>Seats</span>
+            <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
+          </label>
+          <span>
+            <strong>{pricingActivationWorkbench.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+            <small>Pricing proof requires Supabase catalog, ledger, quote, and decision rows.</small>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-pricing-activation-workbench-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(
+                  {
+                    ...pricingActivationWorkbench,
+                    cards: pricingActivationWorkbenchCards.map(({ label, value, detail, ready }) => ({ label, value, detail, ready }))
+                  },
+                  null,
+                  2
+                ),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export pricing workbench
+          </button>
+        </div>
+      </div>
       <div className="billing-launch-board" aria-label="Billing launch board">
         <div className="billing-launch-board-header">
           <div>

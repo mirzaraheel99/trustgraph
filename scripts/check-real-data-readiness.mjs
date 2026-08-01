@@ -118,6 +118,12 @@ const appRequirements = [
     "public_portal_route_shell_requires_one_bounded_login_register_surface_for_professional_corporate_pricing_first_database_write_recovery_server_save_and_no_preview_data",
     "public portal route shell no-preview-data acceptance rule"
   ],
+  ["Pricing activation workbench", "pricing activation workbench label"],
+  ["pricing_activation_workbench", "pricing activation workbench packet mode"],
+  [
+    "pricing_activation_workbench_requires_plan_seats_projected_price_live_ledger_quote_decision_stripe_gate_export_and_no_preview_data",
+    "pricing activation workbench no-preview-data acceptance rule"
+  ],
   ["Corporate reviewer database home", "corporate reviewer database home label"],
   ["corporate_reviewer_database_home", "corporate reviewer database home packet mode"],
   [
