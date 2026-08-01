@@ -171,6 +171,8 @@ The Portal route shell also includes a Current build server gate. It rejects the
 
 The public login/register flow exposes the same Current build server gate before credentials. If the VPS is stale, a buyer or pilot user sees the manual `/opt/trustgraph` sync command and knows not to treat the server as current yet.
 
+That public server gate now includes a manual VPS sync launcher with a copyable `/opt/trustgraph` update command, release-stamp verification commands, Pages smoke context, and the VFIX protected-route boundary before anyone treats the server URL as ready for login testing.
+
 The public login/register card now includes a route confirmation before submit. It restates the selected Professional or Corporate path, whether login or registration will create a database row, the landing portal, the Corporate scoped-access boundary, recovery action, and the no-preview-data rule.
 
 The signed-in workspace now applies a daily SaaS route simplification layer: the tabbed Portal route shell is ordered directly after the header, oversized dashboard headings are reduced, account/logout and Corporate Verify controls stay bounded, and dense proof panels move below the primary route surface.

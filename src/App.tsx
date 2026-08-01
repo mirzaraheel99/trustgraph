@@ -19718,6 +19718,41 @@ function PublicSite({
     protected_vfix_route: publicAuthServerCheckpoint.protected_vfix_route,
     preview_data_accepted: false
   };
+  const publicManualVpsSyncLauncher = {
+    mode: "public_manual_vps_sync_launcher",
+    status: serverSyncMonitor.status === "synced" ? "server_current" : "manual_sync_required",
+    accepted_when:
+      "public_manual_vps_sync_launcher_requires_copyable_update_command_release_stamp_json_commit_match_pages_smoke_and_vfix_route_unchanged_before_server_login_testing",
+    update_command: publicCurrentBuildServerGate.manual_sync_command,
+    verify_commands: [
+      "git -C /opt/trustgraph rev-parse --short HEAD",
+      "curl -I https://trustgraph.5-75-224-110.sslip.io/",
+      "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json"
+    ],
+    release_stamp_url: publicCurrentBuildServerGate.release_stamp_url,
+    protected_vfix_route: publicCurrentBuildServerGate.protected_vfix_route,
+    preview_data_accepted: false
+  };
+  const publicManualVpsSyncLauncherRows = [
+    {
+      label: "Copy",
+      value: "Update command",
+      detail: "Run from the authenticated server shell in /opt/trustgraph.",
+      ready: true
+    },
+    {
+      label: "Verify",
+      value: "Release JSON",
+      detail: "The stamp must return commit JSON, not the app HTML shell.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "Protect",
+      value: "VFIX unchanged",
+      detail: publicManualVpsSyncLauncher.protected_vfix_route,
+      ready: true
+    }
+  ];
   const publicCurrentBuildServerGateRows = [
     {
       label: "GitHub source",
@@ -23092,6 +23127,57 @@ function PublicSite({
             <div className="current-build-server-gate-command">
               <span>Manual VPS sync</span>
               <code>{publicCurrentBuildServerGate.manual_sync_command}</code>
+            </div>
+            <div className={`public-manual-vps-sync-launcher ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="Public manual VPS sync launcher">
+              <div className="public-manual-vps-sync-header">
+                <div>
+                  <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>
+                    Manual server sync
+                  </span>
+                  <strong>{serverSyncMonitor.status === "synced" ? "Server release stamp is current" : "Copy the VPS command before server login testing"}</strong>
+                  <small>{publicManualVpsSyncLauncher.accepted_when}</small>
+                </div>
+                <div className="public-manual-vps-sync-actions">
+                  <button
+                    className="secondary-action"
+                    onClick={() => {
+                      void navigator.clipboard
+                        .writeText(publicCurrentBuildServerGate.manual_sync_command)
+                        .then(() => setMessage("Manual VPS sync command copied. Run it only from /opt/trustgraph on the TrustGraph server."))
+                        .catch(() => setMessage(`Copy this VPS sync command: ${publicCurrentBuildServerGate.manual_sync_command}`));
+                    }}
+                    type="button"
+                  >
+                    Copy command
+                  </button>
+                  <button
+                    className="secondary-action"
+                    onClick={() =>
+                      downloadTextFile(
+                        `trustgraph-public-manual-vps-sync-launcher-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify({ ...publicManualVpsSyncLauncher, rows: publicManualVpsSyncLauncherRows }, null, 2),
+                        "application/json"
+                      )
+                    }
+                    type="button"
+                  >
+                    Export sync plan
+                  </button>
+                </div>
+              </div>
+              <div className="public-manual-vps-sync-grid">
+                {publicManualVpsSyncLauncherRows.map((row) => (
+                  <article className={row.ready ? "ready" : "next"} key={row.label}>
+                    <span>{row.label}</span>
+                    <strong>{row.value}</strong>
+                    <small>{row.detail}</small>
+                  </article>
+                ))}
+              </div>
+              <div className="public-manual-vps-sync-command">
+                <span>Verify after sync</span>
+                <code>{publicManualVpsSyncLauncher.verify_commands.join(" && ")}</code>
+              </div>
             </div>
           </div>
           <div className="public-portal-switchboard" aria-label="Public portal switchboard">

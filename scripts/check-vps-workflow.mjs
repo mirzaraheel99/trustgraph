@@ -135,6 +135,19 @@ const runtimeSnippets = [
   {
     source: app,
     path: "src/App.tsx",
+    snippet: "public_manual_vps_sync_launcher",
+    label: "public login flow exposes the manual VPS sync launcher"
+  },
+  {
+    source: app,
+    path: "src/App.tsx",
+    snippet:
+      "public_manual_vps_sync_launcher_requires_copyable_update_command_release_stamp_json_commit_match_pages_smoke_and_vfix_route_unchanged_before_server_login_testing",
+    label: "manual VPS sync launcher requires release stamp JSON and VFIX protection"
+  },
+  {
+    source: app,
+    path: "src/App.tsx",
     snippet: "TRUSTGRAPH_VPS_USER",
     label: "app names the missing VPS user secret"
   },
