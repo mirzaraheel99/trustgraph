@@ -3620,7 +3620,8 @@ button {
 
 .registration-outcome-command strong,
 .registration-outcome-command small,
-.registration-outcome-command span {
+.registration-outcome-command span,
+.registration-outcome-command button {
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -3644,6 +3645,18 @@ button {
   border: 1px solid rgba(201, 214, 207, 0.12);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.035);
+}
+
+.registration-outcome-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.registration-outcome-actions button {
+  width: 100%;
+  white-space: normal;
 }
 
 .registration-completion-handoff {
@@ -19364,6 +19377,7 @@ p {
   .account-type-chooser-grid,
   .account-type-chooser-actions,
   .portal-submit-receipt-grid,
+  .registration-outcome-actions,
   .public-submit-readiness-grid,
   .public-submit-readiness-actions,
   .public-portal-switchboard-header,
@@ -28709,8 +28723,7 @@ body {
 .auth-path-summary,
 .public-auth-server-checkpoint,
 .registration-pre-submit-checklist,
-.portal-submit-receipt,
-.registration-outcome-command {
+.portal-submit-receipt {
   display: none !important;
 }
 

@@ -431,7 +431,8 @@ assert(css.includes(".portal-launch-decision-strip") && css.includes(".portal-la
 assert(app.includes('aria-label="Public portal launch checklist"'), "public website must expose the launch checklist for website, auth, pricing, database, and server readiness.");
 assert(css.includes(".public-portal-launch-checklist") && css.includes(".public-portal-launch-grid"), "public portal launch checklist must be styled and bounded.");
 assert(css.includes(".portal-submit-receipt") && css.includes(".portal-submit-receipt-grid"), "portal submit receipt must be styled and bounded.");
-assert(css.includes(".registration-outcome-command") && css.includes(".registration-outcome-grid"), "registration outcome command must be styled and bounded.");
+assert(app.includes("registration_outcome_command_requires_selected_portal_mode_required_fields_price_registration_intent_completion_landing_portal_recovery_server_freshness_and_no_preview_data_before_submit"), "registration outcome command must require selected portal, mode, fields, price, intent completion, landing, recovery, server freshness, and no preview data before submit.");
+assert(css.includes(".registration-outcome-command") && css.includes(".registration-outcome-grid") && css.includes(".registration-outcome-actions"), "registration outcome command must be styled, actionable, and bounded.");
 assert(css.includes(".registration-completion-handoff") && css.includes(".registration-completion-grid"), "registration completion handoff must be styled and bounded.");
 assert(app.includes('aria-label="Hosted auth redirect verification receipt"'), "public auth must expose the hosted redirect verification receipt.");
 assert(premiumRepair.includes(".hosted-auth-redirect-verification") && premiumRepair.includes(".hosted-auth-redirect-grid"), "hosted auth redirect verification must be styled and bounded.");

@@ -197,6 +197,8 @@ The public auth form also starts with a Registration route planner that keeps Pr
 
 The public auth form now includes a registration completion handoff after submit. Professional completion is tied to `passport_initialized`; Corporate completion is tied to `workspace_created`, and both show hosted verification, landing dashboard, next action, and preview-data rejection.
 
+The public auth form now keeps the Registration outcome command visible before completion handoff. It shows selected portal and mode, required fields, price, first database write, required registration-intent completion row, landing portal, recovery availability, server freshness, and export/submit actions before credentials are accepted.
+
 The public website now includes a hosted build source contract before login. It makes GitHub `main` the source of truth, GitHub Pages the green bundle check, the VPS release stamp the server proof, and the VFIX route an explicitly protected separate deployment so stale server saves cannot be mistaken for current code.
 
 The public pricing section now includes a Pricing and access summary before the seat estimator, connecting the free Professional pilot, `$149` Corporate Verify pilot, first database write, scoped Corporate user access, and Stripe-off billing boundary in one visible buyer decision point.

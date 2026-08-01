@@ -19137,9 +19137,22 @@ function PublicSite({
     selected_mode: mode,
     submit_label: mode === "signin" ? "Login" : "Create account",
     first_database_write: selectedRegistrationPath.primaryWrite,
+    required_fields: selectedPortalCommand.required_fields,
+    selected_price: selectedRegistrationPath.plan,
     next_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
+    registration_intent_status:
+      mode === "signin"
+        ? "existing_verified_account"
+        : portal === "corporate"
+          ? "workspace_created_required_after_hosted_login"
+          : "passport_initialized_required_after_hosted_login",
+    server_save_status: serverSyncMonitor.status,
+    recovery_available: Boolean(email),
+    preview_data_accepted: false,
     acceptance_boundary:
-      "The UI is only accepted as live database proof after hosted login loads Supabase rows for the selected portal."
+      "The UI is only accepted as live database proof after hosted login loads Supabase rows for the selected portal.",
+    accepted_when:
+      "registration_outcome_command_requires_selected_portal_mode_required_fields_price_registration_intent_completion_landing_portal_recovery_server_freshness_and_no_preview_data_before_submit"
   };
   const registrationOutcomeCards = [
     {
@@ -19153,9 +19166,29 @@ function PublicSite({
       detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
     },
     {
+      label: "Required fields",
+      value: `${registrationOutcomeCommand.required_fields.length} fields`,
+      detail: registrationOutcomeCommand.required_fields.join(", ").replace(/_/g, " ")
+    },
+    {
+      label: "Pricing",
+      value: registrationOutcomeCommand.selected_price,
+      detail: portal === "corporate" ? "Corporate pilot ledger path; Stripe remains gated." : "Professional Passport starts free."
+    },
+    {
+      label: "Completion row",
+      value: registrationOutcomeCommand.registration_intent_status.replace(/_/g, " "),
+      detail: "Registration intent status must be reconciled from Supabase after hosted login."
+    },
+    {
       label: "After success",
       value: registrationOutcomeCommand.next_dashboard,
       detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Server and recovery",
+      value: registrationOutcomeCommand.server_save_status.replaceAll("_", " "),
+      detail: registrationOutcomeCommand.recovery_available ? "Recovery controls can resend, reset, or repair hosted links." : "Enter email to enable recovery controls."
     }
   ];
   const registrationCompletionHandoff = {
@@ -22297,7 +22330,7 @@ function PublicSite({
             <div>
               <span className="status-chip success">Registration outcome command</span>
               <strong>{registrationOutcomeCommand.submit_label} routes to {registrationOutcomeCommand.next_dashboard}</strong>
-              <small>{registrationOutcomeCommand.acceptance_boundary}</small>
+              <small>{registrationOutcomeCommand.accepted_when}</small>
             </div>
             <div className="registration-outcome-grid">
               {registrationOutcomeCards.map((item) => (
@@ -22307,6 +22340,30 @@ function PublicSite({
                   <small>{item.detail}</small>
                 </span>
               ))}
+            </div>
+            <div className="registration-outcome-actions">
+              <button className="primary-action" disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))} type="submit">
+                {registrationOutcomeCommand.submit_label}
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Review pricing
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Recovery
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-registration-outcome-command-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...registrationOutcomeCommand, cards: registrationOutcomeCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export outcome
+              </button>
             </div>
           </div>
           <div className="registration-completion-handoff" aria-label="Registration completion handoff">
