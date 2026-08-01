@@ -17551,6 +17551,56 @@ function PublicSite({
     accepted_when:
       "public_auth_starts_with_clear_user_vs_corporate_routes_pricing_first_database_write_dashboard_and_access_boundary"
   };
+  const corporateAccessRoutePreview = {
+    mode: "corporate_access_route_preview",
+    selected_portal: portal,
+    selected_mode: mode,
+    headline:
+      portal === "corporate"
+        ? "Corporate access is request, approval, then scoped review"
+        : "Companies can only see your Passport after you approve a request",
+    current_step: portal === "corporate" ? "Create company workspace" : "Create Professional Passport",
+    pricing: "$149 Corporate Verify pilot ledger before paid Stripe launch",
+    no_open_database_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_access_route_preview_shows_workspace_pricing_access_request_professional_approval_scoped_rows_and_no_open_user_database_before_signup"
+  };
+  const corporateAccessRouteSteps = [
+    {
+      step: "1",
+      label: portal === "corporate" ? "Company workspace" : "Professional Passport",
+      detail:
+        portal === "corporate"
+          ? "Register the company, save organization and admin membership rows."
+          : "Register the user, save profile and owner-controlled Passport rows.",
+      table: portal === "corporate" ? "organizations + organization_memberships" : "profiles + trust_records"
+    },
+    {
+      step: "2",
+      label: "Pricing ledger",
+      detail: "Corporate Verify uses the $149 pilot ledger; Stripe payment remains human-gated.",
+      table: "organization_subscriptions"
+    },
+    {
+      step: "3",
+      label: "Access request",
+      detail: "Corporate reviewer requests access by professional email. No open user database is available.",
+      table: "corporate_access_grant_requests"
+    },
+    {
+      step: "4",
+      label: "Professional approval",
+      detail: "The professional approves, declines, or revokes the scoped Access Grant.",
+      table: "access_grants + consent_authorizations"
+    },
+    {
+      step: "5",
+      label: "Scoped review",
+      detail: "Corporate Verify sees approved metadata and shared Passport rows only for the active RBAC context.",
+      table: "shared trust_records + corporate_access_reviews"
+    }
+  ];
   const registrationDecisionReceipt = {
     mode: "registration_decision_receipt",
     selected_portal: selectedRegistrationPath.portal,
@@ -20909,6 +20959,48 @@ function PublicSite({
                   Reset password
                 </button>
               </div>
+            </div>
+          </div>
+          <div className="corporate-access-route-preview" aria-label="Corporate access route preview">
+            <div className="corporate-access-route-preview-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Corporate access path</span>
+                <strong>{corporateAccessRoutePreview.headline}</strong>
+                <small>{corporateAccessRoutePreview.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-corporate-access-route-preview-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...corporateAccessRoutePreview, steps: corporateAccessRouteSteps }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export route
+              </button>
+            </div>
+            <div className="corporate-access-route-preview-grid">
+              {corporateAccessRouteSteps.map((item) => (
+                <article key={item.step}>
+                  <span>{item.step}</span>
+                  <strong>{item.label}</strong>
+                  <small>{item.detail}</small>
+                  <em>{item.table}</em>
+                </article>
+              ))}
+            </div>
+            <div className="corporate-access-route-preview-boundary">
+              <span>
+                <strong>{corporateAccessRoutePreview.no_open_database_browse ? "No open user database" : "Open browse"}</strong>
+                <small>Corporate reviewers request by email and see approved, scoped rows only.</small>
+              </span>
+              <span>
+                <strong>{corporateAccessRoutePreview.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+                <small>Completion needs Supabase rows, not static preview data.</small>
+              </span>
             </div>
           </div>
           <div className="portal-tabs">

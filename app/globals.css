@@ -3481,6 +3481,124 @@ button {
   white-space: normal;
 }
 
+.corporate-access-route-preview {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.085), rgba(95, 240, 201, 0.055)),
+    rgba(8, 17, 19, 0.9);
+}
+
+.corporate-access-route-preview-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(142px, 0.28fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-access-route-preview-header > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.corporate-access-route-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-access-route-preview-grid article {
+  display: grid;
+  grid-template-rows: auto auto minmax(54px, 1fr) auto;
+  gap: 6px;
+  min-width: 0;
+  min-height: 144px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.corporate-access-route-preview strong,
+.corporate-access-route-preview small,
+.corporate-access-route-preview span,
+.corporate-access-route-preview em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-access-route-preview-header strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.corporate-access-route-preview-grid span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 999px;
+  color: #9fffe2;
+  font-size: 11px;
+  font-weight: 950;
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.corporate-access-route-preview-grid strong,
+.corporate-access-route-preview-boundary strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.16;
+}
+
+.corporate-access-route-preview small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.corporate-access-route-preview-grid em {
+  color: #9fead5;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.corporate-access-route-preview-boundary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-access-route-preview-boundary span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(95, 240, 201, 0.16);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.045);
+}
+
+.corporate-access-route-preview-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .registration-outcome-command {
   display: grid;
   gap: 12px;
@@ -18657,6 +18775,9 @@ p {
   .public-portal-switchboard-grid,
   .public-portal-switchboard-footer,
   .public-portal-switchboard-actions,
+  .corporate-access-route-preview-header,
+  .corporate-access-route-preview-grid,
+  .corporate-access-route-preview-boundary,
   .registration-pre-submit-checklist,
   .registration-pre-submit-grid,
   .portal-handoff-checklist,
