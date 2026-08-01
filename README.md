@@ -183,6 +183,8 @@ The signed-in portal now shows a Real row acceptance gate before the daily route
 
 The signed-in workspace now starts with a Portal launch matrix. It keeps Professional user, Corporate reviewer, Company Admin, pricing, account/logout, database proof, and server sync paths in one bounded first-screen surface before dense proof panels.
 
+The public login/register card now starts with a compact start strip for Professional registration, Professional login, Corporate registration, and Corporate login. It keeps price, first live database write, landing portal, recovery, scoped Corporate access, server status, and no-preview-data proof visible before credentials.
+
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current. The VPS release stamp is exported as a real `trustgraph-release.json` asset, and the server updater overwrites it with the current Git commit so the freshness check fails clearly if the server returns the app shell instead of JSON.
 
 The signed-in route shell now also includes a VPS save handoff before server freshness proof. It shows the green GitHub source, the `save-vps` automation blocker, missing deploy secrets, manual `/opt/trustgraph` update command, release-stamp JSON check, and VFIX boundary before anyone tests the VPS URL as current.

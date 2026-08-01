@@ -31774,6 +31774,10 @@ body {
   gap: 12px;
 }
 
+.public-auth-card .public-auth-start-strip {
+  order: -70;
+}
+
 .public-auth-card .public-auth-experience-studio {
   order: -60;
 }
@@ -31812,6 +31816,7 @@ body {
 }
 
 .public-auth-card .public-account-access-path,
+.public-auth-card .public-auth-start-strip,
 .public-auth-card .public-auth-experience-studio,
 .public-auth-card .public-portal-switchboard,
 .public-auth-card .public-account-route-confirmation,
@@ -31820,7 +31825,108 @@ body {
   max-width: 100%;
 }
 
+.public-auth-start-strip {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(13px, 1.7vw, 18px);
+  overflow: clip;
+  border: 1px solid rgba(95, 240, 201, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.11), rgba(134, 174, 246, 0.07) 48%, rgba(9, 18, 20, 0.94)),
+    rgba(255, 255, 255, 0.035);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+}
+
+.public-auth-start-strip-header,
+.public-auth-start-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-auth-start-strip-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-auth-start-strip strong,
+.public-auth-start-strip small,
+.public-auth-start-strip span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-auth-start-strip-header strong {
+  color: var(--text);
+  font-size: clamp(19px, 1.8vw, 27px);
+  line-height: 1.08;
+}
+
+.public-auth-start-strip small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.public-auth-start-routes,
+.public-auth-start-status {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-auth-start-routes button,
+.public-auth-start-status span,
+.public-auth-start-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  text-align: left;
+  white-space: normal;
+}
+
+.public-auth-start-routes button.active {
+  border-color: rgba(95, 240, 201, 0.58);
+  background: rgba(95, 240, 201, 0.1);
+}
+
+.public-auth-start-status small:first-child,
+.public-auth-start-proof small {
+  color: #84f7dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-auth-start-status strong,
+.public-auth-start-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.public-auth-start-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 126px), 1fr));
+}
+
+.public-auth-start-proof button,
+.public-auth-start-strip-header button {
+  width: 100%;
+}
+
 .public-auth-card .public-auth-experience-header strong,
+.public-auth-card .public-auth-start-strip-header strong,
 .public-auth-card .public-account-access-header strong,
 .public-auth-card .public-portal-switchboard-header strong,
 .public-auth-card .corporate-access-route-preview-header strong,
@@ -31830,6 +31936,9 @@ body {
 }
 
 .public-auth-card .public-auth-experience-switches,
+.public-auth-card .public-auth-start-routes,
+.public-auth-card .public-auth-start-status,
+.public-auth-card .public-auth-start-proof,
 .public-auth-card .public-auth-experience-grid,
 .public-auth-card .public-auth-experience-actions,
 .public-auth-card .public-account-access-choices,
@@ -31842,6 +31951,9 @@ body {
 }
 
 .public-auth-card .public-auth-experience-grid span,
+.public-auth-card .public-auth-start-routes button,
+.public-auth-card .public-auth-start-status span,
+.public-auth-card .public-auth-start-proof span,
 .public-auth-card .public-account-access-choices button,
 .public-auth-card .public-account-access-status span,
 .public-auth-card .public-portal-switchboard-grid button,
@@ -31871,6 +31983,8 @@ body {
 
 @media (max-width: 700px) {
   .public-login-command-footer,
+  .public-auth-start-strip-header,
+  .public-auth-start-proof,
   .public-account-access-header,
   .public-account-route-confirmation > div:first-child,
   .public-account-route-confirmation-footer,
@@ -31884,6 +31998,8 @@ body {
   }
 
   .public-login-command-footer button,
+  .public-auth-start-strip-header button,
+  .public-auth-start-proof button,
   .public-account-access-actions button,
   .public-account-route-confirmation-footer button,
   .public-portal-switchboard-actions button,

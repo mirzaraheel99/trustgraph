@@ -19897,6 +19897,50 @@ function PublicSite({
       detail: "GitHub is source; VPS stamp proves the server build."
     }
   ];
+  const publicAuthStartStrip = {
+    mode: "public_auth_start_strip",
+    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    primary_label: publicAccountAccessPath.primary_label,
+    price: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    landing_portal: publicAccountAccessPath.landing_portal,
+    required_fields: selectedPortalCommand.required_fields,
+    recovery_available: Boolean(email),
+    corporate_database_boundary: "corporate_reviewers_request_access_by_email_then_review_only_approved_consent_scoped_user_rows",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_auth_start_strip_keeps_professional_register_professional_login_corporate_register_corporate_login_price_first_database_write_landing_recovery_and_scoped_database_boundary_visible_before_credentials"
+  };
+  const publicAuthStartRoutes = publicAccountAccessChoices.map((choice) => ({
+    label: choice.label,
+    detail: choice.detail,
+    active: choice.active,
+    action: choice.action
+  }));
+  const publicAuthStartStripStatus = [
+    {
+      label: "Price",
+      value: publicAuthStartStrip.price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First write",
+      value: publicAuthStartStrip.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Landing",
+      value: publicAuthStartStrip.landing_portal,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Recovery",
+      value: publicAuthStartStrip.recovery_available ? "Ready" : "Enter email",
+      detail: "Resend, reset, or repair hosted email links from this card."
+    }
+  ];
   const publicAccountRouteConfirmation = {
     mode: "public_account_route_confirmation",
     selected_route: `${publicAccountAccessPath.selected_portal} / ${publicAccountAccessPath.selected_action}`,
@@ -22192,6 +22236,72 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="public-auth-start-strip" aria-label="Public auth start strip">
+            <div className="public-auth-start-strip-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
+                <strong>{publicAuthStartStrip.primary_label}</strong>
+                <small>
+                  Choose the account path first. Pricing, first database write, landing portal, recovery, and corporate access boundary stay visible before credentials.
+                </small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-auth-start-routes">
+              {publicAuthStartRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-auth-start-status">
+              {publicAuthStartStripStatus.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-auth-start-proof">
+              <span>
+                <small>Corporate boundary</small>
+                <strong>No open user browse</strong>
+              </span>
+              <span>
+                <small>Server</small>
+                <strong>{publicAuthStartStrip.server_status.replaceAll("_", " ")}</strong>
+              </span>
+              <span>
+                <small>Preview data</small>
+                <strong>{publicAuthStartStrip.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+              </span>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-auth-start-strip-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...publicAuthStartStrip,
+                        routes: publicAuthStartRoutes.map(({ action: _action, ...route }) => route),
+                        status: publicAuthStartStripStatus
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export start proof
+              </button>
+            </div>
+          </div>
           <div className="public-account-access-path" aria-label="Public account access path">
             <div className="public-account-access-header">
               <div>
