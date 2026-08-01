@@ -69,6 +69,8 @@ The signed-in VPS workspace now has a final layout guard for the hosted SaaS she
 
 The server sync monitor now reads the same `trustgraph-release.json` contract that the VPS updater writes. It parses `commit_short`, shows the current `registration_handoff_command` bundle marker, and treats build-time placeholder JSON as a GitHub bundle stamp rather than proof that the VPS saved the latest commit.
 
+The signed-in server surface now includes a server currentness command. It separates GitHub-saved, Pages-live, VPS-saved, missing SSH secrets, manual update command, release-stamp JSON verification, and VFIX protection so the server URL is not treated as current until `/trustgraph-release.json` proves the saved commit.
+
 Professional Passport now starts with a first-use wizard before the record forms. It routes hosted login, first live record creation, evidence metadata, consent, Access Grants, and proof export while making the no-open-corporate-browse boundary clear for user-owned Passport data.
 
 The public login/register card now starts with one primary account access desk. Visitors choose Professional portal or Corporate portal, see the database boundary, copy the hosted redirect, resend verification, reset password, and then reach email/password fields without the older proof panels crowding the visible form.

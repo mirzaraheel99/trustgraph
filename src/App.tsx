@@ -30684,6 +30684,51 @@ function App() {
     accepted_when:
       "portal_server_save_commander_requires_github_main_green_pages_smoke_vps_manual_or_secret_save_release_stamp_match_and_vfix_unchanged"
   };
+  const serverCurrentnessCommand = {
+    mode: "server_currentness_command",
+    status: serverSyncMonitor.status === "synced" ? "vps_current" : "vps_save_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "VPS is serving the saved GitHub build"
+        : "This server still needs the GitHub build saved to VPS",
+    current_truth: "GitHub main and GitHub Pages are the saved source until the VPS release stamp matches.",
+    manual_update_command:
+      "cd /opt/trustgraph && export TRUSTGRAPH_HOST=trustgraph.5-75-224-110.sslip.io && export PUBLIC_URL=https://trustgraph.5-75-224-110.sslip.io/ && export EXPECTED_BUNDLE_MARKER=registration_handoff_command && bash tools/update-vps-from-github.sh",
+    verify_command:
+      "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    missing_automation_secrets: vpsDeploySecretsChecklist.required_repository_secrets.map((secret) => secret.name),
+    protected_vfix_route: hostedVersionReceipt.protected_vfix_route,
+    accepted_when:
+      "server_currentness_command_shows_github_saved_pages_live_vps_save_required_manual_update_command_release_stamp_json_missing_secrets_and_vfix_unchanged"
+  };
+  const serverCurrentnessRows = [
+    {
+      label: "GitHub source",
+      value: "Saved",
+      detail: "Latest code is pushed to main and Pages smoke must pass first.",
+      ready: true
+    },
+    {
+      label: "VPS release stamp",
+      value: serverSyncMonitor.status === "synced" ? "Matched" : "Not proven",
+      detail: serverSyncMonitor.commit ? `Server reports ${serverSyncMonitor.commit}.` : "Release stamp must return JSON, not the app shell.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "Auto-save",
+      value: serverCurrentnessCommand.missing_automation_secrets.length ? "Secrets missing" : "Ready",
+      detail: serverCurrentnessCommand.missing_automation_secrets.length
+        ? serverCurrentnessCommand.missing_automation_secrets.join(", ")
+        : "GitHub Actions can SSH and run the guarded updater.",
+      ready: !serverCurrentnessCommand.missing_automation_secrets.length
+    },
+    {
+      label: "Protected app",
+      value: "VFIX unchanged",
+      detail: "TrustGraph deploys only to the trustgraph subdomain.",
+      ready: true
+    }
+  ];
   const portalRouteShellStatus = [
     {
       label: "Live account",
@@ -30992,6 +31037,37 @@ function App() {
             >
               <Download size={16} />
               Export VPS command
+            </button>
+          </div>
+        </section>
+
+        <section className={`server-currentness-command ${serverCurrentnessCommand.status === "vps_current" ? "ready" : "needed"}`} aria-label="Server currentness command">
+          <div className="server-currentness-copy">
+            <span className={`status-chip ${serverCurrentnessCommand.status === "vps_current" ? "success" : "warning"}`}>
+              Server save status
+            </span>
+            <strong>{serverCurrentnessCommand.headline}</strong>
+            <small>{serverCurrentnessCommand.current_truth}</small>
+          </div>
+          <div className="server-currentness-grid">
+            {serverCurrentnessRows.map((row) => (
+              <span className={row.ready ? "ready" : "needed"} key={row.label}>
+                <small>{row.label}</small>
+                <strong>{row.value}</strong>
+                <em>{row.detail}</em>
+              </span>
+            ))}
+          </div>
+          <div className="server-currentness-actions">
+            <code>{serverCurrentnessCommand.manual_update_command}</code>
+            <code>{serverCurrentnessCommand.verify_command}</code>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile("trustgraph-server-currentness-command.json", JSON.stringify(serverCurrentnessCommand, null, 2), "application/json")}
+              type="button"
+            >
+              <Download size={16} />
+              Export server command
             </button>
           </div>
         </section>
