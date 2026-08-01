@@ -217,6 +217,8 @@ Corporate team setup now starts with a Team launch board that keeps admin readin
 
 Corporate Verify now includes a request-to-row rail before directory filters, showing the reviewer exactly where they are across request, professional approval, scoped rows, attestation, visibility snapshot, and metadata-only export.
 
+Corporate Verify now also starts the user database with a Reviewer task command. It turns request, approval, scoped rows, gap follow-up, review attestation, and metadata export into one visible clickable workflow with no open user browsing.
+
 Corporate Verify now includes a visible rows handoff for the approval-to-review transition. It tells reviewers whether they are waiting for approval, synced rows, consent coverage, review attestation, gap resolution, or scoped export, while preserving the no-open-user-browse boundary.
 
 Corporate Verify now includes a persisted export gate after the review handoff. It keeps metadata export blocked until the reviewer has live rows, a review attestation, a saved database access receipt, a saved visibility snapshot, and the raw-private-file exclusion boundary.
