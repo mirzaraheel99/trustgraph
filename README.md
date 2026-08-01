@@ -149,6 +149,8 @@ The signed-in dashboard now includes a pilot journey checklist that orders the l
 
 The signed-in dashboard now starts daily work from a Portal route shell: Professional, Corporate Verify, Company Admin, Pricing, Account/logout, Database proof, and VPS freshness are tabbed in one bounded surface before older proof receipts. It keeps the corporate user database boundary visible and rejects preview data as completion proof.
 
+The Portal route shell now includes a Server save commander inside the daily workspace. It shows whether GitHub `main` is saved to the VPS, the exact `/opt/trustgraph` manual update command, release-stamp proof, required deploy secrets for automatic save, and the protected VFIX route before the server is accepted as current.
+
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current.
 
 The signed-in workspace now includes an operator viewport polish layer. Oversized workspace headings are capped, Passport detail panels stack before tablet widths, active corporate/admin surfaces clip overflow, and mobile views keep controls readable without horizontal scrolling.

@@ -476,6 +476,10 @@ if (!css.includes(".vps-saved-update-verification") || !css.includes("grid-templ
   throw new Error("Responsive check failed: VPS saved update verification must be visible and bounded.");
 }
 
+if (!css.includes(".portal-server-save-commander") || !css.includes(".portal-server-save-grid") || !css.includes(".portal-server-save-actions") || !css.includes("grid-template-columns: minmax(0, 1fr) minmax(164px, 0.24fr)")) {
+  throw new Error("Responsive check failed: portal server-save commander must be visible, bounded, and mobile stacked.");
+}
+
 if (!css.includes(".v1-operating-map") || !css.includes(".v1-operating-map-grid") || !css.includes("grid-template-columns: 30px minmax(0, 1fr)")) {
   throw new Error("Responsive check failed: V1 operating map must be visible and bounded.");
 }

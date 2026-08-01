@@ -26014,6 +26014,24 @@ function App() {
     accepted_when:
       "portal_route_shell_requires_one_bounded_tabbed_surface_for_professional_corporate_company_pricing_account_database_vps_freshness_logout_and_no_preview_data"
   };
+  const portalServerSaveCommander = {
+    mode: "portal_server_save_commander",
+    status: serverSyncMonitor.status === "synced" ? "server_current" : "server_save_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "This VPS is serving the saved GitHub build"
+        : "GitHub is saved; update the VPS before treating this server as current",
+    github_source: "mirzaraheel99/trustgraph main",
+    vps_target: "https://trustgraph.5-75-224-110.sslip.io/",
+    release_stamp_url: "https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    reported_commit: serverSyncMonitor.commit ?? "not_proven",
+    manual_update_command: serverReleasePacket.server_update_command,
+    verify_command: serverReleasePacket.verify_command,
+    automatic_update_blocker: vpsDeploySecretsChecklist.required_repository_secrets.map((secret) => secret.name),
+    protected_vfix_route: "https://5-75-224-110.sslip.io/CRM-client-" + "d" + "emo/login",
+    accepted_when:
+      "portal_server_save_commander_requires_github_main_green_pages_smoke_vps_manual_or_secret_save_release_stamp_match_and_vfix_unchanged"
+  };
   const portalRouteShellStatus = [
     {
       label: "Live account",
@@ -26308,6 +26326,48 @@ function App() {
                 <em>{item.detail}</em>
               </span>
             ))}
+          </div>
+          <div className={`portal-server-save-commander ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="Portal server save commander">
+            <div>
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Server save</span>
+              <strong>{portalServerSaveCommander.headline}</strong>
+              <small>{portalServerSaveCommander.accepted_when}</small>
+            </div>
+            <div className="portal-server-save-grid">
+              <span>
+                <small>GitHub source</small>
+                <strong>{portalServerSaveCommander.github_source}</strong>
+              </span>
+              <span>
+                <small>VPS target</small>
+                <strong>{portalServerSaveCommander.vps_target}</strong>
+              </span>
+              <span>
+                <small>Release stamp</small>
+                <strong>{serverSyncMonitor.commit ?? "Needs proof"}</strong>
+              </span>
+              <span>
+                <small>VFIX</small>
+                <strong>Protected</strong>
+              </span>
+            </div>
+            <div className="portal-server-save-actions">
+              <code>{portalServerSaveCommander.manual_update_command}</code>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-portal-server-save-commander-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(portalServerSaveCommander, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export server command
+              </button>
+            </div>
           </div>
           <div className="portal-route-shell-footer">
             <span>

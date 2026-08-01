@@ -28497,6 +28497,102 @@ body {
   line-height: 1.4;
 }
 
+.portal-server-save-commander {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 13px;
+  overflow: hidden;
+  border: 1px solid rgba(246, 194, 100, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(246, 194, 100, 0.09), rgba(95, 240, 201, 0.055)),
+    rgba(0, 0, 0, 0.18);
+}
+
+.portal-server-save-commander.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.095), rgba(118, 160, 255, 0.055)),
+    rgba(0, 0, 0, 0.16);
+}
+
+.portal-server-save-commander > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.portal-server-save-commander strong,
+.portal-server-save-commander small,
+.portal-server-save-commander span,
+.portal-server-save-commander code {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.portal-server-save-commander > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.6vw, 24px);
+  line-height: 1.12;
+}
+
+.portal-server-save-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.portal-server-save-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(151, 204, 188, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.portal-server-save-grid small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.portal-server-save-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.14;
+}
+
+.portal-server-save-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(164px, 0.24fr);
+  gap: 10px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.portal-server-save-actions code {
+  display: block;
+  min-height: 42px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(226, 239, 233, 0.86);
+  line-height: 1.45;
+  white-space: normal;
+}
+
+.portal-server-save-actions button {
+  width: 100%;
+  white-space: normal;
+}
+
 .vps-freshness-checkpoint {
   display: grid;
   gap: 14px;
@@ -28628,6 +28724,7 @@ body {
 .workspace-admin-grid,
 .premium-launch-console,
 .portal-route-shell,
+.portal-server-save-commander,
 .vps-freshness-checkpoint,
 .portal-command-deck,
 .setup-center,
@@ -28758,8 +28855,13 @@ body {
 
   .portal-route-shell-actions button,
   .portal-route-shell-footer button,
+  .portal-server-save-actions button,
   .vps-freshness-checkpoint-header button {
     width: 100%;
+  }
+
+  .portal-server-save-actions {
+    grid-template-columns: 1fr;
   }
 
   .workspace-admin-grid,
