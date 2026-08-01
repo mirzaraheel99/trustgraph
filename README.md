@@ -99,6 +99,8 @@ Corporate Verify now adds a review queue command before the dense user rows, sho
 
 The signed-in console keeps the daily operator path lean: one dashboard front door, the setup center, and the active workspace surface. Release, readiness, and proof machinery stay exportable from their command buttons and packets without stacking into the first screen.
 
+The signed-in and public portal shells include a final V1 overflow hardening layer so long commands, proof text, corporate grids, billing panels, admin exports, and login/register controls stay contained on desktop, tablet, mobile, and the VPS browser viewport.
+
 The public website and login/register card are also kept buyer-facing: portal choice, pricing, first database write, required fields, and recovery actions stay visible first, while internal redirect/recovery receipts remain available in the bundle without crowding signup.
 
 The hosted login/register card now starts with a public auth front desk so Professional users and Corporate admins can switch account type, login/register mode, pricing review, and recovery from one compact surface before entering credentials.

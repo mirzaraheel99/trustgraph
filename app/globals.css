@@ -25871,3 +25871,129 @@ body {
 .setup-center-header h2 {
   font-size: clamp(22px, 2vw, 32px);
 }
+
+/* V1 overflow hardening: keep premium SaaS surfaces readable on the VPS/browser viewport. */
+.app,
+.workspace,
+.workspace-main,
+.workspace-admin-grid,
+.premium-launch-console,
+.portal-command-deck,
+.setup-center,
+.work-grid,
+.billing-panel,
+.verify-panel,
+.account-panel,
+.admin-panel,
+.passport-panel,
+.public-shell,
+.public-auth-section,
+.public-auth-card {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.workspace-admin-grid,
+.work-grid,
+.metrics-grid,
+.workflow-grid,
+.pricing-grid,
+.records-grid,
+.evidence-grid,
+.billing-summary-grid,
+.billing-gate-grid,
+.billing-operator-path,
+.security-signoff-grid,
+.v1-security-review-grid,
+.audit-log,
+.release-ledger,
+.corporate-access-review-grid,
+.corporate-visibility-grid,
+.corporate-user-database-contract-grid,
+.corporate-database-visibility-grid,
+.data-export-manifest-grid,
+.admin-export-grid,
+.portal-daily-navigator-grid,
+.premium-launch-console-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.workspace-admin-grid > *,
+.work-grid > *,
+.billing-panel > *,
+.verify-panel > *,
+.account-panel > *,
+.admin-panel > *,
+.passport-panel > *,
+.public-auth-card > *,
+.corporate-directory-panel > *,
+.premium-launch-console > *,
+.setup-center > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.workspace button,
+.workspace input,
+.workspace select,
+.workspace textarea,
+.public-auth-card button,
+.public-auth-card input,
+.public-auth-card select,
+.public-auth-card textarea {
+  max-width: 100%;
+}
+
+.workspace button,
+.public-auth-card button {
+  white-space: normal;
+}
+
+.workspace code,
+.workspace pre,
+.public-auth-card code,
+.public-auth-card pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.workspace strong,
+.workspace small,
+.workspace span,
+.workspace p,
+.workspace h1,
+.workspace h2,
+.workspace h3,
+.public-auth-card strong,
+.public-auth-card small,
+.public-auth-card span,
+.public-auth-card p,
+.public-auth-card h1,
+.public-auth-card h2,
+.public-auth-card h3 {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .topbar,
+  .premium-launch-console,
+  .setup-center,
+  .workspace-admin-grid,
+  .public-auth-card {
+    padding: clamp(12px, 4vw, 18px);
+  }
+
+  .workspace-admin-grid,
+  .work-grid,
+  .billing-summary-grid,
+  .corporate-access-review-grid,
+  .corporate-visibility-grid,
+  .corporate-database-visibility-grid,
+  .data-export-manifest-grid,
+  .admin-export-grid {
+    grid-template-columns: 1fr;
+  }
+}

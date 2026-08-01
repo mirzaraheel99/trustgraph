@@ -479,6 +479,14 @@ if (!css.includes(".grant-card,\n.shared-record-card,\n.directory-card,\n.refere
   throw new Error("Responsive check failed: corporate record cards must be contained to prevent horizontal scroll.");
 }
 
+if (!css.includes("V1 overflow hardening") || !css.includes(".workspace code,\n.workspace pre") || !css.includes("white-space: pre-wrap") || !css.includes("@media (max-width: 900px)")) {
+  throw new Error("Responsive check failed: final V1 overflow hardening must contain code blocks and stack dense grids on narrow screens.");
+}
+
+if (!css.includes(".workspace-admin-grid,\n.work-grid,\n.metrics-grid") || !css.includes("repeat(auto-fit, minmax(min(100%, 220px), 1fr))")) {
+  throw new Error("Responsive check failed: broad dashboard grids must auto-fit without forcing horizontal overflow.");
+}
+
 if (!css.includes(".sidebar") || !css.includes("display: none !important")) {
   throw new Error("Responsive check failed: authenticated workspace must not resurrect the legacy sidebar rail.");
 }
