@@ -2608,6 +2608,50 @@ function VerifyRequestsPanel({
     accepted_when:
       "corporate_verify_access_progress_strip_shows_role_request_approval_visible_rows_review_export_and_no_open_user_database_browse"
   };
+  const corporateVisibleRowsHandoff = {
+    mode: "corporate_visible_rows_handoff",
+    status: sharedRecords.length ? "visible_rows_loaded" : approvedCount ? "approved_waiting_for_visible_rows" : "approval_required",
+    next_action: sharedRecords.length
+      ? pendingGapCount
+        ? "Resolve missing-record gaps, then record review attestation."
+        : reviews.length
+          ? "Export the scoped Corporate user database packet."
+          : "Record review attestation for the visible rows."
+      : approvedCount
+        ? "Reload synced Passport rows after approval and confirm consent scope."
+        : requests.length
+          ? "Wait for Professional approval before expecting any rows."
+          : "Send an Access Grant request to one Professional email.",
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_visible_rows_handoff_requires_approved_grant_visible_scoped_rows_consent_scope_review_attestation_export_and_no_open_user_database_browse"
+  };
+  const corporateVisibleRowsHandoffCards = [
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Required",
+      detail: approvedCount ? "At least one Access Grant can expose scoped Passport rows." : "Professional approval must happen before rows appear.",
+      ready: approvedCount > 0
+    },
+    {
+      label: "Visible rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "None",
+      detail: sharedRecords.length ? "Rows are loaded for this company and reviewer scope." : "Reload after approval; rows remain hidden until scope passes.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Consent scope",
+      value: sharedRecordsNeedingConsent.length ? `${coveredConsentRecords}/${sharedRecordsNeedingConsent.length}` : "No sensitive rows",
+      detail: sharedRecordsNeedingConsent.length ? "Sensitive rows need active consent coverage." : "No additional sensitive consent blocker is visible.",
+      ready: !sharedRecordsNeedingConsent.length || coveredConsentRecords >= sharedRecordsNeedingConsent.length
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} gaps remain before export.` : "Record attestation, then export scoped proof.",
+      ready: reviews.length > 0 && pendingGapCount === 0
+    }
+  ];
   const corporateAccessProgressSteps = [
     {
       label: "Role",
@@ -2990,6 +3034,52 @@ function VerifyRequestsPanel({
           >
             Export progress proof
           </button>
+        </div>
+      </div>
+      <div className="corporate-visible-rows-handoff" aria-label="Corporate visible rows handoff">
+        <div className="corporate-visible-rows-handoff-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : approvedCount ? "warning" : "neutral"}`}>Visible rows handoff</span>
+            <strong>{corporateVisibleRowsHandoff.next_action}</strong>
+            <small>{corporateVisibleRowsHandoff.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-visible-rows-handoff-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(
+                  {
+                    ...corporateVisibleRowsHandoff,
+                    counts: {
+                      approvals: approvedCount,
+                      visible_rows: sharedRecords.length,
+                      sensitive_rows: sharedRecordsNeedingConsent.length,
+                      consent_covered_rows: coveredConsentRecords,
+                      review_attestations: reviews.length,
+                      open_gaps: pendingGapCount
+                    },
+                    cards: corporateVisibleRowsHandoffCards.map(({ label, value, ready }) => ({ label, value, ready }))
+                  },
+                  null,
+                  2
+                ),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export handoff
+          </button>
+        </div>
+        <div className="corporate-visible-rows-handoff-grid">
+          {corporateVisibleRowsHandoffCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <div className="verify-summary-grid">

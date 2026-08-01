@@ -88,6 +88,12 @@ const appRequirements = [
     "corporate_live_row_proof_chain_requires_live_rbac_request_by_email_approved_grants_scoped_rows_review_attestation_visibility_snapshot_and_metadata_only_export",
     "corporate live row proof rule"
   ],
+  ["Corporate visible rows handoff", "corporate visible rows handoff label"],
+  ["corporate_visible_rows_handoff", "corporate visible rows handoff packet mode"],
+  [
+    "corporate_visible_rows_handoff_requires_approved_grant_visible_scoped_rows_consent_scope_review_attestation_export_and_no_open_user_database_browse",
+    "corporate visible rows handoff acceptance rule"
+  ],
   ["Missing record cross-portal checkpoint", "missing-record cross-portal label"],
   ["missing_record_cross_portal_checkpoint", "missing-record cross-portal packet mode"],
   [
