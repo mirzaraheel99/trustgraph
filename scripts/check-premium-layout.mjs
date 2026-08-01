@@ -174,6 +174,7 @@ assert(app.includes('aria-label="Pilot owner readiness database receipt"'), "lau
 assert(app.includes('aria-label="Claim trust taxonomy"'), "Passport records must expose claim source, verifier, status, verification time, and visibility scope.");
 assert(premiumRepair.includes(".sidebar") && premiumRepair.includes("display: none !important"), "final CSS layer must still suppress any legacy sidebar rail.");
 assert(premiumRepair.includes("width: min(100%, 1440px)") && premiumRepair.includes("overflow: clip"), "workspace shell must be bounded and clipped.");
+assert(css.includes("Operator viewport polish") && css.includes("font-size: clamp(34px, 3.8vw, 64px)") && css.includes("@media (max-width: 1180px)"), "operator viewport polish must calm oversized headings and stack record/detail layouts before tablet widths.");
 assert(premiumRepair.includes(".portal-home-command") && premiumRepair.includes(".portal-home-actions"), "portal home command center must be styled and bounded in the premium shell.");
 assert(css.includes(".portal-action-dock") && css.includes(".export-dock"), "portal action dock must be styled and bounded.");
 assert(css.includes(".premium-launch-console") && css.includes(".premium-launch-console-actions") && css.includes(".premium-launch-console-proof"), "premium launch console must be styled, bounded, and exportable.");

@@ -139,6 +139,8 @@ The signed-in dashboard now starts daily work from a Portal route shell: Profess
 
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current.
 
+The signed-in workspace now includes an operator viewport polish layer. Oversized workspace headings are capped, Passport detail panels stack before tablet widths, active corporate/admin surfaces clip overflow, and mobile views keep controls readable without horizontal scrolling.
+
 The V1 completion cockpit now includes a Real database launch gate before the detailed ledger. It makes the acceptance decision explicit: signed-in Supabase row groups, persisted completion receipt, working-data export, preview-data rejection, and VPS freshness must be resolved before V1 review.
 
 The public login/register form now shows a visible auth route summary immediately before the input fields, so Professional users and Corporate admins can confirm account type, login/register mode, pricing path, first database write, and landing portal before submitting.

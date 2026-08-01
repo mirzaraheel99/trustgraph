@@ -487,6 +487,15 @@ if (!css.includes(".workspace-admin-grid,\n.work-grid,\n.metrics-grid") || !css.
   throw new Error("Responsive check failed: broad dashboard grids must auto-fit without forcing horizontal overflow.");
 }
 
+if (
+  !css.includes("Operator viewport polish") ||
+  !css.includes(".workspace-main h1,\n.workspace-admin-grid h1,\n.work-grid h1,\n.verify-panel h1,\n.passport-panel h1") ||
+  !css.includes("@media (max-width: 1180px)") ||
+  !css.includes(".detail-panel {\n    position: static;\n    max-height: none;")
+) {
+  throw new Error("Responsive check failed: operator viewport polish must calm oversized headings and stack detail panels before tablet widths.");
+}
+
 if (!css.includes(".sidebar") || !css.includes("display: none !important")) {
   throw new Error("Responsive check failed: authenticated workspace must not resurrect the legacy sidebar rail.");
 }
