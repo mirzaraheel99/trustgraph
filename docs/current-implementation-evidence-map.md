@@ -64,6 +64,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Full audit and verification history packet: filtered audit events with verification cases, evidence document coverage, and release ledger context from Admin.
 - Pricing structure packet: configured plans, selected-seat projections, active pilot ledger subscriptions, and payment launch gates.
 - Pricing activation workbench: first billing surface for Corporate plan, seats, projected monthly price, live Supabase ledger activation, quote receipt, payment decision, Stripe gate, metadata export, and preview-data rejection.
+- Paid launch decision bridge: billing bridge that separates live pricing catalog, pilot ledger, quote receipt, and billing decision proof from human-approved Stripe, tax, invoice, customer portal, refund, dunning, and payment webhook gates.
 - Evidence setup command: first selected-record evidence surface for metadata, private file attachment, signed preview/download proof, manifest export, and raw-file exclusion before the document list.
 - Admin export launcher: first Admin Audit surface for recommended CSV, JSON, coverage, and readiness exports with current filter scope, case context, data-rights context, release ledger context, raw-file exclusion, and preview-data rejection.
 - Billing architecture decision packet and database receipt: v1 ledger-now decision, disabled Stripe payment flows, launch requirements, and human decision gates.

@@ -5696,6 +5696,117 @@ p,
   white-space: normal;
 }
 
+.paid-launch-decision-bridge {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 111, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 111, 0.08), rgba(143, 178, 255, 0.055)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.paid-launch-decision-header,
+.paid-launch-decision-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.paid-launch-decision-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.paid-launch-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.paid-launch-decision-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.paid-launch-decision-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.25);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.paid-launch-decision-grid article.next {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.05);
+}
+
+.paid-launch-decision-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  padding: 12px;
+  border: 1px solid rgba(151, 204, 188, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.paid-launch-decision-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.paid-launch-decision-bridge strong,
+.paid-launch-decision-bridge small,
+.paid-launch-decision-bridge span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.paid-launch-decision-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.14;
+}
+
+.paid-launch-decision-grid span,
+.paid-launch-decision-proof small {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.paid-launch-decision-grid strong,
+.paid-launch-decision-proof strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.12;
+}
+
+.paid-launch-decision-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.32;
+}
+
+.paid-launch-decision-bridge button {
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
 .billing-pilot-acceptance-checkpoint {
   display: grid;
   gap: 12px;
@@ -19374,6 +19485,9 @@ p {
   .billing-launch-board-header,
   .billing-launch-board-grid,
   .billing-launch-board-actions,
+  .paid-launch-decision-header,
+  .paid-launch-decision-grid,
+  .paid-launch-decision-proof,
   .pricing-launch-command-grid,
   .billing-operator-path,
   .billing-gate-grid,

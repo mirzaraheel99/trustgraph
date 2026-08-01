@@ -162,6 +162,8 @@ assert(app.includes('aria-label="Public portal acceptance checkpoint"') && app.i
 assert(css.includes(".public-portal-acceptance-checkpoint") && css.includes(".public-portal-acceptance-grid"), "public portal acceptance checkpoint must be styled and bounded.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
 assert(app.includes('aria-label="Billing launch board"') && app.includes("billing_launch_board"), "billing must expose a plain launch board for pilot ledger, quote, payment decision, and Stripe gate.");
+assert(app.includes('aria-label="Paid launch decision bridge"') && app.includes("paid_launch_decision_bridge"), "billing must expose the paid-launch decision bridge before Stripe work.");
+assert(app.includes("paid_launch_decision_bridge_requires_live_pricing_catalog_pilot_ledger_quote_receipt_billing_decision_and_human_approved_stripe_tax_invoice_refund_dunning_webhook_gates_before_payment_collection"), "paid-launch decision bridge must require live pricing proof and human-approved Stripe/tax/invoice/refund/dunning/webhook gates.");
 assert(app.includes('aria-label="Billing pilot acceptance checkpoint"') && app.includes("billing_pilot_acceptance_checkpoint"), "billing must expose an acceptance checkpoint for catalog, ledger, quote, decision, Stripe gate, and preview-data rejection.");
 assert(app.includes('aria-label="Pricing quote database receipt"'), "billing must expose a persisted pricing quote receipt.");
 assert(app.includes('aria-label="Pricing decision board"'), "billing must expose a clear pricing decision board.");
@@ -427,6 +429,7 @@ assert(app.includes('aria-label="Auth recovery database receipt"'), "public auth
 assert(css.includes(".auth-recovery-database-receipt") && css.includes(".auth-recovery-database-grid"), "auth recovery database receipt must be styled and bounded.");
 assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checkout-decision-grid") && css.includes(".stripe-checkout-decision-actions"), "Stripe checkout decision receipt must be styled and bounded.");
 assert(css.includes(".billing-launch-board") && css.includes(".billing-launch-board-grid") && css.includes(".billing-launch-board-actions"), "billing launch board must be styled and bounded.");
+assert(css.includes(".paid-launch-decision-bridge") && css.includes(".paid-launch-decision-grid") && css.includes(".paid-launch-decision-proof"), "paid-launch decision bridge must be styled and bounded.");
 assert(css.includes(".billing-pilot-acceptance-checkpoint") && css.includes(".billing-pilot-acceptance-grid") && css.includes(".billing-pilot-acceptance-actions"), "billing pilot acceptance checkpoint must be styled and bounded.");
 assert(css.includes(".team-launch-board") && css.includes(".team-launch-board-grid") && css.includes(".team-launch-board-actions"), "team launch board must be styled and bounded.");
 assert(css.includes(".pricing-quote-receipt") && css.includes(".pricing-quote-receipt-grid") && css.includes(".pricing-quote-receipt-actions"), "pricing quote receipt must be styled and bounded.");

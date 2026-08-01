@@ -12539,6 +12539,61 @@ function BillingPanel({
       ready: true
     }
   ];
+  const paidLaunchDecisionBridge = {
+    mode: "paid_launch_decision_bridge",
+    status:
+      activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt
+        ? "pilot_pricing_proof_ready_stripe_human_gate_open"
+        : "pilot_pricing_proof_in_progress",
+    live_now: [
+      "Supabase pricing catalog",
+      "Corporate pilot subscription ledger",
+      "Pricing quote receipt",
+      "Billing architecture decision receipt"
+    ],
+    human_gated_before_paid_launch: [
+      "Stripe product and price mapping",
+      "Tax and invoice policy",
+      "Customer portal lifecycle",
+      "Refund, dunning, and failed payment policy",
+      "Payment webhook reconciliation and audit mapping"
+    ],
+    preview_data_accepted: false,
+    accepted_when:
+      "paid_launch_decision_bridge_requires_live_pricing_catalog_pilot_ledger_quote_receipt_billing_decision_and_human_approved_stripe_tax_invoice_refund_dunning_webhook_gates_before_payment_collection"
+  };
+  const paidLaunchDecisionBridgeRows = [
+    {
+      label: "Catalog",
+      value: plans.length ? `${plans.length} live plans` : "Missing",
+      detail: "Professional, Corporate Verify, and Scale plan rows must load from Supabase.",
+      ready: plans.length > 0
+    },
+    {
+      label: "Ledger",
+      value: activeSubscriptions.length ? "Pilot active" : "Activate",
+      detail: activeSubscriptions.length ? `${activeSubscriptions.length} live subscription row${activeSubscriptions.length === 1 ? "" : "s"}.` : "Activate a pilot subscription row before pricing acceptance.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Quote",
+      value: latestPricingQuoteReceipt ? "Saved" : "Record",
+      detail: latestPricingQuoteReceipt ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month stored for review.` : "Persist selected seats and projected totals.",
+      ready: Boolean(latestPricingQuoteReceipt)
+    },
+    {
+      label: "Decision",
+      value: latestDecisionReceipt ? "Saved" : "Record",
+      detail: latestDecisionReceipt ? "Pilot-ledger-now, Stripe-later decision has a database receipt." : "Record the billing architecture decision.",
+      ready: Boolean(latestDecisionReceipt)
+    },
+    {
+      label: "Stripe",
+      value: "Human gate",
+      detail: "No checkout, card capture, invoices, refunds, dunning, taxes, or payment webhooks are live.",
+      ready: true
+    }
+  ];
   const pricingActivationWorkbench = {
     mode: "pricing_activation_workbench",
     headline: activeSubscriptions.length
@@ -12914,6 +12969,57 @@ function BillingPanel({
           >
             Export board
           </button>
+        </div>
+      </div>
+      <div className="paid-launch-decision-bridge" aria-label="Paid launch decision bridge">
+        <div className="paid-launch-decision-header">
+          <div>
+            <span className={`status-chip ${activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt ? "success" : "warning"}`}>
+              Paid launch decision bridge
+            </span>
+            <strong>
+              {activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt
+                ? "Pilot pricing proof is ready; Stripe remains a human gate"
+                : "Finish pilot pricing proof before any Stripe launch work"}
+            </strong>
+            <small>{paidLaunchDecisionBridge.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-paid-launch-decision-bridge-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...paidLaunchDecisionBridge, rows: paidLaunchDecisionBridgeRows }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export bridge
+          </button>
+        </div>
+        <div className="paid-launch-decision-grid">
+          {paidLaunchDecisionBridgeRows.map((row) => (
+            <article className={row.ready ? "ready" : "next"} key={row.label}>
+              <span>{row.label}</span>
+              <strong>{row.value}</strong>
+              <small>{row.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="paid-launch-decision-proof">
+          <span>
+            <strong>{paidLaunchDecisionBridge.status.replace(/_/g, " ")}</strong>
+            <small>Decision state</small>
+          </span>
+          <span>
+            <strong>{paidLaunchDecisionBridge.preview_data_accepted ? "Preview accepted" : "Live proof only"}</strong>
+            <small>Acceptance source</small>
+          </span>
+          <span>
+            <strong>{paidLaunchDecisionBridge.human_gated_before_paid_launch.length}</strong>
+            <small>Human-gated paid-launch items</small>
+          </span>
         </div>
       </div>
       <div className="billing-pilot-acceptance-checkpoint" aria-label="Billing pilot acceptance checkpoint">
