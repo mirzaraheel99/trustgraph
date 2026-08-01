@@ -23750,6 +23750,64 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="public-conversion-runway" aria-label="Public conversion runway">
+            <div className="public-conversion-runway-copy">
+              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Account setup</span>
+              <strong>{portal === "corporate" ? "Create a company workspace for scoped reviews" : "Create your private Professional Passport"}</strong>
+              <small>
+                Pick the account type and action, confirm pricing, then use the email and password fields below.
+              </small>
+            </div>
+            <div className="public-conversion-runway-actions" role="tablist" aria-label="Public account setup choices">
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} role="tab" type="button">
+                <Fingerprint size={16} />
+                <span>Professional</span>
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} role="tab" type="button">
+                <BriefcaseBusiness size={16} />
+                <span>Corporate</span>
+              </button>
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} role="tab" type="button">
+                <UserPlus size={16} />
+                <span>Register</span>
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} role="tab" type="button">
+                <LogIn size={16} />
+                <span>Login</span>
+              </button>
+            </div>
+            <div className="public-conversion-runway-grid">
+              <span>
+                <small>Price</small>
+                <strong>{selectedRegistrationPath.plan}</strong>
+                <em>{selectedRegistrationPath.paymentStatus}</em>
+              </span>
+              <span>
+                <small>First database write</small>
+                <strong>{portal === "corporate" ? "Company workspace" : "Passport owner"}</strong>
+                <em>{selectedRegistrationPath.primaryWrite}</em>
+              </span>
+              <span>
+                <small>After login</small>
+                <strong>{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</strong>
+                <em>{selectedRegistrationPath.nextAction}</em>
+              </span>
+            </div>
+            <div className="public-conversion-runway-footer">
+              <span>
+                Corporate reviewers can request approved rows only. There is no open user database browsing.
+              </span>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Pricing
+              </button>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+          </div>
           <div className="public-account-entry-launchpad" aria-label="Public account entry launchpad">
             <div className="public-account-entry-launchpad-header">
               <div>

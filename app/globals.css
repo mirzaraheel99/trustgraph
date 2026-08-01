@@ -36171,3 +36171,155 @@ body {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Public conversion runway: one calm signup/login path before credentials. */
+.public-conversion-runway {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(113, 242, 203, 0.26);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(18, 42, 39, 0.92), rgba(11, 17, 21, 0.96));
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+}
+
+.public-auth-card.corporate-mode .public-conversion-runway {
+  border-color: rgba(130, 169, 255, 0.28);
+  background: linear-gradient(135deg, rgba(23, 35, 54, 0.92), rgba(11, 17, 21, 0.96));
+}
+
+.public-conversion-runway-copy,
+.public-conversion-runway-actions,
+.public-conversion-runway-grid,
+.public-conversion-runway-footer {
+  min-width: 0;
+}
+
+.public-conversion-runway-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.public-conversion-runway-copy strong {
+  color: #f4fbf7;
+  font-size: clamp(1.45rem, 2.5vw, 2.2rem);
+  line-height: 1.04;
+}
+
+.public-conversion-runway-copy small {
+  color: rgba(224, 235, 229, 0.76);
+}
+
+.public-conversion-runway-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.public-conversion-runway-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 46px;
+  border: 1px solid rgba(201, 214, 207, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #dce9e3;
+  font-weight: 800;
+}
+
+.public-conversion-runway-actions button.active {
+  border-color: rgba(113, 242, 203, 0.55);
+  background: rgba(113, 242, 203, 0.16);
+  color: #f4fbf7;
+}
+
+.public-conversion-runway-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.public-conversion-runway-grid span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.public-conversion-runway-grid small,
+.public-conversion-runway-grid strong,
+.public-conversion-runway-grid em,
+.public-conversion-runway-footer span {
+  overflow-wrap: anywhere;
+}
+
+.public-conversion-runway-grid small {
+  color: rgba(175, 190, 183, 0.78);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.public-conversion-runway-grid strong {
+  color: #f4fbf7;
+  font-size: 1.02rem;
+}
+
+.public-conversion-runway-grid em {
+  color: rgba(224, 235, 229, 0.72);
+  font-size: 0.84rem;
+  font-style: normal;
+}
+
+.public-conversion-runway-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.public-conversion-runway-footer span {
+  flex: 1 1 260px;
+  color: rgba(224, 235, 229, 0.78);
+}
+
+.public-conversion-runway-footer button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.public-auth-card:has(.public-conversion-runway) .public-account-entry-launchpad,
+.public-auth-card:has(.public-conversion-runway) .public-auth-start-strip,
+.public-auth-card:has(.public-conversion-runway) .public-account-access-path,
+.public-auth-card:has(.public-conversion-runway) .public-auth-experience-studio,
+.public-auth-card:has(.public-conversion-runway) .public-portal-route-shell,
+.public-auth-card:has(.public-conversion-runway) .registration-route-planner,
+.public-auth-card:has(.public-conversion-runway) .public-auth-front-desk,
+.public-auth-card:has(.public-conversion-runway) .public-access-desk {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .public-conversion-runway-actions,
+  .public-conversion-runway-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .public-conversion-runway-actions,
+  .public-conversion-runway-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .public-conversion-runway-footer button {
+    flex: 1 1 100%;
+  }
+}
