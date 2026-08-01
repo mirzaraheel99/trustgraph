@@ -75,6 +75,8 @@ The public login/register card now starts with one primary account access desk. 
 
 Corporate setup now starts with one primary company setup route. It keeps login, workspace creation, RBAC activation, Corporate Verify database proof, first live database write, active role, and the no-open-user-browse boundary visible while older proof panels stay out of the daily form path.
 
+Corporate Verify now starts the user database with one primary database access desk. It answers whether scoped rows are visible, what the next reviewer action is, how many requests, approved grants, rows, reviews, and gaps exist, and keeps metadata-only export plus no-open-user-browse proof visible before directory controls.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist

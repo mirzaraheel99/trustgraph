@@ -6668,12 +6668,131 @@ function CorporateDirectoryPanel({
     document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  const corporateDatabasePrimaryDesk = {
+    mode: "corporate_database_primary_desk",
+    status: corporateAccessNextAction.ready ? "scoped_rows_ready" : corporateAccessNextAction.target,
+    headline: corporateAccessNextAction.ready ? "Scoped user rows are ready for review" : corporateAccessNextAction.label,
+    primary_action: corporateAccessNextAction.action,
+    live_source: isLiveCorporateDatabase ? "signed_in_supabase_corporate_rbac" : "locked_until_corporate_rbac_login",
+    requests: requests.length,
+    approved_grants: approvedAccessCount,
+    visible_user_rows: filteredRows.length,
+    shared_records: sharedRecords.length,
+    review_attestations: reviews.length,
+    open_gaps: openGapRequestCount,
+    no_open_user_browse: true,
+    metadata_only_export: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_database_primary_desk_answers_access_next_action_scoped_rows_review_proof_export_and_no_open_user_browse_before_directory_controls"
+  };
+  const corporateDatabasePrimaryDeskCards = [
+    {
+      label: "Access",
+      value: isLiveCorporateDatabase ? "Corporate RBAC" : "Locked",
+      detail: databaseModeDetail,
+      ready: isLiveCorporateDatabase,
+      target: "account"
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "Needed",
+      detail: requests.length ? "Access request rows are tracked." : "Request one professional by email.",
+      ready: requests.length > 0,
+      target: "request"
+    },
+    {
+      label: "Rows",
+      value: filteredRows.length ? `${filteredRows.length}` : "None",
+      detail: filteredRows.length ? "Approved scoped user rows are visible." : "Rows appear only after approval and consent scope.",
+      ready: filteredRows.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Proof",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: reviews.length ? "Review attestation exists." : "Record review after checking scoped rows.",
+      ready: reviews.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Export",
+      value: "Metadata only",
+      detail: "Export scoped packet; raw private files stay excluded.",
+      ready: corporateAccessNextAction.ready,
+      target: "export"
+    }
+  ];
+
   return (
     <section className="corporate-directory-panel">
       <div className="mini-heading">
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className="corporate-database-primary-desk" aria-label="Corporate database primary desk">
+        <div className="corporate-database-primary-header">
+          <div>
+            <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Database access</span>
+            <strong>{corporateDatabasePrimaryDesk.headline}</strong>
+            <small>{corporateAccessNextAction.detail}</small>
+          </div>
+          <button className="primary-action" onClick={() => runCorporateReviewerTask()} type="button">
+            {corporateDatabasePrimaryDesk.primary_action}
+          </button>
+        </div>
+        <div className="corporate-database-primary-grid">
+          {corporateDatabasePrimaryDeskCards.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => {
+                if (item.target === "export") {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                runCorporateReviewerTask(item.target);
+              }}
+              type="button"
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-database-primary-proof">
+          <span>
+            <small>Source</small>
+            <strong>{corporateDatabasePrimaryDesk.live_source}</strong>
+          </span>
+          <span>
+            <small>Browse boundary</small>
+            <strong>{corporateDatabasePrimaryDesk.no_open_user_browse ? "No open browse" : "Open browse"}</strong>
+          </span>
+          <span>
+            <small>Export</small>
+            <strong>{corporateDatabasePrimaryDesk.metadata_only_export ? "Metadata only" : "Raw files"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateDatabasePrimaryDesk.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-database-primary-desk-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateDatabasePrimaryDesk, cards: corporateDatabasePrimaryDeskCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export access proof
+          </button>
+        </div>
       </div>
       <div className="corporate-review-studio" aria-label="Corporate review studio">
         <div className="corporate-review-studio-header">
