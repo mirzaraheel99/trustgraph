@@ -157,6 +157,8 @@ The Portal route shell also includes a Current build server gate. It rejects the
 
 The public login/register flow exposes the same Current build server gate before credentials. If the VPS is stale, a buyer or pilot user sees the manual `/opt/trustgraph` sync command and knows not to treat the server as current yet.
 
+The signed-in portal now shows a Real row acceptance gate before the daily route shell. It blocks V1 acceptance until hosted login, registration, Passport, evidence, Corporate access, consent, team, billing, review, visibility snapshot, and release ledger rows are all loaded from Supabase; non-live preview rows are explicitly rejected.
+
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current.
 
 The signed-in workspace now includes an operator viewport polish layer. Oversized workspace headings are capped, Passport detail panels stack before tablet widths, active corporate/admin surfaces clip overflow, and mobile views keep controls readable without horizontal scrolling.

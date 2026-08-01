@@ -34,6 +34,12 @@ const appRequirements = [
     "hosted_auth_account_context_passport_evidence_corporate_access_consent_team_billing_review_and_release_rows_are_loaded_from_supabase_not_preview_data",
     "real-data acceptance rule"
   ],
+  ["Real row acceptance gate", "real-row acceptance gate label"],
+  ["real_row_acceptance_gate", "real-row acceptance gate packet mode"],
+  [
+    "real_row_acceptance_gate_requires_hosted_login_registration_passport_evidence_corporate_access_consent_team_billing_review_visibility_release_rows_and_rejects_non_live_preview_data",
+    "real-row acceptance gate rule"
+  ],
   ["Only signed-in Supabase repository rows count for V1.", "signed-in Supabase source policy"],
   ["Preview, static, browser-memory, or unauthenticated rows are rejected.", "preview rejection policy"],
   ["Export ledger", "real-data ledger export"],

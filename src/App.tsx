@@ -25013,6 +25013,50 @@ function App() {
     missingRequiredGroups: livePilotRowProofRows.filter((row) => row.required && !row.ready).map((row) => row.label),
     rows: livePilotRowProofRows
   };
+  const firstMissingRealRow = livePilotRowProofRows.find((row) => row.required && !row.ready) ?? null;
+  const realRowAcceptanceGate = {
+    mode: "real_row_acceptance_gate",
+    decision: livePilotRowProof.accepted ? "real_database_rows_loaded" : "blocked_until_real_rows_loaded",
+    accepted: livePilotRowProof.accepted,
+    accepted_source: livePilotRowProof.source,
+    preview_data_accepted: false,
+    ready_groups: livePilotRowProof.readyGroups,
+    required_groups: livePilotRowProof.totalRequiredGroups,
+    live_row_total: livePilotRowProofRows.reduce((total, row) => total + row.count, 0),
+    next_missing_group: firstMissingRealRow?.label ?? "none",
+    next_missing_table: firstMissingRealRow?.table ?? "none",
+    next_missing_evidence: firstMissingRealRow?.evidence ?? "All required Supabase row groups are loaded.",
+    accepted_when:
+      "real_row_acceptance_gate_requires_hosted_login_registration_passport_evidence_corporate_access_consent_team_billing_review_visibility_release_rows_and_rejects_non_live_preview_data"
+  };
+  const realRowAcceptanceGateCards = [
+    {
+      label: "Acceptance",
+      value: realRowAcceptanceGate.accepted ? "Ready" : "Blocked",
+      detail: realRowAcceptanceGate.accepted
+        ? "All required Supabase row groups are loaded for this signed-in context."
+        : `Next missing group: ${realRowAcceptanceGate.next_missing_group}`,
+      ready: realRowAcceptanceGate.accepted
+    },
+    {
+      label: "Live groups",
+      value: `${realRowAcceptanceGate.ready_groups}/${realRowAcceptanceGate.required_groups}`,
+      detail: `${realRowAcceptanceGate.live_row_total} live repository rows counted in this browser context.`,
+      ready: realRowAcceptanceGate.accepted
+    },
+    {
+      label: "Source",
+      value: realRowAcceptanceGate.accepted_source.replace(/_/g, " "),
+      detail: "Only hosted, signed-in Supabase repository rows count.",
+      ready: realRowAcceptanceGate.accepted_source === "signed_in_supabase_rows"
+    },
+    {
+      label: "Preview data",
+      value: realRowAcceptanceGate.preview_data_accepted ? "Accepted" : "Rejected",
+      detail: "Static preview rows, unauthenticated rows, and browser-memory seed state cannot complete V1.",
+      ready: true
+    }
+  ];
 
   async function recordLiveDatabaseReadinessReceipt() {
     if (!authSession || !accountContext) {
@@ -26584,6 +26628,70 @@ function App() {
             >
               <Download size={16} />
               Export operating proof
+            </button>
+          </div>
+        </section>
+
+        <section className={`real-row-acceptance-gate ${realRowAcceptanceGate.accepted ? "ready" : "needed"}`} aria-label="Real row acceptance gate">
+          <div className="real-row-acceptance-header">
+            <div>
+              <span className={`status-chip ${realRowAcceptanceGate.accepted ? "success" : "warning"}`}>Real row acceptance gate</span>
+              <strong>{realRowAcceptanceGate.accepted ? "Real Supabase row groups are ready for V1 review" : `Blocked: ${realRowAcceptanceGate.next_missing_group}`}</strong>
+              <small>{realRowAcceptanceGate.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-real-row-acceptance-gate-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...realRowAcceptanceGate, rows: livePilotRowProofRows, cards: realRowAcceptanceGateCards }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export row gate
+            </button>
+          </div>
+          <div className="real-row-acceptance-grid">
+            {realRowAcceptanceGateCards.map((card) => (
+              <article className={card.ready ? "ready" : "next"} key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="real-row-acceptance-actions">
+            <span>
+              <strong>Next required table</strong>
+              <small>{realRowAcceptanceGate.next_missing_table}</small>
+            </span>
+            <span>
+              <strong>Evidence needed</strong>
+              <small>{realRowAcceptanceGate.next_missing_evidence}</small>
+            </span>
+            <button
+              className={realRowAcceptanceGate.accepted ? "secondary-action" : "primary-action"}
+              onClick={() => {
+                if (!authSession || !accountContext) {
+                  openAuthControls();
+                  return;
+                }
+                if (realRowAcceptanceGate.accepted) {
+                  downloadTextFile(
+                    `trustgraph-real-row-acceptance-gate-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...realRowAcceptanceGate, rows: livePilotRowProofRows, cards: realRowAcceptanceGateCards }, null, 2),
+                    "application/json"
+                  );
+                  return;
+                }
+                document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              {realRowAcceptanceGate.accepted ? "Export working data" : authSession ? "Open live proof" : "Login first"}
             </button>
           </div>
         </section>
