@@ -15,6 +15,7 @@
     "check:pilot-acceptance": "node scripts/check-pilot-acceptance.mjs",
     "check:v1-pilot-route": "node scripts/check-v1-pilot-route.mjs",
     "check:v1-demo-flow": "node scripts/check-v1-demo-flow.mjs",
+    "check:live-database-repair": "node scripts/check-live-database-repair.mjs",
     "check:real-data-readiness": "node scripts/check-real-data-readiness.mjs",
     "check:vps-workflow": "node scripts/check-vps-workflow.mjs",
     "check:vps-freshness": "node scripts/check-vps-freshness.mjs",

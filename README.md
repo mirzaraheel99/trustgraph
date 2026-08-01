@@ -59,6 +59,8 @@ The Pages deployment also runs a VPS save job after the hosted smoke check. That
 
 The CI loop also runs `pnpm check:v1-pilot-route`. That verifier ties the public website, Professional and Corporate registration, pricing, hosted auth recovery, Passport evidence, Corporate scoped user database access, Admin exports, live-row repair path, and VPS release stamp into one route-level acceptance check before Pages deployment.
 
+The CI loop also runs `pnpm check:live-database-repair`. That focused gate proves the signed-in app still exposes the next missing Supabase row group, the live pilot seed action, the proof reload route, working-data export, and visible preview-data rejection before a build can deploy.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist
