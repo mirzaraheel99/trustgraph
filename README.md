@@ -231,6 +231,8 @@ The public login/register card now adds a visible Account access path before the
 
 Billing also includes a Billing pilot acceptance checkpoint that ties the live pricing catalog, selected seats, projected totals, live subscription ledger, quote receipt, payment decision receipt, Stripe-off boundary, and preview-data rejection into one exportable packet before paid launch work.
 
+Billing now applies a Billing choice simplification layer. Pricing choice, activation workbench, launch board, pilot acceptance, and paid-launch gate are ordered before quote receipts, Stripe decision receipts, architecture receipts, and ledger exports, with mobile-stacked controls.
+
 Corporate team setup now starts with a Team launch board that keeps admin readiness, first reviewer invite, pending acceptance, accepted roster review, filtered invitation export, and database handoff visible before the dense invitation table.
 
 Corporate Verify now includes a request-to-row rail before directory filters, showing the reviewer exactly where they are across request, professional approval, scoped rows, attestation, visibility snapshot, and metadata-only export.

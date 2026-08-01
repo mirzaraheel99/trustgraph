@@ -31430,3 +31430,122 @@ body {
     width: 100%;
   }
 }
+
+/* Billing choice simplification: keep plan choice, activation, launch, acceptance, and paid gate before proof receipts. */
+.billing-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 12px;
+}
+
+.billing-panel .pricing-choice-rail {
+  order: -70;
+}
+
+.billing-panel .pricing-activation-workbench {
+  order: -65;
+}
+
+.billing-panel .billing-launch-board {
+  order: -60;
+}
+
+.billing-panel .billing-pilot-acceptance-checkpoint {
+  order: -55;
+}
+
+.billing-panel .paid-launch-decision-bridge {
+  order: -50;
+}
+
+.billing-panel .pricing-quote-receipt,
+.billing-panel .pricing-decision-board,
+.billing-panel .stripe-checkout-decision {
+  order: 10;
+}
+
+.billing-panel .billing-architecture-receipt,
+.billing-panel .billing-activation-receipt,
+.billing-panel .billing-operator-path {
+  order: 20;
+}
+
+.billing-panel .pricing-choice-rail,
+.billing-panel .pricing-activation-workbench,
+.billing-panel .billing-launch-board,
+.billing-panel .billing-pilot-acceptance-checkpoint,
+.billing-panel .paid-launch-decision-bridge,
+.billing-panel .pricing-quote-receipt,
+.billing-panel .pricing-decision-board,
+.billing-panel .stripe-checkout-decision,
+.billing-panel .billing-architecture-receipt,
+.billing-panel .billing-activation-receipt,
+.billing-panel .billing-operator-path {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.billing-panel .pricing-choice-copy > strong,
+.billing-panel .pricing-activation-workbench strong,
+.billing-panel .billing-launch-board-header strong,
+.billing-panel .billing-pilot-acceptance-copy > strong,
+.billing-panel .paid-launch-decision-bridge strong,
+.billing-panel .pricing-quote-receipt strong,
+.billing-panel .pricing-decision-board strong,
+.billing-panel .stripe-checkout-decision strong {
+  font-size: clamp(18px, 1.8vw, 26px);
+  line-height: 1.1;
+}
+
+.billing-panel .pricing-choice-grid,
+.billing-panel .pricing-activation-workbench-grid,
+.billing-panel .billing-launch-board-grid,
+.billing-panel .billing-pilot-acceptance-grid,
+.billing-panel .paid-launch-decision-grid,
+.billing-panel .pricing-quote-receipt-grid,
+.billing-panel .pricing-decision-grid,
+.billing-panel .stripe-checkout-decision-grid,
+.billing-panel .billing-gate-grid,
+.billing-panel .billing-plan-list {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+}
+
+.billing-panel .pricing-choice-actions,
+.billing-panel .pricing-activation-workbench-footer,
+.billing-panel .billing-launch-board-actions,
+.billing-panel .billing-pilot-acceptance-actions,
+.billing-panel .paid-launch-decision-proof,
+.billing-panel .pricing-quote-receipt-actions,
+.billing-panel .stripe-checkout-decision-actions,
+.billing-panel .billing-decision-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  align-items: stretch;
+}
+
+.billing-panel .pricing-choice-actions button,
+.billing-panel .pricing-activation-workbench-footer button,
+.billing-panel .billing-launch-board-actions button,
+.billing-panel .billing-pilot-acceptance-actions button,
+.billing-panel .paid-launch-decision-proof button,
+.billing-panel .pricing-quote-receipt-actions button,
+.billing-panel .stripe-checkout-decision-actions button,
+.billing-panel .billing-decision-actions button {
+  width: 100%;
+}
+
+@media (max-width: 780px) {
+  .billing-panel .pricing-choice-actions,
+  .billing-panel .pricing-activation-workbench-footer,
+  .billing-panel .billing-launch-board-header,
+  .billing-panel .billing-launch-board-actions,
+  .billing-panel .billing-pilot-acceptance-actions,
+  .billing-panel .paid-launch-decision-header,
+  .billing-panel .paid-launch-decision-proof,
+  .billing-panel .pricing-quote-receipt-actions,
+  .billing-panel .stripe-checkout-decision-actions,
+  .billing-panel .billing-decision-actions {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
