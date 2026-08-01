@@ -129,6 +129,8 @@ Signed-in Account now has a recovery control strip that keeps hosted redirect co
 
 The public login form now includes a hosted auth recovery board before email actions. It shows the selected Professional or Corporate path, the hosted redirect URL, Supabase email-rate-limit guidance, resend/reset actions, localhost link repair guidance, and an exportable recovery packet so account verification does not accidentally return to local development.
 
+The public login/register card now has a simplification layer that keeps the visible path focused on portal choice, route board, pricing, recovery, and the credential form. Older receipt panels remain in source for packet exports and CI markers, but they no longer crowd the buyer-facing signup flow.
+
 Signed-in Account also includes an account portal route acceptance checkpoint. It proves hosted session, profile context, active workspace, role route, corporate workspace availability, recovery route visibility, and preview-data rejection before users treat portal routing as accepted.
 
 Guided onboarding now includes an onboarding completion command that keeps hosted login, Professional Passport rows, Corporate workspace, pricing ledger, live database proof, persisted receipt, and export actions together before launch-gate review.

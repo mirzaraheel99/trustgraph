@@ -222,6 +222,7 @@ assert(css.includes(".public-saved-build-verification") && css.includes(".public
 assert(css.includes(".public-hosted-build-source-contract") && css.includes(".public-hosted-build-source-grid"), "public hosted build source contract must be styled and bounded.");
 assert(app.includes('aria-label="Public auth server save checkpoint"') && app.includes("public_auth_server_save_checkpoint"), "login and registration form must show a GitHub-to-VPS server save checkpoint.");
 assert(css.includes(".public-auth-server-checkpoint") && css.includes(".public-auth-server-checkpoint-grid"), "public auth server checkpoint must be styled and bounded.");
+assert(css.includes("Public auth simplification layer") && css.includes(".public-auth-card .portal-auth-command") && css.includes("display: none !important"), "public auth card must hide duplicate legacy receipt panels from the visible signup path.");
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");

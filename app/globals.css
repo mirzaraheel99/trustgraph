@@ -19096,6 +19096,38 @@ p {
   }
 }
 
+/* Public auth simplification layer: keep the hosted buyer/user path calm while preserving receipt code for export and checks. */
+.public-auth-card .portal-auth-command,
+.public-auth-card .portal-start-desk,
+.public-auth-card .portal-entry-path,
+.public-auth-card .portal-launch-decision-strip,
+.public-auth-card .public-auth-flow-command,
+.public-auth-card .registration-decision-receipt,
+.public-auth-card .live-onboarding-contract,
+.public-auth-card .account-type-chooser,
+.public-auth-card .auth-choice-summary,
+.public-auth-card .portal-auth-summary-panel,
+.public-auth-card .portal-support-details {
+  display: none !important;
+}
+
+.public-auth-card {
+  gap: 14px;
+}
+
+.public-auth-card .portal-access-cockpit,
+.public-auth-card .public-portal-route-board,
+.public-auth-card .hosted-auth-redirect-verification,
+.public-auth-card .public-auth-recovery-command,
+.public-auth-card .auth-recovery-database-receipt,
+.public-auth-card .registration-route-planner,
+.public-auth-card .public-access-desk,
+.public-auth-card .public-signup-decision-desk,
+.public-auth-card .public-portal-route-shell,
+.public-auth-card .auth-route-summary {
+  border-radius: 8px;
+}
+
 /* Premium workspace shell repair: keep the authenticated app calm, bounded, and readable. */
 .app {
   isolation: isolate;
