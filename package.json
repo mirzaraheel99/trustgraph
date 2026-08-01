@@ -13,6 +13,7 @@
     "check:migrations-workflow": "node scripts/check-migrations-workflow.mjs",
     "check:server-env": "node scripts/check-server-env.mjs tools/test-server-env.example",
     "check:pilot-acceptance": "node scripts/check-pilot-acceptance.mjs",
+    "check:v1-pilot-route": "node scripts/check-v1-pilot-route.mjs",
     "check:v1-demo-flow": "node scripts/check-v1-demo-flow.mjs",
     "check:real-data-readiness": "node scripts/check-real-data-readiness.mjs",
     "check:vps-workflow": "node scripts/check-vps-workflow.mjs",

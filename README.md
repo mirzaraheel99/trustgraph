@@ -57,6 +57,8 @@ After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions
 
 The Pages deployment also runs a VPS save job after the hosted smoke check. That job now fails if `TRUSTGRAPH_VPS_USER` or `TRUSTGRAPH_VPS_SSH_KEY` is missing, because a green GitHub build without a verified VPS save can leave `https://trustgraph.5-75-224-110.sslip.io/` stale.
 
+The CI loop also runs `pnpm check:v1-pilot-route`. That verifier ties the public website, Professional and Corporate registration, pricing, hosted auth recovery, Passport evidence, Corporate scoped user database access, Admin exports, live-row repair path, and VPS release stamp into one route-level acceptance check before Pages deployment.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist
