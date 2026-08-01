@@ -30657,6 +30657,121 @@ body {
     rgba(10, 23, 25, 0.96);
 }
 
+.vps-save-handoff {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 1.7vw, 18px);
+  overflow: clip;
+  border: 1px solid rgba(246, 194, 100, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(246, 194, 100, 0.1), rgba(118, 160, 255, 0.06)),
+    rgba(9, 20, 23, 0.94);
+}
+
+.vps-save-handoff.ready {
+  border-color: rgba(95, 240, 201, 0.3);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(118, 160, 255, 0.055)),
+    rgba(9, 20, 23, 0.94);
+}
+
+.vps-save-handoff-header,
+.vps-save-handoff-command {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.vps-save-handoff-header > div,
+.vps-save-handoff-command span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.vps-save-handoff strong,
+.vps-save-handoff small,
+.vps-save-handoff span,
+.vps-save-handoff code {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.vps-save-handoff-header strong {
+  max-width: 46ch;
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 30px);
+  line-height: 1.06;
+}
+
+.vps-save-handoff small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.vps-save-handoff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.vps-save-handoff-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 100px;
+  padding: 11px;
+  border: 1px solid rgba(151, 204, 188, 0.15);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vps-save-handoff-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+}
+
+.vps-save-handoff-grid article.next {
+  border-color: rgba(246, 194, 100, 0.35);
+  background: rgba(246, 194, 100, 0.065);
+}
+
+.vps-save-handoff-grid span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.vps-save-handoff-grid strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.1;
+}
+
+.vps-save-handoff-command {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.vps-save-handoff-command code {
+  display: block;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--text);
+  line-height: 1.45;
+  white-space: normal;
+}
+
 .vps-freshness-checkpoint-header,
 .vps-freshness-actions,
 .vps-freshness-boundary {
@@ -30778,6 +30893,7 @@ body {
 .premium-launch-console,
 .portal-route-shell,
 .portal-server-save-commander,
+.vps-save-handoff,
 .vps-freshness-checkpoint,
 .portal-command-deck,
 .setup-center,
@@ -30802,13 +30918,16 @@ body {
   .portal-daily-command-proof,
   .live-data-loading-header,
   .live-data-loading-proof,
-  .live-data-loading-actions {
+  .live-data-loading-actions,
+  .vps-save-handoff-header,
+  .vps-save-handoff-command {
     grid-template-columns: 1fr;
   }
 
   .portal-daily-command-next button,
   .portal-daily-command-proof button,
-  .live-data-loading-actions button {
+  .live-data-loading-actions button,
+  .vps-save-handoff-header button {
     width: 100%;
   }
 }

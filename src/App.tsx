@@ -27481,6 +27481,59 @@ function App() {
       detail: "Do not change the VFIX host or route while refreshing TrustGraph."
     }
   ];
+  const vpsSaveHandoff = {
+    mode: "vps_save_handoff",
+    status: serverSyncMonitor.status === "synced" ? "server_saved" : "manual_or_secret_save_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "Server save is proven by the release stamp"
+        : "Save this GitHub build to the VPS before testing the server URL",
+    accepted_when:
+      "vps_save_handoff_requires_green_github_pages_missing_secret_visibility_manual_update_command_release_stamp_json_and_vfix_unchanged_before_server_testing",
+    github_source: "mirzaraheel99/trustgraph main",
+    pages_build_status: "build_deploy_smoke_required",
+    blocked_automation_job: "save-vps",
+    missing_repository_secrets: vpsDeploySecretsChecklist.required_repository_secrets.map((secret) => secret.name),
+    manual_update_command: hostedVersionReceipt.server_update_command,
+    verify_release_stamp_command: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    protected_vfix_route: hostedVersionReceipt.protected_vfix_route,
+    current_server_status: serverSyncMonitor.status,
+    preview_data_accepted: false
+  };
+  const vpsSaveHandoffRows = [
+    {
+      label: "1. GitHub",
+      value: "Pushed",
+      detail: "main is the source of truth after build, deploy, and smoke pass.",
+      ready: true
+    },
+    {
+      label: "2. Auto save",
+      value: vpsSaveHandoff.missing_repository_secrets.length ? "Secrets missing" : "Secrets ready",
+      detail: vpsSaveHandoff.missing_repository_secrets.length
+        ? `Add ${vpsSaveHandoff.missing_repository_secrets.join(", ")} or use the manual command.`
+        : "save-vps can update /opt/trustgraph from GitHub.",
+      ready: !vpsSaveHandoff.missing_repository_secrets.length
+    },
+    {
+      label: "3. Manual save",
+      value: serverSyncMonitor.status === "synced" ? "Done" : "Run command",
+      detail: "Pull main and run tools/update-vps-from-github.sh on the TrustGraph VPS.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "4. Stamp",
+      value: serverSyncMonitor.status === "synced" ? "JSON matched" : "Check JSON",
+      detail: "Do not accept app-shell HTML as a current saved server build.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "5. VFIX",
+      value: "Untouched",
+      detail: vpsSaveHandoff.protected_vfix_route,
+      ready: true
+    }
+  ];
   const serverReleasePacketName = `trustgraph-server-release-save-path-${new Date().toISOString().slice(0, 10)}.json`;
   const serverReleasePacket = {
     mode: "server_release_save_path",
@@ -27494,6 +27547,7 @@ function App() {
     vps_saved_update_verification: vpsSavedUpdateVerification,
     current_build_server_gate: currentBuildServerGate,
     vps_freshness_checkpoint: vpsFreshnessCheckpoint,
+    vps_save_handoff: vpsSaveHandoff,
     server_sync_monitor: serverSyncMonitorPacket,
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
     verify_command: "git -C /opt/trustgraph rev-parse --short HEAD && curl -I https://trustgraph.5-75-224-110.sslip.io/ && curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
@@ -28575,6 +28629,49 @@ function App() {
               <Download size={16} />
               Export route proof
             </button>
+          </div>
+        </section>
+
+        <section className={`vps-save-handoff ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="VPS save handoff">
+          <div className="vps-save-handoff-header">
+            <div>
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>VPS save handoff</span>
+              <strong>{vpsSaveHandoff.headline}</strong>
+              <small>{vpsSaveHandoff.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-vps-save-handoff-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...vpsSaveHandoff, steps: vpsSaveHandoffRows }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export handoff
+            </button>
+          </div>
+          <div className="vps-save-handoff-grid">
+            {vpsSaveHandoffRows.map((row) => (
+              <article className={row.ready ? "ready" : "next"} key={row.label}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="vps-save-handoff-command">
+            <span>
+              <strong>Server update command</strong>
+              <code>{vpsSaveHandoff.manual_update_command}</code>
+            </span>
+            <span>
+              <strong>Release stamp check</strong>
+              <code>{vpsSaveHandoff.verify_release_stamp_command}</code>
+            </span>
           </div>
         </section>
 

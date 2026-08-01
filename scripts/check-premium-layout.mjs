@@ -40,6 +40,8 @@ assert(authenticatedRender.includes('aria-label="VPS freshness checkpoint"') && 
 assert(app.includes("vps_freshness_checkpoint_requires_green_github_pages_release_stamp_commit_match_manual_or_secret_based_save_and_vfix_route_protection"), "VPS freshness checkpoint must require green Pages, release stamp commit match, manual or secret-based save, and VFIX protection.");
 assert(authenticatedRender.includes('aria-label="VPS deploy secrets checklist"'), "signed-in dashboard must expose the VPS deploy secrets checklist when automatic server save is blocked.");
 assert(app.includes("trustgraph-release.json"), "signed-in dashboard must expose the VPS release stamp verification command.");
+assert(authenticatedRender.includes('aria-label="VPS save handoff"') && app.includes("vps_save_handoff"), "signed-in dashboard must expose a VPS save handoff before treating the server URL as current.");
+assert(app.includes("vps_save_handoff_requires_green_github_pages_missing_secret_visibility_manual_update_command_release_stamp_json_and_vfix_unchanged_before_server_testing"), "VPS save handoff must require green Pages, missing secret visibility, manual update command, release stamp JSON, and VFIX protection.");
 assert(authenticatedRender.includes('aria-label="V1 operating map"'), "signed-in dashboard must expose the end-to-end V1 operating map.");
 assert(authenticatedRender.includes('aria-label="Portal action dock"'), "signed-in dashboard must expose a compact portal action dock.");
 assert(authenticatedRender.includes('aria-label="Portal usability command"'), "signed-in dashboard must expose one clear personal, corporate, pricing, database, recovery, and server guide.");
@@ -258,6 +260,7 @@ assert(css.includes(".auth-path-summary") && css.includes(".auth-path-summary-gr
 assert(css.includes(".corporate-onboarding-pricing-cockpit") && css.includes(".corporate-onboarding-pricing-grid") && css.includes(".corporate-onboarding-pricing-actions"), "corporate onboarding pricing cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(css.includes(".vps-freshness-checkpoint") && css.includes(".vps-freshness-grid") && css.includes(".vps-freshness-actions"), "VPS freshness checkpoint must be styled and bounded.");
+assert(css.includes(".vps-save-handoff") && css.includes(".vps-save-handoff-grid") && css.includes(".vps-save-handoff-command"), "VPS save handoff must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-version-receipt") && premiumRepair.includes(".hosted-version-receipt-grid"), "hosted version receipt must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".vps-saved-update-verification") && premiumRepair.includes(".vps-saved-update-command-list"), "VPS saved update verification must be styled and bounded in the premium shell.");
 assert(css.includes(".vps-deploy-secrets-checklist") && css.includes(".vps-deploy-secrets-grid") && css.includes(".vps-deploy-secrets-command"), "VPS deploy secrets checklist must be styled and bounded.");

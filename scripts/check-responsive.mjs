@@ -397,6 +397,9 @@ const requiredMobileStacks = [
   ".server-sync-next",
   ".current-build-server-gate-header",
   ".current-build-server-gate-grid",
+  ".vps-save-handoff-header",
+  ".vps-save-handoff-grid",
+  ".vps-save-handoff-command",
   ".real-row-acceptance-header",
   ".real-row-acceptance-grid",
   ".real-row-acceptance-actions",
@@ -561,6 +564,10 @@ if (!css.includes(".vps-saved-update-verification") || !css.includes("grid-templ
 
 if (!css.includes(".portal-server-save-commander") || !css.includes(".portal-server-save-grid") || !css.includes(".portal-server-save-actions") || !css.includes("grid-template-columns: minmax(0, 1fr) minmax(164px, 0.24fr)")) {
   throw new Error("Responsive check failed: portal server-save commander must be visible, bounded, and mobile stacked.");
+}
+
+if (!css.includes(".vps-save-handoff") || !css.includes(".vps-save-handoff-grid") || !css.includes(".vps-save-handoff-command") || !css.includes(".vps-save-handoff-header button")) {
+  throw new Error("Responsive check failed: VPS save handoff must be visible, bounded, and mobile stacked.");
 }
 
 if (!css.includes(".v1-operating-map") || !css.includes(".v1-operating-map-grid") || !css.includes("grid-template-columns: 30px minmax(0, 1fr)")) {
