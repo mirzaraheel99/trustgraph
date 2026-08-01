@@ -35086,6 +35086,7 @@ body {
 }
 
 .verify-panel > .corporate-verify-review-runway,
+.verify-panel > .corporate-access-answer,
 .verify-panel > .verify-request-form,
 .verify-panel > .grant-list,
 .verify-panel > .corporate-directory-panel {
@@ -35094,8 +35095,116 @@ body {
   overflow: hidden;
 }
 
+.corporate-access-answer {
+  order: -35;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid rgba(109, 242, 220, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(20, 56, 56, 0.84), rgba(12, 22, 26, 0.94)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.corporate-access-answer.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+}
+
+.corporate-access-answer-header,
+.corporate-access-answer-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-access-answer-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-access-answer-grid,
+.corporate-access-answer-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.corporate-access-answer-grid article,
+.corporate-access-answer-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.corporate-access-answer-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.corporate-access-answer-grid article.next {
+  border-color: rgba(225, 184, 102, 0.28);
+}
+
+.corporate-access-answer strong,
+.corporate-access-answer small,
+.corporate-access-answer span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-access-answer-header strong {
+  color: var(--text);
+  font-size: clamp(19px, 2.1vw, 28px);
+  line-height: 1.08;
+}
+
+.corporate-access-answer-grid strong,
+.corporate-access-answer-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.corporate-access-answer-grid span,
+.corporate-access-answer-proof small:first-child {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-access-answer small {
+  color: var(--muted);
+  line-height: 1.38;
+}
+
+.corporate-access-answer button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .corporate-verify-review-runway {
   order: -30;
+}
+
+@media (max-width: 780px) {
+  .corporate-access-answer-header,
+  .corporate-access-answer-proof {
+    grid-template-columns: 1fr;
+  }
 }
 
 .verify-request-form {

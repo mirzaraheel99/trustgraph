@@ -58,6 +58,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Corporate visible rows handoff: approval-to-review checkpoint for approved grant, visible scoped rows, consent scope, review attestation, gap resolution, metadata-only export, and no open user database browse.
 - Corporate attestation completion gate: reviewer checkpoint for live RBAC, approved shared rows, no open gaps, direct review attestation recording, metadata-only export, no-open-browse proof, and live-row-only acceptance before the review queue.
 - Corporate reviewer action bar packet: request access, review rows, record attestation, export packet, and locked reason stay visible before directory filters so corporate users are not dropped into an unclear table.
+- Corporate access answer: first Corporate Verify answer for whether the active company can access approved user rows, current blocker, next click, request/approval/scoped-row/review counts, no-open-user-browse boundary, and preview-data rejection before forms or filters.
 - Renewal readiness packet: visible Passport or Verify records grouped by expired, 45-day due-soon, dated, and missing-expiration review states.
 - Confidentiality review packet: visible performance reviews, references, restricted records, and explicit-consent records scoped to the active Passport or Verify view.
 - Skills evidence packet: visible skill claims with source records, responsibilities, statuses, and Access Grant scope from Passport or Verify.

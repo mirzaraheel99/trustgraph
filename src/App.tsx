@@ -3159,6 +3159,57 @@ function VerifyRequestsPanel({
   const corporateVerifyReviewRunwayNext =
     corporateVerifyReviewRunwaySteps.find((step) => !step.ready) ?? corporateVerifyReviewRunwaySteps[corporateVerifyReviewRunwaySteps.length - 1];
   const corporateVerifyReviewRunwayPacketName = `trustgraph-corporate-verify-review-runway-${new Date().toISOString().slice(0, 10)}.json`;
+  const corporateAccessAnswer = {
+    mode: "corporate_access_answer",
+    can_access_rows: !disabled && sharedRecords.length > 0,
+    answer: disabled
+      ? "No. Switch into a Corporate reviewer role first."
+      : sharedRecords.length
+        ? "Yes. Approved scoped user rows are visible."
+        : approvedCount
+          ? "Almost. Approval exists; reload or review scoped rows."
+          : requests.length
+            ? "Not yet. Waiting for professional approval."
+            : "Not yet. Send an access request by professional email.",
+    next_step: corporateVerifyReviewRunwayNext.label,
+    next_action: corporateVerifyReviewRunwayNext.action,
+    next_target: corporateVerifyReviewRunwayNext.target,
+    requests: requests.length,
+    approved_grants: approvedCount,
+    scoped_rows: sharedRecords.length,
+    review_attestations: reviews.length,
+    open_gaps: pendingGapCount,
+    no_open_user_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_access_answer_shows_if_company_can_access_user_rows_current_blocker_next_click_counts_no_open_browse_and_preview_rejection_before_verify_forms"
+  };
+  const corporateAccessAnswerCards = [
+    {
+      label: "Access answer",
+      value: corporateAccessAnswer.can_access_rows ? "Rows visible" : "Blocked",
+      detail: corporateAccessAnswer.answer,
+      ready: corporateAccessAnswer.can_access_rows
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length} sent` : "Not sent",
+      detail: "Corporate starts by requesting one professional by email.",
+      ready: requests.length > 0
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: "No Passport rows appear before professional approval.",
+      ready: approvedCount > 0
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length} saved` : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} open gaps remain.` : "Record attestation after reviewing visible rows.",
+      ready: reviews.length > 0 && pendingGapCount === 0
+    }
+  ];
   const emptyVerifyStateCommand = {
     mode: "empty_verify_state_command",
     visible_shared_rows: sharedRecords.length,
@@ -3328,6 +3379,55 @@ function VerifyRequestsPanel({
       <div className="mini-heading">
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
+      </div>
+      <div className={`corporate-access-answer ${corporateAccessAnswer.can_access_rows ? "ready" : "blocked"}`} aria-label="Corporate access answer">
+        <div className="corporate-access-answer-header">
+          <div>
+            <span className={`status-chip ${corporateAccessAnswer.can_access_rows ? "success" : "warning"}`}>Can Corporate access user rows?</span>
+            <strong>{corporateAccessAnswer.answer}</strong>
+            <small>{corporateAccessAnswer.accepted_when}</small>
+          </div>
+          <button
+            className={corporateAccessAnswer.can_access_rows ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (corporateAccessAnswer.next_target === "export") {
+                downloadTextFile(
+                  corporateVerifyReviewRunwayPacketName,
+                  JSON.stringify({ ...corporateVerifyReviewRunway, access_answer: corporateAccessAnswer, steps: corporateVerifyReviewRunwaySteps }, null, 2),
+                  "application/json"
+                );
+                return;
+              }
+              document.getElementById(corporateAccessAnswer.next_target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            type="button"
+          >
+            {corporateAccessAnswer.next_action}
+          </button>
+        </div>
+        <div className="corporate-access-answer-grid">
+          {corporateAccessAnswerCards.map((card) => (
+            <article className={card.ready ? "ready" : "next"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-access-answer-proof">
+          <span>
+            <small>Scoped rows</small>
+            <strong>{corporateAccessAnswer.scoped_rows}</strong>
+          </span>
+          <span>
+            <small>No open browse</small>
+            <strong>{corporateAccessAnswer.no_open_user_browse ? "Enforced" : "Not enforced"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateAccessAnswer.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+        </div>
       </div>
       <CorporateControlCenter
         activeOrganization={activeOrganization}
