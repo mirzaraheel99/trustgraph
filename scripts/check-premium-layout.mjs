@@ -89,6 +89,8 @@ assert(app.includes('aria-label="Public auth front desk"') && app.includes("publ
 assert(app.includes('aria-label="Public access desk"') && app.includes("public_access_desk"), "public auth must expose one access desk before fields for portal, action, price, first database write, landing, and recovery.");
 assert(app.includes('aria-label="Public portal route board"') && app.includes("public_portal_route_board"), "public auth must expose a clear user versus corporate route board.");
 assert(app.includes('aria-label="Registration route planner"') && app.includes("registration_route_planner"), "public auth form must expose a plain registration route planner for account type, action, price, first database write, next dashboard, and recovery.");
+assert(app.includes('aria-label="Registration completion handoff"') && app.includes("registration_completion_handoff"), "public auth form must expose Professional and Corporate completion rows, landing dashboard, hosted verification, and next action after submit.");
+assert(app.includes("registration_completion_handoff_requires_hosted_verification_registration_intent_completion_professional_or_corporate_landing_dashboard_next_action_and_no_preview_data"), "registration completion handoff must require hosted verification, registration intent completion, and no preview data.");
 assert(app.includes('aria-label="Portal access cockpit"'), "public auth must start with a single portal access cockpit for portal, mode, pricing, first write, and boundary.");
 assert(app.includes('aria-label="Portal start desk"'), "public auth must expose a simple portal start desk before the dense registration form.");
 assert(app.includes('aria-label="Portal front door"') && app.includes("portal_front_door"), "public website must expose one front door for Professional login, Corporate login, registration, pricing, database boundary, recovery, and server status.");
@@ -323,6 +325,7 @@ assert(app.includes('aria-label="Public portal launch checklist"'), "public webs
 assert(css.includes(".public-portal-launch-checklist") && css.includes(".public-portal-launch-grid"), "public portal launch checklist must be styled and bounded.");
 assert(css.includes(".portal-submit-receipt") && css.includes(".portal-submit-receipt-grid"), "portal submit receipt must be styled and bounded.");
 assert(css.includes(".registration-outcome-command") && css.includes(".registration-outcome-grid"), "registration outcome command must be styled and bounded.");
+assert(css.includes(".registration-completion-handoff") && css.includes(".registration-completion-grid"), "registration completion handoff must be styled and bounded.");
 assert(app.includes('aria-label="Hosted auth redirect verification receipt"'), "public auth must expose the hosted redirect verification receipt.");
 assert(premiumRepair.includes(".hosted-auth-redirect-verification") && premiumRepair.includes(".hosted-auth-redirect-grid"), "hosted auth redirect verification must be styled and bounded.");
 assert(app.includes('aria-label="Email verification delivery receipt"'), "public auth must expose email verification delivery receipt.");

@@ -118,6 +118,12 @@ const appRequirements = [
     "public_login_and_registration_must_show_github_as_source_of_truth_pages_as_green_bundle_vps_release_stamp_as_server_proof_and_vfix_as_separate_protected_route",
     "public hosted build source acceptance rule"
   ],
+  ["Registration completion handoff", "registration completion handoff label"],
+  ["registration_completion_handoff", "registration completion handoff packet mode"],
+  [
+    "registration_completion_handoff_requires_hosted_verification_registration_intent_completion_professional_or_corporate_landing_dashboard_next_action_and_no_preview_data",
+    "registration completion handoff acceptance rule"
+  ],
   ["Signed-in pilot journey checklist", "signed-in pilot journey checklist label"],
   ["signed_in_pilot_journey_checklist", "signed-in pilot journey checklist packet mode"],
   [

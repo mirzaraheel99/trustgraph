@@ -3174,6 +3174,77 @@ button {
   background: rgba(255, 255, 255, 0.035);
 }
 
+.registration-completion-handoff {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.085), rgba(95, 240, 201, 0.035)),
+    rgba(0, 0, 0, 0.14);
+}
+
+.registration-completion-handoff > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.registration-completion-handoff strong,
+.registration-completion-handoff small,
+.registration-completion-handoff span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.registration-completion-handoff > div:first-child > strong {
+  color: #f4fff8;
+  font-size: clamp(18px, 1.8vw, 23px);
+  line-height: 1.15;
+}
+
+.registration-completion-handoff > div:first-child > small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.42;
+}
+
+.registration-completion-grid {
+  display: grid;
+  gap: 9px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+}
+
+.registration-completion-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 11px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.registration-completion-grid small:first-child {
+  color: #a7c2ff;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.registration-completion-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.16;
+}
+
+.registration-completion-handoff > button {
+  justify-self: start;
+}
+
 .account-type-chooser {
   display: grid;
   gap: 12px;

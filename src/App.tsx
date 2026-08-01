@@ -17375,6 +17375,46 @@ function PublicSite({
       detail: selectedRegistrationPath.nextAction
     }
   ];
+  const registrationCompletionHandoff = {
+    mode: "registration_completion_handoff",
+    selected_portal: portal,
+    selected_mode: mode,
+    hosted_verification_required: mode === "signup",
+    completion_row:
+      portal === "corporate"
+        ? "registration_intents.status = workspace_created after organization and admin membership are provisioned"
+        : "registration_intents.status = passport_initialized after the owner Passport context is loaded",
+    landing_dashboard: registrationOutcomeCommand.next_dashboard,
+    next_operator_action:
+      portal === "corporate"
+        ? "Login after hosted verification, create or confirm the company workspace, then request scoped user database access by professional email."
+        : "Login after hosted verification, create Passport records and evidence, then approve scoped sharing only when ready.",
+    preview_data_accepted: false,
+    accepted_when:
+      "registration_completion_handoff_requires_hosted_verification_registration_intent_completion_professional_or_corporate_landing_dashboard_next_action_and_no_preview_data"
+  };
+  const registrationCompletionHandoffCards = [
+    {
+      label: "Hosted verification",
+      value: mode === "signup" ? "Required" : "Already verified",
+      detail: mode === "signup" ? "Email confirmation must return to the hosted TrustGraph URL." : "Login uses the existing verified Supabase user."
+    },
+    {
+      label: "Completion row",
+      value: portal === "corporate" ? "workspace_created" : "passport_initialized",
+      detail: registrationCompletionHandoff.completion_row
+    },
+    {
+      label: "Landing",
+      value: registrationCompletionHandoff.landing_dashboard,
+      detail: registrationCompletionHandoff.next_operator_action
+    },
+    {
+      label: "Acceptance",
+      value: "Live rows only",
+      detail: "Preview, browser-only, or unverified rows do not satisfy portal completion."
+    }
+  ];
   const portalSubmitReceipt = {
     mode: "portal_submit_receipt",
     selected_portal: portal === "corporate" ? "Corporate company portal" : "Professional user portal",
@@ -19826,6 +19866,35 @@ function PublicSite({
                 </span>
               ))}
             </div>
+          </div>
+          <div className="registration-completion-handoff" aria-label="Registration completion handoff">
+            <div>
+              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Completion handoff</span>
+              <strong>{portal === "corporate" ? "Corporate signup must finish with a company workspace" : "Professional signup must finish with a Passport context"}</strong>
+              <small>{registrationCompletionHandoff.accepted_when}</small>
+            </div>
+            <div className="registration-completion-grid">
+              {registrationCompletionHandoffCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-registration-completion-handoff-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(registrationCompletionHandoff, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export handoff
+            </button>
           </div>
           <details className="auth-operator-details">
             <summary>
