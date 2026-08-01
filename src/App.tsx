@@ -29401,6 +29401,83 @@ function App() {
           </div>
         </section>
 
+        <section className="portal-ux-command-center" aria-label="Portal UX command center">
+          <div className="portal-ux-command-hero">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Portal start</span>
+            <strong>{authSession ? `Signed in as ${activeRole.label}` : "Choose user or corporate access first"}</strong>
+            <small>
+              Clear routes for personal users, corporate reviewers, company admins, pricing, account recovery, logout, live database proof, and server freshness.
+            </small>
+            <div className="portal-ux-command-actions">
+              <button className="primary-action" onClick={authSession ? () => openWorkspaceOrSetup("passport") : openAuthControls} type="button">
+                {authSession ? "Open user Passport" : "User login / register"}
+              </button>
+              <button className="secondary-action" onClick={hasLiveCorporateContext ? () => openWorkspaceOrSetup("verify") : openCorporateControls} type="button">
+                {hasLiveCorporateContext ? "Open Corporate Verify" : "Corporate setup / register"}
+              </button>
+              <button className="secondary-action" onClick={() => setSetupView("billing")} type="button">
+                Pricing
+              </button>
+              {authSession ? (
+                <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              ) : null}
+            </div>
+          </div>
+          <div className="portal-ux-command-grid">
+            <button className={authSession ? "ready" : "next"} onClick={openAuthControls} type="button">
+              <span>User access</span>
+              <strong>{authSession ? "Account tools" : "Login or create user account"}</strong>
+              <small>Hosted verification, password reset, recovery, and logout stay together.</small>
+            </button>
+            <button className={hasLiveCorporateContext ? "ready" : "next"} onClick={openCorporateControls} type="button">
+              <span>Corporate access</span>
+              <strong>{hasLiveCorporateContext ? activeOrganization.name : "Create corporate account"}</strong>
+              <small>Company workspace, RBAC role, team invites, and Corporate Verify setup.</small>
+            </button>
+            <button className={sharedVerifyRecords.length ? "ready" : "next"} onClick={() => openWorkspaceOrSetup("verify")} type="button">
+              <span>Corporate database</span>
+              <strong>{sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Request by professional email"}</strong>
+              <small>No open user browse. Rows appear only after approved scope and consent.</small>
+            </button>
+            <button className={subscriptionPlans.length ? "ready" : "next"} onClick={() => setSetupView("billing")} type="button">
+              <span>Pricing</span>
+              <strong>Free user / $149 corporate pilot</strong>
+              <small>Stripe checkout remains gated until billing decisions are recorded.</small>
+            </button>
+            <button className={liveDatabaseContract.accepted ? "ready" : "next"} onClick={() => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+              <span>Live database proof</span>
+              <strong>{liveDatabaseContract.accepted ? "Accepted" : "Proof needed"}</strong>
+              <small>Only signed-in Supabase rows count. Preview data is rejected.</small>
+            </button>
+            <button className={serverSyncMonitor.status === "synced" ? "ready" : "next"} onClick={() => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")} type="button">
+              <span>Server sync</span>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+              <small>GitHub is source of truth; VPS must return release JSON before server testing.</small>
+            </button>
+          </div>
+          <div className="portal-ux-command-proof">
+            <span>
+              <small>Current portal</small>
+              <strong>{workspace.label}</strong>
+            </span>
+            <span>
+              <small>Session</small>
+              <strong>{authSession ? "Live auth" : "Login required"}</strong>
+            </span>
+            <span>
+              <small>Corporate scope</small>
+              <strong>No open browse</strong>
+            </span>
+            <span>
+              <small>VPS</small>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+            </span>
+          </div>
+        </section>
+
         <section className="portal-launch-matrix" aria-label="Portal launch matrix">
           <div className="portal-launch-matrix-header">
             <div>
