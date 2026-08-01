@@ -27038,8 +27038,48 @@ body {
 .verify-panel .corporate-directory-panel .corporate-database-visibility-snapshot,
 .verify-panel .corporate-directory-panel .corporate-classification-contract,
 .verify-panel .corporate-directory-panel .corporate-directory-acceptance,
-.verify-panel .corporate-directory-panel .corporate-review-handoff-receipt {
+.verify-panel .corporate-directory-panel .corporate-review-handoff-receipt,
+.verify-panel .corporate-directory-panel .corporate-review-queue-command,
+.verify-panel .corporate-directory-panel .missing-record-cross-portal-checkpoint,
+.verify-panel .corporate-directory-panel .corporate-live-row-proof-chain,
+.verify-panel .corporate-directory-panel .persisted-corporate-database-acceptance {
   display: none !important;
+}
+
+/* Corporate database simplification layer: keep the reviewer workbench, path strip, filters,
+   rows, reviews, and record actions visible while proof receipts stay available through exports. */
+.verify-panel .corporate-directory-panel {
+  display: grid;
+  gap: 14px;
+  padding: clamp(12px, 1.6vw, 18px);
+  overflow: clip;
+  border: 1px solid rgba(151, 204, 188, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(10, 24, 25, 0.95), rgba(13, 22, 27, 0.9)),
+    rgba(255, 255, 255, 0.02);
+}
+
+.verify-panel .corporate-directory-panel > .mini-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.verify-panel .corporate-directory-panel .corporate-database-path-strip,
+.verify-panel .corporate-directory-panel .corporate-reviewer-action-bar,
+.verify-panel .corporate-directory-panel .corporate-access-review-panel {
+  max-width: 100%;
+  overflow: clip;
+}
+
+.verify-panel .corporate-directory-panel .corporate-database-path-grid,
+.verify-panel .corporate-directory-panel .corporate-database-path-proof,
+.verify-panel .corporate-directory-panel .corporate-reviewer-action-grid,
+.verify-panel .corporate-directory-panel .corporate-access-review-grid,
+.verify-panel .corporate-directory-panel .directory-list {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
 }
 
 .verify-panel .record-form-grid.verify-request-fields {
