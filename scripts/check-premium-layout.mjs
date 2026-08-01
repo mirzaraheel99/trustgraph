@@ -99,6 +99,8 @@ assert(app.includes('aria-label="Portal launch decision strip"'), "public auth m
 assert(app.includes('aria-label="Portal submit receipt"'), "public auth must show the selected portal submit path at the form action point.");
 assert(app.includes('aria-label="Registration pre-submit checklist"'), "public auth must show required fields, first database write, pricing, and next dashboard before submit.");
 assert(app.includes('aria-label="Auth route summary"') && css.includes(".auth-route-summary-grid"), "public auth must show a visible route summary for account type, mode, pricing, first database write, and landing before fields.");
+assert(app.includes('aria-label="Public portal acceptance checkpoint"') && app.includes("public_portal_acceptance_checkpoint"), "public auth must expose a portal acceptance checkpoint for account choice, hosted auth, pricing, first database write, landing, scoped access, and server save.");
+assert(css.includes(".public-portal-acceptance-checkpoint") && css.includes(".public-portal-acceptance-grid"), "public portal acceptance checkpoint must be styled and bounded.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");
 assert(app.includes('aria-label="Billing launch board"') && app.includes("billing_launch_board"), "billing must expose a plain launch board for pilot ledger, quote, payment decision, and Stripe gate.");
 assert(app.includes('aria-label="Pricing quote database receipt"'), "billing must expose a persisted pricing quote receipt.");

@@ -58,6 +58,12 @@ const appRequirements = [
   ["loadVerifyAccessGrants", "live Corporate Verify repository load"],
   ["loadEvidenceDocuments", "live evidence repository load"],
   ["loadConsentAuthorizations", "live consent repository load"],
+  ["Public portal acceptance checkpoint", "public portal acceptance label"],
+  ["public_portal_acceptance_checkpoint", "public portal acceptance packet mode"],
+  [
+    "public_portal_acceptance_requires_account_choice_hosted_auth_pricing_first_database_write_landing_portal_scoped_access_and_saved_server_build_before_live_pilot_acceptance",
+    "public portal acceptance rule"
+  ],
   ["Signed evidence acceptance checkpoint", "signed evidence acceptance label"],
   ["signed_evidence_acceptance_checkpoint", "signed evidence acceptance packet mode"],
   [

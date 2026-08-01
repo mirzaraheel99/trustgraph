@@ -107,6 +107,8 @@ The public auth page now includes a Public portal flow map before the route boar
 
 The public login/register surface now also includes a Public portal route board that compares Professional user and Corporate company paths side by side: price, first database write, landing dashboard, and the scoped database boundary are visible before anyone submits credentials.
 
+The public auth form now includes a Public portal acceptance checkpoint before server-save proof. It ties account choice, hosted auth, pricing, first database write, landing portal, scoped Corporate access, and saved server build into one exportable receipt before live pilot acceptance.
+
 The signed-in app now opens with a premium launch console that separates Personal Passport, Corporate Verify, Company Admin, Account, Pricing, Database proof, and Server sync into one bounded command surface. This is the working first screen; dense proof receipts remain exportable without taking over the daily dashboard.
 
 The signed-in dashboard now adds a Portal daily navigator directly after the front door, with six plain actions for Personal, Corporate, Admin, Account, Pricing, and Database proof plus visible recovery, logout, and export controls. This gives operators one calm path before the deeper audit and database panels.

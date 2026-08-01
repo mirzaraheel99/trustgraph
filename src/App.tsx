@@ -16751,6 +16751,34 @@ function PublicSite({
       detail: selectedRegistrationPath.nextAction
     }
   ];
+  const publicPortalAcceptanceSteps = publicBuyerLaunchPath.lanes.map((lane) => ({
+    label: lane.label,
+    value: lane.value,
+    detail: lane.detail,
+    ready:
+      lane.label === "Proof and save"
+        ? serverSyncMonitor.status === "synced"
+        : lane.label === "Hosted verification"
+          ? authReady
+          : true
+  }));
+  const publicPortalAcceptanceReady = publicPortalAcceptanceSteps.every((step) => step.ready);
+  const publicPortalAcceptanceCheckpoint = {
+    mode: "public_portal_acceptance_checkpoint",
+    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    selected_price: selectedRegistrationPath.plan,
+    first_live_database_write: selectedRegistrationPath.primaryWrite,
+    landing_portal: portal === "corporate" ? "Company setup and Corporate Verify" : "Professional Passport",
+    hosted_redirect_url: authRedirectUrl,
+    server_save_status: serverSyncMonitor.status,
+    server_release_commit: serverSyncMonitor.commit ?? "not_proven",
+    preview_data_accepted: false,
+    ready_steps: publicPortalAcceptanceSteps.filter((step) => step.ready).length,
+    total_steps: publicPortalAcceptanceSteps.length,
+    accepted_when:
+      "public_portal_acceptance_requires_account_choice_hosted_auth_pricing_first_database_write_landing_portal_scoped_access_and_saved_server_build_before_live_pilot_acceptance"
+  };
   const portalStartDesk = {
     mode: "portal_start_desk",
     selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
@@ -18811,6 +18839,48 @@ function PublicSite({
                   <strong>{card.value}</strong>
                   <small>{card.detail}</small>
                 </span>
+              ))}
+            </div>
+          </div>
+          <div className="public-portal-acceptance-checkpoint" aria-label="Public portal acceptance checkpoint">
+            <div className="public-portal-acceptance-header">
+              <div>
+                <span className={`status-chip ${publicPortalAcceptanceReady ? "success" : "warning"}`}>Portal acceptance</span>
+                <strong>
+                  {publicPortalAcceptanceReady
+                    ? `${publicPortalAcceptanceCheckpoint.selected_portal} path is ready for live pilot acceptance`
+                    : `${publicPortalAcceptanceCheckpoint.ready_steps}/${publicPortalAcceptanceCheckpoint.total_steps} portal acceptance steps ready`}
+                </strong>
+                <small>{publicPortalAcceptanceCheckpoint.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-portal-acceptance-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...publicPortalAcceptanceCheckpoint,
+                        steps: publicPortalAcceptanceSteps
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export acceptance
+              </button>
+            </div>
+            <div className="public-portal-acceptance-grid">
+              {publicPortalAcceptanceSteps.map((step) => (
+                <article className={step.ready ? "ready" : "next"} key={step.label}>
+                  <span>{step.label}</span>
+                  <strong>{step.value}</strong>
+                  <small>{step.detail}</small>
+                </article>
               ))}
             </div>
           </div>

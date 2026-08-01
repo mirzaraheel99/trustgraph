@@ -17142,6 +17142,8 @@ p {
   .work-grid,
   .portal-grid,
   .portal-route-grid,
+  .public-portal-acceptance-header,
+  .public-portal-acceptance-grid,
   .workflow-grid,
   .pricing-grid,
   .pricing-decision-strip,
@@ -25409,6 +25411,96 @@ body {
 }
 
 .auth-route-summary-grid small:last-child {
+  color: rgba(222, 239, 233, 0.62);
+  font-size: 11px;
+  line-height: 1.28;
+}
+
+.public-portal-acceptance-checkpoint {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 199, 102, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 199, 102, 0.08), rgba(108, 240, 195, 0.045)),
+    rgba(255, 255, 255, 0.028);
+}
+
+.public-portal-acceptance-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.34fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-portal-acceptance-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-portal-acceptance-checkpoint strong,
+.public-portal-acceptance-checkpoint small,
+.public-portal-acceptance-checkpoint span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-acceptance-header > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(17px, 1.6vw, 22px);
+  line-height: 1.12;
+}
+
+.public-portal-acceptance-header button {
+  min-height: 38px;
+  width: 100%;
+  white-space: normal;
+}
+
+.public-portal-acceptance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 8px;
+}
+
+.public-portal-acceptance-grid article {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-portal-acceptance-grid article.ready {
+  border-color: rgba(108, 240, 195, 0.22);
+}
+
+.public-portal-acceptance-grid article.next {
+  border-color: rgba(255, 199, 102, 0.3);
+}
+
+.public-portal-acceptance-grid span {
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-acceptance-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.public-portal-acceptance-grid small {
   color: rgba(222, 239, 233, 0.62);
   font-size: 11px;
   line-height: 1.28;
