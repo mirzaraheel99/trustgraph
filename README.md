@@ -473,6 +473,8 @@ Corporate registration collects organization name, domain, and type, then provis
 
 The public login and registration card keeps account recovery visible in the main form: resend verification, reset password, and copied hosted-link repair stay beside the credentials while the heavier proof receipts remain hidden from the first-screen buyer/user path.
 
+The current UI applies a V1 premium flow compression layer. The public site keeps the portal front door, launchpad, pricing path, and auth card readable before credentials; the signed-in workspace keeps the portal command center, VPS status, route shell, daily runway, real-row gate, account/logout, and next action first; and Corporate Verify keeps request, approval, scoped rows, review attestation, metadata export, and the no-open-user-database boundary ahead of dense reviewer proof panels. Older receipt surfaces remain in source for exports and CI markers, but they no longer crowd the primary user path or create horizontal overflow.
+
 ## Product Planning
 
 The `docs/` folder contains the planning documents used to shape this foundation. Root-level runbooks capture the live v1 operating checklist.

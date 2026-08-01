@@ -34466,3 +34466,404 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* V1 premium flow compression: keep the working path usable while preserving evidence surfaces in source for exports and CI. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.public-site,
+.app,
+.workspace,
+.public-hero,
+.public-auth-section,
+.public-auth-card,
+.topbar,
+.verify-panel,
+.setup-center,
+.workspace-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.public-hero {
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.58fr);
+  min-height: auto;
+  padding-top: clamp(34px, 5vw, 72px);
+}
+
+.public-hero h1 {
+  max-width: 15ch;
+  font-size: clamp(38px, 5.2vw, 72px);
+}
+
+.public-hero p {
+  max-width: 62ch;
+}
+
+.public-hero > div:first-child {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.public-hero > div:first-child > .portal-front-door,
+.public-hero > div:first-child > .public-portal-launchpad {
+  margin-top: 0;
+}
+
+.public-hero > div:first-child > .public-server-sync-receipt,
+.public-hero > div:first-child > .public-portal-rail,
+.public-hero > div:first-child > .portal-launch-map,
+.public-hero > div:first-child > .public-buyer-decision-board {
+  display: none !important;
+}
+
+.public-proof.public-command-center {
+  position: sticky;
+  top: 92px;
+  align-self: start;
+  max-height: calc(100vh - 118px);
+  overflow: auto;
+}
+
+.public-auth-section {
+  grid-template-columns: minmax(0, 0.82fr) minmax(340px, 0.54fr);
+  align-items: start;
+  gap: clamp(20px, 3vw, 42px);
+}
+
+.public-auth-card {
+  position: sticky;
+  top: 18px;
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.public-auth-card .public-portal-flow-map,
+.public-auth-card .public-portal-route-board,
+.public-auth-card .public-auth-experience-studio,
+.public-auth-card .registration-route-planner,
+.public-auth-card .public-access-desk,
+.public-auth-card .registration-focus-strip,
+.public-auth-card .portal-handoff-checklist,
+.public-auth-card .auth-path-summary,
+.public-auth-card .public-portal-acceptance-checkpoint,
+.public-auth-card .public-auth-server-checkpoint,
+.public-auth-card .hosted-auth-recovery-board,
+.public-auth-card .hosted-auth-redirect-verification,
+.public-auth-card .auth-recovery-command,
+.public-auth-card .auth-recovery-database-receipt,
+.public-auth-card .auth-recovery-decision,
+.public-auth-card .email-verification-delivery-receipt,
+.public-auth-card .portal-submit-receipt,
+.public-auth-card .registration-completion-handoff,
+.public-auth-card .registration-outcome-command {
+  display: none !important;
+}
+
+.public-v1-access-runway,
+.public-portal-route-shell,
+.public-auth-front-desk,
+.portal-front-door,
+.public-portal-launchpad {
+  border-radius: 8px;
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.22);
+}
+
+.public-v1-access-runway-header,
+.public-portal-route-shell-header,
+.public-auth-front-desk-actions,
+.portal-front-door-proof,
+.public-portal-launchpad-proof {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.public-v1-access-runway-actions,
+.public-auth-front-desk-actions,
+.public-portal-route-footer,
+.auth-actions,
+.auth-support-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+}
+
+.auth-form {
+  gap: 12px;
+}
+
+.auth-form label,
+.public-auth-card label {
+  min-width: 0;
+}
+
+.auth-form input,
+.auth-form select,
+.auth-form textarea,
+.public-auth-card input,
+.public-auth-card select,
+.public-auth-card textarea {
+  width: 100%;
+  min-width: 0;
+}
+
+.workspace {
+  display: grid;
+  gap: 18px;
+  padding-top: clamp(14px, 2vw, 26px);
+}
+
+.topbar {
+  position: static;
+  overflow: hidden;
+}
+
+.topbar h1 {
+  max-width: 18ch;
+  font-size: clamp(30px, 4vw, 56px);
+  line-height: 1;
+}
+
+.topbar p {
+  max-width: 72ch;
+  font-size: 15px;
+}
+
+.topbar-actions,
+.topbar-session-card,
+.session-command-bar,
+.workspace-route-strip,
+.workspace-flow-strip {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.topbar-actions {
+  justify-content: flex-start;
+}
+
+.topbar-session-card {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.workspace-route-strip,
+.workspace-flow-strip,
+.session-command-bar {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+}
+
+.workspace-route-strip button,
+.workspace-flow-strip button,
+.session-command-bar button,
+.topbar-actions button,
+.topbar-session-card button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.portal-ux-command-center {
+  order: -70;
+}
+
+.vps-saved-portal-command {
+  order: -65;
+}
+
+.portal-route-shell {
+  order: -60;
+}
+
+.signed-in-daily-operating-runway {
+  order: -55;
+}
+
+.real-row-acceptance-gate {
+  order: -50;
+}
+
+.dashboard-next-action,
+.portal-home-command,
+.portal-choice-guide {
+  order: -45;
+}
+
+.portal-launch-matrix,
+.portal-daily-command-center,
+.dashboard-front-door,
+.signed-in-landing-actions,
+.dashboard-start-map,
+.signed-in-pilot-journey-rail,
+.signed-in-pilot-journey-checklist,
+.signed-in-portal-flow-contract,
+.portal-command-deck,
+.onboarding-handoff-command,
+.v1-launch-flow-command,
+.v1-portal-operating-center,
+.v1-completion-cockpit,
+.v1-operating-map,
+.premium-launch-console {
+  display: none !important;
+}
+
+.portal-ux-command-center,
+.vps-saved-portal-command,
+.portal-route-shell,
+.signed-in-daily-operating-runway,
+.real-row-acceptance-gate,
+.dashboard-next-action,
+.portal-home-command,
+.portal-choice-guide {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.portal-ux-command-grid,
+.vps-saved-portal-command-grid,
+.portal-route-tabs,
+.portal-route-shell-status,
+.signed-in-daily-operating-grid,
+.real-row-acceptance-grid,
+.dashboard-next-action-metrics,
+.portal-choice-guide-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr));
+}
+
+.portal-ux-command-grid button,
+.vps-saved-portal-command-grid button,
+.portal-route-tabs button,
+.signed-in-daily-operating-grid button,
+.dashboard-next-action button,
+.portal-choice-guide button {
+  min-width: 0;
+  width: 100%;
+  white-space: normal;
+}
+
+.verify-panel {
+  display: grid;
+  gap: 14px;
+  overflow: hidden;
+}
+
+.verify-panel > .corporate-reviewer-front-desk,
+.verify-panel > .corporate-reviewer-database-home,
+.verify-panel > .corporate-reviewer-database-workbench,
+.verify-panel > .corporate-attestation-completion-gate,
+.verify-panel > .corporate-database-next-action-commander,
+.verify-panel > .corporate-persisted-export-gate,
+.verify-panel > .corporate-review-studio,
+.verify-panel > .corporate-reviewer-queue-simplification,
+.verify-panel > .corporate-review-handoff-receipt,
+.verify-panel > .corporate-verify-database-unlock-path,
+.verify-panel > .corporate-access-request-preflight {
+  display: none !important;
+}
+
+.verify-panel > .corporate-verify-review-runway,
+.verify-panel > .verify-request-form,
+.verify-panel > .grant-list,
+.verify-panel > .corporate-directory-panel {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.corporate-verify-review-runway {
+  order: -30;
+}
+
+.verify-request-form {
+  order: -25;
+}
+
+.grant-list {
+  order: -20;
+}
+
+.corporate-directory-panel {
+  order: -15;
+  overflow-x: auto;
+}
+
+.corporate-directory-panel,
+.corporate-directory-panel *,
+.workspace table {
+  min-width: 0;
+}
+
+.corporate-directory-panel table,
+.workspace table {
+  width: 100%;
+  max-width: 100%;
+}
+
+button,
+.secondary-action,
+.primary-action,
+.primary-inline-action {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+code,
+pre {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 980px) {
+  .public-hero,
+  .public-auth-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .public-proof.public-command-center,
+  .public-auth-card {
+    position: static;
+    max-height: none;
+  }
+
+  .public-hero h1,
+  .topbar h1 {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .public-nav,
+  .topbar {
+    padding-inline: 14px;
+  }
+
+  .public-hero,
+  .public-auth-section,
+  .workspace {
+    padding-inline: 14px;
+  }
+
+  .public-hero h1 {
+    font-size: clamp(34px, 12vw, 46px);
+  }
+
+  .topbar h1 {
+    font-size: clamp(30px, 10vw, 42px);
+  }
+
+  .public-v1-access-runway-header,
+  .public-v1-access-runway-proof,
+  .signed-in-daily-operating-header,
+  .signed-in-daily-operating-proof,
+  .corporate-verify-review-runway-header,
+  .corporate-verify-review-runway-proof,
+  .dashboard-next-action,
+  .portal-home-command {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
