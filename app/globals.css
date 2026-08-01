@@ -17658,6 +17658,123 @@ p {
   font-size: 12px;
 }
 
+.launch-decision-board {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(225, 184, 102, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.08), transparent 58%),
+    rgba(9, 18, 20, 0.7);
+}
+
+.launch-decision-board-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, max-content);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.launch-decision-board-header > div:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.launch-decision-board strong,
+.launch-decision-board small,
+.launch-decision-board span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.launch-decision-board-header strong {
+  color: var(--text);
+  font-size: 19px;
+  line-height: 1.14;
+}
+
+.launch-decision-board-header small {
+  max-width: 82ch;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.launch-decision-board-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.launch-decision-board-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.launch-decision-board-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 118px;
+  padding: 10px;
+  border: 1px solid rgba(225, 184, 102, 0.18);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.launch-decision-board-grid article.ready {
+  border-color: rgba(112, 224, 178, 0.24);
+  background: rgba(112, 224, 178, 0.05);
+}
+
+.launch-decision-board-grid article.needed {
+  border-color: rgba(225, 184, 102, 0.3);
+}
+
+.launch-decision-board-grid span,
+.launch-decision-board-proof small {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.launch-decision-board-grid strong,
+.launch-decision-board-proof strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.16;
+}
+
+.launch-decision-board-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.36;
+}
+
+.launch-decision-board-proof {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.launch-decision-board-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(225, 184, 102, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .production-gate-cockpit {
   display: grid;
   gap: 10px;
@@ -19602,6 +19719,9 @@ p {
   .real-row-acceptance-actions,
   .stale-vps-recovery-grid,
   .production-gate-cockpit,
+  .launch-decision-board-header,
+  .launch-decision-board-grid,
+  .launch-decision-board-proof,
   .production-gate-cockpit-header,
   .production-gate-cockpit-grid,
   .production-gate-cockpit-proof,

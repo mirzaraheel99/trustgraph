@@ -9944,6 +9944,51 @@ function PlanAlignmentPanel({
   const confirmedPilotContacts = pilotContacts.filter((contact) => contact.status === "confirmed").length;
   const identifiedPilotContacts = pilotContacts.filter((contact) => contact.status === "identified").length;
   const missingPilotContacts = pilotContacts.filter((contact) => contact.status === "missing");
+  const launchDecisionBoard = {
+    mode: "launch_decision_board",
+    status: openProductionGateCount ? "human_decisions_required" : "production_decisions_recorded",
+    allowed_mode: openProductionGateCount ? "pilot_only" : "production_allowed_by_recorded_gates",
+    accepted_when:
+      "launch_decision_board_requires_stripe_security_legal_pilot_owner_and_vps_cutover_decisions_recorded_before_production_payments_or_regulated_traffic",
+    open_gates: openProductionGateCount,
+    approved_gates: approvedProductionGateCount,
+    production_payments_allowed: openProductionGateCount === 0,
+    regulated_employment_traffic_allowed: openProductionGateCount === 0,
+    preview_data_accepted: false
+  };
+  const launchDecisionBoardCards = [
+    {
+      label: "Payments",
+      value: productionGates.some((gate) => gate.label.includes("Stripe") && gate.status === "approved for production") ? "Approved" : "Human decision",
+      detail: "Stripe products, taxes, invoices, refunds, dunning, and webhook reconciliation.",
+      ready: productionGates.some((gate) => gate.label.includes("Stripe") && gate.status === "approved for production")
+    },
+    {
+      label: "Security and legal",
+      value:
+        productionGates.some((gate) => (gate.label.includes("RLS") || gate.label.includes("storage")) && gate.status === "approved for production") &&
+        productionGates.some((gate) => (gate.label.includes("Legal") || gate.label.includes("employment")) && gate.status === "approved for production")
+          ? "Approved"
+          : "Sign-off needed",
+      detail: "External RLS/storage review plus regulated employment language and adverse-action boundary.",
+      ready:
+        productionGates.some((gate) => (gate.label.includes("RLS") || gate.label.includes("storage")) && gate.status === "approved for production") &&
+        productionGates.some((gate) => (gate.label.includes("Legal") || gate.label.includes("employment")) && gate.status === "approved for production")
+    },
+    {
+      label: "Pilot owners",
+      value: confirmedPilotContacts >= 4 ? "Named" : `${confirmedPilotContacts}/4 confirmed`,
+      detail: "Pilot customer, onboarding owner, support owner, and incident response owner.",
+      ready: confirmedPilotContacts >= 4
+    },
+    {
+      label: "VPS cutover",
+      value: productionGates.some((gate) => gate.label.includes("VPS") && gate.status === "approved for production") ? "Approved" : "Cutover gate",
+      detail: "TrustGraph host, TLS, env secrets, Supabase redirects, release stamp, and VFIX isolation.",
+      ready: productionGates.some((gate) => gate.label.includes("VPS") && gate.status === "approved for production")
+    }
+  ];
+  const launchDecisionBoardPacketName = `trustgraph-launch-decision-board-${new Date().toISOString().slice(0, 10)}.json`;
   const latestPilotOwnerReadinessReceipt = pilotOwnerReadinessReceipts[0] ?? null;
   const pilotCustomerCount = pilotContacts.filter(
     (contact) => contact.label === "Pilot customer roster" && contact.status === "confirmed"
@@ -10704,6 +10749,55 @@ function PlanAlignmentPanel({
             <button className="secondary-action" onClick={() => downloadTextFile(launchGatePacketName, JSON.stringify(launchGatePacket, null, 2), "application/json")} type="button">
               Export launch gate packet
             </button>
+          </div>
+        </div>
+        <div className="launch-decision-board" aria-label="Launch decision board">
+          <div className="launch-decision-board-header">
+            <div>
+              <span className={`status-chip ${launchDecisionBoard.open_gates ? "warning" : "success"}`}>Launch decision board</span>
+              <strong>{launchDecisionBoard.open_gates ? "Pilot mode stays on until human decisions are recorded" : "Recorded decisions allow production launch review"}</strong>
+              <small>{launchDecisionBoard.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  launchDecisionBoardPacketName,
+                  JSON.stringify({ ...launchDecisionBoard, cards: launchDecisionBoardCards }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export decisions
+            </button>
+          </div>
+          <div className="launch-decision-board-grid">
+            {launchDecisionBoardCards.map((card) => (
+              <article className={card.ready ? "ready" : "needed"} key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="launch-decision-board-proof">
+            <span>
+              <small>Allowed mode</small>
+              <strong>{launchDecisionBoard.allowed_mode.replace(/_/g, " ")}</strong>
+            </span>
+            <span>
+              <small>Payments</small>
+              <strong>{launchDecisionBoard.production_payments_allowed ? "Allowed" : "Blocked"}</strong>
+            </span>
+            <span>
+              <small>Regulated traffic</small>
+              <strong>{launchDecisionBoard.regulated_employment_traffic_allowed ? "Allowed" : "Blocked"}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{launchDecisionBoard.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
           </div>
         </div>
         <div className="production-gate-cockpit" aria-label="Production gate cockpit">

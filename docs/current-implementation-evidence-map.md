@@ -140,6 +140,7 @@ The app exposes these operator exports to prove live database state after sign-i
 - Seed evidence packet: IDs returned by the live pilot workspace seed RPC, including the corporate review attestation created from the approved Access Grant.
 - Seed reconciliation: compares seed IDs and counts to rows currently loaded through live repositories.
 - Admin exports: operations cases, audit CSV/JSON, release ledger, security runbook, production gates, pilot launch contacts, pilot owner readiness receipts, real database completion receipts, Connect clients, and webhooks.
+- Launch decision board: Admin readiness board that keeps Stripe/payment, security/legal, pilot-owner, and VPS cutover decisions visible above detailed gate records, with production payments and regulated traffic blocked until human approvals are recorded.
 - Production gate cockpit packet: Stripe, external security/storage, legal/employment language, pilot owner, and TrustGraph VPS cutover gates in one Admin control surface; it keeps allowed mode at `pilot_only` until every human approval is recorded.
 - Issuer lifecycle packet: issued credential count, active and revoked credential count, issuer organization scope, corrected expiration metadata, revocation reason, and `credential.updated` / `credential.revoked` audit expectation.
 - Issuer provenance receipt: issuer-backed credential owner, issuer organization, source name, status, expiration, revocation state, no universal trust score, Corporate Verify visibility rule, and credential audit expectations.
