@@ -95,6 +95,8 @@ The public login/register card now includes a signup decision desk directly abov
 
 The public login/register card also includes a registration pricing gate before credentials. It shows selected portal, register/login mode, pilot price, pricing plan id, first live database write, `registration_intents`, Stripe checkout boundary, server-save status, and live-row-only acceptance in one compact card.
 
+The signed-in working database area now includes a live row activation handoff. It groups hosted login, live pilot row creation, browser reload, seed reconciliation, Corporate Verify review, and working-data export into one action path before real database acceptance.
+
 The signed-in dashboard front door now exposes clickable cards for Professional Passport, Corporate Verify, Company Admin, Account and recovery, Pricing, Database proof, and Server sync. Pricing opens the billing setup panel, Database proof scrolls to the live-row proof cockpit, and Server sync exports the GitHub-to-VPS release packet.
 
 Corporate Verify now keeps the visible operator path focused on the quick start, progress strip, request form, request list, user-data proof, and scoped directory. Duplicate wizard/command/blocker panels remain in the bundle for proof exports and tests, but they do not crowd the working reviewer flow.

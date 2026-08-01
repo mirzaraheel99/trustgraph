@@ -53,6 +53,12 @@ const appRequirements = [
     "live_database_repair_guide_requires_hosted_login_seed_or_create_rows_reload_supabase_repositories_export_working_data_packet_and_reject_preview_data",
     "live database repair guide acceptance rule"
   ],
+  ["Live row activation handoff", "live row activation handoff label"],
+  ["live_row_activation_handoff", "live row activation handoff packet mode"],
+  [
+    "live_row_activation_handoff_requires_hosted_login_prepare_live_pilot_workspace_reload_reconcile_seed_ids_export_working_data_and_open_corporate_verify_before_real_database_acceptance",
+    "live row activation handoff acceptance rule"
+  ],
   ["Live pilot row proof", "live pilot row proof label"],
   ["live_pilot_row_proof", "live pilot row proof packet mode"],
   ["Working database proof ready", "working database ready state"],

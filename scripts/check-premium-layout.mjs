@@ -276,6 +276,9 @@ assert(css.includes(".live-data-load-receipt") && css.includes(".live-data-load-
 assert(app.includes('aria-label="Live database reload verification"'), "working database proof must expose reload verification after seed.");
 assert(css.includes(".live-database-reload-verification") && css.includes(".live-database-reload-grid"), "live database reload verification must be styled and bounded.");
 assert(css.includes(".live-database-repair-command") && css.includes(".live-database-repair-actions") && css.includes(".live-database-repair-grid"), "live database repair command must be styled and bounded.");
+assert(app.includes('aria-label="Live row activation handoff"') && app.includes("live_row_activation_handoff"), "working database proof must expose one live row activation handoff.");
+assert(app.includes("live_row_activation_handoff_requires_hosted_login_prepare_live_pilot_workspace_reload_reconcile_seed_ids_export_working_data_and_open_corporate_verify_before_real_database_acceptance"), "live row activation handoff must require hosted login, live seed, reload, reconcile, export, and Corporate Verify review.");
+assert(css.includes(".live-row-activation-handoff") && css.includes(".live-row-activation-handoff-grid") && css.includes(".live-row-activation-handoff-proof"), "live row activation handoff must be styled and bounded.");
 assert(css.includes(".live-seed-preflight") && css.includes(".live-seed-preflight-grid"), "live seed preflight must be styled and bounded.");
 assert(app.includes('aria-label="Live seed reload receipt"'), "live seed proof must expose the reload/reconciliation receipt.");
 assert(css.includes(".live-seed-reload-receipt") && css.includes(".live-seed-reload-grid"), "live seed reload receipt must be styled and bounded.");

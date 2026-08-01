@@ -15993,6 +15993,67 @@ function OnboardingChecklistPanel({
       liveDatabaseReloadVerificationSteps.find((step) => !step.ready)?.label ?? "Export working-data packet",
     steps: liveDatabaseReloadVerificationSteps
   };
+  const liveRowActivationHandoff = {
+    mode: "live_row_activation_handoff",
+    status:
+      liveDatabaseAcceptanceComplete && seedReconciliationComplete && corporateDatabaseReady
+        ? "ready_for_corporate_verify_review"
+        : authSession
+          ? "activation_steps_open"
+          : "hosted_login_required",
+    accepted_when:
+      "live_row_activation_handoff_requires_hosted_login_prepare_live_pilot_workspace_reload_reconcile_seed_ids_export_working_data_and_open_corporate_verify_before_real_database_acceptance",
+    preview_data_accepted: false,
+    next_action:
+      !authSession
+        ? "Login or register first"
+        : !visibleSeedEvidence
+          ? "Prepare live pilot workspace"
+          : !seedReconciliationComplete
+            ? "Reload and reconcile rows"
+            : !liveDatabaseAcceptanceComplete
+              ? liveDatabaseRepairQueue[0]?.action ?? "Repair live row groups"
+              : !corporateDatabaseReady
+                ? "Open Corporate Verify"
+                : "Export working-data packet",
+    steps: [
+      {
+        label: "Hosted login",
+        value: authSession ? "Connected" : "Required",
+        detail: authSession ? authSession.user.email : "Use the hosted auth card first.",
+        ready: Boolean(authSession),
+        action: "Login"
+      },
+      {
+        label: "Prepare rows",
+        value: visibleSeedEvidence ? "Seed evidence captured" : authSession ? "Ready to seed" : "Locked",
+        detail: "Writes Passport, evidence, corporate workspace, consent, team, billing, and review rows.",
+        ready: Boolean(visibleSeedEvidence),
+        action: "Prepare live pilot workspace"
+      },
+      {
+        label: "Reload and reconcile",
+        value: seedReconciliationComplete ? "Matched" : visibleSeedEvidence ? `${seedReconciliationPassing}/${seedReconciliationRows.length}` : "Not started",
+        detail: "Seed evidence counts only after IDs match rows reloaded from Supabase repositories.",
+        ready: seedReconciliationComplete,
+        action: "Reload rows"
+      },
+      {
+        label: "Corporate review",
+        value: corporateDatabaseReady ? "Scoped rows visible" : "Needs Verify proof",
+        detail: "Corporate Verify must show approved scoped rows, consent, team, and review attestation.",
+        ready: corporateDatabaseReady,
+        action: "Open Corporate Verify"
+      },
+      {
+        label: "Export proof",
+        value: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "Ready" : "Blocked",
+        detail: "Export the working-data packet only after live repository rows are loaded and reconciled.",
+        ready: liveDatabaseAcceptanceComplete && seedReconciliationComplete,
+        action: "Export working-data packet"
+      }
+    ]
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -16690,6 +16751,78 @@ function OnboardingChecklistPanel({
               </div>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="live-row-activation-handoff" aria-label="Live row activation handoff">
+        <div className="live-row-activation-handoff-top">
+          <div>
+            <span className={`status-chip ${liveRowActivationHandoff.status === "ready_for_corporate_verify_review" ? "success" : "warning"}`}>
+              Live row activation handoff
+            </span>
+            <strong>{liveRowActivationHandoff.next_action}</strong>
+            <small>{liveRowActivationHandoff.accepted_when}</small>
+          </div>
+          <div className="live-row-activation-handoff-actions">
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(workingDataExportName, JSON.stringify({ ...workingDatabaseProof, live_row_activation_handoff: liveRowActivationHandoff }, null, 2), "application/json")}
+              type="button"
+            >
+              Export handoff
+            </button>
+            <button
+              className="primary-action"
+              onClick={() => {
+                if (!authSession) {
+                  onOpenHostedRegistration();
+                  return;
+                }
+                if (!visibleSeedEvidence) {
+                  void seedLiveData();
+                  return;
+                }
+                if (!seedReconciliationComplete && typeof window !== "undefined") {
+                  window.location.reload();
+                  return;
+                }
+                if (!corporateDatabaseReady) {
+                  onOpenWorkspace("verify");
+                  return;
+                }
+                downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json");
+              }}
+              type="button"
+            >
+              {liveRowActivationHandoff.next_action}
+            </button>
+          </div>
+        </div>
+        <div className="live-row-activation-handoff-grid">
+          {liveRowActivationHandoff.steps.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span className={`status-dot ${step.ready ? "on" : ""}`} />
+              <div>
+                <strong>{step.label}</strong>
+                <small>{step.value}</small>
+                <small>{step.detail}</small>
+                <em>{step.action}</em>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="live-row-activation-handoff-proof">
+          <span>
+            <strong>{liveRowActivationHandoff.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+            <small>Seed evidence must reload from Supabase before the Corporate portal can accept user database proof.</small>
+          </span>
+          <span>
+            <strong>{seedReconciliationComplete ? "Seed reconciled" : "Reload required"}</strong>
+            <small>{seedReconciliationPassing}/{seedReconciliationRows.length} seed rows currently match loaded repository rows.</small>
+          </span>
+          <span>
+            <strong>{corporateDatabaseReady ? "Corporate scoped rows ready" : "Corporate proof open"}</strong>
+            <small>{accessGrants.length} grants, {consentAuthorizations.length} consent rows, {corporateAccessReviews.length} review attestations.</small>
+          </span>
         </div>
       </div>
       <div className="live-seed-preflight" aria-label="Live seed preflight">
