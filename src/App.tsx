@@ -258,6 +258,7 @@ type ServerSyncMonitorState = {
   detail: string;
   checkedAt: string | null;
   commit: string | null;
+  bundleMarker: string | null;
   source: string;
   stampUrl: string;
 };
@@ -25137,6 +25138,7 @@ function App() {
     detail: "Looking for the release stamp on the current host.",
     checkedAt: null,
     commit: null,
+    bundleMarker: null,
     source: "current_host",
     stampUrl: "/trustgraph-release.json"
   });
@@ -25187,6 +25189,7 @@ function App() {
             detail: "GitHub Pages can still be current, but the VPS saved-build check needs the server updater.",
             checkedAt,
             commit: null,
+            bundleMarker: null,
             source: "http_status",
             stampUrl
           });
@@ -25200,19 +25203,52 @@ function App() {
             detail: "The host is alive, but the release stamp returned the app shell instead of commit JSON.",
             checkedAt,
             commit: null,
+            bundleMarker: null,
             source: "html_instead_of_release_stamp",
             stampUrl
           });
           return;
         }
 
-        const stamp = JSON.parse(body) as { commit?: string; short_commit?: string; source?: string; generated_at?: string };
+        const stamp = JSON.parse(body) as {
+          bundle_marker?: string;
+          commit?: string;
+          commit_short?: string;
+          short_commit?: string;
+          source?: string;
+          generated_at?: string;
+          updated_at?: string;
+        };
+        const reportedCommit = stamp.commit_short ?? stamp.short_commit ?? stamp.commit ?? null;
+        const reportedMarker = stamp.bundle_marker ?? null;
+        const isBuildPlaceholder =
+          !reportedCommit ||
+          reportedCommit === "build" ||
+          reportedCommit === "build-time-placeholder" ||
+          stamp.commit === "build-time-placeholder" ||
+          stamp.updated_at === "build-time-placeholder";
+
+        if (isBuildPlaceholder) {
+          setServerSyncMonitor({
+            status: "pages_bundle",
+            headline: "GitHub bundle stamp found; VPS save still needs proof",
+            detail: `The stamp contains marker ${reportedMarker ?? "missing"}, but no saved VPS Git commit yet.`,
+            checkedAt: stamp.updated_at && stamp.updated_at !== "build-time-placeholder" ? stamp.updated_at : checkedAt,
+            commit: reportedCommit,
+            bundleMarker: reportedMarker,
+            source: stamp.source ?? "static_release_stamp",
+            stampUrl
+          });
+          return;
+        }
+
         setServerSyncMonitor({
           status: "synced",
           headline: "Saved build stamp found",
-          detail: `Server reports commit ${stamp.short_commit ?? stamp.commit ?? "unknown"} from ${stamp.source ?? "GitHub main"}.`,
-          checkedAt: stamp.generated_at ?? checkedAt,
-          commit: stamp.short_commit ?? stamp.commit ?? null,
+          detail: `Server reports commit ${reportedCommit} with marker ${reportedMarker ?? "missing"} from ${stamp.source ?? "GitHub main"}.`,
+          checkedAt: stamp.updated_at ?? stamp.generated_at ?? checkedAt,
+          commit: reportedCommit,
+          bundleMarker: reportedMarker,
           source: stamp.source ?? "release_stamp",
           stampUrl
         });
@@ -25224,6 +25260,7 @@ function App() {
           detail: error instanceof Error ? error.message : "The release stamp request failed.",
           checkedAt: new Date().toISOString(),
           commit: null,
+          bundleMarker: null,
           source: "fetch_error",
           stampUrl
         });
@@ -32701,6 +32738,11 @@ function App() {
                 <span>Reported commit</span>
                 <strong>{serverSyncMonitor.commit ?? "Not proven"}</strong>
                 <small>Accepted only when the stamp returns commit JSON.</small>
+              </article>
+              <article className={serverSyncMonitor.bundleMarker === "registration_handoff_command" ? "ready" : "next"}>
+                <span>Bundle marker</span>
+                <strong>{serverSyncMonitor.bundleMarker ?? "Not proven"}</strong>
+                <small>Must match the current TrustGraph UI marker before the server is accepted.</small>
               </article>
               <article>
                 <span>Release stamp URL</span>
