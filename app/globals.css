@@ -35649,6 +35649,10 @@ body {
   order: -53;
 }
 
+.live-database-proof-commander {
+  order: -54;
+}
+
 .dashboard-next-action,
 .portal-home-command,
 .portal-choice-guide {
@@ -35677,6 +35681,7 @@ body {
 .vps-saved-portal-command,
 .portal-route-shell,
 .registration-handoff-command,
+.live-database-proof-commander,
 .real-data-mission-control,
 .signed-in-daily-operating-runway,
 .real-row-acceptance-gate,
@@ -35694,6 +35699,8 @@ body {
 .portal-route-shell-status,
 .registration-handoff-grid,
 .registration-handoff-proof,
+.live-database-proof-grid,
+.live-database-proof-boundary,
 .real-data-mission-grid,
 .real-data-mission-proof,
 .signed-in-daily-operating-grid,
@@ -35814,6 +35821,112 @@ body {
 }
 
 .registration-handoff-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.live-database-proof-commander {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 22px);
+  border: 1px solid rgba(95, 240, 201, 0.28);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.12), rgba(107, 149, 255, 0.07)),
+    rgba(7, 15, 18, 0.88);
+  box-shadow: 0 22px 62px rgba(0, 0, 0, 0.26);
+}
+
+.live-database-proof-commander.hosted_login_required,
+.live-database-proof-commander.load_live_database_rows {
+  border-color: rgba(225, 184, 102, 0.28);
+}
+
+.live-database-proof-header,
+.live-database-proof-boundary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.56fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.live-database-proof-header > div:first-child,
+.live-database-proof-boundary span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.live-database-proof-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.live-database-proof-grid,
+.live-database-proof-boundary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 9px;
+}
+
+.live-database-proof-grid article,
+.live-database-proof-boundary span {
+  min-width: 0;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.live-database-proof-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.live-database-proof-grid article.next {
+  border-color: rgba(225, 184, 102, 0.3);
+}
+
+.live-database-proof-commander strong,
+.live-database-proof-commander small,
+.live-database-proof-commander span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.live-database-proof-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 2.2vw, 30px);
+  line-height: 1.06;
+}
+
+.live-database-proof-grid strong,
+.live-database-proof-boundary strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.live-database-proof-grid span,
+.live-database-proof-boundary small:first-child {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.live-database-proof-commander small {
+  color: var(--muted);
+  line-height: 1.38;
+}
+
+.live-database-proof-actions button {
   width: 100%;
   min-width: 0;
   white-space: normal;

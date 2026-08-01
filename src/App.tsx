@@ -29316,6 +29316,64 @@ function App() {
       ready: serverSyncMonitor.status === "synced"
     }
   ];
+  const liveDatabaseProofCommander = {
+    mode: "live_database_proof_commander",
+    status: livePilotRowProof.accepted ? "accepted_live_database_rows" : authSession && accountContext ? "load_live_database_rows" : "hosted_login_required",
+    headline: livePilotRowProof.accepted
+      ? "Live database proof is ready"
+      : authSession && accountContext
+        ? `Next live row group: ${realRowAcceptanceGate.next_missing_group}`
+        : "Login from the hosted site before rows count",
+    next_action: livePilotRowProof.accepted
+      ? latestRealDatabaseCompletionReceipt
+        ? "Export working-data proof"
+        : "Record completion receipt"
+      : authSession && accountContext
+        ? "Run live seed"
+        : "Login or register",
+    signed_in_source: livePilotRowProof.source,
+    ready_groups: livePilotRowProof.readyGroups,
+    required_groups: livePilotRowProof.totalRequiredGroups,
+    live_row_total: realRowAcceptanceGate.live_row_total,
+    next_missing_group: realRowAcceptanceGate.next_missing_group,
+    persisted_receipt: Boolean(latestRealDatabaseCompletionReceipt),
+    server_save_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "live_database_proof_commander_requires_hosted_login_live_supabase_rows_seed_or_manual_rows_reload_export_completion_receipt_vps_freshness_and_rejects_demo_preview_data"
+  };
+  const liveDatabaseProofCommanderCards = [
+    {
+      label: "Login",
+      value: authSession && accountContext ? "Hosted session" : "Required",
+      detail: authSession && accountContext ? authSession.user.email : "Use the hosted TrustGraph URL before loading live rows.",
+      ready: Boolean(authSession && accountContext)
+    },
+    {
+      label: "Live rows",
+      value: `${liveDatabaseProofCommander.ready_groups}/${liveDatabaseProofCommander.required_groups}`,
+      detail: livePilotRowProof.accepted ? "All required Supabase row groups loaded." : `Missing: ${liveDatabaseProofCommander.next_missing_group}`,
+      ready: livePilotRowProof.accepted
+    },
+    {
+      label: "Rows counted",
+      value: `${liveDatabaseProofCommander.live_row_total}`,
+      detail: "Counts come from signed-in repositories, not static preview copy.",
+      ready: liveDatabaseProofCommander.live_row_total > 0
+    },
+    {
+      label: "Receipt",
+      value: liveDatabaseProofCommander.persisted_receipt ? "Saved" : "Needed",
+      detail: liveDatabaseProofCommander.persisted_receipt ? "Real database completion receipt exists." : "Record after live rows load.",
+      ready: liveDatabaseProofCommander.persisted_receipt
+    },
+    {
+      label: "Server",
+      value: serverSyncMonitor.status === "synced" ? "Fresh" : "Needs save",
+      detail: "VPS acceptance requires release JSON proof for the latest commit.",
+      ready: serverSyncMonitor.status === "synced"
+    }
+  ];
 
   async function recordLiveDatabaseReadinessReceipt() {
     if (!authSession || !accountContext) {
@@ -31660,6 +31718,98 @@ function App() {
             <span>
               <small>Preview data</small>
               <strong>{registrationHandoffCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+          </div>
+        </section>
+
+        <section className={`live-database-proof-commander ${liveDatabaseProofCommander.status}`} aria-label="Live database proof commander">
+          <div className="live-database-proof-header">
+            <div>
+              <span className={`status-chip ${livePilotRowProof.accepted ? "success" : "warning"}`}>Live database proof</span>
+              <strong>{liveDatabaseProofCommander.headline}</strong>
+              <small>
+                V1 accepts only hosted, signed-in Supabase rows. Demo data, static preview copy, and browser-memory seed state do not complete the build.
+              </small>
+            </div>
+            <div className="live-database-proof-actions">
+              <button className={!authSession || !accountContext ? "primary-action" : "secondary-action"} onClick={openAuthControls} type="button">
+                {authSession && accountContext ? "Account / recovery" : "Login or register"}
+              </button>
+              <button
+                className={authSession && accountContext && !livePilotRowProof.accepted ? "primary-action" : "secondary-action"}
+                disabled={!authSession || !accountContext}
+                onClick={() => {
+                  if (!authSession || !accountContext) {
+                    openAuthControls();
+                    return;
+                  }
+                  setV1ReadinessStatus("Running live pilot seed from proof commander...");
+                  seedLivePilotWorkspace()
+                    .then(() => setV1ReadinessStatus("Live pilot seed completed. Repository rows reloaded."))
+                    .catch((error) => {
+                      setV1ReadinessStatus(error instanceof Error ? error.message : "Could not run live pilot seed.");
+                    });
+                }}
+                type="button"
+              >
+                Run live seed
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Reload proof
+              </button>
+              <button className="secondary-action" onClick={() => downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json")} type="button">
+                Export proof
+              </button>
+              <button
+                className="secondary-action"
+                disabled={!authSession || !accountContext}
+                onClick={() =>
+                  void recordLiveRealDatabaseCompletionReceipt({
+                    status: livePilotRowProof.accepted ? "ready_for_v1_review" : "live_rows_missing",
+                    completedSteps: livePilotRowProof.readyGroups,
+                    totalSteps: livePilotRowProof.totalRequiredGroups,
+                    missingGroups: livePilotRowProof.missingRequiredGroups,
+                    liveRowGroups: livePilotRowProof.rows.map((row) => ({
+                      label: row.label,
+                      table: row.table,
+                      count: row.count,
+                      ready: row.ready,
+                      evidence: row.evidence
+                    })),
+                    metadata: {
+                      source: "live_database_proof_commander",
+                      next_action: liveDatabaseProofCommander.next_action,
+                      server_save_status: serverSyncMonitor.status
+                    }
+                  })
+                }
+                type="button"
+              >
+                Record receipt
+              </button>
+            </div>
+          </div>
+          <div className="live-database-proof-grid">
+            {liveDatabaseProofCommanderCards.map((row) => (
+              <article className={row.ready ? "ready" : "next"} key={row.label}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="live-database-proof-boundary">
+            <span>
+              <small>Next action</small>
+              <strong>{liveDatabaseProofCommander.next_action}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{liveDatabaseProofCommander.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <span>
+              <small>Acceptance rule</small>
+              <strong>{liveDatabaseProofCommander.accepted_when}</strong>
             </span>
           </div>
         </section>
