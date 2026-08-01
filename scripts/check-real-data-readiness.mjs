@@ -118,6 +118,12 @@ const appRequirements = [
     "vps_freshness_checkpoint_requires_green_github_pages_release_stamp_commit_match_manual_or_secret_based_save_and_vfix_route_protection",
     "VPS freshness checkpoint rule"
   ],
+  ["Current build server gate", "current-build server gate label"],
+  ["current_build_server_gate", "current-build server gate packet mode"],
+  [
+    "current_build_server_gate_requires_github_green_pages_smoke_vps_release_stamp_commit_json_bundle_marker_and_vfix_route_unchanged",
+    "current-build server gate acceptance rule"
+  ],
   ["Public signup decision desk", "public signup decision desk label"],
   ["public_signup_decision_desk", "public signup decision desk packet mode"],
   [

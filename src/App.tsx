@@ -25747,6 +25747,49 @@ function App() {
     stale_action: hostedVersionReceipt.server_update_command,
     protected_boundary: "Do not edit or restart the VFIX app route while refreshing TrustGraph."
   };
+  const currentBuildServerGate = {
+    mode: "current_build_server_gate",
+    status: serverSyncMonitor.status === "synced" ? "server_current" : "manual_vps_sync_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "This VPS build is accepted as current"
+        : "This GitHub build is not accepted on the VPS until the server proves it",
+    latest_code_source: "GitHub main after green Deploy TrustGraph to GitHub Pages build, deploy, and smoke",
+    vps_public_url: hostedVersionReceipt.vps_target,
+    release_stamp_url: hostedVersionReceipt.release_stamp_url,
+    required_marker: "current_build_server_gate_requires_github_green_pages_smoke_vps_release_stamp_commit_json_bundle_marker_and_vfix_route_unchanged",
+    manual_sync_command: hostedVersionReceipt.server_update_command,
+    verify_commands: vpsSavedUpdateVerification.commands,
+    deploy_secret_blocker: vpsDeploySecretsChecklist.required_repository_secrets.map((secret) => secret.name),
+    protected_vfix_route: hostedVersionReceipt.protected_vfix_route,
+    preview_data_accepted: false
+  };
+  const currentBuildServerGateRows = [
+    {
+      label: "GitHub source",
+      value: "Green main",
+      detail: "This commit is saved only after build, Pages deploy, and smoke pass.",
+      ready: true
+    },
+    {
+      label: "VPS stamp",
+      value: serverSyncMonitor.status === "synced" ? "Accepted" : "Needs sync",
+      detail: serverSyncMonitor.commit ? `Server reports ${serverSyncMonitor.commit}` : "The VPS must return commit JSON from trustgraph-release.json.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "Bundle marker",
+      value: "Required",
+      detail: "The served VPS bundle must contain the latest TrustGraph UI marker, not an older healthy page.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "VFIX route",
+      value: "Untouched",
+      detail: currentBuildServerGate.protected_vfix_route,
+      ready: true
+    }
+  ];
   const serverSyncMonitorTone =
     serverSyncMonitor.status === "synced"
       ? "success"
@@ -25820,6 +25863,7 @@ function App() {
     hosted_version_receipt: hostedVersionReceipt,
     vps_deploy_secrets_checklist: vpsDeploySecretsChecklist,
     vps_saved_update_verification: vpsSavedUpdateVerification,
+    current_build_server_gate: currentBuildServerGate,
     vps_freshness_checkpoint: vpsFreshnessCheckpoint,
     server_sync_monitor: serverSyncMonitorPacket,
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
@@ -26558,6 +26602,42 @@ function App() {
                 <Download size={16} />
                 Export server command
               </button>
+            </div>
+          </div>
+          <div className={`current-build-server-gate ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="Current build server gate">
+            <div className="current-build-server-gate-header">
+              <div>
+                <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Current build server gate</span>
+                <strong>{currentBuildServerGate.headline}</strong>
+                <small>{currentBuildServerGate.required_marker}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-current-build-server-gate-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...currentBuildServerGate, rows: currentBuildServerGateRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export gate
+              </button>
+            </div>
+            <div className="current-build-server-gate-grid">
+              {currentBuildServerGateRows.map((row) => (
+                <article className={row.ready ? "ready" : "next"} key={row.label}>
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="current-build-server-gate-command">
+              <span>Manual VPS sync</span>
+              <code>{currentBuildServerGate.manual_sync_command}</code>
             </div>
           </div>
           <div className="portal-route-shell-footer">

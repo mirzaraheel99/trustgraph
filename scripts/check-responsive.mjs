@@ -323,6 +323,8 @@ const requiredMobileStacks = [
   ".server-release-grid",
   ".server-sync-monitor-grid",
   ".server-sync-next",
+  ".current-build-server-gate-header",
+  ".current-build-server-gate-grid",
   ".v1-operating-map-header",
   ".v1-operating-map-grid",
   ".reference-source-strip",

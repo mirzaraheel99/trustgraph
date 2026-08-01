@@ -18920,6 +18920,8 @@ p {
   .server-release-grid,
   .server-sync-monitor-grid,
   .server-sync-next,
+  .current-build-server-gate-header,
+  .current-build-server-gate-grid,
   .stale-vps-recovery-grid,
   .production-gate-cockpit,
   .production-gate-cockpit-header,
@@ -22094,6 +22096,122 @@ body {
   font-size: 11px;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.current-build-server-gate {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 199, 102, 0.25);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 199, 102, 0.08), rgba(95, 240, 201, 0.055)),
+    rgba(255, 255, 255, 0.028);
+}
+
+.current-build-server-gate.ready {
+  border-color: rgba(95, 240, 201, 0.24);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.09), rgba(134, 174, 246, 0.045)),
+    rgba(255, 255, 255, 0.028);
+}
+
+.current-build-server-gate-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.24fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.current-build-server-gate-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.current-build-server-gate strong,
+.current-build-server-gate small,
+.current-build-server-gate span,
+.current-build-server-gate code {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.current-build-server-gate-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.16;
+}
+
+.current-build-server-gate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 9px;
+}
+
+.current-build-server-gate-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.current-build-server-gate-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.current-build-server-gate-grid article.next {
+  border-color: rgba(255, 199, 102, 0.3);
+  background: rgba(255, 199, 102, 0.07);
+}
+
+.current-build-server-gate-grid span,
+.current-build-server-gate-command span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.current-build-server-gate-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.current-build-server-gate small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.42;
+}
+
+.current-build-server-gate-command {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.current-build-server-gate-command code {
+  display: block;
+  padding: 10px;
+  color: var(--text);
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.current-build-server-gate-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
 }
 
 .vps-deploy-secrets-checklist {
