@@ -112,6 +112,7 @@ const requiredMobileStacks = [
   ".public-buyer-decision-proof",
   ".public-auth-front-desk-grid",
   ".public-auth-front-desk-actions",
+  ".public-auth-help-actions",
   ".public-portal-switchboard-header",
   ".public-portal-switchboard-grid",
   ".public-portal-switchboard-footer",

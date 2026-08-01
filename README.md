@@ -389,6 +389,8 @@ Unauthenticated visitors land on a public TrustGraph website with portal entry p
 
 Corporate registration collects organization name, domain, and type, then provisions an employer or staffing agency portal after Supabase account creation and verified hosted login. Pricing cards now show the database path for each portal so buyers can see what is written immediately and what remains human-gated. The V1 operating map shows the sequence from website to Professional registration, Corporate registration, pricing ledger, Corporate Verify user database access, and server release. The pricing quote receipt records selected seats, projected monthly and annual totals, active ledger count, and Stripe Checkout disabled status; the billing architecture decision packet and database receipt record the v1 choice to keep Supabase subscription ledger activation live while Stripe Checkout, customer portal, invoices, refunds, dunning, taxes, and payment webhooks wait for human approval.
 
+The public login and registration card keeps account recovery visible in the main form: resend verification, reset password, and copied hosted-link repair stay beside the credentials while the heavier proof receipts remain hidden from the first-screen buyer/user path.
+
 ## Product Planning
 
 The `docs/` folder contains the planning documents used to shape this foundation. Root-level runbooks capture the live v1 operating checklist.

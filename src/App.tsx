@@ -21812,6 +21812,36 @@ function PublicSite({
               </select>
             </>
           ) : null}
+          <div className="public-auth-help-strip" aria-label="Public auth help strip">
+            <div>
+              <span className="status-chip neutral">Account help</span>
+              <strong>{email ? "Use the same email for recovery and verification" : "Enter email to unlock recovery actions"}</strong>
+              <small>
+                Reset password, resend verification, or repair a localhost email callback without leaving the login path.
+              </small>
+            </div>
+            <div className="public-auth-help-actions">
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                disabled={!repairedVerificationUrl}
+                onClick={() => void copyRepairedVerificationLink()}
+                type="button"
+              >
+                Copy repaired link
+              </button>
+            </div>
+            <small>
+              {repairedVerificationUrl
+                ? "A pasted localhost callback can be copied as a hosted TrustGraph link."
+                : "Paste a localhost verification link in the recovery panel if Supabase sends the wrong callback."}
+            </small>
+          </div>
           <button
             className="primary-action"
             disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}

@@ -28737,6 +28737,56 @@ body {
   padding: 10px;
 }
 
+.public-auth-help-strip {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(151, 204, 188, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.07), rgba(143, 178, 255, 0.045)),
+    rgba(255, 255, 255, 0.032);
+}
+
+.public-auth-help-strip > div:first-child,
+.public-auth-help-actions {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-auth-help-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+}
+
+.public-auth-help-strip strong,
+.public-auth-help-strip small,
+.public-auth-help-strip span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-auth-help-strip > div:first-child > strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+}
+
+.public-auth-help-strip small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.public-auth-help-actions button {
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
 .public-portal-route-shell {
   display: grid;
   gap: 14px;
