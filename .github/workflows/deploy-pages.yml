@@ -106,3 +106,61 @@ jobs:
 
       - name: Smoke-check hosted app
         run: node scripts/smoke-live.mjs
+
+  save-vps:
+    runs-on: ubuntu-latest
+    needs: smoke
+    env:
+      VPS_HOST: 5.75.224.110
+      VPS_USER: ${{ secrets.TRUSTGRAPH_VPS_USER }}
+      VPS_SSH_KEY: ${{ secrets.TRUSTGRAPH_VPS_SSH_KEY }}
+      PUBLIC_URL: https://trustgraph.5-75-224-110.sslip.io/
+      REMOTE_PATH: /opt/trustgraph
+    steps:
+      - name: Checkout freshness checker
+        uses: actions/checkout@v6
+
+      - name: Setup Node for freshness checker
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Check VPS deploy secrets
+        id: vps-secrets
+        run: |
+          if [[ -n "$VPS_USER" && -n "$VPS_SSH_KEY" ]]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping automatic TrustGraph VPS save because TRUSTGRAPH_VPS_USER or TRUSTGRAPH_VPS_SSH_KEY is not configured."
+          fi
+
+      - name: Configure SSH
+        if: steps.vps-secrets.outputs.enabled == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/trustgraph_vps
+          chmod 600 ~/.ssh/trustgraph_vps
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Save GitHub build to VPS
+        if: steps.vps-secrets.outputs.enabled == 'true'
+        run: |
+          ssh -i ~/.ssh/trustgraph_vps "$VPS_USER@$VPS_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd /opt/trustgraph
+          test "$(pwd)" = "/opt/trustgraph"
+          test -f docker-compose.server.yml
+          test -f .env.server
+          export TRUSTGRAPH_HOST=trustgraph.5-75-224-110.sslip.io
+          export PUBLIC_URL=https://trustgraph.5-75-224-110.sslip.io/
+          export EXPECTED_BUNDLE_MARKER="dashboard_front_door"
+          bash tools/update-vps-from-github.sh
+          REMOTE
+
+      - name: Verify VPS saved build
+        if: steps.vps-secrets.outputs.enabled == 'true'
+        env:
+          TRUSTGRAPH_VPS_URL: https://trustgraph.5-75-224-110.sslip.io/
+        run: node scripts/check-vps-freshness.mjs

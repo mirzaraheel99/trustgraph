@@ -180,7 +180,9 @@ TRUSTGRAPH_VPS_USER=
 TRUSTGRAPH_VPS_SSH_KEY=
 ```
 
-Then run **Deploy TrustGraph to VPS** from GitHub Actions.
+After both secrets exist, every successful GitHub Pages deploy runs a `save-vps` job that pulls `main` on `/opt/trustgraph`, rebuilds the TrustGraph container, writes `/trustgraph-release.json`, and runs the same asset-aware freshness check used locally.
+
+You can also run **Deploy TrustGraph to VPS** from GitHub Actions when you want a manual server save.
 
 Use these workflow inputs:
 
@@ -190,7 +192,7 @@ public_url=https://trustgraph.5-75-224-110.sslip.io
 remote_path=/opt/trustgraph
 ```
 
-The workflow is manual-only. It connects to the VPS by `target_host`, pulls `origin/main` inside `/opt/trustgraph`, runs `docker compose --env-file .env.server -f docker-compose.server.yml up -d --build`, and smoke-checks the validated `public_url`.
+The manual workflow connects to the VPS by `target_host`, pulls `origin/main` inside `/opt/trustgraph`, runs the guarded `tools/update-vps-from-github.sh` script, and smoke-checks the validated `public_url` plus `_next/static` assets.
 
 The workflow runs `tools/validate-server-env.sh` through `tools/preflight-vps.sh` before pulling or rebuilding.
 

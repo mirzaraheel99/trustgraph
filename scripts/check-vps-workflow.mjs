@@ -2,6 +2,8 @@ import fs from "node:fs";
 
 const workflowPath = ".github/workflows/deploy-vps.yml";
 const workflow = fs.readFileSync(workflowPath, "utf8");
+const pagesWorkflowPath = ".github/workflows/deploy-pages.yml";
+const pagesWorkflow = fs.readFileSync(pagesWorkflowPath, "utf8");
 const app = fs.readFileSync("src/App.tsx", "utf8");
 const compose = fs.readFileSync("docker-compose.server.yml", "utf8");
 const dockerfile = fs.readFileSync("Dockerfile", "utf8");
@@ -74,6 +76,36 @@ const requiredSnippets = [
 ];
 
 const runtimeSnippets = [
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "save-vps:",
+    label: "GitHub Pages deploy includes an automatic VPS save job"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "Skipping automatic TrustGraph VPS save because TRUSTGRAPH_VPS_USER or TRUSTGRAPH_VPS_SSH_KEY is not configured.",
+    label: "automatic VPS save skips safely when SSH secrets are missing"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "Save GitHub build to VPS",
+    label: "automatic VPS save runs the guarded server updater after Pages smoke"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "Verify VPS saved build",
+    label: "automatic VPS save verifies the release stamp and static assets"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "TRUSTGRAPH_VPS_URL: https://trustgraph.5-75-224-110.sslip.io/",
+    label: "automatic VPS freshness check targets only the TrustGraph host"
+  },
   {
     source: app,
     path: "src/App.tsx",
