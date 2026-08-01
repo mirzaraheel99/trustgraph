@@ -24886,6 +24886,41 @@ function App() {
     accepted_when:
       "v1_portal_operating_center_requires_professional_corporate_company_pricing_account_database_and_server_paths_visible_clickable_bounded_and_no_preview_data"
   };
+  const portalRouteShell = {
+    mode: "portal_route_shell",
+    current_portal: workspace.label,
+    active_account: authSession ? authSession.user.email : "hosted_login_required",
+    next_action: authSession ? nextV1PortalLane.action : "Login / register",
+    corporate_database_boundary: "corporate_reviewers_only_see_approved_consent_scoped_user_rows",
+    pricing_boundary: "professional_free_pilot_corporate_verify_149_pilot_stripe_human_gated",
+    server_target: "https://trustgraph.5-75-224-110.sslip.io/",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "portal_route_shell_requires_one_bounded_tabbed_surface_for_professional_corporate_company_pricing_account_database_vps_freshness_logout_and_no_preview_data"
+  };
+  const portalRouteShellStatus = [
+    {
+      label: "Live account",
+      value: authSession ? "Signed in" : "Login required",
+      detail: authSession ? authSession.user.email : "Registration or login must happen before live rows count."
+    },
+    {
+      label: "Corporate database",
+      value: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "No open browse",
+      detail: "Corporate access is request, approval, consent scope, review attestation, then metadata export."
+    },
+    {
+      label: "Pricing",
+      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "$149 pilot",
+      detail: "Professional pilot is free; paid Stripe checkout remains a launch decision."
+    },
+    {
+      label: "VPS freshness",
+      value: serverSyncMonitor.status.replaceAll("_", " "),
+      detail: "GitHub Pages is the green build; VPS save needs deploy secrets before automatic updates."
+    }
+  ];
 
   if (showPublicSite) {
     return (
@@ -25106,6 +25141,85 @@ function App() {
             >
               <Download size={16} />
               Export operating proof
+            </button>
+          </div>
+        </section>
+
+        <section className="portal-route-shell" aria-label="Portal route shell">
+          <div className="portal-route-shell-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Portal route shell</span>
+              <strong>{authSession ? `Work in ${workspace.label}` : "Login or register, then choose your portal"}</strong>
+              <small>
+                Professional Passport, Corporate Verify, Company Admin, Pricing, Account, Database proof, and VPS freshness stay in one tabbed workspace.
+              </small>
+            </div>
+            <div className="portal-route-shell-actions">
+              <button className="primary-action" onClick={authSession ? nextV1PortalLane.onClick : openAuthControls} type="button">
+                {authSession ? nextV1PortalLane.action : "Login / register"}
+              </button>
+              {authSession ? (
+                <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Sign out
+                </button>
+              ) : null}
+            </div>
+          </div>
+          <div className="portal-route-tabs" role="tablist" aria-label="Portal workspace tabs">
+            {v1PortalOperatingLanes.map((lane) => {
+              const Icon = lane.icon;
+              return (
+                <button
+                  aria-selected={lane.label === workspace.label || (lane.label === "Account" && setupView === "account")}
+                  className={`${lane.ready ? "ready" : "next"} ${lane.label === workspace.label ? "current" : ""}`}
+                  key={lane.label}
+                  onClick={lane.onClick}
+                  role="tab"
+                  type="button"
+                >
+                  <Icon size={17} />
+                  <span>{lane.label}</span>
+                  <small>{lane.status}</small>
+                </button>
+              );
+            })}
+          </div>
+          <div className="portal-route-shell-status">
+            {portalRouteShellStatus.map((item) => (
+              <span key={item.label}>
+                <small>{item.label}</small>
+                <strong>{item.value}</strong>
+                <em>{item.detail}</em>
+              </span>
+            ))}
+          </div>
+          <div className="portal-route-shell-footer">
+            <span>
+              <strong>{portalRouteShell.preview_data_accepted ? "Preview accepted" : "Preview data rejected"}</strong>
+              <small>{portalRouteShell.accepted_when}</small>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-portal-route-shell-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      ...portalRouteShell,
+                      tabs: v1PortalOperatingLanes.map(({ icon: _icon, onClick: _onClick, ...lane }) => lane),
+                      status: portalRouteShellStatus
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export route proof
             </button>
           </div>
         </section>

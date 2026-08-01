@@ -100,6 +100,12 @@ const appRequirements = [
     "v1_portal_operating_center_requires_professional_corporate_company_pricing_account_database_and_server_paths_visible_clickable_bounded_and_no_preview_data",
     "V1 portal operating center preview-data rejection rule"
   ],
+  ["Portal route shell", "portal route shell label"],
+  ["portal_route_shell", "portal route shell packet mode"],
+  [
+    "portal_route_shell_requires_one_bounded_tabbed_surface_for_professional_corporate_company_pricing_account_database_vps_freshness_logout_and_no_preview_data",
+    "portal route shell no-preview-data acceptance rule"
+  ],
   ["Public signup decision desk", "public signup decision desk label"],
   ["public_signup_decision_desk", "public signup decision desk packet mode"],
   [
