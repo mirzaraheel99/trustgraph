@@ -21198,6 +21198,7 @@ p {
 .corporate-verify-hub-hero,
 .corporate-verify-hub-actions,
 .corporate-verify-hub-proof,
+.corporate-verify-hub-steps,
 .corporate-verify-hub-footer {
   min-width: 0;
 }
@@ -21277,6 +21278,16 @@ p {
   gap: 10px;
 }
 
+.corporate-verify-hub-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
 .corporate-verify-hub-proof span {
   display: grid;
   gap: 6px;
@@ -21285,6 +21296,14 @@ p {
   border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.045);
+}
+
+.corporate-verify-hub-steps span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border-left: 2px solid rgba(96, 245, 208, 0.42);
 }
 
 .corporate-verify-hub-proof small {
@@ -21305,6 +21324,22 @@ p {
   line-height: 1.4;
 }
 
+.corporate-verify-hub-steps small,
+.corporate-verify-hub-steps em {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.corporate-verify-hub-steps strong {
+  color: var(--text-strong);
+  font-size: 0.92rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
 .corporate-verify-hub-footer span {
   display: inline-flex;
   gap: 8px;
@@ -21321,7 +21356,9 @@ p {
 .corporate-directory-panel:has(.corporate-verify-hub) > .corporate-database-primary-desk,
 .corporate-directory-panel:has(.corporate-verify-hub) > .corporate-review-queue-runway,
 .corporate-directory-panel:has(.corporate-verify-hub) > .corporate-review-studio,
-.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-scoped-access-journey {
+.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-scoped-access-journey,
+.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-reviewer-workflow-strip,
+.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-reviewer-task-command {
   display: none;
 }
 
@@ -21332,14 +21369,16 @@ p {
   }
 
   .corporate-verify-hub-actions,
-  .corporate-verify-hub-proof {
+  .corporate-verify-hub-proof,
+  .corporate-verify-hub-steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 580px) {
   .corporate-verify-hub-actions,
-  .corporate-verify-hub-proof {
+  .corporate-verify-hub-proof,
+  .corporate-verify-hub-steps {
     grid-template-columns: minmax(0, 1fr);
   }
 }

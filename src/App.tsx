@@ -6888,6 +6888,33 @@ function CorporateDirectoryPanel({
       detail: "Corporate users review only approved consent-scoped user rows."
     }
   ];
+  const corporateVerifyHubSteps = [
+    {
+      label: "Corporate role",
+      value: isLiveCorporateDatabase ? "Active RBAC" : "Login required",
+      detail: isLiveCorporateDatabase ? databaseModeDetail : "Use Company Admin to activate reviewer or admin access."
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length} requests` : "Ask by email",
+      detail: "Request one professional by email with a clear business purpose."
+    },
+    {
+      label: "Approval",
+      value: approvedAccessCount ? `${approvedAccessCount} approved` : "Waiting",
+      detail: "The professional must approve the scoped Access Grant before rows appear."
+    },
+    {
+      label: "Scoped rows",
+      value: filteredRows.length ? `${filteredRows.length} visible` : "None yet",
+      detail: "Only approved Passport metadata and shared records appear."
+    },
+    {
+      label: "Review + export",
+      value: reviews.length ? "Proof saved" : "Attest review",
+      detail: "Record the reviewer attestation, then export metadata-only proof."
+    }
+  ];
 
   return (
     <section className="corporate-directory-panel">
@@ -6935,6 +6962,15 @@ function CorporateDirectoryPanel({
             </span>
           ))}
         </div>
+        <div className="corporate-verify-hub-steps" aria-label="Corporate Verify hub access sequence">
+          {corporateVerifyHubSteps.map((step, index) => (
+            <span key={step.label}>
+              <small>{String(index + 1).padStart(2, "0")} / {step.label}</small>
+              <strong>{step.value}</strong>
+              <em>{step.detail}</em>
+            </span>
+          ))}
+        </div>
         <div className="corporate-verify-hub-footer">
           <span>
             <ShieldCheck size={16} />
@@ -6949,7 +6985,9 @@ function CorporateDirectoryPanel({
                   {
                     ...corporateVerifyHub,
                     actions: corporateVerifyHubActions,
-                    proof: corporateVerifyHubProof
+                    proof: corporateVerifyHubProof,
+                    access_sequence: corporateVerifyHubSteps,
+                    duplicate_reviewer_workflow_panels_hidden: true
                   },
                   null,
                   2
