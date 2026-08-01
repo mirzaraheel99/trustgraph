@@ -8046,6 +8046,43 @@ function AuditTrailPanel({
       target_tables: targetTables.length
     }
   };
+  const adminExportLauncher = {
+    mode: "admin_export_launcher",
+    status: filteredEvents.length ? "ready_to_export_admin_scope" : "needs_audit_rows",
+    primary_export:
+      guardrailCount || highSignalCount
+        ? "Audit coverage packet"
+        : filteredEvents.length
+          ? "Filtered audit CSV"
+          : "Admin readiness packet",
+    active_filters: activeFilterLabels,
+    included: ["filtered audit events", "verification case status", "data-rights status", "release ledger context"],
+    excluded: ["raw private evidence files", "unfiltered hidden rows", "preview-only proof"],
+    accepted_when:
+      "admin_export_launcher_requires_filtered_audit_scope_case_and_data_rights_context_release_ledger_context_raw_file_exclusion_and_no_preview_data"
+  };
+  const adminExportLauncherCards = [
+    {
+      label: "Audit rows",
+      value: `${filteredEvents.length}/${events.length}`,
+      detail: activeFilterLabels.length ? activeFilterLabels.join(" / ") : "All loaded rows in scope"
+    },
+    {
+      label: "Cases",
+      value: `${openOperationsCases.length} open`,
+      detail: `${resolvedOperationsCases.length} resolved or restricted`
+    },
+    {
+      label: "Data rights",
+      value: `${openDataRightsRequests.length} open`,
+      detail: `${completedDataRightsRequests.length} completed or cancelled`
+    },
+    {
+      label: "Release ledger",
+      value: `${schemaMigrationRuns.length}`,
+      detail: "Migration history included as context"
+    }
+  ];
   const adminOperationsAcceptanceCheckpoint = {
     mode: "admin_operations_acceptance_checkpoint",
     headline:
@@ -8226,6 +8263,60 @@ function AuditTrailPanel({
         <strong>Audit trail</strong>
       </div>
       <small>{message}</small>
+      <div className="admin-export-launcher" aria-label="Admin export launcher">
+        <div className="admin-export-launcher-header">
+          <div>
+            <span className={`status-chip ${filteredEvents.length ? "success" : "warning"}`}>Admin export launcher</span>
+            <strong>{adminExportLauncher.primary_export}</strong>
+            <small>{adminExportLauncher.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(exportReadinessName, JSON.stringify({ ...adminExportReadinessPacket, admin_export_launcher: adminExportLauncher }, null, 2), "application/json")}
+            type="button"
+          >
+            Export readiness
+          </button>
+        </div>
+        <div className="admin-export-launcher-grid">
+          {adminExportLauncherCards.map((card) => (
+            <article key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="admin-export-launcher-actions">
+          <button
+            className="primary-action"
+            disabled={!filteredEvents.length}
+            onClick={() => downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv")}
+            type="button"
+          >
+            Export CSV
+          </button>
+          <button
+            className="secondary-action"
+            disabled={!filteredEvents.length}
+            onClick={() => downloadTextFile(exportJsonName, JSON.stringify(filteredEvents, null, 2), "application/json")}
+            type="button"
+          >
+            Export JSON
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(coveragePacketName, JSON.stringify({ ...auditCoveragePacket, admin_export_launcher: adminExportLauncher }, null, 2), "application/json")}
+            type="button"
+          >
+            Export coverage
+          </button>
+        </div>
+        <div className="admin-export-launcher-boundary">
+          <span>Includes: {adminExportLauncher.included.join(", ")}</span>
+          <small>Excludes: {adminExportLauncher.excluded.join(", ")}</small>
+        </div>
+      </div>
       <div className="admin-operations-acceptance-checkpoint" aria-label="Admin operations acceptance checkpoint">
         <div className="admin-operations-acceptance-header">
           <div>

@@ -149,6 +149,8 @@ Billing now starts with a Pricing activation workbench. Corporate plan, seats, p
 
 Professional Passport evidence now starts with an Evidence setup command. Metadata, private file attachment, signed preview/download proof, manifest export, and raw-file exclusion are visible before the document list, so the evidence path works even when the selected record has no files yet.
 
+Admin Audit now starts with an Admin export launcher. It recommends CSV, JSON, coverage, or readiness export from the current filters and keeps case context, data-rights context, release ledger context, raw-file exclusion, and preview-data rejection visible before the dense audit table.
+
 The public auth form also starts with a Registration route planner that keeps Professional versus Corporate, Register versus Login, price, first database write, next dashboard, recovery, and required proof in one compact operator view before the form fields.
 
 The public auth form now includes a registration completion handoff after submit. Professional completion is tied to `passport_initialized`; Corporate completion is tied to `workspace_created`, and both show hosted verification, landing dashboard, next action, and preview-data rejection.

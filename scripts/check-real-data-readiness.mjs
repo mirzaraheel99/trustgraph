@@ -190,6 +190,12 @@ const appRequirements = [
     "admin_operations_acceptance_requires_verification_cases_data_rights_requests_filtered_audit_exports_release_ledger_security_runbook_and_no_preview_data",
     "admin operations acceptance rule"
   ],
+  ["Admin export launcher", "admin export launcher label"],
+  ["admin_export_launcher", "admin export launcher packet mode"],
+  [
+    "admin_export_launcher_requires_filtered_audit_scope_case_and_data_rights_context_release_ledger_context_raw_file_exclusion_and_no_preview_data",
+    "admin export launcher rule"
+  ],
   ["prepare_pilot_user_access_request", "pilot-named access request RPC"],
   ["ensure_pilot_employer_reviewer_membership", "pilot-named employer reviewer RPC"],
   ["create_pilot_verification_cases", "pilot-named verification cases RPC"],

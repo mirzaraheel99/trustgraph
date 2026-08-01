@@ -153,6 +153,8 @@ assert(app.includes('aria-label="Signed evidence acceptance checkpoint"') && app
 assert(css.includes(".signed-evidence-acceptance-checkpoint") && css.includes(".signed-evidence-acceptance-grid") && css.includes(".signed-evidence-acceptance-actions"), "signed evidence acceptance checkpoint must be styled and bounded.");
 assert(app.includes('aria-label="Data export package receipt"'), "Account data rights must expose data export package receipt state.");
 assert(app.includes('aria-label="Data export package manifest"'), "Account data rights must expose data export package manifest state.");
+assert(app.includes('aria-label="Admin export launcher"') && app.includes("admin_export_launcher"), "admin exports must expose one first-use launcher for CSV, JSON, coverage, and readiness.");
+assert(app.includes("admin_export_launcher_requires_filtered_audit_scope_case_and_data_rights_context_release_ledger_context_raw_file_exclusion_and_no_preview_data"), "admin export launcher must require filtered scope, case/data rights context, release ledger, raw-file exclusion, and no preview data.");
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
 assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
 assert(app.includes('aria-label="Admin operations acceptance checkpoint"') && app.includes("admin_operations_acceptance_checkpoint"), "Admin operations must expose one acceptance checkpoint across cases, data rights, audit exports, release ledger, and security runbook.");
@@ -377,6 +379,8 @@ assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed eviden
 assert(css.includes(".signed-evidence-access-audit") && css.includes(".signed-evidence-access-grid"), "signed evidence access audit receipt must be styled and bounded.");
 assert(css.includes(".data-export-package-receipt") && css.includes(".data-export-package-grid"), "data export package receipt must be styled and bounded.");
 assert(css.includes(".data-export-package-manifest") && css.includes(".data-export-package-manifest-grid"), "data export package manifest must be styled and bounded.");
+assert(css.includes(".admin-export-launcher") && css.includes(".admin-export-launcher-grid") && css.includes(".admin-export-launcher-actions"), "admin export launcher must be styled and bounded.");
+assert(css.includes(".admin-export-launcher-header,\n  .admin-export-launcher-grid,\n  .admin-export-launcher-actions,\n  .admin-export-launcher-boundary"), "admin export launcher must stack in the responsive shell.");
 assert(premiumRepair.includes(".admin-audit-export-command") && premiumRepair.includes(".admin-audit-export-command-grid"), "admin audit export command must be bounded in the premium shell.");
 assert(premiumRepair.includes(".audit-filter-receipt"), "audit filter receipt must be bounded in the premium shell.");
 assert(css.includes(".v1-security-review-receipt") && css.includes(".v1-security-review-grid"), "V1 security/RLS review checklist receipt must be styled and bounded.");
