@@ -57,6 +57,9 @@ const routeGroups = [
       "Corporate registration",
       "Public portal switchboard",
       "Public portal route shell",
+      "Public account route confirmation",
+      "public_account_route_confirmation",
+      "public_account_route_confirmation_shows_selected_portal_mode_database_write_landing_corporate_access_boundary_recovery_action_and_no_preview_data_before_submit",
       "public_account_access_path_keeps_professional_login_corporate_login_professional_registration_corporate_registration_pricing_recovery_first_database_write_landing_and_server_status_visible_before_credentials"
     ]
   },

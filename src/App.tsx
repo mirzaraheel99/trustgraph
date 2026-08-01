@@ -19729,6 +19729,43 @@ function PublicSite({
       detail: "GitHub is source; VPS stamp proves the server build."
     }
   ];
+  const publicAccountRouteConfirmation = {
+    mode: "public_account_route_confirmation",
+    selected_route: `${publicAccountAccessPath.selected_portal} / ${publicAccountAccessPath.selected_action}`,
+    route_owner: portal === "corporate" ? "Company admin creates the workspace before reviewers see rows." : "Professional owns the Passport before sharing rows.",
+    data_created: mode === "signup" ? selectedRegistrationPath.primaryWrite : "No new row before login completes",
+    landing: publicAccountAccessPath.landing_portal,
+    corporate_access_boundary:
+      portal === "corporate"
+        ? "Corporate users request access and only see professional-approved scoped rows."
+        : "Professional users control consent before any corporate review.",
+    support_action: email ? "Reset, resend, or repair hosted email link if login fails." : "Enter email to enable recovery actions.",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_account_route_confirmation_shows_selected_portal_mode_database_write_landing_corporate_access_boundary_recovery_action_and_no_preview_data_before_submit"
+  };
+  const publicAccountRouteConfirmationCards = [
+    {
+      label: "Route",
+      value: publicAccountRouteConfirmation.selected_route,
+      detail: publicAccountRouteConfirmation.route_owner
+    },
+    {
+      label: "Database",
+      value: publicAccountRouteConfirmation.data_created,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "Landing",
+      value: publicAccountRouteConfirmation.landing,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Boundary",
+      value: portal === "corporate" ? "Scoped review" : "Owner consent",
+      detail: publicAccountRouteConfirmation.corporate_access_boundary
+    }
+  ];
   const authPathSummary = {
     mode: "auth_path_summary",
     selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
@@ -21947,6 +21984,41 @@ function PublicSite({
                   <small>{item.detail}</small>
                 </span>
               ))}
+            </div>
+            <div className="public-account-route-confirmation" aria-label="Public account route confirmation">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Route confirmation</span>
+                <strong>{publicAccountRouteConfirmation.selected_route}</strong>
+                <small>{publicAccountRouteConfirmation.accepted_when}</small>
+              </div>
+              <div className="public-account-route-confirmation-grid">
+                {publicAccountRouteConfirmationCards.map((item) => (
+                  <span key={item.label}>
+                    <small>{item.label}</small>
+                    <strong>{item.value}</strong>
+                    <small>{item.detail}</small>
+                  </span>
+                ))}
+              </div>
+              <div className="public-account-route-confirmation-footer">
+                <span>
+                  <strong>{publicAccountRouteConfirmation.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+                  <small>{publicAccountRouteConfirmation.support_action}</small>
+                </span>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(
+                      `trustgraph-public-account-route-confirmation-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                      JSON.stringify({ ...publicAccountRouteConfirmation, cards: publicAccountRouteConfirmationCards }, null, 2),
+                      "application/json"
+                    )
+                  }
+                  type="button"
+                >
+                  Export route proof
+                </button>
+              </div>
             </div>
             <div className="public-account-access-actions">
               <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
