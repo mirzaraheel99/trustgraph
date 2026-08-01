@@ -301,6 +301,8 @@ The signed-in workspace now starts with a Portal daily command center that keeps
 
 Corporate Verify now starts its user-database area with a Corporate portal cockpit. It keeps role status, access requests, approved rows, review/export, next action, no-open-user-database boundary, and preview-data rejection visible before dense proof panels.
 
+Corporate Verify now also starts that same user-database area with a Corporate access decision desk. It answers whether approved user rows are accessible right now, names the current blocker, gives the next click, shows live request/grant/row/review/receipt/snapshot counts, and keeps metadata-only export plus the no-open-user-database boundary explicit.
+
 The signed-in database path now adds a Live data loading command before the real-row gate. It shows the next missing Supabase row group, live row counts, preview/fixture rejection, hosted login state, and direct actions for login, live pilot seed, proof view, or export.
 
 The signed-in database path now includes a Live row gap resolver. It turns the required Supabase row groups into a direct action queue for hosted login, live seed, proof reload, Corporate Verify review, real database completion receipt, working-data export, server proof, and preview-data rejection.

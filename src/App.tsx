@@ -6967,6 +6967,77 @@ function CorporateDirectoryPanel({
       action: reviews.length ? "Export" : "Record proof"
     }
   ];
+  const latestVisibilitySnapshot = corporateVisibilitySnapshots[0] ?? null;
+  const latestAccessReceipt = corporateDatabaseReceipts[0] ?? null;
+  const corporateAccessDecisionDesk = {
+    mode: "corporate_access_decision_desk",
+    status: filteredRows.length && reviews.length && latestVisibilitySnapshot && latestAccessReceipt ? "ready_to_export" : "next_action_required",
+    headline:
+      filteredRows.length && reviews.length
+        ? "Approved user rows are ready for corporate review proof"
+        : corporateAccessNextAction.ready
+          ? "Approved user rows are visible; record the review proof next"
+          : "Corporate access is not open until request and approval are complete",
+    next_action: filteredRows.length && reviews.length && latestVisibilitySnapshot && latestAccessReceipt ? "Export scoped packet" : corporateAccessNextAction.action,
+    current_blocker:
+      !isLiveCorporateDatabase
+        ? "Corporate RBAC session"
+        : !requests.length
+          ? "Access request by professional email"
+          : !approvedAccessCount
+            ? "Professional approval"
+            : !filteredRows.length
+              ? "Scoped row visibility"
+              : !reviews.length
+                ? "Reviewer attestation"
+                : !latestVisibilitySnapshot
+                  ? "Visibility snapshot"
+                  : !latestAccessReceipt
+                    ? "Database access receipt"
+                    : "Ready",
+    live_source: databaseModeLabel,
+    counts: {
+      requests: requests.length,
+      approved_grants: approvedAccessCount,
+      visible_professionals: filteredRows.length,
+      shared_records: sharedRecords.length,
+      review_attestations: reviews.length,
+      open_gaps: openGapRequestCount,
+      visibility_snapshots: corporateVisibilitySnapshots.length,
+      access_receipts: corporateDatabaseReceipts.length
+    },
+    no_open_user_database: true,
+    export_boundary: "metadata_only_scoped_user_database_packet_no_raw_private_files",
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_access_decision_desk_answers_current_access_blocker_next_click_live_counts_receipt_snapshot_metadata_export_and_no_open_user_database"
+  };
+  const corporateAccessDecisionCards = [
+    {
+      label: "Access state",
+      value: corporateAccessDecisionDesk.status === "ready_to_export" ? "Ready" : "Blocked",
+      detail: corporateAccessDecisionDesk.current_blocker,
+      ready: corporateAccessDecisionDesk.status === "ready_to_export"
+    },
+    {
+      label: "Approved rows",
+      value: `${filteredRows.length}`,
+      detail: `${approvedAccessCount} grants, ${sharedRecords.length} shared records.`,
+      ready: filteredRows.length > 0
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length} saved` : "Needed",
+      detail: openGapRequestCount ? `${openGapRequestCount} open gaps before handoff.` : "Attestation and gaps are tracked separately.",
+      ready: reviews.length > 0 && openGapRequestCount === 0
+    },
+    {
+      label: "Receipt + snapshot",
+      value: latestVisibilitySnapshot && latestAccessReceipt ? "Saved" : "Save proof",
+      detail: `${corporateVisibilitySnapshots.length} snapshots, ${corporateDatabaseReceipts.length} access receipts.`,
+      ready: Boolean(latestVisibilitySnapshot && latestAccessReceipt)
+    }
+  ];
 
   return (
     <section className="corporate-directory-panel">
@@ -6974,6 +7045,64 @@ function CorporateDirectoryPanel({
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className={`corporate-access-decision-desk ${corporateAccessDecisionDesk.status}`} aria-label="Corporate access decision desk">
+        <div className="corporate-access-decision-header">
+          <div>
+            <span className={`status-chip ${corporateAccessDecisionDesk.status === "ready_to_export" ? "success" : "warning"}`}>Access decision</span>
+            <strong>{corporateAccessDecisionDesk.headline}</strong>
+            <small>{corporateAccessDecisionDesk.accepted_when}</small>
+          </div>
+          <button
+            className="primary-action"
+            onClick={() => {
+              if (corporateAccessDecisionDesk.status === "ready_to_export") {
+                downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                return;
+              }
+              runCorporateReviewerTask();
+            }}
+            type="button"
+          >
+            {corporateAccessDecisionDesk.next_action}
+          </button>
+        </div>
+        <div className="corporate-access-decision-grid">
+          {corporateAccessDecisionCards.map((card) => (
+            <article className={card.ready ? "ready" : "next"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-access-decision-proof">
+          <span>
+            <small>Boundary</small>
+            <strong>{corporateAccessDecisionDesk.no_open_user_database ? "No open user database" : "Open browse"}</strong>
+          </span>
+          <span>
+            <small>Export</small>
+            <strong>Metadata only</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateAccessDecisionDesk.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-access-decision-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateAccessDecisionDesk, cards: corporateAccessDecisionCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export decision
+          </button>
+        </div>
       </div>
       <div className={`corporate-portal-cockpit ${corporatePortalCockpit.status}`} aria-label="Corporate portal cockpit">
         <div className="corporate-portal-cockpit-header">

@@ -124,6 +124,12 @@ const appRequirements = [
     "corporate_portal_cockpit_keeps_role_request_approved_rows_review_export_next_action_no_open_user_database_and_preview_rejection_visible_before_dense_verify_proof",
     "corporate portal cockpit acceptance rule"
   ],
+  ["Corporate access decision desk", "corporate access decision desk label"],
+  ["corporate_access_decision_desk", "corporate access decision desk packet mode"],
+  [
+    "corporate_access_decision_desk_answers_current_access_blocker_next_click_live_counts_receipt_snapshot_metadata_export_and_no_open_user_database",
+    "corporate access decision desk acceptance rule"
+  ],
   ["Corporate persisted export gate", "corporate persisted export gate label"],
   ["corporate_persisted_export_gate", "corporate persisted export gate packet mode"],
   [
