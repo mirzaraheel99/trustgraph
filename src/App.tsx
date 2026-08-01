@@ -18472,6 +18472,66 @@ function PublicSite({
     accepted_when:
       "public_portal_flow_map_shows_professional_corporate_login_registration_pricing_first_database_write_landing_and_recovery_before_dense_forms"
   };
+  const publicLoginCommandCenter = {
+    mode: "public_login_command_center",
+    selected_portal: portal,
+    selected_action: mode,
+    headline:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create a company workspace"
+          : "Login to Corporate Verify"
+        : mode === "signup"
+          ? "Create a Professional Passport"
+          : "Login to Professional Passport",
+    price: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    landing_portal: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
+    recovery: "Reset password, resend verification, and localhost-link repair stay available before submit.",
+    corporate_database_boundary:
+      "Corporate accounts request access by professional email and review only approved scoped rows; there is no open user database browse.",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_login_command_center_keeps_account_type_login_register_price_first_database_write_recovery_submit_and_corporate_scoped_database_boundary_visible_before_credentials"
+  };
+  const publicLoginCommandRows = [
+    {
+      label: "Account",
+      value: portal === "corporate" ? "Corporate" : "Professional",
+      detail: portal === "corporate" ? "Company workspace and reviewer RBAC." : "Private Passport and owner-controlled sharing.",
+      action: "Switch",
+      onClick: () => setPortal(portal === "corporate" ? "professional" : "corporate")
+    },
+    {
+      label: "Action",
+      value: mode === "signup" ? "Register" : "Login",
+      detail: mode === "signup" ? "Create account, then verify email if required." : "Use a verified hosted account.",
+      action: mode === "signup" ? "Use login" : "Use register",
+      onClick: () => setMode(mode === "signup" ? "signin" : "signup")
+    },
+    {
+      label: "Price",
+      value: selectedRegistrationPath.plan,
+      detail: selectedRegistrationPath.paymentStatus,
+      action: "Pricing",
+      onClick: () => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "First write",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", "),
+      action: "Fields",
+      onClick: () => document.getElementById("public-auth-email")?.focus()
+    },
+    {
+      label: "Recovery",
+      value: "Visible",
+      detail: publicLoginCommandCenter.recovery,
+      action: "Reset",
+      onClick: () => void recoverPassword()
+    }
+  ];
   const publicPortalFlowMapSteps = [
     {
       label: "Choose",
@@ -20906,6 +20966,56 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className="public-login-command-center" aria-label="Public login command center">
+            <div className="public-login-command-copy">
+              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
+              <strong>{publicLoginCommandCenter.headline}</strong>
+              <small>{publicLoginCommandCenter.corporate_database_boundary}</small>
+            </div>
+            <div className="public-login-command-grid">
+              {publicLoginCommandRows.map((item) => (
+                <button key={item.label} onClick={item.onClick} type="button">
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                  <em>{item.action}</em>
+                </button>
+              ))}
+            </div>
+            <div className="public-login-command-footer">
+              <span>
+                <small>Landing portal</small>
+                <strong>{publicLoginCommandCenter.landing_portal}</strong>
+              </span>
+              <span>
+                <small>Server save</small>
+                <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+              </span>
+              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to credentials
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-login-command-center-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...publicLoginCommandCenter,
+                        rows: publicLoginCommandRows.map(({ onClick: _onClick, ...row }) => row)
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export command
+              </button>
+            </div>
+          </div>
           <div className="portal-access-cockpit" aria-label="Portal access cockpit">
             <div className="portal-access-cockpit-copy">
               <span className="status-chip success">Portal access cockpit</span>
