@@ -27103,6 +27103,64 @@ function App() {
       ready: serverSyncMonitor.status === "synced"
     }
   ];
+  const liveDataAcceptanceContract = {
+    mode: "live_data_acceptance_contract",
+    status: livePilotRowProof.accepted && latestRealDatabaseCompletionReceipt ? "live_data_contract_ready" : "live_data_contract_open",
+    accepted_when:
+      "live_data_acceptance_contract_requires_signed_in_supabase_rows_persisted_completion_receipt_working_data_export_preview_rejection_and_vps_release_stamp_before_v1_done",
+    source_required: "signed_in_supabase_rows",
+    preview_data_accepted: false,
+    non_live_preview_data_accepted: false,
+    live_row_groups: `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups}`,
+    missing_live_groups: livePilotRowProof.missingRequiredGroups,
+    persisted_receipts_loaded: realDatabaseCompletionReceipts.length,
+    working_data_export: "authorized_report_metadata_only",
+    server_save_status: serverSyncMonitor.status,
+    next_action:
+      livePilotRowProof.accepted && latestRealDatabaseCompletionReceipt
+        ? "Export working data and verify the VPS release stamp."
+        : liveDatabaseContract.current_blocker
+  };
+  const liveDataAcceptanceRows = [
+    {
+      label: "Source",
+      value: authSession && accountContext ? "Signed-in Supabase" : "Hosted login needed",
+      detail: authSession && accountContext ? "Repository loaders are using the live authenticated session." : "Preview or unauthenticated rows cannot complete V1.",
+      ready: Boolean(authSession && accountContext)
+    },
+    {
+      label: "Live groups",
+      value: liveDataAcceptanceContract.live_row_groups,
+      detail: livePilotRowProof.missingRequiredGroups.length ? livePilotRowProof.missingRequiredGroups.join(", ") : "All required live row groups are loaded.",
+      ready: livePilotRowProof.accepted
+    },
+    {
+      label: "Receipt",
+      value: latestRealDatabaseCompletionReceipt ? "Persisted" : "Missing",
+      detail: latestRealDatabaseCompletionReceipt
+        ? `${latestRealDatabaseCompletionReceipt.completed_steps}/${latestRealDatabaseCompletionReceipt.total_steps} groups recorded`
+        : "Record the real database completion receipt after live rows load.",
+      ready: Boolean(latestRealDatabaseCompletionReceipt)
+    },
+    {
+      label: "Export",
+      value: "Metadata only",
+      detail: "Working-data export can prove loaded rows without raw private evidence files.",
+      ready: livePilotRowProof.accepted
+    },
+    {
+      label: "Preview data",
+      value: liveDataAcceptanceContract.preview_data_accepted ? "Accepted" : "Rejected",
+      detail: "Static preview, localhost callback, and browser-memory rows do not satisfy completion.",
+      ready: !liveDataAcceptanceContract.preview_data_accepted && !liveDataAcceptanceContract.non_live_preview_data_accepted
+    },
+    {
+      label: "Server",
+      value: serverSyncMonitor.status === "synced" ? "VPS current" : "VPS handoff",
+      detail: "The server URL counts only after trustgraph-release.json returns current commit JSON.",
+      ready: serverSyncMonitor.status === "synced"
+    }
+  ];
   const latestRegistrationIntent = registrationIntents[0] ?? null;
   const registrationIntentReviewPacket = {
     mode: "registration_intent_review_packet",
@@ -30422,6 +30480,58 @@ function App() {
               >
                 Export command
               </button>
+            </div>
+          </div>
+          <div className="live-data-acceptance-contract" aria-label="Live data acceptance contract">
+            <div className="live-data-acceptance-header">
+              <div>
+                <span className={`status-chip ${liveDataAcceptanceContract.status === "live_data_contract_ready" ? "success" : "warning"}`}>
+                  Live data acceptance
+                </span>
+                <strong>
+                  {liveDataAcceptanceContract.status === "live_data_contract_ready"
+                    ? "Live database contract is ready for server proof"
+                    : "V1 is not done until live Supabase rows and receipt proof are loaded"}
+                </strong>
+                <small>{liveDataAcceptanceContract.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-live-data-acceptance-contract-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...liveDataAcceptanceContract, rows: liveDataAcceptanceRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export contract
+              </button>
+            </div>
+            <div className="live-data-acceptance-grid">
+              {liveDataAcceptanceRows.map((row) => (
+                <article className={row.ready ? "ready" : "needed"} key={row.label}>
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="live-data-acceptance-proof">
+              <span>
+                <strong>Next action</strong>
+                <small>{liveDataAcceptanceContract.next_action}</small>
+              </span>
+              <span>
+                <strong>Non-live preview accepted</strong>
+                <small>{liveDataAcceptanceContract.non_live_preview_data_accepted ? "yes" : "no"}</small>
+              </span>
+              <span>
+                <strong>Required source</strong>
+                <small>{liveDataAcceptanceContract.source_required}</small>
+              </span>
             </div>
           </div>
           <div className="v1-human-gate-separation" aria-label="V1 human gate separation">
