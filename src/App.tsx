@@ -13729,6 +13729,46 @@ function AuthPanel({
     recovery_redirect_ready: !authRedirectUrl.includes("localhost"),
     corporate_database_boundary: "Corporate users can request access by professional email and review only approved scoped Passport rows."
   };
+  const hostedAuthRecoveryBoard = {
+    generated_at: new Date().toISOString(),
+    mode: "hosted_auth_recovery_board",
+    selected_path: activeLoginPath.id,
+    selected_label: activeLoginPath.label,
+    route_after_login: activeLoginPath.route,
+    first_database_write: activeLoginPath.database,
+    hosted_redirect_url: authRedirectUrl,
+    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
+    email_ready: Boolean(email || session?.user.email),
+    email_rate_limit_notice: "Supabase built-in email allows 2 messages per hour project-wide; wait 60+ minutes or configure custom SMTP before retrying.",
+    localhost_link_repair_available: true,
+    recovery_session_ready: recoverySessionReady,
+    preview_data_accepted: false,
+    accepted_when:
+      "hosted_auth_recovery_board_requires_hosted_redirect_email_rate_limit_localhost_link_repair_resend_reset_professional_or_corporate_landing_and_no_preview_data"
+  };
+  const hostedAuthRecoveryRows = [
+    {
+      label: "Selected path",
+      value: activeLoginPath.label,
+      detail: activeLoginPath.route
+    },
+    {
+      label: "Hosted redirect",
+      value: hostedAuthRecoveryBoard.redirect_is_hosted ? "Ready" : "Fix URL",
+      detail: authRedirectUrl
+    },
+    {
+      label: "Email attempts",
+      value: hostedAuthRecoveryBoard.email_ready ? "Email ready" : "Email needed",
+      detail: "Use one hosted resend or reset at a time; wait 60+ minutes after Supabase rate limits."
+    },
+    {
+      label: "Localhost repair",
+      value: "Available",
+      detail: "If an inbox link opens localhost, paste it into the public repair field and keep the same token on the hosted URL."
+    }
+  ];
+  const hostedAuthRecoveryPacketName = `trustgraph-hosted-auth-recovery-board-${new Date().toISOString().slice(0, 10)}.json`;
   const authChecks = [
     {
       label: "Hosted redirect",
@@ -14428,6 +14468,53 @@ function AuthPanel({
               >
                 Export login path
               </button>
+            </div>
+          </div>
+          <div className="hosted-auth-recovery-board" aria-label="Hosted auth recovery board">
+            <div className="hosted-auth-recovery-header">
+              <div>
+                <span className={`status-chip ${hostedAuthRecoveryBoard.redirect_is_hosted ? "success" : "warning"}`}>
+                  Hosted auth recovery board
+                </span>
+                <strong>{activeLoginPath.label} login recovery is routed to the hosted TrustGraph app</strong>
+                <small>
+                  Use this before signup, resend verification, or password reset so Supabase does not send another email to localhost.
+                </small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(hostedAuthRecoveryPacketName, JSON.stringify(hostedAuthRecoveryBoard, null, 2), "application/json")
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export recovery board
+              </button>
+            </div>
+            <div className="hosted-auth-recovery-grid">
+              {hostedAuthRecoveryRows.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="hosted-auth-recovery-actions">
+              <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
+                Copy hosted redirect
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verify
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+            </div>
+            <div className="hosted-auth-recovery-boundary">
+              <code>{authRedirectUrl}</code>
+              <small>{hostedAuthRecoveryBoard.accepted_when}</small>
             </div>
           </div>
           <div className="auth-operator-path" aria-label="Login and recovery path">

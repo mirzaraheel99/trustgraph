@@ -3127,6 +3127,93 @@ button {
   background: rgba(0, 0, 0, 0.12);
 }
 
+.hosted-auth-recovery-board {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.04)),
+    rgba(0, 0, 0, 0.16);
+}
+
+.hosted-auth-recovery-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.hosted-auth-recovery-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.hosted-auth-recovery-board strong,
+.hosted-auth-recovery-board small,
+.hosted-auth-recovery-board span,
+.hosted-auth-recovery-board code {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.hosted-auth-recovery-board > .hosted-auth-recovery-header strong {
+  font-size: 15px;
+  line-height: 1.22;
+}
+
+.hosted-auth-recovery-board small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.hosted-auth-recovery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.hosted-auth-recovery-grid article,
+.hosted-auth-recovery-boundary {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.hosted-auth-recovery-grid article > span {
+  color: #9fead5;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.hosted-auth-recovery-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+  gap: 8px;
+}
+
+.hosted-auth-recovery-boundary {
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.hosted-auth-recovery-boundary code {
+  color: #d8fff4;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .registration-outcome-command {
   display: grid;
   gap: 12px;
@@ -18310,6 +18397,10 @@ p {
   .signed-in-portal-flow-grid,
   .login-decision-path-grid,
   .login-decision-next,
+  .hosted-auth-recovery-header,
+  .hosted-auth-recovery-grid,
+  .hosted-auth-recovery-actions,
+  .hosted-auth-recovery-boundary,
   .dashboard-start-map-grid,
   .v1-portal-operating-center,
   .v1-portal-operating-grid,

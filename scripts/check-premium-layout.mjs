@@ -90,6 +90,8 @@ assert(app.includes('aria-label="Corporate access request scope receipt"'), "Cor
 assert(app.includes('aria-label="Corporate user database access contract"'), "Corporate Verify must expose the exact corporate user database access boundary.");
 assert(app.includes('aria-label="Corporate scope review command"'), "Corporate Verify must expose a scope review command before export or handoff.");
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
+assert(app.includes('aria-label="Hosted auth recovery board"') && app.includes("hosted_auth_recovery_board"), "public auth must expose a hosted recovery board before email actions.");
+assert(app.includes("hosted_auth_recovery_board_requires_hosted_redirect_email_rate_limit_localhost_link_repair_resend_reset_professional_or_corporate_landing_and_no_preview_data"), "hosted auth recovery board must require hosted redirect, rate-limit guidance, localhost repair, portal landing, and no preview data.");
 assert(app.includes('aria-label="Signed-in recovery control strip"') && app.includes("signed_in_recovery_control_strip"), "signed-in account must expose direct recovery, verification, redirect, export, and logout controls.");
 assert(app.includes('aria-label="Signed-in recovery route"'), "signed-in account must expose a visible logout and password recovery route.");
 assert(app.includes('aria-label="Account portal route acceptance checkpoint"') && app.includes("account_portal_route_acceptance_checkpoint"), "signed-in account must expose hosted session, profile, workspace, role route, corporate workspace, and recovery route acceptance.");
@@ -197,6 +199,7 @@ assert(premiumRepair.includes(".portal-choice-guide") && premiumRepair.includes(
 assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-collection-grid"), "V1 proof collection command must be styled and bounded.");
 assert(css.includes(".registration-intent-review") && css.includes(".registration-intent-review-grid"), "registration intent review must be styled and bounded.");
 assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
+assert(css.includes(".hosted-auth-recovery-board") && css.includes(".hosted-auth-recovery-grid") && css.includes(".hosted-auth-recovery-actions"), "hosted auth recovery board must be styled and bounded.");
 assert(css.includes(".public-portal-database-contract") && css.includes(".public-portal-database-contract-grid"), "public portal database access contract must be styled and bounded.");
 assert(css.includes(".public-portal-flow-map") && css.includes(".public-portal-flow-map-grid") && css.includes(".public-portal-flow-map-proof"), "public portal flow map must be styled and bounded.");
 assert(css.includes(".public-buyer-launch-path") && css.includes(".public-buyer-launch-grid"), "public buyer launch path must be styled and bounded.");

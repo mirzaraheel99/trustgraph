@@ -127,6 +127,8 @@ The signed-in dashboard now adds a Portal daily navigator directly after the fro
 
 Signed-in Account now has a recovery control strip that keeps hosted redirect copy, resend verification, password reset, password update, sign out, and an exportable account packet together. The actions use the current session email when the email field is empty, so hosted verification and recovery tests do not depend on retyping credentials.
 
+The public login form now includes a hosted auth recovery board before email actions. It shows the selected Professional or Corporate path, the hosted redirect URL, Supabase email-rate-limit guidance, resend/reset actions, localhost link repair guidance, and an exportable recovery packet so account verification does not accidentally return to local development.
+
 Signed-in Account also includes an account portal route acceptance checkpoint. It proves hosted session, profile context, active workspace, role route, corporate workspace availability, recovery route visibility, and preview-data rejection before users treat portal routing as accepted.
 
 Guided onboarding now includes an onboarding completion command that keeps hosted login, Professional Passport rows, Corporate workspace, pricing ledger, live database proof, persisted receipt, and export actions together before launch-gate review.
