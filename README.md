@@ -55,6 +55,8 @@ For first server setup, `tools/bootstrap-vps.sh` performs the guarded `/opt/trus
 
 After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`, runs the same guarded `tools/update-vps-from-github.sh` path as the server shell command, and checks `trustgraph-release.json` so the VPS must prove the GitHub source it saved.
 
+The Pages deployment also runs a VPS save job after the hosted smoke check. That job now fails if `TRUSTGRAPH_VPS_USER` or `TRUSTGRAPH_VPS_SSH_KEY` is missing, because a green GitHub build without a verified VPS save can leave `https://trustgraph.5-75-224-110.sslip.io/` stale.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist

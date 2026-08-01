@@ -85,8 +85,14 @@ const runtimeSnippets = [
   {
     source: pagesWorkflow,
     path: pagesWorkflowPath,
-    snippet: "Skipping automatic TrustGraph VPS save because TRUSTGRAPH_VPS_USER or TRUSTGRAPH_VPS_SSH_KEY is not configured.",
-    label: "automatic VPS save skips safely when SSH secrets are missing"
+    snippet: "Automatic TrustGraph VPS save requires repository secrets TRUSTGRAPH_VPS_USER and TRUSTGRAPH_VPS_SSH_KEY",
+    label: "automatic VPS save fails loudly when SSH secrets are missing"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "exit 1",
+    label: "automatic VPS save blocks a false-green deploy when SSH secrets are missing"
   },
   {
     source: pagesWorkflow,

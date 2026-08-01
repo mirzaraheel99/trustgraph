@@ -131,12 +131,11 @@ jobs:
           if [[ -n "$VPS_USER" && -n "$VPS_SSH_KEY" ]]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "Skipping automatic TrustGraph VPS save because TRUSTGRAPH_VPS_USER or TRUSTGRAPH_VPS_SSH_KEY is not configured."
+            echo "::error::Automatic TrustGraph VPS save requires repository secrets TRUSTGRAPH_VPS_USER and TRUSTGRAPH_VPS_SSH_KEY. GitHub is the source of truth, but the VPS cannot be proven current without these secrets."
+            exit 1
           fi
 
       - name: Configure SSH
-        if: steps.vps-secrets.outputs.enabled == 'true'
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -145,7 +144,6 @@ jobs:
           ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
 
       - name: Save GitHub build to VPS
-        if: steps.vps-secrets.outputs.enabled == 'true'
         run: |
           ssh -i ~/.ssh/trustgraph_vps "$VPS_USER@$VPS_HOST" 'bash -s' <<'REMOTE'
           set -euo pipefail
@@ -160,7 +158,6 @@ jobs:
           REMOTE
 
       - name: Verify VPS saved build
-        if: steps.vps-secrets.outputs.enabled == 'true'
         env:
           TRUSTGRAPH_VPS_URL: https://trustgraph.5-75-224-110.sslip.io/
         run: node scripts/check-vps-freshness.mjs
