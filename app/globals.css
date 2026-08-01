@@ -6467,6 +6467,107 @@ p,
   font-weight: 900;
 }
 
+.onboarding-completion-command {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.078), rgba(134, 174, 246, 0.052) 62%, transparent),
+    rgba(255, 255, 255, 0.026);
+}
+
+.onboarding-completion-command-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.48fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.onboarding-completion-command-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.onboarding-completion-command strong,
+.onboarding-completion-command small,
+.onboarding-completion-command span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.onboarding-completion-command-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.onboarding-completion-command-header small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.onboarding-completion-command-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.onboarding-completion-command-actions button {
+  min-width: 0;
+  justify-content: center;
+  white-space: normal;
+}
+
+.onboarding-completion-command-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.onboarding-completion-command-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 116px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.onboarding-completion-command-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.35);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.onboarding-completion-command-grid article.needed {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.05);
+}
+
+.onboarding-completion-command-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.onboarding-completion-command-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.14;
+}
+
+.onboarding-completion-command-grid small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
 .onboarding-wizard-receipt {
   display: grid;
   gap: 12px;
@@ -16942,6 +17043,9 @@ p {
   .verify-reviewer-flow-header,
   .human-decision-list,
   .onboarding-current-step,
+  .onboarding-completion-command-header,
+  .onboarding-completion-command-actions,
+  .onboarding-completion-command-grid,
   .seed-result-grid,
   .seed-reconciliation-grid,
   .live-account-acceptance-top,
@@ -18792,6 +18896,9 @@ p {
   .onboarding-next-action-header,
   .onboarding-next-action-grid,
   .onboarding-next-action-proof,
+  .onboarding-completion-command-header,
+  .onboarding-completion-command-actions,
+  .onboarding-completion-command-grid,
   .onboarding-wizard-receipt-grid {
     grid-template-columns: 1fr;
   }

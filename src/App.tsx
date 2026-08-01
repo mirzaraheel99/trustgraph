@@ -14319,6 +14319,60 @@ function OnboardingChecklistPanel({
       ready: completed === checklist.length
     }
   ];
+  const onboardingCompletionCommand = {
+    mode: "onboarding_completion_command",
+    status: completed === checklist.length && liveDatabaseAcceptanceComplete ? "ready_for_v1_review" : "operator_steps_open",
+    completed_steps: completed,
+    total_steps: checklist.length,
+    live_database_groups_ready: liveDatabaseAcceptancePassing,
+    live_database_groups_required: liveDatabaseAcceptanceRows.length,
+    latest_receipt_id: latestOnboardingReceipt?.id ?? null,
+    next_action: nextItem.done
+      ? liveDatabaseAcceptanceComplete
+        ? "Export working-data proof"
+        : liveDatabaseRepairQueue[0]?.action ?? "Repair live database rows"
+      : nextItem.actionLabel,
+    accepted_when:
+      "onboarding_completion_command_shows_hosted_login_professional_corporate_pricing_user_database_receipt_and_export_before_launch_gate_review"
+  };
+  const onboardingCompletionCards = [
+    {
+      label: "Hosted login",
+      value: authSession && accountContext ? "Connected" : "Needed",
+      detail: authSession?.user.email ?? "Open hosted registration or login.",
+      ready: Boolean(authSession && accountContext)
+    },
+    {
+      label: "Professional",
+      value: livePassportRecords.length ? `${livePassportRecords.length} rows` : "Needed",
+      detail: "Passport rows, evidence, consent, and sharing proof.",
+      ready: livePassportRecords.length > 0
+    },
+    {
+      label: "Corporate",
+      value: hasCorporateContext ? "Workspace" : "Needed",
+      detail: "Company workspace, RBAC, team, and scoped user access.",
+      ready: hasCorporateContext
+    },
+    {
+      label: "Pricing",
+      value: activeSubscription ? "Ledger live" : "Needed",
+      detail: "Pilot subscription ledger row; Stripe stays gated.",
+      ready: activeSubscription
+    },
+    {
+      label: "Database proof",
+      value: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length}`,
+      detail: "Only signed-in Supabase rows count for V1 acceptance.",
+      ready: liveDatabaseAcceptanceComplete
+    },
+    {
+      label: "Receipt",
+      value: latestOnboardingReceipt ? "Saved" : "Needed",
+      detail: "Persist onboarding receipt after live rows load.",
+      ready: Boolean(latestOnboardingReceipt)
+    }
+  ];
 
   async function saveOnboardingReceipt() {
     setReceiptBusy(true);
@@ -14404,6 +14458,45 @@ function OnboardingChecklistPanel({
         <div className="onboarding-next-action-proof">
           <span>{onboardingNextActionRail.route}</span>
           <small>{onboardingNextActionRail.proof_exports.join(" | ")}</small>
+        </div>
+      </div>
+      <div className="onboarding-completion-command" aria-label="Onboarding completion command">
+        <div className="onboarding-completion-command-header">
+          <div>
+            <span className={`status-chip ${onboardingCompletionCommand.status === "ready_for_v1_review" ? "success" : "warning"}`}>Onboarding completion</span>
+            <strong>{onboardingCompletionCommand.next_action}</strong>
+            <small>{onboardingCompletionCommand.accepted_when}</small>
+          </div>
+          <div className="onboarding-completion-command-actions">
+            <button className="primary-action" onClick={nextItem.done ? () => downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json") : nextItem.onAction} type="button">
+              {onboardingCompletionCommand.next_action}
+            </button>
+            <button className="secondary-action" disabled={!authSession || receiptBusy} onClick={() => void saveOnboardingReceipt()} type="button">
+              Record receipt
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-onboarding-completion-command-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(onboardingCompletionCommand, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export command
+            </button>
+          </div>
+        </div>
+        <div className="onboarding-completion-command-grid">
+          {onboardingCompletionCards.map((card) => (
+            <article className={card.ready ? "ready" : "needed"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <div className="onboarding-wizard-receipt" aria-label="Onboarding wizard database receipt">

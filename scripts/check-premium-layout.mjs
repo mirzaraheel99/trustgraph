@@ -77,6 +77,7 @@ assert(app.includes('aria-label="Login issue resolver"'), "public auth must expo
 assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public auth must expose a live onboarding acceptance contract.");
 assert(app.includes('aria-label="Onboarding wizard database receipt"'), "guided onboarding must expose a persisted onboarding wizard receipt.");
 assert(app.includes('aria-label="Onboarding next action rail"') && app.includes("onboarding_next_action_rail"), "guided onboarding must expose one next-action rail for login, Passport, Corporate, pricing, database proof, and export route.");
+assert(app.includes('aria-label="Onboarding completion command"') && app.includes("onboarding_completion_command"), "guided onboarding must expose one completion command for hosted login, Professional, Corporate, pricing, database proof, receipt, and export.");
 assert(app.includes('aria-label="Public auth flow command"'), "public auth must expose a simple flow command for account type, mode, and database result.");
 assert(app.includes('aria-label="Public auth front desk"') && app.includes("public_auth_front_desk"), "public auth must expose one front desk for login, registration, pricing, recovery, and hosted redirects.");
 assert(app.includes('aria-label="Public portal route board"') && app.includes("public_portal_route_board"), "public auth must expose a clear user versus corporate route board.");
@@ -277,6 +278,7 @@ assert(premiumRepair.includes(".login-issue-resolver") && premiumRepair.includes
 assert(css.includes(".live-onboarding-contract") && css.includes(".live-onboarding-contract-grid") && css.includes(".live-onboarding-sequence"), "live onboarding acceptance contract must be styled and bounded.");
 assert(css.includes(".onboarding-wizard-receipt") && css.includes(".onboarding-wizard-receipt-grid"), "onboarding wizard receipt must be styled and bounded.");
 assert(css.includes(".onboarding-next-action-rail") && css.includes(".onboarding-next-action-grid") && css.includes(".onboarding-next-action-proof"), "onboarding next action rail must be styled and bounded.");
+assert(css.includes(".onboarding-completion-command") && css.includes(".onboarding-completion-command-grid") && css.includes(".onboarding-completion-command-actions"), "onboarding completion command must be styled and bounded.");
 assert(css.includes(".public-auth-flow-command") && css.includes(".public-auth-flow-grid") && css.includes("Public auth simplification pass"), "public auth flow command must be styled and simplify the login/register surface.");
 assert(css.includes(".public-auth-front-desk") && css.includes(".public-auth-front-desk-grid") && css.includes(".public-auth-front-desk-actions"), "public auth front desk must be styled and bounded.");
 assert(css.includes(".public-portal-route-board") && css.includes(".public-portal-route-board-grid") && css.includes(".public-portal-route-board-proof"), "public portal route board must be styled and bounded.");
