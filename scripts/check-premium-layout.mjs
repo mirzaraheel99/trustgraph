@@ -65,6 +65,7 @@ assert(app.includes('aria-label="Corporate Verify first-use wizard"'), "Corporat
 assert(app.includes('aria-label="Corporate Verify live access command"'), "Corporate Verify must expose a compact live access command for request, approval, shared rows, and review proof.");
 assert(app.includes('aria-label="Corporate portal quick start"'), "Corporate Verify must expose a simple quick-start path before dense request forms.");
 assert(app.includes('aria-label="Corporate reviewer front desk"') && app.includes("corporate_reviewer_front_desk"), "Corporate Verify must expose one simple reviewer front desk for request, approval, rows, proof, and next action.");
+assert(app.includes('aria-label="Corporate review queue command"') && app.includes("corporate_review_queue_command"), "Corporate Verify must expose a clear review queue command before dense user rows.");
 assert(app.includes('aria-label="Empty Corporate Verify state command"'), "Corporate Verify must expose a clear empty-state command before shared rows exist.");
 assert(app.includes('aria-label="Corporate access request scope receipt"'), "Corporate Verify must expose a request scope receipt before access requests are submitted.");
 assert(app.includes('aria-label="Corporate user database access contract"'), "Corporate Verify must expose the exact corporate user database access boundary.");
@@ -259,6 +260,7 @@ assert(app.includes('aria-label="Reviewer database readiness board"'), "Corporat
 assert(css.includes(".reviewer-database-readiness-board") && css.includes(".reviewer-database-readiness-grid"), "reviewer database readiness board must be styled and bounded.");
 assert(css.includes("Corporate portal usability repair") && css.includes(".corporate-directory-panel .directory-controls"), "Corporate Verify must include the final usability repair for directory controls.");
 assert(css.includes(".corporate-reviewer-action-bar") && css.includes(".corporate-reviewer-action-grid"), "Corporate reviewer action bar must be styled and bounded.");
+assert(css.includes(".corporate-review-queue-command") && css.includes(".corporate-review-queue-command-grid") && css.includes(".corporate-review-queue-command-actions"), "Corporate review queue command must be styled and bounded.");
 assert(css.includes("repeat(auto-fit, minmax(min(100%, 168px), 1fr))") && css.includes(".grant-card,\n.shared-record-card,\n.directory-card"), "Corporate Verify cards and controls must be protected from horizontal overflow.");
 assert(app.includes('aria-label="Corporate review handoff receipt"'), "Corporate Verify must expose the end-to-end review handoff receipt.");
 assert(css.includes(".corporate-review-handoff-receipt") && css.includes(".corporate-review-handoff-grid"), "corporate review handoff receipt must be styled and bounded.");

@@ -4121,9 +4121,50 @@ function CorporateDirectoryPanel({
               : row.readiness === "needs_gap_follow_up"
                 ? "Request missing records"
                 : row.readiness === "waiting_for_consent"
-                  ? "Wait for professional approval"
-                  : "Create or reopen an Access Grant"
+                    ? "Wait for professional approval"
+                    : "Create or reopen an Access Grant"
   }));
+  const corporateReviewQueueCommand = {
+    mode: "corporate_review_queue_command",
+    status: corporateAccessReviewQueue.length ? "queue_visible" : "queue_locked",
+    visible_queue_rows: corporateAccessReviewQueue.length,
+    ready_to_review: reviewReadyCount,
+    waiting_for_consent: waitingForConsentCount,
+    needs_gap_follow_up: needsGapFollowUpCount,
+    review_attestations: reviews.length,
+    export_ready: sharedRecords.length > 0 && openGapRequestCount === 0 && reviews.length > 0,
+    next_action: corporateAccessReviewQueue.length
+      ? corporateAccessReviewQueue[0]?.next_action ?? "Open review queue"
+      : "Request access by professional email",
+    accepted_when:
+      "corporate_review_queue_command_shows_visible_professionals_shared_records_gaps_attestation_status_export_boundary_and_no_open_user_browse_before_rows"
+  };
+  const corporateReviewQueueCommandCards = [
+    {
+      label: "Queue rows",
+      value: corporateAccessReviewQueue.length ? `${corporateAccessReviewQueue.length}` : "Locked",
+      detail: corporateAccessReviewQueue.length ? "Filtered professionals are ready for scoped review." : "Create or approve Access Grants to build the queue.",
+      ready: corporateAccessReviewQueue.length > 0
+    },
+    {
+      label: "Shared records",
+      value: `${sharedRecords.length}`,
+      detail: sharedRecords.length ? "Visible Passport rows are scoped to this corporate context." : "No shared records visible yet.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Open gaps",
+      value: `${openGapRequestCount}`,
+      detail: openGapRequestCount ? "Resolve missing-record requests before handoff." : "No open missing-record gap is blocking the queue.",
+      ready: openGapRequestCount === 0
+    },
+    {
+      label: "Attestations",
+      value: `${reviews.length}`,
+      detail: reviews.length ? "Reviewer proof is saved for at least one Access Grant." : "Record review proof after checking shared rows.",
+      ready: reviews.length > 0
+    }
+  ];
   const corporateReviewAttestationLedger = [
     {
       label: "Review attestations",
@@ -5125,6 +5166,52 @@ function CorporateDirectoryPanel({
             <strong>{corporateDatabaseActionCockpit.review_attestations}</strong>
             <small>Review attestations</small>
           </span>
+        </div>
+      </div>
+      <div className="corporate-review-queue-command" aria-label="Corporate review queue command">
+        <div className="corporate-review-queue-command-header">
+          <div>
+            <span className={`status-chip ${corporateReviewQueueCommand.export_ready ? "success" : corporateReviewQueueCommand.visible_queue_rows ? "warning" : "neutral"}`}>
+              Review queue command
+            </span>
+            <strong>{corporateReviewQueueCommand.next_action}</strong>
+            <small>{corporateReviewQueueCommand.accepted_when}</small>
+          </div>
+          <div className="corporate-review-queue-command-actions">
+            <button className="primary-action" onClick={() => document.getElementById("corporate-access-review-queue")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+              Open queue
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!corporateAccessReviewQueue.length}
+              onClick={() => downloadTextFile(reviewQueueExportName, corporateReviewQueueToCsv(corporateAccessReviewQueue), "text/csv")}
+              type="button"
+            >
+              Export queue
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-corporate-review-queue-command-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(corporateReviewQueueCommand, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export command
+            </button>
+          </div>
+        </div>
+        <div className="corporate-review-queue-command-grid">
+          {corporateReviewQueueCommandCards.map((card) => (
+            <article className={card.ready ? "ready" : "next"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
         </div>
       </div>
       <div className="corporate-reviewer-action-bar" aria-label="Corporate reviewer action bar">
