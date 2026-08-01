@@ -364,6 +364,8 @@ const requiredMobileStacks = [
   ".pilot-owner-readiness-grid",
   ".pilot-owner-readiness-database-grid",
   ".v1-live-database-readiness-grid",
+  ".public-portal-launch-header",
+  ".public-portal-pre-signup-grid",
   ".public-portal-launch-grid",
   ".public-server-sync-receipt",
   ".public-server-sync-grid",

@@ -1631,7 +1631,16 @@ button {
     rgba(255, 255, 255, 0.03);
 }
 
-.public-portal-launch-checklist > div:first-child {
+.public-portal-launch-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(176px, 0.24fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-portal-launch-header > div,
+.public-portal-pre-signup-gate > div:first-child {
   display: grid;
   gap: 8px;
   min-width: 0;
@@ -1639,15 +1648,73 @@ button {
 
 .public-portal-launch-checklist strong,
 .public-portal-launch-checklist small,
-.public-portal-launch-checklist span {
+.public-portal-launch-checklist span,
+.public-portal-launch-checklist button {
   min-width: 0;
+  max-width: 100%;
   overflow-wrap: anywhere;
 }
 
-.public-portal-launch-checklist > div:first-child > strong {
+.public-portal-launch-header > div > strong {
   color: var(--text);
   font-size: clamp(20px, 2vw, 28px);
   line-height: 1.1;
+}
+
+.public-portal-launch-header button {
+  width: 100%;
+  white-space: normal;
+}
+
+.public-portal-pre-signup-gate {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: var(--radius);
+  background: rgba(95, 240, 201, 0.045);
+}
+
+.public-portal-pre-signup-gate > div:first-child > span,
+.public-portal-pre-signup-grid span {
+  color: var(--aqua);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-pre-signup-gate > div:first-child > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 24px);
+  line-height: 1.12;
+}
+
+.public-portal-pre-signup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 152px), 1fr));
+  gap: 8px;
+}
+
+.public-portal-pre-signup-grid article {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-height: 112px;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-portal-pre-signup-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.24);
+  background: rgba(95, 240, 201, 0.06);
+}
+
+.public-portal-pre-signup-grid article.needed {
+  border-color: rgba(225, 184, 102, 0.28);
+  background: rgba(225, 184, 102, 0.07);
 }
 
 .public-portal-launch-grid {
@@ -19567,6 +19634,8 @@ p {
   .portal-decision-grid,
   .public-portal-database-contract,
   .public-portal-database-contract-grid,
+  .public-portal-launch-header,
+  .public-portal-pre-signup-grid,
   .portal-support-details,
   .auth-path-grid,
   .auth-access-command,

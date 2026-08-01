@@ -19088,11 +19088,15 @@ function PublicSite({
   const publicPortalLaunchChecklist = {
     mode: "public_portal_launch_checklist",
     status: "code_ready_server_save_pending",
+    pre_signup_gate: "public_portal_pre_signup_acceptance_gate",
     accepted_when:
       "public_website_login_registration_pricing_corporate_database_path_hosted_auth_and_server_release_are_all_clear_before_v1_launch",
+    pre_signup_accepted_when:
+      "public_portal_pre_signup_acceptance_gate_requires_portal_choice_hosted_auth_pricing_first_database_write_corporate_scoped_database_path_live_data_contract_and_vps_release_stamp_before_pilot_testing",
     selected_portal: portal,
     server_save_status: serverSyncMonitor.status,
     preview_data_accepted: false,
+    live_data_contract: "signed_in_supabase_rows_required_after_login_non_live_preview_rejected",
     items: [
       {
         label: "Premium public website",
@@ -19129,6 +19133,50 @@ function PublicSite({
       }
     ]
   };
+  const publicPortalPreSignupGateRows = [
+    {
+      label: "Portal choice",
+      value: portal === "corporate" ? "Corporate" : "Professional",
+      detail: selectedPortalCommand.headline,
+      ready: true
+    },
+    {
+      label: "Hosted auth",
+      value: authReady ? "Configured" : "Needs env",
+      detail: authReady ? authRedirectUrl : "Supabase URL and publishable key must be present.",
+      ready: authReady
+    },
+    {
+      label: "Pricing",
+      value: selectedRegistrationPath.plan,
+      detail: selectedRegistrationPath.paymentStatus,
+      ready: true
+    },
+    {
+      label: "First database write",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: "Registration intent is the first live handoff row after hosted auth.",
+      ready: true
+    },
+    {
+      label: "Corporate database",
+      value: portal === "corporate" ? "Scoped only" : "Owner controlled",
+      detail: registrationDecisionReceipt.database_boundary,
+      ready: true
+    },
+    {
+      label: "Live data contract",
+      value: "After login",
+      detail: "V1 completion requires signed-in Supabase rows and rejects non-live preview data.",
+      ready: false
+    },
+    {
+      label: "VPS release stamp",
+      value: serverSyncMonitor.status === "synced" ? "Current" : "Needs save",
+      detail: serverSyncMonitor.status === "synced" ? "Server release stamp is current." : "Run the VPS update command or add deploy secrets.",
+      ready: serverSyncMonitor.status === "synced"
+    }
+  ];
   const publicBuyerLaunchPath = {
     mode: "public_buyer_launch_path",
     selected_portal: portal,
@@ -21430,10 +21478,42 @@ function PublicSite({
           </button>
         </div>
         <div className="public-portal-launch-checklist" aria-label="Public portal launch checklist">
-          <div>
-            <span className="status-chip warning">Public portal launch checklist</span>
-            <strong>Website, login, registration, pricing, scoped database access, and server save path are tracked together</strong>
-            <small>{publicPortalLaunchChecklist.accepted_when}</small>
+          <div className="public-portal-launch-header">
+            <div>
+              <span className="status-chip warning">Public portal launch checklist</span>
+              <strong>Website, login, registration, pricing, scoped database access, and server save path are tracked together</strong>
+              <small>{publicPortalLaunchChecklist.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-public-portal-launch-checklist-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...publicPortalLaunchChecklist, pre_signup_gate_rows: publicPortalPreSignupGateRows }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export launch checklist
+            </button>
+          </div>
+          <div className="public-portal-pre-signup-gate" aria-label="Public portal pre-signup acceptance gate">
+            <div>
+              <span>Before signup</span>
+              <strong>{publicPortalLaunchChecklist.pre_signup_gate.replace(/_/g, " ")}</strong>
+              <small>{publicPortalLaunchChecklist.pre_signup_accepted_when}</small>
+            </div>
+            <div className="public-portal-pre-signup-grid">
+              {publicPortalPreSignupGateRows.map((row) => (
+                <article className={row.ready ? "ready" : "needed"} key={row.label}>
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="public-portal-launch-grid">
             {publicPortalLaunchChecklist.items.map((item) => (

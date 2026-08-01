@@ -221,6 +221,8 @@ The public pricing section now includes a Pricing and access summary before the 
 
 The public pricing section now also includes a Pricing launch decision before the estimator. It shows the Professional free path, Corporate `$149` pilot path, selected first database write, and Stripe-off billing boundary with direct Professional, Corporate, and export actions before signup.
 
+The public portal launch checklist now includes a pre-signup acceptance gate. It shows portal choice, hosted auth readiness, selected price, first database write, Corporate scoped database boundary, live-data contract, and VPS release-stamp requirement before pilot testing starts.
+
 Billing now starts with a Billing launch board that keeps the corporate pilot plan, selected seats, live Supabase subscription ledger, pricing quote receipt, payment decision receipt, and Stripe-off gate visible before deeper billing evidence panels.
 
 Billing now also includes a paid-launch decision bridge before the acceptance checkpoint. It separates live pricing proof from the human-gated Stripe, tax, invoice, customer portal, refund, dunning, and payment webhook decisions that must be approved before payment collection.
