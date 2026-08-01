@@ -36416,6 +36416,126 @@ body {
 }
 
 /* Public conversion runway: one calm signup/login path before credentials. */
+.public-account-path-chooser {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(113, 242, 203, 0.3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(16, 36, 33, 0.95), rgba(10, 14, 18, 0.98)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.26);
+  overflow: hidden;
+}
+
+.public-auth-card.corporate-mode .public-account-path-chooser {
+  border-color: rgba(130, 169, 255, 0.34);
+  background:
+    linear-gradient(135deg, rgba(22, 34, 54, 0.95), rgba(10, 14, 18, 0.98)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.public-account-path-copy,
+.public-account-path-tabs,
+.public-account-path-summary,
+.public-account-path-actions,
+.public-account-path-boundary {
+  min-width: 0;
+}
+
+.public-account-path-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.public-account-path-copy strong {
+  color: #f4fbf7;
+  font-size: clamp(1.55rem, 2.7vw, 2.35rem);
+  line-height: 1.03;
+}
+
+.public-account-path-copy small,
+.public-account-path-boundary {
+  color: rgba(224, 235, 229, 0.76);
+  line-height: 1.45;
+}
+
+.public-account-path-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.public-account-path-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border: 1px solid rgba(201, 214, 207, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #dce9e3;
+  font-weight: 900;
+}
+
+.public-account-path-tabs button.active {
+  border-color: rgba(113, 242, 203, 0.58);
+  background: rgba(113, 242, 203, 0.16);
+  color: #f4fbf7;
+}
+
+.public-account-path-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.public-account-path-summary article {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.public-account-path-summary span,
+.public-account-path-summary strong,
+.public-account-path-summary small,
+.public-account-path-boundary {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.public-account-path-summary span {
+  color: rgba(113, 242, 203, 0.86);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.public-account-path-summary strong {
+  color: #f4fbf7;
+  font-size: 1.02rem;
+}
+
+.public-account-path-summary small {
+  color: rgba(224, 235, 229, 0.72);
+}
+
+.public-account-path-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.public-account-path-actions button {
+  width: 100%;
+  min-height: 46px;
+}
+
 .public-conversion-runway {
   display: grid;
   gap: 14px;
@@ -36549,7 +36669,14 @@ body {
   display: none;
 }
 
+.public-auth-card:has(.public-account-path-chooser) .public-conversion-runway {
+  display: none;
+}
+
 @media (max-width: 760px) {
+  .public-account-path-tabs,
+  .public-account-path-summary,
+  .public-account-path-actions,
   .public-conversion-runway-actions,
   .public-conversion-runway-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -36557,6 +36684,9 @@ body {
 }
 
 @media (max-width: 520px) {
+  .public-account-path-tabs,
+  .public-account-path-summary,
+  .public-account-path-actions,
   .public-conversion-runway-actions,
   .public-conversion-runway-grid {
     grid-template-columns: minmax(0, 1fr);

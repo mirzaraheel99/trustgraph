@@ -77,6 +77,8 @@ The public login/register card now starts with one primary account access desk. 
 
 The public login/register card now also has a conversion runway as the visible first signup path. It keeps Professional versus Corporate, Register versus Login, pricing, first database write, next portal, password recovery, and the no-open-user-database boundary in one compact premium surface before credentials.
 
+The public login/register card now starts with a premium Account path chooser above the conversion runway. It gives Personal, Corporate, Register, Login, pricing, recovery, first database write, portal landing, and the Corporate no-open-user-database boundary in one clean surface before credentials.
+
 Corporate setup now starts with one primary company setup route. It keeps login, workspace creation, RBAC activation, Corporate Verify database proof, first live database write, active role, and the no-open-user-browse boundary visible while older proof panels stay out of the daily form path.
 
 Corporate Verify now starts the user database with one primary database access desk. It answers whether scoped rows are visible, what the next reviewer action is, how many requests, approved grants, rows, reviews, and gaps exist, and keeps metadata-only export plus no-open-user-browse proof visible before directory controls.

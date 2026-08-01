@@ -23946,6 +23946,66 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="public-account-path-chooser" aria-label="Public account path chooser">
+            <div className="public-account-path-copy">
+              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
+              <strong>{portal === "corporate" ? "Corporate Verify workspace" : "Professional Passport account"}</strong>
+              <small>
+                Choose Personal or Corporate, then register or login. Pricing, password recovery, first database write, and the Corporate no-open-user-database boundary stay visible before credentials.
+              </small>
+            </div>
+            <div className="public-account-path-tabs" role="tablist" aria-label="Choose account type and action">
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} role="tab" type="button">
+                <Fingerprint size={17} />
+                <span>Personal</span>
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} role="tab" type="button">
+                <BriefcaseBusiness size={17} />
+                <span>Corporate</span>
+              </button>
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} role="tab" type="button">
+                <UserPlus size={17} />
+                <span>Register</span>
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} role="tab" type="button">
+                <LogIn size={17} />
+                <span>Login</span>
+              </button>
+            </div>
+            <div className="public-account-path-summary">
+              <article>
+                <span>Price</span>
+                <strong>{selectedRegistrationPath.plan}</strong>
+                <small>{selectedRegistrationPath.paymentStatus}</small>
+              </article>
+              <article>
+                <span>Database</span>
+                <strong>{portal === "corporate" ? "Organization + admin" : "User profile"}</strong>
+                <small>{selectedRegistrationPath.primaryWrite}</small>
+              </article>
+              <article>
+                <span>Portal</span>
+                <strong>{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</strong>
+                <small>{selectedRegistrationPath.nextAction}</small>
+              </article>
+            </div>
+            <div className="public-account-path-actions">
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                See pricing
+              </button>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <small className="public-account-path-boundary">
+              {portal === "corporate"
+                ? "Corporate can only request and review professional-approved scoped rows."
+                : "Personal accounts own the Passport and decide what gets shared."}
+            </small>
+          </div>
           <div className="public-conversion-runway" aria-label="Public conversion runway">
             <div className="public-conversion-runway-copy">
               <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Account setup</span>
