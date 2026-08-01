@@ -56,20 +56,20 @@ const requiredSnippets = [
     label: "remote deploy requires the current V1 bundle marker"
   },
   {
-    snippet: 'curl --fail --location --silent --show-error "$PUBLIC_URL"',
-    label: "smoke check uses the public URL input"
+    snippet: "Checkout freshness checker",
+    label: "workflow checks out the freshness checker before the public smoke"
   },
   {
-    snippet: 'grep -q "dashboard_front_door" /tmp/trustgraph-vps.html',
-    label: "smoke check refuses stale VPS bundles"
+    snippet: "Setup Node for freshness checker",
+    label: "workflow prepares Node before running the freshness checker"
   },
   {
-    snippet: 'curl --fail --location --silent --show-error "${PUBLIC_URL%/}/trustgraph-release.json"',
-    label: "smoke check verifies the hosted release stamp"
+    snippet: "TRUSTGRAPH_VPS_URL: ${{ inputs.public_url }}",
+    label: "freshness checker uses the public URL input"
   },
   {
-    snippet: 'grep -q \'"source": "https://github.com/mirzaraheel99/trustgraph"\' /tmp/trustgraph-vps-release.json',
-    label: "release stamp proves the GitHub source"
+    snippet: "node scripts/check-vps-freshness.mjs",
+    label: "smoke check verifies assets and release stamp through the shared freshness checker"
   }
 ];
 
@@ -167,8 +167,14 @@ const runtimeSnippets = [
   {
     source: updateVps,
     path: "tools/update-vps-from-github.sh",
-    snippet: "public smoke did not contain latest bundle marker",
-    label: "manual VPS update refuses stale public bundles"
+    snippet: "fetch_public_bundle",
+    label: "manual VPS update fetches the page and static assets before checking freshness"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "public smoke assets did not contain latest bundle marker",
+    label: "manual VPS update refuses stale public bundles using asset-aware smoke"
   },
   {
     source: updateVps,

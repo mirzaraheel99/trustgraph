@@ -86,10 +86,16 @@ jobs:
           bash tools/update-vps-from-github.sh
           REMOTE
 
+      - name: Checkout freshness checker
+        uses: actions/checkout@v6
+
+      - name: Setup Node for freshness checker
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
       - name: Smoke-check VPS
+        env:
+          TRUSTGRAPH_VPS_URL: ${{ inputs.public_url }}
         run: |
-          curl --fail --location --silent --show-error "$PUBLIC_URL" >/tmp/trustgraph-vps.html
-          grep -q "TrustGraph" /tmp/trustgraph-vps.html
-          grep -q "dashboard_front_door" /tmp/trustgraph-vps.html
-          curl --fail --location --silent --show-error "${PUBLIC_URL%/}/trustgraph-release.json" >/tmp/trustgraph-vps-release.json
-          grep -q '"source": "https://github.com/mirzaraheel99/trustgraph"' /tmp/trustgraph-vps-release.json
+          node scripts/check-vps-freshness.mjs

@@ -27,6 +27,36 @@ cd "$TRUSTGRAPH_REMOTE_PATH"
 origin="$(git remote get-url origin)"
 [[ "$origin" == "$EXPECTED_ORIGIN" || "$origin" == "git@github.com:mirzaraheel99/trustgraph.git" ]] || fail "unexpected Git origin: $origin"
 
+fetch_public_bundle() {
+  local page_url="$1"
+  local output_file="$2"
+  local asset_list_file
+  local asset_url
+
+  asset_list_file="$(mktemp)"
+  curl --fail --location --silent --show-error "$page_url" >"$output_file"
+  grep -Eo '(src|href)="[^"]*_next/static/[^"]+"' "$output_file" \
+    | sed -E 's/^(src|href)="([^"]+)"/\2/' \
+    | sort -u >"$asset_list_file" || true
+
+  while IFS= read -r asset_url; do
+    [[ -n "$asset_url" ]] || continue
+    case "$asset_url" in
+      http://*|https://*)
+        curl --fail --location --silent --show-error "$asset_url" >>"$output_file"
+        ;;
+      /*)
+        curl --fail --location --silent --show-error "${page_url%/}$asset_url" >>"$output_file"
+        ;;
+      *)
+        curl --fail --location --silent --show-error "${page_url%/}/$asset_url" >>"$output_file"
+        ;;
+    esac
+  done <"$asset_list_file"
+
+  rm -f "$asset_list_file"
+}
+
 git fetch origin main
 git checkout main
 git pull --ff-only origin main
@@ -55,9 +85,9 @@ docker exec "$web_container" sh -c "cat > /srv/trustgraph/trustgraph-release.jso
 }
 JSON
 
-curl --fail --location --silent --show-error "$PUBLIC_URL" >/tmp/trustgraph-vps-smoke.html
+fetch_public_bundle "$PUBLIC_URL" /tmp/trustgraph-vps-smoke.html
 grep -q "TrustGraph" /tmp/trustgraph-vps-smoke.html || fail "public smoke did not contain TrustGraph"
-grep -q "$EXPECTED_BUNDLE_MARKER" /tmp/trustgraph-vps-smoke.html || fail "public smoke did not contain latest bundle marker: $EXPECTED_BUNDLE_MARKER"
+grep -q "$EXPECTED_BUNDLE_MARKER" /tmp/trustgraph-vps-smoke.html || fail "public smoke assets did not contain latest bundle marker: $EXPECTED_BUNDLE_MARKER"
 curl --fail --location --silent --show-error "${PUBLIC_URL%/}/trustgraph-release.json" >/tmp/trustgraph-vps-release.json
 grep -q "$commit_short" /tmp/trustgraph-vps-release.json || fail "release stamp does not match current commit"
 
