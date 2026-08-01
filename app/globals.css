@@ -31055,3 +31055,141 @@ body {
     gap: 12px;
   }
 }
+
+/* Daily SaaS route simplification: make the real app start with one clear workspace route, not stacked proof panels. */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+}
+
+.topbar {
+  order: -40;
+  min-height: auto;
+}
+
+.topbar h1 {
+  max-width: 24ch;
+  font-size: clamp(24px, 2vw, 34px);
+  line-height: 1.06;
+}
+
+.topbar p {
+  max-width: 78ch;
+}
+
+.session-command-bar,
+.workspace-route-strip,
+.workspace-flow-strip,
+.topbar-actions {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.session-command-bar button,
+.workspace-route-strip button,
+.workspace-flow-strip button,
+.topbar-actions button {
+  min-width: 0;
+}
+
+.portal-route-shell {
+  order: -30;
+}
+
+.portal-route-shell-header strong {
+  max-width: 30ch;
+  font-size: clamp(22px, 1.9vw, 30px);
+}
+
+.portal-route-tabs {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+}
+
+.portal-route-tabs button {
+  min-height: 88px;
+}
+
+.portal-daily-command-center {
+  order: -20;
+}
+
+.v1-portal-operating-center,
+.live-data-loading-command,
+.real-row-acceptance-gate,
+.vps-freshness-checkpoint {
+  order: 20;
+}
+
+.portal-daily-command-grid,
+.v1-portal-operating-grid,
+.live-data-loading-grid,
+.real-row-acceptance-grid,
+.vps-freshness-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+}
+
+.portal-daily-command-grid button,
+.v1-portal-operating-grid button,
+.live-data-loading-grid article,
+.real-row-acceptance-grid article,
+.vps-freshness-grid article {
+  min-height: auto;
+}
+
+.verify-panel .corporate-directory-panel {
+  margin-top: 0;
+}
+
+@media (max-width: 1180px) {
+  .topbar,
+  .portal-route-shell-header,
+  .portal-route-shell-footer,
+  .portal-daily-command-next,
+  .portal-daily-command-proof,
+  .v1-portal-operating-proof {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .topbar-actions,
+  .session-command-bar,
+  .portal-route-shell-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .topbar h1 {
+    max-width: 16ch;
+    font-size: clamp(28px, 8vw, 40px);
+  }
+
+  .session-strip,
+  .session-command-bar,
+  .workspace-route-strip,
+  .workspace-flow-strip,
+  .topbar-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .session-command-bar button,
+  .workspace-route-strip button,
+  .workspace-flow-strip button,
+  .topbar-actions button,
+  .portal-route-shell-actions button,
+  .portal-route-shell-footer button {
+    width: 100%;
+  }
+
+  .portal-route-tabs,
+  .portal-route-shell-status,
+  .portal-daily-command-grid,
+  .v1-portal-operating-grid,
+  .live-data-loading-grid,
+  .real-row-acceptance-grid,
+  .vps-freshness-grid {
+    grid-template-columns: 1fr;
+  }
+}
