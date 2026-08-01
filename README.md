@@ -199,6 +199,8 @@ The public login/register card now starts with a compact start strip for Profess
 
 The public login/register card now adds a V1 access runway directly before the older portal proof panels. It keeps Professional vs Corporate, Register vs Login, price, first database step, recovery, server status, and the Corporate scoped-user-database rule visible in one mobile-safe first path.
 
+The signed-in workspace now adds a daily operating runway before dense live-data proof panels. It gives Passport, Corporate Verify, Company setup, Pricing, Account, Database proof, live row counts, scoped review counts, and server-save context one clear action surface.
+
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current. The VPS release stamp is exported as a real `trustgraph-release.json` asset, and the server updater overwrites it with the current Git commit so the freshness check fails clearly if the server returns the app shell instead of JSON.
 
 The signed-in route shell now also includes a VPS save handoff before server freshness proof. It shows the green GitHub source, the `save-vps` automation blocker, missing deploy secrets, manual `/opt/trustgraph` update command, release-stamp JSON check, and VFIX boundary before anyone tests the VPS URL as current.

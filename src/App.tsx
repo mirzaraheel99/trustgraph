@@ -16882,6 +16882,83 @@ function OnboardingChecklistPanel({
       action: "Export packet"
     }
   ];
+  const signedInDailyOperatingRunway = {
+    mode: "signed_in_daily_operating_runway",
+    account_state: authSession ? "signed_in" : "hosted_login_required",
+    next_action: liveDataLoadReceipt.next_action,
+    live_row_groups_ready: liveDatabaseAcceptancePassing,
+    live_row_groups_required: liveDatabaseAcceptanceRows.length,
+    corporate_scoped_rows: corporateAccessReviews.length,
+    pricing_rows: organizationSubscriptions.length,
+    server_sync_context: "GitHub remains source of truth; VPS release stamp must prove the server copy.",
+    preview_data_accepted: false,
+    accepted_when:
+      "signed_in_daily_operating_runway_keeps_passport_corporate_verify_company_pricing_account_database_server_and_next_action_visible_before_dense_proof_panels"
+  };
+  const signedInDailyRunwayRoutes = [
+    {
+      label: "Passport",
+      value: livePassportRecords.length ? `${livePassportRecords.length} records` : "Add records",
+      detail: "Professional records, evidence, references, consent, and Access Grants.",
+      ready: livePassportRecords.length > 0,
+      action: "Open Passport",
+      onClick: () => onOpenWorkspace("passport")
+    },
+    {
+      label: "Corporate Verify",
+      value: corporateAccessReviews.length ? `${corporateAccessReviews.length} reviews` : "Request access",
+      detail: "Review only approved, consent-scoped user rows for the active RBAC context.",
+      ready: corporateAccessReviews.length > 0,
+      action: "Open Verify",
+      onClick: () => onOpenWorkspace("verify")
+    },
+    {
+      label: "Company setup",
+      value: hasCorporateContext ? "Workspace ready" : "Create workspace",
+      detail: "Organization, RBAC, team invites, and Corporate Verify setup.",
+      ready: hasCorporateContext,
+      action: hasCorporateContext ? "Open company" : "Start company",
+      onClick: () => onOpenWorkspace("verify")
+    },
+    {
+      label: "Pricing",
+      value: organizationSubscriptions.length ? "Ledger active" : "Activate pilot",
+      detail: "$0 Professional pilot and $149 Corporate Verify pilot ledger.",
+      ready: organizationSubscriptions.length > 0,
+      action: "Open pricing",
+      onClick: () => onOpenWorkspace("verify")
+    },
+    {
+      label: "Database proof",
+      value: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length}`,
+      detail: "Only signed-in Supabase repository rows can satisfy V1 acceptance.",
+      ready: liveDatabaseAcceptanceComplete,
+      action: liveDatabaseAcceptanceComplete ? "Export proof" : "Repair rows",
+      onClick: () => {
+        if (liveDatabaseAcceptanceComplete) {
+          downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json");
+          return;
+        }
+        const firstRepair = liveDatabaseRepairQueue[0];
+        if (firstRepair?.action === "Open Corporate Verify") {
+          onOpenWorkspace("verify");
+          return;
+        }
+        onOpenWorkspace("passport");
+      }
+    },
+    {
+      label: "Account",
+      value: authSession ? "Session active" : "Login required",
+      detail: "Hosted login, verification recovery, profile, and account route.",
+      ready: Boolean(authSession),
+      action: authSession ? "Open account" : "Login",
+      onClick: onOpenHostedRegistration
+    }
+  ];
+  const signedInDailyRunwayNext =
+    signedInDailyRunwayRoutes.find((route) => !route.ready) ?? signedInDailyRunwayRoutes.find((route) => route.label === "Database proof") ?? signedInDailyRunwayRoutes[0];
+  const signedInDailyRunwayPacketName = `trustgraph-signed-in-daily-operating-runway-${new Date().toISOString().slice(0, 10)}.json`;
   const realDatabaseProofCockpit = {
     mode: "real_database_proof_cockpit",
     status: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "live_database_accepted" : "live_database_proof_required",
@@ -17943,6 +18020,74 @@ function OnboardingChecklistPanel({
           >
             Export acceptance
           </button>
+        </div>
+      </div>
+      <div className="signed-in-daily-operating-runway" aria-label="Signed-in daily operating runway">
+        <div className="signed-in-daily-operating-header">
+          <div>
+            <span className={`status-chip ${liveDatabaseAcceptanceComplete ? "success" : "warning"}`}>
+              Daily operating runway
+            </span>
+            <strong>{signedInDailyRunwayNext.label}: {signedInDailyRunwayNext.value}</strong>
+            <small>
+              One route for daily work before the dense proof panels: Passport, Corporate Verify, Company setup, Pricing,
+              Account, Database proof, and server-save context.
+            </small>
+          </div>
+          <div className="signed-in-daily-operating-actions">
+            <button className={signedInDailyRunwayNext.ready ? "secondary-action" : "primary-action"} onClick={signedInDailyRunwayNext.onClick} type="button">
+              {signedInDailyRunwayNext.action}
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  signedInDailyRunwayPacketName,
+                  JSON.stringify(
+                    {
+                      ...signedInDailyOperatingRunway,
+                      routes: signedInDailyRunwayRoutes.map(({ onClick: _onClick, ...route }) => route)
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export runway
+            </button>
+          </div>
+        </div>
+        <div className="signed-in-daily-operating-grid">
+          {signedInDailyRunwayRoutes.map((route) => (
+            <button className={route.ready ? "ready" : "next"} key={route.label} onClick={route.onClick} type="button">
+              <span>{route.label}</span>
+              <strong>{route.value}</strong>
+              <small>{route.detail}</small>
+              <em>{route.action}</em>
+            </button>
+          ))}
+        </div>
+        <div className="signed-in-daily-operating-proof">
+          <span>
+            <small>Live rows</small>
+            <strong>{signedInDailyOperatingRunway.live_row_groups_ready}/{signedInDailyOperatingRunway.live_row_groups_required}</strong>
+          </span>
+          <span>
+            <small>Corporate scoped reviews</small>
+            <strong>{signedInDailyOperatingRunway.corporate_scoped_rows}</strong>
+          </span>
+          <span>
+            <small>Pricing rows</small>
+            <strong>{signedInDailyOperatingRunway.pricing_rows}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{signedInDailyOperatingRunway.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
         </div>
       </div>
       <div className="live-data-operator-strip" aria-label="Live data operator strip">
