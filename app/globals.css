@@ -27737,6 +27737,114 @@ body {
   line-height: 1.4;
 }
 
+.vps-freshness-checkpoint {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 1.8vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(246, 194, 100, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(246, 194, 100, 0.12), rgba(95, 240, 201, 0.07) 54%, rgba(7, 16, 18, 0.92)),
+    rgba(10, 23, 25, 0.96);
+}
+
+.vps-freshness-checkpoint-header,
+.vps-freshness-actions,
+.vps-freshness-boundary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.vps-freshness-checkpoint-header > div,
+.vps-freshness-actions span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.vps-freshness-checkpoint strong,
+.vps-freshness-checkpoint small,
+.vps-freshness-checkpoint span,
+.vps-freshness-checkpoint code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.vps-freshness-checkpoint-header strong {
+  max-width: 42ch;
+  color: var(--text);
+  font-size: clamp(21px, 2.1vw, 32px);
+  line-height: 1.05;
+}
+
+.vps-freshness-checkpoint-header small,
+.vps-freshness-boundary small,
+.vps-freshness-grid small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.vps-freshness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 10px;
+}
+
+.vps-freshness-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 98px;
+  padding: 12px;
+  border: 1px solid rgba(151, 204, 188, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vps-freshness-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.26);
+}
+
+.vps-freshness-grid article.next {
+  border-color: rgba(246, 194, 100, 0.34);
+  background: rgba(246, 194, 100, 0.065);
+}
+
+.vps-freshness-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.vps-freshness-grid strong {
+  color: var(--text);
+  font-size: 19px;
+  line-height: 1.08;
+}
+
+.vps-freshness-actions,
+.vps-freshness-boundary {
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.vps-freshness-actions code {
+  display: block;
+  max-width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text);
+  line-height: 1.45;
+  white-space: normal;
+}
+
 .dashboard-front-door,
 .portal-daily-navigator,
 .premium-launch-console,
@@ -27760,6 +27868,7 @@ body {
 .workspace-admin-grid,
 .premium-launch-console,
 .portal-route-shell,
+.vps-freshness-checkpoint,
 .portal-command-deck,
 .setup-center,
 .work-grid,
@@ -27876,12 +27985,20 @@ body {
     flex-direction: column;
   }
 
+  .vps-freshness-checkpoint-header,
+  .vps-freshness-actions,
+  .vps-freshness-boundary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .portal-route-shell-actions {
     justify-content: stretch;
   }
 
   .portal-route-shell-actions button,
-  .portal-route-shell-footer button {
+  .portal-route-shell-footer button,
+  .vps-freshness-checkpoint-header button {
     width: 100%;
   }
 

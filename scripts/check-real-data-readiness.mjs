@@ -112,6 +112,12 @@ const appRequirements = [
     "portal_route_shell_requires_one_bounded_tabbed_surface_for_professional_corporate_company_pricing_account_database_vps_freshness_logout_and_no_preview_data",
     "portal route shell no-preview-data acceptance rule"
   ],
+  ["VPS freshness checkpoint", "VPS freshness checkpoint label"],
+  ["vps_freshness_checkpoint", "VPS freshness checkpoint packet mode"],
+  [
+    "vps_freshness_checkpoint_requires_green_github_pages_release_stamp_commit_match_manual_or_secret_based_save_and_vfix_route_protection",
+    "VPS freshness checkpoint rule"
+  ],
   ["Public signup decision desk", "public signup decision desk label"],
   ["public_signup_decision_desk", "public signup decision desk packet mode"],
   [

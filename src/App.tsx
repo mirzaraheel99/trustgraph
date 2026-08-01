@@ -25077,6 +25077,47 @@ function App() {
     server_update_command: hostedVersionReceipt.server_update_command,
     accepted_when: "vps_release_stamp_returns_commit_json_for_the_current_green_github_main_build"
   };
+  const vpsFreshnessCheckpoint = {
+    mode: "vps_freshness_checkpoint",
+    status: serverSyncMonitor.status === "synced" ? "vps_current" : "vps_save_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "VPS release stamp proves the current build"
+        : "VPS is not accepted until the release stamp matches GitHub",
+    github_source: "main branch after green GitHub Actions build and smoke",
+    pages_status: "green_bundle_required_before_vps_save",
+    vps_status: serverSyncMonitor.status,
+    release_stamp_url: serverSyncMonitor.stampUrl,
+    reported_commit: serverSyncMonitor.commit,
+    deploy_secret_blocker: vpsDeploySecretsChecklist.required_repository_secrets.map((secret) => secret.name),
+    manual_fallback: hostedVersionReceipt.server_update_command,
+    protected_vfix_route: hostedVersionReceipt.protected_vfix_route,
+    preview_data_accepted: false,
+    accepted_when:
+      "vps_freshness_checkpoint_requires_green_github_pages_release_stamp_commit_match_manual_or_secret_based_save_and_vfix_route_protection"
+  };
+  const vpsFreshnessRows = [
+    {
+      label: "GitHub source",
+      value: "main",
+      detail: "Current code must be pushed and green in Actions."
+    },
+    {
+      label: "Pages smoke",
+      value: "Required",
+      detail: "GitHub Pages proves the browser bundle before server save."
+    },
+    {
+      label: "VPS stamp",
+      value: serverSyncMonitor.status === "synced" ? "Matched" : "Missing or stale",
+      detail: serverSyncMonitor.commit ? `Reported ${serverSyncMonitor.commit}` : "Needs /trustgraph-release.json proof."
+    },
+    {
+      label: "VFIX",
+      value: "Protected",
+      detail: "Do not change the VFIX host or route while refreshing TrustGraph."
+    }
+  ];
   const serverReleasePacketName = `trustgraph-server-release-save-path-${new Date().toISOString().slice(0, 10)}.json`;
   const serverReleasePacket = {
     mode: "server_release_save_path",
@@ -25088,6 +25129,7 @@ function App() {
     hosted_version_receipt: hostedVersionReceipt,
     vps_deploy_secrets_checklist: vpsDeploySecretsChecklist,
     vps_saved_update_verification: vpsSavedUpdateVerification,
+    vps_freshness_checkpoint: vpsFreshnessCheckpoint,
     server_sync_monitor: serverSyncMonitorPacket,
     server_update_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
     verify_command: "git -C /opt/trustgraph rev-parse --short HEAD && curl -I https://trustgraph.5-75-224-110.sslip.io/ && curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
@@ -25794,6 +25836,47 @@ function App() {
               <Download size={16} />
               Export route proof
             </button>
+          </div>
+        </section>
+
+        <section className="vps-freshness-checkpoint" aria-label="VPS freshness checkpoint">
+          <div className="vps-freshness-checkpoint-header">
+            <div>
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>VPS freshness checkpoint</span>
+              <strong>{vpsFreshnessCheckpoint.headline}</strong>
+              <small>{vpsFreshnessCheckpoint.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(serverReleasePacketName, JSON.stringify({ ...serverReleasePacket, vps_freshness_checkpoint: vpsFreshnessCheckpoint }, null, 2), "application/json")}
+              type="button"
+            >
+              <Download size={16} />
+              Export server proof
+            </button>
+          </div>
+          <div className="vps-freshness-grid">
+            {vpsFreshnessRows.map((row) => (
+              <article className={row.label === "VPS stamp" && serverSyncMonitor.status !== "synced" ? "next" : "ready"} key={row.label}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="vps-freshness-actions">
+            <span>
+              <strong>Manual VPS save</strong>
+              <code>{vpsFreshnessCheckpoint.manual_fallback}</code>
+            </span>
+            <span>
+              <strong>GitHub secrets needed</strong>
+              <small>{vpsFreshnessCheckpoint.deploy_secret_blocker.join(", ")}</small>
+            </span>
+          </div>
+          <div className="vps-freshness-boundary">
+            <span>Release stamp: {vpsFreshnessCheckpoint.release_stamp_url}</span>
+            <small>Protected VFIX route: {vpsFreshnessCheckpoint.protected_vfix_route}</small>
           </div>
         </section>
 
