@@ -21,6 +21,10 @@ const requiredMobileStacks = [
   ".public-account-access-choices",
   ".public-account-access-status",
   ".public-account-access-actions",
+  ".public-auth-experience-header",
+  ".public-auth-experience-switches",
+  ".public-auth-experience-grid",
+  ".public-auth-experience-actions",
   ".public-account-route-confirmation",
   ".public-account-route-confirmation-grid",
   ".public-account-route-confirmation-footer",
@@ -489,6 +493,10 @@ if (!css.includes(".portal-auth-command") || !css.includes("grid-template-column
 
 if (!css.includes(".public-auth-section") || !css.includes("grid-template-columns: minmax(0, 0.78fr) minmax(320px, 440px)") || !css.includes("max-width: 1240px") || !css.includes("position: sticky")) {
   throw new Error("Responsive check failed: public auth must use a contained two-column access desk with a stable form card.");
+}
+
+if (!css.includes(".public-auth-experience-studio") || !css.includes(".public-auth-experience-switches") || !css.includes(".public-auth-experience-actions")) {
+  throw new Error("Responsive check failed: public auth experience studio must keep portal, mode, pricing, recovery, and submit controls bounded.");
 }
 
 if (!css.includes(".corporate-launch-command") || !css.includes("grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr)") || !css.includes(".corporate-launch-actions")) {

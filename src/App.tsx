@@ -20042,6 +20042,43 @@ function PublicSite({
       detail: "GitHub Pages is deployable; VPS requires the save secrets before it is accepted as fresh."
     }
   ];
+  const publicAuthExperienceStudio = {
+    mode: "public_auth_experience_studio",
+    selected_portal: publicAccessDesk.selected_portal,
+    selected_action: publicAccessDesk.selected_action,
+    primary_cta: publicAccessDesk.primary_cta,
+    price: publicAccessDesk.pricing,
+    first_database_write: publicAccessDesk.first_live_database_write,
+    landing_portal: publicAccessDesk.landing_portal,
+    required_fields: publicAccessDesk.required_fields,
+    recovery_path: publicAccessDesk.recovery_path,
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_auth_experience_studio_keeps_professional_corporate_register_login_pricing_first_database_write_recovery_submit_and_server_status_visible_before_any_dense_receipts"
+  };
+  const publicAuthExperienceStudioCards = [
+    {
+      label: "Plan",
+      value: publicAuthExperienceStudio.price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First write",
+      value: publicAuthExperienceStudio.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "Landing",
+      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
+      detail: publicAuthExperienceStudio.landing_portal
+    },
+    {
+      label: "Server",
+      value: publicAuthExperienceStudio.server_status.replace(/_/g, " "),
+      detail: "GitHub is source of truth; VPS freshness is checked before pilot acceptance."
+    }
+  ];
   const publicSignupDecisionCards = [
     {
       label: "Selected path",
@@ -22127,6 +22164,71 @@ function PublicSite({
                 type="button"
               >
                 Export access path
+              </button>
+            </div>
+          </div>
+          <div className="public-auth-experience-studio" aria-label="Public auth experience studio">
+            <div className="public-auth-experience-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Access studio</span>
+                <strong>{publicAuthExperienceStudio.primary_cta}</strong>
+                <small>
+                  Professional and Corporate users choose the portal, action, price, first database write, and recovery path before credentials.
+                </small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-auth-experience-switches" aria-label="Public auth experience switches">
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                <Fingerprint size={16} />
+                <span>Professional</span>
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                <BriefcaseBusiness size={16} />
+                <span>Corporate</span>
+              </button>
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                <UserPlus size={16} />
+                <span>Register</span>
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                <LogIn size={16} />
+                <span>Login</span>
+              </button>
+            </div>
+            <div className="public-auth-experience-grid">
+              {publicAuthExperienceStudioCards.map((card) => (
+                <span key={card.label}>
+                  <small>{card.label}</small>
+                  <strong>{card.value}</strong>
+                  <small>{card.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-auth-experience-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-auth-experience-studio-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicAuthExperienceStudio, cards: publicAuthExperienceStudioCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export path
               </button>
             </div>
           </div>
