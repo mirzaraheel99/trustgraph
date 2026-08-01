@@ -5457,6 +5457,45 @@ function CorporateDirectoryPanel({
       action: "Record receipt"
     }
   ];
+  const corporateDatabaseNextActionCommander = {
+    mode: "corporate_database_next_action_commander",
+    current_action: corporateAccessNextAction.label,
+    action_label: corporateAccessNextAction.action,
+    action_target: corporateAccessNextAction.target,
+    action_detail: corporateAccessNextAction.detail,
+    source: isLiveCorporateDatabase ? "signed_in_supabase_rows" : "locked_until_corporate_rbac_login",
+    approved_access_grants: approvedAccessCount,
+    visible_user_rows: sharedRecords.length,
+    open_gap_requests: openGapRequestCount,
+    review_attestations: reviews.length,
+    latest_visibility_snapshot: latestCorporateVisibilitySnapshot ? "saved" : "not_saved",
+    latest_database_receipt: latestCorporateDatabaseReceipt?.status ?? "not_recorded",
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_database_next_action_commander_routes_request_approval_rows_gap_review_snapshot_receipt_export_and_rejects_preview_data"
+  };
+  const corporateDatabaseNextActionStats = [
+    {
+      label: "Approved grants",
+      value: `${approvedAccessCount}`,
+      detail: "Professional-approved access scope"
+    },
+    {
+      label: "Visible rows",
+      value: `${sharedRecords.length}`,
+      detail: "Scoped Passport rows"
+    },
+    {
+      label: "Open gaps",
+      value: `${openGapRequestCount}`,
+      detail: "Missing-record follow-ups"
+    },
+    {
+      label: "Review proof",
+      value: `${reviews.length}`,
+      detail: "Corporate attestations"
+    }
+  ];
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -5770,6 +5809,69 @@ function CorporateDirectoryPanel({
             type="button"
           >
             Export workbench
+          </button>
+        </div>
+      </div>
+      <div className="corporate-database-next-action-commander" aria-label="Corporate database next action commander">
+        <div className="corporate-database-next-action-copy">
+          <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Next database action</span>
+          <strong>{corporateDatabaseNextActionCommander.current_action}</strong>
+          <small>{corporateDatabaseNextActionCommander.action_detail}</small>
+          <small>{corporateDatabaseNextActionCommander.accepted_when}</small>
+        </div>
+        <div className="corporate-database-next-action-grid">
+          {corporateDatabaseNextActionStats.map((item) => (
+            <span key={item.label}>
+              <small>{item.label}</small>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </span>
+          ))}
+        </div>
+        <div className="corporate-database-next-action-controls">
+          <button
+            className="primary-action"
+            onClick={() => {
+              if (corporateAccessNextAction.target === "account") {
+                document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                return;
+              }
+              if (corporateAccessNextAction.target === "request") {
+                document.getElementById("corporate-verify-request-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                return;
+              }
+              if (corporateAccessNextAction.target === "refresh") {
+                document.getElementById("corporate-verify-request-list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                return;
+              }
+              if (corporateAccessNextAction.target === "gaps" || corporateAccessNextAction.target === "queue") {
+                document.getElementById("corporate-access-review-queue")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                return;
+              }
+              downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+            }}
+            type="button"
+          >
+            {corporateDatabaseNextActionCommander.action_label}
+          </button>
+          <button className="secondary-action" disabled={!isLiveCorporateDatabase} onClick={() => void recordVisibilitySnapshot()} type="button">
+            Save snapshot
+          </button>
+          <button className="secondary-action" disabled={!isLiveCorporateDatabase} onClick={() => void recordDatabaseReceipt()} type="button">
+            Record receipt
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-database-next-action-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(corporateDatabaseNextActionCommander, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export command
           </button>
         </div>
       </div>

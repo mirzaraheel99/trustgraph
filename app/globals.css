@@ -18721,6 +18721,9 @@ p {
   .corporate-review-queue-command-actions,
   .corporate-review-queue-command-grid,
   .corporate-database-action-buttons,
+  .corporate-database-next-action-commander,
+  .corporate-database-next-action-grid,
+  .corporate-database-next-action-controls,
   .corporate-database-path-grid,
   .corporate-database-path-proof,
   .corporate-request-to-row-grid,
@@ -26474,6 +26477,87 @@ body {
   background: rgba(0, 0, 0, 0.15);
 }
 
+.corporate-database-next-action-commander {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(13px, 1.6vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(151, 204, 188, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.08), rgba(118, 160, 255, 0.05)),
+    rgba(7, 16, 18, 0.88);
+}
+
+.corporate-database-next-action-copy {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-database-next-action-grid,
+.corporate-database-next-action-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 136px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-database-next-action-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.corporate-database-next-action-controls {
+  grid-column: 1 / -1;
+}
+
+.corporate-database-next-action-commander strong,
+.corporate-database-next-action-commander small,
+.corporate-database-next-action-commander span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-database-next-action-copy > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 25px);
+  line-height: 1.1;
+}
+
+.corporate-database-next-action-grid strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.corporate-database-next-action-grid small:first-child {
+  color: #9fead5;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-database-next-action-commander small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.corporate-database-next-action-controls button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .corporate-directory-panel .directory-controls input {
   grid-column: span 2;
 }
@@ -26521,6 +26605,8 @@ body {
 .directory-metrics,
 .corporate-user-database-export-grid,
 .corporate-reviewer-database-workbench-grid,
+.corporate-database-next-action-grid,
+.corporate-database-next-action-controls,
 .corporate-database-visibility-grid,
 .corporate-classification-grid,
 .corporate-classification-boundary,
