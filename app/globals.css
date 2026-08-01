@@ -32778,3 +32778,122 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Real database acceptance command: no demo/preview data can satisfy the live backend gate. */
+.real-database-acceptance-command {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.11), rgba(134, 174, 246, 0.06) 50%, rgba(255, 255, 255, 0.018)),
+    rgba(7, 18, 20, 0.9);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+}
+
+.real-database-acceptance-command-header,
+.real-database-acceptance-command-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.real-database-acceptance-command-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.real-database-acceptance-command strong,
+.real-database-acceptance-command small,
+.real-database-acceptance-command span,
+.real-database-acceptance-command em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.real-database-acceptance-command-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 30px);
+  line-height: 1.08;
+}
+
+.real-database-acceptance-command small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.real-database-acceptance-command-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+  gap: 9px;
+}
+
+.real-database-acceptance-command-grid button,
+.real-database-acceptance-command-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  text-align: left;
+  white-space: normal;
+}
+
+.real-database-acceptance-command-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.35);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.real-database-acceptance-command-grid button.next {
+  border-color: rgba(255, 205, 118, 0.24);
+}
+
+.real-database-acceptance-command-grid span,
+.real-database-acceptance-command-proof small {
+  color: #84f7dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.real-database-acceptance-command-grid strong,
+.real-database-acceptance-command-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.real-database-acceptance-command-grid em {
+  color: rgba(222, 239, 233, 0.72);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.real-database-acceptance-command-header button,
+.real-database-acceptance-command-proof button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.real-database-acceptance-command-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  align-items: stretch;
+}
+
+@media (max-width: 780px) {
+  .real-database-acceptance-command-header,
+  .real-database-acceptance-command-proof {
+    grid-template-columns: 1fr;
+  }
+}

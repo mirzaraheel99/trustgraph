@@ -101,6 +101,8 @@ The public login/register card also includes a registration pricing gate before 
 
 The signed-in working database area now includes a live row activation handoff. It groups hosted login, live pilot row creation, browser reload, seed reconciliation, Corporate Verify review, and working-data export into one action path before real database acceptance.
 
+The working database proof now starts with a Real database acceptance command. It rejects demo and preview data, then requires hosted login, live seed or manually loaded rows, browser reload, seed reconciliation, Corporate Verify review, working-data export, and a persisted completion receipt before the real database path is treated as accepted.
+
 The signed-in dashboard front door now exposes clickable cards for Professional Passport, Corporate Verify, Company Admin, Account and recovery, Pricing, Database proof, and Server sync. Pricing opens the billing setup panel, Database proof scrolls to the live-row proof cockpit, and Server sync exports the GitHub-to-VPS release packet.
 
 Corporate Verify now keeps the visible operator path focused on the quick start, progress strip, request form, request list, user-data proof, and scoped directory. Duplicate wizard/command/blocker panels remain in the bundle for proof exports and tests, but they do not crowd the working reviewer flow.

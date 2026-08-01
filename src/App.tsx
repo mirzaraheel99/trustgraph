@@ -16497,6 +16497,73 @@ function OnboardingChecklistPanel({
       ready: true
     }
   ];
+  const realDatabaseAcceptanceCommand = {
+    mode: "real_database_acceptance_command",
+    status: liveDatabaseAcceptanceComplete && seedReconciliationComplete ? "accepted" : "action_required",
+    next_action: liveDataLoadReceipt.next_action,
+    accepted_when:
+      "real_database_acceptance_command_requires_hosted_login_live_seed_or_manual_rows_reload_seed_reconciliation_corporate_verify_review_working_data_export_persisted_completion_receipt_and_no_demo_data",
+    demo_data_accepted: false,
+    preview_data_accepted: false,
+    row_groups_loaded: liveDatabaseAcceptancePassing,
+    row_groups_required: liveDatabaseAcceptanceRows.length,
+    seed_rows_matched: seedReconciliationPassing,
+    seed_rows_required: seedReconciliationRows.length,
+    corporate_review_rows: corporateAccessReviews.length,
+    completion_receipt_ready: liveDatabaseAcceptanceComplete && seedReconciliationComplete
+  };
+  const realDatabaseAcceptanceCommandCards = [
+    {
+      label: "Hosted login",
+      value: authSession ? "Connected" : "Required",
+      detail: authSession ? authSession.user.email : "Use hosted Supabase auth before any real-row proof.",
+      ready: Boolean(authSession),
+      action: "Login",
+      onClick: onOpenHostedRegistration
+    },
+    {
+      label: "Live rows",
+      value: `${liveDatabaseAcceptancePassing}/${liveDatabaseAcceptanceRows.length}`,
+      detail: "Passport, evidence, grants, consent, team, billing, and corporate review rows must load.",
+      ready: liveDatabaseAcceptanceComplete,
+      action: authSession ? "Run seed" : "Login first",
+      onClick: () => {
+        if (!authSession) {
+          onOpenHostedRegistration();
+          return;
+        }
+        void seedLiveData();
+      }
+    },
+    {
+      label: "Reload and reconcile",
+      value: seedReconciliationComplete ? "Matched" : `${seedReconciliationPassing}/${seedReconciliationRows.length}`,
+      detail: "Seed IDs must match rows reloaded from Supabase repositories.",
+      ready: seedReconciliationComplete,
+      action: "Reload proof",
+      onClick: () => {
+        if (typeof window !== "undefined") {
+          window.location.reload();
+        }
+      }
+    },
+    {
+      label: "Corporate review",
+      value: corporateAccessReviews.length ? `${corporateAccessReviews.length} attestations` : "Needed",
+      detail: "Corporate Verify must review approved scoped rows before acceptance.",
+      ready: corporateAccessReviews.length > 0,
+      action: "Open Verify",
+      onClick: () => onOpenWorkspace("verify")
+    },
+    {
+      label: "Export and receipt",
+      value: realDatabaseAcceptanceCommand.completion_receipt_ready ? "Ready" : "Blocked",
+      detail: "Export working-data proof and record completion only after live rows reconcile.",
+      ready: realDatabaseAcceptanceCommand.completion_receipt_ready,
+      action: "Export proof",
+      onClick: () => downloadTextFile(workingDataExportName, JSON.stringify(workingDatabaseProof, null, 2), "application/json")
+    }
+  ];
   const workingDatabaseRunbookSteps = [
     {
       label: "1. Sign in on hosted TrustGraph",
@@ -17398,6 +17465,64 @@ function OnboardingChecklistPanel({
               <small>{row.label}</small>
             </span>
           ))}
+        </div>
+      </div>
+      <div className="real-database-acceptance-command" aria-label="Real database acceptance command">
+        <div className="real-database-acceptance-command-header">
+          <div>
+            <span className={`status-chip ${realDatabaseAcceptanceCommand.status === "accepted" ? "success" : "warning"}`}>
+              Real database acceptance
+            </span>
+            <strong>{realDatabaseAcceptanceCommand.status === "accepted" ? "Real database proof is ready" : realDatabaseAcceptanceCommand.next_action}</strong>
+            <small>{realDatabaseAcceptanceCommand.accepted_when}</small>
+          </div>
+          <button
+            className={realDatabaseAcceptanceCommand.status === "accepted" ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              const nextCard = realDatabaseAcceptanceCommandCards.find((card) => !card.ready) ?? realDatabaseAcceptanceCommandCards[realDatabaseAcceptanceCommandCards.length - 1];
+              nextCard.onClick();
+            }}
+            type="button"
+          >
+            {realDatabaseAcceptanceCommandCards.find((card) => !card.ready)?.action ?? "Export proof"}
+          </button>
+        </div>
+        <div className="real-database-acceptance-command-grid">
+          {realDatabaseAcceptanceCommandCards.map((card) => (
+            <button className={card.ready ? "ready" : "next"} key={card.label} onClick={card.onClick} type="button">
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+              <em>{card.action}</em>
+            </button>
+          ))}
+        </div>
+        <div className="real-database-acceptance-command-proof">
+          <span>
+            <small>QA fixture data</small>
+            <strong>{realDatabaseAcceptanceCommand.demo_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{realDatabaseAcceptanceCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <span>
+            <small>Rows</small>
+            <strong>{realDatabaseAcceptanceCommand.row_groups_loaded}/{realDatabaseAcceptanceCommand.row_groups_required}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-real-database-acceptance-command-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...realDatabaseAcceptanceCommand, cards: realDatabaseAcceptanceCommandCards.map(({ onClick: _onClick, ...card }) => card) }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export acceptance
+          </button>
         </div>
       </div>
       <div className="live-data-operator-strip" aria-label="Live data operator strip">

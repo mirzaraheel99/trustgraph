@@ -326,6 +326,9 @@ assert(css.includes(".live-row-activation-handoff") && css.includes(".live-row-a
 assert(css.includes(".live-seed-preflight") && css.includes(".live-seed-preflight-grid"), "live seed preflight must be styled and bounded.");
 assert(app.includes('aria-label="Live seed reload receipt"'), "live seed proof must expose the reload/reconciliation receipt.");
 assert(css.includes(".live-seed-reload-receipt") && css.includes(".live-seed-reload-grid"), "live seed reload receipt must be styled and bounded.");
+assert(app.includes('aria-label="Real database acceptance command"') && app.includes("real_database_acceptance_command"), "working database proof must expose one real database acceptance command before detailed operators.");
+assert(app.includes("real_database_acceptance_command_requires_hosted_login_live_seed_or_manual_rows_reload_seed_reconciliation_corporate_verify_review_working_data_export_persisted_completion_receipt_and_no_demo_data"), "real database acceptance command must require hosted login, real rows, reload, reconciliation, Corporate Verify review, export, completion receipt, and no demo data.");
+assert(css.includes(".real-database-acceptance-command") && css.includes(".real-database-acceptance-command-grid") && css.includes(".real-database-acceptance-command-proof"), "real database acceptance command must be styled and bounded.");
 assert(app.includes('aria-label="Live data operator strip"') && app.includes("live_data_operator_strip"), "working database proof must expose a live data operator strip.");
 assert(css.includes(".live-data-operator-strip") && css.includes(".live-data-operator-grid") && css.includes(".live-data-operator-proof"), "live data operator strip must be styled and bounded.");
 assert(css.includes(".release-sync-command") && css.includes(".release-sync-command-grid"), "release sync command must be styled and bounded.");
