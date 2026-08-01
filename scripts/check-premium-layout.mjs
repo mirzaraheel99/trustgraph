@@ -47,6 +47,7 @@ assert(app.includes('label: "Pricing"') && app.includes('label: "Database proof"
 assert(authenticatedRender.includes('item.kind === "setup"') && authenticatedRender.includes('item.kind === "proof"') && authenticatedRender.includes('item.kind === "export"'), "dashboard front door pricing, database proof, and server sync cards must have wired click handlers.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
 assert(authenticatedRender.includes('aria-label="Live database contract"'), "V1 cockpit must expose the live database contract.");
+assert(authenticatedRender.includes('aria-label="Real database launch gate"') && app.includes("real_database_launch_gate"), "V1 cockpit must expose a real database launch gate before accepting live rows.");
 assert(authenticatedRender.includes('aria-label="Real data acceptance ledger"'), "V1 cockpit must expose a real-data acceptance ledger that rejects preview rows.");
 assert(authenticatedRender.includes('aria-label="Live row completion command"'), "V1 cockpit must expose a live row completion command.");
 assert(authenticatedRender.includes('aria-label="Live database repair guide"'), "V1 cockpit must expose a guided repair action for missing live Supabase row groups.");
@@ -172,6 +173,7 @@ assert(css.includes(".public-auth-server-checkpoint") && css.includes(".public-a
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".v1-completion-cockpit") && premiumRepair.includes(".v1-completion-lane-grid"), "V1 completion cockpit must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-database-contract") && premiumRepair.includes(".live-database-contract-grid"), "live database contract must be styled and bounded in the premium shell.");
+assert(premiumRepair.includes(".real-database-launch-gate") && premiumRepair.includes(".real-database-launch-gate-grid") && premiumRepair.includes(".real-database-launch-gate-actions"), "real database launch gate must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".real-data-acceptance-ledger") && premiumRepair.includes(".real-data-acceptance-grid"), "real data acceptance ledger must be styled and bounded in the premium shell.");
 assert(premiumRepair.includes(".live-row-completion-command") && premiumRepair.includes(".live-row-completion-grid"), "live row completion command must be styled and bounded in the premium shell.");
 assert(css.includes(".live-database-repair-guide") && css.includes(".live-database-repair-guide-grid"), "live database repair guide must be styled and bounded.");

@@ -22602,6 +22602,59 @@ function App() {
     server_save_rule: "GitHub main remains the source; VPS acceptance requires the freshness stamp to match the latest deployed commit.",
     steps: realDatabaseCompletionSteps
   };
+  const realDatabaseLaunchGate = {
+    mode: "real_database_launch_gate",
+    decision: livePilotRowProof.accepted ? "ready_for_v1_review" : "blocked_until_live_rows_loaded",
+    accepted: livePilotRowProof.accepted,
+    accepted_source: livePilotRowProof.source,
+    preview_data_accepted: false,
+    ready_groups: livePilotRowProof.readyGroups,
+    required_groups: livePilotRowProof.totalRequiredGroups,
+    missing_groups: livePilotRowProof.missingRequiredGroups,
+    current_blocker: liveDatabaseContract.current_blocker,
+    next_action: livePilotRowProof.accepted
+      ? "Record the real database completion receipt, export the working-data packet, then run the VPS freshness check."
+      : authSession && accountContext
+        ? "Run live pilot seed or create the missing live rows, reload repository data, and record the completion receipt again."
+        : "Login from the hosted TrustGraph URL before loading any completion proof.",
+    latest_receipt_status: latestRealDatabaseCompletionReceipt?.status ?? "no_persisted_receipt",
+    accepted_when:
+      "real_database_launch_gate_requires_signed_in_supabase_rows_persisted_completion_receipt_working_data_export_preview_rejected_and_vps_freshness_before_v1_acceptance"
+  };
+  const realDatabaseLaunchGateCards = [
+    {
+      label: "Decision",
+      value: realDatabaseLaunchGate.accepted ? "Ready for review" : "Blocked",
+      detail: realDatabaseLaunchGate.next_action
+    },
+    {
+      label: "Live row groups",
+      value: `${realDatabaseLaunchGate.ready_groups}/${realDatabaseLaunchGate.required_groups}`,
+      detail: realDatabaseLaunchGate.missing_groups.length ? realDatabaseLaunchGate.missing_groups.join(", ") : "All required live Supabase row groups are loaded."
+    },
+    {
+      label: "Source",
+      value: realDatabaseLaunchGate.accepted_source.replace(/_/g, " "),
+      detail: "Only signed-in Supabase repository rows count for acceptance."
+    },
+    {
+      label: "Preview data",
+      value: realDatabaseLaunchGate.preview_data_accepted ? "Accepted" : "Rejected",
+      detail: "Static preview, browser-memory, and unauthenticated rows cannot complete V1."
+    },
+    {
+      label: "Receipt",
+      value: realDatabaseLaunchGate.latest_receipt_status.replace(/_/g, " "),
+      detail: latestRealDatabaseCompletionReceipt
+        ? `${latestRealDatabaseCompletionReceipt.completed_steps}/${latestRealDatabaseCompletionReceipt.total_steps} persisted groups`
+        : "Record a real database completion receipt after live rows load."
+    },
+    {
+      label: "Server save",
+      value: serverSyncMonitor.status === "synced" ? "VPS synced" : "VPS check needed",
+      detail: realDatabaseCompletionPlan.server_save_rule
+    }
+  ];
   const latestRegistrationIntent = registrationIntents[0] ?? null;
   const registrationIntentReviewPacket = {
     mode: "registration_intent_review_packet",
@@ -24662,6 +24715,76 @@ function App() {
               </span>
             </div>
             <small>{liveDatabaseContract.operator_next_step}</small>
+          </div>
+          <div className="real-database-launch-gate" aria-label="Real database launch gate">
+            <div className="real-database-launch-gate-header">
+              <div>
+                <span className={`status-chip ${realDatabaseLaunchGate.accepted ? "success" : "warning"}`}>
+                  Real database launch gate
+                </span>
+                <strong>{realDatabaseLaunchGate.accepted ? "Live database proof can move to V1 review" : realDatabaseLaunchGate.current_blocker}</strong>
+                <small>{realDatabaseLaunchGate.accepted_when}</small>
+              </div>
+              <span className="status-chip neutral">{realDatabaseLaunchGate.decision.replace(/_/g, " ")}</span>
+            </div>
+            <div className="real-database-launch-gate-grid">
+              {realDatabaseLaunchGateCards.map((item) => (
+                <article className={item.label === "Decision" && realDatabaseLaunchGate.accepted ? "ready" : item.label === "Decision" ? "blocked" : ""} key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="real-database-launch-gate-actions">
+              <button
+                className="primary-action"
+                onClick={() => {
+                  if (!authSession || !accountContext) {
+                    openAuthControls();
+                    return;
+                  }
+                  if (!realDatabaseLaunchGate.accepted) {
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  void recordLiveRealDatabaseCompletionReceipt({
+                    status: "ready_for_v1_review",
+                    completedSteps: realDatabaseCompletionPlan.completed_steps,
+                    totalSteps: realDatabaseCompletionPlan.total_steps,
+                    missingGroups: [],
+                    liveRowGroups: realDatabaseCompletionSteps,
+                    metadata: {
+                      launch_gate: realDatabaseLaunchGate,
+                      server_save_rule: realDatabaseCompletionPlan.server_save_rule
+                    }
+                  });
+                }}
+                type="button"
+              >
+                {realDatabaseLaunchGate.accepted ? "Record ready receipt" : authSession ? "Open missing proof" : "Login first"}
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                type="button"
+              >
+                Review live rows
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-real-database-launch-gate-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(realDatabaseLaunchGate, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export gate
+              </button>
+            </div>
           </div>
           <div className="real-data-acceptance-ledger" aria-label="Real data acceptance ledger">
             <div className="real-data-acceptance-header">
