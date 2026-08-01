@@ -18265,6 +18265,44 @@ function PublicSite({
       detail: registrationPreSubmitChecklist.next_dashboard
     }
   ];
+  const publicSubmitReadiness = {
+    mode: "public_submit_readiness",
+    selected_portal: portal,
+    selected_mode: mode,
+    can_submit: Boolean(email && password && (portal !== "corporate" || mode === "signin" || (organizationName && organizationDomain))),
+    email_ready: Boolean(email),
+    password_ready: Boolean(password),
+    corporate_fields_ready: portal !== "corporate" || mode === "signin" || Boolean(organizationName && organizationDomain),
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    completion_status: portal === "corporate" ? "workspace_created_after_hosted_login" : "passport_initialized_after_hosted_login",
+    next_dashboard: registrationPreSubmitChecklist.next_dashboard,
+    recovery_available: Boolean(email),
+    preview_data_accepted: false,
+    accepted_when:
+      "public_submit_readiness_shows_submit_enabled_state_required_fields_first_database_write_completion_status_recovery_and_no_preview_data_before_auth_submit"
+  };
+  const publicSubmitReadinessCards = [
+    {
+      label: "Submit",
+      value: publicSubmitReadiness.can_submit ? "Ready" : "Needs fields",
+      detail: portalSubmitReceipt.required_before_submit
+    },
+    {
+      label: "Database",
+      value: publicSubmitReadiness.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Completion",
+      value: publicSubmitReadiness.completion_status.replace(/_/g, " "),
+      detail: publicSubmitReadiness.next_dashboard
+    },
+    {
+      label: "Recovery",
+      value: publicSubmitReadiness.recovery_available ? "Available" : "Enter email",
+      detail: "Password reset and hosted verification repair stay on this card."
+    }
+  ];
   const authPathSummary = {
     mode: "auth_path_summary",
     selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
@@ -20750,6 +20788,43 @@ function PublicSite({
                   <small>{card.detail}</small>
                 </span>
               ))}
+            </div>
+          </div>
+          <div className="public-submit-readiness" aria-label="Public submit readiness">
+            <div className="public-submit-readiness-copy">
+              <span className={`status-chip ${publicSubmitReadiness.can_submit ? "success" : "warning"}`}>Submit readiness</span>
+              <strong>{publicSubmitReadiness.can_submit ? "Ready to submit this portal path" : "Finish the required fields before submit"}</strong>
+              <small>{publicSubmitReadiness.accepted_when}</small>
+            </div>
+            <div className="public-submit-readiness-grid">
+              {publicSubmitReadinessCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-submit-readiness-actions">
+              <button className="primary-action" disabled={busy || !publicSubmitReadiness.can_submit} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-submit-readiness-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(publicSubmitReadiness, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export readiness
+              </button>
             </div>
           </div>
           <div className="selected-portal-command" aria-label="Selected portal command">

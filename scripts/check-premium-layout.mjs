@@ -211,6 +211,8 @@ assert(app.includes('aria-label="Public pricing launch decision"') && app.includ
 assert(css.includes(".public-pricing-launch-decision") && css.includes(".public-pricing-launch-decision-grid") && css.includes(".public-pricing-launch-decision-copy"), "public pricing launch decision must be styled and bounded.");
 assert(css.includes(".registration-database-launch-order") && css.includes(".registration-database-launch-grid"), "registration database launch order must be styled and bounded.");
 assert(css.includes(".registration-pre-submit-checklist") && css.includes(".registration-pre-submit-grid"), "registration pre-submit checklist must be styled and bounded.");
+assert(app.includes('aria-label="Public submit readiness"') && app.includes("public_submit_readiness"), "public auth must expose a visible submit readiness strip for required fields, database write, completion status, and recovery before auth submit.");
+assert(css.includes(".public-submit-readiness") && css.includes(".public-submit-readiness-grid") && css.includes(".public-submit-readiness-actions"), "public submit readiness must be styled and bounded.");
 assert(app.includes('aria-label="Auth path summary"') && app.includes("auth_path_summary"), "login/register card must expose a compact selected auth path summary.");
 assert(css.includes(".auth-path-summary") && css.includes(".auth-path-summary-grid"), "auth path summary must be styled and bounded.");
 assert(css.includes(".corporate-onboarding-pricing-cockpit") && css.includes(".corporate-onboarding-pricing-grid") && css.includes(".corporate-onboarding-pricing-actions"), "corporate onboarding pricing cockpit must be styled and bounded.");

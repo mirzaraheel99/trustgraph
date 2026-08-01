@@ -3302,6 +3302,82 @@ button {
   line-height: 1.45;
 }
 
+.public-submit-readiness {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.09), rgba(134, 174, 246, 0.05)),
+    rgba(0, 0, 0, 0.14);
+}
+
+.public-submit-readiness-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-submit-readiness-grid,
+.public-submit-readiness-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-submit-readiness-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-submit-readiness strong,
+.public-submit-readiness small,
+.public-submit-readiness span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-submit-readiness-copy > strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.18;
+}
+
+.public-submit-readiness small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.public-submit-readiness-grid small:first-child {
+  color: #9fead5;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.public-submit-readiness-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+.public-submit-readiness-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .registration-outcome-command {
   display: grid;
   gap: 12px;
@@ -18472,6 +18548,8 @@ p {
   .account-type-chooser-grid,
   .account-type-chooser-actions,
   .portal-submit-receipt-grid,
+  .public-submit-readiness-grid,
+  .public-submit-readiness-actions,
   .registration-pre-submit-checklist,
   .registration-pre-submit-grid,
   .portal-handoff-checklist,
