@@ -71,6 +71,8 @@ The server sync monitor now reads the same `trustgraph-release.json` contract th
 
 Professional Passport now starts with a first-use wizard before the record forms. It routes hosted login, first live record creation, evidence metadata, consent, Access Grants, and proof export while making the no-open-corporate-browse boundary clear for user-owned Passport data.
 
+The public login/register card now starts with one primary account access desk. Visitors choose Professional portal or Corporate portal, see the database boundary, copy the hosted redirect, resend verification, reset password, and then reach email/password fields without the older proof panels crowding the visible form.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist

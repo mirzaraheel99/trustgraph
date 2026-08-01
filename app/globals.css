@@ -20937,6 +20937,122 @@ p {
   }
 }
 
+/* Public auth primary route simplification */
+.public-auth-primary-route {
+  display: grid;
+  gap: 16px;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid rgba(96, 245, 208, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(39, 227, 181, 0.14), rgba(119, 161, 255, 0.08)),
+    rgba(9, 18, 20, 0.92);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.public-auth-primary-copy {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-auth-primary-copy strong {
+  color: var(--text-strong);
+  font-size: clamp(1.45rem, 4vw, 2.45rem);
+  line-height: 0.98;
+}
+
+.public-auth-primary-copy small {
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.public-auth-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.public-auth-primary-grid button {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  min-height: 132px;
+  padding: 18px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.public-auth-primary-grid button.active {
+  border-color: rgba(96, 245, 208, 0.62);
+  background: rgba(39, 227, 181, 0.13);
+}
+
+.public-auth-primary-grid span,
+.public-auth-primary-actions small {
+  color: var(--accent);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.public-auth-primary-grid strong,
+.public-auth-primary-actions strong {
+  color: var(--text-strong);
+  overflow-wrap: anywhere;
+}
+
+.public-auth-primary-grid small {
+  color: var(--muted);
+  line-height: 1.38;
+  overflow-wrap: anywhere;
+}
+
+.public-auth-primary-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(3, minmax(120px, auto));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.public-auth-primary-actions > span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.auth-form:has(.public-auth-primary-route) > .auth-access-command,
+.auth-form:has(.public-auth-primary-route) > .auth-path-grid,
+.auth-form:has(.public-auth-primary-route) > .login-decision-path,
+.auth-form:has(.public-auth-primary-route) > .hosted-recovery-route-rail,
+.auth-form:has(.public-auth-primary-route) > .hosted-auth-recovery-board,
+.auth-form:has(.public-auth-primary-route) > .auth-operator-path,
+.auth-form:has(.public-auth-primary-route) > .auth-recovery-note,
+.auth-form:has(.public-auth-primary-route) > .auth-recovery-command,
+.auth-form:has(.public-auth-primary-route) > .hosted-callback-proof,
+.auth-form:has(.public-auth-primary-route) > .auth-readiness-packet,
+.auth-form:has(.public-auth-primary-route) > .auth-support-grid {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .public-auth-primary-grid,
+  .public-auth-primary-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .public-auth-primary-grid button {
+    min-height: 0;
+  }
+}
+
 /* Public auth simplification layer: keep the hosted buyer/user path calm while preserving receipt code for export and checks. */
 .public-auth-card .portal-auth-command,
 .public-auth-card .portal-start-desk,

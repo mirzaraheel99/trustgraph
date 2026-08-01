@@ -16140,6 +16140,42 @@ function AuthPanel({
         </div>
       ) : (
         <form className="auth-form" onSubmit={(event) => handleAuth(event, "signin")}>
+          <div className="public-auth-primary-route" aria-label="Public auth primary route">
+            <div className="public-auth-primary-copy">
+              <span className="status-chip success">Account access</span>
+              <strong>{activeLoginPath.label === "Corporate" ? "Corporate portal" : "Professional portal"} selected</strong>
+              <small>{activeLoginPath.next}</small>
+            </div>
+            <div className="public-auth-primary-grid">
+              {authPaths.map((path) => (
+                <button
+                  className={path.id === selectedLoginPath ? "active" : ""}
+                  key={path.id}
+                  onClick={() => setSelectedLoginPath(path.id)}
+                  type="button"
+                >
+                  <span>{path.label === "Corporate" ? "Company" : "User"}</span>
+                  <strong>{path.route}</strong>
+                  <small>{path.database}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-auth-primary-actions">
+              <span>
+                <small>Hosted redirect</small>
+                <strong>{authRedirectUrl.includes("localhost") ? "Fix redirect" : "Hosted ready"}</strong>
+              </span>
+              <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
+                Copy URL
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verify
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+            </div>
+          </div>
           <div className="auth-access-command" aria-label="Portal access command">
             <div>
               <span className="status-chip success">Portal access command</span>
