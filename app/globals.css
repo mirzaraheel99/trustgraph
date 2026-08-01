@@ -21053,6 +21053,132 @@ p {
   }
 }
 
+/* Corporate admin primary route simplification */
+.corporate-admin-primary-route {
+  display: grid;
+  gap: 16px;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid rgba(96, 245, 208, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(39, 227, 181, 0.12), rgba(119, 161, 255, 0.1)),
+    rgba(12, 24, 27, 0.92);
+}
+
+.corporate-admin-primary-header,
+.corporate-admin-primary-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, auto);
+  gap: 14px;
+  align-items: start;
+}
+
+.corporate-admin-primary-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-admin-primary-header strong {
+  color: var(--text-strong);
+  font-size: clamp(1.35rem, 3.4vw, 2.1rem);
+  line-height: 1.02;
+}
+
+.corporate-admin-primary-header small,
+.corporate-admin-primary-grid small,
+.corporate-admin-primary-proof small {
+  color: var(--muted);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.corporate-admin-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.corporate-admin-primary-grid button {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  min-height: 140px;
+  padding: 16px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.corporate-admin-primary-grid button.ready {
+  border-color: rgba(96, 245, 208, 0.42);
+  background: rgba(39, 227, 181, 0.1);
+}
+
+.corporate-admin-primary-grid button.next {
+  border-color: rgba(255, 210, 102, 0.5);
+  background: rgba(255, 210, 102, 0.08);
+}
+
+.corporate-admin-primary-grid button.locked {
+  opacity: 0.62;
+}
+
+.corporate-admin-primary-grid span {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.corporate-admin-primary-grid strong,
+.corporate-admin-primary-proof strong {
+  color: var(--text-strong);
+  overflow-wrap: anywhere;
+}
+
+.corporate-admin-primary-proof {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.corporate-admin-primary-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.corporate-command-panel:has(.corporate-admin-primary-route) > .account-portal-route-acceptance,
+.corporate-command-panel:has(.corporate-admin-primary-route) > .corporate-setup-stepper,
+.corporate-command-panel:has(.corporate-admin-primary-route) > .corporate-launch-command,
+.corporate-command-panel:has(.corporate-admin-primary-route) > .corporate-account-rbac-path,
+.corporate-command-panel:has(.corporate-admin-primary-route) > .account-operator-path {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .corporate-admin-primary-grid,
+  .corporate-admin-primary-proof {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .corporate-admin-primary-header,
+  .corporate-admin-primary-grid,
+  .corporate-admin-primary-proof {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .corporate-admin-primary-grid button {
+    min-height: 0;
+  }
+}
+
 /* Public auth simplification layer: keep the hosted buyer/user path calm while preserving receipt code for export and checks. */
 .public-auth-card .portal-auth-command,
 .public-auth-card .portal-start-desk,

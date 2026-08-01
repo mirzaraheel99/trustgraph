@@ -12861,6 +12861,19 @@ function AccountPanel({
       }
     }
   ];
+  const corporateAdminPrimaryRoute = {
+    mode: "corporate_admin_primary_route",
+    status: canManageActiveOrg ? "company_workspace_ready" : accountUser.memberships.length > 1 ? "activate_rbac_next" : authSession ? "create_workspace_next" : "login_required",
+    headline: canManageActiveOrg ? "Company portal is ready for team, billing, and Verify" : "Finish company setup from one path",
+    active_organization: activeOrg.name,
+    active_role: activeRole.label,
+    first_database_write: "organizations + organization_memberships",
+    next_action: corporateLaunchActions.find((action) => action.state === "next")?.action ?? "Open Verify",
+    corporate_database_boundary: "Corporate users request one professional by email and see only approved, consent-scoped rows.",
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_admin_primary_route_keeps_workspace_rbac_team_billing_verify_scoped_database_and_no_open_user_browse_in_one_visible_company_setup_path"
+  };
 
   useEffect(() => {
     setTargetRole(activeOrg.type === "staffing_agency" ? "recruiter" : "employer_reviewer");
@@ -12931,6 +12944,55 @@ function AccountPanel({
         <strong>Corporate account and RBAC</strong>
       </div>
       <p className="panel-intro">Use this panel after login: create the live employer or staffing workspace first, switch into its admin role, then invite reviewers and activate billing from the setup guide.</p>
+      <div className="corporate-admin-primary-route" aria-label="Corporate admin primary route">
+        <div className="corporate-admin-primary-header">
+          <div>
+            <span className={`status-chip ${canManageActiveOrg ? "success" : "warning"}`}>Company setup</span>
+            <strong>{corporateAdminPrimaryRoute.headline}</strong>
+            <small>{corporateAdminPrimaryRoute.corporate_database_boundary}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-admin-primary-route-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateAdminPrimaryRoute, actions: corporateLaunchActions.map(({ onClick: _onClick, ...action }) => action) }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export setup proof
+          </button>
+        </div>
+        <div className="corporate-admin-primary-grid">
+          {corporateLaunchActions.map((item) => (
+            <button className={item.state} disabled={item.disabled} key={item.label} onClick={item.onClick} type="button">
+              <span>{item.label}</span>
+              <strong>{item.action}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-admin-primary-proof">
+          <span>
+            <small>First live write</small>
+            <strong>{corporateAdminPrimaryRoute.first_database_write}</strong>
+          </span>
+          <span>
+            <small>Active context</small>
+            <strong>{corporateAdminPrimaryRoute.active_organization}</strong>
+          </span>
+          <span>
+            <small>Role</small>
+            <strong>{corporateAdminPrimaryRoute.active_role}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateAdminPrimaryRoute.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+        </div>
+      </div>
       <div className="account-portal-route-acceptance" aria-label="Account portal route acceptance checkpoint">
         <div className="account-portal-route-header">
           <div>
