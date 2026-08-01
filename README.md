@@ -115,6 +115,8 @@ The signed-in dashboard now adds a Portal daily navigator directly after the fro
 
 Signed-in Account now has a recovery control strip that keeps hosted redirect copy, resend verification, password reset, password update, sign out, and an exportable account packet together. The actions use the current session email when the email field is empty, so hosted verification and recovery tests do not depend on retyping credentials.
 
+Signed-in Account also includes an account portal route acceptance checkpoint. It proves hosted session, profile context, active workspace, role route, corporate workspace availability, recovery route visibility, and preview-data rejection before users treat portal routing as accepted.
+
 Guided onboarding now includes an onboarding completion command that keeps hosted login, Professional Passport rows, Corporate workspace, pricing ledger, live database proof, persisted receipt, and export actions together before launch-gate review.
 
 The signed-in dashboard now uses a reduced premium shell: the top header is work-app scale, the premium launch console is the single visible start surface, and older front-door/daily command receipts stay hidden from the main path so Professional, Corporate, Pricing, Database proof, Account, and Server actions remain clickable without horizontal overflow.

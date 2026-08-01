@@ -10372,6 +10372,61 @@ function AccountPanel({
     })),
     accepted_when: "corporate_admin_can_follow_stepper_to_workspace_rbac_team_billing_and_verify"
   };
+  const accountPortalRouteAcceptanceSteps = [
+    {
+      label: "Hosted session",
+      value: authSession ? "Connected" : "Login needed",
+      detail: authSession ? `Supabase user ${authSession.user.id.slice(0, 8)} is active.` : "Use hosted auth before accepting account routing.",
+      ready: Boolean(authSession)
+    },
+    {
+      label: "Profile context",
+      value: accountUser.name,
+      detail: accountUser.email,
+      ready: Boolean(accountUser.email)
+    },
+    {
+      label: "Active workspace",
+      value: activeOrg.name,
+      detail: `${activeOrg.type.replace(/_/g, " ")} · ${activeOrg.status.replace(/_/g, " ")}`,
+      ready: Boolean(activeMembership.organizationId)
+    },
+    {
+      label: "Role route",
+      value: activeRole.label,
+      detail: `${activeRole.portal} portal with ${activeRole.permissions.length} permissions.`,
+      ready: Boolean(activeRole.portal)
+    },
+    {
+      label: "Corporate workspace",
+      value: accountUser.memberships.length > 1 ? "Available" : "Personal only",
+      detail: accountUser.memberships.length > 1 ? "Corporate Verify and Company Admin can be selected." : "Create a company workspace to unlock Corporate Verify.",
+      ready: accountUser.memberships.length > 1
+    },
+    {
+      label: "Recovery route",
+      value: "Visible",
+      detail: "Session command bar and Account controls keep password recovery, redirect repair, and logout reachable.",
+      ready: true
+    }
+  ];
+  const accountPortalRouteAcceptanceReady = accountPortalRouteAcceptanceSteps.every((step) => step.ready);
+  const accountPortalRouteAcceptancePacket = {
+    mode: "account_portal_route_acceptance_checkpoint",
+    status: accountPortalRouteAcceptanceReady ? "account_route_ready" : "account_route_open",
+    ready_steps: accountPortalRouteAcceptanceSteps.filter((step) => step.ready).length,
+    total_steps: accountPortalRouteAcceptanceSteps.length,
+    active_profile_email: accountUser.email,
+    active_organization: activeOrg.name,
+    active_role: activeRole.label,
+    active_portal: activeRole.portal,
+    memberships_loaded: accountUser.memberships.length,
+    hosted_session_present: Boolean(authSession),
+    preview_data_accepted: false,
+    next_action: accountPortalRouteAcceptanceSteps.find((step) => !step.ready)?.label ?? "Continue current portal",
+    accepted_when:
+      "account_portal_route_acceptance_requires_hosted_session_profile_context_active_workspace_role_route_corporate_workspace_recovery_route_and_no_preview_data"
+  };
   const corporateLaunchActions = [
     {
       label: authSession ? "Account connected" : "Login first",
@@ -10478,6 +10533,50 @@ function AccountPanel({
         <strong>Corporate account and RBAC</strong>
       </div>
       <p className="panel-intro">Use this panel after login: create the live employer or staffing workspace first, switch into its admin role, then invite reviewers and activate billing from the setup guide.</p>
+      <div className="account-portal-route-acceptance" aria-label="Account portal route acceptance checkpoint">
+        <div className="account-portal-route-header">
+          <div>
+            <span className={`status-chip ${accountPortalRouteAcceptanceReady ? "success" : "warning"}`}>
+              Account route acceptance
+            </span>
+            <strong>
+              {accountPortalRouteAcceptanceReady
+                ? "Account can route into Professional and Corporate work"
+                : `Next: ${accountPortalRouteAcceptancePacket.next_action}`}
+            </strong>
+            <small>{accountPortalRouteAcceptancePacket.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-account-portal-route-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(
+                  {
+                    ...accountPortalRouteAcceptancePacket,
+                    steps: accountPortalRouteAcceptanceSteps
+                  },
+                  null,
+                  2
+                ),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export route proof
+          </button>
+        </div>
+        <div className="account-portal-route-grid">
+          {accountPortalRouteAcceptanceSteps.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </article>
+          ))}
+        </div>
+      </div>
       <div className="corporate-setup-stepper" aria-label="Corporate setup stepper">
         <div className="corporate-setup-stepper-header">
           <div>

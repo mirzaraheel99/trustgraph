@@ -74,6 +74,8 @@ assert(app.includes('aria-label="Corporate scope review command"'), "Corporate V
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
 assert(app.includes('aria-label="Signed-in recovery control strip"') && app.includes("signed_in_recovery_control_strip"), "signed-in account must expose direct recovery, verification, redirect, export, and logout controls.");
 assert(app.includes('aria-label="Signed-in recovery route"'), "signed-in account must expose a visible logout and password recovery route.");
+assert(app.includes('aria-label="Account portal route acceptance checkpoint"') && app.includes("account_portal_route_acceptance_checkpoint"), "signed-in account must expose hosted session, profile, workspace, role route, corporate workspace, and recovery route acceptance.");
+assert(css.includes(".account-portal-route-acceptance") && css.includes(".account-portal-route-grid"), "account portal route acceptance checkpoint must be styled and bounded.");
 assert(app.includes('aria-label="Login issue resolver"'), "public auth must expose visible login issue resolver guidance.");
 assert(app.includes('aria-label="Live onboarding acceptance contract"'), "public auth must expose a live onboarding acceptance contract.");
 assert(app.includes('aria-label="Onboarding wizard database receipt"'), "guided onboarding must expose a persisted onboarding wizard receipt.");

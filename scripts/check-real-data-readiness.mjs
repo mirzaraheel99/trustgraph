@@ -58,6 +58,12 @@ const appRequirements = [
   ["loadVerifyAccessGrants", "live Corporate Verify repository load"],
   ["loadEvidenceDocuments", "live evidence repository load"],
   ["loadConsentAuthorizations", "live consent repository load"],
+  ["Account portal route acceptance checkpoint", "account portal route acceptance label"],
+  ["account_portal_route_acceptance_checkpoint", "account portal route acceptance packet mode"],
+  [
+    "account_portal_route_acceptance_requires_hosted_session_profile_context_active_workspace_role_route_corporate_workspace_recovery_route_and_no_preview_data",
+    "account portal route acceptance rule"
+  ],
   ["Public portal acceptance checkpoint", "public portal acceptance label"],
   ["public_portal_acceptance_checkpoint", "public portal acceptance packet mode"],
   [
