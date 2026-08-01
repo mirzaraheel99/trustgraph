@@ -5309,6 +5309,82 @@ function CorporateDirectoryPanel({
       target: "export"
     }
   ];
+  const corporateReviewerDatabaseWorkbench = {
+    mode: "corporate_reviewer_database_workbench",
+    headline:
+      sharedRecords.length > 0
+        ? `${sharedRecords.length} scoped user row${sharedRecords.length === 1 ? "" : "s"} ready for corporate review`
+        : requests.length > 0
+          ? "Access requests exist; user rows unlock after professional approval"
+          : "Start with one professional email request",
+    current_filter: {
+      status: statusFilter,
+      readiness: readinessFilter,
+      query: directoryQuery.trim() || "none"
+    },
+    counts: {
+      visible_professionals: filteredRows.length,
+      shared_passport_records: sharedRecords.length,
+      approved_access_grants: approvedAccessCount,
+      open_gap_requests: openGapRequestCount,
+      review_attestations: reviews.length,
+      latest_visibility_snapshot: latestCorporateVisibilitySnapshot ? "saved" : "not_saved",
+      latest_access_receipt: latestCorporateDatabaseReceipt?.status ?? "not_recorded"
+    },
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_reviewer_database_workbench_requires_visible_filtered_rows_request_approval_attestation_snapshot_receipt_export_and_no_open_user_browse"
+  };
+  const corporateReviewerDatabaseWorkbenchCards = [
+    {
+      label: "Visible users",
+      value: filteredRows.length ? `${filteredRows.length}` : "0",
+      detail: filteredRows.length ? "Filtered by approved corporate scope." : "No approved user rows match this filter.",
+      ready: filteredRows.length > 0,
+      target: "corporate-directory-list",
+      action: "Review rows"
+    },
+    {
+      label: "Shared records",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Locked",
+      detail: sharedRecords.length ? "Passport rows available for this company." : "Rows unlock only after Access Grant approval.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue",
+      action: "Open queue"
+    },
+    {
+      label: "Open gaps",
+      value: `${openGapRequestCount}`,
+      detail: openGapRequestCount ? "Resolve missing-record follow-ups before handoff." : "No open missing-record blockers.",
+      ready: openGapRequestCount === 0 && sharedRecords.length > 0,
+      target: "corporate-access-review-queue",
+      action: "Review gaps"
+    },
+    {
+      label: "Attestations",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: reviews.length ? "Reviewer audit proof exists." : "Record a review after scoped rows are checked.",
+      ready: reviews.length > 0,
+      target: "corporate-access-review-queue",
+      action: "Record review"
+    },
+    {
+      label: "Snapshot",
+      value: latestCorporateVisibilitySnapshot ? "Saved" : "Needed",
+      detail: "Save filtered visibility proof before export handoff.",
+      ready: Boolean(latestCorporateVisibilitySnapshot),
+      target: "corporate-database-visibility-snapshot",
+      action: "Save snapshot"
+    },
+    {
+      label: "Receipt",
+      value: latestCorporateDatabaseReceipt?.status?.replace(/_/g, " ") ?? "Not recorded",
+      detail: "Persist the corporate database access receipt after review.",
+      ready: Boolean(latestCorporateDatabaseReceipt),
+      target: "corporate-database-access-receipt",
+      action: "Record receipt"
+    }
+  ];
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -5395,6 +5471,10 @@ function CorporateDirectoryPanel({
     corporate_request_to_row_rail: {
       ...corporateRequestToRowRail,
       steps: corporateRequestToRowSteps.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
+    corporate_reviewer_database_workbench: {
+      ...corporateReviewerDatabaseWorkbench,
+      cards: corporateReviewerDatabaseWorkbenchCards.map(({ label, value, ready }) => ({ label, value, ready }))
     },
     corporate_access_next_action_command: corporateAccessNextActionCommand,
     corporate_review_handoff_receipt: corporateReviewHandoffReceipt,
@@ -5544,6 +5624,82 @@ function CorporateDirectoryPanel({
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className="corporate-reviewer-database-workbench" aria-label="Corporate reviewer database workbench">
+        <div className="corporate-reviewer-database-workbench-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Reviewer database workbench</span>
+            <strong>{corporateReviewerDatabaseWorkbench.headline}</strong>
+            <small>{corporateReviewerDatabaseWorkbench.accepted_when}</small>
+          </div>
+          <div className="corporate-reviewer-database-workbench-actions">
+            <button className="primary-action" onClick={() => document.getElementById("corporate-directory-list")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+              Review rows
+            </button>
+            <button className="secondary-action" onClick={() => downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json")} type="button">
+              Export scoped packet
+            </button>
+          </div>
+        </div>
+        <div className="corporate-reviewer-database-workbench-grid">
+          {corporateReviewerDatabaseWorkbenchCards.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => {
+                if (item.target === "corporate-database-visibility-snapshot") {
+                  void recordVisibilitySnapshot();
+                  return;
+                }
+                if (item.target === "corporate-database-access-receipt") {
+                  void recordDatabaseReceipt();
+                  return;
+                }
+                document.getElementById(item.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+              <b>{item.action}</b>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-reviewer-database-workbench-proof">
+          <span>
+            <strong>{statusFilter}</strong>
+            <small>Status filter</small>
+          </span>
+          <span>
+            <strong>{readinessFilter}</strong>
+            <small>Readiness filter</small>
+          </span>
+          <span>
+            <strong>{corporateReviewerDatabaseWorkbench.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            <small>Preview data</small>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-reviewer-database-workbench-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(
+                  {
+                    ...corporateReviewerDatabaseWorkbench,
+                    cards: corporateReviewerDatabaseWorkbenchCards.map(({ label, value, detail, ready }) => ({ label, value, detail, ready }))
+                  },
+                  null,
+                  2
+                ),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export workbench
+          </button>
+        </div>
       </div>
       <div className="corporate-database-path-strip" aria-label="Corporate database path strip">
         <div>

@@ -124,6 +124,12 @@ const appRequirements = [
     "corporate_reviewer_database_home_requires_request_approval_visible_scoped_rows_review_attestation_export_and_no_open_user_browse",
     "corporate reviewer database home no-open-browse acceptance rule"
   ],
+  ["Corporate reviewer database workbench", "corporate reviewer database workbench label"],
+  ["corporate_reviewer_database_workbench", "corporate reviewer database workbench packet mode"],
+  [
+    "corporate_reviewer_database_workbench_requires_visible_filtered_rows_request_approval_attestation_snapshot_receipt_export_and_no_open_user_browse",
+    "corporate reviewer database workbench no-open-browse acceptance rule"
+  ],
   ["Missing record cross-portal checkpoint", "missing-record cross-portal label"],
   ["missing_record_cross_portal_checkpoint", "missing-record cross-portal packet mode"],
   [

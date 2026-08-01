@@ -25508,6 +25508,113 @@ body {
   align-items: stretch;
 }
 
+.corporate-reviewer-database-workbench {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 1.8vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(151, 204, 188, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(118, 160, 255, 0.075) 52%, rgba(7, 16, 18, 0.93)),
+    rgba(9, 22, 25, 0.97);
+}
+
+.corporate-reviewer-database-workbench-header,
+.corporate-reviewer-database-workbench-proof {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.corporate-reviewer-database-workbench-header > div:first-child,
+.corporate-reviewer-database-workbench-proof span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-reviewer-database-workbench-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.corporate-reviewer-database-workbench-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 10px;
+}
+
+.corporate-reviewer-database-workbench-grid button {
+  display: grid;
+  gap: 8px;
+  min-height: 132px;
+  padding: 13px;
+  border: 1px solid rgba(151, 204, 188, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text);
+  text-align: left;
+}
+
+.corporate-reviewer-database-workbench-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.44);
+  background: rgba(95, 240, 201, 0.09);
+}
+
+.corporate-reviewer-database-workbench strong,
+.corporate-reviewer-database-workbench small,
+.corporate-reviewer-database-workbench span,
+.corporate-reviewer-database-workbench b {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-reviewer-database-workbench-header strong {
+  max-width: 42ch;
+  color: var(--text);
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1.04;
+}
+
+.corporate-reviewer-database-workbench-header small,
+.corporate-reviewer-database-workbench-grid small,
+.corporate-reviewer-database-workbench-proof small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.corporate-reviewer-database-workbench-grid span {
+  color: #5ff0c9;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-reviewer-database-workbench-grid strong {
+  font-size: clamp(22px, 2vw, 32px);
+}
+
+.corporate-reviewer-database-workbench-grid b {
+  align-self: end;
+  color: #9fffdc;
+}
+
+.corporate-reviewer-database-workbench-proof {
+  flex-wrap: wrap;
+}
+
+.corporate-reviewer-database-workbench-proof span {
+  min-width: min(100%, 150px);
+  padding: 10px 12px;
+  border: 1px solid rgba(151, 204, 188, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
 .corporate-directory-panel .directory-controls input {
   grid-column: span 2;
 }
@@ -25554,6 +25661,7 @@ body {
 
 .directory-metrics,
 .corporate-user-database-export-grid,
+.corporate-reviewer-database-workbench-grid,
 .corporate-database-visibility-grid,
 .corporate-classification-grid,
 .corporate-classification-boundary,
@@ -25587,6 +25695,18 @@ body {
 }
 
 @media (max-width: 760px) {
+  .corporate-reviewer-database-workbench-header,
+  .corporate-reviewer-database-workbench-proof {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .corporate-reviewer-database-workbench-actions,
+  .corporate-reviewer-database-workbench-actions button,
+  .corporate-reviewer-database-workbench-proof button {
+    width: 100%;
+  }
+
   .corporate-directory-panel .directory-controls input {
     grid-column: 1;
   }
