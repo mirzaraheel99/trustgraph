@@ -37234,6 +37234,7 @@ body {
 .public-access-hub-hero,
 .public-access-hub-routes,
 .public-access-hub-proof,
+.public-access-hub-steps,
 .public-access-hub-actions,
 .public-access-hub-boundary {
   min-width: 0;
@@ -37318,6 +37319,16 @@ body {
   gap: 10px;
 }
 
+.public-access-hub-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
 .public-access-hub-proof span {
   display: grid;
   gap: 6px;
@@ -37326,6 +37337,18 @@ body {
   border: 1px solid rgba(201, 214, 207, 0.12);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.045);
+}
+
+.public-access-hub-steps span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border-left: 2px solid rgba(113, 242, 203, 0.42);
+}
+
+.public-auth-card.corporate-mode .public-access-hub-steps span {
+  border-left-color: rgba(130, 169, 255, 0.5);
 }
 
 .public-access-hub-proof small {
@@ -37351,6 +37374,22 @@ body {
   line-height: 1.4;
 }
 
+.public-access-hub-steps small,
+.public-access-hub-steps em {
+  color: rgba(224, 235, 229, 0.68);
+  font-size: 0.78rem;
+  font-style: normal;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.public-access-hub-steps strong {
+  color: #f4fbf7;
+  font-size: 0.92rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
 .public-access-hub-actions {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -37369,7 +37408,15 @@ body {
 .public-auth-card:has(.public-access-hub) .public-account-access-path,
 .public-auth-card:has(.public-access-hub) .public-auth-experience-studio,
 .public-auth-card:has(.public-access-hub) .public-account-path-chooser,
-.public-auth-card:has(.public-access-hub) .public-conversion-runway {
+.public-auth-card:has(.public-access-hub) .public-conversion-runway,
+.public-auth-card:has(.public-access-hub) .public-v1-access-runway,
+.public-auth-card:has(.public-access-hub) .public-portal-route-shell,
+.public-auth-card:has(.public-access-hub) .public-auth-front-desk,
+.public-auth-card:has(.public-access-hub) .public-access-desk,
+.public-auth-card:has(.public-access-hub) .registration-route-planner,
+.public-auth-card:has(.public-access-hub) .corporate-access-route-preview,
+.public-auth-card:has(.public-access-hub) .public-account-route-confirmation,
+.public-auth-card:has(.public-access-hub) .public-submit-readiness {
   display: none;
 }
 
@@ -37380,14 +37427,16 @@ body {
   }
 
   .public-access-hub-routes,
-  .public-access-hub-proof {
+  .public-access-hub-proof,
+  .public-access-hub-steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 560px) {
   .public-access-hub-routes,
-  .public-access-hub-proof {
+  .public-access-hub-proof,
+  .public-access-hub-steps {
     grid-template-columns: minmax(0, 1fr);
   }
 }

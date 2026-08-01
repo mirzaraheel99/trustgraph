@@ -75,6 +75,8 @@ Professional Passport now starts with a first-use wizard before the record forms
 
 The public login/register card now starts with one primary account access desk. Visitors choose Professional portal or Corporate portal, see the database boundary, copy the hosted redirect, resend verification, reset password, and then reach email/password fields without the older proof panels crowding the visible form.
 
+The public access hub now includes a five-step route sequence for User register, User login, Corporate register, and Corporate login. It shows credentials, first database write, landing portal, pricing, recovery, and Corporate scoped-access rules while older public auth route/proof panels stay hidden from the primary form path.
+
 The public login/register card now also has a conversion runway as the visible first signup path. It keeps Professional versus Corporate, Register versus Login, pricing, first database write, next portal, password recovery, and the no-open-user-database boundary in one compact premium surface before credentials.
 
 The public login/register card now starts with a premium Account path chooser above the conversion runway. It gives Personal, Corporate, Register, Login, pricing, recovery, first database write, portal landing, and the Corporate no-open-user-database boundary in one clean surface before credentials.

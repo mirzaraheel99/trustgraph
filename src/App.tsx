@@ -20482,6 +20482,43 @@ function PublicSite({
       detail: "Password reset, resend verification, and hosted-link repair stay on this form."
     }
   ];
+  const publicAccessHubSteps = [
+    {
+      label: "Choose route",
+      value:
+        portal === "corporate"
+          ? mode === "signup"
+            ? "Corporate register"
+            : "Corporate login"
+          : mode === "signup"
+            ? "User register"
+            : "User login",
+      detail: "The selected route controls pricing, required fields, and landing portal."
+    },
+    {
+      label: "Enter credentials",
+      value: email && password ? "Ready" : "Email + password",
+      detail: portal === "corporate" && mode === "signup" ? "Company name, domain, and type are also required." : "Use hosted verification, not localhost links."
+    },
+    {
+      label: "First database write",
+      value: portal === "corporate" ? "Company workspace" : "Passport owner",
+      detail: selectedRegistrationPath.primaryWrite
+    },
+    {
+      label: "Landing",
+      value: portal === "corporate" ? "Company Admin" : "Professional Passport",
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Corporate data rule",
+      value: portal === "corporate" ? "Scoped request" : "Owner approval",
+      detail:
+        portal === "corporate"
+          ? "No open user database browse. Request a professional and review approved rows only."
+          : "Companies see your records only after you approve a scoped grant."
+    }
+  ];
   const corporateAccessRoutePreview = {
     mode: "corporate_access_route_preview",
     selected_portal: portal,
@@ -24421,6 +24458,15 @@ function PublicSite({
                 </span>
               ))}
             </div>
+            <div className="public-access-hub-steps" aria-label="Public access hub next steps">
+              {publicAccessHubSteps.map((step, index) => (
+                <span key={step.label}>
+                  <small>{String(index + 1).padStart(2, "0")} / {step.label}</small>
+                  <strong>{step.value}</strong>
+                  <em>{step.detail}</em>
+                </span>
+              ))}
+            </div>
             <div className="public-access-hub-actions">
               <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
                 Continue to email
@@ -24440,7 +24486,10 @@ function PublicSite({
                       {
                         ...publicAccessHub,
                         routes: publicAccessHubRoutes.map(({ action: _action, ...route }) => route),
-                        proof: publicAccessHubProof
+                        proof: publicAccessHubProof,
+                        next_steps: publicAccessHubSteps,
+                        primary_form_after_hub: "email_password_fields",
+                        duplicate_public_auth_panels_hidden: true
                       },
                       null,
                       2
