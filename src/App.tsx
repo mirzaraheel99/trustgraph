@@ -16541,6 +16541,58 @@ function PublicSite({
       detail: portalStartDesk.pricing_boundary
     }
   ];
+  const publicAccessDesk = {
+    mode: "public_access_desk",
+    selected_portal: portal === "corporate" ? "Corporate Verify" : "Professional Passport",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    primary_cta:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Register company admin"
+          : "Login company admin"
+        : mode === "signup"
+          ? "Register Professional Passport"
+          : "Login Professional Passport",
+    pricing: selectedRegistrationPath.plan,
+    required_fields: selectedPortalCommand.required_fields,
+    first_live_database_write: selectedRegistrationPath.primaryWrite,
+    landing_portal: portal === "corporate" ? "Company setup, billing, team, then Corporate Verify" : "Professional Passport records, evidence, consent, and sharing",
+    recovery_path: "Password reset and localhost verification-link repair stay on this hosted card.",
+    accepted_when:
+      "public_access_desk_shows_professional_or_corporate_login_register_price_required_fields_first_database_write_landing_and_recovery_before_email_fields"
+  };
+  const publicAccessDeskCards = [
+    {
+      label: "Portal",
+      value: publicAccessDesk.selected_portal,
+      detail: portal === "corporate" ? "Company workspace, RBAC, pricing ledger, scoped user review." : "Personal Passport, private records, evidence, consent, and grants."
+    },
+    {
+      label: "Action",
+      value: publicAccessDesk.selected_action,
+      detail: publicAccessDesk.primary_cta
+    },
+    {
+      label: "Pricing",
+      value: publicAccessDesk.pricing,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First database write",
+      value: publicAccessDesk.first_live_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Required fields",
+      value: `${publicAccessDesk.required_fields.length} fields`,
+      detail: publicAccessDesk.required_fields.join(", ").replace(/_/g, " ")
+    },
+    {
+      label: "After success",
+      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
+      detail: publicAccessDesk.landing_portal
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -18407,6 +18459,60 @@ function PublicSite({
                 type="button"
               >
                 Export auth path
+              </button>
+            </div>
+          </div>
+          <div className="public-access-desk" aria-label="Public access desk">
+            <div className="public-access-desk-copy">
+              <span className="status-chip success">Access desk</span>
+              <strong>{publicAccessDesk.primary_cta}</strong>
+              <small>{publicAccessDesk.accepted_when}</small>
+            </div>
+            <div className="public-access-desk-controls">
+              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                Professional
+              </button>
+              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                Corporate
+              </button>
+              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                Register
+              </button>
+              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                Login
+              </button>
+            </div>
+            <div className="public-access-desk-grid">
+              {publicAccessDeskCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-access-desk-actions">
+              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" onClick={() => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" })} type="button">
+                View pricing
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-access-desk-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(publicAccessDesk, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export access path
               </button>
             </div>
           </div>

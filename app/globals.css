@@ -24932,6 +24932,102 @@ body {
   white-space: normal;
 }
 
+.public-access-desk {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.07) 58%, transparent),
+    rgba(8, 18, 22, 0.9);
+}
+
+.public-access-desk-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-access-desk-copy strong {
+  color: var(--text);
+  font-size: clamp(20px, 2.1vw, 30px);
+  line-height: 1.06;
+}
+
+.public-access-desk-copy small,
+.public-access-desk-grid small {
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.34;
+}
+
+.public-access-desk-controls,
+.public-access-desk-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 108px), 1fr));
+  gap: 8px;
+}
+
+.public-access-desk-controls button,
+.public-access-desk-actions button {
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
+.public-access-desk-controls button {
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  font-weight: 950;
+}
+
+.public-access-desk-controls button.active {
+  border-color: rgba(95, 240, 201, 0.42);
+  color: #95ffd9;
+  background: rgba(95, 240, 201, 0.12);
+}
+
+.public-access-desk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 8px;
+}
+
+.public-access-desk-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 102px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-access-desk strong,
+.public-access-desk small,
+.public-access-desk span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-access-desk-grid small:first-child {
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-access-desk-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
 .auth-route-summary {
   display: grid;
   gap: 10px;

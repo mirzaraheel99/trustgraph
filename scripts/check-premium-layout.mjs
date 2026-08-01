@@ -80,6 +80,7 @@ assert(app.includes('aria-label="Onboarding next action rail"') && app.includes(
 assert(app.includes('aria-label="Onboarding completion command"') && app.includes("onboarding_completion_command"), "guided onboarding must expose one completion command for hosted login, Professional, Corporate, pricing, database proof, receipt, and export.");
 assert(app.includes('aria-label="Public auth flow command"'), "public auth must expose a simple flow command for account type, mode, and database result.");
 assert(app.includes('aria-label="Public auth front desk"') && app.includes("public_auth_front_desk"), "public auth must expose one front desk for login, registration, pricing, recovery, and hosted redirects.");
+assert(app.includes('aria-label="Public access desk"') && app.includes("public_access_desk"), "public auth must expose one access desk before fields for portal, action, price, first database write, landing, and recovery.");
 assert(app.includes('aria-label="Public portal route board"') && app.includes("public_portal_route_board"), "public auth must expose a clear user versus corporate route board.");
 assert(app.includes('aria-label="Registration route planner"') && app.includes("registration_route_planner"), "public auth form must expose a plain registration route planner for account type, action, price, first database write, next dashboard, and recovery.");
 assert(app.includes('aria-label="Portal access cockpit"'), "public auth must start with a single portal access cockpit for portal, mode, pricing, first write, and boundary.");

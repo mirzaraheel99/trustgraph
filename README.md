@@ -119,6 +119,8 @@ The signed-in dashboard now uses a reduced premium shell: the top header is work
 
 The public login/register form now shows a visible auth route summary immediately before the input fields, so Professional users and Corporate admins can confirm account type, login/register mode, pricing path, first database write, and landing portal before submitting.
 
+The public auth card now adds a Public access desk directly before the email and password fields, with one place to switch Professional or Corporate, Register or Login, review pricing, see required fields, confirm the first live database write, and choose recovery before typing.
+
 The public auth form also starts with a Registration route planner that keeps Professional versus Corporate, Register versus Login, price, first database write, next dashboard, recovery, and required proof in one compact operator view before the form fields.
 
 The public pricing section now includes a Pricing and access summary before the seat estimator, connecting the free Professional pilot, `$149` Corporate Verify pilot, first database write, scoped Corporate user access, and Stripe-off billing boundary in one visible buyer decision point.
