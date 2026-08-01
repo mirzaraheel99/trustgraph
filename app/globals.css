@@ -34759,6 +34759,124 @@ body {
   gap: 12px;
 }
 
+.pricing-checkout-readiness-hub {
+  order: -96;
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.17), rgba(134, 174, 246, 0.09) 58%, rgba(255, 255, 255, 0.025)),
+    rgba(5, 17, 19, 0.94);
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.26);
+}
+
+.pricing-checkout-readiness-copy {
+  display: grid;
+  gap: 8px;
+  max-width: 820px;
+}
+
+.pricing-checkout-readiness-copy strong,
+.pricing-checkout-readiness-copy small,
+.pricing-checkout-readiness-copy span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pricing-checkout-readiness-copy strong {
+  color: var(--text);
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.08;
+}
+
+.pricing-checkout-readiness-copy small {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pricing-checkout-readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), 1fr));
+  gap: 10px;
+}
+
+.pricing-checkout-readiness-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.pricing-checkout-readiness-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.pricing-checkout-readiness-grid article.next {
+  border-color: rgba(235, 195, 88, 0.28);
+  background: rgba(235, 195, 88, 0.08);
+}
+
+.pricing-checkout-readiness-grid span,
+.pricing-checkout-readiness-grid strong,
+.pricing-checkout-readiness-grid small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pricing-checkout-readiness-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.pricing-checkout-readiness-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.14;
+}
+
+.pricing-checkout-readiness-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.pricing-checkout-readiness-actions {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) repeat(4, minmax(132px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.pricing-checkout-readiness-actions label {
+  display: grid;
+  gap: 5px;
+}
+
+.pricing-checkout-readiness-actions label span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.pricing-checkout-readiness-actions input,
+.pricing-checkout-readiness-actions button {
+  width: 100%;
+  min-height: 44px;
+}
+
 .billing-decision-center {
   order: -90;
   display: grid;
@@ -34912,6 +35030,7 @@ body {
 }
 
 .billing-panel .pricing-choice-rail,
+.billing-panel .pricing-checkout-readiness-hub,
 .billing-panel .billing-decision-center,
 .billing-panel .pilot-package-board,
 .billing-panel .pricing-activation-workbench,
@@ -34943,6 +35062,7 @@ body {
 }
 
 .billing-panel .pricing-choice-grid,
+.billing-panel .pricing-checkout-readiness-grid,
 .billing-panel .billing-decision-center-grid,
 .billing-panel .pilot-package-board-grid,
 .billing-panel .pricing-activation-workbench-grid,
@@ -34958,6 +35078,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions,
+.billing-panel .pricing-checkout-readiness-actions,
 .billing-panel .billing-decision-center-actions,
 .billing-panel .pilot-package-board-proof,
 .billing-panel .pricing-activation-workbench-footer,
@@ -34972,6 +35093,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions button,
+.billing-panel .pricing-checkout-readiness-actions button,
 .billing-panel .billing-decision-center-actions button,
 .billing-panel .pilot-package-board-proof button,
 .billing-panel .pricing-activation-workbench-footer button,
@@ -34986,6 +35108,7 @@ body {
 
 @media (max-width: 780px) {
   .billing-panel .pricing-choice-actions,
+  .billing-panel .pricing-checkout-readiness-actions,
   .billing-panel .billing-decision-center-actions,
   .billing-panel .pilot-package-board-header,
   .billing-panel .pilot-package-board-proof,
@@ -35004,6 +35127,7 @@ body {
 }
 
 .billing-panel .pricing-launch-command,
+.billing-panel:has(.pricing-checkout-readiness-hub) .billing-decision-center,
 .billing-panel .pricing-quote-receipt,
 .billing-panel .pricing-decision-board,
 .billing-panel .stripe-checkout-decision,

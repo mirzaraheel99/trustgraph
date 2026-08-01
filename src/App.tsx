@@ -14105,6 +14105,62 @@ function BillingPanel({
       ready: true
     }
   ];
+  const pricingCheckoutReadinessHub = {
+    mode: "pricing_checkout_readiness_hub",
+    status: activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt ? "ready_for_human_billing_review" : "setup_required",
+    selected_package: selectedProjectedPlan?.name ?? primaryPlan?.name ?? "Corporate Verify Pilot",
+    selected_plan_id: selectedProjectedPlan?.plan_id ?? primaryPlan?.id ?? null,
+    selected_seats: seats,
+    projected_monthly_usd: estimatedSeatTotal,
+    live_subscription_rows: activeSubscriptions.length,
+    quote_receipt_status: latestPricingQuoteReceipt ? "saved" : "not_recorded",
+    billing_decision_status: latestDecisionReceipt?.status ?? "not_recorded",
+    first_database_write: "organization subscription ledger plus pricing quote receipt",
+    corporate_account_path: "Corporate workspace, RBAC reviewer seat, scoped database request, then approved Passport rows",
+    stripe_checkout_status: "disabled_until_human_gate",
+    preview_data_accepted: false,
+    next_action: !activeSubscriptions.length
+      ? "Activate ledger"
+      : !latestPricingQuoteReceipt
+        ? "Record quote"
+        : !latestDecisionReceipt
+          ? "Record decision"
+          : "Export packet",
+    accepted_when:
+      "pricing_checkout_readiness_hub_keeps_plan_seats_projected_price_live_ledger_quote_decision_stripe_gate_corporate_setup_and_no_preview_data_before_paid_launch"
+  };
+  const pricingCheckoutReadinessCards = [
+    {
+      label: "Package",
+      value: pricingCheckoutReadinessHub.selected_package,
+      detail: estimatedSeatTotal ? `$${estimatedSeatTotal}/month for ${seats} seats before payment collection.` : "Load pricing plans before quoting.",
+      ready: plans.length > 0
+    },
+    {
+      label: "Corporate account",
+      value: activeSubscriptions.length ? "Ledger active" : "Ledger first",
+      detail: activeSubscriptions.length
+        ? `${activeSubscriptions.length} live subscription row${activeSubscriptions.length === 1 ? "" : "s"} connected to the workspace.`
+        : "Activate Corporate Verify so the account has a live subscription ledger row.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Quote",
+      value: latestPricingQuoteReceipt ? "Saved" : "Save quote",
+      detail: latestPricingQuoteReceipt
+        ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month stored in the database quote receipt.`
+        : "Record seats, package, and projected price before buyer review.",
+      ready: Boolean(latestPricingQuoteReceipt)
+    },
+    {
+      label: "Billing decision",
+      value: latestDecisionReceipt ? "Saved" : "Human gate",
+      detail: latestDecisionReceipt
+        ? "Ledger-now, payment-later decision receipt exists."
+        : "Stripe, tax, invoices, refunds, dunning, and webhooks need approval.",
+      ready: Boolean(latestDecisionReceipt)
+    }
+  ];
   const billingLaunchBoard = {
     mode: "billing_launch_board",
     status: activeSubscriptions.length ? "pilot_ledger_active" : "activate_pilot_ledger",
@@ -14344,6 +14400,10 @@ function BillingPanel({
       ...billingDecisionCenter,
       cards: billingDecisionCenterCards.map(({ label, value, ready }) => ({ label, value, ready }))
     },
+    pricing_checkout_readiness_hub: {
+      ...pricingCheckoutReadinessHub,
+      cards: pricingCheckoutReadinessCards.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
     pilot_package_board: {
       ...pilotPackageBoard,
       packages: pilotPackageCards.map(({ label, price, audience, proof }) => ({ label, price, audience, proof })),
@@ -14475,6 +14535,59 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="pricing-checkout-readiness-hub" aria-label="Pricing checkout readiness hub">
+        <div className="pricing-checkout-readiness-copy">
+          <span className={`status-chip ${pricingCheckoutReadinessHub.status === "ready_for_human_billing_review" ? "success" : "warning"}`}>
+            Pricing setup
+          </span>
+          <strong>{pricingCheckoutReadinessHub.next_action}</strong>
+          <small>
+            A clean SaaS checkout path without live card capture: choose the Corporate package, set seats, write the ledger, save the quote, record the billing decision, then export the packet.
+          </small>
+        </div>
+        <div className="pricing-checkout-readiness-grid">
+          {pricingCheckoutReadinessCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="pricing-checkout-readiness-actions">
+          <label>
+            <span>Corporate seats</span>
+            <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
+          </label>
+          <button
+            className="primary-action"
+            disabled={disabled || !pricingCheckoutReadinessHub.selected_plan_id || activeSubscriptions.length > 0 || Boolean(busyPlanId)}
+            onClick={() => pricingCheckoutReadinessHub.selected_plan_id ? void activate(pricingCheckoutReadinessHub.selected_plan_id) : undefined}
+            type="button"
+          >
+            Activate ledger
+          </button>
+          <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+            Record quote
+          </button>
+          <button className="secondary-action" disabled={disabled || decisionBusy} onClick={() => void recordDecisionReceipt()} type="button">
+            Record decision
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-pricing-checkout-readiness-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...pricingCheckoutReadinessHub, cards: pricingCheckoutReadinessCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export packet
+          </button>
+        </div>
+      </div>
       <div className="billing-decision-center" aria-label="Billing decision center">
         <div className="billing-decision-center-copy">
           <span className={`status-chip ${activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt ? "success" : "warning"}`}>

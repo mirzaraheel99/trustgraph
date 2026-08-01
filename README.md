@@ -133,6 +133,8 @@ The signed-in working database path now starts with a Live database proof comman
 
 The signed-in dashboard front door now exposes clickable cards for Professional Passport, Corporate Verify, Company Admin, Account and recovery, Pricing, Database proof, and Server sync. Pricing opens the billing setup panel, Database proof scrolls to the live-row proof cockpit, and Server sync exports the GitHub-to-VPS release packet.
 
+The billing setup panel now starts with a Pricing checkout readiness hub. It keeps Corporate package, seats, projected monthly price, live subscription ledger, quote receipt, billing decision, Stripe-off boundary, and export packet in one primary SaaS-style workflow while older billing proof receipts stay out of the main path.
+
 Corporate Verify now keeps the visible operator path focused on the quick start, progress strip, request form, request list, user-data proof, and scoped directory. Duplicate wizard/command/blocker panels remain in the bundle for proof exports and tests, but they do not crowd the working reviewer flow.
 
 Corporate Verify also includes a reviewer front desk that summarizes request, approval, scoped rows, review proof, and the next action before the reviewer reaches filters or export receipts. This keeps the corporate database path understandable on hosted desktop and mobile views while preserving metadata-only proof packets for audit.
