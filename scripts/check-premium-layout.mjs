@@ -111,6 +111,9 @@ assert(app.includes('aria-label="Portal launch decision strip"'), "public auth m
 assert(app.includes('aria-label="Portal submit receipt"'), "public auth must show the selected portal submit path at the form action point.");
 assert(app.includes('aria-label="Registration pre-submit checklist"'), "public auth must show required fields, first database write, pricing, and next dashboard before submit.");
 assert(app.includes('aria-label="Auth route summary"') && css.includes(".auth-route-summary-grid"), "public auth must show a visible route summary for account type, mode, pricing, first database write, and landing before fields.");
+assert(app.includes('aria-label="Public signup decision desk"') && app.includes("public_signup_decision_desk"), "public auth form must show one compact decision desk directly above fields.");
+assert(app.includes("public_signup_decision_desk_keeps_portal_mode_price_first_database_write_required_fields_recovery_and_submit_action_visible_directly_above_form_fields"), "public signup decision desk must encode portal, mode, price, first write, fields, recovery, and submit action.");
+assert(css.includes(".public-signup-decision-desk") && css.includes(".public-signup-decision-grid") && css.includes(".public-signup-decision-footer"), "public signup decision desk must be styled and bounded.");
 assert(app.includes('aria-label="Public portal acceptance checkpoint"') && app.includes("public_portal_acceptance_checkpoint"), "public auth must expose a portal acceptance checkpoint for account choice, hosted auth, pricing, first database write, landing, scoped access, and server save.");
 assert(css.includes(".public-portal-acceptance-checkpoint") && css.includes(".public-portal-acceptance-grid"), "public portal acceptance checkpoint must be styled and bounded.");
 assert(app.includes('aria-label="Stripe checkout decision receipt"'), "billing must expose a Stripe checkout decision receipt.");

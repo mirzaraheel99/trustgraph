@@ -17722,6 +17722,41 @@ function PublicSite({
       detail: publicAccessDesk.landing_portal
     }
   ];
+  const publicSignupDecisionDesk = {
+    mode: "public_signup_decision_desk",
+    selected_portal: publicAccessDesk.selected_portal,
+    selected_action: publicAccessDesk.selected_action,
+    primary_cta: publicAccessDesk.primary_cta,
+    pricing: publicAccessDesk.pricing,
+    first_live_database_write: publicAccessDesk.first_live_database_write,
+    required_fields: publicAccessDesk.required_fields,
+    recovery_actions: ["resend_verification", "reset_password"],
+    preview_data_accepted: false,
+    accepted_when:
+      "public_signup_decision_desk_keeps_portal_mode_price_first_database_write_required_fields_recovery_and_submit_action_visible_directly_above_form_fields"
+  };
+  const publicSignupDecisionCards = [
+    {
+      label: "Selected path",
+      value: `${publicSignupDecisionDesk.selected_action} - ${publicSignupDecisionDesk.selected_portal}`,
+      detail: publicSignupDecisionDesk.primary_cta
+    },
+    {
+      label: "Price",
+      value: publicSignupDecisionDesk.pricing,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First write",
+      value: publicSignupDecisionDesk.first_live_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "Needed now",
+      value: `${publicSignupDecisionDesk.required_fields.length} fields`,
+      detail: publicSignupDecisionDesk.required_fields.join(", ").replace(/_/g, " ")
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -19921,6 +19956,63 @@ function PublicSite({
             >
               Export checklist
             </button>
+          </div>
+          <div className="public-signup-decision-desk" aria-label="Public signup decision desk">
+            <div className="public-signup-decision-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Signup decision</span>
+                <strong>{publicSignupDecisionDesk.primary_cta}</strong>
+                <small>{publicSignupDecisionDesk.accepted_when}</small>
+              </div>
+              <div className="public-signup-decision-actions">
+                <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                  Professional
+                </button>
+                <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                  Corporate
+                </button>
+                <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                  Register
+                </button>
+                <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                  Login
+                </button>
+              </div>
+            </div>
+            <div className="public-signup-decision-grid">
+              {publicSignupDecisionCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-signup-decision-footer">
+              <span>
+                <strong>{publicSignupDecisionDesk.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+                <small>Completion proof requires hosted auth and Supabase rows.</small>
+              </span>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-signup-decision-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(publicSignupDecisionDesk, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export decision
+              </button>
+            </div>
           </div>
           <input id="public-auth-email" onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
           <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />

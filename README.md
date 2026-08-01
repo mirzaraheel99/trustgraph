@@ -91,6 +91,8 @@ The public auth surface is intentionally split into a contained professional/cor
 
 The public login and registration page now keeps proof receipts out of the main form path: users first choose Professional or Corporate, pick Login or Register, complete the required fields, and use the visible recovery controls if hosted verification or password reset needs repair.
 
+The public login/register card now includes a signup decision desk directly above the email and password fields. It keeps selected portal, login/register mode, price, first database write, required fields, recovery actions, and no-preview-data proof visible at the moment the user submits.
+
 The signed-in dashboard front door now exposes clickable cards for Professional Passport, Corporate Verify, Company Admin, Account and recovery, Pricing, Database proof, and Server sync. Pricing opens the billing setup panel, Database proof scrolls to the live-row proof cockpit, and Server sync exports the GitHub-to-VPS release packet.
 
 Corporate Verify now keeps the visible operator path focused on the quick start, progress strip, request form, request list, user-data proof, and scoped directory. Duplicate wizard/command/blocker panels remain in the bundle for proof exports and tests, but they do not crowd the working reviewer flow.
