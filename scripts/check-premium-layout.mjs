@@ -462,6 +462,9 @@ assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.include
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
 assert(css.includes(".evidence-setup-command") && css.includes(".evidence-setup-command-grid") && css.includes(".evidence-setup-command-actions"), "evidence setup command must be styled and bounded.");
 assert(css.includes(".evidence-access-desk") && css.includes(".evidence-access-desk-grid") && css.includes(".evidence-access-desk-proof"), "evidence access desk must be styled and bounded.");
+assert(app.includes('aria-label="Evidence action queue"') && app.includes("evidence_action_queue"), "Passport evidence must expose one action queue for metadata, signed preview, signed download, manifest export, and packet export before the evidence table.");
+assert(app.includes("evidence_action_queue_routes_add_metadata_preview_download_manifest_export_packet_export_and_requires_short_lived_signed_urls_raw_private_file_exclusion_and_no_preview_data"), "evidence action queue must require short-lived signed URLs, raw private file exclusion, and no preview data.");
+assert(css.includes(".evidence-action-queue") && css.includes(".evidence-action-queue-grid") && css.includes(".evidence-action-queue-proof"), "evidence action queue must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");
 assert(css.includes(".signed-evidence-access-audit") && css.includes(".signed-evidence-access-grid"), "signed evidence access audit receipt must be styled and bounded.");
 assert(css.includes(".data-export-package-receipt") && css.includes(".data-export-package-grid"), "data export package receipt must be styled and bounded.");

@@ -714,8 +714,64 @@ function RecordDetail({
     accepted_when:
       "signed_evidence_acceptance_requires_metadata_private_file_short_lived_signed_link_manifest_export_and_raw_private_file_exclusion"
   };
+  const evidenceActionQueue = {
+    mode: "evidence_action_queue",
+    status: signedEvidenceAcceptanceReady ? "ready_for_evidence_review" : "evidence_actions_open",
+    record_id: record.id,
+    visible_documents: filteredEvidenceDocuments.length,
+    file_backed_documents: fileBackedEvidenceCount,
+    metadata_only_documents: metadataOnlyEvidenceCount,
+    current_filter: evidenceStatusFilter,
+    last_signed_link: signedEvidenceAccessAuditReceipt.last_signed_link,
+    next_action: signedEvidenceAcceptanceCheckpoint.next_action,
+    raw_private_files_exported: false,
+    preview_data_accepted: false,
+    accepted_when:
+      "evidence_action_queue_routes_add_metadata_preview_download_manifest_export_packet_export_and_requires_short_lived_signed_urls_raw_private_file_exclusion_and_no_preview_data"
+  };
+  const evidenceActionQueueCards = [
+    {
+      label: "Add metadata",
+      value: evidenceDocuments.length ? `${evidenceDocuments.length} rows` : "Start",
+      detail: "Create evidence metadata before file access proof.",
+      enabled: true,
+      action: "form" as const
+    },
+    {
+      label: "Preview",
+      value: firstFileBackedEvidence ? "Ready" : "No file",
+      detail: "Open a five-minute signed preview URL.",
+      enabled: Boolean(firstFileBackedEvidence),
+      action: "preview" as const
+    },
+    {
+      label: "Download",
+      value: firstFileBackedEvidence ? "Ready" : "No file",
+      detail: "Open a two-minute signed download URL.",
+      enabled: Boolean(firstFileBackedEvidence),
+      action: "download" as const
+    },
+    {
+      label: "Manifest",
+      value: filteredEvidenceDocuments.length ? `${filteredEvidenceDocuments.length}` : "Empty",
+      detail: "Export metadata-only CSV.",
+      enabled: filteredEvidenceDocuments.length > 0,
+      action: "manifest" as const
+    },
+    {
+      label: "Packet",
+      value: lastEvidenceLink ? "Signed proof" : "No link",
+      detail: "Export policy, counts, and last signed-link proof.",
+      enabled: filteredEvidenceDocuments.length > 0,
+      action: "packet" as const
+    }
+  ];
   const signedEvidenceAccessPacket = {
     ...evidenceAccessPacket,
+    evidence_action_queue: {
+      ...evidenceActionQueue,
+      actions: evidenceActionQueueCards.map(({ label, value, detail, enabled }) => ({ label, value, detail, enabled }))
+    },
     signed_evidence_acceptance_checkpoint: {
       ...signedEvidenceAcceptanceCheckpoint,
       steps: signedEvidenceAcceptanceSteps.map(({ label, value, ready }) => ({ label, value, ready }))
@@ -1161,6 +1217,71 @@ function RecordDetail({
         ) : null}
         {evidenceDocuments.length ? (
           <>
+            <div className="evidence-action-queue" aria-label="Evidence action queue">
+              <div className="evidence-action-queue-header">
+                <div>
+                  <span className={`status-chip ${signedEvidenceAcceptanceReady ? "success" : "warning"}`}>Evidence action queue</span>
+                  <strong>{signedEvidenceAcceptanceReady ? "Evidence preview and download proof is ready" : `Next: ${evidenceActionQueue.next_action}`}</strong>
+                  <small>{evidenceActionQueue.accepted_when}</small>
+                </div>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(
+                      `trustgraph-evidence-action-queue-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`,
+                      JSON.stringify({ ...evidenceActionQueue, actions: evidenceActionQueueCards }, null, 2),
+                      "application/json"
+                    )
+                  }
+                  type="button"
+                >
+                  Export queue
+                </button>
+              </div>
+              <div className="evidence-action-queue-grid">
+                {evidenceActionQueueCards.map((card) => (
+                  <button
+                    className={card.enabled ? "ready" : "locked"}
+                    disabled={!card.enabled || ((card.action === "preview" || card.action === "download") && openingEvidenceId === firstFileBackedEvidence?.id)}
+                    key={card.label}
+                    onClick={() => {
+                      if (card.action === "form") {
+                        document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" });
+                        return;
+                      }
+                      if (card.action === "preview" || card.action === "download") {
+                        if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, card.action);
+                        return;
+                      }
+                      if (card.action === "manifest") {
+                        downloadTextFile(evidenceManifestName, evidenceDocumentsToCsv(filteredEvidenceDocuments), "text/csv");
+                        return;
+                      }
+                      downloadTextFile(evidenceAccessPacketName, JSON.stringify(signedEvidenceAccessPacket, null, 2), "application/json");
+                    }}
+                    type="button"
+                  >
+                    <span>{card.label}</span>
+                    <strong>{card.value}</strong>
+                    <small>{card.detail}</small>
+                  </button>
+                ))}
+              </div>
+              <div className="evidence-action-queue-proof">
+                <span>
+                  <small>Last signed link</small>
+                  <strong>{lastEvidenceLink ? lastEvidenceLink.mode : "None"}</strong>
+                </span>
+                <span>
+                  <small>Raw private files</small>
+                  <strong>{evidenceActionQueue.raw_private_files_exported ? "Exported" : "Excluded"}</strong>
+                </span>
+                <span>
+                  <small>Preview data</small>
+                  <strong>{evidenceActionQueue.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+                </span>
+              </div>
+            </div>
             <div className="evidence-controls">
               <input
                 onChange={(event) => setEvidenceQuery(event.target.value)}

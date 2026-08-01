@@ -18793,6 +18793,96 @@ p {
   white-space: normal;
 }
 
+.evidence-action-queue {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(13px, 1.7vw, 18px);
+  overflow: clip;
+  border: 1px solid rgba(121, 190, 255, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(17, 38, 53, 0.94), rgba(8, 20, 18, 0.92)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.evidence-action-queue-header,
+.evidence-action-queue-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(132px, auto);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.evidence-action-queue-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.evidence-action-queue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.evidence-action-queue-grid button,
+.evidence-action-queue-proof span {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  min-height: 96px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+  white-space: normal;
+}
+
+.evidence-action-queue-grid button.ready {
+  border-color: rgba(108, 240, 195, 0.34);
+  background: rgba(28, 171, 145, 0.12);
+}
+
+.evidence-action-queue-grid button.locked {
+  opacity: 0.68;
+}
+
+.evidence-action-queue strong,
+.evidence-action-queue small,
+.evidence-action-queue span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.evidence-action-queue-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 2.1vw, 30px);
+  line-height: 1.06;
+}
+
+.evidence-action-queue-grid span,
+.evidence-action-queue-proof small {
+  color: #8af7d8;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.evidence-action-queue-grid strong,
+.evidence-action-queue-proof strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.12;
+}
+
 .evidence-preview-download-ledger {
   display: grid;
   gap: 10px;
@@ -19530,6 +19620,9 @@ p {
   .corporate-attestation-completion-proof,
   .corporate-access-review-grid,
   .corporate-visibility-grid,
+  .evidence-action-queue-header,
+  .evidence-action-queue-grid,
+  .evidence-action-queue-proof,
   .corporate-verify-first-use-grid,
   .corporate-verify-first-use-counts,
   .metrics-grid,
