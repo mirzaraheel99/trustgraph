@@ -144,6 +144,8 @@ assert(app.includes('aria-label="Public server sync receipt"'), "public website 
 assert(app.includes('aria-label="Public saved build verification"'), "public website must expose GitHub, Pages, VPS stamp, and VFIX boundary proof before login.");
 assert(app.includes('aria-label="Public hosted build source contract"') && app.includes("public_hosted_build_source_contract"), "public website must expose GitHub as source of truth, Pages as green bundle, VPS release stamp as server proof, and VFIX as a protected route before login.");
 assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readiness must expose hosted corporate retest checklist.");
+assert(app.includes('aria-label="Evidence setup command"') && app.includes("evidence_setup_command"), "evidence preview/download must expose a first-use setup command before the evidence list.");
+assert(app.includes("evidence_setup_command_requires_metadata_private_file_signed_preview_or_download_manifest_export_and_raw_file_exclusion"), "evidence setup command must require metadata, private file, signed access, manifest export, and raw-file exclusion.");
 assert(app.includes('aria-label="Evidence access desk"') && app.includes("evidence_access_desk"), "evidence preview/download must expose one clear desk for preview, download, manifest, packet, and signed-link proof.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
 assert(app.includes('aria-label="Signed evidence access audit receipt"'), "evidence preview/download must expose signed access audit receipt state.");
@@ -369,6 +371,7 @@ assert(css.includes(".claim-trust-taxonomy") && css.includes(".claim-trust-taxon
 assert(css.includes(".regulated-employment-boundary") && css.includes(".regulated-employment-metrics"), "regulated employment boundary must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
+assert(css.includes(".evidence-setup-command") && css.includes(".evidence-setup-command-grid") && css.includes(".evidence-setup-command-actions"), "evidence setup command must be styled and bounded.");
 assert(css.includes(".evidence-access-desk") && css.includes(".evidence-access-desk-grid") && css.includes(".evidence-access-desk-proof"), "evidence access desk must be styled and bounded.");
 assert(premiumRepair.includes(".last-signed-evidence-link"), "last signed evidence link proof must be bounded in the premium shell.");
 assert(css.includes(".signed-evidence-access-audit") && css.includes(".signed-evidence-access-grid"), "signed evidence access audit receipt must be styled and bounded.");

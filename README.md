@@ -147,6 +147,8 @@ The public login/register card now starts with a Public portal route shell. Prof
 
 Billing now starts with a Pricing activation workbench. Corporate plan, seats, projected monthly price, live Supabase subscription ledger, quote receipt, billing decision, Stripe gate, and export are visible before deeper billing receipts.
 
+Professional Passport evidence now starts with an Evidence setup command. Metadata, private file attachment, signed preview/download proof, manifest export, and raw-file exclusion are visible before the document list, so the evidence path works even when the selected record has no files yet.
+
 The public auth form also starts with a Registration route planner that keeps Professional versus Corporate, Register versus Login, price, first database write, next dashboard, recovery, and required proof in one compact operator view before the form fields.
 
 The public auth form now includes a registration completion handoff after submit. Professional completion is tied to `passport_initialized`; Corporate completion is tied to `workspace_created`, and both show hosted verification, landing dashboard, next action, and preview-data rejection.

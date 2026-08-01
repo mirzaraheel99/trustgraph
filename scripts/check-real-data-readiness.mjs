@@ -76,6 +76,12 @@ const appRequirements = [
     "signed_evidence_acceptance_requires_metadata_private_file_short_lived_signed_link_manifest_export_and_raw_private_file_exclusion",
     "signed evidence acceptance rule"
   ],
+  ["Evidence setup command", "evidence setup command label"],
+  ["evidence_setup_command", "evidence setup command packet mode"],
+  [
+    "evidence_setup_command_requires_metadata_private_file_signed_preview_or_download_manifest_export_and_raw_file_exclusion",
+    "evidence setup command rule"
+  ],
   ["Persisted corporate database acceptance checkpoint", "persisted corporate database acceptance label"],
   ["persisted_corporate_database_acceptance_checkpoint", "persisted corporate database acceptance packet mode"],
   [

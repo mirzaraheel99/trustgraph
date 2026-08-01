@@ -721,6 +721,25 @@ function RecordDetail({
       steps: signedEvidenceAcceptanceSteps.map(({ label, value, ready }) => ({ label, value, ready }))
     }
   };
+  const evidenceSetupCommand = {
+    mode: "evidence_setup_command",
+    record_id: record.id,
+    status: signedEvidenceAcceptanceReady ? "ready_for_private_evidence_review" : "needs_evidence_setup",
+    next_action: signedEvidenceAcceptanceCheckpoint.next_action,
+    metadata_rows: evidenceDocuments.length,
+    private_files: fileBackedEvidenceCount,
+    signed_link_opened: Boolean(lastEvidenceLink),
+    manifest_available: filteredEvidenceDocuments.length > 0,
+    raw_private_files_exported: false,
+    accepted_when:
+      "evidence_setup_command_requires_metadata_private_file_signed_preview_or_download_manifest_export_and_raw_file_exclusion"
+  };
+  const evidenceSetupCommandSteps = [
+    { label: "Metadata", value: evidenceDocuments.length ? `${evidenceDocuments.length}` : "Add", ready: evidenceDocuments.length > 0 },
+    { label: "Private file", value: fileBackedEvidenceCount ? `${fileBackedEvidenceCount}` : "Attach", ready: fileBackedEvidenceCount > 0 },
+    { label: "Signed link", value: lastEvidenceLink ? lastEvidenceLink.mode : "Open", ready: Boolean(lastEvidenceLink) },
+    { label: "Manifest", value: filteredEvidenceDocuments.length ? "Ready" : "Pending", ready: filteredEvidenceDocuments.length > 0 }
+  ];
 
   useEffect(() => {
     setTitle(record.title);
@@ -882,6 +901,59 @@ function RecordDetail({
         </div>
         <p>{record.evidence}</p>
         <small>{record.access}</small>
+        <div className="evidence-setup-command" aria-label="Evidence setup command">
+          <div className="evidence-setup-command-copy">
+            <span className={`status-chip ${signedEvidenceAcceptanceReady ? "success" : "warning"}`}>
+              {signedEvidenceAcceptanceReady ? "Evidence ready" : "Evidence setup"}
+            </span>
+            <strong>
+              {signedEvidenceAcceptanceReady ? "Private evidence proof is ready" : `Next: ${evidenceSetupCommand.next_action}`}
+            </strong>
+            <small>{evidenceSetupCommand.accepted_when}</small>
+          </div>
+          <div className="evidence-setup-command-grid">
+            {evidenceSetupCommandSteps.map((step) => (
+              <article className={step.ready ? "ready" : "needed"} key={step.label}>
+                <span>{step.label}</span>
+                <strong>{step.value}</strong>
+              </article>
+            ))}
+          </div>
+          <div className="evidence-setup-command-actions">
+            <button
+              className="secondary-action"
+              onClick={() => document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" })}
+              type="button"
+            >
+              Add evidence
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+              onClick={() => {
+                if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "preview");
+              }}
+              type="button"
+            >
+              Preview file
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!filteredEvidenceDocuments.length}
+              onClick={() => downloadTextFile(evidenceManifestName, evidenceDocumentsToCsv(filteredEvidenceDocuments), "text/csv")}
+              type="button"
+            >
+              Export manifest
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile(evidenceAccessDeskPacketName, JSON.stringify(evidenceSetupCommand, null, 2), "application/json")}
+              type="button"
+            >
+              Export setup
+            </button>
+          </div>
+        </div>
         {evidenceDocuments.length ? (
           <>
             <div className="evidence-access-desk" aria-label="Evidence access desk">
@@ -1217,7 +1289,7 @@ function RecordDetail({
               </button>
             </div>
           </form>
-          <form className="record-edit-form" onSubmit={submitEvidence}>
+          <form className="record-edit-form" id="evidence-metadata-form" onSubmit={submitEvidence}>
             <div className="mini-heading">
               <FileCheck2 size={16} />
               <strong>Evidence metadata</strong>
