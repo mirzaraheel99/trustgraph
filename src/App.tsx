@@ -20603,6 +20603,72 @@ function PublicSite({
       detail: "Resend, reset, or repair hosted email links from this card."
     }
   ];
+  const publicV1AccessRunway = {
+    mode: "public_v1_access_runway",
+    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
+    selected_price: selectedRegistrationPath.plan,
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing account session opens before new writes.",
+    landing_portal: publicAccountAccessPath.landing_portal,
+    recovery_route: email ? "resend_reset_ready" : "email_required_before_recovery",
+    corporate_database_boundary: "Corporate reviewers request a professional by email and see only approved consent-scoped rows.",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_v1_access_runway_keeps_professional_corporate_register_login_pricing_first_database_write_recovery_scoped_database_boundary_and_server_status_visible_before_credentials"
+  };
+  const publicV1AccessRunwayRoutes = [
+    {
+      label: "Professional",
+      value: mode === "signup" && portal === "professional" ? "Register selected" : "User Passport",
+      detail: "Free pilot for personal records, evidence, references, consent, and Access Grants.",
+      active: portal === "professional",
+      action: () => setPortal("professional")
+    },
+    {
+      label: "Corporate",
+      value: mode === "signup" && portal === "corporate" ? "Register selected" : "Company Verify",
+      detail: "$149 pilot ledger. Request access by email; no open user database browse.",
+      active: portal === "corporate",
+      action: () => setPortal("corporate")
+    },
+    {
+      label: "Register",
+      value: mode === "signup" ? "Selected" : "Create account",
+      detail: "Creates Professional Passport or Corporate workspace setup after hosted verification.",
+      active: mode === "signup",
+      action: () => setMode("signup")
+    },
+    {
+      label: "Login",
+      value: mode === "signin" ? "Selected" : "Existing account",
+      detail: "Opens the selected portal with live Supabase rows after verified sign-in.",
+      active: mode === "signin",
+      action: () => setMode("signin")
+    }
+  ];
+  const publicV1AccessRunwayFacts = [
+    {
+      label: "Price",
+      value: publicV1AccessRunway.selected_price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First database step",
+      value: publicV1AccessRunway.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Landing",
+      value: publicV1AccessRunway.landing_portal,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Recovery",
+      value: email ? "Ready" : "Enter email",
+      detail: "Resend verification, reset password, or repair localhost links from the hosted app."
+    }
+  ];
+  const publicV1AccessRunwayPacketName = `trustgraph-public-v1-access-runway-${new Date().toISOString().slice(0, 10)}.json`;
   const publicEntrySequence = {
     mode: "public_entry_sequence",
     selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
@@ -22525,6 +22591,56 @@ function PublicSite({
               >
                 Export command
               </button>
+            </div>
+          </div>
+          <div className="public-v1-access-runway" aria-label="Public V1 access runway">
+            <div className="public-v1-access-runway-header">
+              <div>
+                <span className="status-chip success">V1 access runway</span>
+                <strong>{publicV1AccessRunway.selected_route}: one clear path to the right portal</strong>
+                <small>
+                  Start here, then use the credential fields below. Professional users manage their own Passport. Corporate
+                  accounts request approved scoped rows only.
+                </small>
+              </div>
+              <div className="public-v1-access-runway-actions">
+                <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                  Continue
+                </button>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(publicV1AccessRunwayPacketName, JSON.stringify(publicV1AccessRunway, null, 2), "application/json")
+                  }
+                  type="button"
+                >
+                  <Download size={16} />
+                  Export path
+                </button>
+              </div>
+            </div>
+            <div className="public-v1-access-runway-routes">
+              {publicV1AccessRunwayRoutes.map((item) => (
+                <button className={item.active ? "active" : ""} key={item.label} onClick={item.action} type="button">
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-v1-access-runway-facts">
+              {publicV1AccessRunwayFacts.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="public-v1-access-runway-proof">
+              <span>Server: {publicV1AccessRunway.server_status.replaceAll("_", " ")}</span>
+              <span>Corporate database: scoped approval only</span>
+              <span>{publicV1AccessRunway.accepted_when}</span>
             </div>
           </div>
           <div className="portal-access-cockpit" aria-label="Portal access cockpit">
