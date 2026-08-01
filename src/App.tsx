@@ -28334,6 +28334,87 @@ function App() {
       onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
     }
   ];
+  const portalLaunchMatrix = {
+    mode: "portal_launch_matrix",
+    current_portal: workspace.label,
+    account: authSession ? authSession.user.email : "hosted_login_required",
+    primary_path: authSession ? nextV1PortalLane.label : "Login",
+    corporate_database_boundary: "corporate_reviewers_request_access_then_review_only_approved_consent_scoped_user_rows",
+    pricing_boundary: "professional_free_pilot_corporate_verify_149_pilot_stripe_checkout_human_gated",
+    recovery_boundary: "account_recovery_logout_and_hosted_link_repair_are_visible_from_first_workspace_screen",
+    server_boundary: "github_main_is_source_vps_requires_release_stamp_json_before_server_testing",
+    preview_data_accepted: false,
+    accepted_when:
+      "portal_launch_matrix_keeps_professional_corporate_verify_company_admin_pricing_account_logout_database_proof_and_server_sync_visible_bounded_mobile_stacked_and_no_preview_data"
+  };
+  const portalLaunchMatrixRows = [
+    {
+      label: "Professional user",
+      value: authSession ? `${livePassportRecords.length} records` : "Login first",
+      detail: "Personal Passport, evidence, references, consent, and sharing.",
+      action: authSession ? "Open Passport" : "Login",
+      ready: Boolean(authSession && livePassportRecords.length),
+      icon: Fingerprint,
+      onClick: () => (authSession ? openWorkspaceOrSetup("passport") : openAuthControls())
+    },
+    {
+      label: "Corporate reviewer",
+      value: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Request access",
+      detail: "Approved Corporate Verify access only; no open user browsing.",
+      action: "Open Verify",
+      ready: Boolean(sharedVerifyRecords.length),
+      icon: BriefcaseBusiness,
+      onClick: () => openWorkspaceOrSetup("verify")
+    },
+    {
+      label: "Company admin",
+      value: hasLiveCorporateContext ? activeMembership.role : "Setup needed",
+      detail: "Organization, RBAC, team invitations, billing, and rollout.",
+      action: "Setup company",
+      ready: hasLiveCorporateContext,
+      icon: Users,
+      onClick: openCorporateControls
+    },
+    {
+      label: "Pricing",
+      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "$149 pilot",
+      detail: "Professional free pilot and Corporate Verify pilot before Stripe.",
+      action: "Review pricing",
+      ready: Boolean(subscriptionPlans.length),
+      icon: BadgeCheck,
+      onClick: () => {
+        setSetupView("billing");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Account",
+      value: authSession ? "Recovery ready" : "Login desk",
+      detail: "Login, register, reset password, hosted verification repair, logout.",
+      action: authSession ? "Account tools" : "Login / register",
+      ready: Boolean(authSession),
+      icon: KeyRound,
+      onClick: openAuthControls
+    },
+    {
+      label: "Database proof",
+      value: liveDatabaseContract.accepted ? "Accepted" : "Live rows needed",
+      detail: "Supabase row groups, scoped exports, receipts, and no preview data.",
+      action: "Check proof",
+      ready: liveDatabaseContract.accepted,
+      icon: Database,
+      onClick: () => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Server sync",
+      value: serverSyncMonitor.status === "synced" ? "VPS synced" : "Pull needed",
+      detail: "GitHub source, VPS release stamp, and VFIX protection.",
+      action: "Export server",
+      ready: serverSyncMonitor.status === "synced",
+      icon: Network,
+      onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
+    }
+  ];
   const v1PortalOperatingCenter = {
     mode: "v1_portal_operating_center",
     current_portal: workspace.label,
@@ -28548,6 +28629,88 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="portal-launch-matrix" aria-label="Portal launch matrix">
+          <div className="portal-launch-matrix-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Portal launch matrix</span>
+              <strong>{authSession ? `Start with ${portalLaunchMatrix.primary_path}` : "Choose login or registration before live database work"}</strong>
+              <small>
+                One first-screen map for Professional users, Corporate reviewers, Company Admin, pricing, account recovery/logout, database proof, and server sync.
+              </small>
+            </div>
+            <div className="portal-launch-matrix-next">
+              <span>
+                <small>Current account</small>
+                <strong>{portalLaunchMatrix.account.replaceAll("_", " ")}</strong>
+              </span>
+              <button className="primary-action" onClick={authSession ? nextV1PortalLane.onClick : openAuthControls} type="button">
+                {authSession ? nextV1PortalLane.action : "Login / register"}
+              </button>
+              {authSession ? (
+                <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              ) : null}
+            </div>
+          </div>
+          <div className="portal-launch-matrix-grid">
+            {portalLaunchMatrixRows.map((row) => {
+              const Icon = row.icon;
+              return (
+                <button className={`${row.ready ? "ready" : "next"}`} key={row.label} onClick={row.onClick} type="button">
+                  <span>
+                    <Icon size={18} />
+                    {row.label}
+                  </span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                  <em>{row.action}</em>
+                </button>
+              );
+            })}
+          </div>
+          <div className="portal-launch-matrix-proof">
+            <span>
+              <small>Corporate boundary</small>
+              <strong>No open user browse</strong>
+            </span>
+            <span>
+              <small>Pricing</small>
+              <strong>Free user / $149 corporate pilot</strong>
+            </span>
+            <span>
+              <small>Server</small>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{portalLaunchMatrix.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-portal-launch-matrix-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      ...portalLaunchMatrix,
+                      rows: portalLaunchMatrixRows.map(({ icon: _icon, onClick: _onClick, ...row }) => row)
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export launch proof
+            </button>
+          </div>
+        </section>
 
         <section className="portal-daily-command-center" aria-label="Portal daily command center">
           <div className="portal-daily-command-copy">

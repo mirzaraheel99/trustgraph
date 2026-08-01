@@ -31183,6 +31183,7 @@ body {
 .workspace,
 .workspace-main,
 .workspace-admin-grid,
+.portal-launch-matrix,
 .portal-daily-command-center,
 .premium-launch-console,
 .portal-route-shell,
@@ -31206,6 +31207,8 @@ body {
 }
 
 @media (max-width: 820px) {
+  .portal-launch-matrix-header,
+  .portal-launch-matrix-proof,
   .portal-daily-command-copy,
   .portal-daily-command-next,
   .portal-daily-command-grid,
@@ -31219,6 +31222,8 @@ body {
   }
 
   .portal-daily-command-next button,
+  .portal-launch-matrix-next button,
+  .portal-launch-matrix-proof button,
   .portal-daily-command-proof button,
   .live-data-loading-actions button,
   .vps-save-handoff-header button {
@@ -31261,6 +31266,7 @@ body {
 .public-auth-card > *,
 .corporate-directory-panel > *,
 .premium-launch-console > *,
+.portal-launch-matrix > *,
 .portal-route-shell > *,
 .setup-center > * {
   min-width: 0;
@@ -31312,6 +31318,7 @@ body {
 
 @media (max-width: 900px) {
   .topbar,
+  .portal-launch-matrix,
   .premium-launch-console,
   .portal-route-shell,
   .setup-center,
@@ -31510,6 +31517,141 @@ body {
   order: -30;
 }
 
+.portal-launch-matrix {
+  order: -35;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(14px, 1.8vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(133, 244, 218, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(76, 219, 199, 0.12), rgba(127, 165, 248, 0.075) 48%, rgba(8, 16, 18, 0.94)),
+    rgba(10, 23, 25, 0.96);
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.22);
+}
+
+.portal-launch-matrix-header,
+.portal-launch-matrix-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.portal-launch-matrix-header > div:first-child,
+.portal-launch-matrix-next {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.portal-launch-matrix-header strong {
+  max-width: 38ch;
+  color: var(--text);
+  font-size: clamp(22px, 2vw, 32px);
+  line-height: 1.05;
+}
+
+.portal-launch-matrix strong,
+.portal-launch-matrix small,
+.portal-launch-matrix span,
+.portal-launch-matrix em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.portal-launch-matrix small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.portal-launch-matrix-next span,
+.portal-launch-matrix-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.portal-launch-matrix-next small,
+.portal-launch-matrix-proof small {
+  color: #84f7dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.portal-launch-matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.portal-launch-matrix-grid button {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  min-height: 122px;
+  padding: 12px;
+  overflow: hidden;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+  white-space: normal;
+}
+
+.portal-launch-matrix-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.35);
+  background: rgba(95, 240, 201, 0.085);
+}
+
+.portal-launch-matrix-grid button.next {
+  border-color: rgba(246, 194, 100, 0.26);
+}
+
+.portal-launch-matrix-grid span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #84f7dc;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.portal-launch-matrix-grid strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.1;
+}
+
+.portal-launch-matrix-grid em {
+  color: var(--green);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.portal-launch-matrix-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+}
+
+.portal-launch-matrix-proof button,
+.portal-launch-matrix-next button {
+  width: 100%;
+}
+
 .portal-route-shell-header strong {
   max-width: 30ch;
   font-size: clamp(22px, 1.9vw, 30px);
@@ -31556,6 +31698,8 @@ body {
 
 @media (max-width: 1180px) {
   .topbar,
+  .portal-launch-matrix-header,
+  .portal-launch-matrix-proof,
   .portal-route-shell-header,
   .portal-route-shell-footer,
   .portal-daily-command-next,
@@ -31567,6 +31711,7 @@ body {
 
   .topbar-actions,
   .session-command-bar,
+  .portal-launch-matrix-grid,
   .portal-route-shell-actions {
     justify-content: flex-start;
   }
@@ -31588,6 +31733,8 @@ body {
   }
 
   .session-command-bar button,
+  .portal-launch-matrix-next button,
+  .portal-launch-matrix-proof button,
   .workspace-route-strip button,
   .workspace-flow-strip button,
   .topbar-actions button,
@@ -31596,6 +31743,7 @@ body {
     width: 100%;
   }
 
+  .portal-launch-matrix-grid,
   .portal-route-tabs,
   .portal-route-shell-status,
   .portal-daily-command-grid,
