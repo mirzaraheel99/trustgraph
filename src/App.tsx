@@ -11191,6 +11191,7 @@ function TeamInvitationsPanel({
   const [invitationStatusFilter, setInvitationStatusFilter] = useState<"all" | "pending" | "accepted" | "cancelled" | "expired">("all");
   const pendingCount = invitations.filter((invitation) => invitation.status === "pending").length;
   const acceptedCount = invitations.filter((invitation) => invitation.status === "accepted").length;
+  const activeInvitationCount = invitations.filter((invitation) => !["cancelled", "expired"].includes(invitation.status)).length;
   const inviteOperatorSteps = [
     {
       label: "Invite reviewer",
@@ -11214,6 +11215,50 @@ function TeamInvitationsPanel({
     return matchesStatus && haystack.includes(invitationQuery.trim().toLowerCase());
   });
   const exportName = `trustgraph-team-invitations-${new Date().toISOString().slice(0, 10)}.csv`;
+  const teamLaunchBoard = {
+    mode: "team_launch_board",
+    status: disabled ? "corporate_admin_required" : activeInvitationCount ? "team_path_started" : "invite_first_reviewer",
+    pending_invitations: pendingCount,
+    accepted_invitations: acceptedCount,
+    active_invitation_count: activeInvitationCount,
+    filtered_invitation_count: filteredInvitations.length,
+    selected_role: role,
+    next_action: disabled
+      ? "Switch into corporate admin role"
+      : !pendingCount && !acceptedCount
+        ? "Invite the first reviewer"
+        : pendingCount
+          ? "Ask invitee to accept the pending invitation"
+          : "Review accepted members in Team members",
+    accepted_when:
+      "team_launch_board_shows_corporate_admin_role_invite_accept_roster_review_filtered_export_and_database_handoff_before_dense_invitation_rows"
+  };
+  const teamLaunchBoardCards = [
+    {
+      label: "Admin access",
+      value: disabled ? "Needed" : "Ready",
+      detail: disabled ? "Switch to employer or staffing admin before inviting." : "This role can create reviewer invitations.",
+      ready: !disabled
+    },
+    {
+      label: "Pending",
+      value: `${pendingCount}`,
+      detail: pendingCount ? "Waiting for invitee acceptance." : "No pending invite handoff.",
+      ready: pendingCount > 0
+    },
+    {
+      label: "Accepted",
+      value: `${acceptedCount}`,
+      detail: acceptedCount ? "Accepted invitations should appear as memberships." : "Accepted users appear in Team members.",
+      ready: acceptedCount > 0
+    },
+    {
+      label: "Export",
+      value: filteredInvitations.length ? "Ready" : "No rows",
+      detail: "Export the filtered invitation database handoff.",
+      ready: filteredInvitations.length > 0
+    }
+  ];
 
   useEffect(() => {
     setStatus(message);
@@ -11249,6 +11294,56 @@ function TeamInvitationsPanel({
         <UserPlus size={16} />
         <strong>Team invitations</strong>
       </div>
+      <div className="team-launch-board" aria-label="Team launch board">
+        <div className="team-launch-board-header">
+          <div>
+            <span className={`status-chip ${disabled ? "warning" : activeInvitationCount ? "success" : "neutral"}`}>Team launch board</span>
+            <strong>{teamLaunchBoard.next_action}</strong>
+            <small>{teamLaunchBoard.accepted_when}</small>
+          </div>
+          <span className="status-chip neutral">{role.replace(/_/g, " ")}</span>
+        </div>
+        <div className="team-launch-board-grid">
+          {teamLaunchBoardCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="team-launch-board-actions">
+          <button
+            className="primary-action"
+            disabled={disabled || busy}
+            onClick={() => document.getElementById("team-invite-email")?.focus()}
+            type="button"
+          >
+            Invite reviewer
+          </button>
+          <button
+            className="secondary-action"
+            disabled={!filteredInvitations.length}
+            onClick={() => downloadTextFile(exportName, teamInvitationsToCsv(filteredInvitations), "text/csv")}
+            type="button"
+          >
+            Export filtered invites
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-team-launch-board-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(teamLaunchBoard, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export team board
+          </button>
+        </div>
+      </div>
       <div className="team-summary-grid">
         <div>
           <span>Pending</span>
@@ -11273,7 +11368,7 @@ function TeamInvitationsPanel({
       <form className="team-form" onSubmit={submit}>
         <label>
           <span>Invitee email</span>
-          <input disabled={disabled || busy} onChange={(event) => setEmail(event.target.value)} placeholder="reviewer@company.com" type="email" value={email} />
+          <input id="team-invite-email" disabled={disabled || busy} onChange={(event) => setEmail(event.target.value)} placeholder="reviewer@company.com" type="email" value={email} />
         </label>
         <label>
           <span>Portal role</span>

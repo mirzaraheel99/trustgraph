@@ -117,6 +117,8 @@ The public pricing section now includes a Pricing and access summary before the 
 
 Billing now starts with a Billing launch board that keeps the corporate pilot plan, selected seats, live Supabase subscription ledger, pricing quote receipt, payment decision receipt, and Stripe-off gate visible before deeper billing evidence panels.
 
+Corporate team setup now starts with a Team launch board that keeps admin readiness, first reviewer invite, pending acceptance, accepted roster review, filtered invitation export, and database handoff visible before the dense invitation table.
+
 Corporate Verify now includes a request-to-row rail before directory filters, showing the reviewer exactly where they are across request, professional approval, scoped rows, attestation, visibility snapshot, and metadata-only export.
 
 Corporate Verify’s database action cockpit now includes direct controls for requesting access, reviewing scoped rows, saving the visibility snapshot, recording the database access receipt, and exporting the scoped metadata packet before reviewers reach dense filters.

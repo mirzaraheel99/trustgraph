@@ -5439,6 +5439,101 @@ p,
     rgba(255, 255, 255, 0.025);
 }
 
+.team-launch-board {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(95, 240, 201, 0.07), rgba(134, 174, 246, 0.035)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.team-launch-board-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.team-launch-board-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.team-launch-board strong,
+.team-launch-board small,
+.team-launch-board span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.team-launch-board-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.14;
+}
+
+.team-launch-board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 8px;
+}
+
+.team-launch-board-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.team-launch-board-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.25);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.team-launch-board-grid article.next {
+  border-color: rgba(134, 174, 246, 0.22);
+  background: rgba(134, 174, 246, 0.045);
+}
+
+.team-launch-board-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.team-launch-board-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.team-launch-board-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.32;
+}
+
+.team-launch-board-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.team-launch-board-actions button {
+  min-width: 0;
+  justify-content: center;
+  white-space: normal;
+}
+
 .team-form,
 .team-list {
   display: grid;
@@ -16619,6 +16714,9 @@ p {
   .working-database-grid,
   .team-operations-cockpit,
   .team-operations-grid,
+  .team-launch-board-header,
+  .team-launch-board-grid,
+  .team-launch-board-actions,
   .team-invite-path,
   .team-controls,
   .team-summary-grid,
@@ -17540,6 +17638,7 @@ p {
 
 .account-admin-row,
 .team-controls,
+.team-launch-board-actions,
 .directory-controls,
 .audit-controls,
 .evidence-controls,

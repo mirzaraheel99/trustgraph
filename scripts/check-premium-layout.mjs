@@ -101,6 +101,7 @@ assert(app.includes('aria-label="Pricing decision board"'), "billing must expose
 assert(app.includes('aria-label="Pricing choice rail"') && app.includes("pricing_choice_rail"), "billing must expose a visible pricing choice rail before billing receipts.");
 assert(app.includes('aria-label="Billing architecture decision database receipt"'), "billing must expose a persisted billing architecture decision receipt.");
 assert(app.includes('aria-label="Billing activation receipt"'), "billing must expose a live ledger activation receipt.");
+assert(app.includes('aria-label="Team launch board"') && app.includes("team_launch_board"), "team invitations must expose a clear launch board for admin access, invite, accept, roster review, and export.");
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
 assert(app.includes('aria-label="Public server sync receipt"'), "public website must expose saved-build status before login.");
 assert(app.includes('aria-label="Public saved build verification"'), "public website must expose GitHub, Pages, VPS stamp, and VFIX boundary proof before login.");
@@ -297,6 +298,7 @@ assert(app.includes('aria-label="Auth recovery database receipt"'), "public auth
 assert(css.includes(".auth-recovery-database-receipt") && css.includes(".auth-recovery-database-grid"), "auth recovery database receipt must be styled and bounded.");
 assert(css.includes(".stripe-checkout-decision") && css.includes(".stripe-checkout-decision-grid") && css.includes(".stripe-checkout-decision-actions"), "Stripe checkout decision receipt must be styled and bounded.");
 assert(css.includes(".billing-launch-board") && css.includes(".billing-launch-board-grid") && css.includes(".billing-launch-board-actions"), "billing launch board must be styled and bounded.");
+assert(css.includes(".team-launch-board") && css.includes(".team-launch-board-grid") && css.includes(".team-launch-board-actions"), "team launch board must be styled and bounded.");
 assert(css.includes(".pricing-quote-receipt") && css.includes(".pricing-quote-receipt-grid") && css.includes(".pricing-quote-receipt-actions"), "pricing quote receipt must be styled and bounded.");
 assert(css.includes(".pricing-decision-board") && css.includes(".pricing-decision-board-grid") && css.includes(".pricing-decision-board-actions"), "pricing decision board must be styled and bounded.");
 assert(css.includes(".pricing-choice-rail") && css.includes(".pricing-choice-grid") && css.includes(".pricing-choice-actions"), "pricing choice rail must be styled and bounded.");

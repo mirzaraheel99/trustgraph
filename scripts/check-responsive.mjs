@@ -294,6 +294,9 @@ const requiredMobileStacks = [
   ".signed-in-landing-grid",
   ".team-operations-cockpit",
   ".team-operations-grid",
+  ".team-launch-board-header",
+  ".team-launch-board-grid",
+  ".team-launch-board-actions",
   ".team-invite-path",
   ".team-billing-handoff-header",
   ".team-billing-handoff-grid",
@@ -448,7 +451,7 @@ if (!css.includes(".session-command-bar") || !css.includes("width: fit-content")
   throw new Error("Responsive check failed: account/logout controls and workspace routes must stack without horizontal scrolling.");
 }
 
-if (!css.includes(".account-admin-row,\n.team-controls,\n.directory-controls,\n.audit-controls,\n.evidence-controls") || !css.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))")) {
+if (!css.includes(".account-admin-row,\n.team-controls,\n.team-launch-board-actions,\n.directory-controls,\n.audit-controls,\n.evidence-controls") || !css.includes("repeat(auto-fit, minmax(min(100%, 180px), 1fr))")) {
   throw new Error("Responsive check failed: dense corporate/admin forms must auto-fit instead of forcing horizontal overflow.");
 }
 
