@@ -155,6 +155,8 @@ Passport record detail now starts evidence work with an evidence access desk: pr
 
 Evidence preview/download now includes a signed evidence acceptance checkpoint: metadata rows, private file presence, short-lived signed preview/download proof, manifest export, and raw private file exclusion must all be visible before an evidence packet is accepted.
 
+Admin now includes an operations acceptance checkpoint that ties verification cases, data-rights requests, filtered audit exports, release ledger context, Security/RLS runbook proof, and preview-data rejection into one exportable V1 packet.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text

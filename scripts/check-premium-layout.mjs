@@ -125,6 +125,8 @@ assert(app.includes('aria-label="Data export package receipt"'), "Account data r
 assert(app.includes('aria-label="Data export package manifest"'), "Account data rights must expose data export package manifest state.");
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
 assert(app.includes('aria-label="Audit filter receipt"'), "admin audit exports must expose a visible filter receipt.");
+assert(app.includes('aria-label="Admin operations acceptance checkpoint"') && app.includes("admin_operations_acceptance_checkpoint"), "Admin operations must expose one acceptance checkpoint across cases, data rights, audit exports, release ledger, and security runbook.");
+assert(css.includes(".admin-operations-acceptance-checkpoint") && css.includes(".admin-operations-acceptance-grid") && css.includes(".admin-operations-acceptance-proof"), "Admin operations acceptance checkpoint must be styled and bounded.");
 assert(app.includes('aria-label="Regulated employment boundary packet"'), "Admin operations must expose background-check and adverse-action legal gating.");
 assert(app.includes('aria-label="V1 security RLS review checklist receipt"'), "security review must expose a V1 security/RLS checklist receipt.");
 assert(app.includes('aria-label="Security RLS database receipt"'), "security review must expose persisted security/RLS database receipt proof.");

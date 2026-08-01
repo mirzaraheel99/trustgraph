@@ -14457,6 +14457,130 @@ p {
   white-space: normal;
 }
 
+.admin-operations-acceptance-checkpoint {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.105), transparent 58%),
+    linear-gradient(165deg, rgba(246, 194, 100, 0.075), transparent 76%),
+    rgba(255, 255, 255, 0.032);
+}
+
+.admin-operations-acceptance-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(148px, 0.26fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.admin-operations-acceptance-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.admin-operations-acceptance-header strong,
+.admin-operations-acceptance-header small,
+.admin-operations-acceptance-header span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-operations-acceptance-header strong {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.12;
+}
+
+.admin-operations-acceptance-header small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.admin-operations-acceptance-header button {
+  width: 100%;
+  min-height: 42px;
+  white-space: normal;
+}
+
+.admin-operations-acceptance-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.admin-operations-acceptance-grid article {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.admin-operations-acceptance-grid span,
+.admin-operations-acceptance-grid strong,
+.admin-operations-acceptance-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-operations-acceptance-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.admin-operations-acceptance-grid strong {
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.admin-operations-acceptance-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.admin-operations-acceptance-proof {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(95, 240, 201, 0.16);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.admin-operations-acceptance-proof span,
+.admin-operations-acceptance-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-operations-acceptance-proof span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.admin-operations-acceptance-proof small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .audit-summary-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));

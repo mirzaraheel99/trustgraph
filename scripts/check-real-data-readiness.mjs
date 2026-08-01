@@ -100,6 +100,12 @@ const appRequirements = [
     "billing_pilot_acceptance_requires_live_pricing_catalog_selected_seats_projected_totals_live_subscription_ledger_quote_receipt_payment_decision_stripe_gate_and_no_preview_data",
     "billing pilot acceptance rule"
   ],
+  ["Admin operations acceptance checkpoint", "admin operations acceptance label"],
+  ["admin_operations_acceptance_checkpoint", "admin operations acceptance packet mode"],
+  [
+    "admin_operations_acceptance_requires_verification_cases_data_rights_requests_filtered_audit_exports_release_ledger_security_runbook_and_no_preview_data",
+    "admin operations acceptance rule"
+  ],
   ["prepare_pilot_user_access_request", "pilot-named access request RPC"],
   ["ensure_pilot_employer_reviewer_membership", "pilot-named employer reviewer RPC"],
   ["create_pilot_verification_cases", "pilot-named verification cases RPC"],

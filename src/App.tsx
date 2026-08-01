@@ -7477,6 +7477,7 @@ function OperationsQueuePanel({
 function AuditTrailPanel({
   events,
   corporateAccessReviews,
+  dataRightsRequests,
   evidenceDocuments,
   message
   ,
@@ -7485,6 +7486,7 @@ function AuditTrailPanel({
 }: {
   events: DbAuditEvent[];
   corporateAccessReviews: DbCorporateAccessReview[];
+  dataRightsRequests: DbDataRightsRequest[];
   evidenceDocuments: DbEvidenceDocument[];
   message: string;
   operationsCases: DbVerificationCase[];
@@ -7539,10 +7541,15 @@ function AuditTrailPanel({
   const actorCount = new Set(filteredEvents.map((event) => event.actor_profile_id).filter(Boolean)).size;
   const guardrailCount = filteredEvents.filter((event) => classifySignal(event) === "guardrail").length;
   const highSignalCount = filteredEvents.filter((event) => classifySignal(event) === "high").length;
+  const openOperationsCases = operationsCases.filter((item) => item.status === "open" || item.status === "in_review");
+  const resolvedOperationsCases = operationsCases.filter((item) => item.status === "resolved" || item.status === "restricted" || item.status === "dismissed");
+  const openDataRightsRequests = dataRightsRequests.filter((item) => item.status === "requested" || item.status === "in_review");
+  const completedDataRightsRequests = dataRightsRequests.filter((item) => item.status === "completed" || item.status === "cancelled");
   const exportName = `trustgraph-audit-${new Date().toISOString().slice(0, 10)}.csv`;
   const exportJsonName = `trustgraph-audit-evidence-${new Date().toISOString().slice(0, 10)}.json`;
   const coveragePacketName = `trustgraph-audit-coverage-${new Date().toISOString().slice(0, 10)}.json`;
   const exportReadinessName = `trustgraph-admin-export-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const adminOperationsAcceptanceName = `trustgraph-admin-operations-acceptance-${new Date().toISOString().slice(0, 10)}.json`;
   const activeFilterLabels = [
     actionFilter !== "all" ? `action:${actionFilter}` : null,
     targetFilter !== "all" ? `target:${targetFilter}` : null,
@@ -7602,6 +7609,67 @@ function AuditTrailPanel({
       target_tables: targetTables.length
     }
   };
+  const adminOperationsAcceptanceCheckpoint = {
+    mode: "admin_operations_acceptance_checkpoint",
+    headline:
+      openOperationsCases.length || openDataRightsRequests.length
+        ? "Admin has open items before V1 acceptance"
+        : operationsCases.length || dataRightsRequests.length || filteredEvents.length
+          ? "Admin operations are ready for V1 review export"
+          : "Load live Admin rows before acceptance",
+    accepted_when:
+      "admin_operations_acceptance_requires_verification_cases_data_rights_requests_filtered_audit_exports_release_ledger_security_runbook_and_no_preview_data",
+    next_action:
+      !operationsCases.length && !dataRightsRequests.length
+        ? "Create pilot cases and data-rights rows from a hosted signed-in admin account."
+        : openOperationsCases.length || openDataRightsRequests.length
+          ? "Resolve open verification cases and data-rights requests before pilot handoff."
+          : !filteredEvents.length
+            ? "Clear audit filters or load audit events before exporting acceptance."
+            : "Export Admin operations acceptance for the V1 proof packet.",
+    preview_data_accepted: false,
+    counts: {
+      verification_cases: operationsCases.length,
+      open_verification_cases: openOperationsCases.length,
+      resolved_verification_cases: resolvedOperationsCases.length,
+      data_rights_requests: dataRightsRequests.length,
+      open_data_rights_requests: openDataRightsRequests.length,
+      completed_data_rights_requests: completedDataRightsRequests.length,
+      filtered_audit_events: filteredEvents.length,
+      evidence_metadata_rows: evidenceDocuments.length,
+      corporate_review_attestations: corporateAccessReviews.length,
+      release_ledger_records: schemaMigrationRuns.length
+    },
+    export_boundary: {
+      includes_case_reason_codes: true,
+      includes_data_rights_statuses: true,
+      includes_filtered_audit_receipt: true,
+      includes_release_ledger_context: true,
+      raw_private_evidence_files_excluded: true
+    }
+  };
+  const adminOperationsAcceptanceCards = [
+    {
+      label: "Verification cases",
+      value: `${resolvedOperationsCases.length}/${operationsCases.length}`,
+      detail: openOperationsCases.length ? `${openOperationsCases.length} open cases need a decision` : "Case decisions and reason codes ready"
+    },
+    {
+      label: "Data rights",
+      value: `${completedDataRightsRequests.length}/${dataRightsRequests.length}`,
+      detail: openDataRightsRequests.length ? `${openDataRightsRequests.length} requests still open` : "Export and closure rows ready"
+    },
+    {
+      label: "Audit export",
+      value: `${filteredEvents.length}`,
+      detail: activeFilterLabels.length ? activeFilterLabels.join(" / ") : "All audit events in scope"
+    },
+    {
+      label: "Release and security",
+      value: `${schemaMigrationRuns.length}`,
+      detail: "Release ledger and Security RLS runbook stay in the handoff packet"
+    }
+  ];
   const adminExportReadinessPacket = {
     generated_at: new Date().toISOString(),
     packet_mode: "admin_audit_export_readiness",
@@ -7643,6 +7711,7 @@ function AuditTrailPanel({
       corporate_access_reviews: corporateAccessReviews.length,
       release_ledger_records: schemaMigrationRuns.length
     },
+    admin_operations_acceptance_checkpoint: adminOperationsAcceptanceCheckpoint,
     admin_audit_export_command: adminAuditExportCommand,
     admin_audit_export_matrix: auditExportMatrix
   };
@@ -7707,6 +7776,7 @@ function AuditTrailPanel({
       commit_sha: run.commit_sha,
       applied_at: run.applied_at
     })),
+    admin_operations_acceptance_checkpoint: adminOperationsAcceptanceCheckpoint,
     admin_audit_export_command: adminAuditExportCommand,
     admin_audit_export_matrix: auditExportMatrix,
     events: filteredEvents
@@ -7719,6 +7789,37 @@ function AuditTrailPanel({
         <strong>Audit trail</strong>
       </div>
       <small>{message}</small>
+      <div className="admin-operations-acceptance-checkpoint" aria-label="Admin operations acceptance checkpoint">
+        <div className="admin-operations-acceptance-header">
+          <div>
+            <span className={`status-chip ${openOperationsCases.length || openDataRightsRequests.length ? "warning" : "success"}`}>
+              Admin operations acceptance checkpoint
+            </span>
+            <strong>{adminOperationsAcceptanceCheckpoint.headline}</strong>
+            <small>{adminOperationsAcceptanceCheckpoint.next_action}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(adminOperationsAcceptanceName, JSON.stringify(adminOperationsAcceptanceCheckpoint, null, 2), "application/json")}
+            type="button"
+          >
+            Export acceptance
+          </button>
+        </div>
+        <div className="admin-operations-acceptance-grid">
+          {adminOperationsAcceptanceCards.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="admin-operations-acceptance-proof">
+          <span>{adminOperationsAcceptanceCheckpoint.accepted_when}</span>
+          <small>Preview data accepted: {adminOperationsAcceptanceCheckpoint.preview_data_accepted ? "yes" : "no"} | Raw private evidence files excluded</small>
+        </div>
+      </div>
       <div className="admin-audit-export-command" aria-label="Admin audit export command">
         <div>
           <span className={`status-chip ${filteredEvents.length ? "success" : "warning"}`}>Admin audit export command</span>
@@ -26749,6 +26850,7 @@ function App() {
                 />
                 <AuditTrailPanel
                   corporateAccessReviews={corporateAccessReviews}
+                  dataRightsRequests={dataRightsRequests}
                   events={auditEvents}
                   evidenceDocuments={evidenceDocuments}
                   message={auditStatus}
