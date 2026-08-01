@@ -79,6 +79,10 @@ if (!pagesText.includes(expectedMarker)) fail(`GitHub Pages does not contain cur
 if (!vpsText.includes(expectedMarker)) fail(`VPS 200 OK is stale; missing current marker ${expectedMarker}`);
 
 if (!release.response.ok) fail(`VPS release stamp returned ${release.response.status}`);
+const releaseContentType = release.response.headers.get("content-type") || "";
+if (release.text.trimStart().startsWith("<!DOCTYPE html") || releaseContentType.includes("text/html")) {
+  fail("VPS release stamp served the app shell instead of trustgraph-release.json");
+}
 
 let releaseJson;
 try {

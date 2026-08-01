@@ -1,7 +1,6 @@
 :80 {
 	root * /srv/trustgraph
 	encode gzip zstd
-	file_server
 
 	header {
 		X-Content-Type-Options "nosniff"
@@ -9,5 +8,11 @@
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
 	}
 
+	handle /trustgraph-release.json {
+		header Content-Type "application/json; charset=utf-8"
+		file_server
+	}
+
 	try_files {path} {path}/ /index.html
+	file_server
 }
