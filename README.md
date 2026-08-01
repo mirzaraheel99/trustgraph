@@ -53,7 +53,7 @@ Use `SERVER_DEPLOYMENT.md` to install Docker, pull the GitHub repo, start Caddy 
 
 For first server setup, `tools/bootstrap-vps.sh` performs the guarded `/opt/trustgraph` install and refuses the VFIX host/path.
 
-After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`, runs the same guarded `tools/update-vps-from-github.sh` path as the server shell command, and checks `trustgraph-release.json` so the VPS must prove the GitHub source and current `registration_handoff_command` bundle marker it saved. The main Pages workflow now verifies the exported release stamp asset before upload, so a missing or app-shell-fallback release stamp cannot pass as a current server save.
+After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`, runs the same guarded `tools/update-vps-from-github.sh` path as the server shell command, and checks `trustgraph-release.json` so the VPS must prove the GitHub source and current `premium_workspace_responsive_guard` bundle marker it saved. The main Pages workflow now verifies the exported release stamp asset before upload, so a missing or app-shell-fallback release stamp cannot pass as a current server save.
 
 The Pages deployment also runs a VPS save job after the hosted smoke check. That job now fails if `TRUSTGRAPH_VPS_USER` or `TRUSTGRAPH_VPS_SSH_KEY` is missing, because a green GitHub build without a verified VPS save can leave `https://trustgraph.5-75-224-110.sslip.io/` stale.
 
@@ -67,7 +67,7 @@ The public first viewport now includes an audience switchboard for Professionals
 
 The signed-in VPS workspace now has a final layout guard for the hosted SaaS shell. It hides global horizontal overflow, stacks the Professional and Corporate work grids at tablet width, keeps account/logout action groups wrapping instead of clipping, and bounds dense records, setup, and Verify panels so the dashboard stays readable on desktop and mobile.
 
-The server sync monitor now reads the same `trustgraph-release.json` contract that the VPS updater writes. It parses `commit_short`, shows the current `registration_handoff_command` bundle marker, and treats build-time placeholder JSON as a GitHub bundle stamp rather than proof that the VPS saved the latest commit.
+The server sync monitor now reads the same `trustgraph-release.json` contract that the VPS updater writes. It parses `commit_short`, shows the current `premium_workspace_responsive_guard` bundle marker, and treats build-time placeholder JSON as a GitHub bundle stamp rather than proof that the VPS saved the latest commit.
 
 The signed-in server surface now includes a server currentness command. It separates GitHub-saved, Pages-live, VPS-saved, missing SSH secrets, manual update command, release-stamp JSON verification, and VFIX protection so the server URL is not treated as current until `/trustgraph-release.json` proves the saved commit.
 

@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 
 const vpsUrl = process.env.TRUSTGRAPH_VPS_URL || "https://trustgraph.5-75-224-110.sslip.io/";
 const pagesUrl = process.env.TRUSTGRAPH_PAGES_URL || "https://mirzaraheel99.github.io/trustgraph/";
-const expectedMarker = process.env.EXPECTED_BUNDLE_MARKER || "registration_handoff_command";
+const expectedMarker = process.env.EXPECTED_BUNDLE_MARKER || "premium_workspace_responsive_guard";
 
 function fail(message) {
   console.error(`TrustGraph VPS freshness check failed: ${message}`);

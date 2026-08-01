@@ -175,7 +175,7 @@ assertIncludes(workflowText, "pnpm check:v1-pilot-route", "GitHub Pages workflow
 
 assert(releaseStamp.app === "TrustGraph", "release stamp app");
 assert(releaseStamp.source === "https://github.com/mirzaraheel99/trustgraph", "release stamp source");
-assert(releaseStamp.bundle_marker === "registration_handoff_command", "release stamp bundle marker");
+assert(releaseStamp.bundle_marker === "premium_workspace_responsive_guard", "release stamp bundle marker");
 assert(
   releaseStamp.server_save_contract === "trustgraph_release_stamp_static_asset_then_vps_updater_overwrites_with_current_git_commit_and_marker",
   "release stamp server-save contract"

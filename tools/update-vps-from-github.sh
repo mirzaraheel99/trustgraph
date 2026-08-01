@@ -5,7 +5,7 @@ TRUSTGRAPH_REMOTE_PATH="${TRUSTGRAPH_REMOTE_PATH:-/opt/trustgraph}"
 TRUSTGRAPH_HOST="${TRUSTGRAPH_HOST:-trustgraph.5-75-224-110.sslip.io}"
 PUBLIC_URL="${PUBLIC_URL:-https://trustgraph.5-75-224-110.sslip.io/}"
 EXPECTED_ORIGIN="${EXPECTED_ORIGIN:-https://github.com/mirzaraheel99/trustgraph.git}"
-EXPECTED_BUNDLE_MARKER="${EXPECTED_BUNDLE_MARKER:-registration_handoff_command}"
+EXPECTED_BUNDLE_MARKER="${EXPECTED_BUNDLE_MARKER:-premium_workspace_responsive_guard}"
 
 fail() {
   echo "TrustGraph VPS update failed: $*" >&2

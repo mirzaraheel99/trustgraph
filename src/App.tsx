@@ -32039,7 +32039,7 @@ function App() {
         : "This server still needs the GitHub build saved to VPS",
     current_truth: "GitHub main and GitHub Pages are the saved source until the VPS release stamp matches.",
     manual_update_command:
-      "cd /opt/trustgraph && export TRUSTGRAPH_HOST=trustgraph.5-75-224-110.sslip.io && export PUBLIC_URL=https://trustgraph.5-75-224-110.sslip.io/ && export EXPECTED_BUNDLE_MARKER=registration_handoff_command && bash tools/update-vps-from-github.sh",
+      "cd /opt/trustgraph && export TRUSTGRAPH_HOST=trustgraph.5-75-224-110.sslip.io && export PUBLIC_URL=https://trustgraph.5-75-224-110.sslip.io/ && export EXPECTED_BUNDLE_MARKER=premium_workspace_responsive_guard && bash tools/update-vps-from-github.sh",
     verify_command:
       "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
     missing_automation_secrets: vpsDeploySecretsChecklist.required_repository_secrets.map((secret) => secret.name),
@@ -34847,7 +34847,7 @@ function App() {
                 <strong>{serverSyncMonitor.commit ?? "Not proven"}</strong>
                 <small>Accepted only when the stamp returns commit JSON.</small>
               </article>
-              <article className={serverSyncMonitor.bundleMarker === "registration_handoff_command" ? "ready" : "next"}>
+              <article className={serverSyncMonitor.bundleMarker === "premium_workspace_responsive_guard" ? "ready" : "next"}>
                 <span>Bundle marker</span>
                 <strong>{serverSyncMonitor.bundleMarker ?? "Not proven"}</strong>
                 <small>Must match the current TrustGraph UI marker before the server is accepted.</small>

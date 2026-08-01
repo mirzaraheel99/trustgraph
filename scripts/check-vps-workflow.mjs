@@ -56,7 +56,7 @@ const requiredSnippets = [
     label: "remote deploy runs the guarded VPS update script"
   },
   {
-    snippet: 'export EXPECTED_BUNDLE_MARKER="registration_handoff_command"',
+    snippet: 'export EXPECTED_BUNDLE_MARKER="premium_workspace_responsive_guard"',
     label: "remote deploy requires the current V1 bundle marker"
   },
   {
