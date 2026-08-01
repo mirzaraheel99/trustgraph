@@ -36772,6 +36772,185 @@ body {
   }
 }
 
+/* Public access hub: one premium user/corporate login path before credentials. */
+.public-access-hub {
+  display: grid;
+  gap: 14px;
+  order: -100;
+  padding: 18px;
+  border: 1px solid rgba(113, 242, 203, 0.28);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(16, 34, 34, 0.96), rgba(9, 13, 17, 0.98));
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.26);
+  overflow: hidden;
+}
+
+.public-auth-card.corporate-mode .public-access-hub {
+  border-color: rgba(130, 169, 255, 0.34);
+  background: linear-gradient(135deg, rgba(20, 31, 50, 0.96), rgba(9, 13, 17, 0.98));
+}
+
+.public-access-hub-hero,
+.public-access-hub-routes,
+.public-access-hub-proof,
+.public-access-hub-actions,
+.public-access-hub-boundary {
+  min-width: 0;
+}
+
+.public-access-hub-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.public-access-hub-hero > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-access-hub-hero strong {
+  color: #f4fbf7;
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  line-height: 1.04;
+}
+
+.public-access-hub-hero small,
+.public-access-hub-boundary {
+  color: rgba(224, 235, 229, 0.76);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.public-access-hub-routes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.public-access-hub-routes button {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 74px;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #dce9e3;
+  text-align: left;
+}
+
+.public-access-hub-routes button.active {
+  border-color: rgba(113, 242, 203, 0.58);
+  background: rgba(113, 242, 203, 0.15);
+  color: #f4fbf7;
+}
+
+.public-auth-card.corporate-mode .public-access-hub-routes button.active {
+  border-color: rgba(130, 169, 255, 0.62);
+  background: rgba(130, 169, 255, 0.14);
+}
+
+.public-access-hub-routes strong,
+.public-access-hub-routes small,
+.public-access-hub-proof strong,
+.public-access-hub-proof small,
+.public-access-hub-proof em {
+  overflow-wrap: anywhere;
+}
+
+.public-access-hub-routes strong {
+  font-size: 0.96rem;
+}
+
+.public-access-hub-routes small {
+  color: rgba(224, 235, 229, 0.7);
+  line-height: 1.35;
+}
+
+.public-access-hub-proof {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.public-access-hub-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.public-access-hub-proof small {
+  color: rgba(113, 242, 203, 0.86);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.public-auth-card.corporate-mode .public-access-hub-proof small {
+  color: rgba(166, 190, 255, 0.9);
+}
+
+.public-access-hub-proof strong {
+  color: #f4fbf7;
+  font-size: 1rem;
+}
+
+.public-access-hub-proof em {
+  color: rgba(224, 235, 229, 0.7);
+  font-size: 0.82rem;
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.public-access-hub-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.public-access-hub-actions button,
+.public-access-hub-hero button {
+  min-width: 0;
+  min-height: 46px;
+  white-space: normal;
+}
+
+.public-auth-card:has(.public-access-hub) .public-account-entry-launchpad,
+.public-auth-card:has(.public-access-hub) .public-auth-start-strip,
+.public-auth-card:has(.public-access-hub) .public-account-access-path,
+.public-auth-card:has(.public-access-hub) .public-auth-experience-studio,
+.public-auth-card:has(.public-access-hub) .public-account-path-chooser,
+.public-auth-card:has(.public-access-hub) .public-conversion-runway {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  .public-access-hub-hero,
+  .public-access-hub-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .public-access-hub-routes,
+  .public-access-hub-proof {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .public-access-hub-routes,
+  .public-access-hub-proof {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Public conversion runway: one calm signup/login path before credentials. */
 .public-account-path-chooser {
   display: grid;

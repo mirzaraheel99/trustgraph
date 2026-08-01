@@ -227,6 +227,8 @@ The public login/register card now starts with a compact start strip for Profess
 
 The public login/register card now adds a V1 access runway directly before the older portal proof panels. It keeps Professional vs Corporate, Register vs Login, price, first database step, recovery, server status, and the Corporate scoped-user-database rule visible in one mobile-safe first path.
 
+The public login/register card now starts with a Public access hub. It replaces the stacked launch panels in the primary view with one premium route selector for User register, User login, Corporate register, and Corporate login, plus pricing, first database write, landing portal, recovery actions, submit, and the scoped Corporate database boundary.
+
 The signed-in workspace now adds a daily operating runway before dense live-data proof panels. It gives Passport, Corporate Verify, Company setup, Pricing, Account, Database proof, live row counts, scoped review counts, and server-save context one clear action surface.
 
 Corporate Verify now starts with a review runway that keeps request, approval, visible scoped rows, review attestation, metadata-only export, and the no-open-user-database boundary together before dense reviewer panels.

@@ -20155,6 +20155,89 @@ function PublicSite({
     accepted_when:
       "public_auth_starts_with_clear_user_vs_corporate_routes_pricing_first_database_write_dashboard_and_access_boundary"
   };
+  const publicAccessHub = {
+    mode: "public_access_hub",
+    selected_portal: portal,
+    selected_mode: mode,
+    headline:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create a company workspace"
+          : "Login to Corporate Verify"
+        : mode === "signup"
+          ? "Create your Professional Passport"
+          : "Login to your Passport",
+    subline:
+      portal === "corporate"
+        ? "Company teams request access by email and review only professional-approved rows."
+        : "Users own their records, evidence, consent, and every company sharing decision.",
+    price: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    landing: portal === "corporate" ? "Company Admin, then Corporate Verify" : "Professional Passport",
+    recovery: email ? "Reset and resend controls ready" : "Enter email to enable recovery",
+    accepted_when:
+      "public_access_hub_replaces_stacked_auth_panels_with_one_premium_user_corporate_register_login_pricing_recovery_database_and_submit_flow"
+  };
+  const publicAccessHubRoutes = [
+    {
+      label: "User register",
+      detail: "Free Passport account",
+      active: portal === "professional" && mode === "signup",
+      action: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "User login",
+      detail: "Open your Passport",
+      active: portal === "professional" && mode === "signin",
+      action: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate register",
+      detail: "$149 pilot company workspace",
+      active: portal === "corporate" && mode === "signup",
+      action: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate login",
+      detail: "Open Corporate Verify",
+      active: portal === "corporate" && mode === "signin",
+      action: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    }
+  ];
+  const publicAccessHubProof = [
+    {
+      label: "Pricing",
+      value: publicAccessHub.price,
+      detail: portal === "corporate" ? "Stripe checkout is still a human-gated launch decision." : "No payment is collected for the professional pilot."
+    },
+    {
+      label: "Database",
+      value: publicAccessHub.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Landing",
+      value: publicAccessHub.landing,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Recovery",
+      value: publicAccessHub.recovery,
+      detail: "Password reset, resend verification, and hosted-link repair stay on this form."
+    }
+  ];
   const corporateAccessRoutePreview = {
     mode: "corporate_access_route_preview",
     selected_portal: portal,
@@ -24066,6 +24149,72 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="public-access-hub" aria-label="Public access hub">
+            <div className="public-access-hub-hero">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Access hub</span>
+                <strong>{publicAccessHub.headline}</strong>
+                <small>{publicAccessHub.subline}</small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-access-hub-routes" aria-label="Choose user or corporate access route">
+              {publicAccessHubRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-access-hub-proof">
+              {publicAccessHubProof.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <em>{item.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="public-access-hub-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-access-hub-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...publicAccessHub,
+                        routes: publicAccessHubRoutes.map(({ action: _action, ...route }) => route),
+                        proof: publicAccessHubProof
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export path
+              </button>
+            </div>
+            <small className="public-access-hub-boundary">
+              {portal === "corporate"
+                ? "Corporate database rule: request access, wait for professional approval, then review scoped rows only."
+                : "User database rule: your Passport is private until you approve scoped sharing."}
+            </small>
+          </div>
           <div className="public-account-path-chooser" aria-label="Public account path chooser">
             <div className="public-account-path-copy">
               <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
