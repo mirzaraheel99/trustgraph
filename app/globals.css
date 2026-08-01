@@ -19142,6 +19142,29 @@ p {
   border-radius: 8px;
 }
 
+/* Corporate Verify simplification layer: keep reviewer home, request, list, and scoped database visible first. */
+.verify-panel > .corporate-portal-quick-start,
+.verify-panel > .corporate-access-progress-strip,
+.verify-panel > .corporate-visible-rows-handoff,
+.verify-panel > .verify-summary-grid,
+.verify-panel > .corporate-verify-live-command,
+.verify-panel > .empty-verify-state-command,
+.verify-panel > .corporate-verify-first-use,
+.verify-panel > .verify-reviewer-flow,
+.verify-panel > .corporate-verify-access-lane,
+.verify-panel > .corporate-access-blocker-map,
+.verify-panel > .verify-user-data-proof {
+  display: none !important;
+}
+
+.verify-panel > .corporate-reviewer-database-home,
+.verify-panel > .corporate-reviewer-front-desk,
+.verify-panel > .verify-request-form,
+.verify-panel > .grant-list,
+.verify-panel > .corporate-directory-panel {
+  border-radius: 8px;
+}
+
 /* Premium workspace shell repair: keep the authenticated app calm, bounded, and readable. */
 .app {
   isolation: isolate;
