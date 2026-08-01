@@ -17265,6 +17265,38 @@ function PublicSite({
       detail: publicSavedBuildVerification.protected_vfix_route
     }
   ];
+  const publicHostedBuildSourceContract = {
+    mode: "public_hosted_build_source_contract",
+    github_source: publicSavedBuildVerification.github_source,
+    pages_bundle: publicSavedBuildVerification.pages_smoke,
+    vps_release_stamp: publicSavedBuildVerification.release_stamp,
+    vps_status: serverSyncMonitor.status,
+    vfix_boundary: publicSavedBuildVerification.protected_vfix_route,
+    accepted_when:
+      "public_login_and_registration_must_show_github_as_source_of_truth_pages_as_green_bundle_vps_release_stamp_as_server_proof_and_vfix_as_separate_protected_route"
+  };
+  const publicHostedBuildSourceCards = [
+    {
+      label: "Source",
+      value: "GitHub main",
+      detail: publicHostedBuildSourceContract.github_source
+    },
+    {
+      label: "Green build",
+      value: "Pages first",
+      detail: publicHostedBuildSourceContract.pages_bundle
+    },
+    {
+      label: "Server proof",
+      value: serverSyncMonitor.status === "synced" ? "VPS current" : "Stamp required",
+      detail: publicHostedBuildSourceContract.vps_release_stamp
+    },
+    {
+      label: "VFIX",
+      value: "Separate",
+      detail: publicHostedBuildSourceContract.vfix_boundary
+    }
+  ];
   const publicAuthServerCheckpoint = {
     mode: "public_auth_server_save_checkpoint",
     selected_portal: portal,
@@ -18440,6 +18472,35 @@ function PublicSite({
                   </article>
                 ))}
               </div>
+            </div>
+            <div className="public-hosted-build-source-contract" aria-label="Public hosted build source contract">
+              <div>
+                <span>Hosted build source</span>
+                <strong>{serverSyncMonitor.status === "synced" ? "Server is current for login testing" : "GitHub is current; VPS must prove the saved release"}</strong>
+                <small>{publicHostedBuildSourceContract.accepted_when}</small>
+              </div>
+              <div className="public-hosted-build-source-grid">
+                {publicHostedBuildSourceCards.map((card) => (
+                  <article key={card.label}>
+                    <span>{card.label}</span>
+                    <strong>{card.value}</strong>
+                    <small>{card.detail}</small>
+                  </article>
+                ))}
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-hosted-build-source-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(publicHostedBuildSourceContract, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export build source
+              </button>
             </div>
           </div>
           {currentSession ? (

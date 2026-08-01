@@ -315,6 +315,76 @@ button {
   line-height: 1.15;
 }
 
+.public-hosted-build-source-contract {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.065), rgba(134, 174, 246, 0.04)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.public-hosted-build-source-contract > div:first-child {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.public-hosted-build-source-contract span,
+.public-hosted-build-source-contract strong,
+.public-hosted-build-source-contract small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-hosted-build-source-contract > div:first-child > span,
+.public-hosted-build-source-grid span {
+  color: #77f6dc;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-hosted-build-source-contract > div:first-child > strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.public-hosted-build-source-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-hosted-build-source-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.105);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-hosted-build-source-grid strong {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.15;
+}
+
+.public-hosted-build-source-contract button {
+  justify-self: start;
+}
+
 .public-session-actions {
   display: flex;
   flex-wrap: wrap;

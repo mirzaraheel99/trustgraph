@@ -131,6 +131,8 @@ The public auth card now adds a Public access desk directly before the email and
 
 The public auth form also starts with a Registration route planner that keeps Professional versus Corporate, Register versus Login, price, first database write, next dashboard, recovery, and required proof in one compact operator view before the form fields.
 
+The public website now includes a hosted build source contract before login. It makes GitHub `main` the source of truth, GitHub Pages the green bundle check, the VPS release stamp the server proof, and the VFIX route an explicitly protected separate deployment so stale server saves cannot be mistaken for current code.
+
 The public pricing section now includes a Pricing and access summary before the seat estimator, connecting the free Professional pilot, `$149` Corporate Verify pilot, first database write, scoped Corporate user access, and Stripe-off billing boundary in one visible buyer decision point.
 
 Billing now starts with a Billing launch board that keeps the corporate pilot plan, selected seats, live Supabase subscription ledger, pricing quote receipt, payment decision receipt, and Stripe-off gate visible before deeper billing evidence panels.

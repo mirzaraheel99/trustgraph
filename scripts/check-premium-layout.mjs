@@ -118,6 +118,7 @@ assert(app.includes('aria-label="Team launch board"') && app.includes("team_laun
 assert(app.includes('aria-label="Hosted callback acceptance proof"'), "account and public auth must expose a hosted callback acceptance proof without tokens.");
 assert(app.includes('aria-label="Public server sync receipt"'), "public website must expose saved-build status before login.");
 assert(app.includes('aria-label="Public saved build verification"'), "public website must expose GitHub, Pages, VPS stamp, and VFIX boundary proof before login.");
+assert(app.includes('aria-label="Public hosted build source contract"') && app.includes("public_hosted_build_source_contract"), "public website must expose GitHub as source of truth, Pages as green bundle, VPS release stamp as server proof, and VFIX as a protected route before login.");
 assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readiness must expose hosted corporate retest checklist.");
 assert(app.includes('aria-label="Evidence access desk"') && app.includes("evidence_access_desk"), "evidence preview/download must expose one clear desk for preview, download, manifest, packet, and signed-link proof.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
@@ -180,6 +181,7 @@ assert(css.includes(".public-server-sync-receipt") && css.includes(".public-serv
 assert(app.includes('aria-label="Public server update receipt"'), "public saved-build receipt must expose the VPS update command when the host is stale.");
 assert(css.includes(".public-server-update-receipt") && css.includes("grid-column: 1 / -1"), "public server update receipt must be styled and bounded.");
 assert(css.includes(".public-saved-build-verification") && css.includes(".public-saved-build-grid"), "public saved build verification must be styled and bounded.");
+assert(css.includes(".public-hosted-build-source-contract") && css.includes(".public-hosted-build-source-grid"), "public hosted build source contract must be styled and bounded.");
 assert(app.includes('aria-label="Public auth server save checkpoint"') && app.includes("public_auth_server_save_checkpoint"), "login and registration form must show a GitHub-to-VPS server save checkpoint.");
 assert(css.includes(".public-auth-server-checkpoint") && css.includes(".public-auth-server-checkpoint-grid"), "public auth server checkpoint must be styled and bounded.");
 assert(premiumRepair.includes(".v1-operating-map") && premiumRepair.includes(".v1-operating-map-grid"), "V1 operating map must be styled and bounded in the premium shell.");
