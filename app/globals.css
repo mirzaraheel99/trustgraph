@@ -28503,6 +28503,7 @@ body {
 }
 
 .verify-panel .corporate-portal-quick-start-grid,
+.verify-panel .corporate-database-unlock-grid,
 .verify-panel .corporate-reviewer-front-desk-grid,
 .verify-panel .corporate-access-progress-grid,
 .verify-panel .request-scope-receipt-grid,
@@ -28579,6 +28580,120 @@ body {
   gap: 10px;
 }
 
+.corporate-database-unlock-path {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 111, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 111, 0.1), rgba(97, 232, 208, 0.07)),
+    rgba(13, 23, 25, 0.9);
+}
+
+.corporate-database-unlock-header,
+.corporate-database-unlock-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-database-unlock-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-database-unlock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.corporate-database-unlock-grid button {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  min-width: 0;
+  min-height: 132px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.14);
+  border-radius: 8px;
+  color: var(--ink);
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.corporate-database-unlock-grid button.ready {
+  border-color: rgba(108, 240, 195, 0.36);
+  background: rgba(26, 176, 145, 0.12);
+}
+
+.corporate-database-unlock-grid button.next {
+  border-color: rgba(255, 205, 111, 0.34);
+  background: rgba(255, 205, 111, 0.07);
+}
+
+.corporate-database-unlock-proof {
+  padding: 12px;
+  border: 1px solid rgba(151, 204, 188, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.corporate-database-unlock-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.corporate-database-unlock-path strong,
+.corporate-database-unlock-path small,
+.corporate-database-unlock-path span,
+.corporate-database-unlock-path b {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-database-unlock-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 2.3vw, 32px);
+  line-height: 1.06;
+}
+
+.corporate-database-unlock-grid span,
+.corporate-database-unlock-proof small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-database-unlock-grid strong,
+.corporate-database-unlock-proof strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.12;
+}
+
+.corporate-database-unlock-grid b {
+  color: #9bfbe3;
+  font-size: 12px;
+}
+
+.corporate-database-unlock-path button {
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
 .verify-panel .corporate-directory-panel .corporate-database-action-cockpit,
 .verify-panel .corporate-directory-panel .reviewer-database-readiness-board,
 .verify-panel .corporate-directory-panel .corporate-database-visibility-snapshot,
@@ -28633,6 +28748,8 @@ body {
 }
 
 .verify-panel .corporate-portal-quick-start-header,
+.verify-panel .corporate-database-unlock-header,
+.verify-panel .corporate-database-unlock-proof,
 .verify-panel .corporate-reviewer-front-desk-actions,
 .verify-panel .corporate-access-progress-strip-header,
 .verify-panel .verify-request-header,
@@ -28660,6 +28777,8 @@ body {
 @media (max-width: 860px) {
   .verify-panel .record-form-grid.verify-request-fields,
   .verify-panel .corporate-portal-quick-start-header,
+  .verify-panel .corporate-database-unlock-header,
+  .verify-panel .corporate-database-unlock-proof,
   .verify-panel .corporate-reviewer-front-desk-actions,
   .verify-panel .corporate-access-progress-strip-header,
   .verify-panel .verify-request-header,

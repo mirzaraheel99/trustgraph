@@ -2998,6 +2998,65 @@ function VerifyRequestsPanel({
       detail: disabled ? "Create or switch into reviewer access." : "Rows load only for the active company and role."
     }
   ];
+  const corporateDatabaseUnlockPath = {
+    mode: "corporate_database_unlock_path",
+    status: disabled
+      ? "corporate_role_required"
+      : sharedRecords.length
+        ? "scoped_user_rows_visible"
+        : approvedCount
+          ? "approval_ready_reload_or_review"
+          : requests.length
+            ? "waiting_for_professional_approval"
+            : "request_access_first",
+    active_organization: activeOrganization.name,
+    preview_data_accepted: false,
+    open_user_browse_allowed: false,
+    accepted_when:
+      "corporate_database_unlock_path_requires_company_workspace_reviewer_rbac_access_request_professional_approval_scoped_rows_review_attestation_metadata_export_and_no_open_user_browse"
+  };
+  const corporateDatabaseUnlockSteps = [
+    {
+      label: "Company workspace",
+      value: disabled ? "Role needed" : activeOrganization.name,
+      detail: disabled ? "Create or switch to a Corporate reviewer role first." : "Corporate RBAC context is active.",
+      ready: !disabled,
+      target: "corporate-account-controls",
+      action: disabled ? "Open company setup" : "Use active role"
+    },
+    {
+      label: "Access request",
+      value: requests.length ? `${requests.length}` : "Not sent",
+      detail: requests.length ? "Request rows are in the live database." : "Request one professional by email before rows can show.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form",
+      action: "Request access"
+    },
+    {
+      label: "Professional approval",
+      value: approvedCount ? `${approvedCount}` : "Waiting",
+      detail: approvedCount ? "Approved grants can expose scoped rows." : "Rows stay hidden until the professional approves.",
+      ready: approvedCount > 0,
+      target: "corporate-verify-request-list",
+      action: "Check grants"
+    },
+    {
+      label: "Scoped rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Locked",
+      detail: sharedRecords.length ? "Approved user rows are visible for review." : "No open browse: only approved scoped rows appear.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue",
+      action: "Review rows"
+    },
+    {
+      label: "Review and export",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: reviews.length ? "Review proof exists; export metadata-only packet next." : "Record reviewer attestation before acceptance.",
+      ready: reviews.length > 0 && pendingGapCount === 0,
+      target: "corporate-access-review-queue",
+      action: "Attest"
+    }
+  ];
   const corporateVerifyFirstUsePacket = {
     generated_at: new Date().toISOString(),
     mode: "corporate_verify_first_use_wizard",
@@ -3094,6 +3153,60 @@ function VerifyRequestsPanel({
         teamInvitations={teamInvitations}
         teamMembers={teamMembers}
       />
+      <div className="corporate-database-unlock-path" aria-label="Corporate database unlock path">
+        <div className="corporate-database-unlock-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Corporate database unlock path</span>
+            <strong>{sharedRecords.length ? "Scoped user database is ready for review" : firstUseNextAction}</strong>
+            <small>{corporateDatabaseUnlockPath.accepted_when}</small>
+          </div>
+          <button
+            className="primary-action"
+            onClick={() => document.getElementById(corporateDatabaseUnlockSteps.find((step) => !step.ready)?.target ?? "corporate-access-review-queue")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            type="button"
+          >
+            Open unlock step
+          </button>
+        </div>
+        <div className="corporate-database-unlock-grid">
+          {corporateDatabaseUnlockSteps.map((step) => (
+            <button
+              className={step.ready ? "ready" : "next"}
+              key={step.label}
+              onClick={() => document.getElementById(step.target)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              type="button"
+            >
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+              <b>{step.action}</b>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-database-unlock-proof">
+          <span>
+            <strong>{corporateDatabaseUnlockPath.status.replace(/_/g, " ")}</strong>
+            <small>Current unlock state</small>
+          </span>
+          <span>
+            <strong>{corporateDatabaseUnlockPath.open_user_browse_allowed ? "Open browse" : "No open browse"}</strong>
+            <small>Database boundary</small>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-database-unlock-path-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateDatabaseUnlockPath, steps: corporateDatabaseUnlockSteps }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export unlock path
+          </button>
+        </div>
+      </div>
       <div className="corporate-reviewer-database-home" aria-label="Corporate reviewer database home">
         <div className="corporate-reviewer-database-home-header">
           <div>
