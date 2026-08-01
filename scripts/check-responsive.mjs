@@ -124,6 +124,8 @@ const requiredMobileStacks = [
   ".corporate-row-access-outcome-header",
   ".corporate-row-access-outcome-grid",
   ".corporate-row-access-outcome-proof",
+  ".corporate-reviewer-database-workbench-header",
+  ".corporate-reviewer-database-workbench-proof",
   ".corporate-database-unlock-header",
   ".corporate-database-unlock-grid",
   ".corporate-database-unlock-proof",

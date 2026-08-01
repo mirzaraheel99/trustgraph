@@ -31321,3 +31321,112 @@ body {
     width: 100%;
   }
 }
+
+/* Corporate reviewer queue simplification: make Verify read as task, outcome, workbench, filters, rows. */
+.verify-panel .corporate-directory-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 12px;
+}
+
+.verify-panel .corporate-directory-panel > .mini-heading {
+  order: -80;
+}
+
+.verify-panel .corporate-directory-panel .corporate-reviewer-task-command {
+  order: -70;
+}
+
+.verify-panel .corporate-directory-panel .corporate-row-access-outcome-command {
+  order: -65;
+}
+
+.verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench {
+  order: -60;
+}
+
+.verify-panel .corporate-directory-panel .corporate-database-next-action-commander {
+  order: -55;
+}
+
+.verify-panel .corporate-directory-panel .directory-controls {
+  order: -50;
+}
+
+.verify-panel .corporate-directory-panel .directory-list,
+.verify-panel .corporate-directory-panel .shared-record-grid {
+  order: -45;
+}
+
+.verify-panel .corporate-directory-panel .corporate-database-path-strip,
+.verify-panel .corporate-directory-panel .corporate-database-action-cockpit,
+.verify-panel .corporate-directory-panel .corporate-review-queue-command,
+.verify-panel .corporate-directory-panel .corporate-reviewer-action-bar,
+.verify-panel .corporate-directory-panel .corporate-request-to-row-rail {
+  order: 10;
+}
+
+.verify-panel .corporate-directory-panel .reviewer-database-readiness-board,
+.verify-panel .corporate-directory-panel .corporate-live-row-proof-chain,
+.verify-panel .corporate-directory-panel .persisted-corporate-database-acceptance,
+.verify-panel .corporate-directory-panel .missing-record-cross-portal-checkpoint {
+  order: 30;
+}
+
+.verify-panel .corporate-directory-panel .corporate-reviewer-task-header,
+.verify-panel .corporate-directory-panel .corporate-row-access-outcome-header,
+.verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-header,
+.verify-panel .corporate-directory-panel .corporate-database-next-action-copy {
+  min-width: 0;
+}
+
+.verify-panel .corporate-directory-panel .corporate-reviewer-task-header strong,
+.verify-panel .corporate-directory-panel .corporate-row-access-outcome-header strong,
+.verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-header strong,
+.verify-panel .corporate-directory-panel .corporate-database-next-action-copy > strong {
+  font-size: clamp(18px, 1.8vw, 26px);
+  line-height: 1.1;
+}
+
+.verify-panel .corporate-directory-panel .corporate-reviewer-task-grid,
+.verify-panel .corporate-directory-panel .corporate-row-access-outcome-grid,
+.verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-grid,
+.verify-panel .corporate-directory-panel .corporate-database-next-action-grid,
+.verify-panel .corporate-directory-panel .directory-controls,
+.verify-panel .corporate-directory-panel .directory-list,
+.verify-panel .corporate-directory-panel .shared-record-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+}
+
+.verify-panel .corporate-directory-panel .corporate-reviewer-task-grid button,
+.verify-panel .corporate-directory-panel .corporate-row-access-outcome-grid button,
+.verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-grid button,
+.verify-panel .corporate-directory-panel .corporate-database-next-action-grid span {
+  min-height: auto;
+}
+
+@media (max-width: 780px) {
+  .verify-panel .corporate-directory-panel .corporate-reviewer-task-header,
+  .verify-panel .corporate-directory-panel .corporate-reviewer-task-proof,
+  .verify-panel .corporate-directory-panel .corporate-row-access-outcome-header,
+  .verify-panel .corporate-directory-panel .corporate-row-access-outcome-proof,
+  .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-header,
+  .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-proof,
+  .verify-panel .corporate-directory-panel .corporate-database-next-action-controls,
+  .verify-panel .corporate-directory-panel .directory-controls {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .verify-panel .corporate-directory-panel .corporate-reviewer-task-header button,
+  .verify-panel .corporate-directory-panel .corporate-reviewer-task-proof button,
+  .verify-panel .corporate-directory-panel .corporate-row-access-outcome-header button,
+  .verify-panel .corporate-directory-panel .corporate-row-access-outcome-proof button,
+  .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-actions button,
+  .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-proof button,
+  .verify-panel .corporate-directory-panel .corporate-database-next-action-controls button,
+  .verify-panel .corporate-directory-panel .directory-controls button {
+    width: 100%;
+  }
+}
