@@ -5364,6 +5364,20 @@ function CorporateDirectoryPanel({
     accepted_when:
       "persisted_corporate_database_acceptance_requires_live_rbac_approved_rows_review_attestation_access_receipt_visibility_snapshot_and_metadata_only_export"
   };
+  const corporatePersistedExportGate = {
+    mode: "corporate_persisted_export_gate",
+    status: persistedCorporateDatabaseAccepted ? "export_acceptance_ready" : "persisted_proof_required",
+    ready_steps: persistedCorporateDatabaseAcceptanceSteps.filter((step) => step.ready).length,
+    total_steps: persistedCorporateDatabaseAcceptanceSteps.length,
+    next_missing_proof: persistedCorporateDatabaseAcceptanceSteps.find((step) => !step.ready)?.label ?? "none",
+    latest_access_receipt_status: latestCorporateDatabaseReceiptStatus,
+    latest_visibility_snapshot_status: latestCorporateVisibilitySnapshotStatus,
+    metadata_only_export: true,
+    raw_private_files_included: false,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_persisted_export_gate_requires_access_receipt_visibility_snapshot_review_attestation_metadata_only_export_and_no_raw_private_files"
+  };
   const corporateDatabasePathStrip = {
     mode: "corporate_database_path_strip",
     current_action: corporateAccessNextAction.label,
@@ -6778,6 +6792,51 @@ function CorporateDirectoryPanel({
               <small>{step.detail}</small>
             </span>
           ))}
+        </div>
+      </div>
+      <div className={`corporate-persisted-export-gate ${persistedCorporateDatabaseAccepted ? "ready" : "needed"}`} aria-label="Corporate persisted export gate">
+        <div className="corporate-persisted-export-header">
+          <div>
+            <span className={`status-chip ${persistedCorporateDatabaseAccepted ? "success" : "warning"}`}>Persisted export gate</span>
+            <strong>
+              {persistedCorporateDatabaseAccepted
+                ? "Persisted Corporate Verify proof is ready for metadata export"
+                : `${corporatePersistedExportGate.next_missing_proof} is required before export acceptance`}
+            </strong>
+            <small>{corporatePersistedExportGate.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-persisted-export-gate-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporatePersistedExportGate, steps: persistedCorporateDatabaseAcceptanceSteps }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export gate
+          </button>
+        </div>
+        <div className="corporate-persisted-export-grid">
+          {persistedCorporateDatabaseAcceptanceSteps.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-persisted-export-boundary">
+          <span>
+            <strong>Metadata only</strong>
+            <small>Corporate export includes scope, row counts, filters, receipts, snapshots, and review proof.</small>
+          </span>
+          <span>
+            <strong>No raw private files</strong>
+            <small>Private evidence files stay excluded; preview and download still require separate signed evidence access.</small>
+          </span>
         </div>
       </div>
       <div className="corporate-review-attestations" aria-label="Corporate review attestations">

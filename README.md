@@ -205,6 +205,8 @@ Corporate Verify now includes a request-to-row rail before directory filters, sh
 
 Corporate Verify now includes a visible rows handoff for the approval-to-review transition. It tells reviewers whether they are waiting for approval, synced rows, consent coverage, review attestation, gap resolution, or scoped export, while preserving the no-open-user-browse boundary.
 
+Corporate Verify now includes a persisted export gate after the review handoff. It keeps metadata export blocked until the reviewer has live rows, a review attestation, a saved database access receipt, a saved visibility snapshot, and the raw-private-file exclusion boundary.
+
 Corporate Verify also includes a Missing-record cross-portal checkpoint that ties corporate requests, Professional Passport handoff, open gap status, scoped rows, review attestation, metadata-only export, and preview-data rejection into one visible proof before handoff.
 
 Corporate Verify’s database action cockpit remains available as exportable proof, while the visible database workbench now carries the direct controls for reviewing scoped rows, saving the visibility snapshot, recording the database access receipt, and exporting the scoped metadata packet.

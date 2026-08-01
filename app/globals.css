@@ -14120,6 +14120,109 @@ p {
   text-transform: uppercase;
 }
 
+.corporate-persisted-export-gate {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 199, 102, 0.24);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 199, 102, 0.075), rgba(95, 240, 201, 0.04)),
+    rgba(255, 255, 255, 0.025);
+}
+
+.corporate-persisted-export-gate.ready {
+  border-color: rgba(95, 240, 201, 0.22);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.075), rgba(134, 174, 246, 0.04)),
+    rgba(255, 255, 255, 0.025);
+}
+
+.corporate-persisted-export-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.24fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.corporate-persisted-export-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-persisted-export-gate strong,
+.corporate-persisted-export-gate small,
+.corporate-persisted-export-gate span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-persisted-export-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.corporate-persisted-export-grid,
+.corporate-persisted-export-boundary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 9px;
+}
+
+.corporate-persisted-export-grid article,
+.corporate-persisted-export-boundary span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 108px;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.corporate-persisted-export-grid article.ready,
+.corporate-persisted-export-boundary span {
+  border-color: rgba(95, 240, 201, 0.24);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.corporate-persisted-export-grid article.next {
+  border-color: rgba(255, 199, 102, 0.28);
+  background: rgba(255, 199, 102, 0.065);
+}
+
+.corporate-persisted-export-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-persisted-export-grid strong,
+.corporate-persisted-export-boundary strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.16;
+}
+
+.corporate-persisted-export-gate small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.corporate-persisted-export-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .directory-review-board {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -19062,6 +19165,9 @@ p {
   .corporate-scope-review-grid,
   .corporate-access-next-action-grid,
   .corporate-review-handoff-grid,
+  .corporate-persisted-export-header,
+  .corporate-persisted-export-grid,
+  .corporate-persisted-export-boundary,
   .corporate-access-request-preflight-header,
   .corporate-access-request-preflight-grid,
   .corporate-access-request-preflight-boundary,
@@ -27174,6 +27280,9 @@ body {
 .corporate-access-next-action-grid,
 .corporate-database-access-decision-grid,
 .corporate-review-handoff-grid,
+.corporate-persisted-export-header,
+.corporate-persisted-export-grid,
+.corporate-persisted-export-boundary,
 .corporate-access-request-preflight-header,
 .corporate-access-request-preflight-grid,
 .corporate-access-request-preflight-boundary,

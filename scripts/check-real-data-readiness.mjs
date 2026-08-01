@@ -94,6 +94,12 @@ const appRequirements = [
     "persisted_corporate_database_acceptance_requires_live_rbac_approved_rows_review_attestation_access_receipt_visibility_snapshot_and_metadata_only_export",
     "persisted corporate database acceptance rule"
   ],
+  ["Corporate persisted export gate", "corporate persisted export gate label"],
+  ["corporate_persisted_export_gate", "corporate persisted export gate packet mode"],
+  [
+    "corporate_persisted_export_gate_requires_access_receipt_visibility_snapshot_review_attestation_metadata_only_export_and_no_raw_private_files",
+    "corporate persisted export gate rule"
+  ],
   ["Corporate live row proof chain", "corporate live row proof label"],
   ["corporate_live_row_proof_chain", "corporate live row proof packet mode"],
   [

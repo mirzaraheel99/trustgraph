@@ -364,6 +364,9 @@ assert(css.includes(".corporate-review-queue-command") && css.includes(".corpora
 assert(css.includes("repeat(auto-fit, minmax(min(100%, 168px), 1fr))") && css.includes(".grant-card,\n.shared-record-card,\n.directory-card"), "Corporate Verify cards and controls must be protected from horizontal overflow.");
 assert(app.includes('aria-label="Corporate review handoff receipt"'), "Corporate Verify must expose the end-to-end review handoff receipt.");
 assert(css.includes(".corporate-review-handoff-receipt") && css.includes(".corporate-review-handoff-grid"), "corporate review handoff receipt must be styled and bounded.");
+assert(app.includes('aria-label="Corporate persisted export gate"') && app.includes("corporate_persisted_export_gate"), "Corporate Verify must expose a persisted export gate before export acceptance.");
+assert(app.includes("corporate_persisted_export_gate_requires_access_receipt_visibility_snapshot_review_attestation_metadata_only_export_and_no_raw_private_files"), "Corporate persisted export gate must require receipt, snapshot, attestation, metadata-only export, and no raw private files.");
+assert(css.includes(".corporate-persisted-export-gate") && css.includes(".corporate-persisted-export-grid") && css.includes(".corporate-persisted-export-boundary"), "Corporate persisted export gate must be styled and bounded.");
 assert(app.includes('aria-label="Missing record lifecycle receipt"'), "Corporate Verify missing-record requests must expose lifecycle receipt.");
 assert(app.includes('aria-label="Passport missing record handoff receipt"'), "Professional Passport missing-record inbox must expose handoff receipt.");
 assert(app.includes('aria-label="Missing record cross-portal checkpoint"') && app.includes("missing_record_cross_portal_checkpoint"), "Corporate Verify must expose a cross-portal missing-record checkpoint from request to Passport handoff and review export.");
