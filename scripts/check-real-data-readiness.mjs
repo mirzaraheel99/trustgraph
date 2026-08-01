@@ -130,6 +130,12 @@ const appRequirements = [
     "corporate_access_decision_desk_answers_current_access_blocker_next_click_live_counts_receipt_snapshot_metadata_export_and_no_open_user_database",
     "corporate access decision desk acceptance rule"
   ],
+  ["Corporate row review answer bar", "corporate row review answer label"],
+  ["corporate_row_review_answer_bar", "corporate row review answer packet mode"],
+  [
+    "corporate_row_review_answer_bar_keeps_current_access_answer_filtered_rows_proof_gap_next_click_metadata_export_and_no_open_user_database_visible_before_directory_filters",
+    "corporate row review answer no-open-database rule"
+  ],
   ["Corporate persisted export gate", "corporate persisted export gate label"],
   ["corporate_persisted_export_gate", "corporate persisted export gate packet mode"],
   [

@@ -5004,6 +5004,8 @@ function CorporateDirectoryPanel({
   const reviewedAccessCount = reviews.filter((review) => review.review_status === "reviewed").length;
   const needsFollowUpReviewCount = reviews.filter((review) => review.review_status === "needs_follow_up").length;
   const readyForHandoffReviewCount = reviews.filter((review) => review.review_status === "ready_for_handoff").length;
+  const latestVisibilitySnapshot = corporateVisibilitySnapshots[0] ?? null;
+  const latestAccessReceipt = corporateDatabaseReceipts[0] ?? null;
   const waitingForConsentCount = candidateRows.filter((row) => row.readiness === "waiting_for_consent").length;
   const needsGapFollowUpCount = candidateRows.filter((row) => row.readiness === "needs_gap_follow_up").length;
   const openGapRequestCount = missingRecordRequests.filter((request) => request.status !== "fulfilled").length;
@@ -5440,6 +5442,61 @@ function CorporateDirectoryPanel({
       value: corporateDatabaseAccessDecisionBoard.can_export_user_packet ? "Ready" : corporateAccessNextAction.action,
       detail: "Export stays scoped to current RBAC, Access Grant, consent, filters, and review proof.",
       ready: corporateDatabaseAccessDecisionBoard.can_export_user_packet
+    }
+  ];
+  const corporateRowReviewAnswerBar = {
+    mode: "corporate_row_review_answer_bar",
+    status: corporateAccessNextAction.ready ? "scoped_rows_ready" : "access_step_required",
+    answer: corporateAccessNextAction.ready ? "Yes. Corporate can review approved scoped rows." : "Not yet. Complete the next access step first.",
+    next_click: corporateAccessNextAction.action,
+    visible_queue_rows: filteredRows.length,
+    shared_records: sharedRecords.length,
+    active_filters: {
+      status: statusFilter,
+      readiness: readinessFilter,
+      search: directoryQuery.trim() || "none"
+    },
+    proof_needed:
+      !isLiveCorporateDatabase
+        ? "corporate_rbac_session"
+        : !approvedAccessCount
+          ? "professional_approval"
+          : !sharedRecords.length
+            ? "shared_passport_rows"
+            : !reviews.length
+              ? "review_attestation"
+              : !latestVisibilitySnapshot || !latestAccessReceipt
+                ? "snapshot_and_access_receipt"
+                : "metadata_export_ready",
+    no_open_user_database: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_row_review_answer_bar_keeps_current_access_answer_filtered_rows_proof_gap_next_click_metadata_export_and_no_open_user_database_visible_before_directory_filters"
+  };
+  const corporateRowReviewAnswerCards = [
+    {
+      label: "Answer",
+      value: corporateRowReviewAnswerBar.status === "scoped_rows_ready" ? "Access allowed" : "Access blocked",
+      detail: corporateRowReviewAnswerBar.answer,
+      ready: corporateRowReviewAnswerBar.status === "scoped_rows_ready"
+    },
+    {
+      label: "Filtered rows",
+      value: `${corporateRowReviewAnswerBar.visible_queue_rows}`,
+      detail: `${corporateRowReviewAnswerBar.shared_records} scoped shared records under current filters.`,
+      ready: corporateRowReviewAnswerBar.visible_queue_rows > 0
+    },
+    {
+      label: "Proof gap",
+      value: corporateRowReviewAnswerBar.proof_needed.replace(/_/g, " "),
+      detail: "Live RBAC, approved grants, rows, attestation, receipt, and snapshot are checked before export.",
+      ready: corporateRowReviewAnswerBar.proof_needed === "metadata_export_ready"
+    },
+    {
+      label: "Boundary",
+      value: "No open browse",
+      detail: "Corporate sees only professional-approved consent-scoped user rows.",
+      ready: corporateRowReviewAnswerBar.no_open_user_database
     }
   ];
   const firstAttestationCandidate = filteredRows.find((row) => row.rawStatus === "approved" && row.sharedRecordCount > 0 && row.openGapCount === 0) ?? null;
@@ -6967,8 +7024,6 @@ function CorporateDirectoryPanel({
       action: reviews.length ? "Export" : "Record proof"
     }
   ];
-  const latestVisibilitySnapshot = corporateVisibilitySnapshots[0] ?? null;
-  const latestAccessReceipt = corporateDatabaseReceipts[0] ?? null;
   const corporateAccessDecisionDesk = {
     mode: "corporate_access_decision_desk",
     status: filteredRows.length && reviews.length && latestVisibilitySnapshot && latestAccessReceipt ? "ready_to_export" : "next_action_required",
@@ -7811,6 +7866,56 @@ function CorporateDirectoryPanel({
             type="button"
           >
             Export command
+          </button>
+        </div>
+      </div>
+      <div className={`corporate-row-review-answer-bar ${corporateRowReviewAnswerBar.status}`} aria-label="Corporate row review answer bar">
+        <div className="corporate-row-review-answer-copy">
+          <span className={`status-chip ${corporateRowReviewAnswerBar.status === "scoped_rows_ready" ? "success" : "warning"}`}>Row review answer</span>
+          <strong>{corporateRowReviewAnswerBar.answer}</strong>
+          <small>{corporateRowReviewAnswerBar.accepted_when}</small>
+        </div>
+        <div className="corporate-row-review-answer-grid">
+          {corporateRowReviewAnswerCards.map((card) => (
+            <button
+              className={card.ready ? "ready" : "next"}
+              key={card.label}
+              onClick={() => {
+                if (card.label === "Proof gap" && corporateRowReviewAnswerBar.proof_needed === "snapshot_and_access_receipt") {
+                  void recordVisibilitySnapshot();
+                  return;
+                }
+                runCorporateReviewerTask();
+              }}
+              type="button"
+            >
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-row-review-answer-proof">
+          <span>
+            <small>Current filters</small>
+            <strong>{statusFilter} / {readinessFilter}</strong>
+          </span>
+          <span>
+            <small>Next click</small>
+            <strong>{corporateRowReviewAnswerBar.next_click}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-row-review-answer-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateRowReviewAnswerBar, cards: corporateRowReviewAnswerCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export answer
           </button>
         </div>
       </div>

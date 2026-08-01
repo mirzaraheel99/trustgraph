@@ -329,6 +329,8 @@ Corporate Verify now includes a visible rows handoff for the approval-to-review 
 
 Corporate Verify now adds a row access outcome command directly after the reviewer task command. It answers whether Corporate can access approved user rows, shows the live Supabase/RBAC source, visible row count, review proof, persisted snapshot and receipt status, and gives the next click without exposing open user browsing or raw private files.
 
+Corporate Verify now also shows a row review answer bar immediately before directory filters. It keeps the current access answer, filtered row count, proof gap, next click, metadata-only export rule, and no-open-user-database boundary visible at the moment reviewers start filtering user rows.
+
 Corporate Verify now includes a persisted export gate after the review handoff. It keeps metadata export blocked until the reviewer has live rows, a review attestation, a saved database access receipt, a saved visibility snapshot, and the raw-private-file exclusion boundary.
 
 Corporate Verify also includes a Missing-record cross-portal checkpoint that ties corporate requests, Professional Passport handoff, open gap status, scoped rows, review attestation, metadata-only export, and preview-data rejection into one visible proof before handoff.

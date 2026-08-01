@@ -13407,6 +13407,108 @@ p {
   white-space: normal;
 }
 
+.corporate-row-review-answer-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.11), rgba(95, 240, 201, 0.052) 62%, transparent),
+    rgba(5, 14, 18, 0.86);
+}
+
+.corporate-row-review-answer-bar.scoped_rows_ready {
+  border-color: rgba(95, 240, 201, 0.32);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.12), rgba(134, 174, 246, 0.05) 62%, transparent),
+    rgba(5, 18, 17, 0.88);
+}
+
+.corporate-row-review-answer-copy,
+.corporate-row-review-answer-grid button,
+.corporate-row-review-answer-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.corporate-row-review-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-row-review-answer-grid button,
+.corporate-row-review-answer-proof span {
+  padding: 9px;
+  text-align: left;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.corporate-row-review-answer-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.corporate-row-review-answer-grid button.next {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.05);
+}
+
+.corporate-row-review-answer-proof {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(132px, auto);
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-row-review-answer-bar strong,
+.corporate-row-review-answer-bar small,
+.corporate-row-review-answer-bar span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-row-review-answer-copy > strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.14;
+}
+
+.corporate-row-review-answer-grid span,
+.corporate-row-review-answer-proof small {
+  color: #9bbcff;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-row-review-answer-grid strong,
+.corporate-row-review-answer-proof strong {
+  color: #f6fbf8;
+  font-size: 13px;
+  line-height: 1.16;
+}
+
+.corporate-row-review-answer-bar small {
+  color: rgba(222, 239, 233, 0.68);
+  font-size: 11px;
+  line-height: 1.34;
+}
+
+.corporate-row-review-answer-bar button {
+  min-width: 0;
+  white-space: normal;
+}
+
 .corporate-database-path-strip {
   display: grid;
   gap: 12px;
@@ -34907,6 +35009,10 @@ body {
   order: -55;
 }
 
+.verify-panel .corporate-directory-panel .corporate-row-review-answer-bar {
+  order: -52;
+}
+
 .verify-panel .corporate-directory-panel .directory-controls {
   order: -50;
 }
@@ -34952,6 +35058,7 @@ body {
 .verify-panel .corporate-directory-panel .corporate-reviewer-task-grid,
 .verify-panel .corporate-directory-panel .corporate-row-access-outcome-grid,
 .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-grid,
+.verify-panel .corporate-directory-panel .corporate-row-review-answer-grid,
 .verify-panel .corporate-directory-panel .corporate-database-next-action-grid,
 .verify-panel .corporate-directory-panel .directory-controls,
 .verify-panel .corporate-directory-panel .directory-list,
@@ -35080,6 +35187,9 @@ body {
   .verify-panel .corporate-directory-panel .corporate-row-access-outcome-proof,
   .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-header,
   .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-proof,
+  .verify-panel .corporate-directory-panel .corporate-row-review-answer-bar,
+  .verify-panel .corporate-directory-panel .corporate-row-review-answer-grid,
+  .verify-panel .corporate-directory-panel .corporate-row-review-answer-proof,
   .verify-panel .corporate-directory-panel .corporate-database-next-action-controls,
   .verify-panel .corporate-directory-panel .directory-controls {
     grid-template-columns: 1fr;
@@ -35094,6 +35204,8 @@ body {
   .verify-panel .corporate-directory-panel .corporate-row-access-outcome-proof button,
   .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-actions button,
   .verify-panel .corporate-directory-panel .corporate-reviewer-database-workbench-proof button,
+  .verify-panel .corporate-directory-panel .corporate-row-review-answer-grid button,
+  .verify-panel .corporate-directory-panel .corporate-row-review-answer-proof button,
   .verify-panel .corporate-directory-panel .corporate-database-next-action-controls button,
   .verify-panel .corporate-directory-panel .directory-controls button {
     width: 100%;
