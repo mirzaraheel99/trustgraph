@@ -6723,6 +6723,52 @@ function CorporateDirectoryPanel({
       target: "export"
     }
   ];
+  const corporateReviewQueueRunway = {
+    mode: "corporate_review_queue_runway",
+    status: filteredRows.length ? "queue_visible" : "queue_locked",
+    headline: filteredRows.length ? "Review approved professionals from one queue" : "Build the review queue with an approved Access Grant",
+    next_action: corporateAccessNextAction.action,
+    visible_professionals: filteredRows.length,
+    shared_passport_records: sharedRecords.length,
+    open_gap_requests: openGapRequestCount,
+    review_attestations: reviews.length,
+    live_source: databaseModeLabel,
+    no_open_user_browse: true,
+    metadata_only_export: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_review_queue_runway_keeps_visible_professionals_shared_records_gaps_attestations_filters_export_and_no_open_user_browse_before_dense_database_receipts"
+  };
+  const corporateReviewQueueRunwayCards = [
+    {
+      label: "Professionals",
+      value: filteredRows.length ? `${filteredRows.length}` : "None",
+      detail: filteredRows.length ? "Visible through current filters and corporate scope." : "Request access and wait for professional approval.",
+      ready: filteredRows.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Shared records",
+      value: `${sharedRecords.length}`,
+      detail: sharedRecords.length ? "Passport rows are visible through approved grants." : "Rows appear only after approval and consent.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Gaps",
+      value: openGapRequestCount ? `${openGapRequestCount}` : "Clear",
+      detail: openGapRequestCount ? "Follow up on missing-record requests before handoff." : "No open missing-record request is blocking the queue.",
+      ready: openGapRequestCount === 0 && (filteredRows.length > 0 || sharedRecords.length > 0),
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: reviews.length ? "Corporate review attestations are saved." : "Record review proof after checking scoped rows.",
+      ready: reviews.length > 0,
+      target: "corporate-access-review-queue"
+    }
+  ];
 
   return (
     <section className="corporate-directory-panel">
@@ -6791,6 +6837,54 @@ function CorporateDirectoryPanel({
             type="button"
           >
             Export access proof
+          </button>
+        </div>
+      </div>
+      <div className={`corporate-review-queue-runway ${corporateReviewQueueRunway.status === "queue_visible" ? "ready" : "needed"}`} aria-label="Corporate review queue runway">
+        <div className="corporate-review-queue-runway-header">
+          <div>
+            <span className={`status-chip ${filteredRows.length ? "success" : "warning"}`}>Review queue</span>
+            <strong>{corporateReviewQueueRunway.headline}</strong>
+            <small>{corporateAccessNextAction.detail}</small>
+          </div>
+          <button className="primary-action" onClick={() => runCorporateReviewerTask()} type="button">
+            {corporateReviewQueueRunway.next_action}
+          </button>
+        </div>
+        <div className="corporate-review-queue-runway-grid">
+          {corporateReviewQueueRunwayCards.map((item) => (
+            <button className={item.ready ? "ready" : "next"} key={item.label} onClick={() => runCorporateReviewerTask(item.target)} type="button">
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-review-queue-runway-proof">
+          <span>
+            <small>Source</small>
+            <strong>{corporateReviewQueueRunway.live_source}</strong>
+          </span>
+          <span>
+            <small>Browse boundary</small>
+            <strong>{corporateReviewQueueRunway.no_open_user_browse ? "No open browse" : "Open browse"}</strong>
+          </span>
+          <span>
+            <small>Export</small>
+            <strong>{corporateReviewQueueRunway.metadata_only_export ? "Metadata only" : "Raw files"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-review-queue-runway-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateReviewQueueRunway, cards: corporateReviewQueueRunwayCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export queue path
           </button>
         </div>
       </div>

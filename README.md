@@ -81,6 +81,8 @@ Corporate setup now starts with one primary company setup route. It keeps login,
 
 Corporate Verify now starts the user database with one primary database access desk. It answers whether scoped rows are visible, what the next reviewer action is, how many requests, approved grants, rows, reviews, and gaps exist, and keeps metadata-only export plus no-open-user-browse proof visible before directory controls.
 
+Corporate Verify now also starts the row area with a review queue runway. Reviewers see visible professionals, shared Passport records, open gaps, review attestations, filtered queue state, metadata-only export, and the no-open-user-database rule before the dense receipt and proof panels.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist
