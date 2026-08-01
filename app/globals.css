@@ -6108,6 +6108,145 @@ p,
   white-space: normal;
 }
 
+.pilot-package-board {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(14px, 1.8vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(143, 178, 255, 0.065) 56%, rgba(8, 17, 19, 0.95)),
+    rgba(255, 255, 255, 0.028);
+}
+
+.pilot-package-board-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.pilot-package-board-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.pilot-package-board-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.pilot-package-board-grid article {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  min-height: 190px;
+  padding: 14px;
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    rgba(0, 0, 0, 0.12);
+}
+
+.pilot-package-board strong,
+.pilot-package-board small,
+.pilot-package-board span,
+.pilot-package-board b,
+.pilot-package-board em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.pilot-package-board-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 30px);
+  line-height: 1.06;
+}
+
+.pilot-package-board-header small,
+.pilot-package-board-grid small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.pilot-package-board-grid span,
+.pilot-package-board-proof small {
+  color: var(--mint);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.pilot-package-board-grid strong {
+  color: var(--text);
+  font-size: 19px;
+  line-height: 1.12;
+}
+
+.pilot-package-board-grid b {
+  color: var(--gold);
+  font-size: 24px;
+  line-height: 1.02;
+}
+
+.pilot-package-board-grid em {
+  align-self: end;
+  color: #a9f7dd;
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.32;
+}
+
+.pilot-package-board-proof {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(190px, auto);
+  gap: 8px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.pilot-package-board-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.pilot-package-board-proof span.ready {
+  border-color: rgba(95, 240, 201, 0.26);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.pilot-package-board-proof span.next {
+  border-color: rgba(225, 184, 102, 0.28);
+  background: rgba(225, 184, 102, 0.055);
+}
+
+.pilot-package-board-proof strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.12;
+}
+
+.pilot-package-board-proof button {
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .pricing-activation-workbench {
   display: grid;
   gap: 14px;
@@ -32802,12 +32941,16 @@ body {
   }
 }
 
-/* Billing choice simplification: keep plan choice, activation, launch, acceptance, and paid gate before proof receipts. */
+/* Billing choice simplification: keep package choice, activation, launch, acceptance, and paid gate before proof receipts. */
 .billing-panel {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: 12px;
+}
+
+.billing-panel .pilot-package-board {
+  order: -75;
 }
 
 .billing-panel .pricing-choice-rail {
@@ -32843,6 +32986,7 @@ body {
 }
 
 .billing-panel .pricing-choice-rail,
+.billing-panel .pilot-package-board,
 .billing-panel .pricing-activation-workbench,
 .billing-panel .billing-launch-board,
 .billing-panel .billing-pilot-acceptance-checkpoint,
@@ -32858,6 +33002,7 @@ body {
 }
 
 .billing-panel .pricing-choice-copy > strong,
+.billing-panel .pilot-package-board-header strong,
 .billing-panel .pricing-activation-workbench strong,
 .billing-panel .billing-launch-board-header strong,
 .billing-panel .billing-pilot-acceptance-copy > strong,
@@ -32870,6 +33015,7 @@ body {
 }
 
 .billing-panel .pricing-choice-grid,
+.billing-panel .pilot-package-board-grid,
 .billing-panel .pricing-activation-workbench-grid,
 .billing-panel .billing-launch-board-grid,
 .billing-panel .billing-pilot-acceptance-grid,
@@ -32883,6 +33029,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions,
+.billing-panel .pilot-package-board-proof,
 .billing-panel .pricing-activation-workbench-footer,
 .billing-panel .billing-launch-board-actions,
 .billing-panel .billing-pilot-acceptance-actions,
@@ -32895,6 +33042,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions button,
+.billing-panel .pilot-package-board-proof button,
 .billing-panel .pricing-activation-workbench-footer button,
 .billing-panel .billing-launch-board-actions button,
 .billing-panel .billing-pilot-acceptance-actions button,
@@ -32907,6 +33055,8 @@ body {
 
 @media (max-width: 780px) {
   .billing-panel .pricing-choice-actions,
+  .billing-panel .pilot-package-board-header,
+  .billing-panel .pilot-package-board-proof,
   .billing-panel .pricing-activation-workbench-footer,
   .billing-panel .billing-launch-board-header,
   .billing-panel .billing-launch-board-actions,

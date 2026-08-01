@@ -13149,6 +13149,47 @@ function BillingPanel({
       ready: true
     }
   ];
+  const pilotPackageBoard = {
+    mode: "pilot_package_board",
+    selected_seats: seats,
+    selected_plan: selectedProjectedPlan?.name ?? primaryPlan?.name ?? "Corporate Verify Pilot",
+    projected_monthly_usd: estimatedSeatTotal,
+    live_subscription_rows: activeSubscriptions.length,
+    latest_quote_receipt_id: latestPricingQuoteReceipt?.id ?? "not_recorded",
+    stripe_checkout_status: "disabled_until_human_gate",
+    preview_data_accepted: false,
+    accepted_when:
+      "pilot_package_board_requires_professional_free_corporate_149_pilot_scale_quote_live_ledger_quote_receipt_scoped_user_database_access_and_stripe_human_gate"
+  };
+  const pilotPackageCards = [
+    {
+      label: "Professional Passport",
+      price: "$0 pilot",
+      audience: "Individual users",
+      detail: "Create the Passport, add evidence metadata, grant consent, and control scoped sharing.",
+      proof: "Profile, evidence, consent, and access-grant rows"
+    },
+    {
+      label: "Corporate Verify",
+      price: selectedProjectedPlan ? `$${selectedProjectedPlan.projected_monthly_usd}/month` : "$149/month pilot",
+      audience: "Employer reviewers",
+      detail: "Company workspace, RBAC reviewers, access requests, approved scoped rows, attestations, and exports.",
+      proof: activeSubscriptions.length ? `${activeSubscriptions.length} live subscription row${activeSubscriptions.length === 1 ? "" : "s"}` : "Pilot ledger row required"
+    },
+    {
+      label: "Scale package",
+      price: "Human quote",
+      audience: "Multi-team operations",
+      detail: "Security, legal language, API/export needs, pilot owner, and paid-launch approvals stay in human review.",
+      proof: "Launch decision board plus payment architecture receipt"
+    }
+  ];
+  const pilotPackageProof = [
+    { label: "Catalog", value: plans.length ? `${plans.length} live plans` : "Missing", ready: plans.length > 0 },
+    { label: "Seats", value: `${seats}`, ready: seats > 0 },
+    { label: "Quote", value: latestPricingQuoteReceipt ? "Saved" : "Record", ready: Boolean(latestPricingQuoteReceipt) },
+    { label: "Payments", value: "Stripe gated", ready: true }
+  ];
   const billingLaunchBoard = {
     mode: "billing_launch_board",
     status: activeSubscriptions.length ? "pilot_ledger_active" : "activate_pilot_ledger",
@@ -13384,6 +13425,11 @@ function BillingPanel({
     billing_activation_receipt: billingActivationReceipt,
     billing_operator_path: billingOperatorSteps,
     billing_pilot_acceptance_checkpoint: billingPilotAcceptanceCheckpoint,
+    pilot_package_board: {
+      ...pilotPackageBoard,
+      packages: pilotPackageCards.map(({ label, price, audience, proof }) => ({ label, price, audience, proof })),
+      proof: pilotPackageProof.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
     pricing_choice_rail: {
       ...pricingChoiceRail,
       items: pricingChoiceRailItems.map(({ label, value, ready }) => ({ label, value, ready }))
@@ -13510,6 +13556,50 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className="pilot-package-board" aria-label="Pilot package board">
+        <div className="pilot-package-board-header">
+          <div>
+            <span className={`status-chip ${activeSubscriptions.length && latestPricingQuoteReceipt ? "success" : "warning"}`}>Pilot package board</span>
+            <strong>Professional free, Corporate Verify pilot, Scale by approval</strong>
+            <small>
+              Buyers see the package, first database proof, scoped Corporate access, and the Stripe boundary before any paid launch step.
+            </small>
+          </div>
+          <span className="status-chip neutral">No preview data</span>
+        </div>
+        <div className="pilot-package-board-grid">
+          {pilotPackageCards.map((packageCard) => (
+            <article key={packageCard.label}>
+              <span>{packageCard.audience}</span>
+              <strong>{packageCard.label}</strong>
+              <b>{packageCard.price}</b>
+              <small>{packageCard.detail}</small>
+              <em>{packageCard.proof}</em>
+            </article>
+          ))}
+        </div>
+        <div className="pilot-package-board-proof">
+          {pilotPackageProof.map((item) => (
+            <span className={item.ready ? "ready" : "next"} key={item.label}>
+              <strong>{item.value}</strong>
+              <small>{item.label}</small>
+            </span>
+          ))}
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-pilot-package-board-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...pilotPackageBoard, packages: pilotPackageCards, proof: pilotPackageProof }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export package board
+          </button>
+        </div>
+      </div>
       <div className="pricing-activation-workbench" aria-label="Pricing activation workbench">
         <div className="pricing-activation-workbench-header">
           <div>
