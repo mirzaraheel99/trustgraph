@@ -3094,6 +3094,71 @@ function VerifyRequestsPanel({
     cards: corporateReviewerFrontDeskCards.map(({ label, value, ready }) => ({ label, value, ready }))
   };
   const corporateReviewerFrontDeskPacketName = `trustgraph-corporate-reviewer-front-desk-${new Date().toISOString().slice(0, 10)}.json`;
+  const corporateVerifyReviewRunway = {
+    mode: "corporate_verify_review_runway",
+    active_organization: activeOrganization.name,
+    status: disabled
+      ? "corporate_role_required"
+      : sharedRecords.length && reviews.length && pendingGapCount === 0
+        ? "metadata_export_ready"
+        : firstUseNextAction,
+    next_target: liveAccessCommandTarget,
+    request_count: requests.length,
+    approved_grants: approvedCount,
+    visible_scoped_rows: sharedRecords.length,
+    review_attestations: reviews.length,
+    open_gap_count: pendingGapCount,
+    no_open_user_database_browse: true,
+    metadata_only_export: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_verify_review_runway_keeps_request_approval_visible_scoped_rows_review_attestation_metadata_export_and_no_open_user_database_visible_before_dense_panels"
+  };
+  const corporateVerifyReviewRunwaySteps = [
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length} sent` : "Send first",
+      detail: "Start with one professional email and a clear business purpose.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form",
+      action: "Request access"
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : requestedCount ? `${requestedCount} waiting` : "Waiting",
+      detail: "No user Passport rows appear before the professional approves scope.",
+      ready: approvedCount > 0,
+      target: "corporate-verify-request-list",
+      action: "Check approval"
+    },
+    {
+      label: "Scoped rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Locked",
+      detail: "Only approved, consent-scoped rows load for this company and role.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue",
+      action: "Review rows"
+    },
+    {
+      label: "Review",
+      value: reviews.length ? `${reviews.length} saved` : "Attest",
+      detail: pendingGapCount ? `${pendingGapCount} open gaps must be resolved or documented.` : "Record the reviewer attestation after row review.",
+      ready: reviews.length > 0 && pendingGapCount === 0,
+      target: "corporate-access-review-queue",
+      action: "Record review"
+    },
+    {
+      label: "Export",
+      value: sharedRecords.length && reviews.length ? "Ready" : "After review",
+      detail: "Export metadata and audit proof only. Private evidence files are not exported.",
+      ready: sharedRecords.length > 0 && reviews.length > 0,
+      target: "export",
+      action: "Export packet"
+    }
+  ];
+  const corporateVerifyReviewRunwayNext =
+    corporateVerifyReviewRunwaySteps.find((step) => !step.ready) ?? corporateVerifyReviewRunwaySteps[corporateVerifyReviewRunwaySteps.length - 1];
+  const corporateVerifyReviewRunwayPacketName = `trustgraph-corporate-verify-review-runway-${new Date().toISOString().slice(0, 10)}.json`;
   const emptyVerifyStateCommand = {
     mode: "empty_verify_state_command",
     visible_shared_rows: sharedRecords.length,
@@ -3326,6 +3391,100 @@ function VerifyRequestsPanel({
           >
             Export unlock path
           </button>
+        </div>
+      </div>
+      <div className="corporate-verify-review-runway" aria-label="Corporate Verify review runway">
+        <div className="corporate-verify-review-runway-header">
+          <div>
+            <span className={`status-chip ${corporateVerifyReviewRunwayNext.ready ? "success" : "warning"}`}>
+              Corporate Verify runway
+            </span>
+            <strong>{corporateVerifyReviewRunwayNext.label}: {corporateVerifyReviewRunwayNext.value}</strong>
+            <small>
+              Request, approval, scoped rows, review attestation, and metadata export stay in one workflow. Corporate
+              reviewers never browse an open user database.
+            </small>
+          </div>
+          <div className="corporate-verify-review-runway-actions">
+            <button
+              className={corporateVerifyReviewRunwayNext.ready ? "secondary-action" : "primary-action"}
+              onClick={() => {
+                if (corporateVerifyReviewRunwayNext.target === "export") {
+                  downloadTextFile(
+                    corporateVerifyReviewRunwayPacketName,
+                    JSON.stringify({ ...corporateVerifyReviewRunway, steps: corporateVerifyReviewRunwaySteps }, null, 2),
+                    "application/json"
+                  );
+                  return;
+                }
+                document.getElementById(corporateVerifyReviewRunwayNext.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              {corporateVerifyReviewRunwayNext.action}
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  corporateVerifyReviewRunwayPacketName,
+                  JSON.stringify({ ...corporateVerifyReviewRunway, steps: corporateVerifyReviewRunwaySteps }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export runway
+            </button>
+          </div>
+        </div>
+        <div className="corporate-verify-review-runway-grid">
+          {corporateVerifyReviewRunwaySteps.map((step) => (
+            <button
+              className={step.ready ? "ready" : step.label === corporateVerifyReviewRunwayNext.label ? "next" : "locked"}
+              key={step.label}
+              onClick={() => {
+                if (step.target === "export") {
+                  downloadTextFile(
+                    corporateVerifyReviewRunwayPacketName,
+                    JSON.stringify({ ...corporateVerifyReviewRunway, steps: corporateVerifyReviewRunwaySteps }, null, 2),
+                    "application/json"
+                  );
+                  return;
+                }
+                document.getElementById(step.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+              <em>{step.action}</em>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-verify-review-runway-proof">
+          <span>
+            <small>Approved grants</small>
+            <strong>{corporateVerifyReviewRunway.approved_grants}</strong>
+          </span>
+          <span>
+            <small>Scoped rows</small>
+            <strong>{corporateVerifyReviewRunway.visible_scoped_rows}</strong>
+          </span>
+          <span>
+            <small>Reviews</small>
+            <strong>{corporateVerifyReviewRunway.review_attestations}</strong>
+          </span>
+          <span>
+            <small>Browse boundary</small>
+            <strong>{corporateVerifyReviewRunway.no_open_user_database_browse ? "No open browse" : "Open browse"}</strong>
+          </span>
+          <span>
+            <small>Export</small>
+            <strong>{corporateVerifyReviewRunway.metadata_only_export ? "Metadata only" : "Raw files"}</strong>
+          </span>
         </div>
       </div>
       <div className="corporate-reviewer-database-home" aria-label="Corporate reviewer database home">

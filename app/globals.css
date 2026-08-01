@@ -15354,6 +15354,143 @@ p {
     rgba(255, 255, 255, 0.025);
 }
 
+.corporate-verify-review-runway {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(13, 49, 45, 0.88), rgba(13, 25, 31, 0.92)),
+    rgba(255, 255, 255, 0.035);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+}
+
+.corporate-verify-review-runway-header,
+.corporate-verify-review-runway-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-verify-review-runway-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-verify-review-runway strong,
+.corporate-verify-review-runway small,
+.corporate-verify-review-runway span,
+.corporate-verify-review-runway em {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-verify-review-runway-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 30px);
+  line-height: 1.08;
+}
+
+.corporate-verify-review-runway small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.corporate-verify-review-runway-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: min(100%, 280px);
+}
+
+.corporate-verify-review-runway-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.corporate-verify-review-runway-grid button {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  min-height: 144px;
+  padding: 12px;
+  color: var(--text);
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.corporate-verify-review-runway-grid button.ready {
+  border-color: rgba(112, 224, 178, 0.32);
+  background: rgba(112, 224, 178, 0.07);
+}
+
+.corporate-verify-review-runway-grid button.next {
+  border-color: rgba(225, 184, 102, 0.28);
+}
+
+.corporate-verify-review-runway-grid button.locked {
+  opacity: 0.82;
+}
+
+.corporate-verify-review-runway-grid span,
+.corporate-verify-review-runway-proof small {
+  color: #77ffd6;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.corporate-verify-review-runway-grid strong {
+  font-size: 17px;
+  line-height: 1.12;
+}
+
+.corporate-verify-review-runway-grid em {
+  align-self: end;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 9px;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.corporate-verify-review-runway-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+}
+
+.corporate-verify-review-runway-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.corporate-verify-review-runway-proof strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
 .verify-request-form {
   display: grid;
   gap: 10px;
@@ -20114,6 +20251,10 @@ p {
   .corporate-database-next-action-commander,
   .corporate-database-next-action-grid,
   .corporate-database-next-action-controls,
+  .corporate-verify-review-runway-header,
+  .corporate-verify-review-runway-actions,
+  .corporate-verify-review-runway-grid,
+  .corporate-verify-review-runway-proof,
   .corporate-database-path-grid,
   .corporate-database-path-proof,
   .corporate-request-to-row-grid,
