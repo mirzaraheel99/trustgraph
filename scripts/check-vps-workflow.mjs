@@ -8,9 +8,11 @@ const app = fs.readFileSync("src/App.tsx", "utf8");
 const compose = fs.readFileSync("docker-compose.server.yml", "utf8");
 const dockerfile = fs.readFileSync("Dockerfile", "utf8");
 const caddyfile = fs.readFileSync("Caddyfile", "utf8");
+const releaseStamp = fs.readFileSync("public/trustgraph-release.json", "utf8");
 const preflight = fs.readFileSync("tools/preflight-vps.sh", "utf8");
 const updateVps = fs.readFileSync("tools/update-vps-from-github.sh", "utf8");
 const envValidator = fs.readFileSync("tools/validate-server-env.sh", "utf8");
+const freshnessCheck = fs.readFileSync("scripts/check-vps-freshness.mjs", "utf8");
 
 const requiredSnippets = [
   {
@@ -76,6 +78,18 @@ const requiredSnippets = [
 ];
 
 const runtimeSnippets = [
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "Verify release stamp asset",
+    label: "GitHub Pages build verifies the exported release stamp asset"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "trustgraph_release_stamp_static_asset_then_vps_updater_overwrites_with_current_git_commit_and_marker",
+    label: "GitHub Pages build verifies the server-save release stamp contract"
+  },
   {
     source: pagesWorkflow,
     path: pagesWorkflowPath,
@@ -159,6 +173,30 @@ const runtimeSnippets = [
     path: "Caddyfile",
     snippet: ":80 {",
     label: "Caddy serves HTTP-only behind the shared nginx edge"
+  },
+  {
+    source: caddyfile,
+    path: "Caddyfile",
+    snippet: "handle /trustgraph-release.json",
+    label: "Caddy serves the release stamp before the app shell fallback"
+  },
+  {
+    source: caddyfile,
+    path: "Caddyfile",
+    snippet: 'header Content-Type "application/json; charset=utf-8"',
+    label: "Caddy returns a JSON content type for the release stamp"
+  },
+  {
+    source: releaseStamp,
+    path: "public/trustgraph-release.json",
+    snippet: "trustgraph_release_stamp_static_asset_then_vps_updater_overwrites_with_current_git_commit_and_marker",
+    label: "public release stamp encodes the server-save contract"
+  },
+  {
+    source: freshnessCheck,
+    path: "scripts/check-vps-freshness.mjs",
+    snippet: "VPS release stamp served the app shell instead of trustgraph-release.json",
+    label: "freshness checker rejects HTML fallback release stamps"
   },
   {
     source: preflight,
