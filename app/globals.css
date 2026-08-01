@@ -30734,6 +30734,102 @@ body {
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
 }
 
+.public-audience-switchboard {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin-top: 18px;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(210, 231, 223, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(16, 46, 44, 0.9), rgba(12, 21, 25, 0.94)),
+    rgba(255, 255, 255, 0.034);
+  box-shadow: 0 22px 64px rgba(0, 0, 0, 0.24);
+}
+
+.public-audience-switchboard-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-audience-switchboard-copy strong {
+  color: var(--text);
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.05;
+}
+
+.public-audience-switchboard-copy small,
+.public-audience-switchboard-grid small,
+.public-audience-switchboard-proof small {
+  color: rgba(226, 239, 233, 0.76);
+  line-height: 1.4;
+}
+
+.public-audience-switchboard-grid,
+.public-audience-switchboard-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.public-audience-switchboard-grid button,
+.public-audience-switchboard-proof span {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  min-height: 120px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.052);
+  color: inherit;
+  text-align: left;
+}
+
+.public-audience-switchboard-grid button:hover,
+.public-audience-switchboard-grid button.active {
+  border-color: rgba(109, 242, 220, 0.36);
+  background: rgba(109, 242, 220, 0.1);
+}
+
+.public-audience-switchboard-grid span,
+.public-audience-switchboard-proof small {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-audience-switchboard-grid strong,
+.public-audience-switchboard-proof strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.14;
+}
+
+.public-audience-switchboard-grid em {
+  align-self: end;
+  color: #f2cb78;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.public-audience-switchboard strong,
+.public-audience-switchboard small,
+.public-audience-switchboard span,
+.public-audience-switchboard em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .public-login-command-center {
   display: grid;
   gap: 12px;

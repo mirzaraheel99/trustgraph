@@ -21992,6 +21992,43 @@ function PublicSite({
       portal_outcome: portalOutcome
     }))
   };
+  const publicAudienceSwitchboard = {
+    generated_at: new Date().toISOString(),
+    mode: "public_audience_switchboard",
+    selected_portal: portal,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_audience_switchboard_explains_professional_corporate_and_operator_paths_pricing_database_effects_scoped_access_and_human_gates_in_first_viewport"
+  };
+  const publicAudienceCards = [
+    {
+      label: "Professional",
+      title: "Build your private Passport",
+      detail: "Own work history, credentials, references, training, evidence links, consent, and Access Grants.",
+      price: "$0 pilot",
+      database: "Profile, personal organization, Passport records",
+      action: "Start Passport",
+      portal: "professional" as const
+    },
+    {
+      label: "Corporate Verify",
+      title: "Request scoped user records",
+      detail: "Create a company workspace, invite reviewers, request one professional by email, and review approved rows only.",
+      price: "$149 pilot",
+      database: "Company, RBAC seat, subscription ledger, access requests",
+      action: "Start Corporate",
+      portal: "corporate" as const
+    },
+    {
+      label: "Trust operations",
+      title: "Audit the pilot launch path",
+      detail: "Review release proof, security/RLS, exports, pilot contacts, and human gates before production traffic.",
+      price: "Human-gated",
+      database: "Audit, release, security, readiness receipts",
+      action: "Review pricing",
+      portal: "corporate" as const
+    }
+  ];
   const portalFrontDoor = {
     generated_at: new Date().toISOString(),
     mode: "portal_front_door",
@@ -22119,6 +22156,43 @@ function PublicSite({
             <button className="secondary-action" onClick={() => openPortal("corporate")}>
               Corporate portal
             </button>
+          </div>
+          <div className="public-audience-switchboard" aria-label="Public audience switchboard">
+            <div className="public-audience-switchboard-copy">
+              <span className="status-chip success">Who TrustGraph serves</span>
+              <strong>Choose the workflow before live database rows are created</strong>
+              <small>{publicAudienceSwitchboard.accepted_when}</small>
+            </div>
+            <div className="public-audience-switchboard-grid">
+              {publicAudienceCards.map((card) => (
+                <button
+                  className={portal === card.portal ? "active" : ""}
+                  key={card.label}
+                  onClick={() => {
+                    setPortal(card.portal);
+                    if (card.label === "Trust operations") {
+                      document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" });
+                      return;
+                    }
+                    window.requestAnimationFrame(() => document.getElementById("portal-auth")?.scrollIntoView({ behavior: "smooth" }));
+                  }}
+                  type="button"
+                >
+                  <span>{card.label}</span>
+                  <strong>{card.title}</strong>
+                  <small>{card.detail}</small>
+                  <em>{card.price}</em>
+                </button>
+              ))}
+            </div>
+            <div className="public-audience-switchboard-proof">
+              {publicAudienceCards.map((card) => (
+                <span key={card.label}>
+                  <strong>{card.database}</strong>
+                  <small>{card.label} database effect</small>
+                </span>
+              ))}
+            </div>
           </div>
           <div className="portal-front-door" aria-label="Portal front door">
             <div className="portal-front-door-copy">

@@ -63,6 +63,8 @@ The CI loop also runs `pnpm check:live-database-repair`. That focused gate prove
 
 The signed-in workspace now includes a registration handoff command immediately after the portal command center. It shows the hosted registration intent, selected Professional or Corporate portal, selected plan, first live database write, completion state, next workspace or Passport action, and preview-data rejection so a verified user can see why Corporate remains locked until workspace/RBAC creation is complete.
 
+The public first viewport now includes an audience switchboard for Professionals, Corporate Verify buyers, and TrustGraph operators. It explains the pilot price, first database effect, scoped-access boundary, and human-gated operations before a visitor reaches the credential form.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist

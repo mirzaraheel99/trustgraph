@@ -83,6 +83,8 @@ const requiredMobileStacks = [
   ".production-gate-cockpit-header",
   ".production-gate-cockpit-grid",
   ".production-gate-cockpit-proof",
+  ".public-audience-switchboard-grid",
+  ".public-audience-switchboard-proof",
   ".portal-ux-command-center",
   ".portal-ux-command-actions",
   ".portal-ux-command-grid",
