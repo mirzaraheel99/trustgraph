@@ -103,7 +103,7 @@ Corporate Verify now starts the reviewer work area with a Corporate reviewer dat
 
 Corporate Verify now also puts a reviewer database workbench at the top of the user database. It summarizes visible users, shared records, open gaps, review attestations, visibility snapshot, access receipt, filters, export, and the no-open-browse boundary before the row list.
 
-Corporate Verify now adds a review queue command before the dense user rows, showing queue rows, shared records, open gaps, attestations, the next reviewer action, and metadata-only queue export in one bounded control surface.
+Corporate Verify keeps the review queue command in the source/export packet, but the visible reviewer path now routes through the reviewer workbench and action bar first so the main database screen does not stack duplicate proof panels before the row list.
 
 The signed-in console keeps the daily operator path lean: one dashboard front door, the setup center, and the active workspace surface. Release, readiness, and proof machinery stay exportable from their command buttons and packets without stacking into the first screen.
 
@@ -183,11 +183,11 @@ Corporate Verify now includes a visible rows handoff for the approval-to-review 
 
 Corporate Verify also includes a Missing-record cross-portal checkpoint that ties corporate requests, Professional Passport handoff, open gap status, scoped rows, review attestation, metadata-only export, and preview-data rejection into one visible proof before handoff.
 
-Corporate Verify’s database action cockpit now includes direct controls for requesting access, reviewing scoped rows, saving the visibility snapshot, recording the database access receipt, and exporting the scoped metadata packet before reviewers reach dense filters.
+Corporate Verify’s database action cockpit remains available as exportable proof, while the visible database workbench now carries the direct controls for reviewing scoped rows, saving the visibility snapshot, recording the database access receipt, and exporting the scoped metadata packet.
 
-Corporate Verify now also includes a persisted database acceptance checkpoint before directory filters. It requires live corporate RBAC rows, approved shared user rows, review attestation, persisted database access receipt, persisted visibility snapshot, and metadata-only export before the corporate user database path can be accepted.
+Corporate Verify now also includes a persisted database acceptance checkpoint in the source/export evidence. The daily reviewer screen keeps that acceptance proof behind the workbench actions while still requiring live corporate RBAC rows, approved shared user rows, review attestation, persisted database access receipt, persisted visibility snapshot, and metadata-only export before the corporate user database path can be accepted.
 
-Corporate Verify now adds a live row proof chain before persisted acceptance. It shows active corporate RBAC, email-based access requests, approved grants, scoped user rows, reviewer attestation, visibility snapshot, and metadata-only export status in one bounded proof path.
+Corporate Verify now keeps the live row proof chain as metadata evidence behind the reviewer workbench. The operator still proves active corporate RBAC, email-based access requests, approved grants, scoped user rows, reviewer attestation, visibility snapshot, and metadata-only export status, without forcing those proof cards into the primary row-review path.
 
 Billing now starts with a pricing choice rail that summarizes selected plan, seats, projected monthly price, live pilot ledger state, saved quote receipt, Stripe gate, and pricing packet export before the deeper billing receipts.
 

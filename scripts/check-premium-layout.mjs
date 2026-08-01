@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 
 const app = readFileSync("src/App.tsx", "utf8");
 const css = readFileSync("app/globals.css", "utf8");
+const readme = readFileSync("README.md", "utf8");
 
 function assert(condition, message) {
   if (!condition) {
@@ -90,6 +91,7 @@ assert(app.includes('aria-label="Corporate access request scope receipt"'), "Cor
 assert(app.includes('aria-label="Corporate user database access contract"'), "Corporate Verify must expose the exact corporate user database access boundary.");
 assert(app.includes('aria-label="Corporate scope review command"'), "Corporate Verify must expose a scope review command before export or handoff.");
 assert(css.includes("Corporate database simplification layer") && css.includes(".verify-panel .corporate-directory-panel .corporate-live-row-proof-chain") && css.includes(".verify-panel .corporate-directory-panel .persisted-corporate-database-acceptance"), "Corporate database UI must keep proof receipt clutter out of the main reviewer flow while preserving exportable proof markers.");
+assert(readme.includes("visible database workbench now carries the direct controls") && readme.includes("without forcing those proof cards into the primary row-review path"), "README must describe the simplified Corporate database path instead of promising hidden proof panels as the visible first path.");
 assert(app.includes('aria-label="Auth recovery command center"'), "account and public auth must expose visible recovery command centers.");
 assert(app.includes('aria-label="Hosted auth recovery board"') && app.includes("hosted_auth_recovery_board"), "public auth must expose a hosted recovery board before email actions.");
 assert(app.includes("hosted_auth_recovery_board_requires_hosted_redirect_email_rate_limit_localhost_link_repair_resend_reset_professional_or_corporate_landing_and_no_preview_data"), "hosted auth recovery board must require hosted redirect, rate-limit guidance, localhost repair, portal landing, and no preview data.");
