@@ -475,6 +475,8 @@ The public login and registration card keeps account recovery visible in the mai
 
 The current UI applies a V1 premium flow compression layer. The public site keeps the portal front door, launchpad, pricing path, and auth card readable before credentials; the signed-in workspace keeps the portal command center, VPS status, route shell, daily runway, real-row gate, account/logout, and next action first; and Corporate Verify keeps request, approval, scoped rows, review attestation, metadata export, and the no-open-user-database boundary ahead of dense reviewer proof panels. Older receipt surfaces remain in source for exports and CI markers, but they no longer crowd the primary user path or create horizontal overflow.
 
+The signed-in workspace also includes a Real data mission control directly below the portal command center. It shows live-row progress, next missing Supabase group, row source, completion receipt status, VPS freshness, and direct actions for login/recovery, live pilot seed, proof reload, working-data export, and real database completion receipt recording before the deeper proof panels.
+
 ## Product Planning
 
 The `docs/` folder contains the planning documents used to shape this foundation. Root-level runbooks capture the live v1 operating checklist.

@@ -34686,6 +34686,10 @@ body {
   order: -50;
 }
 
+.real-data-mission-control {
+  order: -52;
+}
+
 .dashboard-next-action,
 .portal-home-command,
 .portal-choice-guide {
@@ -34713,6 +34717,7 @@ body {
 .portal-ux-command-center,
 .vps-saved-portal-command,
 .portal-route-shell,
+.real-data-mission-control,
 .signed-in-daily-operating-runway,
 .real-row-acceptance-gate,
 .dashboard-next-action,
@@ -34727,6 +34732,8 @@ body {
 .vps-saved-portal-command-grid,
 .portal-route-tabs,
 .portal-route-shell-status,
+.real-data-mission-grid,
+.real-data-mission-proof,
 .signed-in-daily-operating-grid,
 .real-row-acceptance-grid,
 .dashboard-next-action-metrics,
@@ -34742,6 +34749,111 @@ body {
 .portal-choice-guide button {
   min-width: 0;
   width: 100%;
+  white-space: normal;
+}
+
+.real-data-mission-control {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid rgba(225, 184, 102, 0.24);
+  background:
+    linear-gradient(135deg, rgba(225, 184, 102, 0.095), rgba(82, 214, 196, 0.055)),
+    rgba(8, 16, 18, 0.82);
+  box-shadow: 0 20px 58px rgba(0, 0, 0, 0.24);
+}
+
+.real-data-mission-control.ready {
+  border-color: rgba(95, 240, 201, 0.3);
+}
+
+.real-data-mission-header,
+.real-data-mission-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.48fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.real-data-mission-header > div:first-child,
+.real-data-mission-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.real-data-mission-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.real-data-mission-grid,
+.real-data-mission-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 9px;
+}
+
+.real-data-mission-grid article,
+.real-data-mission-proof span {
+  min-width: 0;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.real-data-mission-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.real-data-mission-grid article.next {
+  border-color: rgba(225, 184, 102, 0.3);
+}
+
+.real-data-mission-control strong,
+.real-data-mission-control small,
+.real-data-mission-control span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.real-data-mission-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.08;
+}
+
+.real-data-mission-grid strong,
+.real-data-mission-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.real-data-mission-grid span,
+.real-data-mission-proof small:first-child {
+  color: #f2cb78;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.real-data-mission-control small {
+  color: var(--muted);
+  line-height: 1.38;
+}
+
+.real-data-mission-actions button {
+  width: 100%;
+  min-width: 0;
   white-space: normal;
 }
 
@@ -34860,6 +34972,8 @@ pre {
   .public-v1-access-runway-proof,
   .signed-in-daily-operating-header,
   .signed-in-daily-operating-proof,
+  .real-data-mission-header,
+  .real-data-mission-proof,
   .corporate-verify-review-runway-header,
   .corporate-verify-review-runway-proof,
   .dashboard-next-action,

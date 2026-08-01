@@ -28322,6 +28322,60 @@ function App() {
     ...liveDataLoadingCommandRows.filter((row) => !row.ready).slice(0, 1),
     ...liveDataLoadingCommandRows.filter((row) => row.ready).slice(0, 2)
   ];
+  const latestRealDatabaseCompletionReceipt = realDatabaseCompletionReceipts[0] ?? null;
+  const realDataMissionControl = {
+    mode: "real_data_mission_control",
+    status: livePilotRowProof.accepted ? "live_rows_loaded" : authSession && accountContext ? "load_live_rows" : "hosted_login_required",
+    accepted: livePilotRowProof.accepted,
+    source: livePilotRowProof.source,
+    preview_data_accepted: false,
+    ready_groups: livePilotRowProof.readyGroups,
+    required_groups: livePilotRowProof.totalRequiredGroups,
+    live_row_total: realRowAcceptanceGate.live_row_total,
+    next_missing_group: realRowAcceptanceGate.next_missing_group,
+    next_missing_table: realRowAcceptanceGate.next_missing_table,
+    next_action: livePilotRowProof.accepted
+      ? "Record completion receipt and export the working-data packet."
+      : authSession && accountContext
+        ? "Run live pilot seed, reload proof, then export the working-data packet."
+        : "Login from the hosted TrustGraph URL before loading live rows.",
+    accepted_when:
+      "real_data_mission_control_keeps_live_seed_reload_working_data_export_completion_receipt_preview_rejection_and_vps_freshness_visible_before_dense_proof_panels"
+  };
+  const realDataMissionRows = [
+    {
+      label: "Live rows",
+      value: `${realDataMissionControl.ready_groups}/${realDataMissionControl.required_groups}`,
+      detail: livePilotRowProof.accepted ? "All required signed-in Supabase row groups are loaded." : `Next: ${realDataMissionControl.next_missing_group}`,
+      ready: livePilotRowProof.accepted
+    },
+    {
+      label: "Source",
+      value: realDataMissionControl.source.replace(/_/g, " "),
+      detail: "Only hosted, signed-in Supabase repository rows count.",
+      ready: realDataMissionControl.source === "signed_in_supabase_rows"
+    },
+    {
+      label: "Rows counted",
+      value: `${realDataMissionControl.live_row_total}`,
+      detail: "Preview data, browser-memory seed state, and static copy are rejected.",
+      ready: realDataMissionControl.live_row_total > 0
+    },
+    {
+      label: "Completion receipt",
+      value: latestRealDatabaseCompletionReceipt ? "Saved" : "Missing",
+      detail: latestRealDatabaseCompletionReceipt
+        ? `${latestRealDatabaseCompletionReceipt.completed_steps}/${latestRealDatabaseCompletionReceipt.total_steps} groups persisted`
+        : "Record after live rows load.",
+      ready: Boolean(latestRealDatabaseCompletionReceipt)
+    },
+    {
+      label: "VPS freshness",
+      value: serverSyncMonitor.status === "synced" ? "Synced" : "Needs save",
+      detail: "Server proof requires release JSON and bundle marker match.",
+      ready: serverSyncMonitor.status === "synced"
+    }
+  ];
 
   async function recordLiveDatabaseReadinessReceipt() {
     if (!authSession || !accountContext) {
@@ -28750,7 +28804,6 @@ function App() {
       };
     });
   const nextRealDatabaseStep = realDatabaseCompletionSteps.find((step) => step.status !== "complete") ?? realDatabaseCompletionSteps[0];
-  const latestRealDatabaseCompletionReceipt = realDatabaseCompletionReceipts[0] ?? null;
   const realDatabaseCompletionPlan = {
     mode: "real_database_completion_plan",
     latest_persisted_receipt: latestRealDatabaseCompletionReceipt,
@@ -30447,6 +30500,114 @@ function App() {
             <span>
               <small>VPS</small>
               <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+            </span>
+          </div>
+        </section>
+
+        <section className={`real-data-mission-control ${realDataMissionControl.accepted ? "ready" : "needed"}`} aria-label="Real data mission control">
+          <div className="real-data-mission-header">
+            <div>
+              <span className={`status-chip ${realDataMissionControl.accepted ? "success" : "warning"}`}>Real database mission</span>
+              <strong>
+                {realDataMissionControl.accepted
+                  ? "Live Supabase rows are loaded for V1 proof"
+                  : authSession && accountContext
+                    ? `Load live rows next: ${realDataMissionControl.next_missing_group}`
+                    : "Login first before any database proof counts"}
+              </strong>
+              <small>{realDataMissionControl.accepted_when}</small>
+            </div>
+            <div className="real-data-mission-actions">
+              <button
+                className={authSession && accountContext ? "secondary-action" : "primary-action"}
+                onClick={openAuthControls}
+                type="button"
+              >
+                {authSession && accountContext ? "Account / recovery" : "Login or register"}
+              </button>
+              <button
+                className={authSession && accountContext && !livePilotRowProof.accepted ? "primary-action" : "secondary-action"}
+                disabled={!authSession || !accountContext}
+                onClick={() => {
+                  if (!authSession || !accountContext) {
+                    openAuthControls();
+                    return;
+                  }
+                  setV1ReadinessStatus("Running live pilot seed from mission control...");
+                  seedLivePilotWorkspace()
+                    .then(() => setV1ReadinessStatus("Live pilot seed completed. Repository rows reloaded."))
+                    .catch((error) => {
+                      setV1ReadinessStatus(error instanceof Error ? error.message : "Could not run live pilot seed.");
+                    });
+                }}
+                type="button"
+              >
+                Run live seed
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                type="button"
+              >
+                Reload proof view
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() => downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json")}
+                type="button"
+              >
+                Export working data
+              </button>
+              <button
+                className="secondary-action"
+                disabled={!authSession || !accountContext}
+                onClick={() =>
+                  void recordLiveRealDatabaseCompletionReceipt({
+                    status: livePilotRowProof.accepted ? "ready_for_v1_review" : "live_rows_missing",
+                    completedSteps: livePilotRowProof.readyGroups,
+                    totalSteps: livePilotRowProof.totalRequiredGroups,
+                    missingGroups: livePilotRowProof.missingRequiredGroups,
+                    liveRowGroups: livePilotRowProof.rows.map((row) => ({
+                      label: row.label,
+                      table: row.table,
+                      count: row.count,
+                      ready: row.ready,
+                      evidence: row.evidence
+                    })),
+                    metadata: {
+                      source: "real_data_mission_control",
+                      next_action: realDataMissionControl.next_action,
+                      server_save_status: serverSyncMonitor.status
+                    }
+                  })
+                }
+                type="button"
+              >
+                Record receipt
+              </button>
+            </div>
+          </div>
+          <div className="real-data-mission-grid">
+            {realDataMissionRows.map((row) => (
+              <article className={row.ready ? "ready" : "next"} key={row.label}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="real-data-mission-proof">
+            <span>
+              <small>Next action</small>
+              <strong>{realDataMissionControl.next_action}</strong>
+            </span>
+            <span>
+              <small>Missing table</small>
+              <strong>{realDataMissionControl.next_missing_table}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{realDataMissionControl.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
           </div>
         </section>
