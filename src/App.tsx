@@ -5846,6 +5846,73 @@ function CorporateDirectoryPanel({
       detail: "Corporate attestations"
     }
   ];
+  const corporateRowAccessOutcomeCommand = {
+    mode: "corporate_row_access_outcome_command",
+    status:
+      isLiveCorporateDatabase && approvedAccessCount > 0 && sharedRecords.length > 0
+        ? "approved_scoped_user_rows_visible"
+        : isLiveCorporateDatabase && approvedAccessCount > 0
+          ? "approval_ready_waiting_for_shared_rows"
+          : isLiveCorporateDatabase && requests.length > 0
+            ? "waiting_for_professional_approval"
+            : isLiveCorporateDatabase
+              ? "request_access_first"
+              : "corporate_rbac_login_required",
+    source: isLiveCorporateDatabase ? "signed_in_supabase_rows" : "locked_until_corporate_rbac_login",
+    visible_user_rows: sharedRecords.length,
+    approved_access_grants: approvedAccessCount,
+    open_gap_requests: openGapRequestCount,
+    review_attestations: reviews.length,
+    latest_visibility_snapshot: latestCorporateVisibilitySnapshot ? "saved" : "not_saved",
+    latest_database_receipt: latestCorporateDatabaseReceipt?.status ?? "not_recorded",
+    current_action: corporateAccessNextAction.label,
+    primary_action: corporateAccessNextAction.action,
+    target: corporateAccessNextAction.target,
+    metadata_only_export: true,
+    raw_private_files_included: false,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_row_access_outcome_command_requires_live_corporate_rbac_approved_grant_scoped_user_rows_review_attestation_visibility_snapshot_database_receipt_metadata_export_and_no_open_user_database_browse"
+  };
+  const corporateRowAccessOutcomeCards = [
+    {
+      label: "Access status",
+      value:
+        corporateRowAccessOutcomeCommand.status === "approved_scoped_user_rows_visible"
+          ? "Rows visible"
+          : corporateRowAccessOutcomeCommand.status === "waiting_for_professional_approval"
+            ? "Approval pending"
+            : corporateRowAccessOutcomeCommand.status === "approval_ready_waiting_for_shared_rows"
+              ? "Reload rows"
+              : corporateRowAccessOutcomeCommand.status === "request_access_first"
+                ? "Request first"
+                : "Login needed",
+      detail: corporateAccessNextAction.detail,
+      ready: corporateRowAccessOutcomeCommand.status === "approved_scoped_user_rows_visible",
+      target: corporateAccessNextAction.target
+    },
+    {
+      label: "User rows",
+      value: `${sharedRecords.length}`,
+      detail: "Only approved, consent-scoped rows are counted.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: openGapRequestCount ? `${openGapRequestCount} open gaps block handoff.` : "Record attestation after row review.",
+      ready: reviews.length > 0 && openGapRequestCount === 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Save proof",
+      value: latestCorporateDatabaseReceipt && latestCorporateVisibilitySnapshot ? "Saved" : "Needed",
+      detail: "Snapshot plus receipt proves the filtered database access decision.",
+      ready: Boolean(latestCorporateDatabaseReceipt && latestCorporateVisibilitySnapshot),
+      target: latestCorporateVisibilitySnapshot ? "corporate-database-access-receipt" : "corporate-database-visibility-snapshot"
+    }
+  ];
   const corporateUserDatabasePacket = {
     generated_at: new Date().toISOString(),
     mode: databaseMode,
@@ -5936,6 +6003,10 @@ function CorporateDirectoryPanel({
     corporate_reviewer_database_workbench: {
       ...corporateReviewerDatabaseWorkbench,
       cards: corporateReviewerDatabaseWorkbenchCards.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
+    corporate_row_access_outcome_command: {
+      ...corporateRowAccessOutcomeCommand,
+      cards: corporateRowAccessOutcomeCards.map(({ label, value, detail, ready }) => ({ label, value, detail, ready }))
     },
     corporate_access_next_action_command: corporateAccessNextActionCommand,
     corporate_review_handoff_receipt: corporateReviewHandoffReceipt,
@@ -6156,6 +6227,69 @@ function CorporateDirectoryPanel({
             type="button"
           >
             Export task proof
+          </button>
+        </div>
+      </div>
+      <div className="corporate-row-access-outcome-command" aria-label="Corporate row access outcome command">
+        <div className="corporate-row-access-outcome-header">
+          <div>
+            <span className={`status-chip ${corporateRowAccessOutcomeCommand.visible_user_rows ? "success" : "warning"}`}>Row access outcome</span>
+            <strong>{corporateRowAccessOutcomeCommand.current_action}</strong>
+            <small>
+              {corporateRowAccessOutcomeCommand.source === "signed_in_supabase_rows"
+                ? "Corporate Verify is reading live rows through RBAC, Access Grants, consent, and review scope."
+                : "Sign in with a corporate role before user rows can be requested or viewed."}
+            </small>
+          </div>
+          <button className="primary-action" onClick={() => runCorporateReviewerTask()} type="button">
+            {corporateRowAccessOutcomeCommand.primary_action}
+          </button>
+        </div>
+        <div className="corporate-row-access-outcome-grid">
+          {corporateRowAccessOutcomeCards.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => {
+                if (item.target === "corporate-database-visibility-snapshot") {
+                  void recordVisibilitySnapshot();
+                  return;
+                }
+                if (item.target === "corporate-database-access-receipt") {
+                  void recordDatabaseReceipt();
+                  return;
+                }
+                runCorporateReviewerTask(item.target);
+              }}
+              type="button"
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-row-access-outcome-proof">
+          <span>
+            <small>Private files</small>
+            <strong>{corporateRowAccessOutcomeCommand.raw_private_files_included ? "Included" : "Excluded"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateRowAccessOutcomeCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-row-access-outcome-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateRowAccessOutcomeCommand, cards: corporateRowAccessOutcomeCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export outcome
           </button>
         </div>
       </div>
