@@ -4827,6 +4827,61 @@ function CorporateDirectoryPanel({
     checks: reviewerDatabaseReadinessBoard.map(({ label, value, ready }) => ({ label, value, ready })),
     accepted_when: "corporate_reviewer_can_see_request_grant_scoped_rows_review_attestation_visibility_snapshot_and_export_readiness_before_filtering_user_rows"
   };
+  const corporateLiveRowProofChain = [
+    {
+      label: "Corporate RBAC",
+      value: isLiveCorporateDatabase ? "Live" : "Locked",
+      detail: databaseModeDetail,
+      ready: isLiveCorporateDatabase
+    },
+    {
+      label: "Access requests",
+      value: `${requests.length}`,
+      detail: "Corporate reviewers request a specific professional by email.",
+      ready: requests.length > 0
+    },
+    {
+      label: "Approved grants",
+      value: `${approvedAccessCount}`,
+      detail: "User rows stay hidden until the professional approves the grant.",
+      ready: approvedAccessCount > 0
+    },
+    {
+      label: "Scoped rows",
+      value: `${sharedRecords.length}`,
+      detail: "Only approved Passport rows in consent scope appear in Corporate Verify.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Review proof",
+      value: `${reviews.length}`,
+      detail: "The reviewer records an attestation after checking visible rows and gaps.",
+      ready: reviews.length > 0
+    },
+    {
+      label: "Snapshot/export",
+      value: latestCorporateVisibilitySnapshot ? "Saved" : corporateAccessNextAction.ready ? "Ready" : "Blocked",
+      detail: latestCorporateVisibilitySnapshot
+        ? "Filtered visibility proof is persisted."
+        : "Save snapshot and export metadata-only proof after row review.",
+      ready: Boolean(latestCorporateVisibilitySnapshot) || corporateAccessNextAction.ready
+    }
+  ];
+  const corporateLiveRowProofPacket = {
+    mode: "corporate_live_row_proof_chain",
+    status: corporateLiveRowProofChain.every((item) => item.ready) ? "live_user_rows_proven" : "live_user_rows_open",
+    ready_steps: corporateLiveRowProofChain.filter((item) => item.ready).length,
+    total_steps: corporateLiveRowProofChain.length,
+    visible_professionals: filteredRows.length,
+    visible_shared_records: sharedRecords.length,
+    approved_access_grants: approvedAccessCount,
+    review_attestations: reviews.length,
+    open_gap_requests: openGapRequestCount,
+    preview_data_accepted: false,
+    next_action: corporateLiveRowProofChain.find((item) => !item.ready)?.label ?? "Export scoped corporate user database packet",
+    accepted_when:
+      "corporate_live_row_proof_chain_requires_live_rbac_request_by_email_approved_grants_scoped_rows_review_attestation_visibility_snapshot_and_metadata_only_export"
+  };
   const latestCorporateDatabaseReceiptStatus = latestCorporateDatabaseReceipt?.status ?? "not_recorded";
   const latestCorporateVisibilitySnapshotStatus = latestCorporateVisibilitySnapshot?.status ?? "not_recorded";
   const persistedCorporateDatabaseAcceptanceSteps = [
@@ -5059,6 +5114,10 @@ function CorporateDirectoryPanel({
     },
     corporate_classification_handling_contract: corporateClassificationHandlingContract,
     reviewer_database_readiness_board: reviewerDatabaseReadinessPacket,
+    corporate_live_row_proof_chain: {
+      ...corporateLiveRowProofPacket,
+      steps: corporateLiveRowProofChain.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
     corporate_scope_review_command: {
       ready_checks: corporateScopeReviewReady,
       total_checks: corporateScopeReviewCommand.length,
@@ -5467,6 +5526,69 @@ function CorporateDirectoryPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="corporate-live-row-proof-chain" aria-label="Corporate live row proof chain">
+        <div className="corporate-live-row-proof-header">
+          <div>
+            <span className={`status-chip ${corporateLiveRowProofPacket.status === "live_user_rows_proven" ? "success" : "warning"}`}>
+              Live row proof chain
+            </span>
+            <strong>
+              {corporateLiveRowProofPacket.status === "live_user_rows_proven"
+                ? "Corporate Verify can prove scoped user database rows"
+                : `Next: ${corporateLiveRowProofPacket.next_action}`}
+            </strong>
+            <small>{corporateLiveRowProofPacket.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-live-row-proof-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(
+                  {
+                    ...corporateLiveRowProofPacket,
+                    steps: corporateLiveRowProofChain,
+                    export_receipt: corporateUserDatabaseExportReceipt
+                  },
+                  null,
+                  2
+                ),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export live proof
+          </button>
+        </div>
+        <div className="corporate-live-row-proof-grid">
+          {corporateLiveRowProofChain.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-live-row-proof-summary">
+          <span>
+            <strong>{corporateLiveRowProofPacket.ready_steps}/{corporateLiveRowProofPacket.total_steps}</strong>
+            <small>Proof steps ready</small>
+          </span>
+          <span>
+            <strong>{corporateLiveRowProofPacket.visible_professionals}</strong>
+            <small>Visible professionals</small>
+          </span>
+          <span>
+            <strong>{corporateLiveRowProofPacket.visible_shared_records}</strong>
+            <small>Shared rows</small>
+          </span>
+          <span>
+            <strong>No open browse</strong>
+            <small>Request by email only.</small>
+          </span>
         </div>
       </div>
       <div className="persisted-corporate-database-acceptance" aria-label="Persisted corporate database acceptance checkpoint">

@@ -261,6 +261,8 @@ assert(app.includes("Record database receipt"), "Corporate Verify must expose a 
 assert(app.includes('aria-label="Corporate database visibility snapshot"'), "Corporate Verify must expose a persisted visibility snapshot for filtered database rows.");
 assert(css.includes(".corporate-database-visibility-snapshot") && css.includes(".corporate-database-visibility-grid"), "corporate database visibility snapshot must be styled and bounded.");
 assert(app.includes("Record visibility snapshot"), "Corporate Verify must expose a visibility snapshot save action.");
+assert(app.includes('aria-label="Corporate live row proof chain"') && app.includes("corporate_live_row_proof_chain"), "Corporate Verify must expose a live-row proof chain for RBAC, requests, approved grants, scoped rows, review proof, and export.");
+assert(css.includes(".corporate-live-row-proof-chain") && css.includes(".corporate-live-row-proof-grid") && css.includes(".corporate-live-row-proof-summary"), "corporate live row proof chain must be styled and bounded.");
 assert(app.includes('aria-label="Corporate classification handling contract"'), "Corporate Verify must expose Step 07 classification handling before review/export.");
 assert(app.includes("corporate_classification_handling_contract") && app.includes("status_visibility_can_differ_from_evidence_visibility"), "Corporate Verify classification packet must encode the status/evidence visibility boundary.");
 assert(css.includes(".corporate-classification-contract") && css.includes(".corporate-classification-grid") && css.includes(".corporate-classification-boundary"), "corporate classification handling contract must be styled and bounded.");

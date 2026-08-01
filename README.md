@@ -139,6 +139,8 @@ Corporate Verify’s database action cockpit now includes direct controls for re
 
 Corporate Verify now also includes a persisted database acceptance checkpoint before directory filters. It requires live corporate RBAC rows, approved shared user rows, review attestation, persisted database access receipt, persisted visibility snapshot, and metadata-only export before the corporate user database path can be accepted.
 
+Corporate Verify now adds a live row proof chain before persisted acceptance. It shows active corporate RBAC, email-based access requests, approved grants, scoped user rows, reviewer attestation, visibility snapshot, and metadata-only export status in one bounded proof path.
+
 Billing now starts with a pricing choice rail that summarizes selected plan, seats, projected monthly price, live pilot ledger state, saved quote receipt, Stripe gate, and pricing packet export before the deeper billing receipts.
 
 Passport record detail now starts evidence work with an evidence access desk: preview, download, metadata manifest export, access packet export, signed URL expiry, metadata-only boundaries, and last-link proof are visible before deeper evidence receipts.

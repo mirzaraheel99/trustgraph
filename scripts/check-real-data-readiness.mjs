@@ -76,6 +76,12 @@ const appRequirements = [
     "persisted_corporate_database_acceptance_requires_live_rbac_approved_rows_review_attestation_access_receipt_visibility_snapshot_and_metadata_only_export",
     "persisted corporate database acceptance rule"
   ],
+  ["Corporate live row proof chain", "corporate live row proof label"],
+  ["corporate_live_row_proof_chain", "corporate live row proof packet mode"],
+  [
+    "corporate_live_row_proof_chain_requires_live_rbac_request_by_email_approved_grants_scoped_rows_review_attestation_visibility_snapshot_and_metadata_only_export",
+    "corporate live row proof rule"
+  ],
   ["prepare_pilot_user_access_request", "pilot-named access request RPC"],
   ["ensure_pilot_employer_reviewer_membership", "pilot-named employer reviewer RPC"],
   ["create_pilot_verification_cases", "pilot-named verification cases RPC"],
