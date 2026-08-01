@@ -23048,6 +23048,77 @@ function App() {
     accepted_when:
       "login_professional_passport_corporate_workspace_pricing_ledger_scoped_user_database_and_vps_release_stamp_are_visible_actionable_and_backed_by_live_rows"
   };
+  const signedInPilotJourneyChecklist = [
+    {
+      step: "01",
+      label: "Hosted account",
+      status: authSession ? "Live session" : "Login required",
+      detail: authSession ? authSession.user.email : "Use the hosted TrustGraph URL before creating live rows.",
+      action: authSession ? "Account route" : "Login",
+      target: "account" as const,
+      ready: Boolean(authSession)
+    },
+    {
+      step: "02",
+      label: "Professional Passport",
+      status: livePassportRecords.length ? `${livePassportRecords.length} live rows` : "Create first row",
+      detail: "Professional users need owner-scoped Passport records before sharing.",
+      action: "Open Passport",
+      target: "passport" as const,
+      ready: livePassportRecords.length > 0
+    },
+    {
+      step: "03",
+      label: "Corporate workspace",
+      status: hasLiveCorporateContext ? activeOrganization.name : "Create company",
+      detail: "Corporate admins need organization and RBAC rows before Verify works.",
+      action: hasLiveCorporateContext ? "Company setup" : "Create company",
+      target: "corporate_setup" as const,
+      ready: hasLiveCorporateContext
+    },
+    {
+      step: "04",
+      label: "Pricing ledger",
+      status: organizationSubscriptions.length ? "Pilot ledger active" : "$149 pilot ledger",
+      detail: "Corporate Verify pricing is ledger-backed; Stripe checkout stays gated.",
+      action: "Open pricing",
+      target: "billing" as const,
+      ready: organizationSubscriptions.length > 0
+    },
+    {
+      step: "05",
+      label: "Scoped user database",
+      status: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} visible rows` : "Access Grant needed",
+      detail: "Corporate reviewers see approved, consent-scoped Passport rows only.",
+      action: "Open Verify",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0
+    },
+    {
+      step: "06",
+      label: "Server proof",
+      status: serverSyncMonitor.status === "synced" ? "VPS synced" : "VPS stamp required",
+      detail: "GitHub is accepted first; VPS needs a matching release stamp before pilot signoff.",
+      action: "Export server packet",
+      target: "server_packet" as const,
+      ready: serverSyncMonitor.status === "synced"
+    }
+  ];
+  const signedInPilotJourneyNext = signedInPilotJourneyChecklist.find((item) => !item.ready) ?? signedInPilotJourneyChecklist[signedInPilotJourneyChecklist.length - 1];
+  const signedInPilotJourneyPacket = {
+    mode: "signed_in_pilot_journey_checklist",
+    generated_at: new Date().toISOString(),
+    signed_in: Boolean(authSession),
+    current_workspace: workspace.id,
+    next_step: signedInPilotJourneyNext.label,
+    next_action: signedInPilotJourneyNext.action,
+    completed_steps: signedInPilotJourneyChecklist.filter((item) => item.ready).length,
+    total_steps: signedInPilotJourneyChecklist.length,
+    preview_data_accepted: false,
+    accepted_when:
+      "signed_in_pilot_journey_checklist_requires_hosted_account_professional_passport_corporate_workspace_pricing_ledger_scoped_user_database_server_release_stamp_and_no_preview_data",
+    steps: signedInPilotJourneyChecklist.map(({ step, label, status, ready }) => ({ step, label, status, ready }))
+  };
   const portalActionDock = [
     {
       label: "Passport",
@@ -25138,6 +25209,64 @@ function App() {
                   <strong>{item.status}</strong>
                   <small>{item.detail}</small>
                   <em>{item.proof}</em>
+                  <b>{item.action}</b>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="signed-in-pilot-journey-checklist" aria-label="Signed-in pilot journey checklist">
+            <div className="signed-in-pilot-journey-header">
+              <div>
+                <span className={`status-chip ${signedInPilotJourneyPacket.completed_steps === signedInPilotJourneyPacket.total_steps ? "success" : "warning"}`}>
+                  Pilot journey
+                </span>
+                <strong>{signedInPilotJourneyPacket.completed_steps === signedInPilotJourneyPacket.total_steps ? "Pilot journey is ready for route-run proof" : `${signedInPilotJourneyNext.label} is the next required step`}</strong>
+                <small>{signedInPilotJourneyPacket.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-signed-in-pilot-journey-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(signedInPilotJourneyPacket, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export journey
+              </button>
+            </div>
+            <div className="signed-in-pilot-journey-grid">
+              {signedInPilotJourneyChecklist.map((item) => (
+                <button
+                  className={item.ready ? "ready" : "next"}
+                  key={item.step}
+                  onClick={() => {
+                    if (item.target === "account") {
+                      openAuthControls();
+                      return;
+                    }
+                    if (item.target === "corporate_setup") {
+                      openCorporateControls();
+                      return;
+                    }
+                    if (item.target === "billing") {
+                      setSetupView("billing");
+                      return;
+                    }
+                    if (item.target === "server_packet") {
+                      downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                      return;
+                    }
+                    openWorkspaceOrSetup(item.target);
+                  }}
+                  type="button"
+                >
+                  <span>{item.step}</span>
+                  <strong>{item.label}</strong>
+                  <small>{item.status}</small>
+                  <em>{item.detail}</em>
                   <b>{item.action}</b>
                 </button>
               ))}

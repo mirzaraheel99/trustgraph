@@ -118,6 +118,12 @@ const appRequirements = [
     "public_login_and_registration_must_show_github_as_source_of_truth_pages_as_green_bundle_vps_release_stamp_as_server_proof_and_vfix_as_separate_protected_route",
     "public hosted build source acceptance rule"
   ],
+  ["Signed-in pilot journey checklist", "signed-in pilot journey checklist label"],
+  ["signed_in_pilot_journey_checklist", "signed-in pilot journey checklist packet mode"],
+  [
+    "signed_in_pilot_journey_checklist_requires_hosted_account_professional_passport_corporate_workspace_pricing_ledger_scoped_user_database_server_release_stamp_and_no_preview_data",
+    "signed-in pilot journey checklist acceptance rule"
+  ],
   ["Admin operations acceptance checkpoint", "admin operations acceptance label"],
   ["admin_operations_acceptance_checkpoint", "admin operations acceptance packet mode"],
   [

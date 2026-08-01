@@ -22515,6 +22515,133 @@ body {
   font-weight: 950;
 }
 
+.signed-in-pilot-journey-checklist {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.08), rgba(95, 240, 201, 0.045)),
+    rgba(6, 15, 18, 0.84);
+}
+
+.signed-in-pilot-journey-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, max-content);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.signed-in-pilot-journey-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.signed-in-pilot-journey-header strong,
+.signed-in-pilot-journey-header small,
+.signed-in-pilot-journey-grid span,
+.signed-in-pilot-journey-grid strong,
+.signed-in-pilot-journey-grid small,
+.signed-in-pilot-journey-grid em,
+.signed-in-pilot-journey-grid b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.signed-in-pilot-journey-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.45vw, 23px);
+  line-height: 1.12;
+}
+
+.signed-in-pilot-journey-header small {
+  max-width: 82ch;
+  color: rgba(222, 239, 233, 0.7);
+  line-height: 1.42;
+}
+
+.signed-in-pilot-journey-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.signed-in-pilot-journey-grid button {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: 6px;
+  min-width: 0;
+  min-height: 168px;
+  padding: 11px;
+  text-align: left;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.032);
+  box-shadow: none;
+  white-space: normal;
+}
+
+.signed-in-pilot-journey-grid button.ready {
+  border-color: rgba(92, 236, 193, 0.28);
+  background:
+    linear-gradient(135deg, rgba(92, 236, 193, 0.085), transparent 65%),
+    rgba(255, 255, 255, 0.034);
+}
+
+.signed-in-pilot-journey-grid button.next {
+  border-color: rgba(240, 198, 107, 0.3);
+  background:
+    linear-gradient(135deg, rgba(240, 198, 107, 0.08), transparent 65%),
+    rgba(255, 255, 255, 0.034);
+}
+
+.signed-in-pilot-journey-grid button:hover {
+  border-color: rgba(210, 231, 223, 0.28);
+  background-color: rgba(255, 255, 255, 0.055);
+}
+
+.signed-in-pilot-journey-grid span {
+  color: #a7c2ff;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.signed-in-pilot-journey-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.14;
+}
+
+.signed-in-pilot-journey-grid small {
+  color: rgba(222, 239, 233, 0.72);
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.signed-in-pilot-journey-grid em {
+  color: rgba(222, 239, 233, 0.62);
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.signed-in-pilot-journey-grid b {
+  align-self: end;
+  color: #f8fffb;
+  font-size: 12px;
+  font-weight: 950;
+}
+
 .role-workspace-switchboard {
   display: grid;
   grid-template-columns: minmax(0, 0.48fr) minmax(0, 1fr);

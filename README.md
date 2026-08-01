@@ -123,6 +123,8 @@ Guided onboarding now includes an onboarding completion command that keeps hoste
 
 The signed-in dashboard now uses a reduced premium shell: the top header is work-app scale, the premium launch console is the single visible start surface, and older front-door/daily command receipts stay hidden from the main path so Professional, Corporate, Pricing, Database proof, Account, and Server actions remain clickable without horizontal overflow.
 
+The signed-in dashboard now includes a pilot journey checklist that orders the live path into hosted account, Professional Passport, Corporate workspace, pricing ledger, scoped user database, and server proof. It exports a packet and rejects preview data so operators can see the next required step before route-run acceptance.
+
 The V1 completion cockpit now includes a Real database launch gate before the detailed ledger. It makes the acceptance decision explicit: signed-in Supabase row groups, persisted completion receipt, working-data export, preview-data rejection, and VPS freshness must be resolved before V1 review.
 
 The public login/register form now shows a visible auth route summary immediately before the input fields, so Professional users and Corporate admins can confirm account type, login/register mode, pricing path, first database write, and landing portal before submitting.
