@@ -237,6 +237,8 @@ The signed-in route shell now shows a VPS freshness checkpoint immediately after
 
 The signed-in route shell now also includes a VPS save handoff before server freshness proof. It shows the green GitHub source, the `save-vps` automation blocker, missing deploy secrets, manual `/opt/trustgraph` update command, release-stamp JSON check, and VFIX boundary before anyone tests the VPS URL as current.
 
+The signed-in route shell now includes a VPS save recovery center. It turns the server-save blocker into a four-step operational path: GitHub main is primary, Pages smoke must pass, the VPS needs either the manual `/opt/trustgraph` updater or the `TRUSTGRAPH_VPS_USER` and `TRUSTGRAPH_VPS_SSH_KEY` repository secrets, and the protected VFIX route remains untouched before server testing.
+
 The signed-in workspace now includes an operator viewport polish layer. Oversized workspace headings are capped, Passport detail panels stack before tablet widths, active corporate/admin surfaces clip overflow, and mobile views keep controls readable without horizontal scrolling.
 
 The V1 completion cockpit now includes a Real database launch gate before the detailed ledger. It makes the acceptance decision explicit: signed-in Supabase row groups, persisted completion receipt, working-data export, preview-data rejection, and VPS freshness must be resolved before V1 review.

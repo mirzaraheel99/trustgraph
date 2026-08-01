@@ -31221,6 +31221,51 @@ function App() {
       ready: true
     }
   ];
+  const vpsSaveRecoveryCenter = {
+    mode: "vps_save_recovery_center",
+    status: serverSyncMonitor.status === "synced" ? "server_saved" : "human_or_secret_save_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "Server save is verified from the release stamp"
+        : "Save this GitHub build to the VPS before trusting the server URL",
+    primary_path: "GitHub main -> Pages smoke -> VPS updater -> trustgraph-release.json proof",
+    automatic_blocker: "save-vps cannot complete until GitHub repository secrets are added",
+    required_secrets: ["TRUSTGRAPH_VPS_USER", "TRUSTGRAPH_VPS_SSH_KEY"],
+    manual_command: serverCurrentnessCommand.manual_update_command,
+    verify_command: serverCurrentnessCommand.verify_command,
+    accepted_when:
+      "vps_save_recovery_center_keeps_github_primary_pages_smoke_manual_update_required_secrets_release_stamp_json_and_vfix_route_visible_before_server_testing",
+    protected_vfix_route: serverCurrentnessCommand.protected_vfix_route
+  };
+  const vpsSaveRecoverySteps = [
+    {
+      label: "1. Source",
+      title: "GitHub stays primary",
+      detail: "Only code pushed to mirzaraheel99/trustgraph main should be deployed.",
+      state: "ready"
+    },
+    {
+      label: "2. Build",
+      title: "Pages smoke first",
+      detail: "GitHub Pages must load the current bundle before the VPS is refreshed.",
+      state: "ready"
+    },
+    {
+      label: "3. Save",
+      title: serverSyncMonitor.status === "synced" ? "VPS stamp found" : "Manual save or SSH secrets needed",
+      detail:
+        serverSyncMonitor.status === "synced"
+          ? `Release stamp reports ${serverSyncMonitor.commit ?? "a current commit"}.`
+          : vpsSaveRecoveryCenter.required_secrets.join(" + "),
+      state: serverSyncMonitor.status === "synced" ? "ready" : "needed"
+    },
+    {
+      label: "4. Protect",
+      title: "VFIX remains separate",
+      detail: "Do not edit /opt/fixflow or the CRM-client-demo route while saving TrustGraph.",
+      state: "ready"
+    }
+  ];
   const portalRouteShellStatus = [
     {
       label: "Live account",
@@ -31561,6 +31606,45 @@ function App() {
               <Download size={16} />
               Export server command
             </button>
+          </div>
+        </section>
+
+        <section className={`vps-save-recovery-center ${vpsSaveRecoveryCenter.status === "server_saved" ? "ready" : "needed"}`} aria-label="VPS save recovery center">
+          <div className="vps-save-recovery-copy">
+            <span className={`status-chip ${vpsSaveRecoveryCenter.status === "server_saved" ? "success" : "warning"}`}>
+              Save to server
+            </span>
+            <strong>{vpsSaveRecoveryCenter.headline}</strong>
+            <small>{vpsSaveRecoveryCenter.primary_path}</small>
+          </div>
+          <div className="vps-save-recovery-steps">
+            {vpsSaveRecoverySteps.map((step) => (
+              <article className={step.state} key={step.label}>
+                <span>{step.label}</span>
+                <strong>{step.title}</strong>
+                <small>{step.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="vps-save-recovery-command">
+            <span>
+              <strong>{vpsSaveRecoveryCenter.automatic_blocker}</strong>
+              <small>Manual save is acceptable until the GitHub secrets are present.</small>
+            </span>
+            <code>{vpsSaveRecoveryCenter.manual_command}</code>
+            <code>{vpsSaveRecoveryCenter.verify_command}</code>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile("trustgraph-vps-save-recovery-center.json", JSON.stringify(vpsSaveRecoveryCenter, null, 2), "application/json")}
+              type="button"
+            >
+              <Download size={16} />
+              Export save packet
+            </button>
+          </div>
+          <div className="vps-save-recovery-boundary">
+            <ShieldCheck size={16} />
+            <span>Protected VFIX route: {vpsSaveRecoveryCenter.protected_vfix_route}</span>
           </div>
         </section>
 
