@@ -29596,6 +29596,66 @@ function App() {
       ready: serverSyncMonitor.status === "synced"
     }
   ];
+  const liveRowGapResolver = {
+    mode: "live_row_gap_resolver",
+    status: livePilotRowProof.accepted ? "all_live_rows_loaded" : authSession && accountContext ? "missing_live_rows" : "hosted_login_required",
+    headline: livePilotRowProof.accepted
+      ? "All required live row groups are loaded"
+      : authSession && accountContext
+        ? `Finish live database group: ${realRowAcceptanceGate.next_missing_group}`
+        : "Login before live database rows can be accepted",
+    source: livePilotRowProof.source,
+    ready_groups: livePilotRowProof.readyGroups,
+    required_groups: livePilotRowProof.totalRequiredGroups,
+    missing_groups: livePilotRowProof.missingRequiredGroups,
+    next_missing_table: realRowAcceptanceGate.next_missing_table,
+    live_row_total: realRowAcceptanceGate.live_row_total,
+    completion_receipt_loaded: Boolean(latestRealDatabaseCompletionReceipt),
+    preview_data_accepted: false,
+    accepted_when:
+      "live_row_gap_resolver_shows_missing_supabase_groups_next_table_seed_reload_export_receipt_corporate_review_server_proof_and_rejects_demo_data"
+  };
+  const liveRowGapResolverActions = [
+    {
+      label: authSession && accountContext ? "Run seed" : "Login",
+      detail: authSession && accountContext ? "Create live pilot rows, then reload proof." : "Use hosted auth before live rows count.",
+      ready: Boolean(authSession && accountContext),
+      target: "seed"
+    },
+    {
+      label: "Reload proof",
+      detail: "Open the live database proof section after seed or manual row entry.",
+      ready: livePilotRowProof.source === "signed_in_supabase_rows",
+      target: "proof"
+    },
+    {
+      label: "Corporate review",
+      detail: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows visible.` : "Approve scoped access before Corporate Verify is accepted.",
+      ready: sharedVerifyRecords.length > 0,
+      target: "verify"
+    },
+    {
+      label: "Record receipt",
+      detail: latestRealDatabaseCompletionReceipt ? "Completion receipt exists." : "Persist the live database completion receipt.",
+      ready: Boolean(latestRealDatabaseCompletionReceipt),
+      target: "receipt"
+    },
+    {
+      label: "Export proof",
+      detail: "Download metadata-only working-data proof.",
+      ready: realRowAcceptanceGate.live_row_total > 0,
+      target: "export"
+    }
+  ];
+  const liveRowGapResolverRows = livePilotRowProof.rows
+    .filter((row) => row.required)
+    .map((row) => ({
+      label: row.label,
+      value: row.ready ? `${row.count} loaded` : row.label === realRowAcceptanceGate.next_missing_group ? "Next missing" : "Missing",
+      detail: row.evidence,
+      table: row.table,
+      ready: row.ready
+    }));
   const liveDatabaseProofCommander = {
     mode: "live_database_proof_commander",
     status: livePilotRowProof.accepted ? "accepted_live_database_rows" : authSession && accountContext ? "load_live_database_rows" : "hosted_login_required",
@@ -32092,7 +32152,7 @@ function App() {
               <span className={`status-chip ${livePilotRowProof.accepted ? "success" : "warning"}`}>Live database proof</span>
               <strong>{liveDatabaseProofCommander.headline}</strong>
               <small>
-                V1 accepts only hosted, signed-in Supabase rows. Demo data, static preview copy, and browser-memory seed state do not complete the build.
+                V1 accepts only hosted, signed-in Supabase rows. Static preview copy and browser-memory seed state do not complete the build.
               </small>
             </div>
             <div className="live-database-proof-actions">
@@ -32283,6 +32343,124 @@ function App() {
               <small>Preview data</small>
               <strong>{realDataMissionControl.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
+          </div>
+        </section>
+
+        <section className={`live-row-gap-resolver ${liveRowGapResolver.status === "all_live_rows_loaded" ? "ready" : "needed"}`} aria-label="Live row gap resolver">
+          <div className="live-row-gap-resolver-header">
+            <div>
+              <span className={`status-chip ${liveRowGapResolver.status === "all_live_rows_loaded" ? "success" : "warning"}`}>Live row resolver</span>
+              <strong>{liveRowGapResolver.headline}</strong>
+              <small>{liveRowGapResolver.accepted_when}</small>
+            </div>
+            <div className="live-row-gap-resolver-score">
+              <span>
+                <small>Groups</small>
+                <strong>{liveRowGapResolver.ready_groups}/{liveRowGapResolver.required_groups}</strong>
+              </span>
+              <span>
+                <small>Rows</small>
+                <strong>{liveRowGapResolver.live_row_total}</strong>
+              </span>
+            </div>
+          </div>
+          <div className="live-row-gap-resolver-actions">
+            {liveRowGapResolverActions.map((action) => (
+              <button
+                className={action.ready ? "ready" : "next"}
+                key={action.label}
+                onClick={() => {
+                  if (action.target === "seed") {
+                    if (!authSession || !accountContext) {
+                      openAuthControls();
+                      return;
+                    }
+                    setV1ReadinessStatus("Running live pilot seed from gap resolver...");
+                    seedLivePilotWorkspace()
+                      .then(() => setV1ReadinessStatus("Live pilot seed completed. Reload proof and export working data."))
+                      .catch((error) => {
+                        setV1ReadinessStatus(error instanceof Error ? error.message : "Could not run live pilot seed.");
+                      });
+                    return;
+                  }
+                  if (action.target === "proof") {
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (action.target === "verify") {
+                    openWorkspaceOrSetup("verify");
+                    return;
+                  }
+                  if (action.target === "receipt") {
+                    void recordLiveRealDatabaseCompletionReceipt({
+                      status: livePilotRowProof.accepted ? "ready_for_v1_review" : "live_rows_missing",
+                      completedSteps: livePilotRowProof.readyGroups,
+                      totalSteps: livePilotRowProof.totalRequiredGroups,
+                      missingGroups: livePilotRowProof.missingRequiredGroups,
+                      liveRowGroups: livePilotRowProof.rows.map((row) => ({
+                        label: row.label,
+                        table: row.table,
+                        count: row.count,
+                        ready: row.ready,
+                        evidence: row.evidence
+                      })),
+                      metadata: {
+                        source: "live_row_gap_resolver",
+                        next_missing_table: liveRowGapResolver.next_missing_table,
+                        server_save_status: serverSyncMonitor.status
+                      }
+                    });
+                    return;
+                  }
+                  downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json");
+                }}
+                type="button"
+              >
+                <strong>{action.label}</strong>
+                <small>{action.detail}</small>
+              </button>
+            ))}
+          </div>
+          <div className="live-row-gap-resolver-grid">
+            {liveRowGapResolverRows.map((row) => (
+              <article className={row.ready ? "ready" : "missing"} key={row.label}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.table}</small>
+                <em>{row.detail}</em>
+              </article>
+            ))}
+          </div>
+          <div className="live-row-gap-resolver-proof">
+            <span>
+              <small>Source</small>
+              <strong>{liveRowGapResolver.source.replace(/_/g, " ")}</strong>
+            </span>
+            <span>
+              <small>Next table</small>
+              <strong>{liveRowGapResolver.next_missing_table}</strong>
+            </span>
+            <span>
+              <small>Receipt</small>
+              <strong>{liveRowGapResolver.completion_receipt_loaded ? "Loaded" : "Missing"}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{liveRowGapResolver.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-live-row-gap-resolver-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...liveRowGapResolver, actions: liveRowGapResolverActions, rows: liveRowGapResolverRows }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export resolver
+            </button>
           </div>
         </section>
 
