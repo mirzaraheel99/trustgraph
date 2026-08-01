@@ -250,8 +250,26 @@ const runtimeSnippets = [
   {
     source: updateVps,
     path: "tools/update-vps-from-github.sh",
+    snippet: "release stamp was not written inside the TrustGraph web container",
+    label: "manual VPS update verifies the release stamp inside the web container"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
     snippet: "grep -q \"$commit_short\" /tmp/trustgraph-vps-release.json",
     label: "manual VPS update verifies release stamp matches current commit"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "^content-type: application/json",
+    label: "manual VPS update requires a public JSON release stamp response"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "public release stamp served the app shell instead of trustgraph-release.json",
+    label: "manual VPS update rejects public app-shell release stamp fallback"
   },
   {
     source: updateVps,

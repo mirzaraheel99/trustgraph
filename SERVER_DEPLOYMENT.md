@@ -84,7 +84,9 @@ bash tools/preflight-vps.sh
 bash tools/update-vps-from-github.sh
 ```
 
-The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-release.json`, and refuses a 200 OK page that does not contain the current bundle marker `registration_handoff_command`.
+The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-release.json`, and refuses a 200 OK page that does not contain the current bundle marker `premium_workspace_responsive_guard`.
+
+The updater also checks that the public `https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json` response is real `application/json`. If that URL returns the app shell HTML, fix the nginx TrustGraph host proxy before treating the server as current.
 
 From the repo, run the freshness check after every server update:
 

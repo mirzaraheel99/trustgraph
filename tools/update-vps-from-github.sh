@@ -85,12 +85,22 @@ docker exec "$web_container" sh -c "cat > /srv/trustgraph/trustgraph-release.jso
   "protected_vfix_host": "https://5-75-224-110.sslip.io"
 }
 JSON
+docker exec "$web_container" sh -c "test -s /srv/trustgraph/trustgraph-release.json && grep -q '\"commit_short\": \"$commit_short\"' /srv/trustgraph/trustgraph-release.json" \
+  || fail "release stamp was not written inside the TrustGraph web container"
 
 fetch_public_bundle "$PUBLIC_URL" /tmp/trustgraph-vps-smoke.html
 grep -q "TrustGraph" /tmp/trustgraph-vps-smoke.html || fail "public smoke did not contain TrustGraph"
 grep -q "$EXPECTED_BUNDLE_MARKER" /tmp/trustgraph-vps-smoke.html || fail "public smoke assets did not contain latest bundle marker: $EXPECTED_BUNDLE_MARKER"
-curl --fail --location --silent --show-error "${PUBLIC_URL%/}/trustgraph-release.json" >/tmp/trustgraph-vps-release.json
+release_headers="$(mktemp)"
+curl --fail --location --silent --show-error --dump-header "$release_headers" "${PUBLIC_URL%/}/trustgraph-release.json" >/tmp/trustgraph-vps-release.json
+grep -qi '^content-type: application/json' "$release_headers" \
+  || fail "public release stamp did not return application/json; check the nginx TrustGraph host proxy and Caddy /trustgraph-release.json route"
+if grep -qi '<!DOCTYPE html\|<html' /tmp/trustgraph-vps-release.json; then
+  fail "public release stamp served the app shell instead of trustgraph-release.json; check that trustgraph.${TRUSTGRAPH_HOST#trustgraph.} proxies to the TrustGraph container, not the fallback app"
+fi
 grep -q "$commit_short" /tmp/trustgraph-vps-release.json || fail "release stamp does not match current commit"
+grep -q "$EXPECTED_BUNDLE_MARKER" /tmp/trustgraph-vps-release.json || fail "release stamp does not contain expected bundle marker: $EXPECTED_BUNDLE_MARKER"
+rm -f "$release_headers"
 
 echo "TrustGraph VPS updated from GitHub."
 echo "Commit: $commit_short"
