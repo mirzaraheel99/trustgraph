@@ -11141,6 +11141,60 @@ function BillingPanel({
       ready: true
     }
   ];
+  const billingPilotAcceptanceCheckpoint = {
+    mode: "billing_pilot_acceptance_checkpoint",
+    selected_plan: billingLaunchBoard.selected_plan,
+    selected_plan_id: billingLaunchBoard.selected_plan_id,
+    selected_seats: seats,
+    projected_monthly_usd: estimatedSeatTotal,
+    projected_annual_usd: estimatedSeatTotal * 12,
+    live_pricing_plans_loaded: plans.length,
+    live_subscription_ledger_rows: activeSubscriptions.length,
+    quote_receipt_status: latestPricingQuoteReceipt ? "saved" : "not_recorded",
+    payment_decision_status: latestDecisionReceipt?.status ?? "not_recorded",
+    payment_collection_live: false,
+    stripe_checkout_status: "disabled_until_human_gate",
+    preview_data_accepted: false,
+    next_action: !activeSubscriptions.length
+      ? "activate_live_pilot_subscription_ledger"
+      : !latestPricingQuoteReceipt
+        ? "record_database_pricing_quote_receipt"
+        : !latestDecisionReceipt
+          ? "record_billing_architecture_decision_receipt"
+          : "export_billing_pilot_acceptance_packet",
+    accepted_when:
+      "billing_pilot_acceptance_requires_live_pricing_catalog_selected_seats_projected_totals_live_subscription_ledger_quote_receipt_payment_decision_stripe_gate_and_no_preview_data"
+  };
+  const billingPilotAcceptanceCards = [
+    {
+      label: "Catalog",
+      value: plans.length ? `${plans.length} live plans` : "Missing plans",
+      detail: "Pricing must load from the database catalog before billing is accepted.",
+      ready: plans.length > 0
+    },
+    {
+      label: "Ledger",
+      value: activeSubscriptions.length ? "Live row" : "Needed",
+      detail: activeSubscriptions.length
+        ? `${activeSubscriptions.length} active subscription row${activeSubscriptions.length === 1 ? "" : "s"} loaded.`
+        : "Activate a pilot ledger row before treating Corporate billing as ready.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Quote",
+      value: latestPricingQuoteReceipt ? "Saved" : "Record",
+      detail: latestPricingQuoteReceipt
+        ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month stored in the quote receipt table.`
+        : "Record the selected plan, seats, and projected total as a database receipt.",
+      ready: Boolean(latestPricingQuoteReceipt)
+    },
+    {
+      label: "Payments",
+      value: "Stripe off",
+      detail: "Checkout, portal, invoices, taxes, refunds, dunning, and webhooks stay gated.",
+      ready: true
+    }
+  ];
   const pricingStructurePacket = {
     generated_at: new Date().toISOString(),
     mode: "pilot_subscription_ledger",
@@ -11159,6 +11213,7 @@ function BillingPanel({
     billing_ledger_evidence: billingLedgerEvidence,
     billing_activation_receipt: billingActivationReceipt,
     billing_operator_path: billingOperatorSteps,
+    billing_pilot_acceptance_checkpoint: billingPilotAcceptanceCheckpoint,
     pricing_choice_rail: {
       ...pricingChoiceRail,
       items: pricingChoiceRailItems.map(({ label, value, ready }) => ({ label, value, ready }))
@@ -11330,6 +11385,41 @@ function BillingPanel({
             type="button"
           >
             Export board
+          </button>
+        </div>
+      </div>
+      <div className="billing-pilot-acceptance-checkpoint" aria-label="Billing pilot acceptance checkpoint">
+        <div className="billing-pilot-acceptance-copy">
+          <span className={`status-chip ${activeSubscriptions.length && latestPricingQuoteReceipt ? "success" : "warning"}`}>Billing pilot acceptance</span>
+          <strong>{billingPilotAcceptanceCheckpoint.next_action.replace(/_/g, " ")}</strong>
+          <small>{billingPilotAcceptanceCheckpoint.accepted_when}</small>
+        </div>
+        <div className="billing-pilot-acceptance-grid">
+          {billingPilotAcceptanceCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="billing-pilot-acceptance-actions">
+          <small>
+            Preview data accepted: {billingPilotAcceptanceCheckpoint.preview_data_accepted ? "yes" : "no"} · Projected annual:
+            ${billingPilotAcceptanceCheckpoint.projected_annual_usd}
+          </small>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-billing-pilot-acceptance-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(billingPilotAcceptanceCheckpoint, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export acceptance
           </button>
         </div>
       </div>

@@ -88,6 +88,12 @@ const appRequirements = [
     "corporate_live_row_proof_chain_requires_live_rbac_request_by_email_approved_grants_scoped_rows_review_attestation_visibility_snapshot_and_metadata_only_export",
     "corporate live row proof rule"
   ],
+  ["Billing pilot acceptance checkpoint", "billing pilot acceptance label"],
+  ["billing_pilot_acceptance_checkpoint", "billing pilot acceptance packet mode"],
+  [
+    "billing_pilot_acceptance_requires_live_pricing_catalog_selected_seats_projected_totals_live_subscription_ledger_quote_receipt_payment_decision_stripe_gate_and_no_preview_data",
+    "billing pilot acceptance rule"
+  ],
   ["prepare_pilot_user_access_request", "pilot-named access request RPC"],
   ["ensure_pilot_employer_reviewer_membership", "pilot-named employer reviewer RPC"],
   ["create_pilot_verification_cases", "pilot-named verification cases RPC"],

@@ -4857,6 +4857,96 @@ p,
   white-space: normal;
 }
 
+.billing-pilot-acceptance-checkpoint {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(143, 178, 255, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(143, 178, 255, 0.075), rgba(95, 240, 201, 0.045)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.billing-pilot-acceptance-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.billing-pilot-acceptance-checkpoint strong,
+.billing-pilot-acceptance-checkpoint small,
+.billing-pilot-acceptance-checkpoint span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.billing-pilot-acceptance-copy > strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.14;
+  text-transform: capitalize;
+}
+
+.billing-pilot-acceptance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.billing-pilot-acceptance-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.billing-pilot-acceptance-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.25);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.billing-pilot-acceptance-grid article.next {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.05);
+}
+
+.billing-pilot-acceptance-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.billing-pilot-acceptance-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.12;
+}
+
+.billing-pilot-acceptance-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.32;
+}
+
+.billing-pilot-acceptance-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
+  gap: 10px;
+  align-items: center;
+}
+
+.billing-pilot-acceptance-actions button {
+  justify-content: center;
+  min-height: 36px;
+}
+
 .pricing-launch-command {
   display: grid;
   grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
