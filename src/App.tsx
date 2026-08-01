@@ -15198,6 +15198,43 @@ function AuthPanel({
       detail: "If an inbox link opens localhost, paste it into the public repair field and keep the same token on the hosted URL."
     }
   ];
+  const hostedRecoveryRouteRail = {
+    generated_at: new Date().toISOString(),
+    mode: "hosted_recovery_route_rail",
+    hosted_url: TRUSTGRAPH_VPS_URL,
+    current_redirect_url: authRedirectUrl,
+    selected_portal: activeLoginPath.label,
+    primary_action: email ? "resend_or_reset_ready" : "enter_email_first",
+    server_current_requirement: "VPS must be synced from GitHub before production login testing.",
+    localhost_repair: "Replace http://localhost:3000 with the hosted TrustGraph origin and keep the same query or hash token.",
+    tokens_redacted: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "hosted_recovery_route_rail_requires_vps_hosted_url_email_resend_reset_localhost_link_repair_portal_landing_server_sync_and_no_token_export"
+  };
+  const hostedRecoveryRouteRows = [
+    {
+      label: "1. Start hosted",
+      value: "VPS URL",
+      detail: TRUSTGRAPH_VPS_URL
+    },
+    {
+      label: "2. Choose portal",
+      value: activeLoginPath.label,
+      detail: activeLoginPath.route
+    },
+    {
+      label: "3. Email action",
+      value: email ? "Ready" : "Email needed",
+      detail: email ? "Use resend verification or reset password once, then wait if rate limited." : "Enter the account email before sending any Supabase email."
+    },
+    {
+      label: "4. Repair old links",
+      value: "Keep token",
+      detail: "If the email opens localhost, keep the hash/query token and swap only the origin to the VPS URL."
+    }
+  ];
+  const hostedRecoveryRoutePacketName = `trustgraph-hosted-recovery-route-rail-${new Date().toISOString().slice(0, 10)}.json`;
   const hostedAuthRecoveryPacketName = `trustgraph-hosted-auth-recovery-board-${new Date().toISOString().slice(0, 10)}.json`;
   const authChecks = [
     {
@@ -15898,6 +15935,49 @@ function AuthPanel({
               >
                 Export login path
               </button>
+            </div>
+          </div>
+          <div className="hosted-recovery-route-rail" aria-label="Hosted recovery route rail">
+            <div className="hosted-recovery-route-header">
+              <div>
+                <span className={`status-chip ${hostedAuthRecoveryBoard.redirect_is_hosted ? "success" : "warning"}`}>
+                  Hosted recovery route
+                </span>
+                <strong>Fix verification and reset emails from the hosted TrustGraph URL</strong>
+                <small>
+                  This is the short path: open the VPS site, enter the email, resend verify or reset once, and repair any old
+                  localhost link without copying tokens into support notes.
+                </small>
+              </div>
+              <div className="hosted-recovery-route-actions">
+                <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
+                  Copy hosted URL
+                </button>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(hostedRecoveryRoutePacketName, JSON.stringify(hostedRecoveryRouteRail, null, 2), "application/json")
+                  }
+                  type="button"
+                >
+                  <Download size={16} />
+                  Export route
+                </button>
+              </div>
+            </div>
+            <div className="hosted-recovery-route-grid">
+              {hostedRecoveryRouteRows.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="hosted-recovery-route-proof">
+              <span>Server save: verify release stamp after GitHub push</span>
+              <span>VFIX route protected: yes</span>
+              <span>{hostedRecoveryRouteRail.accepted_when}</span>
             </div>
           </div>
           <div className="hosted-auth-recovery-board" aria-label="Hosted auth recovery board">

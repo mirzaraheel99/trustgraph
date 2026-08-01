@@ -143,6 +143,8 @@ Signed-in Account now has a recovery control strip that keeps hosted redirect co
 
 The public login form now includes a hosted auth recovery board before email actions. It shows the selected Professional or Corporate path, the hosted redirect URL, Supabase email-rate-limit guidance, resend/reset actions, localhost link repair guidance, and an exportable recovery packet so account verification does not accidentally return to local development.
 
+The public login form now also has a compact hosted recovery route rail before the dense recovery board. It keeps the VPS URL, portal choice, resend/reset action, localhost link repair instruction, server-save reminder, and no-token export rule in one mobile-safe surface.
+
 The public login/register card now has a simplification layer that keeps the visible path focused on portal choice, route board, pricing, recovery, and the credential form. Older receipt panels remain in source for packet exports and CI markers, but they no longer crowd the buyer-facing signup flow.
 
 Corporate setup now uses the same simplification rule: the visible workspace starts with one launch cockpit, one setup command bar, and one route deck. Duplicate helper panels for operator status, onboarding/pricing, team/billing handoff, and the older setup guide remain in source for export evidence but no longer crowd the daily company-admin path.
