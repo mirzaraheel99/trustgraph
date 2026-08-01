@@ -202,6 +202,12 @@ const appRequirements = [
     "public_signup_answer_bar_keeps_selected_path_price_first_database_write_landing_submit_readiness_server_status_and_corporate_no_open_database_visible_at_credentials",
     "public signup answer bar live-row credential acceptance rule"
   ],
+  ["Public hosted server freshness alert", "public hosted server freshness alert label"],
+  ["public_hosted_server_freshness_alert", "public hosted server freshness alert packet mode"],
+  [
+    "public_hosted_server_freshness_alert_requires_vps_200_plus_release_stamp_json_commit_match_marker_vfix_boundary_and_copyable_manual_update_before_credentials",
+    "public hosted server freshness alert acceptance rule"
+  ],
   ["Public registration pricing gate", "public registration pricing gate label"],
   ["public_registration_pricing_gate", "public registration pricing gate packet mode"],
   [

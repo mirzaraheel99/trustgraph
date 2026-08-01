@@ -21904,6 +21904,51 @@ function PublicSite({
       ready: true
     }
   ];
+  const publicHostedServerFreshnessAlert = {
+    mode: "public_hosted_server_freshness_alert",
+    status: serverSyncMonitor.status === "synced" ? "server_current" : "release_stamp_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "Server is current for login testing"
+        : "Server page is live, but the saved build is not proven current",
+    body:
+      serverSyncMonitor.status === "synced"
+        ? "The VPS release stamp returned JSON for the current GitHub build."
+        : "A 200 page can still be the app shell. Verify trustgraph-release.json returns commit JSON before treating this VPS as updated.",
+    release_stamp_url: publicCurrentBuildServerGate.release_stamp_url,
+    current_commit: serverSyncMonitor.commit ?? "not_proven",
+    required_marker: "premium_workspace_responsive_guard",
+    protected_vfix_route: publicCurrentBuildServerGate.protected_vfix_route,
+    update_command: publicCurrentBuildServerGate.manual_sync_command,
+    accepted_when:
+      "public_hosted_server_freshness_alert_requires_vps_200_plus_release_stamp_json_commit_match_marker_vfix_boundary_and_copyable_manual_update_before_credentials"
+  };
+  const publicHostedServerFreshnessRows = [
+    {
+      label: "VPS page",
+      value: "200 is not enough",
+      detail: TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
+      ready: true
+    },
+    {
+      label: "Release stamp",
+      value: serverSyncMonitor.status === "synced" ? "JSON current" : "JSON required",
+      detail: publicHostedServerFreshnessAlert.release_stamp_url,
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "Commit",
+      value: publicHostedServerFreshnessAlert.current_commit,
+      detail: "Must match latest green GitHub main commit.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "VFIX",
+      value: "Protected",
+      detail: publicHostedServerFreshnessAlert.protected_vfix_route,
+      ready: true
+    }
+  ];
   const publicCurrentBuildServerGateRows = [
     {
       label: "GitHub source",
@@ -26347,6 +26392,51 @@ function PublicSite({
                 ? "Corporate access starts with an organization workspace, then waits for professional-approved scoped rows. No open user database."
                 : "Professional access starts with your private Passport. You decide which rows are shared."}
             </small>
+          </div>
+          <div className={`public-hosted-server-freshness-alert ${publicHostedServerFreshnessAlert.status}`} aria-label="Public hosted server freshness alert">
+            <div className="public-hosted-server-freshness-copy">
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>
+                {serverSyncMonitor.status === "synced" ? "Server current" : "Server proof needed"}
+              </span>
+              <strong>{publicHostedServerFreshnessAlert.headline}</strong>
+              <small>{publicHostedServerFreshnessAlert.body}</small>
+            </div>
+            <div className="public-hosted-server-freshness-grid">
+              {publicHostedServerFreshnessRows.map((item) => (
+                <span className={item.ready ? "ready" : "next"} key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-hosted-server-freshness-actions">
+              <button
+                className="secondary-action"
+                onClick={() => {
+                  void navigator.clipboard
+                    .writeText(publicHostedServerFreshnessAlert.update_command)
+                    .then(() => setMessage("Manual VPS update command copied. Run it from /opt/trustgraph on the TrustGraph server."))
+                    .catch(() => setMessage(`Copy this VPS update command: ${publicHostedServerFreshnessAlert.update_command}`));
+                }}
+                type="button"
+              >
+                Copy VPS update
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-hosted-server-freshness-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicHostedServerFreshnessAlert, rows: publicHostedServerFreshnessRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export server proof
+              </button>
+            </div>
           </div>
           <input id="public-auth-email" onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
           <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />

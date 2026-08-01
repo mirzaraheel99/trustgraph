@@ -129,6 +129,8 @@ The public login/register card now includes a signup decision desk directly abov
 
 The public login/register card now also has a signup answer bar at the credential fields. It summarizes selected path, price, first database write, landing portal, submit readiness, server-save status, and the Corporate no-open-user-database rule right before the user types email and password.
 
+The public login/register card now also shows a hosted server freshness alert before credentials. It warns that a `200` VPS page is not enough, requires `trustgraph-release.json` commit JSON, keeps the current GitHub/VPS/VFIX boundary visible, and gives a copyable manual `/opt/trustgraph` update command when the server stamp is not proven current.
+
 The public login/register card also includes a registration pricing gate before credentials. It shows selected portal, register/login mode, pilot price, pricing plan id, first live database write, `registration_intents`, Stripe checkout boundary, server-save status, and live-row-only acceptance in one compact card.
 
 The signed-in working database area now includes a live row activation handoff. It groups hosted login, live pilot row creation, browser reload, seed reconciliation, Corporate Verify review, and working-data export into one action path before real database acceptance.

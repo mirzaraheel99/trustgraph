@@ -478,6 +478,8 @@ const requiredMobileStacks = [
   ".public-saved-build-verification",
   ".public-saved-build-grid",
   ".public-auth-server-checkpoint-grid",
+  ".public-hosted-server-freshness-grid",
+  ".public-hosted-server-freshness-actions",
   ".public-auth-flow-grid",
   ".stripe-checkout-decision-grid",
   ".stripe-checkout-decision-actions",
