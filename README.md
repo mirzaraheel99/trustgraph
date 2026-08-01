@@ -139,6 +139,8 @@ Corporate setup now also includes a triage board before the dense admin controls
 
 Corporate Verify now has a reviewer simplification layer too. The daily reviewer path keeps database home, front desk, access request, request list, and scoped user database visible first; duplicate walkthrough/proof panels remain source evidence for exports and CI without making reviewers hunt through repeated instructions.
 
+Corporate Verify now includes an access request preflight directly before the request form. It checks corporate role, professional email, business purpose, review window, no-open-browse boundary, and live-row-only acceptance before a reviewer submits an access request.
+
 Signed-in Account also includes an account portal route acceptance checkpoint. It proves hosted session, profile context, active workspace, role route, corporate workspace availability, recovery route visibility, and preview-data rejection before users treat portal routing as accepted.
 
 Guided onboarding now includes an onboarding completion command that keeps hosted login, Professional Passport rows, Corporate workspace, pricing ledger, live database proof, persisted receipt, and export actions together before launch-gate review.

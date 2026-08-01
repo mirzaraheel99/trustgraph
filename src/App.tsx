@@ -2736,6 +2736,58 @@ function VerifyRequestsPanel({
     accepted_when:
       "corporate_verify_access_progress_strip_shows_role_request_approval_visible_rows_review_export_and_no_open_user_database_browse"
   };
+  const requestEmailReady = subjectEmail.includes("@") && subjectEmail.includes(".");
+  const requestPurposeReady = purpose.trim().length >= 12;
+  const requestWindowReady = expiresInDays >= 1 && expiresInDays <= 90;
+  const corporateAccessRequestPreflight = {
+    mode: "corporate_access_request_preflight",
+    status:
+      !disabled && requestEmailReady && requestPurposeReady && requestWindowReady
+        ? "ready_to_request"
+        : disabled
+          ? "corporate_role_required"
+          : "finish_request_fields",
+    active_organization: activeOrganization.name,
+    professional_email_ready: requestEmailReady,
+    business_purpose_ready: requestPurposeReady,
+    review_window_ready: requestWindowReady,
+    no_open_user_database_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_access_request_preflight_requires_corporate_role_professional_email_business_purpose_review_window_no_open_browse_and_live_rows_only"
+  };
+  const corporateAccessRequestPreflightCards = [
+    {
+      label: "Corporate role",
+      value: disabled ? "Required" : "Active",
+      detail: disabled ? "Create or switch to a corporate reviewer role first." : activeOrganization.name,
+      ready: !disabled
+    },
+    {
+      label: "Professional email",
+      value: requestEmailReady ? "Ready" : "Needed",
+      detail: subjectEmail || "Enter the professional account email to request scope.",
+      ready: requestEmailReady
+    },
+    {
+      label: "Business purpose",
+      value: requestPurposeReady ? "Ready" : "Explain review",
+      detail: requestPurposeReady ? purpose : "Use at least 12 characters so the professional sees a real reason.",
+      ready: requestPurposeReady
+    },
+    {
+      label: "Review window",
+      value: requestWindowReady ? `${expiresInDays} days` : "1-90 days",
+      detail: "Access expires; it is not a permanent open database connection.",
+      ready: requestWindowReady
+    },
+    {
+      label: "Access boundary",
+      value: "Scoped only",
+      detail: "Corporate Verify sees approved rows only after professional consent.",
+      ready: true
+    }
+  ];
   const corporateVisibleRowsHandoff = {
     mode: "corporate_visible_rows_handoff",
     status: sharedRecords.length ? "visible_rows_loaded" : approvedCount ? "approved_waiting_for_visible_rows" : "approval_required",
@@ -3471,6 +3523,53 @@ function VerifyRequestsPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="corporate-access-request-preflight" aria-label="Corporate access request preflight">
+        <div className="corporate-access-request-preflight-header">
+          <div>
+            <span className={`status-chip ${corporateAccessRequestPreflight.status === "ready_to_request" ? "success" : "warning"}`}>Request preflight</span>
+            <strong>
+              {corporateAccessRequestPreflight.status === "ready_to_request"
+                ? "Ready to request scoped Passport access"
+                : disabled
+                  ? "Corporate reviewer role is required before requesting access"
+                  : "Finish the request fields before asking for access"}
+            </strong>
+            <small>{corporateAccessRequestPreflight.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-access-request-preflight-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateAccessRequestPreflight, cards: corporateAccessRequestPreflightCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export preflight
+          </button>
+        </div>
+        <div className="corporate-access-request-preflight-grid">
+          {corporateAccessRequestPreflightCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-access-request-preflight-boundary">
+          <span>
+            <strong>No open browse</strong>
+            <small>Request one professional by email; rows appear only after approval, RBAC, and consent scope pass.</small>
+          </span>
+          <span>
+            <strong>Live rows only</strong>
+            <small>Preview data does not satisfy Corporate Verify access proof.</small>
+          </span>
         </div>
       </div>
       <form className="verify-request-form" id="corporate-verify-request-form" onSubmit={submitAccessRequest}>

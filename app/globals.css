@@ -14829,6 +14829,104 @@ p {
   line-height: 1.35;
 }
 
+.corporate-access-request-preflight {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.07), rgba(134, 174, 246, 0.045)),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-access-request-preflight-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.26fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-access-request-preflight-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-access-request-preflight-grid,
+.corporate-access-request-preflight-boundary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-access-request-preflight-grid article,
+.corporate-access-request-preflight-boundary span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.corporate-access-request-preflight-grid article.ready,
+.corporate-access-request-preflight-boundary span {
+  border-color: rgba(112, 224, 178, 0.24);
+  background: rgba(112, 224, 178, 0.05);
+}
+
+.corporate-access-request-preflight-grid article.next {
+  border-color: rgba(225, 184, 102, 0.32);
+  background: rgba(225, 184, 102, 0.055);
+}
+
+.corporate-access-request-preflight strong,
+.corporate-access-request-preflight small,
+.corporate-access-request-preflight span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-access-request-preflight-header strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.14;
+}
+
+.corporate-access-request-preflight-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-access-request-preflight-grid strong,
+.corporate-access-request-preflight-boundary strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.15;
+}
+
+.corporate-access-request-preflight small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.corporate-access-request-preflight-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .verify-user-data-proof-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -18959,6 +19057,9 @@ p {
   .corporate-scope-review-grid,
   .corporate-access-next-action-grid,
   .corporate-review-handoff-grid,
+  .corporate-access-request-preflight-header,
+  .corporate-access-request-preflight-grid,
+  .corporate-access-request-preflight-boundary,
   .directory-review-board,
   .admin-audit-export-command-grid,
   .admin-audit-export-command-actions,
@@ -26833,6 +26934,9 @@ body {
 .corporate-access-next-action-grid,
 .corporate-database-access-decision-grid,
 .corporate-review-handoff-grid,
+.corporate-access-request-preflight-header,
+.corporate-access-request-preflight-grid,
+.corporate-access-request-preflight-boundary,
 .verify-user-data-proof-grid,
 .corporate-verify-first-use-grid,
 .corporate-verify-access-lane-grid,
