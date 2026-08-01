@@ -187,6 +187,8 @@ The hosted VPS workspace now also starts with a VPS saved portal command. It put
 
 The public login/register card now starts with an Account entry launchpad. It separates User registration, User login, Corporate registration, and Corporate login while keeping selected pricing, first database write, recovery, submit, server status, and the Corporate no-open-user-browse boundary visible before credentials.
 
+The corporate setup center now includes a Corporate database handoff command. It connects company workspace, RBAC/team, pilot pricing ledger, access request, professional approval, scoped user rows, metadata export, and the no-open-user-browse boundary in one action path before deeper setup panels.
+
 The public login/register card now starts with a compact start strip for Professional registration, Professional login, Corporate registration, and Corporate login. It keeps price, first live database write, landing portal, recovery, scoped Corporate access, server status, and no-preview-data proof visible before credentials.
 
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current. The VPS release stamp is exported as a real `trustgraph-release.json` asset, and the server updater overwrites it with the current Git commit so the freshness check fails clearly if the server returns the app shell instead of JSON.

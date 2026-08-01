@@ -26020,6 +26020,66 @@ function App() {
     },
     accepted_when: "workspace_rbac_team_pilot_ledger_and_scoped_database_rows_are_ready"
   };
+  const corporateDatabaseHandoffCommand = {
+    mode: "corporate_database_handoff_command",
+    active_organization: activeOrganization.name,
+    active_role: activeRole.label,
+    next_step: nextCorporateOnboardingPricingStep.label,
+    source: authSession && accountContext ? "signed_in_supabase_rows" : "hosted_login_required",
+    setup_ready: corporateSetupComplete,
+    setup_total: corporateSetupSteps.length,
+    team_rows: teamMembers.length + teamInvitations.length,
+    pricing_rows: organizationSubscriptions.length,
+    access_requests: verifyRequests.length,
+    grants: accessGrants.length,
+    scoped_user_rows: sharedVerifyRecords.length,
+    corporate_database_boundary: "Corporate reviewers request one professional by email and review only approved consent-scoped rows.",
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_database_handoff_command_connects_workspace_rbac_team_pricing_access_request_approval_scoped_user_rows_export_and_no_open_user_browse"
+  };
+  const corporateDatabaseHandoffCards = [
+    {
+      label: "Company workspace",
+      value: hasLiveCorporateContext ? "Ready" : "Needed",
+      detail: hasLiveCorporateContext ? activeOrganization.name : "Create the corporate account first.",
+      action: hasLiveCorporateContext ? "Review company" : "Create workspace",
+      target: "corporate" as const,
+      ready: hasLiveCorporateContext
+    },
+    {
+      label: "RBAC and team",
+      value: canManageCorporateSetup ? `${teamMembers.length + teamInvitations.length} operators` : "Admin needed",
+      detail: "Invite reviewers after an admin role is active.",
+      action: "Open team",
+      target: "team" as const,
+      ready: canManageCorporateSetup && Boolean(teamMembers.length || teamInvitations.length)
+    },
+    {
+      label: "Pricing ledger",
+      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} rows` : "$149 pilot",
+      detail: "Activate the Corporate Verify pilot ledger before client review.",
+      action: "Open pricing",
+      target: "billing" as const,
+      ready: Boolean(organizationSubscriptions.length)
+    },
+    {
+      label: "Access request",
+      value: verifyRequests.length ? `${verifyRequests.length} requests` : "Request by email",
+      detail: "Ask one professional for scoped Passport access. No open user browsing.",
+      action: "Open Verify",
+      target: "verify" as const,
+      ready: Boolean(verifyRequests.length || accessGrants.length)
+    },
+    {
+      label: "Scoped rows",
+      value: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} visible` : "Await approval",
+      detail: "Corporate database proof needs approved shared rows.",
+      action: "Review rows",
+      target: "verify" as const,
+      ready: sharedVerifyRecords.length > 0
+    }
+  ];
   const dashboardStartMap = [
     {
       label: "Personal Passport",
@@ -32074,6 +32134,77 @@ function App() {
                     type="button"
                   >
                     Export triage
+                  </button>
+                </div>
+              </div>
+              <div className="corporate-database-handoff-command" aria-label="Corporate database handoff command">
+                <div className="corporate-database-handoff-header">
+                  <div>
+                    <span className={`status-chip ${sharedVerifyRecords.length ? "success" : "warning"}`}>Corporate database handoff</span>
+                    <strong>{sharedVerifyRecords.length ? "Scoped user rows are ready for Corporate Verify" : `Next: ${corporateDatabaseHandoffCommand.next_step}`}</strong>
+                    <small>{corporateDatabaseHandoffCommand.accepted_when}</small>
+                  </div>
+                  <button
+                    className="primary-action"
+                    onClick={() => {
+                      if (nextCorporateOnboardingPricingStep.target === "verify") {
+                        openWorkspaceOrSetup("verify");
+                        return;
+                      }
+                      setSetupView(nextCorporateOnboardingPricingStep.target);
+                    }}
+                    type="button"
+                  >
+                    {nextCorporateOnboardingPricingStep.target === "verify" ? "Open Verify" : nextCorporateOnboardingPricingStep.action}
+                  </button>
+                </div>
+                <div className="corporate-database-handoff-grid">
+                  {corporateDatabaseHandoffCards.map((card) => (
+                    <article className={card.ready ? "ready" : "next"} key={card.label}>
+                      <span>{card.label}</span>
+                      <strong>{card.value}</strong>
+                      <small>{card.detail}</small>
+                      <button
+                        className={card.ready ? "secondary-action" : "primary-action"}
+                        onClick={() => {
+                          if (card.target === "verify") {
+                            openWorkspaceOrSetup("verify");
+                            return;
+                          }
+                          setSetupView(card.target);
+                        }}
+                        type="button"
+                      >
+                        {card.action}
+                      </button>
+                    </article>
+                  ))}
+                </div>
+                <div className="corporate-database-handoff-proof">
+                  <span>
+                    <small>Boundary</small>
+                    <strong>No open user browse</strong>
+                  </span>
+                  <span>
+                    <small>Scoped rows</small>
+                    <strong>{corporateDatabaseHandoffCommand.scoped_user_rows}</strong>
+                  </span>
+                  <span>
+                    <small>Preview data</small>
+                    <strong>{corporateDatabaseHandoffCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+                  </span>
+                  <button
+                    className="secondary-action"
+                    onClick={() =>
+                      downloadTextFile(
+                        `trustgraph-corporate-database-handoff-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify({ ...corporateDatabaseHandoffCommand, cards: corporateDatabaseHandoffCards }, null, 2),
+                        "application/json"
+                      )
+                    }
+                    type="button"
+                  >
+                    Export handoff
                   </button>
                 </div>
               </div>

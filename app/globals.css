@@ -20342,6 +20342,7 @@ p {
 
 #corporate-account-controls > .corporate-launch-cockpit,
 #corporate-account-controls > .corporate-setup-triage-board,
+#corporate-account-controls > .corporate-database-handoff-command,
 #corporate-account-controls > .setup-command-bar,
 #corporate-account-controls > .setup-route-deck {
   border-radius: 8px;
@@ -32667,5 +32668,113 @@ body {
 
   .vps-saved-portal-command-actions {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  }
+}
+
+/* Corporate database handoff: one setup-to-scoped-user-review command path. */
+.corporate-database-handoff-command {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.055) 54%, rgba(255, 255, 255, 0.018)),
+    rgba(7, 18, 20, 0.88);
+  box-shadow: 0 20px 58px rgba(0, 0, 0, 0.2);
+}
+
+.corporate-database-handoff-header,
+.corporate-database-handoff-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.corporate-database-handoff-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-database-handoff-command strong,
+.corporate-database-handoff-command small,
+.corporate-database-handoff-command span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-database-handoff-header strong {
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.08;
+}
+
+.corporate-database-handoff-command small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.corporate-database-handoff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+  gap: 9px;
+}
+
+.corporate-database-handoff-grid article,
+.corporate-database-handoff-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.corporate-database-handoff-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.35);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.corporate-database-handoff-grid article.next {
+  border-color: rgba(255, 205, 118, 0.24);
+}
+
+.corporate-database-handoff-grid span,
+.corporate-database-handoff-proof small {
+  color: #84f7dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-database-handoff-grid strong,
+.corporate-database-handoff-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.corporate-database-handoff-grid button,
+.corporate-database-handoff-header button,
+.corporate-database-handoff-proof button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.corporate-database-handoff-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  align-items: stretch;
+}
+
+@media (max-width: 780px) {
+  .corporate-database-handoff-header,
+  .corporate-database-handoff-proof {
+    grid-template-columns: 1fr;
   }
 }

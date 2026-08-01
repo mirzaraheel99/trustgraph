@@ -276,6 +276,9 @@ assert(css.includes(".public-submit-readiness") && css.includes(".public-submit-
 assert(app.includes('aria-label="Auth path summary"') && app.includes("auth_path_summary"), "login/register card must expose a compact selected auth path summary.");
 assert(css.includes(".auth-path-summary") && css.includes(".auth-path-summary-grid"), "auth path summary must be styled and bounded.");
 assert(css.includes(".corporate-onboarding-pricing-cockpit") && css.includes(".corporate-onboarding-pricing-grid") && css.includes(".corporate-onboarding-pricing-actions"), "corporate onboarding pricing cockpit must be styled and bounded.");
+assert(app.includes('aria-label="Corporate database handoff command"') && app.includes("corporate_database_handoff_command"), "corporate setup center must expose a corporate database handoff command.");
+assert(app.includes("corporate_database_handoff_command_connects_workspace_rbac_team_pricing_access_request_approval_scoped_user_rows_export_and_no_open_user_browse"), "corporate database handoff must connect setup, pricing, request, approval, scoped rows, export, and no open browse.");
+assert(css.includes(".corporate-database-handoff-command") && css.includes(".corporate-database-handoff-grid") && css.includes(".corporate-database-handoff-proof"), "corporate database handoff must be styled and bounded.");
 assert(premiumRepair.includes(".server-release-cockpit") && premiumRepair.includes(".server-release-grid"), "server release save path must be styled and bounded in the premium shell.");
 assert(css.includes(".vps-freshness-checkpoint") && css.includes(".vps-freshness-grid") && css.includes(".vps-freshness-actions"), "VPS freshness checkpoint must be styled and bounded.");
 assert(css.includes(".vps-save-handoff") && css.includes(".vps-save-handoff-grid") && css.includes(".vps-save-handoff-command"), "VPS save handoff must be styled and bounded.");
