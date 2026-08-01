@@ -84,7 +84,7 @@ bash tools/preflight-vps.sh
 bash tools/update-vps-from-github.sh
 ```
 
-The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-release.json`, and refuses a 200 OK page that does not contain the current bundle marker `dashboard_front_door`.
+The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-release.json`, and refuses a 200 OK page that does not contain the current bundle marker `live_data_loading_command`.
 
 From the repo, run the freshness check after every server update:
 
@@ -92,7 +92,7 @@ From the repo, run the freshness check after every server update:
 npm run check:vps-freshness
 ```
 
-It passes only when GitHub Pages contains the current bundle marker, the VPS page contains the same marker, and `/trustgraph-release.json` reports the current GitHub commit.
+It passes only when GitHub Pages contains the current bundle marker, the VPS page contains the same marker, and `/trustgraph-release.json` reports the current GitHub commit plus the same `bundle_marker`.
 
 ## 4. Configure Server Env
 

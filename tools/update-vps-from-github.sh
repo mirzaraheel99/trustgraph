@@ -5,7 +5,7 @@ TRUSTGRAPH_REMOTE_PATH="${TRUSTGRAPH_REMOTE_PATH:-/opt/trustgraph}"
 TRUSTGRAPH_HOST="${TRUSTGRAPH_HOST:-trustgraph.5-75-224-110.sslip.io}"
 PUBLIC_URL="${PUBLIC_URL:-https://trustgraph.5-75-224-110.sslip.io/}"
 EXPECTED_ORIGIN="${EXPECTED_ORIGIN:-https://github.com/mirzaraheel99/trustgraph.git}"
-EXPECTED_BUNDLE_MARKER="${EXPECTED_BUNDLE_MARKER:-dashboard_front_door}"
+EXPECTED_BUNDLE_MARKER="${EXPECTED_BUNDLE_MARKER:-live_data_loading_command}"
 
 fail() {
   echo "TrustGraph VPS update failed: $*" >&2
@@ -80,6 +80,7 @@ docker exec "$web_container" sh -c "cat > /srv/trustgraph/trustgraph-release.jso
   "commit": "$commit_sha",
   "commit_short": "$commit_short",
   "updated_at": "$updated_at",
+  "bundle_marker": "$EXPECTED_BUNDLE_MARKER",
   "public_url": "$PUBLIC_URL",
   "protected_vfix_host": "https://5-75-224-110.sslip.io"
 }

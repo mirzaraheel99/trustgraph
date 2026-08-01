@@ -54,7 +54,7 @@ const requiredSnippets = [
     label: "remote deploy runs the guarded VPS update script"
   },
   {
-    snippet: 'export EXPECTED_BUNDLE_MARKER="dashboard_front_door"',
+    snippet: 'export EXPECTED_BUNDLE_MARKER="live_data_loading_command"',
     label: "remote deploy requires the current V1 bundle marker"
   },
   {
@@ -189,6 +189,12 @@ const runtimeSnippets = [
     path: "tools/update-vps-from-github.sh",
     snippet: "\"commit_short\": \"$commit_short\"",
     label: "hosted release stamp includes the deployed commit"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "\"bundle_marker\": \"$EXPECTED_BUNDLE_MARKER\"",
+    label: "hosted release stamp includes the required bundle marker"
   },
   {
     source: updateVps,

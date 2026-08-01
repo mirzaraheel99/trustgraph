@@ -82,7 +82,7 @@ jobs:
           test -f .env.server
           export TRUSTGRAPH_HOST=trustgraph.5-75-224-110.sslip.io
           export PUBLIC_URL=https://trustgraph.5-75-224-110.sslip.io/
-          export EXPECTED_BUNDLE_MARKER="dashboard_front_door"
+          export EXPECTED_BUNDLE_MARKER="live_data_loading_command"
           bash tools/update-vps-from-github.sh
           REMOTE
 

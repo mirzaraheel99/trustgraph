@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 
 const vpsUrl = process.env.TRUSTGRAPH_VPS_URL || "https://trustgraph.5-75-224-110.sslip.io/";
 const pagesUrl = process.env.TRUSTGRAPH_PAGES_URL || "https://mirzaraheel99.github.io/trustgraph/";
-const expectedMarker = process.env.EXPECTED_BUNDLE_MARKER || "dashboard_front_door";
+const expectedMarker = process.env.EXPECTED_BUNDLE_MARKER || "live_data_loading_command";
 
 function fail(message) {
   console.error(`TrustGraph VPS freshness check failed: ${message}`);
@@ -93,6 +93,10 @@ if (releaseJson.source !== "https://github.com/mirzaraheel99/trustgraph") {
 
 if (releaseJson.commit_short !== expectedCommit) {
   fail(`VPS release stamp commit ${releaseJson.commit_short || "missing"} does not match local HEAD ${expectedCommit}`);
+}
+
+if (releaseJson.bundle_marker !== expectedMarker) {
+  fail(`VPS release stamp marker ${releaseJson.bundle_marker || "missing"} does not match required marker ${expectedMarker}`);
 }
 
 console.log(
