@@ -24198,6 +24198,11 @@ body {
   color: var(--muted);
 }
 
+.dashboard-front-door,
+.portal-daily-navigator {
+  display: none !important;
+}
+
 .workspace-admin-grid {
   margin-top: 14px;
 }
@@ -25016,4 +25021,65 @@ body {
   .public-auth-section {
     grid-template-columns: 1fr;
   }
+}
+
+/* Premium shell reduction: the product dashboard should feel like a SaaS tool, not a stacked landing page. */
+.workspace {
+  gap: 14px;
+}
+
+.topbar {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  padding: clamp(16px, 2vw, 22px);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.075), rgba(134, 174, 246, 0.045) 46%, transparent),
+    rgba(8, 19, 20, 0.92);
+}
+
+.topbar h1 {
+  max-width: 28ch;
+  font-size: clamp(26px, 2.2vw, 36px);
+  line-height: 1.04;
+}
+
+.topbar p {
+  max-width: 84ch;
+  font-size: clamp(14px, 1.05vw, 16px);
+}
+
+.premium-launch-console {
+  padding: clamp(14px, 1.8vw, 20px);
+}
+
+.premium-launch-console-copy strong {
+  max-width: 34ch;
+  font-size: clamp(24px, 2.5vw, 38px);
+}
+
+.premium-launch-console-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 196px), 1fr));
+}
+
+.premium-launch-console-actions button {
+  min-height: 154px;
+}
+
+.premium-launch-console-proof {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+}
+
+.dashboard-front-door,
+.portal-daily-navigator,
+.today-command-center,
+.portal-usability-command {
+  display: none !important;
+}
+
+.workspace-admin-grid {
+  padding: clamp(14px, 1.8vw, 20px);
+}
+
+.setup-center-header h2 {
+  font-size: clamp(22px, 2vw, 32px);
 }

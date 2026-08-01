@@ -115,6 +115,8 @@ Signed-in Account now has a recovery control strip that keeps hosted redirect co
 
 Guided onboarding now includes an onboarding completion command that keeps hosted login, Professional Passport rows, Corporate workspace, pricing ledger, live database proof, persisted receipt, and export actions together before launch-gate review.
 
+The signed-in dashboard now uses a reduced premium shell: the top header is work-app scale, the premium launch console is the single visible start surface, and older front-door/daily command receipts stay hidden from the main path so Professional, Corporate, Pricing, Database proof, Account, and Server actions remain clickable without horizontal overflow.
+
 The public login/register form now shows a visible auth route summary immediately before the input fields, so Professional users and Corporate admins can confirm account type, login/register mode, pricing path, first database write, and landing portal before submitting.
 
 The public auth form also starts with a Registration route planner that keeps Professional versus Corporate, Register versus Login, price, first database write, next dashboard, recovery, and required proof in one compact operator view before the form fields.
