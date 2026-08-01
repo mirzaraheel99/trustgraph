@@ -5,7 +5,7 @@
   "commit": "build-time-placeholder",
   "commit_short": "build",
   "updated_at": "build-time-placeholder",
-  "bundle_marker": "live_data_loading_command",
+  "bundle_marker": "registration_handoff_command",
   "public_url": "https://trustgraph.5-75-224-110.sslip.io/",
   "protected_vfix_host": "https://5-75-224-110.sslip.io",
   "server_save_contract": "trustgraph_release_stamp_static_asset_then_vps_updater_overwrites_with_current_git_commit_and_marker"

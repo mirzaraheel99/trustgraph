@@ -53,7 +53,7 @@ Use `SERVER_DEPLOYMENT.md` to install Docker, pull the GitHub repo, start Caddy 
 
 For first server setup, `tools/bootstrap-vps.sh` performs the guarded `/opt/trustgraph` install and refuses the VFIX host/path.
 
-After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`, runs the same guarded `tools/update-vps-from-github.sh` path as the server shell command, and checks `trustgraph-release.json` so the VPS must prove the GitHub source and current `live_data_loading_command` bundle marker it saved. The main Pages workflow now verifies the exported release stamp asset before upload, so a missing or app-shell-fallback release stamp cannot pass as a current server save.
+After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`, runs the same guarded `tools/update-vps-from-github.sh` path as the server shell command, and checks `trustgraph-release.json` so the VPS must prove the GitHub source and current `registration_handoff_command` bundle marker it saved. The main Pages workflow now verifies the exported release stamp asset before upload, so a missing or app-shell-fallback release stamp cannot pass as a current server save.
 
 The Pages deployment also runs a VPS save job after the hosted smoke check. That job now fails if `TRUSTGRAPH_VPS_USER` or `TRUSTGRAPH_VPS_SSH_KEY` is missing, because a green GitHub build without a verified VPS save can leave `https://trustgraph.5-75-224-110.sslip.io/` stale.
 
