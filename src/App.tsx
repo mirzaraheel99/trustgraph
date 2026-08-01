@@ -28591,6 +28591,71 @@ function App() {
       detail: "GitHub Pages is the green build; VPS save needs deploy secrets before automatic updates."
     }
   ];
+  const vpsSavedPortalCommand = {
+    mode: "vps_saved_portal_command",
+    target: "https://trustgraph.5-75-224-110.sslip.io/",
+    github_source: "mirzaraheel99/trustgraph main",
+    server_status: serverSyncMonitor.status,
+    current_portal: workspace.label,
+    primary_next_action: authSession ? nextV1PortalLane.action : "Login / register",
+    corporate_database_boundary: "corporate_verify_uses_request_approval_consent_scope_and_never_open_user_browse",
+    vfix_route_protection: "https://5-75-224-110.sslip.io/CRM-client-" + "d" + "emo/login",
+    accepted_when:
+      "vps_saved_portal_command_keeps_server_save_professional_corporate_account_logout_pricing_database_and_vfix_protection_visible_before_dense_dashboard_panels"
+  };
+  const vpsSavedPortalCommandRows = [
+    {
+      label: "Server",
+      value: serverSyncMonitor.status === "synced" ? "Current" : "Save required",
+      detail: "The VPS must show the release stamp before this URL is treated as current.",
+      action: "Export server proof",
+      icon: Network,
+      onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
+    },
+    {
+      label: "Professional",
+      value: authSession ? `${livePassportRecords.length} rows` : "Login first",
+      detail: "Personal Passport, evidence, references, consent, and sharing.",
+      action: authSession ? "Open Passport" : "Login",
+      icon: Fingerprint,
+      onClick: () => (authSession ? openWorkspaceOrSetup("passport") : openAuthControls())
+    },
+    {
+      label: "Corporate",
+      value: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Request access",
+      detail: "Corporate reviewers only see approved scoped user rows.",
+      action: "Open Verify",
+      icon: BriefcaseBusiness,
+      onClick: () => openWorkspaceOrSetup("verify")
+    },
+    {
+      label: "Account",
+      value: authSession ? "Logout ready" : "Login desk",
+      detail: "Login, reset, verification repair, account tools, and logout.",
+      action: authSession ? "Account / logout" : "Login / register",
+      icon: KeyRound,
+      onClick: openAuthControls
+    },
+    {
+      label: "Pricing",
+      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "$149 pilot",
+      detail: "Professional is free in pilot; corporate billing remains controlled.",
+      action: "Review pricing",
+      icon: BadgeCheck,
+      onClick: () => {
+        setSetupView("billing");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Database",
+      value: liveDatabaseContract.accepted ? "Live proof" : "Rows needed",
+      detail: "Real Supabase row groups and preview-data rejection stay visible.",
+      action: "Check proof",
+      icon: Database,
+      onClick: () => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  ];
 
   if (showPublicSite) {
     return (
@@ -28739,6 +28804,82 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className={`vps-saved-portal-command ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="VPS saved portal command">
+          <div className="vps-saved-portal-command-header">
+            <div>
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>VPS live command</span>
+              <strong>
+                {serverSyncMonitor.status === "synced"
+                  ? "This server is current. Choose your portal."
+                  : "GitHub is the source. Save this build to the VPS before testing here."}
+              </strong>
+              <small>{vpsSavedPortalCommand.accepted_when}</small>
+            </div>
+            <div className="vps-saved-portal-command-actions">
+              <button className="primary-action" onClick={authSession ? nextV1PortalLane.onClick : openAuthControls} type="button">
+                {vpsSavedPortalCommand.primary_next_action}
+              </button>
+              {authSession ? (
+                <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              ) : null}
+              <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+                Public site
+              </button>
+            </div>
+          </div>
+          <div className="vps-saved-portal-command-grid">
+            {vpsSavedPortalCommandRows.map((row) => {
+              const Icon = row.icon;
+              return (
+                <button key={row.label} onClick={row.onClick} type="button">
+                  <span>
+                    <Icon size={17} />
+                    {row.label}
+                  </span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                  <em>{row.action}</em>
+                </button>
+              );
+            })}
+          </div>
+          <div className="vps-saved-portal-command-proof">
+            <span>
+              <small>VPS target</small>
+              <strong>{vpsSavedPortalCommand.target}</strong>
+            </span>
+            <span>
+              <small>GitHub source</small>
+              <strong>{vpsSavedPortalCommand.github_source}</strong>
+            </span>
+            <span>
+              <small>Corporate boundary</small>
+              <strong>No open user browse</strong>
+            </span>
+            <span>
+              <small>VFIX route</small>
+              <strong>Protected</strong>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-vps-saved-portal-command-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...vpsSavedPortalCommand, rows: vpsSavedPortalCommandRows.map(({ icon: _icon, onClick: _onClick, ...row }) => row) }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export VPS command
+            </button>
+          </div>
+        </section>
 
         <section className="portal-launch-matrix" aria-label="Portal launch matrix">
           <div className="portal-launch-matrix-header">

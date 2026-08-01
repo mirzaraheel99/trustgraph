@@ -32352,3 +32352,206 @@ body {
     align-items: stretch;
   }
 }
+
+/* VPS saved portal command: keep the live server page understandable before dense proof panels. */
+.vps-saved-portal-command {
+  order: -48;
+  display: grid;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.055) 58%, rgba(255, 255, 255, 0.018)),
+    rgba(6, 15, 18, 0.9);
+  box-shadow: 0 22px 72px rgba(0, 0, 0, 0.24);
+}
+
+.vps-saved-portal-command.needed {
+  border-color: rgba(255, 205, 118, 0.28);
+}
+
+.vps-saved-portal-command-header,
+.vps-saved-portal-command-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.vps-saved-portal-command-header > div:first-child,
+.vps-saved-portal-command-actions,
+.vps-saved-portal-command-grid button,
+.vps-saved-portal-command-proof span {
+  min-width: 0;
+}
+
+.vps-saved-portal-command strong,
+.vps-saved-portal-command small,
+.vps-saved-portal-command span,
+.vps-saved-portal-command em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.vps-saved-portal-command-header > div:first-child {
+  display: grid;
+  gap: 6px;
+}
+
+.vps-saved-portal-command-header > div:first-child > strong {
+  max-width: 34ch;
+  color: var(--text);
+  font-size: clamp(22px, 2.4vw, 34px);
+  line-height: 1.06;
+}
+
+.vps-saved-portal-command-header small,
+.vps-saved-portal-command-grid small,
+.vps-saved-portal-command-proof small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.vps-saved-portal-command-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, auto));
+  gap: 8px;
+  align-items: stretch;
+}
+
+.vps-saved-portal-command-actions button {
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
+.vps-saved-portal-command-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 9px;
+}
+
+.vps-saved-portal-command-grid button {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-height: 132px;
+  padding: 12px;
+  color: var(--text);
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+  text-align: left;
+  white-space: normal;
+}
+
+.vps-saved-portal-command-grid button:hover {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.vps-saved-portal-command-grid span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #83f4dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.vps-saved-portal-command-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.14;
+}
+
+.vps-saved-portal-command-grid small {
+  font-size: 12px;
+}
+
+.vps-saved-portal-command-grid em {
+  align-self: end;
+  color: #091814;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #65f0d0;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.vps-saved-portal-command-proof {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(170px, auto);
+  padding-top: 10px;
+  border-top: 1px solid rgba(210, 231, 223, 0.1);
+}
+
+.vps-saved-portal-command-proof span {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.vps-saved-portal-command-proof strong {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.16;
+}
+
+.vps-saved-portal-command-proof button {
+  min-width: 0;
+  white-space: normal;
+}
+
+/* Authenticated shell width repair: prevent side-scroll and oversized hero copy on the VPS build. */
+.workspace {
+  width: min(100%, 1320px);
+  padding-inline: clamp(14px, 2.2vw, 34px);
+}
+
+.topbar h1 {
+  max-width: 22ch;
+  font-size: clamp(30px, 3.1vw, 48px);
+}
+
+.topbar p {
+  max-width: 74ch;
+  font-size: clamp(14px, 1.15vw, 16px);
+}
+
+.portal-launch-matrix,
+.portal-daily-command-center,
+.v1-portal-operating-center,
+.portal-route-shell,
+.live-data-loading-command,
+.real-row-acceptance-gate,
+.workspace-admin-grid {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .vps-saved-portal-command-header,
+  .vps-saved-portal-command-proof {
+    grid-template-columns: 1fr;
+  }
+
+  .vps-saved-portal-command-actions,
+  .vps-saved-portal-command-proof {
+    align-items: stretch;
+  }
+
+  .vps-saved-portal-command-actions {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  }
+}
