@@ -6824,6 +6824,70 @@ function CorporateDirectoryPanel({
       target: "export"
     }
   ];
+  const corporateVerifyHub = {
+    mode: "corporate_verify_hub",
+    status: corporateAccessNextAction.ready ? "review_ready" : "setup_required",
+    headline: corporateAccessNextAction.ready ? "Review approved users from one hub" : "Build Corporate Verify access in order",
+    next_action: corporateAccessNextAction.action,
+    source: databaseModeLabel,
+    visible_professionals: filteredRows.length,
+    shared_records: sharedRecords.length,
+    review_attestations: reviews.length,
+    open_gaps: openGapRequestCount,
+    no_open_user_database: true,
+    metadata_only_export: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_verify_hub_replaces_stacked_database_panels_with_one_login_request_approval_scoped_rows_review_export_and_no_open_user_database_flow"
+  };
+  const corporateVerifyHubActions = [
+    {
+      label: "Request access",
+      detail: requests.length ? `${requests.length} requests in database` : "Ask by professional email",
+      ready: requests.length > 0,
+      target: "request"
+    },
+    {
+      label: "Review rows",
+      detail: filteredRows.length ? `${filteredRows.length} professionals visible` : "Rows appear after approval",
+      ready: filteredRows.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Record proof",
+      detail: reviews.length ? `${reviews.length} attestations saved` : "Save reviewer attestation",
+      ready: reviews.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Export packet",
+      detail: "Metadata-only scoped database export",
+      ready: sharedRecords.length > 0,
+      target: "export"
+    }
+  ];
+  const corporateVerifyHubProof = [
+    {
+      label: "RBAC",
+      value: isLiveCorporateDatabase ? "Live role" : "Login required",
+      detail: isLiveCorporateDatabase ? databaseModeDetail : "Corporate reviewer/admin role must be active."
+    },
+    {
+      label: "Scoped rows",
+      value: `${filteredRows.length}`,
+      detail: `${sharedRecords.length} shared records, ${approvedAccessCount} approved grants.`
+    },
+    {
+      label: "Gaps",
+      value: openGapRequestCount ? `${openGapRequestCount} open` : "Clear",
+      detail: openGapRequestCount ? "Resolve missing-record requests before handoff." : "No open missing-record request blocks export."
+    },
+    {
+      label: "Boundary",
+      value: "No open browse",
+      detail: "Corporate users review only approved consent-scoped user rows."
+    }
+  ];
 
   return (
     <section className="corporate-directory-panel">
@@ -6831,6 +6895,73 @@ function CorporateDirectoryPanel({
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className={`corporate-verify-hub ${corporateVerifyHub.status === "review_ready" ? "ready" : "needed"}`} aria-label="Corporate Verify hub">
+        <div className="corporate-verify-hub-hero">
+          <div>
+            <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Corporate Verify</span>
+            <strong>{corporateVerifyHub.headline}</strong>
+            <small>{corporateAccessNextAction.detail}</small>
+          </div>
+          <button className="primary-action" onClick={() => runCorporateReviewerTask()} type="button">
+            {corporateVerifyHub.next_action}
+          </button>
+        </div>
+        <div className="corporate-verify-hub-actions">
+          {corporateVerifyHubActions.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => {
+                if (item.target === "export") {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                runCorporateReviewerTask(item.target);
+              }}
+              type="button"
+            >
+              <strong>{item.label}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-verify-hub-proof">
+          {corporateVerifyHubProof.map((item) => (
+            <span key={item.label}>
+              <small>{item.label}</small>
+              <strong>{item.value}</strong>
+              <em>{item.detail}</em>
+            </span>
+          ))}
+        </div>
+        <div className="corporate-verify-hub-footer">
+          <span>
+            <ShieldCheck size={16} />
+            Corporate Verify never opens the full user database. Every visible row must come from request, approval, consent scope, and RBAC.
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-verify-hub-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(
+                  {
+                    ...corporateVerifyHub,
+                    actions: corporateVerifyHubActions,
+                    proof: corporateVerifyHubProof
+                  },
+                  null,
+                  2
+                ),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export hub proof
+          </button>
+        </div>
       </div>
       <div className={`corporate-access-command-center ${corporateAccessNextAction.ready ? "ready" : "needed"}`} aria-label="Corporate access command center">
         <div className="corporate-access-command-header">

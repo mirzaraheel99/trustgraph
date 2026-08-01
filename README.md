@@ -233,6 +233,8 @@ The signed-in workspace now adds a daily operating runway before dense live-data
 
 Corporate Verify now starts with a review runway that keeps request, approval, visible scoped rows, review attestation, metadata-only export, and the no-open-user-database boundary together before dense reviewer panels.
 
+Corporate Verify now starts with a single Corporate Verify hub. It replaces stacked database command panels in the primary view with one action path for request access, review scoped rows, record review proof, export metadata-only packets, live RBAC status, open gaps, and the no-open-user-database boundary.
+
 Corporate Verify now also starts with a direct access answer: whether the active company can access approved user rows right now, the current blocker, the next click, request/approval/scoped-row/review counts, no-open-browse proof, and preview-data rejection before forms or filters.
 
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current. The VPS release stamp is exported as a real `trustgraph-release.json` asset, and the server updater overwrites it with the current Git commit so the freshness check fails clearly if the server returns the app shell instead of JSON.

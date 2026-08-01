@@ -21179,6 +21179,171 @@ p {
   }
 }
 
+/* Corporate Verify hub: one readable path before dense database tools */
+.corporate-verify-hub {
+  display: grid;
+  gap: 14px;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid rgba(96, 245, 208, 0.3);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(14, 32, 35, 0.96), rgba(10, 15, 19, 0.98));
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+}
+
+.corporate-verify-hub.needed {
+  border-color: rgba(255, 210, 102, 0.3);
+}
+
+.corporate-verify-hub-hero,
+.corporate-verify-hub-actions,
+.corporate-verify-hub-proof,
+.corporate-verify-hub-footer {
+  min-width: 0;
+}
+
+.corporate-verify-hub-hero,
+.corporate-verify-hub-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.corporate-verify-hub-hero > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-verify-hub-hero strong {
+  color: var(--text-strong);
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+  line-height: 1.04;
+}
+
+.corporate-verify-hub-hero small,
+.corporate-verify-hub-footer span {
+  color: var(--text-muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.corporate-verify-hub-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.corporate-verify-hub-actions button {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 96px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text);
+  text-align: left;
+}
+
+.corporate-verify-hub-actions button.ready {
+  border-color: rgba(96, 245, 208, 0.42);
+  background: rgba(39, 227, 181, 0.1);
+}
+
+.corporate-verify-hub-actions button.next {
+  border-color: rgba(255, 210, 102, 0.46);
+  background: rgba(255, 210, 102, 0.08);
+}
+
+.corporate-verify-hub-actions strong,
+.corporate-verify-hub-actions small,
+.corporate-verify-hub-proof small,
+.corporate-verify-hub-proof strong,
+.corporate-verify-hub-proof em {
+  overflow-wrap: anywhere;
+}
+
+.corporate-verify-hub-actions small {
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.corporate-verify-hub-proof {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.corporate-verify-hub-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.corporate-verify-hub-proof small {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-verify-hub-proof strong {
+  color: var(--text-strong);
+}
+
+.corporate-verify-hub-proof em {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.corporate-verify-hub-footer span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.corporate-verify-hub-footer button,
+.corporate-verify-hub-hero button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-access-command-center,
+.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-database-primary-desk,
+.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-review-queue-runway,
+.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-review-studio,
+.corporate-directory-panel:has(.corporate-verify-hub) > .corporate-scoped-access-journey {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .corporate-verify-hub-hero,
+  .corporate-verify-hub-footer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .corporate-verify-hub-actions,
+  .corporate-verify-hub-proof {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 580px) {
+  .corporate-verify-hub-actions,
+  .corporate-verify-hub-proof {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Corporate Verify primary database desk */
 .corporate-access-command-center {
   display: grid;
