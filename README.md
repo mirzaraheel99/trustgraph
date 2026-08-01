@@ -173,6 +173,8 @@ The public login/register card now includes a route confirmation before submit. 
 
 The signed-in workspace now applies a daily SaaS route simplification layer: the tabbed Portal route shell is ordered directly after the header, oversized dashboard headings are reduced, account/logout and Corporate Verify controls stay bounded, and dense proof panels move below the primary route surface.
 
+The public login/register card now applies the same simplification rule: account choice, Professional or Corporate switchboard, pricing/database-write confirmation, Corporate scoped-access boundary, and submit readiness appear before credentials while older audit receipts stay out of the primary form path.
+
 The signed-in portal now shows a Real row acceptance gate before the daily route shell. It blocks V1 acceptance until hosted login, registration, Passport, evidence, Corporate access, consent, team, billing, review, visibility snapshot, and release ledger rows are all loaded from Supabase; non-live preview rows are explicitly rejected.
 
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current. The VPS release stamp is exported as a real `trustgraph-release.json` asset, and the server updater overwrites it with the current Git commit so the freshness check fails clearly if the server returns the app shell instead of JSON.

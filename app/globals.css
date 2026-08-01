@@ -31193,3 +31193,131 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Public auth route simplification: keep signup/login buyer-facing and push audit proof out of the form path. */
+.public-auth-section {
+  gap: clamp(18px, 3vw, 32px);
+}
+
+.public-auth-section > div:first-child {
+  align-content: start;
+}
+
+.public-auth-section > div:first-child > .public-login-command-center {
+  order: -30;
+}
+
+.public-auth-card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.public-auth-card .public-account-access-path {
+  order: -50;
+}
+
+.public-auth-card .public-portal-switchboard {
+  order: -45;
+}
+
+.public-auth-card .public-account-route-confirmation {
+  order: -40;
+}
+
+.public-auth-card .corporate-access-route-preview {
+  order: -35;
+}
+
+.public-auth-card .public-submit-readiness {
+  order: -30;
+}
+
+.public-auth-card .auth-card-heading {
+  order: -25;
+}
+
+.public-auth-card label,
+.public-auth-card input,
+.public-auth-card select,
+.public-auth-card textarea,
+.public-auth-card > button,
+.public-auth-card > small {
+  order: 0;
+}
+
+.public-auth-card .public-account-access-path,
+.public-auth-card .public-portal-switchboard,
+.public-auth-card .public-account-route-confirmation,
+.public-auth-card .corporate-access-route-preview,
+.public-auth-card .public-submit-readiness {
+  max-width: 100%;
+}
+
+.public-auth-card .public-account-access-header strong,
+.public-auth-card .public-portal-switchboard-header strong,
+.public-auth-card .corporate-access-route-preview-header strong,
+.public-auth-card .public-submit-readiness-copy > strong {
+  font-size: clamp(18px, 1.7vw, 24px);
+  line-height: 1.12;
+}
+
+.public-auth-card .public-account-access-choices,
+.public-auth-card .public-account-access-status,
+.public-auth-card .public-portal-switchboard-grid,
+.public-auth-card .public-account-route-confirmation-grid,
+.public-auth-card .corporate-access-route-preview-grid,
+.public-auth-card .public-submit-readiness-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 136px), 1fr));
+}
+
+.public-auth-card .public-account-access-choices button,
+.public-auth-card .public-account-access-status span,
+.public-auth-card .public-portal-switchboard-grid button,
+.public-auth-card .public-account-route-confirmation-grid span,
+.public-auth-card .corporate-access-route-preview-grid article,
+.public-auth-card .public-submit-readiness-grid span {
+  min-height: auto;
+}
+
+.public-auth-card .public-submit-readiness-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 126px), 1fr));
+}
+
+.public-auth-card .public-submit-readiness-actions button {
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .public-auth-section {
+    grid-template-columns: 1fr;
+  }
+
+  .public-auth-card {
+    position: static;
+  }
+}
+
+@media (max-width: 700px) {
+  .public-login-command-footer,
+  .public-account-access-header,
+  .public-account-route-confirmation > div:first-child,
+  .public-account-route-confirmation-footer,
+  .public-portal-switchboard-header,
+  .public-portal-switchboard-footer,
+  .corporate-access-route-preview-header,
+  .corporate-access-route-preview-boundary,
+  .public-submit-readiness-actions {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .public-login-command-footer button,
+  .public-account-access-actions button,
+  .public-account-route-confirmation-footer button,
+  .public-portal-switchboard-actions button,
+  .corporate-access-route-preview-header button,
+  .public-submit-readiness-actions button {
+    width: 100%;
+  }
+}
