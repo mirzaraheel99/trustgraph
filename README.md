@@ -141,6 +141,8 @@ Billing now starts with a pricing choice rail that summarizes selected plan, sea
 
 Passport record detail now starts evidence work with an evidence access desk: preview, download, metadata manifest export, access packet export, signed URL expiry, metadata-only boundaries, and last-link proof are visible before deeper evidence receipts.
 
+Evidence preview/download now includes a signed evidence acceptance checkpoint: metadata rows, private file presence, short-lived signed preview/download proof, manifest export, and raw private file exclusion must all be visible before an evidence packet is accepted.
+
 For database migrations, add these GitHub repository secrets. New SQL files under `supabase/migrations/*.sql` are applied automatically when pushed to `main`; the `Apply Supabase Migrations` workflow can also be run manually with a specific `migration_path` when a targeted repair is needed:
 
 ```text

@@ -58,6 +58,12 @@ const appRequirements = [
   ["loadVerifyAccessGrants", "live Corporate Verify repository load"],
   ["loadEvidenceDocuments", "live evidence repository load"],
   ["loadConsentAuthorizations", "live consent repository load"],
+  ["Signed evidence acceptance checkpoint", "signed evidence acceptance label"],
+  ["signed_evidence_acceptance_checkpoint", "signed evidence acceptance packet mode"],
+  [
+    "signed_evidence_acceptance_requires_metadata_private_file_short_lived_signed_link_manifest_export_and_raw_private_file_exclusion",
+    "signed evidence acceptance rule"
+  ],
   ["Persisted corporate database acceptance checkpoint", "persisted corporate database acceptance label"],
   ["persisted_corporate_database_acceptance_checkpoint", "persisted corporate database acceptance packet mode"],
   [

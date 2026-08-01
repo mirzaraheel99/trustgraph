@@ -667,6 +667,58 @@ function RecordDetail({
     }
   ];
   const evidenceAccessDeskPacketName = `trustgraph-evidence-access-desk-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`;
+  const signedEvidenceAcceptanceSteps = [
+    {
+      label: "Metadata row",
+      value: evidenceDocuments.length ? `${evidenceDocuments.length}` : "Needed",
+      detail: "Evidence metadata must exist before any file access can be accepted.",
+      ready: evidenceDocuments.length > 0
+    },
+    {
+      label: "Private file",
+      value: fileBackedEvidenceCount ? `${fileBackedEvidenceCount}` : "No file",
+      detail: "Raw evidence files stay in private Supabase Storage.",
+      ready: fileBackedEvidenceCount > 0
+    },
+    {
+      label: "Signed access proof",
+      value: lastEvidenceLink ? lastEvidenceLink.mode : "Not opened",
+      detail: "Open preview or download once to prove short-lived signed URLs work.",
+      ready: Boolean(lastEvidenceLink)
+    },
+    {
+      label: "Manifest export",
+      value: filteredEvidenceDocuments.length ? "Available" : "Empty",
+      detail: "The manifest exports evidence metadata only, never raw private file URLs.",
+      ready: filteredEvidenceDocuments.length > 0
+    },
+    {
+      label: "Raw file boundary",
+      value: "Excluded",
+      detail: "Packets and manifests include metadata and signed-link proof, not permanent file links.",
+      ready: true
+    }
+  ];
+  const signedEvidenceAcceptanceReady = signedEvidenceAcceptanceSteps.every((step) => step.ready);
+  const signedEvidenceAcceptanceCheckpoint = {
+    mode: "signed_evidence_acceptance_checkpoint",
+    status: signedEvidenceAcceptanceReady ? "signed_evidence_access_ready" : "signed_evidence_access_open",
+    ready_steps: signedEvidenceAcceptanceSteps.filter((step) => step.ready).length,
+    total_steps: signedEvidenceAcceptanceSteps.length,
+    preview_data_accepted: false,
+    raw_private_files_exported: false,
+    last_signed_link: signedEvidenceAccessAuditReceipt.last_signed_link,
+    next_action: signedEvidenceAcceptanceSteps.find((step) => !step.ready)?.label ?? "Export evidence packet",
+    accepted_when:
+      "signed_evidence_acceptance_requires_metadata_private_file_short_lived_signed_link_manifest_export_and_raw_private_file_exclusion"
+  };
+  const signedEvidenceAccessPacket = {
+    ...evidenceAccessPacket,
+    signed_evidence_acceptance_checkpoint: {
+      ...signedEvidenceAcceptanceCheckpoint,
+      steps: signedEvidenceAcceptanceSteps.map(({ label, value, ready }) => ({ label, value, ready }))
+    }
+  };
 
   useEffect(() => {
     setTitle(record.title);
@@ -962,6 +1014,71 @@ function RecordDetail({
                     <span>{card.label}</span>
                     <strong>{card.value}</strong>
                     <small>{card.detail}</small>
+                  </article>
+                ))}
+              </div>
+            </div>
+            <div className="signed-evidence-acceptance-checkpoint" aria-label="Signed evidence acceptance checkpoint">
+              <div className="signed-evidence-acceptance-header">
+                <div>
+                  <span className={`status-chip ${signedEvidenceAcceptanceReady ? "success" : "warning"}`}>Signed evidence acceptance</span>
+                  <strong>
+                    {signedEvidenceAcceptanceReady ? "Evidence access proof is ready" : `Next: ${signedEvidenceAcceptanceCheckpoint.next_action}`}
+                  </strong>
+                  <small>{signedEvidenceAcceptanceCheckpoint.accepted_when}</small>
+                </div>
+                <div className="signed-evidence-acceptance-actions">
+                  <button
+                    className="secondary-action"
+                    disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+                    onClick={() => {
+                      if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "preview");
+                    }}
+                    type="button"
+                  >
+                    Preview proof
+                  </button>
+                  <button
+                    className="secondary-action"
+                    disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+                    onClick={() => {
+                      if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "download");
+                    }}
+                    type="button"
+                  >
+                    Download proof
+                  </button>
+                  <button
+                    className="secondary-action"
+                    disabled={!filteredEvidenceDocuments.length}
+                    onClick={() =>
+                      downloadTextFile(
+                        `trustgraph-signed-evidence-acceptance-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify(
+                          {
+                            ...signedEvidenceAcceptanceCheckpoint,
+                            steps: signedEvidenceAcceptanceSteps,
+                            access_receipt: signedEvidenceAccessAuditReceipt,
+                            evidence_packet: signedEvidenceAccessPacket
+                          },
+                          null,
+                          2
+                        ),
+                        "application/json"
+                      )
+                    }
+                    type="button"
+                  >
+                    Export acceptance
+                  </button>
+                </div>
+              </div>
+              <div className="signed-evidence-acceptance-grid">
+                {signedEvidenceAcceptanceSteps.map((step) => (
+                  <article className={step.ready ? "ready" : "next"} key={step.label}>
+                    <span>{step.label}</span>
+                    <strong>{step.value}</strong>
+                    <small>{step.detail}</small>
                   </article>
                 ))}
               </div>

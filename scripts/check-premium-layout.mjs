@@ -114,6 +114,8 @@ assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readines
 assert(app.includes('aria-label="Evidence access desk"') && app.includes("evidence_access_desk"), "evidence preview/download must expose one clear desk for preview, download, manifest, packet, and signed-link proof.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
 assert(app.includes('aria-label="Signed evidence access audit receipt"'), "evidence preview/download must expose signed access audit receipt state.");
+assert(app.includes('aria-label="Signed evidence acceptance checkpoint"') && app.includes("signed_evidence_acceptance_checkpoint"), "evidence preview/download must expose signed acceptance across metadata, private file, signed link, manifest, and raw-file exclusion.");
+assert(css.includes(".signed-evidence-acceptance-checkpoint") && css.includes(".signed-evidence-acceptance-grid") && css.includes(".signed-evidence-acceptance-actions"), "signed evidence acceptance checkpoint must be styled and bounded.");
 assert(app.includes('aria-label="Data export package receipt"'), "Account data rights must expose data export package receipt state.");
 assert(app.includes('aria-label="Data export package manifest"'), "Account data rights must expose data export package manifest state.");
 assert(app.includes('aria-label="Admin audit export command"'), "admin audit exports must expose a clear export command surface.");
