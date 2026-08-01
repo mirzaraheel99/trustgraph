@@ -30269,6 +30269,57 @@ function App() {
     ...liveDataLoadingCommandRows.filter((row) => row.ready).slice(0, 2)
   ];
   const latestRealDatabaseCompletionReceipt = realDatabaseCompletionReceipts[0] ?? null;
+  const liveDataAcceptanceAnswer = {
+    mode: "live_data_acceptance_answer",
+    status: realRowAcceptanceGate.accepted ? "accepted_live_rows" : authSession && accountContext ? "live_rows_missing" : "hosted_login_required",
+    answer: realRowAcceptanceGate.accepted
+      ? "Yes. V1 can use the live Supabase row set for proof and review."
+      : "Not yet. V1 still needs hosted login and live Supabase row proof.",
+    ready_groups: realRowAcceptanceGate.ready_groups,
+    required_groups: realRowAcceptanceGate.required_groups,
+    live_row_total: realRowAcceptanceGate.live_row_total,
+    next_missing_group: realRowAcceptanceGate.next_missing_group,
+    next_missing_table: realRowAcceptanceGate.next_missing_table,
+    completion_receipt: Boolean(latestRealDatabaseCompletionReceipt),
+    server_save_status: serverSyncMonitor.status,
+    demo_data_accepted: false,
+    preview_data_accepted: false,
+    next_action: realRowAcceptanceGate.accepted
+      ? latestRealDatabaseCompletionReceipt
+        ? "Export the working-data packet and confirm the VPS release stamp."
+        : "Record the live database completion receipt."
+      : authSession && accountContext
+        ? "Run live seed, reload proof, then export the working-data packet."
+        : "Login or register on the hosted TrustGraph URL before loading rows.",
+    accepted_when:
+      "live_data_acceptance_answer_keeps_current_live_row_answer_next_missing_group_seed_reload_receipt_export_vps_status_and_demo_preview_rejection_visible_before_database_proof"
+  };
+  const liveDataAcceptanceAnswerCards = [
+    {
+      label: "Live answer",
+      value: liveDataAcceptanceAnswer.status === "accepted_live_rows" ? "Yes" : "No",
+      detail: liveDataAcceptanceAnswer.answer,
+      ready: liveDataAcceptanceAnswer.status === "accepted_live_rows"
+    },
+    {
+      label: "Required groups",
+      value: `${liveDataAcceptanceAnswer.ready_groups}/${liveDataAcceptanceAnswer.required_groups}`,
+      detail: `${liveDataAcceptanceAnswer.live_row_total} live rows are visible in this signed-in context.`,
+      ready: realRowAcceptanceGate.accepted
+    },
+    {
+      label: "Next missing",
+      value: liveDataAcceptanceAnswer.next_missing_group,
+      detail: liveDataAcceptanceAnswer.next_missing_table,
+      ready: realRowAcceptanceGate.accepted
+    },
+    {
+      label: "Receipt",
+      value: liveDataAcceptanceAnswer.completion_receipt ? "Recorded" : "Needed",
+      detail: `Server save status: ${liveDataAcceptanceAnswer.server_save_status}.`,
+      ready: liveDataAcceptanceAnswer.completion_receipt
+    }
+  ];
   const realDataMissionControl = {
     mode: "real_data_mission_control",
     status: livePilotRowProof.accepted ? "live_rows_loaded" : authSession && accountContext ? "load_live_rows" : "hosted_login_required",
@@ -32957,6 +33008,103 @@ function App() {
             <span>
               <small>Preview data</small>
               <strong>{registrationHandoffCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+          </div>
+        </section>
+
+        <section className={`live-data-acceptance-answer ${liveDataAcceptanceAnswer.status}`} aria-label="Live data acceptance answer">
+          <div className="live-data-acceptance-answer-header">
+            <div>
+              <span className={`status-chip ${realRowAcceptanceGate.accepted ? "success" : "warning"}`}>Live data answer</span>
+              <strong>{liveDataAcceptanceAnswer.answer}</strong>
+              <small>{liveDataAcceptanceAnswer.accepted_when}</small>
+            </div>
+            <div className="live-data-acceptance-answer-actions">
+              <button className={!authSession || !accountContext ? "primary-action" : "secondary-action"} onClick={openAuthControls} type="button">
+                {authSession && accountContext ? "Account / recovery" : "Login or register"}
+              </button>
+              <button
+                className={authSession && accountContext && !realRowAcceptanceGate.accepted ? "primary-action" : "secondary-action"}
+                disabled={!authSession || !accountContext}
+                onClick={() => {
+                  if (!authSession || !accountContext) {
+                    openAuthControls();
+                    return;
+                  }
+                  setV1ReadinessStatus("Running live pilot seed from live data answer...");
+                  seedLivePilotWorkspace()
+                    .then(() => setV1ReadinessStatus("Live pilot seed completed. Reload proof and export the packet."))
+                    .catch((error) => {
+                      setV1ReadinessStatus(error instanceof Error ? error.message : "Could not run live pilot seed.");
+                    });
+                }}
+                type="button"
+              >
+                Run live seed
+              </button>
+              <button
+                className="secondary-action"
+                disabled={!authSession || !accountContext}
+                onClick={() =>
+                  void recordLiveRealDatabaseCompletionReceipt({
+                    status: realRowAcceptanceGate.accepted ? "ready_for_v1_review" : "live_rows_missing",
+                    completedSteps: livePilotRowProof.readyGroups,
+                    totalSteps: livePilotRowProof.totalRequiredGroups,
+                    missingGroups: livePilotRowProof.missingRequiredGroups,
+                    liveRowGroups: livePilotRowProof.rows.map((row) => ({
+                      label: row.label,
+                      table: row.table,
+                      count: row.count,
+                      ready: row.ready,
+                      evidence: row.evidence
+                    })),
+                    metadata: {
+                      source: "live_data_acceptance_answer",
+                      next_action: liveDataAcceptanceAnswer.next_action,
+                      server_save_status: serverSyncMonitor.status
+                    }
+                  })
+                }
+                type="button"
+              >
+                Record receipt
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-live-data-acceptance-answer-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...liveDataAcceptanceAnswer, cards: liveDataAcceptanceAnswerCards, rows: livePilotRowProof.rows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export answer
+              </button>
+            </div>
+          </div>
+          <div className="live-data-acceptance-answer-grid">
+            {liveDataAcceptanceAnswerCards.map((card) => (
+              <article className={card.ready ? "ready" : "next"} key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="live-data-acceptance-answer-proof">
+            <span>
+              <small>Next action</small>
+              <strong>{liveDataAcceptanceAnswer.next_action}</strong>
+            </span>
+            <span>
+              <small>Fixture rows</small>
+              <strong>{liveDataAcceptanceAnswer.demo_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{liveDataAcceptanceAnswer.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
           </div>
         </section>

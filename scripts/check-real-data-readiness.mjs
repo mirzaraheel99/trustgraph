@@ -36,6 +36,12 @@ const appRequirements = [
     "live_database_proof_commander_requires_hosted_login_live_supabase_rows_seed_or_manual_rows_reload_export_completion_receipt_vps_freshness_and_rejects_demo_preview_data",
     "live database proof commander acceptance rule"
   ],
+  ["Live data acceptance answer", "live data acceptance answer label"],
+  ["live_data_acceptance_answer", "live data acceptance answer packet mode"],
+  [
+    "live_data_acceptance_answer_keeps_current_live_row_answer_next_missing_group_seed_reload_receipt_export_vps_status_and_demo_preview_rejection_visible_before_database_proof",
+    "live data acceptance answer rule"
+  ],
   ["Live rows checklist", "live rows checklist label"],
   ["live_rows_checklist", "live rows checklist packet mode"],
   [
