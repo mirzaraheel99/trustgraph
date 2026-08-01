@@ -13933,6 +13933,93 @@ p {
   background: rgba(255, 255, 255, 0.035);
 }
 
+.corporate-attestation-completion-gate {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.075), rgba(134, 174, 246, 0.042) 62%, transparent),
+    rgba(255, 255, 255, 0.026);
+}
+
+.corporate-attestation-completion-header,
+.corporate-attestation-completion-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-attestation-completion-header > div:first-child,
+.corporate-attestation-completion-actions,
+.corporate-attestation-completion-grid article,
+.corporate-attestation-completion-proof span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-attestation-completion-actions {
+  grid-template-columns: repeat(2, minmax(126px, auto));
+}
+
+.corporate-attestation-completion-gate strong,
+.corporate-attestation-completion-gate small,
+.corporate-attestation-completion-gate span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-attestation-completion-gate small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.36;
+}
+
+.corporate-attestation-completion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+  gap: 8px;
+}
+
+.corporate-attestation-completion-grid article {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.corporate-attestation-completion-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.06);
+}
+
+.corporate-attestation-completion-grid article.next {
+  border-color: rgba(240, 198, 107, 0.24);
+}
+
+.corporate-attestation-completion-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-attestation-completion-proof {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.corporate-attestation-completion-proof span {
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
 .corporate-visibility-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -19309,6 +19396,10 @@ p {
   .corporate-database-access-decision-grid,
   .corporate-database-visibility-snapshot,
   .corporate-database-visibility-grid,
+  .corporate-attestation-completion-header,
+  .corporate-attestation-completion-actions,
+  .corporate-attestation-completion-grid,
+  .corporate-attestation-completion-proof,
   .corporate-access-review-grid,
   .corporate-visibility-grid,
   .corporate-verify-first-use-grid,

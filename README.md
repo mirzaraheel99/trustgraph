@@ -107,6 +107,8 @@ Corporate Verify now starts the reviewer work area with a Corporate reviewer dat
 
 Corporate Verify now also puts a reviewer database workbench at the top of the user database. It summarizes visible users, shared records, open gaps, review attestations, visibility snapshot, access receipt, filters, export, and the no-open-browse boundary before the row list.
 
+Corporate Verify now includes a direct attestation completion gate before the review queue. It shows live RBAC, approved shared rows, gap status, review proof, metadata-only export, no-open-browse status, and can record the first eligible reviewed attestation from the same surface.
+
 Corporate Verify now adds a next-action commander directly under the reviewer workbench. It chooses the current live database step across corporate login, request-by-email, professional approval, scoped rows, missing gaps, review attestation, snapshot, receipt, and metadata export, then exposes the primary action plus snapshot, receipt, and export controls.
 
 Corporate Verify keeps the review queue command in the source/export packet, but the visible reviewer path now routes through the reviewer workbench and action bar first so the main database screen does not stack duplicate proof panels before the row list.

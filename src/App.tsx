@@ -4827,6 +4827,70 @@ function CorporateDirectoryPanel({
       ready: corporateDatabaseAccessDecisionBoard.can_export_user_packet
     }
   ];
+  const firstAttestationCandidate = filteredRows.find((row) => row.rawStatus === "approved" && row.sharedRecordCount > 0 && row.openGapCount === 0) ?? null;
+  const corporateAttestationCompletionGate = {
+    mode: "corporate_attestation_completion_gate",
+    status: reviews.length ? "review_attestation_recorded" : firstAttestationCandidate ? "ready_to_record_attestation" : "attestation_blocked",
+    accepted_when:
+      "corporate_attestation_completion_gate_requires_live_rbac_approved_shared_rows_no_open_gaps_recorded_review_attestation_metadata_export_and_no_open_user_browse",
+    preview_data_accepted: false,
+    can_record_attestation: Boolean(firstAttestationCandidate),
+    first_candidate: firstAttestationCandidate
+      ? {
+          name: firstAttestationCandidate.name,
+          email: firstAttestationCandidate.detail,
+          access_grant_id: firstAttestationCandidate.id,
+          shared_records: firstAttestationCandidate.sharedRecordCount
+        }
+      : null,
+    blocker:
+      !isLiveCorporateDatabase
+        ? "Corporate RBAC login required"
+        : approvedAccessCount === 0
+          ? "Approved Access Grant required"
+          : sharedRecords.length === 0
+            ? "Shared Passport rows required"
+            : openGapRequestCount > 0
+              ? "Resolve missing-record gaps"
+              : reviews.length === 0
+                ? "No eligible row selected for attestation"
+                : "Review attestation recorded",
+    review_attestations: reviews.length,
+    metadata_only_export: true,
+    no_open_user_browse: true
+  };
+  const corporateAttestationCompletionSteps = [
+    {
+      label: "Live corporate RBAC",
+      value: isLiveCorporateDatabase ? "Loaded" : "Required",
+      detail: "Attestation requires a live corporate workspace and role.",
+      ready: isLiveCorporateDatabase
+    },
+    {
+      label: "Approved shared rows",
+      value: `${approvedAccessCount} grants / ${sharedRecords.length} rows`,
+      detail: "Reviewer proof starts only after professional-approved Passport rows are visible.",
+      ready: approvedAccessCount > 0 && sharedRecords.length > 0
+    },
+    {
+      label: "Gap status",
+      value: openGapRequestCount ? `${openGapRequestCount} open` : "Clear",
+      detail: "Ready handoff is locked until missing-record gaps are resolved or reviewed.",
+      ready: openGapRequestCount === 0 && sharedRecords.length > 0
+    },
+    {
+      label: "Review attestation",
+      value: reviews.length ? `${reviews.length} saved` : firstAttestationCandidate ? "Ready" : "Blocked",
+      detail: reviews.length ? "Corporate review audit proof exists." : "Record reviewed, needs follow-up, or ready handoff.",
+      ready: reviews.length > 0
+    },
+    {
+      label: "Export boundary",
+      value: "Metadata only",
+      detail: "Export includes scope, counts, filters, receipts, and review proof; raw private files stay excluded.",
+      ready: true
+    }
+  ];
   const corporateDatabaseActionCockpit = {
     mode: "corporate_database_action_cockpit",
     current_state: isLiveCorporateDatabase ? "Live corporate database" : "Corporate database locked",
@@ -6861,6 +6925,63 @@ function CorporateDirectoryPanel({
             value={reviewNote}
           />
         </label>
+      </div>
+      <div className="corporate-attestation-completion-gate" aria-label="Corporate attestation completion gate">
+        <div className="corporate-attestation-completion-header">
+          <div>
+            <span className={`status-chip ${corporateAttestationCompletionGate.status === "review_attestation_recorded" ? "success" : corporateAttestationCompletionGate.can_record_attestation ? "info" : "warning"}`}>
+              Attestation completion gate
+            </span>
+            <strong>{corporateAttestationCompletionGate.status.replace(/_/g, " ")}</strong>
+            <small>{corporateAttestationCompletionGate.accepted_when}</small>
+          </div>
+          <div className="corporate-attestation-completion-actions">
+            <button
+              className="primary-action"
+              disabled={!firstAttestationCandidate || reviewBusyId === `${firstAttestationCandidate.id}-reviewed`}
+              onClick={() => firstAttestationCandidate ? void recordReview(firstAttestationCandidate.id, "reviewed") : undefined}
+              type="button"
+            >
+              Record reviewed
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-corporate-attestation-completion-gate-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...corporateAttestationCompletionGate, steps: corporateAttestationCompletionSteps }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export gate
+            </button>
+          </div>
+        </div>
+        <div className="corporate-attestation-completion-grid">
+          {corporateAttestationCompletionSteps.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-attestation-completion-proof">
+          <span>
+            <strong>{corporateAttestationCompletionGate.blocker}</strong>
+            <small>Current blocker</small>
+          </span>
+          <span>
+            <strong>{corporateAttestationCompletionGate.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+            <small>Corporate reviewer proof must come from live RBAC rows.</small>
+          </span>
+          <span>
+            <strong>{corporateAttestationCompletionGate.no_open_user_browse ? "No open browse" : "Open browse"}</strong>
+            <small>Reviewer acts only on approved scoped rows.</small>
+          </span>
+        </div>
       </div>
       <div className="directory-review-board">
         {directoryReviewBoard.map((bucket) => (

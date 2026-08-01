@@ -118,6 +118,12 @@ const appRequirements = [
     "corporate_visible_rows_handoff_requires_approved_grant_visible_scoped_rows_consent_scope_review_attestation_export_and_no_open_user_database_browse",
     "corporate visible rows handoff acceptance rule"
   ],
+  ["Corporate attestation completion gate", "corporate attestation completion gate label"],
+  ["corporate_attestation_completion_gate", "corporate attestation completion gate packet mode"],
+  [
+    "corporate_attestation_completion_gate_requires_live_rbac_approved_shared_rows_no_open_gaps_recorded_review_attestation_metadata_export_and_no_open_user_browse",
+    "corporate attestation completion gate no-open-browse rule"
+  ],
   ["V1 portal operating center", "V1 portal operating center label"],
   ["v1_portal_operating_center", "V1 portal operating center packet mode"],
   [
