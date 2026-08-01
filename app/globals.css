@@ -29657,6 +29657,92 @@ body {
     rgba(255, 255, 255, 0.035);
 }
 
+.corporate-reviewer-workflow-strip {
+  order: -72;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 1.8vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(9, 39, 42, 0.94), rgba(12, 21, 26, 0.96)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.corporate-reviewer-workflow-header,
+.corporate-reviewer-workflow-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-reviewer-workflow-header > div,
+.corporate-reviewer-workflow-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.corporate-reviewer-workflow-grid,
+.corporate-reviewer-workflow-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 9px;
+}
+
+.corporate-reviewer-workflow-grid button,
+.corporate-reviewer-workflow-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(210, 231, 223, 0.13);
+  border-radius: 8px;
+  color: var(--ink);
+  text-align: left;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.corporate-reviewer-workflow-grid button.ready {
+  border-color: rgba(108, 240, 195, 0.34);
+  background: rgba(26, 176, 145, 0.12);
+}
+
+.corporate-reviewer-workflow-grid button.next {
+  border-color: rgba(255, 205, 111, 0.34);
+}
+
+.corporate-reviewer-workflow-grid button.locked {
+  opacity: 0.76;
+}
+
+.corporate-reviewer-workflow-strip strong,
+.corporate-reviewer-workflow-strip small,
+.corporate-reviewer-workflow-strip span,
+.corporate-reviewer-workflow-strip b {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-reviewer-workflow-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 25px);
+  line-height: 1.1;
+}
+
+.corporate-reviewer-workflow-grid span,
+.corporate-reviewer-workflow-proof small {
+  color: #84f7dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
 .corporate-row-access-outcome-command {
   display: grid;
   gap: 12px;

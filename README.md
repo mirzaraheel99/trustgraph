@@ -293,6 +293,8 @@ The signed-in dashboard now starts with a Portal UX command center. It gives sep
 
 The public login/register page now includes a Public access command center before credentials. It makes Professional registration, Professional login, Corporate registration, Corporate login, pricing, first database write, landing portal, and the no-open-user-browse Corporate boundary visible in one premium command surface.
 
+Corporate Verify now includes a reviewer workflow strip before directory rows. It gives reviewers one sequence for request, approval, scoped rows, review attestation, visibility snapshot, and metadata export while keeping open user browsing blocked.
+
 V1 readiness now includes a pilot route run checkpoint that proves the hosted path from website and auth through Professional rows, Corporate workspace, pricing ledger, scoped user database access, Admin proof exports, and VPS freshness before pilot acceptance.
 
 V1 pilot route run receipts are now persisted in Supabase so the route checkpoint can be recorded as an audited live database row, not only exported as a local JSON packet.

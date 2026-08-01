@@ -5913,6 +5913,28 @@ function CorporateDirectoryPanel({
       target: "export"
     }
   ];
+  const currentCorporateReviewerStep = corporateRequestToRowSteps.find((step) => !step.ready) ?? corporateRequestToRowSteps[corporateRequestToRowSteps.length - 1];
+  const corporateReviewerWorkflowStrip = {
+    mode: "corporate_reviewer_workflow_strip",
+    current_step: currentCorporateReviewerStep.label,
+    current_action:
+      currentCorporateReviewerStep.target === "export"
+        ? "Export scoped packet"
+        : currentCorporateReviewerStep.target === "corporate-database-visibility-snapshot"
+          ? "Save visibility snapshot"
+          : currentCorporateReviewerStep.target === "corporate-access-review-queue"
+            ? reviews.length ? "Review scoped rows" : "Record review attestation"
+            : currentCorporateReviewerStep.target === "corporate-verify-request-list"
+              ? "Check approval"
+              : "Request access",
+    approved_user_rows: sharedRecords.length,
+    review_attestations: reviews.length,
+    visibility_snapshot_saved: Boolean(latestCorporateVisibilitySnapshot),
+    no_open_user_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_reviewer_workflow_strip_requires_request_approval_scoped_rows_review_attestation_snapshot_export_and_no_open_user_browse_before_directory_rows"
+  };
   const corporateReviewerDatabaseWorkbench = {
     mode: "corporate_reviewer_database_workbench",
     headline:
@@ -6420,6 +6442,56 @@ function CorporateDirectoryPanel({
           >
             Export studio proof
           </button>
+        </div>
+      </div>
+      <div className="corporate-reviewer-workflow-strip" aria-label="Corporate reviewer workflow strip">
+        <div className="corporate-reviewer-workflow-header">
+          <div>
+            <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Reviewer workflow</span>
+            <strong>{corporateReviewerWorkflowStrip.current_step}: {corporateReviewerWorkflowStrip.current_action}</strong>
+            <small>{corporateReviewerWorkflowStrip.accepted_when}</small>
+          </div>
+          <button
+            className="primary-action"
+            onClick={() => {
+              if (currentCorporateReviewerStep.target === "export") {
+                downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                return;
+              }
+              runCorporateReviewerTask(currentCorporateReviewerStep.target);
+            }}
+            type="button"
+          >
+            {corporateReviewerWorkflowStrip.current_action}
+          </button>
+        </div>
+        <div className="corporate-reviewer-workflow-grid">
+          {corporateRequestToRowSteps.map((step, index) => (
+            <button className={step.ready ? "ready" : step.label === currentCorporateReviewerStep.label ? "next" : "locked"} key={step.label} onClick={() => runCorporateReviewerTask(step.target)} type="button">
+              <span>{index + 1}</span>
+              <strong>{step.label}</strong>
+              <small>{step.detail}</small>
+              <b>{step.value}</b>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-reviewer-workflow-proof">
+          <span>
+            <small>Approved rows</small>
+            <strong>{corporateReviewerWorkflowStrip.approved_user_rows}</strong>
+          </span>
+          <span>
+            <small>Reviews</small>
+            <strong>{corporateReviewerWorkflowStrip.review_attestations}</strong>
+          </span>
+          <span>
+            <small>Snapshot</small>
+            <strong>{corporateReviewerWorkflowStrip.visibility_snapshot_saved ? "Saved" : "Needed"}</strong>
+          </span>
+          <span>
+            <small>Browse boundary</small>
+            <strong>{corporateReviewerWorkflowStrip.no_open_user_browse ? "No open browse" : "Open browse"}</strong>
+          </span>
         </div>
       </div>
       <div className="corporate-reviewer-task-command" aria-label="Corporate reviewer task command">
