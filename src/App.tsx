@@ -18367,6 +18367,46 @@ function PublicSite({
       detail: publicAuthServerCheckpoint.protected_vfix_route
     }
   ];
+  const publicCurrentBuildServerGate = {
+    mode: "current_build_server_gate",
+    status: serverSyncMonitor.status === "synced" ? "server_current" : "manual_vps_sync_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "This VPS build is accepted as current"
+        : "This GitHub build is not accepted on the VPS until the server proves it",
+    required_marker:
+      "current_build_server_gate_requires_github_green_pages_smoke_vps_release_stamp_commit_json_bundle_marker_and_vfix_route_unchanged",
+    manual_sync_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+    release_stamp_url: "https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    protected_vfix_route: publicAuthServerCheckpoint.protected_vfix_route,
+    preview_data_accepted: false
+  };
+  const publicCurrentBuildServerGateRows = [
+    {
+      label: "GitHub source",
+      value: "Green main",
+      detail: "Use the latest passed build, deploy, and smoke workflow as source.",
+      ready: true
+    },
+    {
+      label: "VPS stamp",
+      value: serverSyncMonitor.status === "synced" ? "Accepted" : "Needs sync",
+      detail: serverSyncMonitor.commit ? `Server reports ${serverSyncMonitor.commit}` : publicCurrentBuildServerGate.release_stamp_url,
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "Bundle marker",
+      value: "Required",
+      detail: "The VPS page must serve the latest TrustGraph UI marker, not an older build.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "VFIX route",
+      value: "Untouched",
+      detail: publicCurrentBuildServerGate.protected_vfix_route,
+      ready: true
+    }
+  ];
   const publicAuthFlowCards = [
     {
       label: "Account type",
@@ -21020,6 +21060,41 @@ function PublicSite({
             >
               Export server checkpoint
             </button>
+          </div>
+          <div className={`current-build-server-gate public ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="Public current build server gate">
+            <div className="current-build-server-gate-header">
+              <div>
+                <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Current server build</span>
+                <strong>{publicCurrentBuildServerGate.headline}</strong>
+                <small>{publicCurrentBuildServerGate.required_marker}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-current-build-server-gate-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicCurrentBuildServerGate, rows: publicCurrentBuildServerGateRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export server gate
+              </button>
+            </div>
+            <div className="current-build-server-gate-grid">
+              {publicCurrentBuildServerGateRows.map((row) => (
+                <article className={row.ready ? "ready" : "next"} key={row.label}>
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="current-build-server-gate-command">
+              <span>Manual VPS sync</span>
+              <code>{publicCurrentBuildServerGate.manual_sync_command}</code>
+            </div>
           </div>
           <div className="public-portal-switchboard" aria-label="Public portal switchboard">
             <div className="public-portal-switchboard-header">

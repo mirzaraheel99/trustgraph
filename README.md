@@ -155,6 +155,8 @@ The Portal route shell now includes a Server save commander inside the daily wor
 
 The Portal route shell also includes a Current build server gate. It rejects the VPS as current until GitHub main is green, Pages smoke passes, the VPS release stamp returns commit JSON, the served bundle contains the current TrustGraph marker, and the protected VFIX route remains unchanged.
 
+The public login/register flow exposes the same Current build server gate before credentials. If the VPS is stale, a buyer or pilot user sees the manual `/opt/trustgraph` sync command and knows not to treat the server as current yet.
+
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current.
 
 The signed-in workspace now includes an operator viewport polish layer. Oversized workspace headings are capped, Passport detail panels stack before tablet widths, active corporate/admin surfaces clip overflow, and mobile views keep controls readable without horizontal scrolling.
