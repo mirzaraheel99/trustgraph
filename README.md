@@ -65,6 +65,8 @@ The signed-in workspace now includes a registration handoff command immediately 
 
 The public first viewport now includes an audience switchboard for Professionals, Corporate Verify buyers, and TrustGraph operators. It explains the pilot price, first database effect, scoped-access boundary, and human-gated operations before a visitor reaches the credential form.
 
+The signed-in VPS workspace now has a final layout guard for the hosted SaaS shell. It hides global horizontal overflow, stacks the Professional and Corporate work grids at tablet width, keeps account/logout action groups wrapping instead of clipping, and bounds dense records, setup, and Verify panels so the dashboard stays readable on desktop and mobile.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist

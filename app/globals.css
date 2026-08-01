@@ -35298,3 +35298,233 @@ pre {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* VPS workspace layout guard: final cascade layer for the hosted SaaS workspace. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.app,
+.workspace,
+.topbar,
+.hero,
+.metrics-grid,
+.workspace-command-strip,
+.workspace-admin-grid,
+.work-grid,
+.records-panel,
+.detail-panel,
+.actions-panel,
+.verify-panel,
+.setup-panel-grid,
+.setup-tabs,
+.records-list {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.workspace {
+  width: min(100%, 1380px);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 40px);
+}
+
+.topbar {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.topbar-actions,
+.topbar-session-card,
+.workspace-command-actions,
+.context-actions,
+.setup-command-actions,
+.real-database-launch-gate-actions,
+.registration-handoff-actions,
+.dashboard-next-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.topbar-actions > *,
+.topbar-session-card > *,
+.workspace-command-actions > *,
+.context-actions > *,
+.setup-command-actions > *,
+.real-database-launch-gate-actions > *,
+.registration-handoff-actions > *,
+.dashboard-next-action-buttons > * {
+  flex: 1 1 170px;
+  min-width: 0;
+}
+
+.session-command-bar {
+  width: 100%;
+}
+
+.hero {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: 16px;
+}
+
+.hero-value {
+  font-size: clamp(58px, 8vw, 108px);
+}
+
+.metrics-grid,
+.setup-panel-grid,
+.workspace-command-metrics,
+.professional-passport-progress-grid,
+.corporate-access-answer-grid,
+.corporate-access-progress-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.workspace-admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+
+.setup-tabs button,
+.setup-panel-grid > *,
+.workspace-admin-grid > *,
+.records-panel > *,
+.detail-panel > *,
+.actions-panel > *,
+.verify-panel > *,
+.records-list > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.work-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.72fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.records-panel,
+.detail-panel,
+.actions-panel,
+.workspace-admin-grid,
+.professional-passport-progress-strip,
+.corporate-access-answer,
+.verify-panel > .corporate-verify-review-runway,
+.verify-panel > .verify-request-form,
+.verify-panel > .grant-list,
+.verify-panel > .corporate-directory-panel {
+  border-radius: 8px;
+}
+
+.records-panel,
+.detail-panel,
+.actions-panel {
+  overflow: hidden;
+}
+
+.records-panel input,
+.records-panel select,
+.records-panel textarea,
+.records-panel button,
+.detail-panel input,
+.detail-panel select,
+.detail-panel textarea,
+.detail-panel button,
+.workspace-admin-grid input,
+.workspace-admin-grid select,
+.workspace-admin-grid textarea,
+.workspace-admin-grid button,
+.verify-panel input,
+.verify-panel select,
+.verify-panel textarea,
+.verify-panel button {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.records-panel strong,
+.records-panel small,
+.records-panel span,
+.records-panel p,
+.detail-panel strong,
+.detail-panel small,
+.detail-panel span,
+.detail-panel p,
+.workspace-admin-grid strong,
+.workspace-admin-grid small,
+.workspace-admin-grid span,
+.workspace-admin-grid p,
+.verify-panel strong,
+.verify-panel small,
+.verify-panel span,
+.verify-panel p {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.professional-passport-progress-header,
+.corporate-access-answer-header,
+.corporate-access-answer-proof {
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+}
+
+.professional-passport-progress-header button,
+.corporate-access-answer-header button {
+  justify-self: stretch;
+}
+
+.corporate-directory-panel {
+  overflow-x: auto;
+}
+
+@media (max-width: 1100px) {
+  .work-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detail-panel {
+    order: -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    padding-inline: 14px;
+  }
+
+  .topbar,
+  .workspace-command-strip,
+  .workspace-admin-grid,
+  .work-grid {
+    gap: 14px;
+  }
+
+  .professional-passport-progress-header,
+  .corporate-access-answer-header,
+  .corporate-access-answer-proof {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .topbar-actions > *,
+  .topbar-session-card > *,
+  .workspace-command-actions > *,
+  .context-actions > *,
+  .setup-command-actions > *,
+  .real-database-launch-gate-actions > *,
+  .registration-handoff-actions > *,
+  .dashboard-next-action-buttons > * {
+    flex-basis: 100%;
+  }
+}
