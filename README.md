@@ -291,6 +291,8 @@ Admin readiness now starts the human launch section with a Launch decision board
 
 The signed-in dashboard now starts with a Portal UX command center. It gives separate first-screen actions for user login/Passport, Corporate setup/register, Corporate Verify scoped database review, pricing, account recovery/logout, live database proof, and server sync before dense proof panels.
 
+The signed-in dashboard now includes a pilot journey rail that walks account, Professional Passport, company setup, Corporate Verify scoped access, pricing, database proof, and VPS server save in one bounded sequence.
+
 The public login/register page now includes a Public access command center before credentials. It makes Professional registration, Professional login, Corporate registration, Corporate login, pricing, first database write, landing portal, and the no-open-user-browse Corporate boundary visible in one premium command surface.
 
 Public auth now includes a Public entry sequence after the access command. It shows the exact order from route choice to credentials, hosted email verification, correct portal landing, and Corporate scoped database access before submit.

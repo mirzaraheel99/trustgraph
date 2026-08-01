@@ -29272,6 +29272,87 @@ function App() {
       onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
     }
   ];
+  const signedInPilotJourneyRail = {
+    mode: "signed_in_pilot_journey_rail",
+    account: authSession ? authSession.user.email : "hosted_login_required",
+    current_portal: workspace.label,
+    next_action: authSession ? nextV1PortalLane.action : "Login / register",
+    ready_steps: [
+      Boolean(authSession),
+      Boolean(authSession && livePassportRecords.length),
+      hasLiveCorporateContext,
+      Boolean(sharedVerifyRecords.length),
+      Boolean(subscriptionPlans.length),
+      Boolean(authSession && accountContext),
+      serverSyncMonitor.status === "synced"
+    ].filter(Boolean).length,
+    total_steps: 7,
+    corporate_database_boundary: "corporate_verify_requests_by_professional_email_then_reviews_only_approved_scoped_rows",
+    preview_data_accepted: false,
+    accepted_when:
+      "signed_in_pilot_journey_rail_requires_account_professional_passport_company_setup_corporate_verify_pricing_database_proof_server_save_and_no_preview_data"
+  };
+  const signedInPilotJourneySteps = [
+    {
+      label: "Account",
+      value: authSession ? "Signed in" : "Login required",
+      detail: authSession ? authSession.user.email : "Use hosted login or registration first.",
+      ready: Boolean(authSession),
+      action: authSession ? "Account tools" : "Login",
+      onClick: openAuthControls
+    },
+    {
+      label: "Professional",
+      value: livePassportRecords.length ? `${livePassportRecords.length} Passport rows` : "Create Passport",
+      detail: "Personal records, evidence, references, consent, and sharing.",
+      ready: Boolean(authSession && livePassportRecords.length),
+      action: "Open Passport",
+      onClick: () => openWorkspaceOrSetup("passport")
+    },
+    {
+      label: "Company",
+      value: hasLiveCorporateContext ? activeOrganization.name : "Setup needed",
+      detail: "Organization, RBAC roles, team invitations, and billing handoff.",
+      ready: hasLiveCorporateContext,
+      action: "Setup company",
+      onClick: openCorporateControls
+    },
+    {
+      label: "Corporate Verify",
+      value: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Request access",
+      detail: "Review only professional-approved, consent-scoped user rows.",
+      ready: Boolean(sharedVerifyRecords.length),
+      action: "Open Verify",
+      onClick: () => openWorkspaceOrSetup("verify")
+    },
+    {
+      label: "Pricing",
+      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "$149 pilot",
+      detail: "Professional free pilot, Corporate Verify ledger, Stripe human gate.",
+      ready: Boolean(subscriptionPlans.length),
+      action: "Review pricing",
+      onClick: () => {
+        setSetupView("billing");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Database proof",
+      value: liveDatabaseContract.accepted ? "Accepted" : "Live rows needed",
+      detail: "Supabase row groups, scoped exports, receipts, and no preview data.",
+      ready: liveDatabaseContract.accepted,
+      action: "Check proof",
+      onClick: () => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Server save",
+      value: serverSyncMonitor.status === "synced" ? "VPS synced" : "Pull needed",
+      detail: "GitHub source must be saved to VPS before server testing is accepted.",
+      ready: serverSyncMonitor.status === "synced",
+      action: "Export server",
+      onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
+    }
+  ];
   const portalLaunchMatrix = {
     mode: "portal_launch_matrix",
     current_portal: workspace.label,
@@ -29938,6 +30019,68 @@ function App() {
             >
               <Download size={16} />
               Export command proof
+            </button>
+          </div>
+        </section>
+
+        <section className="signed-in-pilot-journey-rail" aria-label="Signed-in pilot journey rail">
+          <div className="signed-in-pilot-journey-header">
+            <div>
+              <span className={`status-chip ${signedInPilotJourneyRail.ready_steps === signedInPilotJourneyRail.total_steps ? "success" : "warning"}`}>
+                Pilot journey
+              </span>
+              <strong>{authSession ? `Next: ${signedInPilotJourneyRail.next_action}` : "Login first, then complete the pilot route"}</strong>
+              <small>{signedInPilotJourneyRail.accepted_when}</small>
+            </div>
+            <span>
+              <strong>{signedInPilotJourneyRail.ready_steps}/{signedInPilotJourneyRail.total_steps}</strong>
+              <small>Steps ready</small>
+            </span>
+          </div>
+          <div className="signed-in-pilot-journey-grid">
+            {signedInPilotJourneySteps.map((step, index) => (
+              <button className={step.ready ? "ready" : "next"} key={step.label} onClick={step.onClick} type="button">
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{step.label}</strong>
+                <b>{step.value}</b>
+                <small>{step.detail}</small>
+                <em>{step.action}</em>
+              </button>
+            ))}
+          </div>
+          <div className="signed-in-pilot-journey-proof">
+            <span>
+              <small>Current portal</small>
+              <strong>{signedInPilotJourneyRail.current_portal}</strong>
+            </span>
+            <span>
+              <small>Corporate database</small>
+              <strong>No open browse</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{signedInPilotJourneyRail.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-signed-in-pilot-journey-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      ...signedInPilotJourneyRail,
+                      steps: signedInPilotJourneySteps.map(({ onClick: _onClick, ...step }) => step)
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export journey
             </button>
           </div>
         </section>
