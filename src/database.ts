@@ -507,6 +507,22 @@ export interface DbRealDatabaseCompletionReceipt {
   created_at: string;
 }
 
+export interface DbV1PilotRouteRunReceipt {
+  id: string;
+  profile_id: string;
+  organization_id: string | null;
+  status: "hosted_pilot_route_needs_runtime_proof" | "hosted_pilot_route_accepted";
+  ready_steps: number;
+  total_steps: number;
+  missing_steps: string[];
+  route_steps: Array<Record<string, unknown>>;
+  preview_data_accepted: boolean;
+  vps_freshness_required: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbRegistrationIntent {
   id: string;
   profile_id: string;

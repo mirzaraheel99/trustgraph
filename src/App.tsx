@@ -61,6 +61,7 @@ import type {
   DbSecurityRlsReviewReceipt,
   DbSubscriptionPlan,
   DbV1LiveDatabaseReadinessReceipt,
+  DbV1PilotRouteRunReceipt,
   DbVerificationCase,
   DbWebhookSubscription,
   CorporateAccessReviewStatus,
@@ -188,6 +189,7 @@ import { loadSchemaMigrationRuns } from "./releaseRepository";
 import { loadSecurityRlsReviewReceipts, recordSecurityRlsReviewReceipt } from "./securityRepository";
 import { isSupabaseConfigured } from "./supabase";
 import { loadV1LiveDatabaseReadinessReceipts, recordV1LiveDatabaseReadinessReceipt } from "./v1ReadinessRepository";
+import { loadV1PilotRouteRunReceipts, recordV1PilotRouteRunReceipt } from "./v1PilotRouteRunRepository";
 import {
   acceptOrganizationInvitation,
   createOrganizationInvitation,
@@ -8258,9 +8260,11 @@ function PlanAlignmentPanel({
   disabled,
   livePilotRowProof,
   v1ReadinessReceipts,
+  v1PilotRouteRunReceipts,
   v1ReadinessStatus,
   pilotOwnerReadinessReceipts,
   onRecordV1ReadinessReceipt,
+  onRecordV1PilotRouteRunReceipt,
   onRecordPilotOwnerReadinessReceipt,
   onRecordPilotLaunchContact,
   onRecordGateDecision,
@@ -8270,9 +8274,18 @@ function PlanAlignmentPanel({
   disabled: boolean;
   livePilotRowProof: LivePilotRowProof;
   v1ReadinessReceipts: DbV1LiveDatabaseReadinessReceipt[];
+  v1PilotRouteRunReceipts: DbV1PilotRouteRunReceipt[];
   v1ReadinessStatus: string;
   pilotOwnerReadinessReceipts: DbPilotOwnerReadinessReceipt[];
   onRecordV1ReadinessReceipt: () => Promise<void>;
+  onRecordV1PilotRouteRunReceipt: (input: {
+    status: DbV1PilotRouteRunReceipt["status"];
+    readySteps: number;
+    totalSteps: number;
+    missingSteps: string[];
+    routeSteps: Array<Record<string, unknown>>;
+    metadata: Record<string, unknown>;
+  }) => Promise<void>;
   onRecordPilotOwnerReadinessReceipt: (input: {
     status: DbPilotOwnerReadinessReceipt["status"];
     contactsReady: number;
@@ -8312,6 +8325,8 @@ function PlanAlignmentPanel({
   const [pilotContactMessage, setPilotContactMessage] = useState("Record pilot launch owners after the human roster decision is available.");
   const [pilotOwnerReceiptBusy, setPilotOwnerReceiptBusy] = useState(false);
   const [pilotOwnerReceiptMessage, setPilotOwnerReceiptMessage] = useState("Record a database receipt after pilot owners are named from live contact rows.");
+  const [routeRunReceiptBusy, setRouteRunReceiptBusy] = useState(false);
+  const [routeRunReceiptMessage, setRouteRunReceiptMessage] = useState("Record a database receipt after the hosted pilot route has live-row evidence.");
   const deployedCount = foundationTracks.filter((track) => track.status === "deployed").length;
   const foundationCount = foundationTracks.filter((track) => track.status === "foundation").length;
   const plannedCount = foundationTracks.filter((track) => track.status === "planned").length;
@@ -8588,9 +8603,16 @@ function PlanAlignmentPanel({
     source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
     hosted_review_url: "https://mirzaraheel99.github.io/trustgraph/",
     vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
+    persisted_receipt_table: "v1_pilot_route_run_receipts",
+    persisted_receipt_rpc: "record_v1_pilot_route_run_receipt",
+    persisted_receipt_accepted_when:
+      "v1_pilot_route_run_receipt_requires_hosted_auth_professional_rows_corporate_workspace_pricing_ledger_scoped_database_admin_exports_vps_freshness_and_no_preview_data",
+    persisted_receipts_loaded: v1PilotRouteRunReceipts.length,
+    latest_persisted_receipt: v1PilotRouteRunReceipts[0] ?? null,
     live_pilot_row_proof: livePilotRowProof,
     steps: v1PilotRouteRunSteps
   };
+  const latestV1PilotRouteRunReceipt = v1PilotRouteRunReceipts[0] ?? null;
   const completionAuditRequirements = [
     {
       label: "GitHub Pages hosted application",
@@ -8911,6 +8933,39 @@ function PlanAlignmentPanel({
     }
   }
 
+  async function submitV1PilotRouteRunReceipt() {
+    setRouteRunReceiptBusy(true);
+    setRouteRunReceiptMessage("Recording V1 pilot route run receipt...");
+    try {
+      await onRecordV1PilotRouteRunReceipt({
+        status: v1PilotRouteRunCheckpoint.status as DbV1PilotRouteRunReceipt["status"],
+        readySteps: v1PilotRouteRunCheckpoint.ready_steps,
+        totalSteps: v1PilotRouteRunCheckpoint.total_steps,
+        missingSteps: v1PilotRouteRunCheckpoint.missing_steps,
+        routeSteps: v1PilotRouteRunCheckpoint.steps.map((step) => ({
+          label: step.label,
+          status: step.status,
+          evidence: step.evidence,
+          ready: step.ready
+        })),
+        metadata: {
+          accepted_when: v1PilotRouteRunCheckpoint.accepted_when,
+          source_of_truth: v1PilotRouteRunCheckpoint.source_of_truth,
+          hosted_review_url: v1PilotRouteRunCheckpoint.hosted_review_url,
+          vps_url: v1PilotRouteRunCheckpoint.vps_url,
+          live_pilot_row_proof: livePilotRowProof,
+          preview_data_accepted: false,
+          vps_freshness_required: true
+        }
+      });
+      setRouteRunReceiptMessage("V1 pilot route run receipt saved to Supabase.");
+    } catch (error) {
+      setRouteRunReceiptMessage(error instanceof Error ? error.message : "Could not record V1 pilot route run receipt");
+    } finally {
+      setRouteRunReceiptBusy(false);
+    }
+  }
+
   return (
     <section className="plan-panel">
       <div className="mini-heading">
@@ -8969,6 +9024,14 @@ function PlanAlignmentPanel({
           >
             Export route run
           </button>
+          <button
+            className="secondary-action"
+            disabled={disabled || routeRunReceiptBusy}
+            onClick={() => void submitV1PilotRouteRunReceipt()}
+            type="button"
+          >
+            Record route receipt
+          </button>
         </div>
         <div className="v1-pilot-route-run-grid">
           {v1PilotRouteRunSteps.map((step) => (
@@ -8985,6 +9048,12 @@ function PlanAlignmentPanel({
             Missing: {v1PilotRouteRunCheckpoint.missing_steps.join(", ") || "none"} | Preview data accepted:{" "}
             {v1PilotRouteRunCheckpoint.preview_data_accepted ? "yes" : "no"}
           </small>
+          <small>
+            {latestV1PilotRouteRunReceipt
+              ? `Latest saved receipt: ${latestV1PilotRouteRunReceipt.ready_steps}/${latestV1PilotRouteRunReceipt.total_steps} steps, ${latestV1PilotRouteRunReceipt.status.replace(/_/g, " ")}.`
+              : "No persisted V1 pilot route run receipt yet."}
+          </small>
+          <small>{routeRunReceiptMessage}</small>
         </div>
       </div>
       <div className="release-sync-command" aria-label="Release sync command">
@@ -20017,6 +20086,7 @@ function App() {
   const [authRecoveryReceipts, setAuthRecoveryReceipts] = useState<DbAuthRecoveryReceipt[]>([]);
   const [onboardingReceipts, setOnboardingReceipts] = useState<DbOnboardingWizardReceipt[]>([]);
   const [v1ReadinessReceipts, setV1ReadinessReceipts] = useState<DbV1LiveDatabaseReadinessReceipt[]>([]);
+  const [v1PilotRouteRunReceipts, setV1PilotRouteRunReceipts] = useState<DbV1PilotRouteRunReceipt[]>([]);
   const [realDatabaseCompletionReceipts, setRealDatabaseCompletionReceipts] = useState<DbRealDatabaseCompletionReceipt[]>([]);
   const [v1ReadinessStatus, setV1ReadinessStatus] = useState("Sign in to record V1 live database readiness receipts");
   const [serverSyncMonitor, setServerSyncMonitor] = useState<ServerSyncMonitorState>({
@@ -20186,6 +20256,8 @@ function App() {
       setRegistrationIntents([]);
       setAuthRecoveryReceipts([]);
       setOnboardingReceipts([]);
+      setV1ReadinessReceipts([]);
+      setV1PilotRouteRunReceipts([]);
       setRealDatabaseCompletionReceipts([]);
       setRegistrationIntentStatus("Sign in to load registration intent rows");
       setBillingStatus("Sign in to manage billing plans");
@@ -20258,11 +20330,12 @@ function App() {
       loadAuthRecoveryReceipts(authSession.accessToken).catch(() => []),
       loadOnboardingWizardReceipts(authSession.accessToken).catch(() => []),
       loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => []),
+      loadV1PilotRouteRunReceipts(authSession.accessToken).catch(() => []),
       loadRealDatabaseCompletionReceipts(authSession.accessToken).catch(() => []),
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, authReceipts, onboardingRows, readinessReceipts, realDatabaseReceipts, invitations, members]) => {
+      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, authReceipts, onboardingRows, readinessReceipts, routeRunReceipts, realDatabaseReceipts, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
@@ -20272,6 +20345,7 @@ function App() {
         setAuthRecoveryReceipts(authReceipts);
         setOnboardingReceipts(onboardingRows);
         setV1ReadinessReceipts(readinessReceipts);
+        setV1PilotRouteRunReceipts(routeRunReceipts);
         setRealDatabaseCompletionReceipts(realDatabaseReceipts);
         setTeamInvitations(invitations);
         setTeamMembers(members);
@@ -20293,6 +20367,7 @@ function App() {
         setAuthRecoveryReceipts([]);
         setOnboardingReceipts([]);
         setV1ReadinessReceipts([]);
+        setV1PilotRouteRunReceipts([]);
         setRealDatabaseCompletionReceipts([]);
         setTeamInvitations([]);
         setTeamMembers([]);
@@ -23181,6 +23256,46 @@ function App() {
     } catch (error) {
       setV1ReadinessStatus(operatorErrorMessage(error, "Could not record V1 live database readiness receipt"));
     }
+  }
+
+  async function recordLiveV1PilotRouteRunReceipt(input: {
+    status: DbV1PilotRouteRunReceipt["status"];
+    readySteps: number;
+    totalSteps: number;
+    missingSteps: string[];
+    routeSteps: Array<Record<string, unknown>>;
+    metadata: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext) {
+      throw new Error("Login first to record the V1 pilot route run receipt.");
+    }
+
+    const receipt = await recordV1PilotRouteRunReceipt({
+      accessToken: authSession.accessToken,
+      organizationId: activeMembership.organizationId || null,
+      status: input.status,
+      readySteps: input.readySteps,
+      totalSteps: input.totalSteps,
+      missingSteps: input.missingSteps,
+      routeSteps: input.routeSteps,
+      metadata: {
+        ...input.metadata,
+        active_workspace: workspace.id,
+        active_role: activeMembership.role,
+        server_sync_status: serverSyncMonitor.status,
+        server_commit: serverSyncMonitor.commit,
+        preview_data_accepted: false,
+        vps_freshness_required: true
+      }
+    });
+    const [receipts, events] = await Promise.all([
+      loadV1PilotRouteRunReceipts(authSession.accessToken),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setV1PilotRouteRunReceipts(receipts);
+    setAuditEvents(events);
+    setV1ReadinessStatus(`V1 pilot route run receipt recorded: ${receipt.ready_steps}/${receipt.total_steps} steps`);
+    setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
   }
 
   async function recordLiveOnboardingWizardReceipt(input: {
@@ -26994,9 +27109,11 @@ function App() {
                   disabled={!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")}
                   livePilotRowProof={livePilotRowProof}
                   v1ReadinessReceipts={v1ReadinessReceipts}
+                  v1PilotRouteRunReceipts={v1PilotRouteRunReceipts}
                   v1ReadinessStatus={v1ReadinessStatus}
                   pilotOwnerReadinessReceipts={pilotOwnerReadinessReceipts}
                   onRecordV1ReadinessReceipt={recordLiveDatabaseReadinessReceipt}
+                  onRecordV1PilotRouteRunReceipt={recordLiveV1PilotRouteRunReceipt}
                   onRecordPilotOwnerReadinessReceipt={recordLivePilotOwnerReadinessReceipt}
                   onRecordPilotLaunchContact={recordLivePilotLaunchContact}
                   onRecordGateDecision={recordLiveProductionGateDecision}

@@ -106,6 +106,12 @@ const appRequirements = [
     "v1_pilot_route_run_requires_website_hosted_auth_professional_rows_corporate_workspace_pricing_ledger_scoped_user_database_admin_exports_vps_freshness_and_no_preview_data",
     "V1 pilot route run acceptance rule"
   ],
+  ["v1_pilot_route_run_receipts", "persisted V1 pilot route run receipt table"],
+  ["record_v1_pilot_route_run_receipt", "persisted V1 pilot route run receipt RPC"],
+  [
+    "v1_pilot_route_run_receipt_requires_hosted_auth_professional_rows_corporate_workspace_pricing_ledger_scoped_database_admin_exports_vps_freshness_and_no_preview_data",
+    "persisted V1 pilot route run receipt acceptance rule"
+  ],
   ["Admin operations acceptance checkpoint", "admin operations acceptance label"],
   ["admin_operations_acceptance_checkpoint", "admin operations acceptance packet mode"],
   [
@@ -148,7 +154,7 @@ for (const [phrase, label] of runbookRequirements) {
 
 assertIncludes(evidenceMap, "Working-data packet", "evidence map working-data export");
 assertIncludes(evidenceMap, "Seed reconciliation", "evidence map seed reconciliation");
-assertIncludes(evidenceMap, "Live Supabase migrations currently run through `061_pilot_named_operator_aliases.sql`", "evidence map current migration boundary");
+assertIncludes(evidenceMap, "Live Supabase migrations currently run through `062_v1_pilot_route_run_receipts.sql`", "evidence map current migration boundary");
 assertIncludes(evidenceMap, "043_account_context_rpc.sql", "evidence map account-context migration history");
 assertIncludes(evidenceMap, "passport_initialized", "evidence map professional registration completion status");
 assertIncludes(evidenceMap, "persisted V1 live database readiness receipts", "evidence map persisted readiness receipt");
@@ -162,6 +168,7 @@ assertMigration(migrationFiles, "058_", "real database completion receipts");
 assertMigration(migrationFiles, "059_", "corporate database visibility snapshots");
 assertMigration(migrationFiles, "060_", "pilot visibility snapshot seed");
 assertMigration(migrationFiles, "061_", "pilot-named operator RPC aliases");
+assertMigration(migrationFiles, "062_", "persisted V1 pilot route run receipts");
 assertMigration(migrationFiles, "043_", "account context RPC");
 assertMigration(migrationFiles, "044_", "registration intent rows");
 assertMigration(migrationFiles, "045_", "corporate registration intent completion");

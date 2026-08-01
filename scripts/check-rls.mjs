@@ -45,7 +45,8 @@ const requiredRlsTables = [
   "security_rls_review_receipts",
   "pilot_owner_readiness_receipts",
   "real_database_completion_receipts",
-  "corporate_database_visibility_snapshots"
+  "corporate_database_visibility_snapshots",
+  "v1_pilot_route_run_receipts"
 ];
 
 const missingTables = requiredRlsTables.filter(
@@ -488,6 +489,32 @@ if (!realDatabaseCompletionReceiptMigration.includes("database.real_completion_r
 }
 if (!realDatabaseCompletionReceiptMigration.includes("grant execute on function public.record_real_database_completion_receipt")) {
   throw new Error("Real database completion receipt RPC must be executable by authenticated users.");
+}
+
+const v1PilotRouteRunReceiptMigration = latestSqlByFile["062_v1_pilot_route_run_receipts.sql"] ?? "";
+if (!v1PilotRouteRunReceiptMigration.includes("create table if not exists public.v1_pilot_route_run_receipts")) {
+  throw new Error("Missing V1 pilot route run receipt table migration.");
+}
+if (!v1PilotRouteRunReceiptMigration.includes("alter table public.v1_pilot_route_run_receipts enable row level security")) {
+  throw new Error("V1 pilot route run receipts must enable RLS.");
+}
+if (!v1PilotRouteRunReceiptMigration.includes("profile_id = public.current_profile_id()")) {
+  throw new Error("V1 pilot route run receipts must be owner-scoped.");
+}
+if (!v1PilotRouteRunReceiptMigration.includes("preview_data_accepted = false")) {
+  throw new Error("V1 pilot route run receipts must reject preview data.");
+}
+if (!v1PilotRouteRunReceiptMigration.includes("vps_freshness_required = true")) {
+  throw new Error("V1 pilot route run receipts must require VPS freshness proof.");
+}
+if (!v1PilotRouteRunReceiptMigration.includes("create or replace function public.record_v1_pilot_route_run_receipt")) {
+  throw new Error("Missing V1 pilot route run receipt RPC.");
+}
+if (!v1PilotRouteRunReceiptMigration.includes("v1_pilot_route_run.receipt_recorded")) {
+  throw new Error("V1 pilot route run receipt RPC must write audit history.");
+}
+if (!v1PilotRouteRunReceiptMigration.includes("grant execute on function public.record_v1_pilot_route_run_receipt")) {
+  throw new Error("V1 pilot route run receipt RPC must be executable by authenticated users.");
 }
 
 console.log(`TrustGraph RLS check passed: ${requiredRlsTables.length} protected tables verified across ${files.length} migrations.`);

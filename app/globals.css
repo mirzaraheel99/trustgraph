@@ -21249,7 +21249,7 @@ body {
 
 .v1-pilot-route-run-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(142px, 0.24fr);
+  grid-template-columns: minmax(0, 1fr) repeat(2, minmax(142px, 0.2fr));
   gap: 10px;
   align-items: start;
 }
