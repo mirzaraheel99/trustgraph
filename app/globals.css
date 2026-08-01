@@ -34690,6 +34690,10 @@ body {
   order: -52;
 }
 
+.registration-handoff-command {
+  order: -53;
+}
+
 .dashboard-next-action,
 .portal-home-command,
 .portal-choice-guide {
@@ -34717,6 +34721,7 @@ body {
 .portal-ux-command-center,
 .vps-saved-portal-command,
 .portal-route-shell,
+.registration-handoff-command,
 .real-data-mission-control,
 .signed-in-daily-operating-runway,
 .real-row-acceptance-gate,
@@ -34732,6 +34737,8 @@ body {
 .vps-saved-portal-command-grid,
 .portal-route-tabs,
 .portal-route-shell-status,
+.registration-handoff-grid,
+.registration-handoff-proof,
 .real-data-mission-grid,
 .real-data-mission-proof,
 .signed-in-daily-operating-grid,
@@ -34749,6 +34756,111 @@ body {
 .portal-choice-guide button {
   min-width: 0;
   width: 100%;
+  white-space: normal;
+}
+
+.registration-handoff-command {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid rgba(95, 240, 201, 0.2);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.085), rgba(107, 149, 255, 0.06)),
+    rgba(8, 16, 18, 0.84);
+  box-shadow: 0 20px 58px rgba(0, 0, 0, 0.22);
+}
+
+.registration-handoff-command.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+}
+
+.registration-handoff-header,
+.registration-handoff-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.48fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.registration-handoff-header > div:first-child,
+.registration-handoff-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.registration-handoff-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.registration-handoff-grid,
+.registration-handoff-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 9px;
+}
+
+.registration-handoff-grid article,
+.registration-handoff-proof span {
+  min-width: 0;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.registration-handoff-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.registration-handoff-grid article.next {
+  border-color: rgba(225, 184, 102, 0.3);
+}
+
+.registration-handoff-command strong,
+.registration-handoff-command small,
+.registration-handoff-command span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.registration-handoff-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.08;
+}
+
+.registration-handoff-grid strong,
+.registration-handoff-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.registration-handoff-grid span,
+.registration-handoff-proof small:first-child {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.registration-handoff-command small {
+  color: var(--muted);
+  line-height: 1.38;
+}
+
+.registration-handoff-actions button {
+  width: 100%;
+  min-width: 0;
   white-space: normal;
 }
 

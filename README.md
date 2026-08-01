@@ -61,6 +61,8 @@ The CI loop also runs `pnpm check:v1-pilot-route`. That verifier ties the public
 
 The CI loop also runs `pnpm check:live-database-repair`. That focused gate proves the signed-in app still exposes the next missing Supabase row group, the live pilot seed action, the proof reload route, working-data export, and visible preview-data rejection before a build can deploy.
 
+The signed-in workspace now includes a registration handoff command immediately after the portal command center. It shows the hosted registration intent, selected Professional or Corporate portal, selected plan, first live database write, completion state, next workspace or Passport action, and preview-data rejection so a verified user can see why Corporate remains locked until workspace/RBAC creation is complete.
+
 If another service already owns public ports 80/443 on the server, set `TRUSTGRAPH_HTTP_PORT` and `TRUSTGRAPH_HTTPS_PORT` in `.env.server` before starting TrustGraph, then route the external HTTPS host through the existing reverse proxy.
 
 ## Hosted Registration Checklist
@@ -473,7 +475,7 @@ Corporate registration collects organization name, domain, and type, then provis
 
 The public login and registration card keeps account recovery visible in the main form: resend verification, reset password, and copied hosted-link repair stay beside the credentials while the heavier proof receipts remain hidden from the first-screen buyer/user path.
 
-The current UI applies a V1 premium flow compression layer. The public site keeps the portal front door, launchpad, pricing path, and auth card readable before credentials; the signed-in workspace keeps the portal command center, VPS status, route shell, daily runway, real-row gate, account/logout, and next action first; and Corporate Verify keeps request, approval, scoped rows, review attestation, metadata export, and the no-open-user-database boundary ahead of dense reviewer proof panels. Older receipt surfaces remain in source for exports and CI markers, but they no longer crowd the primary user path or create horizontal overflow.
+The current UI applies a V1 premium flow compression layer. The public site keeps the portal front door, launchpad, pricing path, and auth card readable before credentials; the signed-in workspace keeps the portal command center, registration handoff, VPS status, route shell, daily runway, real-row gate, account/logout, and next action first; and Corporate Verify keeps request, approval, scoped rows, review attestation, metadata export, and the no-open-user-database boundary ahead of dense reviewer proof panels. Older receipt surfaces remain in source for exports and CI markers, but they no longer crowd the primary user path or create horizontal overflow.
 
 The signed-in workspace also includes a Real data mission control directly below the portal command center. It shows live-row progress, next missing Supabase group, row source, completion receipt status, VPS freshness, and direct actions for login/recovery, live pilot seed, proof reload, working-data export, and real database completion receipt recording before the deeper proof panels.
 

@@ -29075,6 +29075,69 @@ function App() {
       detail: "Corporate workspaces and Professional Passports mark matching captured intents as completed."
     }
   ];
+  const registrationHandoffPortal = latestRegistrationIntent?.selected_portal ?? (authSession ? "professional" : "not selected");
+  const registrationHandoffCompletion =
+    latestRegistrationIntent?.status === "workspace_created" || latestRegistrationIntent?.status === "passport_initialized"
+      ? "completed"
+      : latestRegistrationIntent?.selected_portal === "corporate"
+        ? "workspace needed"
+        : latestRegistrationIntent?.selected_portal === "professional"
+          ? "passport needed"
+          : authSession
+            ? "choose portal"
+            : "login needed";
+  const registrationHandoffNextAction =
+    !authSession
+      ? "Login or register"
+      : latestRegistrationIntent?.selected_portal === "corporate" && latestRegistrationIntent.status !== "workspace_created"
+        ? "Create corporate workspace"
+        : latestRegistrationIntent?.selected_portal === "corporate"
+          ? "Open Corporate Verify"
+          : "Open user Passport";
+  const registrationHandoffCommand = {
+    mode: "registration_handoff_command",
+    signed_in: Boolean(authSession),
+    selected_portal: registrationHandoffPortal,
+    selected_mode: latestRegistrationIntent?.selected_mode ?? "none",
+    pricing_plan_id: latestRegistrationIntent?.pricing_plan_id ?? "not selected",
+    first_database_write: latestRegistrationIntent?.first_database_write ?? "registration_intent_pending",
+    completion_status: registrationHandoffCompletion,
+    next_action: registrationHandoffNextAction,
+    preview_data_accepted: false,
+    accepted_when:
+      "registration_handoff_command_shows_hosted_intent_selected_portal_completion_status_next_workspace_or_passport_action_pricing_first_database_write_and_preview_rejection"
+  };
+  const registrationHandoffRows = [
+    {
+      label: "Hosted intent",
+      value: registrationHandoffCommand.selected_portal,
+      detail: latestRegistrationIntent
+        ? `${registrationHandoffCommand.selected_mode} captured in Supabase registration_intents.`
+        : "No live registration intent loaded yet.",
+      ready: Boolean(latestRegistrationIntent)
+    },
+    {
+      label: "Pricing",
+      value: registrationHandoffCommand.pricing_plan_id,
+      detail: "The chosen plan remains attached to the handoff before workspace or Passport completion.",
+      ready: Boolean(latestRegistrationIntent?.pricing_plan_id)
+    },
+    {
+      label: "First DB write",
+      value: registrationHandoffCommand.first_database_write,
+      detail: "Only hosted auth plus Supabase rows count. Preview data remains rejected.",
+      ready: Boolean(latestRegistrationIntent?.first_database_write)
+    },
+    {
+      label: "Completion",
+      value: registrationHandoffCommand.completion_status,
+      detail:
+        latestRegistrationIntent?.selected_portal === "corporate"
+          ? "Corporate opens after workspace creation and RBAC membership exist."
+          : "Professional opens after the Passport record is initialized.",
+      ready: registrationHandoffCommand.completion_status === "completed"
+    }
+  ];
   const onboardingHandoffCommand = {
     mode: "onboarding_handoff_command",
     signed_in: Boolean(authSession),
@@ -30500,6 +30563,87 @@ function App() {
             <span>
               <small>VPS</small>
               <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+            </span>
+          </div>
+        </section>
+
+        <section className={`registration-handoff-command ${registrationHandoffCommand.completion_status === "completed" ? "ready" : "needed"}`} aria-label="Registration handoff command">
+          <div className="registration-handoff-header">
+            <div>
+              <span className={`status-chip ${latestRegistrationIntent ? "success" : "warning"}`}>Registration handoff</span>
+              <strong>
+                {latestRegistrationIntent
+                  ? `${registrationHandoffCommand.selected_portal} ${registrationHandoffCommand.selected_mode} is captured`
+                  : authSession
+                    ? "Choose Professional or Corporate registration to create the first live row"
+                    : "Login or register on the hosted site first"}
+              </strong>
+              <small>
+                Corporate access unlocks only after the organization workspace and RBAC seat exist. Professional access opens from the Passport initialization path.
+              </small>
+            </div>
+            <div className="registration-handoff-actions">
+              <button className={authSession ? "secondary-action" : "primary-action"} onClick={openAuthControls} type="button">
+                {authSession ? "Account / recovery" : "Login / register"}
+              </button>
+              <button
+                className={registrationHandoffCommand.selected_portal === "corporate" && registrationHandoffCommand.completion_status !== "completed" ? "primary-action" : "secondary-action"}
+                disabled={!authSession}
+                onClick={() => {
+                  if (!authSession) {
+                    openAuthControls();
+                    return;
+                  }
+                  if (registrationHandoffCommand.selected_portal === "corporate" && registrationHandoffCommand.completion_status !== "completed") {
+                    openCorporateControls();
+                    return;
+                  }
+                  openWorkspaceOrSetup(registrationHandoffCommand.selected_portal === "corporate" ? "verify" : "passport");
+                }}
+                type="button"
+              >
+                {registrationHandoffCommand.next_action}
+              </button>
+              <button className="secondary-action" onClick={() => setSetupView("billing")} type="button">
+                Pricing
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-registration-handoff-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(registrationHandoffCommand, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export handoff
+              </button>
+            </div>
+          </div>
+          <div className="registration-handoff-grid">
+            {registrationHandoffRows.map((row) => (
+              <article className={row.ready ? "ready" : "next"} key={row.label}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="registration-handoff-proof">
+            <span>
+              <small>Next action</small>
+              <strong>{registrationHandoffCommand.next_action}</strong>
+            </span>
+            <span>
+              <small>Live rows</small>
+              <strong>{registrationIntents.length}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{registrationHandoffCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
           </div>
         </section>
