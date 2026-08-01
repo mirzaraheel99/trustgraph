@@ -38166,3 +38166,227 @@ body {
     flex: 1 1 100%;
   }
 }
+
+/* premium_workspace_responsive_guard keeps the signed-in SaaS surface bounded. */
+.workspace,
+.topbar,
+.dashboard-front-door,
+.portal-route-shell,
+.portal-daily-navigator,
+.portal-usability-command,
+.v1-portal-launchpad,
+.portal-readiness-board,
+.onboarding-handoff-command,
+.portal-command-deck,
+.portal-home-command,
+.portal-choice-guide,
+.corporate-directory-panel,
+.corporate-portal-cockpit,
+.corporate-onboarding-pricing-cockpit,
+.team-billing-handoff,
+.professional-passport-first-use,
+.proof-export-hub,
+.live-rows-checklist,
+.live-data-panel,
+.readiness-panel,
+.billing-panel,
+.team-panel,
+.records-panel,
+.references-panel,
+.consent-panel,
+.admin-panel,
+.notification-panel {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.workspace {
+  width: min(100%, 1180px);
+  padding-inline: clamp(14px, 3vw, 34px);
+}
+
+.topbar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.topbar h1 {
+  max-width: 18ch;
+  font-size: clamp(2rem, 5vw, 4.2rem);
+}
+
+.session-command-bar,
+.portal-home-actions,
+.portal-daily-navigator-actions,
+.v1-portal-launchpad-actions,
+.corporate-onboarding-pricing-actions,
+.team-launch-board-actions,
+.signed-in-recovery-control-actions {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.session-command-bar button,
+.portal-home-actions button,
+.portal-daily-navigator-actions button,
+.v1-portal-launchpad-actions button,
+.corporate-onboarding-pricing-actions button,
+.team-launch-board-actions button,
+.signed-in-recovery-control-actions button,
+.dashboard-front-door-proof button,
+.proof-export-hub button {
+  flex: 1 1 150px;
+  min-width: 0;
+  white-space: normal;
+}
+
+.dashboard-front-door-proof,
+.portal-server-save-grid,
+.portal-route-shell-status,
+.portal-action-dock,
+.portal-readiness-board-grid,
+.signed-in-pilot-journey-grid,
+.onboarding-handoff-grid,
+.corporate-onboarding-pricing-grid,
+.team-billing-handoff-grid,
+.team-billing-handoff-counts,
+.team-summary-grid,
+.notification-summary-grid,
+.evidence-preview-download-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+}
+
+.team-controls,
+.reference-controls,
+.notification-controls,
+.access-form-grid,
+.corporate-request-controls,
+.corporate-review-controls,
+.record-form-grid,
+.consent-form-grid,
+.billing-control-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+}
+
+.team-controls button,
+.reference-controls button,
+.notification-controls button,
+.access-form-grid button,
+.corporate-request-controls button,
+.corporate-review-controls button,
+.record-form-grid button,
+.consent-form-grid button,
+.billing-control-grid button {
+  min-width: 0;
+  white-space: normal;
+}
+
+.portal-action-dock {
+  position: sticky;
+  bottom: 12px;
+  z-index: 12;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(8, 13, 15, 0.88);
+  backdrop-filter: blur(18px);
+}
+
+.portal-action-dock button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.corporate-directory-panel:has(.corporate-portal-cockpit) {
+  display: grid;
+  gap: 14px;
+}
+
+.corporate-portal-cockpit,
+.corporate-onboarding-pricing-cockpit,
+.team-billing-handoff {
+  padding: clamp(12px, 2vw, 18px);
+}
+
+.workspace strong,
+.workspace small,
+.workspace span,
+.workspace p,
+.workspace label,
+.workspace code,
+.workspace em {
+  overflow-wrap: anywhere;
+}
+
+.workspace input,
+.workspace select,
+.workspace textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 980px) {
+  .workspace {
+    padding-block: 20px 62px;
+  }
+
+  .topbar h1 {
+    max-width: 16ch;
+    font-size: clamp(2rem, 8vw, 3.6rem);
+  }
+
+  .v1-portal-operating-center,
+  .portal-route-shell-header,
+  .portal-server-save-commander,
+  .signed-in-recovery-route,
+  .account-portal-route-acceptance,
+  .team-operations-cockpit,
+  .notification-source-strip,
+  .proof-export-hub-header,
+  .corporate-portal-cockpit-header,
+  .corporate-onboarding-pricing-header,
+  .team-billing-handoff-header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .workspace {
+    width: 100%;
+    padding-inline: 12px;
+  }
+
+  .topbar,
+  .dashboard-front-door,
+  .portal-route-shell,
+  .portal-daily-navigator,
+  .portal-usability-command,
+  .v1-portal-launchpad,
+  .portal-readiness-board,
+  .onboarding-handoff-command,
+  .corporate-directory-panel,
+  .corporate-portal-cockpit,
+  .corporate-onboarding-pricing-cockpit,
+  .team-billing-handoff,
+  .proof-export-hub {
+    padding: 12px;
+  }
+
+  .topbar h1 {
+    max-width: 12ch;
+    font-size: clamp(2rem, 11vw, 3rem);
+  }
+
+  .workspace-route-strip,
+  .workspace-flow-strip,
+  .dashboard-front-door-grid,
+  .portal-command-deck-grid,
+  .portal-choice-guide-grid,
+  .portal-welcome-path-grid,
+  .corporate-portal-cockpit-grid,
+  .live-rows-checklist-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
