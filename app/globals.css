@@ -26290,11 +26290,24 @@ body {
   .portal-access-cockpit-grid,
   .portal-start-desk-switches,
   .portal-start-desk-grid,
+  .public-portal-route-tabs,
+  .public-portal-route-status,
   .portal-launch-decision-strip,
   .portal-entry-path,
   .public-auth-card .portal-tabs,
   .auth-support-actions {
     grid-template-columns: 1fr !important;
+  }
+
+  .public-portal-route-shell-header,
+  .public-portal-route-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .public-portal-route-shell-header button,
+  .public-portal-route-footer button {
+    width: 100%;
   }
 }
 
@@ -26476,10 +26489,20 @@ body {
 .portal-launch-map,
 .public-server-sync-receipt,
 .public-saved-build-verification,
+.public-auth-card .registration-route-planner,
+.public-auth-card .public-auth-front-desk,
+.public-auth-card .public-access-desk,
+.public-auth-card .auth-selected-route,
+.public-auth-card .registration-focus-strip,
 .public-auth-card .auth-path-summary,
+.public-auth-card .public-portal-acceptance-checkpoint,
 .public-auth-card .public-auth-server-checkpoint,
 .public-auth-card .portal-handoff-checklist,
+.public-auth-card > .portal-tabs,
+.public-auth-card .auth-route-summary,
+.public-auth-card .selected-portal-command,
 .public-auth-card .portal-submit-receipt,
+.public-auth-card .registration-pre-submit-checklist,
 .public-auth-card .registration-outcome-command,
 .public-auth-card .login-issue-resolver,
 .public-auth-card .hosted-auth-redirect-verification,
@@ -26510,6 +26533,110 @@ body {
 
 .public-auth-card .registration-pre-submit-checklist {
   padding: 10px;
+}
+
+.public-portal-route-shell {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(151, 204, 188, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.12), rgba(118, 160, 255, 0.075) 48%, rgba(7, 16, 18, 0.93)),
+    rgba(9, 23, 25, 0.97);
+}
+
+.public-portal-route-shell-header,
+.public-portal-route-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.public-portal-route-shell-header > div:first-child,
+.public-portal-route-footer > span {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-portal-route-shell strong,
+.public-portal-route-shell small,
+.public-portal-route-shell span,
+.public-portal-route-shell em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-route-shell-header strong {
+  max-width: 32ch;
+  color: var(--text);
+  font-size: clamp(22px, 2.6vw, 34px);
+  line-height: 1.04;
+}
+
+.public-portal-route-shell-header small,
+.public-portal-route-footer small {
+  max-width: 72ch;
+  color: rgba(222, 239, 233, 0.68);
+  line-height: 1.45;
+}
+
+.public-portal-route-tabs,
+.public-portal-route-status {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+}
+
+.public-portal-route-tabs button {
+  display: grid;
+  gap: 7px;
+  min-height: 82px;
+  padding: 12px;
+  border: 1px solid rgba(151, 204, 188, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text);
+  text-align: left;
+}
+
+.public-portal-route-tabs button.active,
+.public-portal-route-tabs button[aria-selected="true"] {
+  border-color: rgba(95, 240, 201, 0.72);
+  background: rgba(95, 240, 201, 0.1);
+}
+
+.public-portal-route-tabs small {
+  color: rgba(222, 239, 233, 0.66);
+  line-height: 1.35;
+}
+
+.public-portal-route-status span {
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+  border: 1px solid rgba(151, 204, 188, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.public-portal-route-status small {
+  color: rgba(222, 239, 233, 0.66);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.public-portal-route-status em {
+  color: rgba(222, 239, 233, 0.66);
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.public-portal-route-footer {
+  flex-wrap: wrap;
 }
 
 .registration-route-planner {

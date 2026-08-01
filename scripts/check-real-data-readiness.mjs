@@ -112,6 +112,12 @@ const appRequirements = [
     "public_signup_decision_desk_keeps_portal_mode_price_first_database_write_required_fields_recovery_and_submit_action_visible_directly_above_form_fields",
     "public signup decision desk live-row form acceptance rule"
   ],
+  ["Public portal route shell", "public portal route shell label"],
+  ["public_portal_route_shell", "public portal route shell packet mode"],
+  [
+    "public_portal_route_shell_requires_one_bounded_login_register_surface_for_professional_corporate_pricing_first_database_write_recovery_server_save_and_no_preview_data",
+    "public portal route shell no-preview-data acceptance rule"
+  ],
   ["Corporate reviewer database home", "corporate reviewer database home label"],
   ["corporate_reviewer_database_home", "corporate reviewer database home packet mode"],
   [

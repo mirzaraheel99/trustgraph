@@ -141,6 +141,8 @@ The public login/register form now shows a visible auth route summary immediatel
 
 The public auth card now adds a Public access desk directly before the email and password fields, with one place to switch Professional or Corporate, Register or Login, review pricing, see required fields, confirm the first live database write, and choose recovery before typing.
 
+The public login/register card now starts with a Public portal route shell. Professional, Corporate, Register, Login, pricing, first database write, landing portal, recovery, and server-save status are contained in one bounded surface, while older proof panels stay out of the primary credential path.
+
 The public auth form also starts with a Registration route planner that keeps Professional versus Corporate, Register versus Login, price, first database write, next dashboard, recovery, and required proof in one compact operator view before the form fields.
 
 The public auth form now includes a registration completion handoff after submit. Professional completion is tied to `passport_initialized`; Corporate completion is tied to `workspace_created`, and both show hosted verification, landing dashboard, next action, and preview-data rejection.

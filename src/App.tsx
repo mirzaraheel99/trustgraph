@@ -17852,6 +17852,69 @@ function PublicSite({
     accepted_when:
       "public_signup_decision_desk_keeps_portal_mode_price_first_database_write_required_fields_recovery_and_submit_action_visible_directly_above_form_fields"
   };
+  const publicPortalRouteShell = {
+    mode: "public_portal_route_shell",
+    selected_portal: publicAccessDesk.selected_portal,
+    selected_action: publicAccessDesk.selected_action,
+    primary_cta: publicAccessDesk.primary_cta,
+    pricing: publicAccessDesk.pricing,
+    first_live_database_write: publicAccessDesk.first_live_database_write,
+    landing_portal: publicAccessDesk.landing_portal,
+    recovery_actions: ["resend_verification", "reset_password", "hosted_link_repair"],
+    corporate_database_boundary: "corporate_accounts_request_access_then_view_approved_consent_scoped_user_rows_only",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_portal_route_shell_requires_one_bounded_login_register_surface_for_professional_corporate_pricing_first_database_write_recovery_server_save_and_no_preview_data"
+  };
+  const publicPortalRouteShellTabs = [
+    {
+      label: "Professional",
+      active: portal === "professional",
+      detail: "Private Passport, evidence, consent, and sharing.",
+      action: () => setPortal("professional")
+    },
+    {
+      label: "Corporate",
+      active: portal === "corporate",
+      detail: "Company workspace, pricing ledger, RBAC, and scoped user review.",
+      action: () => setPortal("corporate")
+    },
+    {
+      label: "Register",
+      active: mode === "signup",
+      detail: selectedRegistrationPath.primaryWrite,
+      action: () => setMode("signup")
+    },
+    {
+      label: "Login",
+      active: mode === "signin",
+      detail: selectedRegistrationPath.nextAction,
+      action: () => setMode("signin")
+    }
+  ];
+  const publicPortalRouteShellStatus = [
+    {
+      label: "Price",
+      value: publicPortalRouteShell.pricing,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First write",
+      value: publicPortalRouteShell.first_live_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "Landing",
+      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
+      detail: publicPortalRouteShell.landing_portal
+    },
+    {
+      label: "Server save",
+      value: serverSyncMonitor.status.replaceAll("_", " "),
+      detail: "GitHub Pages is deployable; VPS requires the save secrets before it is accepted as fresh."
+    }
+  ];
   const publicSignupDecisionCards = [
     {
       label: "Selected path",
@@ -19689,6 +19752,67 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="public-portal-route-shell" aria-label="Public portal route shell">
+            <div className="public-portal-route-shell-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Public portal route shell</span>
+                <strong>{publicPortalRouteShell.primary_cta}</strong>
+                <small>
+                  Choose Professional or Corporate, confirm pricing and the first live database write, then use hosted recovery if email verification or login needs repair.
+                </small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-portal-route-tabs" role="tablist" aria-label="Public portal route tabs">
+              {publicPortalRouteShellTabs.map((tab) => (
+                <button aria-selected={tab.active} className={tab.active ? "active" : ""} key={tab.label} onClick={tab.action} role="tab" type="button">
+                  <strong>{tab.label}</strong>
+                  <small>{tab.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-portal-route-status">
+              {publicPortalRouteShellStatus.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <em>{item.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="public-portal-route-footer">
+              <span>
+                <strong>{publicPortalRouteShell.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+                <small>{publicPortalRouteShell.accepted_when}</small>
+              </span>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-portal-route-shell-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...publicPortalRouteShell,
+                        tabs: publicPortalRouteShellTabs.map(({ action: _action, ...tab }) => tab),
+                        status: publicPortalRouteShellStatus
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export route
+              </button>
+            </div>
+          </div>
           <div className="registration-route-planner" aria-label="Registration route planner">
             <div className="registration-route-planner-copy">
               <span className="status-chip success">Registration route</span>
