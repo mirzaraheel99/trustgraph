@@ -5072,6 +5072,67 @@ function CorporateDirectoryPanel({
       target: "export"
     }
   ];
+  const corporateReviewStudio = {
+    mode: "corporate_review_studio",
+    current_step: corporateAccessNextAction.label,
+    primary_action: corporateAccessNextAction.action,
+    source: isLiveCorporateDatabase ? "live_supabase_corporate_rbac" : "corporate_login_required",
+    visible_professionals: filteredRows.length,
+    approved_access_grants: approvedAccessCount,
+    visible_user_rows: sharedRecords.length,
+    open_gap_requests: openGapRequestCount,
+    review_attestations: reviews.length,
+    export_ready: corporateAccessNextAction.ready,
+    no_open_user_browse: true,
+    metadata_only_export: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_review_studio_keeps_request_approval_scoped_rows_gap_review_attestation_export_metadata_only_boundary_and_no_open_user_browse_visible_before_directory_filters"
+  };
+  const corporateReviewStudioCards = [
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "Start",
+      detail: "Request one professional by email and business purpose.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Approval",
+      value: approvedAccessCount ? `${approvedAccessCount}` : "Waiting",
+      detail: "Professional approval unlocks scoped Passport rows.",
+      ready: approvedAccessCount > 0,
+      target: "corporate-verify-request-list"
+    },
+    {
+      label: "Scoped rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Locked",
+      detail: "Corporate sees approved shared rows only.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Gaps",
+      value: openGapRequestCount ? `${openGapRequestCount}` : "Clear",
+      detail: openGapRequestCount ? "Resolve missing-record follow-ups." : "No open gap blocker.",
+      ready: openGapRequestCount === 0 && sharedRecords.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Attestation",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: "Record review proof after checking scoped rows.",
+      ready: reviews.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Export",
+      value: corporateAccessNextAction.ready ? "Ready" : "Locked",
+      detail: "Export metadata-only corporate proof.",
+      ready: corporateAccessNextAction.ready,
+      target: "export"
+    }
+  ];
   const corporateDatabaseAccessDecisionBoard = {
     mode: "corporate_database_access_decision_board",
     can_request_access_by_email: isLiveCorporateDatabase,
@@ -6301,6 +6362,65 @@ function CorporateDirectoryPanel({
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className="corporate-review-studio" aria-label="Corporate review studio">
+        <div className="corporate-review-studio-header">
+          <div>
+            <span className={`status-chip ${corporateReviewStudio.export_ready ? "success" : "warning"}`}>Review studio</span>
+            <strong>{corporateReviewStudio.current_step}</strong>
+            <small>{corporateReviewStudio.accepted_when}</small>
+          </div>
+          <button className="primary-action" onClick={() => runCorporateReviewerTask()} type="button">
+            {corporateReviewStudio.primary_action}
+          </button>
+        </div>
+        <div className="corporate-review-studio-grid">
+          {corporateReviewStudioCards.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => {
+                if (item.target === "export") {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                runCorporateReviewerTask(item.target);
+              }}
+              type="button"
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-review-studio-proof">
+          <span>
+            <small>Browse boundary</small>
+            <strong>{corporateReviewStudio.no_open_user_browse ? "No open browse" : "Open browse"}</strong>
+          </span>
+          <span>
+            <small>Export</small>
+            <strong>{corporateReviewStudio.metadata_only_export ? "Metadata only" : "Raw files"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateReviewStudio.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-review-studio-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateReviewStudio, cards: corporateReviewStudioCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export studio proof
+          </button>
+        </div>
       </div>
       <div className="corporate-reviewer-task-command" aria-label="Corporate reviewer task command">
         <div className="corporate-reviewer-task-header">

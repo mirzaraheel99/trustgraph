@@ -177,6 +177,8 @@ The public login/register card now applies the same simplification rule: account
 
 Corporate Verify now applies a reviewer queue simplification layer: the user database reads as task, row-access outcome, reviewer workbench, filters, and rows first, while path receipts, proof chains, persisted acceptance, and export packets remain available below the working queue.
 
+Corporate Verify now starts the user database with a Corporate review studio. It keeps request, approval, scoped rows, gaps, review attestation, metadata-only export, preview-data rejection, and no-open-user-browse proof in one bounded surface before filters or rows.
+
 The signed-in portal now shows a Real row acceptance gate before the daily route shell. It blocks V1 acceptance until hosted login, registration, Passport, evidence, Corporate access, consent, team, billing, review, visibility snapshot, and release ledger rows are all loaded from Supabase; non-live preview rows are explicitly rejected.
 
 The signed-in route shell now shows a VPS freshness checkpoint immediately after the tabs. GitHub source, Pages smoke, VPS release stamp, manual save command, required deploy secrets, and VFIX protection are visible before anyone treats the server as current. The VPS release stamp is exported as a real `trustgraph-release.json` asset, and the server updater overwrites it with the current Git commit so the freshness check fails clearly if the server returns the app shell instead of JSON.
