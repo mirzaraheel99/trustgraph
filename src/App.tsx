@@ -23274,6 +23274,62 @@ function PublicSite({
               </div>
             </div>
           </div>
+          <div className="public-access-command-center" aria-label="Public access command center">
+            <div className="public-access-command-copy">
+              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
+              <strong>{publicAccountEntryLaunchpad.primary_label}</strong>
+              <small>
+                Choose Professional or Corporate access, see the pilot price, understand the first live database write, then continue to the right login or registration form.
+              </small>
+            </div>
+            <div className="public-access-command-routes">
+              {publicAccountEntryRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-access-command-proof">
+              <span>
+                <small>Selected price</small>
+                <strong>{publicAccountEntryLaunchpad.selected_price}</strong>
+              </span>
+              <span>
+                <small>First database write</small>
+                <strong>{publicAccountEntryLaunchpad.first_database_write}</strong>
+              </span>
+              <span>
+                <small>Landing portal</small>
+                <strong>{publicAccountEntryLaunchpad.landing_portal}</strong>
+              </span>
+              <span>
+                <small>Corporate database</small>
+                <strong>No open browse</strong>
+              </span>
+            </div>
+            <div className="public-access-command-actions">
+              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to credentials
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Review pricing
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-access-command-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(publicAccountEntryLaunchpad, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export route
+              </button>
+            </div>
+          </div>
           <div className="public-portal-switchboard" aria-label="Public portal switchboard">
             <div className="public-portal-switchboard-header">
               <div>

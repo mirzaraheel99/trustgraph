@@ -32080,6 +32080,119 @@ body {
   max-width: 100%;
 }
 
+.public-access-command-center {
+  order: -82;
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: clip;
+  border: 1px solid rgba(210, 231, 223, 0.13);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(134, 174, 246, 0.06) 52%, rgba(255, 255, 255, 0.022)),
+    rgba(7, 18, 20, 0.92);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.24);
+}
+
+.public-access-command-copy,
+.public-access-command-routes button,
+.public-access-command-proof span {
+  min-width: 0;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-access-command-copy {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 14px;
+}
+
+.public-access-command-copy strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.5vw, 34px);
+  line-height: 1.04;
+}
+
+.public-access-command-center strong,
+.public-access-command-center small,
+.public-access-command-center span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-access-command-center small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.public-access-command-routes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.public-access-command-routes button {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 12px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.public-access-command-routes button.active {
+  border-color: rgba(95, 240, 201, 0.42);
+  background: rgba(95, 240, 201, 0.1);
+}
+
+.public-access-command-routes strong,
+.public-access-command-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.14;
+}
+
+.public-access-command-proof,
+.public-access-command-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.public-access-command-proof span {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+}
+
+.public-access-command-proof small {
+  color: #84f7dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-access-command-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.public-access-command-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .public-account-entry-launchpad {
   display: grid;
   gap: 12px;
@@ -32346,6 +32459,10 @@ body {
 }
 
 @media (max-width: 700px) {
+  .public-access-command-center,
+  .public-access-command-routes,
+  .public-access-command-proof,
+  .public-access-command-actions,
   .public-login-command-footer,
   .public-auth-start-strip-header,
   .public-auth-start-proof,
@@ -32362,6 +32479,7 @@ body {
   }
 
   .public-login-command-footer button,
+  .public-access-command-actions button,
   .public-auth-start-strip-header button,
   .public-auth-start-proof button,
   .public-account-access-actions button,

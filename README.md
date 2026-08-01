@@ -291,6 +291,8 @@ Admin readiness now starts the human launch section with a Launch decision board
 
 The signed-in dashboard now starts with a Portal UX command center. It gives separate first-screen actions for user login/Passport, Corporate setup/register, Corporate Verify scoped database review, pricing, account recovery/logout, live database proof, and server sync before dense proof panels.
 
+The public login/register page now includes a Public access command center before credentials. It makes Professional registration, Professional login, Corporate registration, Corporate login, pricing, first database write, landing portal, and the no-open-user-browse Corporate boundary visible in one premium command surface.
+
 V1 readiness now includes a pilot route run checkpoint that proves the hosted path from website and auth through Professional rows, Corporate workspace, pricing ledger, scoped user database access, Admin proof exports, and VPS freshness before pilot acceptance.
 
 V1 pilot route run receipts are now persisted in Supabase so the route checkpoint can be recorded as an audited live database row, not only exported as a local JSON packet.
