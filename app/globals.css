@@ -21233,6 +21233,140 @@ body {
   overflow-wrap: anywhere;
 }
 
+.v1-pilot-route-run-checkpoint {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), transparent 58%),
+    linear-gradient(165deg, rgba(134, 174, 246, 0.075), transparent 76%),
+    rgba(255, 255, 255, 0.032);
+}
+
+.v1-pilot-route-run-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(142px, 0.24fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.v1-pilot-route-run-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.v1-pilot-route-run-header strong,
+.v1-pilot-route-run-header small,
+.v1-pilot-route-run-header span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-pilot-route-run-header strong {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.12;
+}
+
+.v1-pilot-route-run-header small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.v1-pilot-route-run-header button {
+  width: 100%;
+  min-height: 42px;
+  white-space: normal;
+}
+
+.v1-pilot-route-run-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.v1-pilot-route-run-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.v1-pilot-route-run-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.2);
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.v1-pilot-route-run-grid article.next {
+  border-color: rgba(246, 194, 100, 0.22);
+  background: rgba(246, 194, 100, 0.055);
+}
+
+.v1-pilot-route-run-grid span,
+.v1-pilot-route-run-grid strong,
+.v1-pilot-route-run-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-pilot-route-run-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.v1-pilot-route-run-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.v1-pilot-route-run-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.v1-pilot-route-run-proof {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(134, 174, 246, 0.2);
+  border-radius: 8px;
+  background: rgba(134, 174, 246, 0.055);
+}
+
+.v1-pilot-route-run-proof span,
+.v1-pilot-route-run-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v1-pilot-route-run-proof span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.v1-pilot-route-run-proof small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .real-database-launch-gate {
   display: grid;
   gap: 12px;

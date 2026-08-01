@@ -46,6 +46,8 @@ assert(authenticatedRender.includes('aria-label="Portal welcome path"'), "signed
 assert(app.includes('label: "Pricing"') && app.includes('label: "Database proof"') && app.includes('label: "Server sync"'), "dashboard front door must include clickable pricing, database proof, and server sync cards.");
 assert(authenticatedRender.includes('item.kind === "setup"') && authenticatedRender.includes('item.kind === "proof"') && authenticatedRender.includes('item.kind === "export"'), "dashboard front door pricing, database proof, and server sync cards must have wired click handlers.");
 assert(authenticatedRender.includes('aria-label="V1 completion cockpit"'), "signed-in dashboard must expose a V1 completion cockpit.");
+assert(app.includes('aria-label="V1 pilot route run checkpoint"') && app.includes("v1_pilot_route_run_checkpoint"), "V1 readiness must expose one pilot route run checkpoint across website, auth, Professional, Corporate, pricing, database, Admin proof, and VPS freshness.");
+assert(css.includes(".v1-pilot-route-run-checkpoint") && css.includes(".v1-pilot-route-run-grid") && css.includes(".v1-pilot-route-run-proof"), "V1 pilot route run checkpoint must be styled and bounded.");
 assert(authenticatedRender.includes('aria-label="Live database contract"'), "V1 cockpit must expose the live database contract.");
 assert(authenticatedRender.includes('aria-label="Real database launch gate"') && app.includes("real_database_launch_gate"), "V1 cockpit must expose a real database launch gate before accepting live rows.");
 assert(authenticatedRender.includes('aria-label="Real data acceptance ledger"'), "V1 cockpit must expose a real-data acceptance ledger that rejects preview rows.");

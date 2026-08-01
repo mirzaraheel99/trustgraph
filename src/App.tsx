@@ -8465,6 +8465,7 @@ function PlanAlignmentPanel({
   const launchGatePacketName = `trustgraph-launch-gate-packet-${new Date().toISOString().slice(0, 10)}.json`;
   const v1CompletionPacketName = `trustgraph-v1-completion-audit-${new Date().toISOString().slice(0, 10)}.json`;
   const v1LiveDatabaseReadinessName = `trustgraph-v1-live-database-readiness-${new Date().toISOString().slice(0, 10)}.json`;
+  const v1PilotRouteRunName = `trustgraph-v1-pilot-route-run-${new Date().toISOString().slice(0, 10)}.json`;
   const v1LiveDatabaseReadinessReceipt = {
     mode: "v1_live_database_readiness_receipt",
     status: livePilotRowProof.accepted ? "live_database_rows_accepted" : "live_database_rows_required",
@@ -8527,6 +8528,69 @@ function PlanAlignmentPanel({
       ready: true
     }
   ];
+  const v1PilotRouteRunSteps = [
+    {
+      label: "Website and auth",
+      status: "implemented",
+      evidence: "Public website, hosted login/register, pricing access, recovery, and hosted callback proof are visible before dense forms.",
+      ready: true
+    },
+    {
+      label: "Professional Passport",
+      status: livePilotRowProof.rows.some((row) => row.label === "Passport records" && row.ready) ? "live_rows_loaded" : "needs_live_rows",
+      evidence: "Professional registration, Passport records, evidence metadata, consent, and signed evidence controls must load from Supabase.",
+      ready: livePilotRowProof.rows.some((row) => row.label === "Passport records" && row.ready)
+    },
+    {
+      label: "Corporate workspace",
+      status: livePilotRowProof.rows.some((row) => row.label === "Account and RBAC context" && row.ready) ? "live_rows_loaded" : "needs_live_rows",
+      evidence: "Corporate registration, workspace_created intent, RBAC membership, team handoff, and reviewer role access must load from Supabase.",
+      ready: livePilotRowProof.rows.some((row) => row.label === "Account and RBAC context" && row.ready)
+    },
+    {
+      label: "Pricing ledger",
+      status: livePilotRowProof.rows.some((row) => row.label === "Billing ledger" && row.ready) ? "live_rows_loaded" : "needs_live_rows",
+      evidence: "Corporate pilot plan, quote receipt, billing decision, and Supabase subscription ledger are present while Stripe stays human-gated.",
+      ready: livePilotRowProof.rows.some((row) => row.label === "Billing ledger" && row.ready)
+    },
+    {
+      label: "Corporate user database",
+      status: livePilotRowProof.rows.some((row) => row.label === "Corporate access and shared rows" && row.ready) ? "scoped_rows_loaded" : "needs_scoped_rows",
+      evidence: "Approved Access Grants, scoped Passport rows, review attestations, visibility snapshots, and metadata-only export prove database access.",
+      ready: livePilotRowProof.rows.some((row) => row.label === "Corporate access and shared rows" && row.ready)
+    },
+    {
+      label: "Admin proof packet",
+      status: "exportable",
+      evidence: "Admin operations acceptance, audit export, release ledger, Security/RLS runbook, and V1 readiness receipts are exportable.",
+      ready: true
+    },
+    {
+      label: "VPS saved build",
+      status: "manual_freshness_required",
+      evidence: "GitHub main is source of truth; the VPS must pull main and serve the current release stamp before server acceptance.",
+      ready: false
+    }
+  ];
+  const v1PilotRouteReadySteps = v1PilotRouteRunSteps.filter((step) => step.ready).length;
+  const v1PilotRouteRunCheckpoint = {
+    mode: "v1_pilot_route_run_checkpoint",
+    status:
+      v1PilotRouteReadySteps === v1PilotRouteRunSteps.length
+        ? "hosted_pilot_route_accepted"
+        : "hosted_pilot_route_needs_runtime_proof",
+    accepted_when:
+      "v1_pilot_route_run_requires_website_hosted_auth_professional_rows_corporate_workspace_pricing_ledger_scoped_user_database_admin_exports_vps_freshness_and_no_preview_data",
+    ready_steps: v1PilotRouteReadySteps,
+    total_steps: v1PilotRouteRunSteps.length,
+    missing_steps: v1PilotRouteRunSteps.filter((step) => !step.ready).map((step) => step.label),
+    preview_data_accepted: false,
+    source_of_truth: "https://github.com/mirzaraheel99/trustgraph",
+    hosted_review_url: "https://mirzaraheel99.github.io/trustgraph/",
+    vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
+    live_pilot_row_proof: livePilotRowProof,
+    steps: v1PilotRouteRunSteps
+  };
   const completionAuditRequirements = [
     {
       label: "GitHub Pages hosted application",
@@ -8671,6 +8735,7 @@ function PlanAlignmentPanel({
     },
     stale_vps_recovery_runbook: staleVpsRecoveryRunbook,
     v1_audit_command: v1AuditCommand,
+    v1_pilot_route_run_checkpoint: v1PilotRouteRunCheckpoint,
     production_gate_cockpit: productionGateCockpitPacket,
     completion_open_items: completionAuditOpenItems,
     production_gates_open: openProductionGateCount,
@@ -8697,6 +8762,7 @@ function PlanAlignmentPanel({
     completion_audit_requirements: completionAuditRequirements,
     completion_audit_open_items: completionAuditOpenItems,
     v1_audit_command: v1AuditCommand,
+    v1_pilot_route_run_checkpoint: v1PilotRouteRunCheckpoint,
     production_gate_cockpit: productionGateCockpitPacket,
     release_sync_command: releaseSyncPacket.release_sync_command,
     live_pilot_row_proof: livePilotRowProof,
@@ -8881,6 +8947,44 @@ function PlanAlignmentPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="v1-pilot-route-run-checkpoint" aria-label="V1 pilot route run checkpoint">
+        <div className="v1-pilot-route-run-header">
+          <div>
+            <span className={`status-chip ${v1PilotRouteRunCheckpoint.status === "hosted_pilot_route_accepted" ? "success" : "warning"}`}>
+              V1 pilot route run checkpoint
+            </span>
+            <strong>
+              {v1PilotRouteRunCheckpoint.status === "hosted_pilot_route_accepted"
+                ? "Hosted pilot route is accepted"
+                : "Hosted pilot route still needs live-row and VPS freshness proof"}
+            </strong>
+            <small>{v1PilotRouteRunCheckpoint.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(v1PilotRouteRunName, JSON.stringify(v1PilotRouteRunCheckpoint, null, 2), "application/json")}
+            type="button"
+          >
+            Export route run
+          </button>
+        </div>
+        <div className="v1-pilot-route-run-grid">
+          {v1PilotRouteRunSteps.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.status.replace(/_/g, " ")}</strong>
+              <small>{step.evidence}</small>
+            </article>
+          ))}
+        </div>
+        <div className="v1-pilot-route-run-proof">
+          <span>{v1PilotRouteRunCheckpoint.ready_steps}/{v1PilotRouteRunCheckpoint.total_steps} route steps ready</span>
+          <small>
+            Missing: {v1PilotRouteRunCheckpoint.missing_steps.join(", ") || "none"} | Preview data accepted:{" "}
+            {v1PilotRouteRunCheckpoint.preview_data_accepted ? "yes" : "no"}
+          </small>
         </div>
       </div>
       <div className="release-sync-command" aria-label="Release sync command">

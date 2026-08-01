@@ -100,6 +100,12 @@ const appRequirements = [
     "billing_pilot_acceptance_requires_live_pricing_catalog_selected_seats_projected_totals_live_subscription_ledger_quote_receipt_payment_decision_stripe_gate_and_no_preview_data",
     "billing pilot acceptance rule"
   ],
+  ["V1 pilot route run checkpoint", "V1 pilot route run label"],
+  ["v1_pilot_route_run_checkpoint", "V1 pilot route run packet mode"],
+  [
+    "v1_pilot_route_run_requires_website_hosted_auth_professional_rows_corporate_workspace_pricing_ledger_scoped_user_database_admin_exports_vps_freshness_and_no_preview_data",
+    "V1 pilot route run acceptance rule"
+  ],
   ["Admin operations acceptance checkpoint", "admin operations acceptance label"],
   ["admin_operations_acceptance_checkpoint", "admin operations acceptance packet mode"],
   [
