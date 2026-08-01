@@ -3378,6 +3378,109 @@ button {
   white-space: normal;
 }
 
+.public-portal-switchboard {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(151, 204, 188, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.1), rgba(128, 166, 255, 0.055)),
+    rgba(8, 17, 19, 0.92);
+}
+
+.public-portal-switchboard-header,
+.public-portal-switchboard-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(132px, 0.38fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-portal-switchboard-header > div:first-child,
+.public-portal-switchboard-header > span,
+.public-portal-switchboard-footer > span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.public-portal-switchboard-grid,
+.public-portal-switchboard-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-portal-switchboard-grid button {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 92px;
+  padding: 11px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.public-portal-switchboard-grid button.active {
+  border-color: rgba(95, 240, 201, 0.52);
+  background: rgba(95, 240, 201, 0.13);
+  box-shadow: inset 0 0 0 1px rgba(95, 240, 201, 0.12);
+}
+
+.public-portal-switchboard strong,
+.public-portal-switchboard small,
+.public-portal-switchboard span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-switchboard-header strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.public-portal-switchboard-grid strong,
+.public-portal-switchboard-footer strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.public-portal-switchboard small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.38;
+}
+
+.public-portal-switchboard-header small:first-child,
+.public-portal-switchboard-footer small:first-child {
+  color: #9fead5;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.public-portal-switchboard-actions {
+  grid-column: 1 / -1;
+}
+
+.public-portal-switchboard-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .registration-outcome-command {
   display: grid;
   gap: 12px;
@@ -18550,6 +18653,10 @@ p {
   .portal-submit-receipt-grid,
   .public-submit-readiness-grid,
   .public-submit-readiness-actions,
+  .public-portal-switchboard-header,
+  .public-portal-switchboard-grid,
+  .public-portal-switchboard-footer,
+  .public-portal-switchboard-actions,
   .registration-pre-submit-checklist,
   .registration-pre-submit-grid,
   .portal-handoff-checklist,

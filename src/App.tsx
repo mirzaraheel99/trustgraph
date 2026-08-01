@@ -18303,6 +18303,58 @@ function PublicSite({
       detail: "Password reset and hosted verification repair stay on this card."
     }
   ];
+  const publicPortalSwitchboard = {
+    mode: "public_portal_switchboard",
+    selected_portal: portal === "corporate" ? "Corporate" : "Professional",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    current_price: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    recovery_route: email ? "Ready for password reset" : "Enter email to enable recovery",
+    accepted_when:
+      "public_portal_switchboard_keeps_professional_login_corporate_login_professional_registration_corporate_registration_pricing_and_recovery_visible_before_dense_receipts"
+  };
+  const publicPortalSwitchboardCards = [
+    {
+      id: "professional-login",
+      label: "Professional login",
+      detail: "Open an existing Passport account.",
+      active: portal === "professional" && mode === "signin",
+      onClick: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      id: "corporate-login",
+      label: "Corporate login",
+      detail: "Open company setup, team, billing, and Verify.",
+      active: portal === "corporate" && mode === "signin",
+      onClick: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    },
+    {
+      id: "professional-register",
+      label: "Professional registration",
+      detail: "Create a free pilot Passport user.",
+      active: portal === "professional" && mode === "signup",
+      onClick: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      id: "corporate-register",
+      label: "Corporate registration",
+      detail: "Create a company admin and workspace.",
+      active: portal === "corporate" && mode === "signup",
+      onClick: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    }
+  ];
   const authPathSummary = {
     mode: "auth_path_summary",
     selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
@@ -20717,6 +20769,45 @@ function PublicSite({
             >
               Export server checkpoint
             </button>
+          </div>
+          <div className="public-portal-switchboard" aria-label="Public portal switchboard">
+            <div className="public-portal-switchboard-header">
+              <div>
+                <span className="status-chip success">Choose your path</span>
+                <strong>{publicPortalSwitchboard.selected_portal} {publicPortalSwitchboard.selected_action}</strong>
+                <small>{publicPortalSwitchboard.accepted_when}</small>
+              </div>
+              <span>
+                <small>Current plan</small>
+                <strong>{publicPortalSwitchboard.current_price}</strong>
+              </span>
+            </div>
+            <div className="public-portal-switchboard-grid">
+              {publicPortalSwitchboardCards.map((card) => (
+                <button className={card.active ? "active" : ""} key={card.id} onClick={card.onClick} type="button">
+                  <strong>{card.label}</strong>
+                  <small>{card.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-portal-switchboard-footer">
+              <span>
+                <small>First database write</small>
+                <strong>{publicPortalSwitchboard.first_database_write}</strong>
+              </span>
+              <span>
+                <small>Recovery</small>
+                <strong>{publicPortalSwitchboard.recovery_route}</strong>
+              </span>
+              <div className="public-portal-switchboard-actions">
+                <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                  Review pricing
+                </button>
+                <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                  Reset password
+                </button>
+              </div>
+            </div>
           </div>
           <div className="portal-tabs">
             <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">

@@ -159,6 +159,8 @@ The public login/register card now starts with a Public portal route shell. Prof
 
 The public login/register card now includes a visible Submit readiness strip before the deeper proof receipts. It shows whether the current Professional or Corporate path has the required fields, first database write, completion status, recovery availability, and preview-data rejection before the user submits auth.
 
+The public login/register card now also includes one visible portal switchboard for Professional login, Corporate login, Professional registration, Corporate registration, pricing review, and password recovery before older proof receipts, so users do not have to decode dense audit panels to choose the right path.
+
 Billing now starts with a Pricing activation workbench. Corporate plan, seats, projected monthly price, live Supabase subscription ledger, quote receipt, billing decision, Stripe gate, and export are visible before deeper billing receipts.
 
 Professional Passport evidence now starts with an Evidence setup command. Metadata, private file attachment, signed preview/download proof, manifest export, and raw-file exclusion are visible before the document list, so the evidence path works even when the selected record has no files yet.
