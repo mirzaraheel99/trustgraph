@@ -249,6 +249,9 @@ assert(premiumRepair.includes(".live-row-completion-command") && premiumRepair.i
 assert(css.includes(".live-database-repair-guide") && css.includes(".live-database-repair-guide-grid"), "live database repair guide must be styled and bounded.");
 assert(app.includes('aria-label="Real database completion plan"'), "real database completion plan must expose a guided live-row path.");
 assert(premiumRepair.includes(".real-database-completion-plan") && premiumRepair.includes(".real-database-completion-grid"), "real database completion plan must be styled and bounded in the premium shell.");
+assert(app.includes('aria-label="V1 completion command center"') && app.includes("v1_completion_command_center"), "V1 completion must expose one command center for registration, corporate workspace, pricing, scoped database, evidence, receipts, and VPS freshness.");
+assert(app.includes("v1_completion_command_center_requires_registration_corporate_workspace_pricing_scoped_database_evidence_receipts_vps_freshness_and_no_preview_data"), "V1 completion command center must reject preview data and require the full live pilot path.");
+assert(premiumRepair.includes(".v1-completion-command-center") && premiumRepair.includes(".v1-completion-command-grid") && premiumRepair.includes(".v1-completion-command-actions"), "V1 completion command center must be styled and bounded in the premium shell.");
 assert(css.includes(".live-row-source-receipt") && css.includes(".live-row-source-grid") && css.includes(".live-row-source-next"), "live row source receipt must be styled and bounded.");
 assert(css.includes(".live-data-load-receipt") && css.includes(".live-data-load-grid"), "live data load receipt must be styled and bounded.");
 assert(app.includes('aria-label="Live database reload verification"'), "working database proof must expose reload verification after seed.");

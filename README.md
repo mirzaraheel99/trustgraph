@@ -155,6 +155,8 @@ The signed-in workspace now includes an operator viewport polish layer. Oversize
 
 The V1 completion cockpit now includes a Real database launch gate before the detailed ledger. It makes the acceptance decision explicit: signed-in Supabase row groups, persisted completion receipt, working-data export, preview-data rejection, and VPS freshness must be resolved before V1 review.
 
+V1 completion now also starts with a command center before the detailed completion plan. It summarizes registration, live row groups, completion receipt, VPS freshness, the next missing live-row step, and direct receipt/export actions so operators can finish the live database path without hunting through the ledger.
+
 The public login/register form now shows a visible auth route summary immediately before the input fields, so Professional users and Corporate admins can confirm account type, login/register mode, pricing path, first database write, and landing portal before submitting.
 
 The public auth card now adds a Public access desk directly before the email and password fields, with one place to switch Professional or Corporate, Register or Login, review pricing, see required fields, confirm the first live database write, and choose recovery before typing.

@@ -25243,6 +25243,46 @@ function App() {
       detail: realDatabaseCompletionPlan.server_save_rule
     }
   ];
+  const v1CompletionCommandCenter = {
+    mode: "v1_completion_command_center",
+    decision: realDatabaseLaunchGate.decision,
+    live_row_groups: `${realDatabaseLaunchGate.ready_groups}/${realDatabaseLaunchGate.required_groups}`,
+    next_step: nextRealDatabaseStep?.label ?? "All live row groups complete",
+    next_action: realDatabaseLaunchGate.next_action,
+    latest_receipt_status: realDatabaseLaunchGate.latest_receipt_status,
+    server_save_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "v1_completion_command_center_requires_registration_corporate_workspace_pricing_scoped_database_evidence_receipts_vps_freshness_and_no_preview_data"
+  };
+  const v1CompletionCommandCards = [
+    {
+      label: "Registration",
+      value: registrationIntents.length ? `${registrationIntents.length}` : "Missing",
+      detail: registrationIntents.length ? registrationIntentStatus : "Hosted registration must write a live intent row.",
+      ready: registrationIntents.length > 0
+    },
+    {
+      label: "Live rows",
+      value: v1CompletionCommandCenter.live_row_groups,
+      detail: liveDatabaseContract.current_blocker,
+      ready: livePilotRowProof.accepted
+    },
+    {
+      label: "Completion receipt",
+      value: latestRealDatabaseCompletionReceipt ? latestRealDatabaseCompletionReceipt.status.replace(/_/g, " ") : "Not saved",
+      detail: latestRealDatabaseCompletionReceipt
+        ? `${latestRealDatabaseCompletionReceipt.completed_steps}/${latestRealDatabaseCompletionReceipt.total_steps} groups persisted`
+        : "Record after live rows load.",
+      ready: Boolean(latestRealDatabaseCompletionReceipt)
+    },
+    {
+      label: "VPS freshness",
+      value: serverSyncMonitor.status === "synced" ? "Synced" : "Needs check",
+      detail: realDatabaseCompletionPlan.server_save_rule,
+      ready: serverSyncMonitor.status === "synced"
+    }
+  ];
   const latestRegistrationIntent = registrationIntents[0] ?? null;
   const registrationIntentReviewPacket = {
     mode: "registration_intent_review_packet",
@@ -27959,6 +27999,93 @@ function App() {
                   </button>
                 </article>
               )}
+            </div>
+          </div>
+          <div className="v1-completion-command-center" aria-label="V1 completion command center">
+            <div className="v1-completion-command-header">
+              <div>
+                <span className={`status-chip ${livePilotRowProof.accepted && latestRealDatabaseCompletionReceipt ? "success" : "warning"}`}>
+                  V1 completion command
+                </span>
+                <strong>{livePilotRowProof.accepted ? "Live database proof is ready for receipt review" : v1CompletionCommandCenter.next_step}</strong>
+                <small>{v1CompletionCommandCenter.accepted_when}</small>
+              </div>
+              <button
+                className="primary-action"
+                onClick={() => {
+                  if (nextRealDatabaseStep?.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (nextRealDatabaseStep?.target === "billing" || nextRealDatabaseStep?.target === "readiness") {
+                    setSetupView(nextRealDatabaseStep.target);
+                    document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (nextRealDatabaseStep?.target === "proof") {
+                    document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  openWorkspaceOrSetup((nextRealDatabaseStep?.target ?? "readiness") as WorkspaceId);
+                }}
+                type="button"
+              >
+                {livePilotRowProof.accepted ? "Review receipt" : nextRealDatabaseStep?.action ?? "Open proof"}
+              </button>
+            </div>
+            <div className="v1-completion-command-grid">
+              {v1CompletionCommandCards.map((card) => (
+                <article className={card.ready ? "ready" : "needed"} key={card.label}>
+                  <span>{card.label}</span>
+                  <strong>{card.value}</strong>
+                  <small>{card.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="v1-completion-command-actions">
+              <button
+                className="secondary-action"
+                disabled={!authSession || !accountContext}
+                onClick={() =>
+                  void recordLiveRealDatabaseCompletionReceipt({
+                    status:
+                      realDatabaseCompletionPlan.completed_steps === realDatabaseCompletionPlan.total_steps
+                        ? "ready_for_v1_review"
+                        : "live_rows_missing",
+                    completedSteps: realDatabaseCompletionPlan.completed_steps,
+                    totalSteps: realDatabaseCompletionPlan.total_steps,
+                    missingGroups: realDatabaseCompletionSteps
+                      .filter((step) => step.status !== "complete")
+                      .map((step) => step.label),
+                    liveRowGroups: realDatabaseCompletionSteps,
+                    metadata: {
+                      command_center: v1CompletionCommandCenter,
+                      current_host: realDatabaseCompletionPlan.current_host,
+                      next_step: realDatabaseCompletionPlan.next_step,
+                      server_save_rule: realDatabaseCompletionPlan.server_save_rule
+                    }
+                  })
+                }
+                type="button"
+              >
+                Record receipt
+              </button>
+              <button className="secondary-action" onClick={() => downloadTextFile(authorizedReportName, JSON.stringify(authorizedReport, null, 2), "application/json")} type="button">
+                Export working data
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-v1-completion-command-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...v1CompletionCommandCenter, cards: v1CompletionCommandCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export command
+              </button>
             </div>
           </div>
           <div className="real-database-completion-plan" aria-label="Real database completion plan">

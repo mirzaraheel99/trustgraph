@@ -18693,6 +18693,9 @@ p {
   .live-database-repair-guide-summary,
   .live-database-repair-guide-grid,
   .live-row-completion-grid,
+  .v1-completion-command-header,
+  .v1-completion-command-grid,
+  .v1-completion-command-actions,
   .server-release-cockpit-header,
   .server-release-command,
   .server-release-grid,
@@ -22950,6 +22953,101 @@ body {
 }
 
 .live-row-completion-grid button {
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
+.v1-completion-command-center {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.09), rgba(143, 178, 255, 0.055)),
+    rgba(8, 20, 22, 0.78);
+}
+
+.v1-completion-command-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.3fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.v1-completion-command-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.v1-completion-command-grid,
+.v1-completion-command-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 164px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.v1-completion-command-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.v1-completion-command-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.075);
+}
+
+.v1-completion-command-grid article.needed {
+  border-color: rgba(242, 190, 92, 0.22);
+}
+
+.v1-completion-command-center strong,
+.v1-completion-command-center small,
+.v1-completion-command-center span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.v1-completion-command-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.9vw, 26px);
+  line-height: 1.1;
+}
+
+.v1-completion-command-grid > article > span {
+  color: #9fead5;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.v1-completion-command-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.16;
+}
+
+.v1-completion-command-center small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.v1-completion-command-actions button,
+.v1-completion-command-header button {
+  width: 100%;
   min-width: 0;
   min-height: 40px;
   white-space: normal;
