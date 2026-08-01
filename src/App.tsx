@@ -4710,6 +4710,60 @@ function CorporateDirectoryPanel({
     checks: reviewerDatabaseReadinessBoard.map(({ label, value, ready }) => ({ label, value, ready })),
     accepted_when: "corporate_reviewer_can_see_request_grant_scoped_rows_review_attestation_visibility_snapshot_and_export_readiness_before_filtering_user_rows"
   };
+  const latestCorporateDatabaseReceiptStatus = latestCorporateDatabaseReceipt?.status ?? "not_recorded";
+  const latestCorporateVisibilitySnapshotStatus = latestCorporateVisibilitySnapshot?.status ?? "not_recorded";
+  const persistedCorporateDatabaseAcceptanceSteps = [
+    {
+      label: "Live RBAC source",
+      value: isLiveCorporateDatabase ? "Live" : "Locked",
+      detail: isLiveCorporateDatabase ? "Active corporate role is reading scoped Supabase rows." : "Login with corporate RBAC before acceptance.",
+      ready: isLiveCorporateDatabase
+    },
+    {
+      label: "Approved rows",
+      value: `${approvedAccessCount}/${sharedRecords.length}`,
+      detail: "Approved Access Grants and visible Passport rows must both be present.",
+      ready: approvedAccessCount > 0 && sharedRecords.length > 0
+    },
+    {
+      label: "Review attestation",
+      value: `${reviews.length}`,
+      detail: "Reviewer must save audit proof after checking visible rows and gaps.",
+      ready: reviews.length > 0
+    },
+    {
+      label: "Access receipt",
+      value: latestCorporateDatabaseReceiptStatus.replace(/_/g, " "),
+      detail: "Persisted corporate_database_access_receipts row proves the export decision.",
+      ready: Boolean(latestCorporateDatabaseReceipt)
+    },
+    {
+      label: "Visibility snapshot",
+      value: latestCorporateVisibilitySnapshotStatus.replace(/_/g, " "),
+      detail: "Persisted visibility snapshot proves filters, buckets, rows, and no raw private files.",
+      ready: Boolean(latestCorporateVisibilitySnapshot)
+    },
+    {
+      label: "Export packet",
+      value: corporateAccessNextAction.ready ? "Ready" : "Blocked",
+      detail: "Metadata-only user database packet can be exported after persisted proof is saved.",
+      ready: corporateAccessNextAction.ready && Boolean(latestCorporateDatabaseReceipt) && Boolean(latestCorporateVisibilitySnapshot)
+    }
+  ];
+  const persistedCorporateDatabaseAccepted = persistedCorporateDatabaseAcceptanceSteps.every((step) => step.ready);
+  const persistedCorporateDatabaseAcceptanceCheckpoint = {
+    mode: "persisted_corporate_database_acceptance_checkpoint",
+    status: persistedCorporateDatabaseAccepted ? "persisted_acceptance_ready" : "persisted_acceptance_open",
+    ready_steps: persistedCorporateDatabaseAcceptanceSteps.filter((step) => step.ready).length,
+    total_steps: persistedCorporateDatabaseAcceptanceSteps.length,
+    latest_access_receipt_status: latestCorporateDatabaseReceiptStatus,
+    latest_visibility_snapshot_status: latestCorporateVisibilitySnapshotStatus,
+    preview_data_accepted: false,
+    next_action:
+      persistedCorporateDatabaseAcceptanceSteps.find((step) => !step.ready)?.label ?? "Export scoped corporate user database packet",
+    accepted_when:
+      "persisted_corporate_database_acceptance_requires_live_rbac_approved_rows_review_attestation_access_receipt_visibility_snapshot_and_metadata_only_export"
+  };
   const corporateDatabasePathStrip = {
     mode: "corporate_database_path_strip",
     current_action: corporateAccessNextAction.label,
@@ -4882,6 +4936,10 @@ function CorporateDirectoryPanel({
       preview_data_accepted_for_v1: false
     },
     corporate_database_visibility_snapshot: corporateDatabaseVisibilitySnapshotPacket,
+    persisted_corporate_database_acceptance_checkpoint: {
+      ...persistedCorporateDatabaseAcceptanceCheckpoint,
+      steps: persistedCorporateDatabaseAcceptanceSteps.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
     corporate_classification_handling_contract: corporateClassificationHandlingContract,
     reviewer_database_readiness_board: reviewerDatabaseReadinessPacket,
     corporate_scope_review_command: {
@@ -5292,6 +5350,81 @@ function CorporateDirectoryPanel({
               <small>{item.detail}</small>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="persisted-corporate-database-acceptance" aria-label="Persisted corporate database acceptance checkpoint">
+        <div className="persisted-corporate-database-acceptance-header">
+          <div>
+            <span className={`status-chip ${persistedCorporateDatabaseAccepted ? "success" : "warning"}`}>
+              Persisted database acceptance
+            </span>
+            <strong>
+              {persistedCorporateDatabaseAccepted
+                ? "Corporate user database proof is saved"
+                : `Next: ${persistedCorporateDatabaseAcceptanceCheckpoint.next_action}`}
+            </strong>
+            <small>{persistedCorporateDatabaseAcceptanceCheckpoint.accepted_when}</small>
+          </div>
+          <div className="persisted-corporate-database-actions">
+            <button className="secondary-action" disabled={snapshotBusy} onClick={() => void recordVisibilitySnapshot()} type="button">
+              {snapshotBusy ? "Saving snapshot..." : "Save snapshot"}
+            </button>
+            <button className="secondary-action" disabled={receiptBusy} onClick={() => void recordDatabaseReceipt()} type="button">
+              {receiptBusy ? "Saving receipt..." : "Save receipt"}
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-persisted-corporate-database-acceptance-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      ...persistedCorporateDatabaseAcceptanceCheckpoint,
+                      steps: persistedCorporateDatabaseAcceptanceSteps,
+                      latest_access_receipt: latestCorporateDatabaseReceipt,
+                      latest_visibility_snapshot: latestCorporateVisibilitySnapshot,
+                      export_receipt: corporateUserDatabaseExportReceipt
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export acceptance
+            </button>
+          </div>
+        </div>
+        <div className="persisted-corporate-database-grid">
+          {persistedCorporateDatabaseAcceptanceSteps.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="persisted-corporate-database-proof">
+          <span>
+            <strong>
+              {persistedCorporateDatabaseAcceptanceCheckpoint.ready_steps}/{persistedCorporateDatabaseAcceptanceCheckpoint.total_steps}
+            </strong>
+            <small>Persisted acceptance checks</small>
+          </span>
+          <span>
+            <strong>{latestCorporateDatabaseReceiptStatus.replace(/_/g, " ")}</strong>
+            <small>Latest access receipt</small>
+          </span>
+          <span>
+            <strong>{latestCorporateVisibilitySnapshotStatus.replace(/_/g, " ")}</strong>
+            <small>Latest visibility snapshot</small>
+          </span>
+          <span>
+            <strong>No preview rows</strong>
+            <small>Only signed-in Supabase rows count.</small>
+          </span>
         </div>
       </div>
       <div className="corporate-request-to-row-rail" aria-label="Corporate request to row rail">

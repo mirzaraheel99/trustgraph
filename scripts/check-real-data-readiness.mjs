@@ -58,6 +58,12 @@ const appRequirements = [
   ["loadVerifyAccessGrants", "live Corporate Verify repository load"],
   ["loadEvidenceDocuments", "live evidence repository load"],
   ["loadConsentAuthorizations", "live consent repository load"],
+  ["Persisted corporate database acceptance checkpoint", "persisted corporate database acceptance label"],
+  ["persisted_corporate_database_acceptance_checkpoint", "persisted corporate database acceptance packet mode"],
+  [
+    "persisted_corporate_database_acceptance_requires_live_rbac_approved_rows_review_attestation_access_receipt_visibility_snapshot_and_metadata_only_export",
+    "persisted corporate database acceptance rule"
+  ],
   ["prepare_pilot_user_access_request", "pilot-named access request RPC"],
   ["ensure_pilot_employer_reviewer_membership", "pilot-named employer reviewer RPC"],
   ["create_pilot_verification_cases", "pilot-named verification cases RPC"],

@@ -262,6 +262,8 @@ assert(app.includes("corporate_classification_handling_contract") && app.include
 assert(css.includes(".corporate-classification-contract") && css.includes(".corporate-classification-grid") && css.includes(".corporate-classification-boundary"), "corporate classification handling contract must be styled and bounded.");
 assert(app.includes('aria-label="Reviewer database readiness board"'), "Corporate Verify must expose a reviewer database readiness board before filters.");
 assert(css.includes(".reviewer-database-readiness-board") && css.includes(".reviewer-database-readiness-grid"), "reviewer database readiness board must be styled and bounded.");
+assert(app.includes('aria-label="Persisted corporate database acceptance checkpoint"') && app.includes("persisted_corporate_database_acceptance_checkpoint"), "Corporate Verify must expose persisted database acceptance before filters.");
+assert(css.includes(".persisted-corporate-database-acceptance") && css.includes(".persisted-corporate-database-grid") && css.includes(".persisted-corporate-database-actions"), "persisted corporate database acceptance checkpoint must be styled and bounded.");
 assert(css.includes("Corporate portal usability repair") && css.includes(".corporate-directory-panel .directory-controls"), "Corporate Verify must include the final usability repair for directory controls.");
 assert(css.includes(".corporate-reviewer-action-bar") && css.includes(".corporate-reviewer-action-grid"), "Corporate reviewer action bar must be styled and bounded.");
 assert(css.includes(".corporate-review-queue-command") && css.includes(".corporate-review-queue-command-grid") && css.includes(".corporate-review-queue-command-actions"), "Corporate review queue command must be styled and bounded.");
