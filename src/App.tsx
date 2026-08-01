@@ -27060,6 +27060,74 @@ function App() {
     }
   ];
   const nextV1PortalLane = v1PortalOperatingLanes.find((lane) => !lane.ready) ?? v1PortalOperatingLanes[v1PortalOperatingLanes.length - 1];
+  const portalDailyCommandCenter = {
+    mode: "portal_daily_command_center",
+    source: authSession ? "live_supabase_session" : "hosted_login_required",
+    current_portal: workspace.label,
+    account: authSession ? authSession.user.email : "not_signed_in",
+    primary_next_action: authSession ? nextV1PortalLane.action : "Login / register",
+    current_focus: authSession ? nextV1PortalLane.title : "Hosted access",
+    live_database_status: authSession && accountContext ? "live_rows_loading_from_supabase" : "preview_until_login",
+    corporate_database_boundary:
+      "Corporate Verify can request access by professional email and review only approved scoped user rows; open browsing of all users is not available.",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "portal_daily_command_center_keeps_login_logout_professional_corporate_pricing_database_and_server_sync_actions_visible_clickable_bounded_mobile_stacked_and_rejects_preview_data"
+  };
+  const portalDailyCommandRows = [
+    {
+      label: "Professional",
+      value: authSession ? `${livePassportRecords.length} records` : "Login first",
+      detail: "Private Passport records, evidence, references, consent, and sharing.",
+      action: authSession ? "Open Passport" : "Login",
+      icon: Fingerprint,
+      onClick: () => (authSession ? openWorkspaceOrSetup("passport") : openAuthControls())
+    },
+    {
+      label: "Corporate",
+      value: hasLiveCorporateContext ? activeOrganization.name : "Setup needed",
+      detail: "Company workspace, RBAC, Verify requests, scoped rows, and exports.",
+      action: hasLiveCorporateContext ? "Open Verify" : "Setup company",
+      icon: BriefcaseBusiness,
+      onClick: () => (hasLiveCorporateContext ? openWorkspaceOrSetup("verify") : openCorporateControls())
+    },
+    {
+      label: "Account",
+      value: authSession ? "Signed in" : "No session",
+      detail: "Login, registration, password reset, hosted link repair, and logout.",
+      action: authSession ? "Account tools" : "Login / register",
+      icon: KeyRound,
+      onClick: openAuthControls
+    },
+    {
+      label: "Pricing",
+      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "$149 pilot",
+      detail: "Pilot ledger is live; Stripe payment collection remains human-gated.",
+      action: "Review pricing",
+      icon: BadgeCheck,
+      onClick: () => {
+        setSetupView("billing");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Database",
+      value: liveDatabaseContract.accepted ? "Accepted" : "Proof needed",
+      detail: "Live Supabase rows, scoped Corporate access, receipts, and preview-data rejection.",
+      action: "Check proof",
+      icon: Database,
+      onClick: () => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Server",
+      value: serverSyncMonitor.status === "synced" ? "Synced" : "Pull needed",
+      detail: "GitHub remains source of truth; VPS must show the latest release stamp.",
+      action: "Export sync",
+      icon: Network,
+      onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
+    }
+  ];
   const v1PortalOperatingCenter = {
     mode: "v1_portal_operating_center",
     current_portal: workspace.label,
@@ -27274,6 +27342,80 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className="portal-daily-command-center" aria-label="Portal daily command center">
+          <div className="portal-daily-command-copy">
+            <span className={`status-chip ${authSession ? "success" : "warning"}`}>Daily portal command</span>
+            <strong>{authSession ? `Start in ${portalDailyCommandCenter.current_focus}` : "Login or register before live database work"}</strong>
+            <small>{portalDailyCommandCenter.corporate_database_boundary}</small>
+          </div>
+          <div className="portal-daily-command-next">
+            <span>
+              <small>Current account</small>
+              <strong>{authSession ? authSession.user.email : "Hosted login required"}</strong>
+            </span>
+            <span>
+              <small>Database</small>
+              <strong>{portalDailyCommandCenter.live_database_status.replaceAll("_", " ")}</strong>
+            </span>
+            <button className="primary-action" onClick={authSession ? nextV1PortalLane.onClick : openAuthControls} type="button">
+              {portalDailyCommandCenter.primary_next_action}
+            </button>
+            {authSession ? (
+              <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                <LogOut size={16} />
+                Logout
+              </button>
+            ) : null}
+          </div>
+          <div className="portal-daily-command-grid">
+            {portalDailyCommandRows.map((row) => {
+              const Icon = row.icon;
+              return (
+                <button key={row.label} onClick={row.onClick} type="button">
+                  <span>
+                    <Icon size={17} />
+                    {row.label}
+                  </span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                  <em>{row.action}</em>
+                </button>
+              );
+            })}
+          </div>
+          <div className="portal-daily-command-proof">
+            <span>
+              <small>Preview data</small>
+              <strong>{portalDailyCommandCenter.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <span>
+              <small>Server save</small>
+              <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-portal-daily-command-center-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      ...portalDailyCommandCenter,
+                      rows: portalDailyCommandRows.map(({ icon: _icon, onClick: _onClick, ...row }) => row)
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export command proof
+            </button>
+          </div>
+        </section>
 
         <section className="v1-portal-operating-center" aria-label="V1 portal operating center">
           <div className="v1-portal-operating-copy">

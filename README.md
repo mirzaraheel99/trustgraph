@@ -207,6 +207,8 @@ Billing now starts with a Billing launch board that keeps the corporate pilot pl
 
 Billing now also includes a paid-launch decision bridge before the acceptance checkpoint. It separates live pricing proof from the human-gated Stripe, tax, invoice, customer portal, refund, dunning, and payment webhook decisions that must be approved before payment collection.
 
+The signed-in workspace now starts with a Portal daily command center that keeps login/logout, Professional Passport, Corporate Verify, Account, Pricing, live database proof, and VPS sync actions visible in one bounded mobile-stacked surface before the dense evidence panels.
+
 Billing also includes a Billing pilot acceptance checkpoint that ties the live pricing catalog, selected seats, projected totals, live subscription ledger, quote receipt, payment decision receipt, Stripe-off boundary, and preview-data rejection into one exportable packet before paid launch work.
 
 Corporate team setup now starts with a Team launch board that keeps admin readiness, first reviewer invite, pending acceptance, accepted roster review, filtered invitation export, and database handoff visible before the dense invitation table.
