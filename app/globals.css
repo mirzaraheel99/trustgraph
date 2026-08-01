@@ -23915,6 +23915,124 @@ body {
   white-space: normal;
 }
 
+.v1-human-gate-separation {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 111, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 111, 0.08), rgba(95, 240, 201, 0.055)),
+    rgba(14, 20, 22, 0.78);
+}
+
+.v1-human-gate-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.28fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.v1-human-gate-header > div,
+.v1-human-gate-grid article > div,
+.v1-human-gate-proof {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.v1-human-gate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.v1-human-gate-grid article {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 10px;
+  min-width: 0;
+  min-height: 190px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.v1-human-gate-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.075);
+}
+
+.v1-human-gate-grid article.needed {
+  border-color: rgba(242, 190, 92, 0.24);
+}
+
+.v1-human-gate-grid article.human {
+  border-color: rgba(255, 205, 111, 0.34);
+  background: rgba(255, 205, 111, 0.075);
+}
+
+.v1-human-gate-separation strong,
+.v1-human-gate-separation small,
+.v1-human-gate-separation span,
+.v1-human-gate-separation b {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.v1-human-gate-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 25px);
+  line-height: 1.12;
+}
+
+.v1-human-gate-grid span,
+.v1-human-gate-proof span {
+  color: #ffdf9b;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.v1-human-gate-grid strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.v1-human-gate-grid b {
+  color: #9fead5;
+  font-size: 13px;
+}
+
+.v1-human-gate-separation small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.v1-human-gate-proof {
+  padding: 12px;
+  border: 1px solid rgba(95, 240, 201, 0.18);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.v1-human-gate-header button,
+.v1-human-gate-grid button {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
 .real-database-completion-plan {
   display: grid;
   gap: 12px;

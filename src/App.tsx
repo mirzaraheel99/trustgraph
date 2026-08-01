@@ -25965,6 +25965,75 @@ function App() {
     accepted_when:
       "v1_completion_command_center_requires_registration_corporate_workspace_pricing_scoped_database_evidence_receipts_vps_freshness_and_no_preview_data"
   };
+  const v1HumanGateSeparationRows = [
+    {
+      label: "Code and live rows",
+      value: livePilotRowProof.accepted ? "Code-ready" : "Needs live rows",
+      detail: liveDatabaseContract.current_blocker,
+      owner: "Engineering",
+      ready: livePilotRowProof.accepted,
+      action: "Open proof",
+      target: "proof" as const
+    },
+    {
+      label: "Persisted receipts",
+      value: latestRealDatabaseCompletionReceipt ? "Receipt saved" : "Receipt missing",
+      detail: latestRealDatabaseCompletionReceipt
+        ? `${latestRealDatabaseCompletionReceipt.completed_steps}/${latestRealDatabaseCompletionReceipt.total_steps} live groups saved`
+        : "Record the live database completion receipt after hosted login and row reload.",
+      owner: "Engineering",
+      ready: Boolean(latestRealDatabaseCompletionReceipt),
+      action: "Record receipt",
+      target: "receipt" as const
+    },
+    {
+      label: "VPS freshness",
+      value: serverSyncMonitor.status === "synced" ? "Server synced" : "Server check needed",
+      detail: realDatabaseCompletionPlan.server_save_rule,
+      owner: "Engineering",
+      ready: serverSyncMonitor.status === "synced",
+      action: "Export command",
+      target: "server" as const
+    },
+    {
+      label: "Pilot owners",
+      value: "Human signoff",
+      detail: "Customer owner, onboarding owner, support owner, and incident owner must be named before launch traffic.",
+      owner: "Human",
+      ready: false,
+      action: "Open Admin",
+      target: "admin" as const
+    },
+    {
+      label: "Billing boundary",
+      value: "Stripe decision",
+      detail: "The V1 path keeps ledger activation live while payment collection waits for an explicit Stripe/billing decision.",
+      owner: "Human",
+      ready: false,
+      action: "Open billing",
+      target: "billing" as const
+    },
+    {
+      label: "Security and legal",
+      value: "External signoff",
+      detail: "RLS checklist, storage policy review, security review, and employment/legal wording remain separated from code acceptance.",
+      owner: "Human",
+      ready: false,
+      action: "Open readiness",
+      target: "readiness" as const
+    }
+  ];
+  const v1HumanGateSeparation = {
+    mode: "v1_human_gate_separation",
+    status: v1HumanGateSeparationRows.every((row) => row.ready) ? "ready_for_production_launch" : "human_gate_open",
+    code_ready_count: v1HumanGateSeparationRows.filter((row) => row.owner === "Engineering" && row.ready).length,
+    code_ready_total: v1HumanGateSeparationRows.filter((row) => row.owner === "Engineering").length,
+    human_gate_count: v1HumanGateSeparationRows.filter((row) => row.owner === "Human" && !row.ready).length,
+    preview_data_accepted: false,
+    accepted_when:
+      "v1_human_gate_separation_requires_code_live_rows_persisted_receipts_vps_freshness_pilot_owners_stripe_security_storage_and_legal_signoff_to_be_separated_before_completion",
+    rows: v1HumanGateSeparationRows
+  };
   const v1CompletionCommandCards = [
     {
       label: "Registration",
@@ -29000,6 +29069,103 @@ function App() {
               >
                 Export command
               </button>
+            </div>
+          </div>
+          <div className="v1-human-gate-separation" aria-label="V1 human gate separation">
+            <div className="v1-human-gate-header">
+              <div>
+                <span className={`status-chip ${v1HumanGateSeparation.human_gate_count ? "warning" : "success"}`}>
+                  Human gate separation
+                </span>
+                <strong>
+                  {v1HumanGateSeparation.human_gate_count
+                    ? `${v1HumanGateSeparation.human_gate_count} human launch decisions still separate from code acceptance`
+                    : "Code and launch approvals are aligned"}
+                </strong>
+                <small>{v1HumanGateSeparation.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-v1-human-gate-separation-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(v1HumanGateSeparation, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export gate proof
+              </button>
+            </div>
+            <div className="v1-human-gate-grid">
+              {v1HumanGateSeparationRows.map((row) => (
+                <article className={row.ready ? "ready" : row.owner === "Human" ? "human" : "needed"} key={row.label}>
+                  <div>
+                    <span>{row.owner}</span>
+                    <strong>{row.label}</strong>
+                    <b>{row.value}</b>
+                    <small>{row.detail}</small>
+                  </div>
+                  <button
+                    className="secondary-action"
+                    onClick={() => {
+                      if (row.target === "proof") {
+                        document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        return;
+                      }
+                      if (row.target === "receipt") {
+                        void recordLiveRealDatabaseCompletionReceipt({
+                          status:
+                            realDatabaseCompletionPlan.completed_steps === realDatabaseCompletionPlan.total_steps
+                              ? "ready_for_v1_review"
+                              : "live_rows_missing",
+                          completedSteps: realDatabaseCompletionPlan.completed_steps,
+                          totalSteps: realDatabaseCompletionPlan.total_steps,
+                          missingGroups: realDatabaseCompletionSteps
+                            .filter((step) => step.status !== "complete")
+                            .map((step) => step.label),
+                          liveRowGroups: realDatabaseCompletionSteps,
+                          metadata: {
+                            human_gate_separation: v1HumanGateSeparation,
+                            current_host: realDatabaseCompletionPlan.current_host,
+                            server_save_rule: realDatabaseCompletionPlan.server_save_rule
+                          }
+                        });
+                        return;
+                      }
+                      if (row.target === "server") {
+                        downloadTextFile(
+                          `trustgraph-v1-server-save-command-${new Date().toISOString().slice(0, 10)}.json`,
+                          JSON.stringify({ serverSyncMonitor, v1HumanGateSeparation, command: realDatabaseCompletionPlan.server_save_rule }, null, 2),
+                          "application/json"
+                        );
+                        return;
+                      }
+                      if (row.target === "admin") {
+                        openWorkspaceOrSetup("admin");
+                        return;
+                      }
+                      if (row.target === "billing" || row.target === "readiness") {
+                        setSetupView(row.target);
+                        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }
+                    }}
+                    type="button"
+                  >
+                    {row.action}
+                  </button>
+                </article>
+              ))}
+            </div>
+            <div className="v1-human-gate-proof">
+              <span>Launch acceptance boundary</span>
+              <strong>
+                Code-ready {v1HumanGateSeparation.code_ready_count}/{v1HumanGateSeparation.code_ready_total}; human gates open {v1HumanGateSeparation.human_gate_count}
+              </strong>
+              <small>
+                This keeps the hosted build, live Supabase rows, and VPS freshness checks moving while preventing payment collection, production traffic, or employment/legal claims from being treated as complete without human approval.
+              </small>
             </div>
           </div>
           <div className="real-database-completion-plan" aria-label="Real database completion plan">

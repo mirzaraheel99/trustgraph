@@ -373,6 +373,7 @@ The Supabase REST/RPC/Storage adapter lives in `src/supabase.ts`, with focused r
 27. Export the V1 operating map packet to confirm the pilot path from public website through server release is understandable.
 28. Export the server release save path packet, then update the VPS from `/opt/trustgraph` with `bash tools/update-vps-from-github.sh`.
 29. Record and export the onboarding wizard receipt and V1 live database readiness receipt from Admin after signed-in Supabase rows load for Professional, Corporate, pricing, scoped database access, registration, review, and release proof.
+30. Export the V1 human gate separation packet from the completion command center to confirm code/live-row readiness is separated from pilot-owner, Stripe, security/storage, legal, and VPS launch approvals before production traffic.
 
 ## Live Database Status
 
