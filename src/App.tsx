@@ -15774,6 +15774,44 @@ function PublicSite({
       detail: portal === "corporate" ? "Open Corporate Verify, team, billing, and access requests." : "Open Passport records, evidence, consent, and sharing."
     }
   ];
+  const publicPortalFlowMap = {
+    mode: "public_portal_flow_map",
+    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
+    selected_action: mode === "signup" ? "Register" : "Login",
+    selected_price: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    selected_landing: portal === "corporate" ? "Company Admin and Corporate Verify" : "Professional Passport",
+    recovery_route: "Hosted resend, reset, and localhost-link repair stay visible before submit.",
+    accepted_when:
+      "public_portal_flow_map_shows_professional_corporate_login_registration_pricing_first_database_write_landing_and_recovery_before_dense_forms"
+  };
+  const publicPortalFlowMapSteps = [
+    {
+      label: "Choose",
+      value: publicPortalFlowMap.selected_portal,
+      detail: portal === "corporate" ? "Company workspace for reviewers." : "Private Passport for the record owner."
+    },
+    {
+      label: "Access",
+      value: publicPortalFlowMap.selected_action,
+      detail: mode === "signup" ? "Create account, verify email, return hosted." : "Use verified email or reset password."
+    },
+    {
+      label: "Price",
+      value: publicPortalFlowMap.selected_price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "Database",
+      value: publicPortalFlowMap.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Landing",
+      value: publicPortalFlowMap.selected_landing,
+      detail: selectedRegistrationPath.nextAction
+    }
+  ];
   const portalHandoffChecklist = [
     {
       label: portal === "corporate" ? "Company portal" : "Personal portal",
@@ -17730,6 +17768,60 @@ function PublicSite({
                   <small>{item.detail}</small>
                 </span>
               ))}
+            </div>
+          </div>
+          <div className="public-portal-flow-map" aria-label="Public portal flow map">
+            <div className="public-portal-flow-map-header">
+              <div>
+                <span className="status-chip success">Start here</span>
+                <strong>{publicPortalFlowMap.selected_action} for {publicPortalFlowMap.selected_portal}</strong>
+                <small>{publicPortalFlowMap.accepted_when}</small>
+              </div>
+              <div className="public-portal-flow-map-actions">
+                <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
+                  Professional
+                </button>
+                <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
+                  Corporate
+                </button>
+                <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
+                  Register
+                </button>
+                <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
+                  Login
+                </button>
+              </div>
+            </div>
+            <div className="public-portal-flow-map-grid">
+              {publicPortalFlowMapSteps.map((step) => (
+                <article key={step.label}>
+                  <span>{step.label}</span>
+                  <strong>{step.value}</strong>
+                  <small>{step.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="public-portal-flow-map-proof">
+              <span>
+                <strong>{publicPortalFlowMap.recovery_route}</strong>
+                <small>Recovery route</small>
+              </span>
+              <button className="secondary-action" onClick={() => document.querySelector(".public-auth-card")?.scrollIntoView({ behavior: "smooth", block: "center" })} type="button">
+                Continue
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-portal-flow-map-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(publicPortalFlowMap, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export map
+              </button>
             </div>
           </div>
           <div className="public-portal-route-board" aria-label="Public portal route board">

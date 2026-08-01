@@ -2172,6 +2172,138 @@ button {
   background: rgba(95, 240, 201, 0.12);
 }
 
+.public-portal-flow-map {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 174, 246, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.066), transparent 56%),
+    linear-gradient(180deg, rgba(134, 174, 246, 0.06), rgba(255, 255, 255, 0.018));
+}
+
+.public-portal-flow-map-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.48fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.public-portal-flow-map-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-portal-flow-map strong,
+.public-portal-flow-map small,
+.public-portal-flow-map span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-flow-map-header strong {
+  color: var(--text);
+  font-size: 19px;
+  line-height: 1.15;
+}
+
+.public-portal-flow-map-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.public-portal-flow-map-actions button {
+  min-width: 0;
+  min-height: 38px;
+  justify-content: center;
+  padding: 0 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 900;
+  white-space: normal;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-portal-flow-map-actions button.active {
+  border-color: rgba(95, 240, 201, 0.38);
+  color: #eafff9;
+  background: rgba(95, 240, 201, 0.12);
+}
+
+.public-portal-flow-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.public-portal-flow-map-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.public-portal-flow-map-grid span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-flow-map-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.18;
+}
+
+.public-portal-flow-map-grid small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.34;
+}
+
+.public-portal-flow-map-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(2, minmax(120px, 150px));
+  gap: 8px;
+  align-items: stretch;
+}
+
+.public-portal-flow-map-proof > span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.public-portal-flow-map-proof strong {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.24;
+}
+
+.public-portal-flow-map-proof small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.public-portal-flow-map-proof button {
+  min-width: 0;
+  justify-content: center;
+  white-space: normal;
+}
+
 .public-portal-route-board {
   display: grid;
   gap: 12px;
@@ -17651,6 +17783,10 @@ p {
 .auth-recovery-command-grid,
 .signed-in-recovery-control-grid,
 .signed-in-recovery-control-actions,
+.public-portal-flow-map-header,
+.public-portal-flow-map-actions,
+.public-portal-flow-map-grid,
+.public-portal-flow-map-proof,
 .public-portal-route-board-header,
 .public-portal-route-board-grid,
 .public-portal-route-board-proof,

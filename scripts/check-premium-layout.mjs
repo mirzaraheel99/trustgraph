@@ -85,6 +85,7 @@ assert(app.includes('aria-label="Portal start desk"'), "public auth must expose 
 assert(app.includes('aria-label="Portal front door"') && app.includes("portal_front_door"), "public website must expose one front door for Professional login, Corporate login, registration, pricing, database boundary, recovery, and server status.");
 assert(app.includes('aria-label="Public portal launchpad"'), "public website must expose a compact portal, pricing, and database launchpad before signup.");
 assert(app.includes('aria-label="Public portal database access contract"'), "public website must expose Professional, Corporate, pricing, and scoped database access before signup.");
+assert(app.includes('aria-label="Public portal flow map"') && app.includes("public_portal_flow_map"), "public auth must expose one clear map for Professional, Corporate, login, registration, pricing, database, landing, and recovery before dense forms.");
 assert(app.includes('aria-label="Public buyer decision board"') && app.includes("public_buyer_decision_board"), "public website must expose a buyer decision board for Professional, Corporate, Scale, pricing, and database boundaries.");
 assert(app.includes('aria-label="Public buyer launch path"'), "public website must expose a plain-language buyer launch path before signup.");
 assert(app.includes('aria-label="Public pricing access summary"') && app.includes("public_pricing_access_summary"), "public pricing section must expose Professional free, Corporate $149 pilot, first database write, scoped user access, and Stripe boundary before signup.");
@@ -146,6 +147,7 @@ assert(css.includes(".v1-proof-collection-command") && css.includes(".v1-proof-c
 assert(css.includes(".registration-intent-review") && css.includes(".registration-intent-review-grid"), "registration intent review must be styled and bounded.");
 assert(css.includes(".login-decision-path") && css.includes(".login-decision-path-grid"), "login decision path must be styled and bounded.");
 assert(css.includes(".public-portal-database-contract") && css.includes(".public-portal-database-contract-grid"), "public portal database access contract must be styled and bounded.");
+assert(css.includes(".public-portal-flow-map") && css.includes(".public-portal-flow-map-grid") && css.includes(".public-portal-flow-map-proof"), "public portal flow map must be styled and bounded.");
 assert(css.includes(".public-buyer-launch-path") && css.includes(".public-buyer-launch-grid"), "public buyer launch path must be styled and bounded.");
 assert(css.includes(".public-pricing-access-summary") && css.includes(".public-pricing-access-grid") && css.includes(".public-pricing-access-actions"), "public pricing access summary must be styled and bounded.");
 assert(css.includes(".registration-database-launch-order") && css.includes(".registration-database-launch-grid"), "registration database launch order must be styled and bounded.");
