@@ -131,6 +131,8 @@ The public login form now includes a hosted auth recovery board before email act
 
 The public login/register card now has a simplification layer that keeps the visible path focused on portal choice, route board, pricing, recovery, and the credential form. Older receipt panels remain in source for packet exports and CI markers, but they no longer crowd the buyer-facing signup flow.
 
+Corporate setup now uses the same simplification rule: the visible workspace starts with one launch cockpit, one setup command bar, and one route deck. Duplicate helper panels for operator status, onboarding/pricing, team/billing handoff, and the older setup guide remain in source for export evidence but no longer crowd the daily company-admin path.
+
 Signed-in Account also includes an account portal route acceptance checkpoint. It proves hosted session, profile context, active workspace, role route, corporate workspace availability, recovery route visibility, and preview-data rejection before users treat portal routing as accepted.
 
 Guided onboarding now includes an onboarding completion command that keeps hosted login, Professional Passport rows, Corporate workspace, pricing ledger, live database proof, persisted receipt, and export actions together before launch-gate review.

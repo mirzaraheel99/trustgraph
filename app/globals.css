@@ -19128,6 +19128,20 @@ p {
   border-radius: 8px;
 }
 
+/* Corporate setup simplification layer: keep one launch cockpit, one command bar, and one route deck visible. */
+#corporate-account-controls > .corporate-operator-strip,
+#corporate-account-controls > .corporate-onboarding-pricing-cockpit,
+#corporate-account-controls > .team-billing-handoff,
+#corporate-account-controls > .corporate-setup-guide {
+  display: none !important;
+}
+
+#corporate-account-controls > .corporate-launch-cockpit,
+#corporate-account-controls > .setup-command-bar,
+#corporate-account-controls > .setup-route-deck {
+  border-radius: 8px;
+}
+
 /* Premium workspace shell repair: keep the authenticated app calm, bounded, and readable. */
 .app {
   isolation: isolate;
