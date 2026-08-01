@@ -4365,6 +4365,73 @@ button {
   background: rgba(134, 174, 246, 0.14);
 }
 
+.public-signup-answer-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.34);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.12), rgba(15, 23, 42, 0.08) 58%, transparent),
+    rgba(2, 10, 14, 0.34);
+}
+
+.public-signup-answer-copy,
+.public-signup-answer-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.public-signup-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-signup-answer-grid span {
+  padding: 9px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-signup-answer-bar strong,
+.public-signup-answer-bar small,
+.public-signup-answer-bar span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-signup-answer-copy > strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.14;
+}
+
+.public-signup-answer-bar small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.34;
+}
+
+.public-signup-answer-grid small:first-child {
+  color: #83f4dc;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-signup-answer-grid strong {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.16;
+}
+
 .auth-operator-details {
   display: grid;
   gap: 10px;
@@ -20485,6 +20552,8 @@ p {
   .public-registration-pricing-gate-header,
   .public-registration-pricing-gate-grid,
   .public-registration-pricing-gate-footer,
+  .public-signup-answer-bar,
+  .public-signup-answer-grid,
   .directory-controls,
   .corporate-directory-filter-receipt,
   .corporate-directory-filter-grid,

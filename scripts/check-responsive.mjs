@@ -244,6 +244,8 @@ const requiredMobileStacks = [
   ".public-registration-pricing-gate-header",
   ".public-registration-pricing-gate-grid",
   ".public-registration-pricing-gate-footer",
+  ".public-signup-answer-bar",
+  ".public-signup-answer-grid",
   ".public-portal-flow-map-header",
   ".public-portal-flow-map-actions",
   ".public-portal-flow-map-grid",

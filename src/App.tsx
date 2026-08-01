@@ -22700,6 +22700,50 @@ function PublicSite({
       detail: serverSyncMonitor.status === "synced" ? "Release stamp matches." : "Run the VPS sync command after GitHub goes green."
     }
   ];
+  const publicSignupAnswerBar = {
+    mode: "public_signup_answer_bar",
+    selected_path: `${publicSignupDecisionDesk.selected_action} - ${publicSignupDecisionDesk.selected_portal}`,
+    price: publicSignupDecisionDesk.pricing,
+    first_database_write: publicSignupDecisionDesk.first_live_database_write,
+    landing_portal: publicAccessDesk.landing_portal,
+    submit_ready:
+      email && password && (portal !== "corporate" || mode !== "signup" || (organizationName && organizationDomain))
+        ? "ready"
+        : "needs_required_fields",
+    server_status: serverSyncMonitor.status,
+    corporate_database_boundary:
+      portal === "corporate"
+        ? "request_professional_approval_then_view_scoped_rows_only"
+        : "passport_owner_controls_scoped_sharing",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_signup_answer_bar_keeps_selected_path_price_first_database_write_landing_submit_readiness_server_status_and_corporate_no_open_database_visible_at_credentials"
+  };
+  const publicSignupAnswerBarRows = [
+    {
+      label: "Selected",
+      value: publicSignupAnswerBar.selected_path,
+      detail: publicSignupDecisionDesk.primary_cta
+    },
+    {
+      label: "Price",
+      value: publicSignupAnswerBar.price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First row",
+      value: publicSignupAnswerBar.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "Submit",
+      value: publicSignupAnswerBar.submit_ready === "ready" ? "Ready" : "Needs fields",
+      detail:
+        portal === "corporate" && mode === "signup"
+          ? "Email, password, organization, and domain."
+          : "Email and password."
+    }
+  ];
   const authRecoveryDecisionPath = [
     {
       label: "New account verification",
@@ -26175,6 +26219,29 @@ function PublicSite({
                 Register
               </button>
             </div>
+          </div>
+          <div className="public-signup-answer-bar" aria-label="Public signup answer bar">
+            <div className="public-signup-answer-copy">
+              <span className={`status-chip ${publicSignupAnswerBar.submit_ready === "ready" ? "success" : "warning"}`}>
+                {publicSignupAnswerBar.submit_ready === "ready" ? "Ready to submit" : "Complete fields"}
+              </span>
+              <strong>{publicSignupAnswerBar.selected_path}</strong>
+              <small>{publicSignupAnswerBar.accepted_when}</small>
+            </div>
+            <div className="public-signup-answer-grid">
+              {publicSignupAnswerBarRows.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <small>
+              {portal === "corporate"
+                ? "Corporate access starts with an organization workspace, then waits for professional-approved scoped rows. No open user database."
+                : "Professional access starts with your private Passport. You decide which rows are shared."}
+            </small>
           </div>
           <input id="public-auth-email" onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
           <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />

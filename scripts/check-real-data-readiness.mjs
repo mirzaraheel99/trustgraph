@@ -184,6 +184,12 @@ const appRequirements = [
     "public_signup_decision_desk_keeps_portal_mode_price_first_database_write_required_fields_recovery_and_submit_action_visible_directly_above_form_fields",
     "public signup decision desk live-row form acceptance rule"
   ],
+  ["Public signup answer bar", "public signup answer bar label"],
+  ["public_signup_answer_bar", "public signup answer bar packet mode"],
+  [
+    "public_signup_answer_bar_keeps_selected_path_price_first_database_write_landing_submit_readiness_server_status_and_corporate_no_open_database_visible_at_credentials",
+    "public signup answer bar live-row credential acceptance rule"
+  ],
   ["Public registration pricing gate", "public registration pricing gate label"],
   ["public_registration_pricing_gate", "public registration pricing gate packet mode"],
   [

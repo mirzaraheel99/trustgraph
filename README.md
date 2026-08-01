@@ -127,6 +127,8 @@ The public login and registration page now keeps proof receipts out of the main 
 
 The public login/register card now includes a signup decision desk directly above the email and password fields. It keeps selected portal, login/register mode, price, first database write, required fields, recovery actions, and no-preview-data proof visible at the moment the user submits.
 
+The public login/register card now also has a signup answer bar at the credential fields. It summarizes selected path, price, first database write, landing portal, submit readiness, server-save status, and the Corporate no-open-user-database rule right before the user types email and password.
+
 The public login/register card also includes a registration pricing gate before credentials. It shows selected portal, register/login mode, pilot price, pricing plan id, first live database write, `registration_intents`, Stripe checkout boundary, server-save status, and live-row-only acceptance in one compact card.
 
 The signed-in working database area now includes a live row activation handoff. It groups hosted login, live pilot row creation, browser reload, seed reconciliation, Corporate Verify review, and working-data export into one action path before real database acceptance.
