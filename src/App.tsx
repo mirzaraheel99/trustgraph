@@ -6769,6 +6769,61 @@ function CorporateDirectoryPanel({
       target: "corporate-access-review-queue"
     }
   ];
+  const corporateAccessCommandCenter = {
+    mode: "corporate_access_command_center",
+    status: corporateAccessNextAction.ready ? "ready_to_review_scoped_rows" : "needs_setup_or_access",
+    headline: corporateAccessNextAction.ready ? "Approved user rows are ready" : "Unlock Corporate Verify access",
+    next_action: corporateAccessNextAction.action,
+    active_source: databaseModeLabel,
+    corporate_rbac_active: isLiveCorporateDatabase,
+    requests: requests.length,
+    approved_grants: approvedAccessCount,
+    visible_user_rows: filteredRows.length,
+    shared_records: sharedRecords.length,
+    review_attestations: reviews.length,
+    open_gaps: openGapRequestCount,
+    no_open_user_database: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_access_command_center_keeps_login_rbac_request_approval_visible_rows_review_export_and_no_open_user_database_before_directory_controls"
+  };
+  const corporateAccessCommandCards = [
+    {
+      label: "Access",
+      value: isLiveCorporateDatabase ? "RBAC active" : "Sign in first",
+      detail: isLiveCorporateDatabase ? databaseModeDetail : "Use a corporate reviewer or admin role before requesting user rows.",
+      ready: isLiveCorporateDatabase,
+      target: "account"
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "New request",
+      detail: "Request one professional by email; broad user browsing is blocked.",
+      ready: requests.length > 0,
+      target: "request"
+    },
+    {
+      label: "Rows",
+      value: filteredRows.length ? `${filteredRows.length}` : "Waiting",
+      detail: filteredRows.length ? "Review only approved, consent-scoped user rows." : "Rows appear after professional approval.",
+      ready: filteredRows.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Review",
+      value: reviews.length ? `${reviews.length}` : "Record proof",
+      detail: "Save a review attestation before export handoff.",
+      ready: reviews.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Export",
+      value: "Metadata only",
+      detail: "Export scoped proof; raw private files stay excluded.",
+      ready: corporateAccessNextAction.ready,
+      target: "export"
+    }
+  ];
 
   return (
     <section className="corporate-directory-panel">
@@ -6776,6 +6831,71 @@ function CorporateDirectoryPanel({
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
         <span className="status-chip neutral">{filteredRows.length + sharedRecords.length} visible</span>
+      </div>
+      <div className={`corporate-access-command-center ${corporateAccessNextAction.ready ? "ready" : "needed"}`} aria-label="Corporate access command center">
+        <div className="corporate-access-command-header">
+          <div>
+            <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Corporate access</span>
+            <strong>{corporateAccessCommandCenter.headline}</strong>
+            <small>
+              {corporateAccessNextAction.detail} Corporate Verify never opens the whole user database; reviewers work from requested, approved, consent-scoped rows only.
+            </small>
+          </div>
+          <button className="primary-action" onClick={() => runCorporateReviewerTask()} type="button">
+            {corporateAccessCommandCenter.next_action}
+          </button>
+        </div>
+        <div className="corporate-access-command-grid">
+          {corporateAccessCommandCards.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => {
+                if (item.target === "export") {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                runCorporateReviewerTask(item.target);
+              }}
+              type="button"
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-access-command-proof">
+          <span>
+            <small>Source</small>
+            <strong>{corporateAccessCommandCenter.active_source}</strong>
+          </span>
+          <span>
+            <small>Rows</small>
+            <strong>{corporateAccessCommandCenter.visible_user_rows}</strong>
+          </span>
+          <span>
+            <small>Boundary</small>
+            <strong>{corporateAccessCommandCenter.no_open_user_database ? "No open database" : "Open database"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateAccessCommandCenter.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-access-command-center-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateAccessCommandCenter, cards: corporateAccessCommandCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export command
+          </button>
+        </div>
       </div>
       <div className="corporate-database-primary-desk" aria-label="Corporate database primary desk">
         <div className="corporate-database-primary-header">

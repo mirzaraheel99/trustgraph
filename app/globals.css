@@ -21180,6 +21180,105 @@ p {
 }
 
 /* Corporate Verify primary database desk */
+.corporate-access-command-center {
+  display: grid;
+  gap: 14px;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid rgba(96, 245, 208, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(39, 227, 181, 0.14), rgba(119, 161, 255, 0.1)),
+    rgba(9, 18, 22, 0.96);
+  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+}
+
+.corporate-access-command-center.needed {
+  border-color: rgba(255, 210, 102, 0.28);
+}
+
+.corporate-access-command-header,
+.corporate-access-command-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, auto);
+  gap: 14px;
+  align-items: start;
+}
+
+.corporate-access-command-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-access-command-header strong {
+  color: var(--text-strong);
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+  line-height: 1.02;
+}
+
+.corporate-access-command-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.corporate-access-command-grid button {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  min-height: 122px;
+  padding: 14px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.corporate-access-command-grid button.ready {
+  border-color: rgba(96, 245, 208, 0.42);
+  background: rgba(39, 227, 181, 0.1);
+}
+
+.corporate-access-command-grid button.next {
+  border-color: rgba(255, 210, 102, 0.48);
+  background: rgba(255, 210, 102, 0.08);
+}
+
+.corporate-access-command-grid span {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-access-command-header small,
+.corporate-access-command-grid small,
+.corporate-access-command-grid strong,
+.corporate-access-command-proof small,
+.corporate-access-command-proof strong {
+  overflow-wrap: anywhere;
+}
+
+.corporate-access-command-grid strong,
+.corporate-access-command-proof strong {
+  color: var(--text-strong);
+}
+
+.corporate-access-command-proof {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.corporate-access-command-proof span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .corporate-database-primary-desk {
   display: grid;
   gap: 16px;
@@ -21387,6 +21486,8 @@ p {
 }
 
 @media (max-width: 1120px) {
+  .corporate-access-command-grid,
+  .corporate-access-command-proof,
   .corporate-database-primary-grid,
   .corporate-database-primary-proof,
   .corporate-review-queue-runway-grid,
@@ -21396,6 +21497,9 @@ p {
 }
 
 @media (max-width: 680px) {
+  .corporate-access-command-header,
+  .corporate-access-command-grid,
+  .corporate-access-command-proof,
   .corporate-database-primary-header,
   .corporate-database-primary-grid,
   .corporate-database-primary-proof,
@@ -21405,6 +21509,7 @@ p {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .corporate-access-command-grid button,
   .corporate-database-primary-grid button,
   .corporate-review-queue-runway-grid button {
     min-height: 0;
