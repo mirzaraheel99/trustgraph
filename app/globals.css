@@ -26488,6 +26488,112 @@ body {
   white-space: normal;
 }
 
+.v1-remaining-work-answer {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(242, 190, 92, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(242, 190, 92, 0.1), rgba(95, 240, 201, 0.065)),
+    rgba(8, 20, 22, 0.82);
+}
+
+.v1-remaining-work-answer.code_owned_path_ready_human_gates_open {
+  border-color: rgba(95, 240, 201, 0.3);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.11), rgba(143, 178, 255, 0.06)),
+    rgba(8, 20, 22, 0.82);
+}
+
+.v1-remaining-work-header,
+.v1-remaining-work-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.3fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.v1-remaining-work-header > div:first-child,
+.v1-remaining-work-actions span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.v1-remaining-work-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 164px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.v1-remaining-work-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.v1-remaining-work-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.075);
+}
+
+.v1-remaining-work-grid article.needed {
+  border-color: rgba(242, 190, 92, 0.24);
+  background: rgba(242, 190, 92, 0.06);
+}
+
+.v1-remaining-work-answer strong,
+.v1-remaining-work-answer small,
+.v1-remaining-work-answer span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.v1-remaining-work-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.9vw, 26px);
+  line-height: 1.1;
+}
+
+.v1-remaining-work-grid > article > span,
+.v1-remaining-work-actions small {
+  color: #9fead5;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.v1-remaining-work-grid strong,
+.v1-remaining-work-actions strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.16;
+}
+
+.v1-remaining-work-answer small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.v1-remaining-work-actions button,
+.v1-remaining-work-header button {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  white-space: normal;
+}
+
 .v1-completion-command-center {
   display: grid;
   gap: 12px;

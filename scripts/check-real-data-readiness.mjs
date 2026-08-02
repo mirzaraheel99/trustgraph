@@ -304,6 +304,12 @@ const appRequirements = [
     "v1_pilot_route_run_receipt_requires_hosted_auth_professional_rows_corporate_workspace_pricing_ledger_scoped_database_admin_exports_vps_freshness_and_no_preview_data",
     "persisted V1 pilot route run receipt acceptance rule"
   ],
+  ["V1 remaining work answer", "V1 remaining work answer label"],
+  ["v1_remaining_work_answer", "V1 remaining work answer packet mode"],
+  [
+    "v1_remaining_work_answer_keeps_current_goal_status_live_rows_completion_receipt_vps_freshness_human_gates_next_action_and_preview_rejection_visible_before_v1_claim",
+    "V1 remaining work answer acceptance rule"
+  ],
   ["Public hosted build source contract", "public hosted build source label"],
   ["public_hosted_build_source_contract", "public hosted build source packet mode"],
   [

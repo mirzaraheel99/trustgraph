@@ -31851,6 +31851,61 @@ function App() {
       "v1_human_gate_separation_requires_code_live_rows_persisted_receipts_vps_freshness_pilot_owners_stripe_security_storage_and_legal_signoff_to_be_separated_before_completion",
     rows: v1HumanGateSeparationRows
   };
+  const v1RemainingWorkAnswer = {
+    mode: "v1_remaining_work_answer",
+    status:
+      livePilotRowProof.accepted && latestRealDatabaseCompletionReceipt && serverSyncMonitor.status === "synced"
+        ? "code_owned_path_ready_human_gates_open"
+        : "work_remaining",
+    code_owned_ready:
+      livePilotRowProof.accepted && Boolean(latestRealDatabaseCompletionReceipt) && serverSyncMonitor.status === "synced",
+    live_row_groups: `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups}`,
+    missing_live_groups: livePilotRowProof.missingRequiredGroups,
+    persisted_completion_receipts: realDatabaseCompletionReceipts.length,
+    vps_save_status: serverSyncMonitor.status,
+    next_code_action:
+      !authSession
+        ? "Login from the hosted app"
+        : !livePilotRowProof.accepted
+          ? "Run live seed or create missing Supabase rows, then reload"
+          : !latestRealDatabaseCompletionReceipt
+            ? "Record real database completion receipt"
+            : serverSyncMonitor.status !== "synced"
+              ? "Add VPS deploy secrets or manually save latest GitHub build to server"
+              : "Collect human launch signoffs",
+    human_gates_remaining: v1HumanGateSeparation.human_gate_count,
+    preview_data_accepted: false,
+    accepted_when:
+      "v1_remaining_work_answer_keeps_current_goal_status_live_rows_completion_receipt_vps_freshness_human_gates_next_action_and_preview_rejection_visible_before_v1_claim"
+  };
+  const v1RemainingWorkCards = [
+    {
+      label: "Live database rows",
+      value: v1RemainingWorkAnswer.live_row_groups,
+      detail: livePilotRowProof.missingRequiredGroups.length ? livePilotRowProof.missingRequiredGroups.join(", ") : "All required signed-in Supabase groups are loaded.",
+      ready: livePilotRowProof.accepted
+    },
+    {
+      label: "Completion receipt",
+      value: latestRealDatabaseCompletionReceipt ? "Recorded" : "Needed",
+      detail: latestRealDatabaseCompletionReceipt
+        ? `${latestRealDatabaseCompletionReceipt.completed_steps}/${latestRealDatabaseCompletionReceipt.total_steps} groups persisted.`
+        : "Record after live rows load and the working-data packet is ready.",
+      ready: Boolean(latestRealDatabaseCompletionReceipt)
+    },
+    {
+      label: "VPS freshness",
+      value: serverSyncMonitor.status === "synced" ? "Synced" : "Secrets or manual save needed",
+      detail: "The server URL counts only when trustgraph-release.json proves the latest GitHub commit.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "Human gates",
+      value: `${v1RemainingWorkAnswer.human_gates_remaining} open`,
+      detail: "Pilot owners, Stripe/billing, security, storage, and legal signoff remain separate from code completion.",
+      ready: v1RemainingWorkAnswer.human_gates_remaining === 0
+    }
+  ];
   const v1CompletionCommandCards = [
     {
       label: "Registration",
@@ -36614,6 +36669,65 @@ function App() {
                   </button>
                 </article>
               )}
+            </div>
+          </div>
+          <div className={`v1-remaining-work-answer ${v1RemainingWorkAnswer.status}`} aria-label="V1 remaining work answer">
+            <div className="v1-remaining-work-header">
+              <div>
+                <span className={`status-chip ${v1RemainingWorkAnswer.code_owned_ready ? "success" : "warning"}`}>What is left</span>
+                <strong>{v1RemainingWorkAnswer.next_code_action}</strong>
+                <small>{v1RemainingWorkAnswer.accepted_when}</small>
+              </div>
+              <button
+                className="primary-action"
+                onClick={() => {
+                  if (!authSession) {
+                    openAuthControls();
+                    return;
+                  }
+                  if (!livePilotRowProof.accepted) {
+                    document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (!latestRealDatabaseCompletionReceipt) {
+                    document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  setSetupView("readiness");
+                  document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                type="button"
+              >
+                Open next step
+              </button>
+            </div>
+            <div className="v1-remaining-work-grid">
+              {v1RemainingWorkCards.map((card) => (
+                <article className={card.ready ? "ready" : "needed"} key={card.label}>
+                  <span>{card.label}</span>
+                  <strong>{card.value}</strong>
+                  <small>{card.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="v1-remaining-work-actions">
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-v1-remaining-work-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...v1RemainingWorkAnswer, cards: v1RemainingWorkCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export remaining work
+              </button>
+              <span>
+                <strong>{v1RemainingWorkAnswer.preview_data_accepted ? "Preview accepted" : "Preview rejected"}</strong>
+                <small>Completion requires hosted login, live Supabase rows, completion receipt, VPS freshness, and human-gate signoff.</small>
+              </span>
             </div>
           </div>
           <div className="v1-completion-command-center" aria-label="V1 completion command center">
