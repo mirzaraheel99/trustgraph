@@ -23,7 +23,7 @@ drop policy if exists "registration completion owners read" on public.registrati
 create policy "registration completion owners read"
 on public.registration_completion_receipts
 for select
-using (profile_id = auth.uid());
+using (profile_id = public.current_profile_id());
 
 drop policy if exists "registration completion org members read" on public.registration_completion_receipts;
 create policy "registration completion org members read"
@@ -31,21 +31,35 @@ on public.registration_completion_receipts
 for select
 using (
   organization_id is not null
-  and public.has_active_membership(organization_id, auth.uid())
+  and exists (
+    select 1
+    from public.organization_memberships membership
+    where membership.organization_id = registration_completion_receipts.organization_id
+      and membership.profile_id = public.current_profile_id()
+      and membership.status = 'active'
+  )
 );
 
 drop policy if exists "registration completion operators read" on public.registration_completion_receipts;
 create policy "registration completion operators read"
 on public.registration_completion_receipts
 for select
-using (public.has_operator_role(auth.uid()));
+using (
+  exists (
+    select 1
+    from public.organization_memberships membership
+    where membership.profile_id = public.current_profile_id()
+      and membership.status = 'active'
+      and membership.role in ('system_admin', 'auditor')
+  )
+);
 
 drop policy if exists "registration completion owners insert" on public.registration_completion_receipts;
 create policy "registration completion owners insert"
 on public.registration_completion_receipts
 for insert
 with check (
-  profile_id = auth.uid()
+  profile_id = public.current_profile_id()
   and preview_data_accepted = false
   and localhost_redirect_detected = false
 );
@@ -64,7 +78,7 @@ security definer
 set search_path = public
 as $$
 declare
-  current_id uuid := auth.uid();
+  current_id uuid := public.current_profile_id();
   intent_row public.registration_intents;
   receipt_row public.registration_completion_receipts;
   normalized_redirect text := lower(coalesce(input_redirect_url, ''));
@@ -98,7 +112,13 @@ begin
     raise exception 'Registration intent not found for current profile';
   end if;
 
-  if input_organization_id is not null and not public.has_active_membership(input_organization_id, current_id) then
+  if input_organization_id is not null and not exists (
+    select 1
+    from public.organization_memberships membership
+    where membership.organization_id = input_organization_id
+      and membership.profile_id = current_id
+      and membership.status = 'active'
+  ) then
     raise exception 'Active organization membership required for registration completion receipt';
   end if;
 
