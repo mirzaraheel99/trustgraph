@@ -13,6 +13,7 @@ const preflight = fs.readFileSync("tools/preflight-vps.sh", "utf8");
 const updateVps = fs.readFileSync("tools/update-vps-from-github.sh", "utf8");
 const envValidator = fs.readFileSync("tools/validate-server-env.sh", "utf8");
 const freshnessCheck = fs.readFileSync("scripts/check-vps-freshness.mjs", "utf8");
+const stampRelease = fs.readFileSync("scripts/stamp-release.mjs", "utf8");
 
 const requiredSnippets = [
   {
@@ -78,6 +79,48 @@ const requiredSnippets = [
 ];
 
 const runtimeSnippets = [
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "Stamp release asset",
+    label: "GitHub Pages build stamps the release asset with the current commit"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "node scripts/stamp-release.mjs out/trustgraph-release.json",
+    label: "GitHub Pages build stamps the exported release stamp"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "TRUSTGRAPH_RELEASE_COMMIT: ${{ github.sha }}",
+    label: "GitHub Pages release stamp uses the deployed GitHub SHA"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "stamp.commit !== process.env.GITHUB_SHA",
+    label: "GitHub Pages release stamp verification rejects stale commits"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "stamp.commit === 'build-time-placeholder'",
+    label: "GitHub Pages release stamp verification rejects placeholder commits"
+  },
+  {
+    source: stampRelease,
+    path: "scripts/stamp-release.mjs",
+    snippet: "TrustGraph release stamp needs a real commit SHA before deployment.",
+    label: "release stamp script refuses placeholder deploy commits"
+  },
+  {
+    source: stampRelease,
+    path: "scripts/stamp-release.mjs",
+    snippet: "commit_short: commit.slice(0, 7)",
+    label: "release stamp script writes the short deployed commit"
+  },
   {
     source: pagesWorkflow,
     path: pagesWorkflowPath,
