@@ -35166,6 +35166,34 @@ function App() {
     steps: v1OperatingMap,
     accepted_when: "public_website_professional_registration_corporate_registration_pricing_ledger_corporate_database_and_server_save_path_are_clear_and_exportable"
   };
+  const v1RemainingWorkBoardRows = v1OperatingMap.map((step) => ({
+    label: step.label,
+    status: step.ready ? "done" : "next",
+    value: step.status,
+    detail: step.detail,
+    action: step.action,
+    target: step.target
+  }));
+  const v1RemainingWorkBoard = {
+    mode: "v1_remaining_work_board",
+    headline: nextOperatingStep.ready ? "V1 route is mapped; verify live proof before closeout" : `Next required step: ${nextOperatingStep.label}`,
+    current_blocker:
+      serverSyncMonitor.status !== "synced"
+        ? "VPS release stamp must return current commit JSON before server testing is accepted."
+        : nextOperatingStep.ready
+          ? "Run the final live database and corporate access acceptance proof."
+          : nextOperatingStep.detail,
+    ready_steps: v1OperatingMap.filter((step) => step.ready).length,
+    total_steps: v1OperatingMap.length,
+    professional_registration: authSession ? "hosted_session_active" : "hosted_login_or_registration_required",
+    corporate_registration: hasLiveCorporateContext ? "corporate_workspace_active" : "corporate_workspace_required",
+    pricing_status: organizationSubscriptions.length ? "live_ledger_rows_loaded" : "pilot_ledger_required",
+    corporate_database_status: sharedVerifyRecords.length ? "scoped_rows_visible" : "approved_access_grants_required",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "v1_remaining_work_board_keeps_public_site_user_registration_corporate_registration_pricing_scoped_database_exports_vps_freshness_and_no_preview_data_visible_before_dense_panels"
+  };
   const v1CommandCockpit = {
     mode: "v1_command_cockpit",
     headline: authSession ? "TrustGraph operating console" : "Start with hosted registration or login",
@@ -42497,6 +42525,82 @@ function App() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className={`v1-remaining-work-board ${v1RemainingWorkBoard.ready_steps === v1RemainingWorkBoard.total_steps ? "ready" : "needed"}`} aria-label="V1 remaining work board">
+          <div className="v1-remaining-work-header">
+            <div>
+              <span className={`status-chip ${v1RemainingWorkBoard.ready_steps === v1RemainingWorkBoard.total_steps ? "success" : "warning"}`}>V1 remaining work</span>
+              <strong>{v1RemainingWorkBoard.headline}</strong>
+              <small>{v1RemainingWorkBoard.current_blocker}</small>
+            </div>
+            <button
+              className={serverSyncMonitor.status === "synced" ? "secondary-action" : "primary-action"}
+              onClick={() => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")}
+              type="button"
+            >
+              {serverSyncMonitor.status === "synced" ? "Export server proof" : "VPS sync packet"}
+            </button>
+          </div>
+          <div className="v1-remaining-work-grid">
+            {v1RemainingWorkBoardRows.map((row) => (
+              <article className={row.status === "done" ? "ready" : "next"} key={row.label}>
+                <span>{row.status}</span>
+                <strong>{row.label}</strong>
+                <small>{row.value}</small>
+                <small>{row.detail}</small>
+                <button
+                  className={row.status === "done" ? "secondary-action" : "primary-action"}
+                  onClick={() => {
+                    if (row.target === "public") {
+                      setShowPublicSite(true);
+                      return;
+                    }
+                    if (row.target === "account") {
+                      openAuthControls();
+                      return;
+                    }
+                    if (row.target === "corporate_setup") {
+                      openCorporateControls();
+                      return;
+                    }
+                    if (row.target === "billing") {
+                      setSetupView("billing");
+                      document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    if (row.target === "verify") {
+                      openWorkspaceOrSetup("verify");
+                      return;
+                    }
+                    downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                  }}
+                  type="button"
+                >
+                  {row.action}
+                </button>
+              </article>
+            ))}
+          </div>
+          <div className="v1-remaining-work-proof">
+            <span>
+              <small>Progress</small>
+              <strong>{v1RemainingWorkBoard.ready_steps}/{v1RemainingWorkBoard.total_steps}</strong>
+            </span>
+            <span>
+              <small>Corporate database</small>
+              <strong>{v1RemainingWorkBoard.corporate_database_status.replaceAll("_", " ")}</strong>
+            </span>
+            <span>
+              <small>Server</small>
+              <strong>{v1RemainingWorkBoard.server_status.replaceAll("_", " ")}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{v1RemainingWorkBoard.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+          </div>
+          <small className="v1-remaining-work-boundary">{v1RemainingWorkBoard.accepted_when}</small>
         </section>
 
         {!workspaceAllowed ? (

@@ -51843,6 +51843,76 @@ body,
   table-layout: fixed !important;
 }
 
+.v1-remaining-work-board {
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(255, 205, 118, 0.24) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 118, 0.08), rgba(72, 208, 174, 0.07) 54%, rgba(134, 174, 246, 0.055)),
+    rgba(7, 15, 18, 0.94) !important;
+}
+
+.v1-remaining-work-board.ready {
+  border-color: rgba(113, 242, 203, 0.24) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .v1-remaining-work-board {
+  order: -735 !important;
+}
+
+.v1-remaining-work-header,
+.v1-remaining-work-proof {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.v1-remaining-work-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.v1-remaining-work-grid article,
+.v1-remaining-work-proof span,
+.v1-remaining-work-boundary {
+  display: grid !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.v1-remaining-work-grid article.ready {
+  border-color: rgba(113, 242, 203, 0.22) !important;
+}
+
+.v1-remaining-work-grid article.next {
+  border-color: rgba(255, 205, 118, 0.24) !important;
+}
+
+.v1-remaining-work-board :is(button, strong, small, span, p, em, b, code, label, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.v1-remaining-work-board button {
+  width: 100% !important;
+  min-width: 0 !important;
+  pointer-events: auto !important;
+  white-space: normal !important;
+}
+
 @media (max-width: 760px) {
   .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) {
     width: min(100%, calc(100vw - 10px)) !important;
@@ -51852,6 +51922,11 @@ body,
 
   .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar h1 {
     font-size: clamp(1.72rem, 9vw, 2.55rem) !important;
+  }
+
+  .v1-remaining-work-header,
+  .v1-remaining-work-proof {
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 }
 
