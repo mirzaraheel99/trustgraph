@@ -669,6 +669,31 @@ function RecordDetail({
       mode: "packet" as const
     }
   ];
+  const evidencePreviewDownloadAnswer = {
+    mode: "evidence_preview_download_answer",
+    status: fileBackedEvidenceCount ? "signed_file_access_ready" : evidenceDocuments.length ? "metadata_ready_file_needed" : "evidence_needed",
+    headline: fileBackedEvidenceCount
+      ? "Evidence can be previewed or downloaded with short-lived signed links"
+      : evidenceDocuments.length
+        ? "Evidence metadata can be exported; attach a private file for preview/download"
+        : "Add evidence metadata before preview or download can be accepted",
+    metadata_export_allowed: filteredEvidenceDocuments.length > 0,
+    preview_allowed: Boolean(firstFileBackedEvidence),
+    download_allowed: Boolean(firstFileBackedEvidence),
+    preview_expiry_seconds: 300,
+    download_expiry_seconds: 120,
+    raw_private_files_exported: false,
+    corporate_boundary: "Corporate exports include metadata and audit proof only; raw private files require scoped signed access.",
+    next_action: fileBackedEvidenceCount ? "Preview file" : "Add evidence",
+    accepted_when:
+      "evidence_preview_download_answer_keeps_metadata_export_preview_download_signed_url_expiry_raw_file_exclusion_corporate_boundary_and_next_action_visible_before_dense_evidence_controls"
+  };
+  const evidencePreviewDownloadAnswerCards = [
+    { label: "Metadata export", value: filteredEvidenceDocuments.length ? `${filteredEvidenceDocuments.length}` : "Empty", detail: "CSV and JSON packets never include permanent raw file links.", ready: filteredEvidenceDocuments.length > 0 },
+    { label: "Preview", value: firstFileBackedEvidence ? "5 min signed URL" : "File needed", detail: "Private file preview is short-lived.", ready: Boolean(firstFileBackedEvidence) },
+    { label: "Download", value: firstFileBackedEvidence ? "2 min signed URL" : "File needed", detail: "Downloads are governed and auditable.", ready: Boolean(firstFileBackedEvidence) },
+    { label: "Corporate boundary", value: "Metadata first", detail: "Raw evidence is not part of open exports.", ready: true }
+  ];
   const evidenceAccessDeskPacketName = `trustgraph-evidence-access-desk-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`;
   const signedEvidenceAcceptanceSteps = [
     {
@@ -958,6 +983,38 @@ function RecordDetail({
         </div>
         <p>{record.evidence}</p>
         <small>{record.access}</small>
+        <div className={`evidence-preview-download-answer ${evidencePreviewDownloadAnswer.status}`} aria-label="Evidence preview download answer">
+          <div className="evidence-preview-download-answer-header">
+            <div>
+              <span className={`status-chip ${firstFileBackedEvidence ? "success" : "warning"}`}>Evidence answer</span>
+              <strong>{evidencePreviewDownloadAnswer.headline}</strong>
+              <small>{evidencePreviewDownloadAnswer.corporate_boundary}</small>
+            </div>
+            <button
+              className={firstFileBackedEvidence ? "secondary-action" : "primary-action"}
+              onClick={() => {
+                if (firstFileBackedEvidence) {
+                  void openEvidence(firstFileBackedEvidence, "preview");
+                  return;
+                }
+                document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" });
+              }}
+              type="button"
+            >
+              {evidencePreviewDownloadAnswer.next_action}
+            </button>
+          </div>
+          <div className="evidence-preview-download-answer-grid">
+            {evidencePreviewDownloadAnswerCards.map((card) => (
+              <article className={card.ready ? "ready" : "needed"} key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+          <small>{evidencePreviewDownloadAnswer.accepted_when} | Raw private files exported: {evidencePreviewDownloadAnswer.raw_private_files_exported ? "yes" : "no"}</small>
+        </div>
         <div className="evidence-setup-command" aria-label="Evidence setup command">
           <div className="evidence-setup-command-copy">
             <span className={`status-chip ${signedEvidenceAcceptanceReady ? "success" : "warning"}`}>

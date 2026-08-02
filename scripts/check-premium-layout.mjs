@@ -302,6 +302,8 @@ assert(css.includes(".public-entry-sequence") && css.includes("order: -78;") && 
 assert(app.includes('aria-label="Hosted corporate retest checklist"'), "readiness must expose hosted corporate retest checklist.");
 assert(app.includes('aria-label="Evidence setup command"') && app.includes("evidence_setup_command"), "evidence preview/download must expose a first-use setup command before the evidence list.");
 assert(app.includes("evidence_setup_command_requires_metadata_private_file_signed_preview_or_download_manifest_export_and_raw_file_exclusion"), "evidence setup command must require metadata, private file, signed access, manifest export, and raw-file exclusion.");
+assert(app.includes('aria-label="Evidence preview download answer"') && app.includes("evidence_preview_download_answer"), "evidence preview/download must expose one answer before dense evidence controls.");
+assert(app.includes("evidence_preview_download_answer_keeps_metadata_export_preview_download_signed_url_expiry_raw_file_exclusion_corporate_boundary_and_next_action_visible_before_dense_evidence_controls"), "evidence preview/download answer must keep metadata export, signed expiry, raw-file exclusion, corporate boundary, and next action visible.");
 assert(app.includes('aria-label="Evidence access desk"') && app.includes("evidence_access_desk"), "evidence preview/download must expose one clear desk for preview, download, manifest, packet, and signed-link proof.");
 assert(app.includes('aria-label="Last signed evidence link"'), "evidence preview/download must expose the last signed-link proof state.");
 assert(app.includes('aria-label="Signed evidence access audit receipt"'), "evidence preview/download must expose signed access audit receipt state.");
@@ -660,6 +662,7 @@ assert(css.includes(".regulated-employment-boundary") && css.includes(".regulate
 assert(premiumRepair.includes(".hosted-callback-proof") && premiumRepair.includes(".hosted-callback-proof-grid"), "hosted callback proof must be styled and bounded.");
 assert(premiumRepair.includes(".hosted-corporate-retest") && premiumRepair.includes(".hosted-corporate-retest-grid"), "hosted corporate retest must be styled and bounded.");
 assert(css.includes(".evidence-setup-command") && css.includes(".evidence-setup-command-grid") && css.includes(".evidence-setup-command-actions"), "evidence setup command must be styled and bounded.");
+assert(css.includes(".evidence-preview-download-answer") && css.includes(".evidence-preview-download-answer-grid"), "evidence preview/download answer must be styled and bounded.");
 assert(css.includes(".evidence-access-desk") && css.includes(".evidence-access-desk-grid") && css.includes(".evidence-access-desk-proof"), "evidence access desk must be styled and bounded.");
 assert(app.includes('aria-label="Evidence action queue"') && app.includes("evidence_action_queue"), "Passport evidence must expose one action queue for metadata, signed preview, signed download, manifest export, and packet export before the evidence table.");
 assert(app.includes("evidence_action_queue_routes_add_metadata_preview_download_manifest_export_packet_export_and_requires_short_lived_signed_urls_raw_private_file_exclusion_and_no_preview_data"), "evidence action queue must require short-lived signed URLs, raw private file exclusion, and no preview data.");
