@@ -48858,3 +48858,171 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* V1 daily operator shell: keep one understandable route first and move proof boards out of the working path. */
+.workspace:has(.signed-in-portal-entry-desk) {
+  --tg-daily-shell-max: 1280px;
+  width: min(var(--tg-daily-shell-max), calc(100vw - 24px)) !important;
+  padding-inline: clamp(12px, 2.4vw, 28px) !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .topbar {
+  order: -130 !important;
+  align-items: start !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-portal-entry-desk {
+  order: -120 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .vps-saved-portal-command {
+  order: -118 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .portal-route-shell {
+  order: -116 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .real-data-mission-control {
+  order: -114 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .work-grid {
+  order: -112 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-landing-actions,
+.workspace:has(.signed-in-portal-entry-desk) > .dashboard-start-map,
+.workspace:has(.signed-in-portal-entry-desk) > .proof-export-hub,
+.workspace:has(.signed-in-portal-entry-desk) > .dashboard-front-door,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-welcome-path,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-daily-navigator,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-launch-matrix,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-daily-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-daily-operating-runway,
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-pilot-journey-rail,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-experience-compass,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-ux-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-portal-operating-center,
+.workspace:has(.signed-in-portal-entry-desk) > .premium-launch-console,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-home-command,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-choice-guide,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-command-deck,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-action-dock,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-usability-command,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-operating-map,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-completion-cockpit,
+.workspace:has(.signed-in-portal-entry-desk) > .live-database-acceptance-lanes,
+.workspace:has(.signed-in-portal-entry-desk) > .admin-audit-export-command,
+.workspace:has(.signed-in-portal-entry-desk) > .server-release-cockpit,
+.workspace:has(.signed-in-portal-entry-desk) > .server-sync-monitor,
+.workspace:has(.signed-in-portal-entry-desk) > .hosted-version-receipt,
+.workspace:has(.signed-in-portal-entry-desk) > .server-release-save-path,
+.workspace:has(.signed-in-portal-entry-desk) > .vps-freshness-checkpoint,
+.workspace:has(.signed-in-portal-entry-desk) > .vps-deploy-secrets-checklist,
+.workspace:has(.signed-in-portal-entry-desk) > .vps-save-handoff,
+.workspace:has(.signed-in-portal-entry-desk) > .current-build-server-gate,
+.workspace:has(.signed-in-portal-entry-desk) > .first-screen-goal-status-strip,
+.workspace:has(.signed-in-portal-entry-desk) > .live-data-loading-command {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  pointer-events: none !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .topbar h1 {
+  max-width: 18ch !important;
+  font-size: clamp(34px, 5vw, 64px) !important;
+  line-height: 0.98 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .topbar-actions,
+.workspace:has(.signed-in-portal-entry-desk) .session-command-actions,
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-tabs,
+.workspace:has(.signed-in-portal-entry-desk) .real-data-mission-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+  min-width: 0 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-grid,
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-tabs,
+.workspace:has(.signed-in-portal-entry-desk) .real-data-mission-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .hero {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .hero-card {
+  min-height: auto !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .hero-card h2 {
+  font-size: clamp(56px, 9vw, 88px) !important;
+  line-height: 0.9 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-route-strip,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-flow-strip {
+  display: none !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .work-grid,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid,
+.workspace:has(.signed-in-portal-entry-desk) .setup-panel-grid,
+.workspace:has(.signed-in-portal-entry-desk) .verify-panel,
+.workspace:has(.signed-in-portal-entry-desk) .corporate-directory-panel,
+.workspace:has(.signed-in-portal-entry-desk) .records-panel,
+.workspace:has(.signed-in-portal-entry-desk) .auth-panel {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) button,
+.workspace:has(.signed-in-portal-entry-desk) input,
+.workspace:has(.signed-in-portal-entry-desk) select,
+.workspace:has(.signed-in-portal-entry-desk) textarea {
+  max-width: 100% !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) table {
+  min-width: min(680px, 100%) !important;
+}
+
+@media (max-width: 760px) {
+  .workspace:has(.signed-in-portal-entry-desk) {
+    width: min(100%, calc(100vw - 12px)) !important;
+    padding-inline: 8px !important;
+  }
+
+  .workspace:has(.signed-in-portal-entry-desk) > .topbar,
+  .workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-header,
+  .workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-header,
+  .workspace:has(.signed-in-portal-entry-desk) .real-data-mission-header {
+    grid-template-columns: 1fr !important;
+  }
+
+  .workspace:has(.signed-in-portal-entry-desk) .topbar-actions,
+  .workspace:has(.signed-in-portal-entry-desk) .session-command-actions,
+  .workspace:has(.signed-in-portal-entry-desk) .real-data-mission-actions {
+    justify-content: stretch !important;
+  }
+
+  .workspace:has(.signed-in-portal-entry-desk) .topbar-actions > *,
+  .workspace:has(.signed-in-portal-entry-desk) .session-command-actions > *,
+  .workspace:has(.signed-in-portal-entry-desk) .real-data-mission-actions > * {
+    flex: 1 1 min(100%, 160px) !important;
+  }
+}

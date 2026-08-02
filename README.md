@@ -594,6 +594,8 @@ The public website premium front door now makes `TrustGraph Workforce Passport` 
 
 The simplified signed-in portal keeps the compact VPS saved-build command visible directly under the portal desk. Duplicate route and guidance panels stay hidden, but the operator can still see whether GitHub Pages is current, whether the VPS needs the manual `/opt/trustgraph` updater or SSH secrets, and whether `/trustgraph-release.json` returns commit JSON before testing the server URL.
 
+The signed-in workspace now has a V1 daily operator shell. The visible daily flow is entry desk, VPS freshness, route shell, real-data mission control, and the active workspace; older route strips, duplicated launch maps, release ledgers, and proof boards stay preserved for export/CI evidence but are clipped out of the working UI so account, Corporate Verify, Company Admin, pricing, database proof, and logout remain understandable and mobile-safe.
+
 ## Product Planning
 
 The `docs/` folder contains the planning documents used to shape this foundation. Root-level runbooks capture the live v1 operating checklist.
