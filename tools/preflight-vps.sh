@@ -70,6 +70,10 @@ if [[ "$http_port" == "80" || "$https_port" == "443" ]]; then
   fi
 fi
 
+if [[ "$http_port" == "4180" && "$http_bind" == "127.0.0.1" ]]; then
+  fail "TRUSTGRAPH_HTTP_BIND=127.0.0.1 is not reachable from the shared fixflow-nginx container; use TRUSTGRAPH_HTTP_BIND=172.17.0.1 for the TrustGraph subdomain proxy"
+fi
+
 [[ -n "$(read_env NEXT_PUBLIC_SUPABASE_URL)" ]] || warn "NEXT_PUBLIC_SUPABASE_URL is empty; auth will run in preview/local adapter mode"
 [[ -n "$(read_env NEXT_PUBLIC_SUPABASE_ANON_KEY)" ]] || warn "NEXT_PUBLIC_SUPABASE_ANON_KEY is empty; auth will run in preview/local adapter mode"
 

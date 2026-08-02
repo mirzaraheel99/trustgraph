@@ -5,7 +5,8 @@ TRUSTGRAPH_NGINX_SOURCE="${TRUSTGRAPH_NGINX_SOURCE:-tools/trustgraph-nginx.conf}
 TRUSTGRAPH_NGINX_TARGET="${TRUSTGRAPH_NGINX_TARGET:-/opt/fixflow-nginx/conf.d/trustgraph.conf}"
 FIXFLOW_NGINX_CONTAINER="${FIXFLOW_NGINX_CONTAINER:-fixflow-nginx}"
 TRUSTGRAPH_HOST="${TRUSTGRAPH_HOST:-trustgraph.5-75-224-110.sslip.io}"
-TRUSTGRAPH_LOCAL_RELEASE_URL="${TRUSTGRAPH_LOCAL_RELEASE_URL:-http://127.0.0.1:4180/trustgraph-release.json}"
+TRUSTGRAPH_EDGE_UPSTREAM="${TRUSTGRAPH_EDGE_UPSTREAM:-172.17.0.1:4180}"
+TRUSTGRAPH_LOCAL_RELEASE_URL="${TRUSTGRAPH_LOCAL_RELEASE_URL:-http://$TRUSTGRAPH_EDGE_UPSTREAM/trustgraph-release.json}"
 PROTECTED_VFIX_HOST="${PROTECTED_VFIX_HOST:-5-75-224-110.sslip.io}"
 PROTECTED_VFIX_PATH="${PROTECTED_VFIX_PATH:-/CRM-client-demo/login}"
 
@@ -26,10 +27,17 @@ grep -q "server_name $TRUSTGRAPH_HOST;" "$TRUSTGRAPH_NGINX_SOURCE" \
   || fail "nginx source does not target the TrustGraph subdomain"
 grep -q "location = /trustgraph-release.json" "$TRUSTGRAPH_NGINX_SOURCE" \
   || fail "nginx source must include the exact release JSON route"
-grep -q "proxy_pass http://127.0.0.1:4180/trustgraph-release.json;" "$TRUSTGRAPH_NGINX_SOURCE" \
-  || fail "nginx source must proxy release JSON to the TrustGraph local port"
+grep -q "proxy_pass http://$TRUSTGRAPH_EDGE_UPSTREAM/trustgraph-release.json;" "$TRUSTGRAPH_NGINX_SOURCE" \
+  || fail "nginx source must proxy release JSON to the TrustGraph bridge upstream"
 if grep -q "$PROTECTED_VFIX_HOST" "$TRUSTGRAPH_NGINX_SOURCE" || grep -q "CRM-client-demo" "$TRUSTGRAPH_NGINX_SOURCE"; then
   fail "nginx source must not include the protected VFIX host or CRM-client-demo route"
+fi
+
+if [[ -f .env.server ]]; then
+  grep -q '^TRUSTGRAPH_HTTP_BIND=172\.17\.0\.1$' .env.server \
+    || fail ".env.server must set TRUSTGRAPH_HTTP_BIND=172.17.0.1 so the shared nginx container can reach TrustGraph without using public ports"
+  grep -q '^TRUSTGRAPH_HTTP_PORT=4180$' .env.server \
+    || fail ".env.server must set TRUSTGRAPH_HTTP_PORT=4180 for the shared nginx TrustGraph upstream"
 fi
 
 curl --fail --location --silent --show-error "$TRUSTGRAPH_LOCAL_RELEASE_URL" >/tmp/trustgraph-local-release-check.json \
@@ -43,7 +51,7 @@ grep -q "premium_workspace_responsive_guard" /tmp/trustgraph-local-release-check
 install -D -m 0644 "$TRUSTGRAPH_NGINX_SOURCE" "$TRUSTGRAPH_NGINX_TARGET"
 docker exec "$FIXFLOW_NGINX_CONTAINER" sh -c "test -f /etc/nginx/conf.d/trustgraph.conf && grep -q 'server_name $TRUSTGRAPH_HOST;' /etc/nginx/conf.d/trustgraph.conf" \
   || fail "shared nginx container does not see the installed TrustGraph server block"
-docker exec "$FIXFLOW_NGINX_CONTAINER" sh -c "grep -q 'location = /trustgraph-release.json' /etc/nginx/conf.d/trustgraph.conf && grep -q 'proxy_pass http://127.0.0.1:4180/trustgraph-release.json;' /etc/nginx/conf.d/trustgraph.conf" \
+docker exec "$FIXFLOW_NGINX_CONTAINER" sh -c "grep -q 'location = /trustgraph-release.json' /etc/nginx/conf.d/trustgraph.conf && grep -q 'proxy_pass http://$TRUSTGRAPH_EDGE_UPSTREAM/trustgraph-release.json;' /etc/nginx/conf.d/trustgraph.conf" \
   || fail "shared nginx container does not see the exact TrustGraph release JSON proxy route"
 docker exec "$FIXFLOW_NGINX_CONTAINER" nginx -t
 docker exec "$FIXFLOW_NGINX_CONTAINER" nginx -s reload

@@ -132,10 +132,10 @@ TRUSTGRAPH_HTTPS_BIND=0.0.0.0
 TRUSTGRAPH_HTTPS_PORT=443
 ```
 
-For a shared server or existing reverse proxy, use unused internal ports instead:
+For this shared VPS with the existing `fixflow-nginx` container, bind the TrustGraph HTTP port on the Docker bridge gateway so nginx can reach it without taking VFIX public ports:
 
 ```text
-TRUSTGRAPH_HTTP_BIND=127.0.0.1
+TRUSTGRAPH_HTTP_BIND=172.17.0.1
 TRUSTGRAPH_HTTP_PORT=4180
 TRUSTGRAPH_HTTPS_BIND=127.0.0.1
 TRUSTGRAPH_HTTPS_PORT=4443
@@ -180,7 +180,8 @@ docker compose --env-file .env.server -f docker-compose.server.yml exec trustgra
 If running behind an existing reverse proxy, smoke-check the configured internal port from the server first:
 
 ```bash
-curl -I http://127.0.0.1:4180
+curl -I http://172.17.0.1:4180
+curl -i http://172.17.0.1:4180/trustgraph-release.json
 ```
 
 If `curl -I https://trustgraph.5-75-224-110.sslip.io` reports a certificate hostname mismatch, another HTTPS service is answering for the host. Keep VFIX running, set TrustGraph to internal ports in `.env.server`, and add a route for `trustgraph.5-75-224-110.sslip.io` in the existing reverse proxy.

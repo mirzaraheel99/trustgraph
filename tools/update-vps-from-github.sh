@@ -105,7 +105,7 @@ grep -qi '^content-type: application/json' "$release_headers" \
 if grep -qi '<!DOCTYPE html\|<html' /tmp/trustgraph-vps-release.json; then
   docker exec "$web_container" sh -c "wget -qO- http://127.0.0.1/trustgraph-release.json" >/tmp/trustgraph-local-release.json || true
   if grep -q "$commit_short" /tmp/trustgraph-local-release.json; then
-    fail "public release stamp served the app shell instead of trustgraph-release.json, but the local container route is correct; reload the shared nginx trustgraph host proxy to 127.0.0.1:4180 and keep VFIX separate"
+    fail "public release stamp served the app shell instead of trustgraph-release.json, but the local container route is correct; install the shared nginx trustgraph host proxy to 172.17.0.1:4180 and keep VFIX separate"
   fi
   fail "public release stamp served the app shell instead of trustgraph-release.json and the local container route was not proven; check Caddy /trustgraph-release.json before nginx proxy debugging"
 fi

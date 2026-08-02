@@ -410,7 +410,7 @@ const runtimeSnippets = [
   {
     source: updateVps,
     path: "tools/update-vps-from-github.sh",
-    snippet: "the local container route is correct; reload the shared nginx trustgraph host proxy to 127.0.0.1:4180 and keep VFIX separate",
+    snippet: "the local container route is correct; install the shared nginx trustgraph host proxy to 172.17.0.1:4180 and keep VFIX separate",
     label: "manual VPS update diagnoses public app-shell fallback as shared nginx proxy when local Caddy is correct"
   },
   {
@@ -428,8 +428,8 @@ const runtimeSnippets = [
   {
     source: nginxConfig,
     path: "tools/trustgraph-nginx.conf",
-    snippet: "proxy_pass http://127.0.0.1:4180/trustgraph-release.json;",
-    label: "shared nginx snippet proxies release stamp to the TrustGraph container"
+    snippet: "proxy_pass http://172.17.0.1:4180/trustgraph-release.json;",
+    label: "shared nginx snippet proxies release stamp to the TrustGraph bridge upstream"
   },
   {
     source: nginxInstaller,
@@ -458,8 +458,8 @@ const runtimeSnippets = [
   {
     source: nginxInstaller,
     path: "tools/install-trustgraph-nginx.sh",
-    snippet: "shared nginx container does not see the exact TrustGraph release JSON proxy route",
-    label: "nginx installer verifies the mounted nginx container has the exact release JSON route"
+    snippet: "TRUSTGRAPH_EDGE_UPSTREAM=\"${TRUSTGRAPH_EDGE_UPSTREAM:-172.17.0.1:4180}\"",
+    label: "nginx installer uses the Docker bridge upstream by default"
   },
   {
     source: nginxInstaller,
