@@ -43930,3 +43930,180 @@ body,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Signed-in portal entry desk: one daily operating surface before dense proof panels. */
+.signed-in-portal-entry-desk {
+  order: -105;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 238, 201, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 238, 201, 0.13), rgba(8, 15, 18, 0.97) 44%, rgba(255, 205, 117, 0.1)),
+    rgba(8, 15, 18, 0.97);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.34);
+}
+
+.signed-in-portal-entry-desk.needed {
+  border-color: rgba(255, 205, 117, 0.28);
+}
+
+.signed-in-portal-entry-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.signed-in-portal-entry-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.signed-in-portal-entry-header strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: clamp(1.18rem, 2.2vw, 1.6rem);
+  line-height: 1.12;
+}
+
+.signed-in-portal-entry-header small,
+.signed-in-portal-entry-grid small,
+.signed-in-portal-entry-proof small,
+.signed-in-portal-entry-boundary {
+  color: var(--tg-muted, #a7bab3);
+  line-height: 1.38;
+}
+
+.signed-in-portal-entry-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, auto));
+  gap: 10px;
+  min-width: 0;
+}
+
+.signed-in-portal-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.signed-in-portal-entry-grid button {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 7px;
+  min-width: 0;
+  min-height: 138px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 235, 229, 0.13);
+  border-radius: 8px;
+  color: inherit;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.044);
+}
+
+.signed-in-portal-entry-grid button.ready {
+  border-color: rgba(95, 238, 201, 0.3);
+  background: rgba(28, 104, 95, 0.2);
+}
+
+.signed-in-portal-entry-grid button.active {
+  border-color: rgba(95, 238, 201, 0.58);
+  box-shadow: inset 0 0 0 1px rgba(95, 238, 201, 0.24);
+}
+
+.signed-in-portal-entry-grid span {
+  color: rgba(95, 238, 201, 0.94);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.signed-in-portal-entry-grid strong,
+.signed-in-portal-entry-proof strong {
+  color: var(--tg-text, #f3fbf7);
+  line-height: 1.14;
+}
+
+.signed-in-portal-entry-grid em {
+  color: #d8c38a;
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.signed-in-portal-entry-proof {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(130px, auto);
+  gap: 10px;
+  min-width: 0;
+}
+
+.signed-in-portal-entry-proof span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 235, 229, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.signed-in-portal-entry-actions button,
+.signed-in-portal-entry-proof button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.signed-in-portal-entry-boundary {
+  min-width: 0;
+  padding: 9px 10px;
+  overflow-wrap: anywhere;
+  border: 1px solid rgba(95, 238, 201, 0.16);
+  border-radius: 8px;
+  background: rgba(95, 238, 201, 0.055);
+}
+
+.signed-in-portal-entry-header strong,
+.signed-in-portal-entry-header small,
+.signed-in-portal-entry-grid strong,
+.signed-in-portal-entry-grid small,
+.signed-in-portal-entry-grid span,
+.signed-in-portal-entry-grid em,
+.signed-in-portal-entry-proof strong,
+.signed-in-portal-entry-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .vps-saved-portal-command,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-ux-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .dashboard-front-door,
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-landing-actions {
+  display: none !important;
+}
+
+@media (max-width: 1180px) {
+  .signed-in-portal-entry-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .signed-in-portal-entry-header,
+  .signed-in-portal-entry-actions,
+  .signed-in-portal-entry-grid,
+  .signed-in-portal-entry-proof {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

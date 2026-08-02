@@ -32266,6 +32266,81 @@ function App() {
       kind: "export"
     }
   ];
+  const signedInPortalEntryDesk = {
+    generated_at: new Date().toISOString(),
+    mode: "signed_in_portal_entry_desk",
+    signed_in: Boolean(authSession),
+    account: authSession?.user.email ?? "hosted_login_required",
+    current_portal: workspace.label,
+    active_role: activeRole.label,
+    active_organization: activeOrganization.name,
+    logout_visible: Boolean(authSession),
+    recovery_visible: true,
+    database_status: authSession && accountContext ? "live_supabase_context" : "hosted_login_required",
+    server_status: serverSyncMonitor.status,
+    corporate_scope_boundary: "Corporate Verify can request a professional by email and review only approved consent-scoped rows.",
+    preview_data_accepted: false,
+    accepted_when:
+      "signed_in_portal_entry_desk_keeps_personal_corporate_verify_company_admin_pricing_account_recovery_logout_database_proof_server_status_and_no_open_user_database_visible_before_dense_panels"
+  };
+  const signedInPortalEntryDeskRows = [
+    {
+      label: "Personal",
+      value: "Professional Passport",
+      detail: livePassportRecords.length ? `${livePassportRecords.length} live records ready.` : "Create or review personal Passport rows.",
+      status: livePassportRecords.length ? "ready" : "next",
+      action: "Open Passport",
+      target: "passport" as const
+    },
+    {
+      label: "Corporate Verify",
+      value: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Request access",
+      detail: "Review only approved user rows; no open database browse.",
+      status: sharedVerifyRecords.length ? "ready" : "next",
+      action: hasLiveCorporateContext ? "Open Verify" : "Setup company",
+      target: hasLiveCorporateContext ? ("verify" as const) : ("corporate_setup" as const)
+    },
+    {
+      label: "Company Admin",
+      value: hasLiveCorporateContext ? activeOrganization.name : "Create workspace",
+      detail: "Organization profile, RBAC, reviewers, team invites, and launch readiness.",
+      status: hasLiveCorporateContext ? "ready" : "next",
+      action: "Open Admin",
+      target: "admin" as const
+    },
+    {
+      label: "Pricing",
+      value: "Free user / $149 corporate pilot",
+      detail: organizationSubscriptions.length ? `${organizationSubscriptions.length} subscription ledger rows.` : "Pilot pricing and Stripe boundary.",
+      status: "ready",
+      action: "Open Pricing",
+      target: "billing" as const
+    },
+    {
+      label: "Account",
+      value: authSession ? "Recovery and logout" : "Login required",
+      detail: "Session, password reset, verification-link repair, and sign out.",
+      status: authSession ? "ready" : "next",
+      action: authSession ? "Account tools" : "Login",
+      target: "account" as const
+    },
+    {
+      label: "Database proof",
+      value: authSession && accountContext ? "Live rows" : "Login first",
+      detail: "Real Supabase rows, export receipts, preview rejection, and repair path.",
+      status: authSession && accountContext ? "ready" : "next",
+      action: "Open Proof",
+      target: "proof" as const
+    },
+    {
+      label: "Server",
+      value: serverSyncMonitor.status.replaceAll("_", " "),
+      detail: "GitHub source, Pages smoke, VPS release JSON, and VFIX protection.",
+      status: serverSyncMonitor.status === "synced" ? "ready" : "next",
+      action: "Export Server",
+      target: "server_packet" as const
+    }
+  ];
   const dashboardFrontDoor = {
     generated_at: new Date().toISOString(),
     mode: "dashboard_front_door",
@@ -35708,6 +35783,103 @@ function App() {
             </button>
           </div>
         </header>
+
+        <section className={`signed-in-portal-entry-desk ${authSession ? "ready" : "needed"}`} aria-label="Signed-in portal entry desk">
+          <div className="signed-in-portal-entry-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Daily portal desk</span>
+              <strong>{authSession ? `Start as ${activeRole.label}` : "Login first, then choose user or corporate portal"}</strong>
+              <small>
+                Personal, Corporate Verify, Company Admin, pricing, account recovery/logout, live database proof, and server freshness stay visible before dense panels.
+              </small>
+            </div>
+            <div className="signed-in-portal-entry-actions">
+              <button className="primary-action" onClick={authSession ? () => openWorkspaceOrSetup("passport") : openAuthControls} type="button">
+                {authSession ? "Open Passport" : "Login or register"}
+              </button>
+              {authSession ? (
+                <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              ) : null}
+              <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+                Public site
+              </button>
+            </div>
+          </div>
+          <div className="signed-in-portal-entry-grid">
+            {signedInPortalEntryDeskRows.map((row) => (
+              <button
+                className={`${row.status} ${row.target === workspace.id ? "active" : ""}`}
+                key={row.label}
+                onClick={() => {
+                  if (row.target === "account") {
+                    openAuthControls();
+                    return;
+                  }
+                  if (row.target === "billing") {
+                    setSetupView("billing");
+                    document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (row.target === "corporate_setup") {
+                    openCorporateControls();
+                    return;
+                  }
+                  if (row.target === "proof") {
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (row.target === "server_packet") {
+                    downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                    return;
+                  }
+                  openWorkspaceOrSetup(row.target);
+                }}
+                type="button"
+              >
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+                <em>{row.action}</em>
+              </button>
+            ))}
+          </div>
+          <div className="signed-in-portal-entry-proof">
+            <span>
+              <small>Account</small>
+              <strong>{signedInPortalEntryDesk.account}</strong>
+            </span>
+            <span>
+              <small>Database</small>
+              <strong>{signedInPortalEntryDesk.database_status.replaceAll("_", " ")}</strong>
+            </span>
+            <span>
+              <small>Server</small>
+              <strong>{signedInPortalEntryDesk.server_status.replaceAll("_", " ")}</strong>
+            </span>
+            <span>
+              <small>Corporate boundary</small>
+              <strong>No open user browse</strong>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-signed-in-portal-entry-desk-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...signedInPortalEntryDesk, rows: signedInPortalEntryDeskRows }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export desk
+            </button>
+          </div>
+          <div className="signed-in-portal-entry-boundary">{signedInPortalEntryDesk.accepted_when}</div>
+        </section>
 
         <section className={`vps-saved-portal-command ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="VPS saved portal command">
           <div className="vps-saved-portal-command-header">
