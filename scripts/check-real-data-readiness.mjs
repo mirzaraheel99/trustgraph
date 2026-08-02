@@ -152,6 +152,12 @@ const appRequirements = [
     "public_auth_help_strip_keeps_email_ready_hosted_redirect_resend_verification_reset_password_localhost_repair_rate_limit_no_token_export_and_no_preview_data_visible_before_credentials",
     "public auth help strip acceptance rule"
   ],
+  ["Public auth rescue checklist", "public auth rescue checklist label"],
+  ["public_auth_rescue_checklist", "public auth rescue checklist packet mode"],
+  [
+    "public_auth_rescue_checklist_keeps_route_email_hosted_redirect_resend_reset_localhost_repair_rate_limit_landing_portal_scoped_database_boundary_and_no_preview_data_visible_before_credentials",
+    "public auth rescue checklist acceptance rule"
+  ],
   ["Signed evidence acceptance checkpoint", "signed evidence acceptance label"],
   ["signed_evidence_acceptance_checkpoint", "signed evidence acceptance packet mode"],
   [

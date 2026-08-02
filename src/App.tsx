@@ -25562,6 +25562,60 @@ function PublicSite({
       detail: "Password reset and hosted verification repair stay on this card."
     }
   ];
+  const publicAuthRescueChecklist = {
+    mode: "public_auth_rescue_checklist",
+    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
+    hosted_redirect_url: authRedirectUrl,
+    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
+    email_ready: Boolean(email),
+    resend_available: Boolean(email && authReady),
+    reset_available: Boolean(email && authReady),
+    localhost_repair_ready: Boolean(repairedVerificationUrl),
+    rate_limit_guidance: "Use one resend or reset, then wait 60+ minutes if Supabase reports an email rate limit.",
+    landing_portal: portal === "corporate" ? "Company Admin then Corporate Verify" : "Professional Passport",
+    corporate_database_boundary: "Corporate accounts request by professional email and review approved scoped rows only.",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_auth_rescue_checklist_keeps_route_email_hosted_redirect_resend_reset_localhost_repair_rate_limit_landing_portal_scoped_database_boundary_and_no_preview_data_visible_before_credentials"
+  };
+  const publicAuthRescueChecklistSteps = [
+    {
+      label: "1. Route",
+      value: publicAuthRescueChecklist.selected_route,
+      detail: selectedRegistrationPath.plan,
+      ready: true
+    },
+    {
+      label: "2. Email",
+      value: publicAuthRescueChecklist.email_ready ? "Ready" : "Enter email",
+      detail: "Required for login, resend verification, and reset.",
+      ready: publicAuthRescueChecklist.email_ready
+    },
+    {
+      label: "3. Hosted URL",
+      value: publicAuthRescueChecklist.redirect_is_hosted ? "Hosted" : "Repair needed",
+      detail: publicAuthRescueChecklist.hosted_redirect_url,
+      ready: publicAuthRescueChecklist.redirect_is_hosted
+    },
+    {
+      label: "4. Resend",
+      value: publicAuthRescueChecklist.resend_available ? "Available" : "Email needed",
+      detail: "Send once, then wait if rate limited.",
+      ready: publicAuthRescueChecklist.resend_available
+    },
+    {
+      label: "5. Reset",
+      value: publicAuthRescueChecklist.reset_available ? "Available" : "Email needed",
+      detail: "Recovery email returns to the hosted app.",
+      ready: publicAuthRescueChecklist.reset_available
+    },
+    {
+      label: "6. Repair link",
+      value: publicAuthRescueChecklist.localhost_repair_ready ? "Ready" : "Paste link",
+      detail: "Convert localhost verification or recovery links to hosted TrustGraph.",
+      ready: publicAuthRescueChecklist.localhost_repair_ready
+    }
+  ];
   const publicCredentialPreflight = {
     mode: "public_credential_preflight",
     selected_portal: portal,
@@ -29754,6 +29808,66 @@ function PublicSite({
                 Export start proof
               </button>
             </div>
+          </div>
+          <div className={`public-auth-rescue-checklist ${publicAuthRescueChecklist.redirect_is_hosted ? "hosted" : "needs-repair"}`} aria-label="Public auth rescue checklist">
+            <div className="public-auth-rescue-header">
+              <div>
+                <span className={`status-chip ${publicAuthRescueChecklist.redirect_is_hosted ? "success" : "warning"}`}>Auth rescue checklist</span>
+                <strong>{publicAuthRescueChecklist.email_ready ? "Verification and recovery actions are ready" : "Enter email before resend or reset"}</strong>
+                <small>{publicAuthRescueChecklist.rate_limit_guidance}</small>
+              </div>
+              <div className="public-auth-rescue-actions">
+                <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                  Resend verify
+                </button>
+                <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                  Reset password
+                </button>
+                <button className="secondary-action" onClick={() => void copyHostedRedirectUrl()} type="button">
+                  Copy hosted URL
+                </button>
+                <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
+                  Repair link
+                </button>
+              </div>
+            </div>
+            <div className="public-auth-rescue-grid">
+              {publicAuthRescueChecklistSteps.map((step) => (
+                <article className={step.ready ? "ready" : "needed"} key={step.label}>
+                  <span>{step.label}</span>
+                  <strong>{step.value}</strong>
+                  <small>{step.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="public-auth-rescue-proof">
+              <span>
+                <small>Landing portal</small>
+                <strong>{publicAuthRescueChecklist.landing_portal}</strong>
+              </span>
+              <span>
+                <small>Corporate data</small>
+                <strong>Scoped rows only</strong>
+              </span>
+              <span>
+                <small>Preview data</small>
+                <strong>{publicAuthRescueChecklist.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+              </span>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-auth-rescue-checklist-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicAuthRescueChecklist, steps: publicAuthRescueChecklistSteps }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export recovery proof
+              </button>
+            </div>
+            <small>{publicAuthRescueChecklist.accepted_when}</small>
           </div>
           <div className="public-account-access-path" aria-label="Public account access path">
             <div className="public-account-access-header">
