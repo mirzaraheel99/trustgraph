@@ -34596,6 +34596,52 @@ function App() {
     accepted_when:
       "v1_completion_blocker_ledger_requires_hosted_login_live_supabase_rows_completion_receipt_vps_release_stamp_billing_security_legal_signoff_and_no_preview_data_before_goal_complete"
   };
+  const firstScreenGoalStatusStrip = {
+    mode: "first_screen_goal_status_strip",
+    status: v1CompletionBlockerLedger.completion_claim_allowed ? "ready_for_completion_audit" : "active_goal_in_progress",
+    headline: v1CompletionBlockerLedger.completion_claim_allowed
+      ? "Every blocker is cleared. Run final completion audit."
+      : `${v1CompletionBlockerLedger.total_count - v1CompletionBlockerLedger.passed_count} blockers still prevent completion.`,
+    code_blockers: v1CompletionBlockerLedger.code_blockers,
+    human_blockers: v1CompletionBlockerLedger.human_blockers,
+    next_action: v1RemainingWorkAnswer.next_code_action,
+    live_rows: v1RemainingWorkAnswer.live_row_groups,
+    completion_receipts: v1RemainingWorkAnswer.persisted_completion_receipts,
+    vps_status: v1RemainingWorkAnswer.vps_save_status,
+    preview_data_accepted: false,
+    accepted_when:
+      "first_screen_goal_status_strip_keeps_done_not_done_code_blockers_human_blockers_next_action_live_rows_receipts_vps_and_no_preview_data_visible_without_proof_wall"
+  };
+  const firstScreenGoalStatusCards = [
+    {
+      label: "Live rows",
+      value: firstScreenGoalStatusStrip.live_rows,
+      detail: livePilotRowProof.missingRequiredGroups.length ? livePilotRowProof.missingRequiredGroups.slice(0, 3).join(", ") : "Required Supabase row groups loaded.",
+      ready: livePilotRowProof.accepted,
+      target: "proof" as const
+    },
+    {
+      label: "Receipt",
+      value: firstScreenGoalStatusStrip.completion_receipts ? `${firstScreenGoalStatusStrip.completion_receipts} saved` : "Needed",
+      detail: latestRealDatabaseCompletionReceipt ? "Completion receipt exists." : "Record a real database completion receipt.",
+      ready: Boolean(latestRealDatabaseCompletionReceipt),
+      target: "receipt" as const
+    },
+    {
+      label: "VPS",
+      value: serverSyncMonitor.status === "synced" ? "Synced" : "Save needed",
+      detail: serverSyncMonitor.status === "synced" ? "Release stamp is current." : "Add SSH secrets or run manual VPS updater.",
+      ready: serverSyncMonitor.status === "synced",
+      target: "server" as const
+    },
+    {
+      label: "Human gates",
+      value: firstScreenGoalStatusStrip.human_blockers.length ? `${firstScreenGoalStatusStrip.human_blockers.length} open` : "Clear",
+      detail: firstScreenGoalStatusStrip.human_blockers.length ? firstScreenGoalStatusStrip.human_blockers.join(", ") : "Human blockers cleared.",
+      ready: firstScreenGoalStatusStrip.human_blockers.length === 0,
+      target: "readiness" as const
+    }
+  ];
   const v1CompletionCommandCards = [
     {
       label: "Registration",
@@ -36354,6 +36400,71 @@ function App() {
             </button>
           </div>
           <div className="signed-in-portal-entry-boundary">{signedInPortalEntryDesk.accepted_when}</div>
+        </section>
+
+        <section className={`first-screen-goal-status-strip ${firstScreenGoalStatusStrip.status}`} aria-label="First screen goal status strip">
+          <div className="first-screen-goal-status-header">
+            <div>
+              <span className={`status-chip ${v1CompletionBlockerLedger.completion_claim_allowed ? "success" : "warning"}`}>Goal status</span>
+              <strong>{firstScreenGoalStatusStrip.headline}</strong>
+              <small>{firstScreenGoalStatusStrip.next_action}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-first-screen-goal-status-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(firstScreenGoalStatusStrip, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export status
+            </button>
+          </div>
+          <div className="first-screen-goal-status-grid">
+            {firstScreenGoalStatusCards.map((card) => (
+              <button
+                className={card.ready ? "ready" : "needed"}
+                key={card.label}
+                onClick={() => {
+                  if (card.target === "proof") {
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (card.target === "receipt") {
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (card.target === "server") {
+                    downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                    return;
+                  }
+                  document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                type="button"
+              >
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </button>
+            ))}
+          </div>
+          <div className="first-screen-goal-status-proof">
+            <span>
+              <small>Code blockers</small>
+              <strong>{firstScreenGoalStatusStrip.code_blockers.length ? firstScreenGoalStatusStrip.code_blockers.join(", ") : "None"}</strong>
+            </span>
+            <span>
+              <small>Human blockers</small>
+              <strong>{firstScreenGoalStatusStrip.human_blockers.length ? firstScreenGoalStatusStrip.human_blockers.join(", ") : "None"}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{firstScreenGoalStatusStrip.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+          </div>
         </section>
 
         <section className={`vps-saved-portal-command ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="VPS saved portal command">
