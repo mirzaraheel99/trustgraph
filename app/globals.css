@@ -23216,6 +23216,67 @@ p {
   padding: clamp(14px, 2vw, 22px);
 }
 
+/* Signed-in viewport guard: keep the dashboard inside the browser instead of forcing side-scroll. */
+.app {
+  overflow-x: clip;
+}
+
+.workspace {
+  width: min(1360px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  padding-inline: clamp(12px, 2.4vw, 34px);
+}
+
+.topbar,
+.portal-home-command,
+.workspace-command-strip,
+.dashboard-front-door,
+.dashboard-next-action,
+.dashboard-start-map,
+.signed-in-landing-actions,
+.workspace-admin-grid,
+.hero,
+.verify-panel,
+.corporate-directory-panel {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.hero {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.workspace-route-strip,
+.workspace-flow-strip,
+.portal-home-actions,
+.topbar-actions {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.workspace-route-strip button,
+.workspace-flow-strip button {
+  flex: 1 1 min(100%, 168px);
+  max-width: 100%;
+}
+
+.portal-home-command,
+.workspace-command-strip {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.portal-home-actions,
+.workspace-command-actions {
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+}
+
+.topbar-actions {
+  justify-content: flex-start;
+  width: 100%;
+}
+
 .setup-command-bar,
 .corporate-setup-guide,
 .corporate-task-hub-header,
