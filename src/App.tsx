@@ -24571,6 +24571,51 @@ function PublicSite({
       ready: true
     }
   ];
+  const publicAuthHelpStrip = {
+    generated_at: new Date().toISOString(),
+    mode: "public_auth_help_strip",
+    selected_route: `${portal}_${mode}`,
+    selected_portal: portal === "corporate" ? "Corporate" : "Professional",
+    email_ready: Boolean(email),
+    hosted_redirect_url: authRedirectUrl,
+    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
+    resend_verification_available: Boolean(email),
+    reset_password_available: Boolean(email),
+    localhost_repair:
+      "If an inbox link opens localhost, replace only the origin with the hosted TrustGraph URL and keep the same query/hash token.",
+    email_rate_limit_notice:
+      "Supabase built-in email allows 2 messages per hour project-wide; wait 60+ minutes after rate-limit errors or configure SMTP.",
+    tokens_redacted: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_auth_help_strip_keeps_email_ready_hosted_redirect_resend_verification_reset_password_localhost_repair_rate_limit_no_token_export_and_no_preview_data_visible_before_credentials"
+  };
+  const publicAuthHelpStripRows = [
+    {
+      label: "Email",
+      value: publicAuthHelpStrip.email_ready ? "Ready" : "Needed",
+      detail: publicAuthHelpStrip.email_ready ? "Resend and reset actions have an address." : "Enter email before requesting another Supabase message.",
+      ready: publicAuthHelpStrip.email_ready
+    },
+    {
+      label: "Hosted redirect",
+      value: publicAuthHelpStrip.redirect_is_hosted ? "Ready" : "Fix URL",
+      detail: publicAuthHelpStrip.hosted_redirect_url,
+      ready: publicAuthHelpStrip.redirect_is_hosted
+    },
+    {
+      label: "Rate limit",
+      value: "60+ min wait",
+      detail: publicAuthHelpStrip.email_rate_limit_notice,
+      ready: true
+    },
+    {
+      label: "Localhost link",
+      value: "Repair origin",
+      detail: publicAuthHelpStrip.localhost_repair,
+      ready: true
+    }
+  ];
   const registrationDatabaseLaunchOrder = {
     mode: "registration_database_launch_order",
     selected_portal: portal,
@@ -26445,6 +26490,15 @@ function PublicSite({
       setVerificationLinkMessage("Hosted verification link copied. Open it in this browser, then login again.");
     } catch {
       setVerificationLinkMessage("Copy blocked by the browser. Select the hosted link below and open it manually.");
+    }
+  }
+
+  async function copyHostedRedirectUrl() {
+    try {
+      await navigator.clipboard.writeText(authRedirectUrl);
+      setMessage("Hosted redirect URL copied. Use this URL in Supabase Auth settings and recovery links.");
+    } catch {
+      setMessage(`Copy this hosted redirect URL: ${authRedirectUrl}`);
     }
   }
 
@@ -28467,6 +28521,71 @@ function PublicSite({
               </button>
             </div>
             <small className="public-registration-path-summary-boundary">{publicRegistrationPathSummary.accepted_when}</small>
+          </div>
+          <div className={`public-auth-help-strip ${publicAuthHelpStrip.redirect_is_hosted ? "ready" : "needed"}`} aria-label="Public auth help strip">
+            <div className="public-auth-help-strip-header">
+              <div>
+                <span className={`status-chip ${publicAuthHelpStrip.email_ready && publicAuthHelpStrip.redirect_is_hosted ? "success" : "warning"}`}>Auth help</span>
+                <strong>
+                  {publicAuthHelpStrip.email_ready
+                    ? "Verification and recovery actions are ready"
+                    : "Enter email before resend, reset, or link repair"}
+                </strong>
+                <small>
+                  Use this when verification points to localhost, Supabase says rate limit exceeded, or the account needs password recovery.
+                </small>
+              </div>
+              <button className="secondary-action" onClick={() => void copyHostedRedirectUrl()} type="button">
+                Copy hosted redirect
+              </button>
+            </div>
+            <div className="public-auth-help-strip-grid">
+              {publicAuthHelpStripRows.map((row) => (
+                <button
+                  className={row.ready ? "ready" : "needed"}
+                  key={row.label}
+                  onClick={() => {
+                    if (row.label === "Email") {
+                      document.getElementById("public-auth-email")?.focus();
+                      return;
+                    }
+                    if (row.label === "Hosted redirect") {
+                      void copyHostedRedirectUrl();
+                      return;
+                    }
+                    document.getElementById("public-auth-email")?.focus();
+                  }}
+                  type="button"
+                >
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-auth-help-strip-actions">
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-auth-help-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicAuthHelpStrip, rows: publicAuthHelpStripRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export help
+              </button>
+            </div>
+            <small className="public-auth-help-strip-boundary">{publicAuthHelpStrip.accepted_when}</small>
           </div>
           <div className={`public-login-route-cockpit ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public login route cockpit">
             <div className="public-login-route-header">

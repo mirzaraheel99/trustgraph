@@ -50474,3 +50474,85 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Public auth help strip: one recovery answer for verification, reset, localhost links, and rate limits. */
+.public-auth-help-strip {
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(255, 205, 118, 0.24) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 118, 0.08), rgba(134, 174, 246, 0.06) 52%, rgba(72, 208, 174, 0.055)),
+    rgba(7, 15, 18, 0.94) !important;
+}
+
+.public-auth-help-strip.ready {
+  border-color: rgba(113, 242, 203, 0.24) !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-help-strip {
+  order: -405 !important;
+}
+
+.public-auth-help-strip-header,
+.public-auth-help-strip-actions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.public-auth-help-strip-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.public-auth-help-strip-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+  gap: 9px !important;
+}
+
+.public-auth-help-strip-grid button,
+.public-auth-help-strip-boundary {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.public-auth-help-strip-grid button.ready {
+  border-color: rgba(113, 242, 203, 0.24) !important;
+  background: rgba(72, 208, 174, 0.08) !important;
+}
+
+.public-auth-help-strip-grid button.needed {
+  border-color: rgba(255, 205, 118, 0.24) !important;
+  background: rgba(255, 205, 118, 0.055) !important;
+}
+
+.public-auth-help-strip :is(button, strong, small, span, p, em, b, code, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.public-auth-help-strip button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 760px) {
+  .public-auth-help-strip-header,
+  .public-auth-help-strip-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}

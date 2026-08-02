@@ -146,6 +146,12 @@ const appRequirements = [
     "public_registration_path_summary_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_first_database_write_hosted_verification_recovery_landing_and_no_open_user_database_visible_before_credentials",
     "public registration path summary acceptance rule"
   ],
+  ["Public auth help strip", "public auth help strip label"],
+  ["public_auth_help_strip", "public auth help strip packet mode"],
+  [
+    "public_auth_help_strip_keeps_email_ready_hosted_redirect_resend_verification_reset_password_localhost_repair_rate_limit_no_token_export_and_no_preview_data_visible_before_credentials",
+    "public auth help strip acceptance rule"
+  ],
   ["Signed evidence acceptance checkpoint", "signed evidence acceptance label"],
   ["signed_evidence_acceptance_checkpoint", "signed evidence acceptance packet mode"],
   [
