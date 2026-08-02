@@ -22010,6 +22010,67 @@ function PublicSite({
       detail: authRedirectUrl.includes("localhost") ? "Hosted redirect still needs repair." : "Hosted redirect is active."
     }
   ];
+  const publicRouteDecisionDesk = {
+    mode: "public_route_decision_desk",
+    selected_portal: portal,
+    selected_mode: mode,
+    headline:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create a Corporate Verify workspace"
+          : "Login to Corporate Verify"
+        : mode === "signup"
+          ? "Create a Professional Passport"
+          : "Login to Professional Passport",
+    subline:
+      portal === "corporate"
+        ? "Corporate accounts create a company workspace, activate the pilot ledger, then request approved user rows by professional email."
+        : "Professional users create a private Passport, add real records, then approve each company sharing request.",
+    selected_price: selectedRegistrationPath.plan,
+    required_fields: selectedPortalCommand.required_fields,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    landing_portal: portal === "corporate" ? "Company Admin and Corporate Verify" : "Professional Passport",
+    hosted_redirect_url: authRedirectUrl,
+    submit_ready: publicLoginPrimaryChoice.submit_ready,
+    corporate_database_boundary: "Corporate users cannot browse all users; every review starts with a scoped access request and professional approval.",
+    accepted_when:
+      "public_route_decision_desk_keeps_professional_login_register_corporate_login_register_pricing_required_fields_hosted_verification_first_database_write_landing_portal_submit_and_scoped_database_rule_as_the_single_front_door"
+  };
+  const publicRouteDecisionDeskCards = [
+    {
+      label: "Route",
+      value: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "register" : "login"}`,
+      detail: publicRouteDecisionDesk.landing_portal
+    },
+    {
+      label: "Pricing",
+      value: publicRouteDecisionDesk.selected_price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "Required fields",
+      value: `${publicRouteDecisionDesk.required_fields.length} fields`,
+      detail: publicRouteDecisionDesk.required_fields.join(", ").replace(/_/g, " ")
+    },
+    {
+      label: "First database write",
+      value: publicRouteDecisionDesk.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Hosted verification",
+      value: authRedirectUrl.includes("localhost") ? "Needs repair" : "Hosted",
+      detail: publicRouteDecisionDesk.hosted_redirect_url
+    },
+    {
+      label: "Corporate data rule",
+      value: portal === "corporate" ? "Scoped only" : "Owner approved",
+      detail:
+        portal === "corporate"
+          ? publicRouteDecisionDesk.corporate_database_boundary
+          : "Companies see Passport rows only after the professional approves a scoped grant."
+    }
+  ];
   const publicAccessHubProof = [
     {
       label: "Pricing",
@@ -26507,6 +26568,66 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className={`public-route-decision-desk ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public route decision desk">
+            <div className="public-route-decision-header">
+              <div>
+                <span className={`status-chip ${publicRouteDecisionDesk.submit_ready ? "success" : "warning"}`}>
+                  {publicRouteDecisionDesk.submit_ready ? "Ready" : "Choose route"}
+                </span>
+                <strong>{publicRouteDecisionDesk.headline}</strong>
+                <small>{publicRouteDecisionDesk.subline}</small>
+              </div>
+              <button className="primary-action" disabled={busy || !publicRouteDecisionDesk.submit_ready} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-route-decision-routes" aria-label="Professional and Corporate login or registration">
+              {publicLoginPrimaryChoiceRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.onClick} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-route-decision-grid">
+              {publicRouteDecisionDeskCards.map((card) => (
+                <span key={card.label}>
+                  <small>{card.label}</small>
+                  <strong>{card.value}</strong>
+                  <em>{card.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="public-route-decision-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-route-decision-desk-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicRouteDecisionDesk, cards: publicRouteDecisionDeskCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export route
+              </button>
+            </div>
+            <small className="public-route-decision-boundary">
+              {portal === "corporate"
+                ? publicRouteDecisionDesk.corporate_database_boundary
+                : "Professional users own their Passport and decide what each company can review."}
+            </small>
+          </div>
           <div className="auth-portal-console" aria-label="Auth portal console">
             <div className="auth-portal-console-header">
               <div>
