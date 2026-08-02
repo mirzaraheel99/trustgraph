@@ -35619,6 +35619,17 @@ function App() {
       target: "billing" as const
     },
     {
+      label: "Pilot owners",
+      owner: "Human",
+      status: pilotOwnerGateReady ? "passed" : "blocked",
+      value: pilotOwnerGateReady ? "Owners ready" : "Owner signoff needed",
+      detail: latestPilotOwnerReadinessReceiptForCompletion
+        ? `${latestPilotOwnerReadinessReceiptForCompletion.contacts_ready}/${latestPilotOwnerReadinessReceiptForCompletion.contacts_total} owner contacts saved in Supabase.`
+        : "Pilot customer, onboarding owner, support owner, and incident owner must be confirmed.",
+      next_action: "Open Admin",
+      target: "readiness" as const
+    },
+    {
       label: "Security and legal",
       owner: "Human",
       status: v1HumanGateSeparationRows.find((row) => row.label === "Security and legal")?.ready ? "passed" : "blocked",
@@ -35626,6 +35637,15 @@ function App() {
       detail: "External security/storage review and regulated wording approval are not code-owned completion.",
       next_action: "Open readiness",
       target: "readiness" as const
+    },
+    {
+      label: "VPS cutover approval",
+      owner: "Human",
+      status: vpsCutoverGateReady ? "passed" : "blocked",
+      value: vpsCutoverGateReady ? "Cutover approved" : "Cutover approval needed",
+      detail: "The VPS must serve current release JSON and the cutover production gate must be approved before server launch acceptance.",
+      next_action: "Export server proof",
+      target: "server" as const
     }
   ];
   const v1CompletionBlockerLedger = {
@@ -35638,7 +35658,7 @@ function App() {
     preview_data_accepted: false,
     completion_claim_allowed: v1CompletionBlockerLedgerRows.every((row) => row.status === "passed"),
     accepted_when:
-      "v1_completion_blocker_ledger_requires_hosted_login_live_supabase_rows_completion_receipt_vps_release_stamp_billing_security_legal_signoff_and_no_preview_data_before_goal_complete"
+      "v1_completion_blocker_ledger_requires_hosted_login_live_supabase_rows_completion_receipt_vps_release_stamp_billing_pilot_owner_security_legal_vps_cutover_signoff_and_no_preview_data_before_goal_complete"
   };
   const firstScreenGoalStatusStrip = {
     mode: "first_screen_goal_status_strip",
