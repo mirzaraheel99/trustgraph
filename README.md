@@ -63,6 +63,8 @@ The CI loop also runs `pnpm check:live-database-repair`. That focused gate prove
 
 The signed-in workspace now uses a V1 focused portal shell as the daily UI. The first visible path is the portal entry desk, VPS saved-build command, active workspace, and current-server status; older route maps, proof ledgers, and audit/export boards remain in source for receipts and CI markers, but they are hidden from the primary cockpit so Personal, Corporate Verify, Company Admin, Account/logout, pricing, and database proof do not compete on the first screen.
 
+The public login/register card now uses the same focused shell. Visitors see one route cockpit for Professional login, Professional registration, Corporate login, and Corporate registration, then the credential station, recovery/help controls, and server freshness; duplicate pricing, recovery, route, and proof boards remain exportable in source but no longer stack above the form.
+
 The signed-in workspace now includes a registration handoff command immediately after the portal command center. It shows the hosted registration intent, selected Professional or Corporate portal, selected plan, first live database write, completion state, next workspace or Passport action, and preview-data rejection so a verified user can see why Corporate remains locked until workspace/RBAC creation is complete.
 
 The public first viewport now includes an audience switchboard for Professionals, Corporate Verify buyers, and TrustGraph operators. It explains the pilot price, first database effect, scoped-access boundary, and human-gated operations before a visitor reaches the credential form.

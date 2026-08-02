@@ -45742,6 +45742,106 @@ body,
   gap: 10px !important;
 }
 
+/* Public focused auth shell: one route answer, one credential station, no stacked proof wall. */
+.public-auth-card:has(.public-login-route-cockpit) {
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-login-route-cockpit {
+  order: -100 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-credential-station {
+  order: -90 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-help-strip {
+  order: -80 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-hosted-server-freshness-alert,
+.public-auth-card:has(.public-login-route-cockpit) > .current-build-server-gate.public,
+.public-auth-card:has(.public-login-route-cockpit) > .public-manual-vps-sync-launcher {
+  order: -70 !important;
+  max-height: 240px !important;
+  overflow-y: auto !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-route-decision-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-portal-console,
+.public-auth-card:has(.public-login-route-cockpit) > .login-portal-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-credential-command,
+.public-auth-card:has(.public-login-route-cockpit) > .hosted-recovery-route-rail,
+.public-auth-card:has(.public-login-route-cockpit) > .hosted-auth-recovery-board,
+.public-auth-card:has(.public-login-route-cockpit) > .login-issue-resolver,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-flow-command,
+.public-auth-card:has(.public-login-route-cockpit) > .public-login-primary-choice,
+.public-auth-card:has(.public-login-route-cockpit) > .account-access-path,
+.public-auth-card:has(.public-login-route-cockpit) > .public-signup-decision-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .public-signup-answer-bar,
+.public-auth-card:has(.public-login-route-cockpit) > .public-registration-pricing-gate,
+.public-auth-card:has(.public-login-route-cockpit) > .registration-route-planner,
+.public-auth-card:has(.public-login-route-cockpit) > .registration-outcome-command,
+.public-auth-card:has(.public-login-route-cockpit) > .registration-completion-handoff,
+.public-auth-card:has(.public-login-route-cockpit) > .live-onboarding-acceptance-contract,
+.public-auth-card:has(.public-login-route-cockpit) > .public-submit-readiness,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-route-summary,
+.public-auth-card:has(.public-login-route-cockpit) > .route-confirmation-before-submit,
+.public-auth-card:has(.public-login-route-cockpit) > .public-access-answer {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > button.primary-action[type="submit"] {
+  display: none !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header {
+  align-items: start !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-grid,
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-status,
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-action-dock,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-fields,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-readiness,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-help-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-grid button,
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-actions button,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-action-dock button,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-actions button,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-help-actions button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+@media (max-width: 760px) {
+  .public-auth-card:has(.public-login-route-cockpit) {
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+
+  .public-auth-card:has(.public-login-route-cockpit) .public-login-route-header > button.primary-action {
+    width: 100% !important;
+  }
+}
+
 /* V1 focused portal shell: keep daily work readable before audit/export evidence. */
 .workspace:has(.signed-in-portal-entry-desk) {
   --tg-shell-max: 1180px;
