@@ -50065,6 +50065,127 @@ body,
   }
 }
 
+/* Premium SaaS console density pass: keep the signed-in dashboard calm, bounded, and action-first. */
+.workspace:has(.portal-route-shell):has(.session-control-strip),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) {
+  --tg-console-max: 1120px !important;
+  width: min(var(--tg-console-max), calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  gap: 10px !important;
+  padding-block-start: 12px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .topbar,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .topbar {
+  position: sticky !important;
+  top: 8px !important;
+  z-index: 20 !important;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.34fr) !important;
+  padding: 12px !important;
+  background:
+    linear-gradient(135deg, rgba(8, 17, 20, 0.98), rgba(13, 24, 29, 0.96)),
+    rgba(7, 15, 18, 0.98) !important;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) .topbar h1,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar h1 {
+  max-width: 22ch !important;
+  font-size: clamp(1.6rem, 3vw, 2.6rem) !important;
+  line-height: 1.02 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) .topbar p,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar p {
+  max-width: 76ch !important;
+  font-size: 0.94rem !important;
+  line-height: 1.45 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) .topbar-actions,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar-actions,
+.workspace:has(.portal-route-shell):has(.session-control-strip) .session-control-strip-actions,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .session-control-strip-actions,
+.workspace:has(.portal-route-shell):has(.session-control-strip) .portal-route-shell-actions,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .portal-route-shell-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 118px), 1fr)) !important;
+  align-items: stretch !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .session-control-strip,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .session-control-strip {
+  order: -780 !important;
+  padding: 12px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .portal-route-shell,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .portal-route-shell {
+  order: -760 !important;
+  padding: clamp(12px, 2vw, 18px) !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(7, 15, 18, 0.92) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .work-grid,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .work-grid {
+  order: -740 !important;
+  gap: 12px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) .hero,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .hero {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) .hero-card,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .hero-card {
+  min-height: 0 !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) .hero-card h2,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .hero-card h2 {
+  max-width: 18ch !important;
+  font-size: clamp(2.2rem, 4vw, 3.5rem) !important;
+  line-height: 0.98 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(.auth-panel, .workspace-admin-grid, .verify-panel, .records-panel, .passport-panel, .corporate-directory-panel, .billing-panel, .audit-panel),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.auth-panel, .workspace-admin-grid, .verify-panel, .records-panel, .passport-panel, .corporate-directory-panel, .billing-panel, .audit-panel) {
+  border-radius: 8px !important;
+  overflow: clip !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(.workspace-admin-grid, .setup-panel-grid, .verify-panel, .corporate-directory-panel) :is(button, input, select, textarea),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.workspace-admin-grid, .setup-panel-grid, .verify-panel, .corporate-directory-panel) :is(button, input, select, textarea) {
+  min-height: 44px !important;
+  max-width: 100% !important;
+  pointer-events: auto !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(.live-data-reality-strip, .portal-flow-compass),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.live-data-reality-strip, .portal-flow-compass) {
+  order: 40 !important;
+}
+
+@media (max-width: 860px) {
+  .workspace:has(.portal-route-shell):has(.session-control-strip),
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) {
+    width: min(100%, calc(100vw - 12px)) !important;
+    max-width: calc(100vw - 12px) !important;
+  }
+
+  .workspace:has(.portal-route-shell):has(.session-control-strip) > .topbar,
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .topbar,
+  .workspace:has(.portal-route-shell):has(.session-control-strip) .portal-route-shell-header,
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .portal-route-shell-header {
+    position: relative !important;
+    top: auto !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 /* Public front door single-path final pass: make user/corporate login and registration obvious before proof receipts. */
 .public-site:has(.public-login-route-cockpit) {
   --tg-public-shell-max: 1180px !important;
