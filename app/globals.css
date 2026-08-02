@@ -44086,7 +44086,6 @@ body,
   overflow-wrap: anywhere;
 }
 
-.workspace:has(.signed-in-portal-entry-desk) > .vps-saved-portal-command,
 .workspace:has(.signed-in-portal-entry-desk) > .portal-ux-command-center,
 .workspace:has(.signed-in-portal-entry-desk) > .dashboard-front-door,
 .workspace:has(.signed-in-portal-entry-desk) > .signed-in-landing-actions {
