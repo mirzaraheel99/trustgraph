@@ -71,6 +71,8 @@ The signed-in workspace now uses a V1 focused portal shell as the daily UI. The 
 
 The signed-in workspace now also applies a Portal clarity v1 layer. It centers the app as one premium SaaS console, keeps account/logout and server-save actions reachable, reduces the oversized Passport hero, and compresses Corporate setup to setup command, unlock answer, route tabs, active forms, and Corporate database handoff while preserving older proof panels away from the primary path.
 
+The signed-in workspace now adds a premium portal usability lock over that shell. The first working surface is the single tabbed portal route shell, account/logout is a bounded action bar instead of a buried panel, and Company Admin/Corporate Verify controls are forced into responsive form grids so the hosted dashboard does not clip or sprawl across the viewport.
+
 The public login/register card now uses the same focused shell. Visitors see one route cockpit for Professional login, Professional registration, Corporate login, and Corporate registration, then the credential station, recovery/help controls, and server freshness; duplicate pricing, recovery, route, and proof boards remain exportable in source but no longer stack above the form.
 
 Company Admin now uses a corporate focused workbench. The visible route is setup command bar, unlock answer, route deck, setup tabs, active setup panel, and Corporate Verify handoff; duplicate launch, operator, triage, onboarding, team/billing, and guide boards remain preserved for export and CI proof without crowding the admin workflow.

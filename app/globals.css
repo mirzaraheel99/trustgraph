@@ -48499,3 +48499,196 @@ body,
     font-size: clamp(2.35rem, 15vw, 3.4rem) !important;
   }
 }
+
+/* Premium portal usability lock: make the hosted app feel like one SaaS console, not a receipt wall. */
+.workspace:has(.signed-in-portal-entry-desk) {
+  --tg-operator-shell-max: 1120px !important;
+  row-gap: 14px !important;
+  padding: clamp(10px, 1.6vw, 16px) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .topbar {
+  order: -240 !important;
+  padding: clamp(14px, 2vw, 22px) !important;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.24) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .topbar p {
+  max-width: 68ch !important;
+  font-size: clamp(0.98rem, 1.5vw, 1.12rem) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .portal-route-shell {
+  order: -235 !important;
+  display: grid !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(113, 242, 203, 0.22) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(95, 238, 201, 0.12), rgba(255, 255, 255, 0.02) 42%, rgba(130, 169, 255, 0.08)),
+    rgba(8, 17, 19, 0.94) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-header,
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-footer {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, auto) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-actions,
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-footer {
+  align-items: stretch !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-actions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 8px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-tabs button {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 6px 8px !important;
+  min-height: 74px !important;
+  padding: 10px !important;
+  text-align: left !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-tabs button small {
+  grid-column: 1 / -1 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-status {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-server-save-commander,
+.workspace:has(.signed-in-portal-entry-desk) .current-build-server-gate,
+.workspace:has(.signed-in-portal-entry-desk) > .vps-save-handoff,
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-portal-entry-desk,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-ux-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-launch-matrix,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-daily-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-experience-compass {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .work-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 14px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .auth-panel,
+.workspace:has(.signed-in-portal-entry-desk) .verify-panel,
+.workspace:has(.signed-in-portal-entry-desk) .records-panel,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid {
+  border-radius: 8px !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.046), rgba(255, 255, 255, 0.014)),
+    rgba(8, 16, 18, 0.94) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .auth-panel:has(.account-action-bar) {
+  order: -120 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .auth-panel:has(.account-action-bar) .account-action-bar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.78fr) minmax(220px, 0.52fr) minmax(220px, 0.58fr) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .auth-panel:has(.account-action-bar) .account-action-bar-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .auth-panel:has(.account-action-bar) .account-action-bar-actions button {
+  justify-content: center !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) {
+  order: -90 !important;
+  gap: 12px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) > .setup-center-header {
+  order: -130 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) > .corporate-portal-unlock-answer {
+  order: -125 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) > .setup-command-bar {
+  order: -120 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) > .setup-tabs {
+  order: -115 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) > .setup-panel-grid {
+  order: -110 !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) > .corporate-database-handoff-command {
+  order: -105 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) .account-admin-row,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) .team-controls,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) .billing-actions,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) .form-grid,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid:has(.setup-panel-grid) .record-form-grid,
+.workspace:has(.signed-in-portal-entry-desk) .verify-panel:has(.corporate-verify-single-lane) .directory-controls,
+.workspace:has(.signed-in-portal-entry-desk) .verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-action-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) button,
+.workspace:has(.signed-in-portal-entry-desk) input,
+.workspace:has(.signed-in-portal-entry-desk) select,
+.workspace:has(.signed-in-portal-entry-desk) textarea {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) button {
+  min-height: 44px !important;
+}
+
+@media (max-width: 920px) {
+  .workspace:has(.signed-in-portal-entry-desk) .topbar,
+  .workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-header,
+  .workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-footer,
+  .workspace:has(.signed-in-portal-entry-desk) .auth-panel:has(.account-action-bar) .account-action-bar {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
