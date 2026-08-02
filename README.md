@@ -71,6 +71,8 @@ Corporate Verify now uses a focused reviewer queue inside the user database. Rev
 
 Signed-in Account now uses a focused account action bar. Logout, resend verification, reset password, password update, hosted redirect copy, data-rights status, and export are visible before deeper recovery receipts or data-rights audit panels so account switching and recovery tests are not buried.
 
+Passport evidence now uses the file access cockpit as the visible preview/download path. Add metadata, signed preview, signed download, metadata manifest, evidence packet, last signed-link proof, and signed access receipts stay first while older setup, answer, rail, desk, ledger, and action queue panels remain preserved for exports without hiding the cockpit.
+
 The signed-in workspace now includes a registration handoff command immediately after the portal command center. It shows the hosted registration intent, selected Professional or Corporate portal, selected plan, first live database write, completion state, next workspace or Passport action, and preview-data rejection so a verified user can see why Corporate remains locked until workspace/RBAC creation is complete.
 
 The public first viewport now includes an audience switchboard for Professionals, Corporate Verify buyers, and TrustGraph operators. It explains the pilot price, first database effect, scoped-access boundary, and human-gated operations before a visitor reaches the credential form.

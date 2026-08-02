@@ -46572,3 +46572,104 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Evidence cockpit focus: signed preview/download wins over older receipt panels. */
+.evidence-box:has(.evidence-file-access-cockpit) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) > .mini-heading {
+  order: -130 !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) > p,
+.evidence-box:has(.evidence-file-access-cockpit) > small {
+  order: -126 !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-file-access-cockpit {
+  order: -122 !important;
+  max-height: none !important;
+  margin-block: 0 !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  border: 1px solid rgba(113, 242, 203, 0.26) !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) > .last-signed-evidence-link,
+.evidence-box:has(.evidence-file-access-cockpit) > .signed-evidence-access-audit,
+.evidence-box:has(.evidence-file-access-cockpit) > .signed-evidence-acceptance-checkpoint {
+  order: -118 !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-controls {
+  order: -114 !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-document-list {
+  order: -110 !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-review-rail,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-safe-access-command,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-preview-download-answer,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-setup-command,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-access-desk,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-summary-grid,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-preview-download-ledger,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-source-strip,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-access-chain,
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-action-queue {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-header,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-grid,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-actions,
+.evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-access-grid,
+.evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-acceptance-grid,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-controls {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-header > div,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-grid article,
+.evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-access-grid article,
+.evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-acceptance-grid article {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-actions button,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-header button,
+.evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-acceptance-actions button,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-document-actions button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+@media (max-width: 760px) {
+  .evidence-box:has(.evidence-file-access-cockpit) {
+    gap: 10px !important;
+  }
+
+  .evidence-box:has(.evidence-file-access-cockpit) > .evidence-file-access-cockpit {
+    padding: 12px !important;
+  }
+}
