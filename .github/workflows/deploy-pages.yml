@@ -151,9 +151,39 @@ jobs:
         run: |
           if [[ -n "$VPS_USER" && -n "$VPS_SSH_KEY" ]]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
+            cat > trustgraph-vps-save-receipt.json <<JSON
+          {
+            "app": "TrustGraph",
+            "status": "ready_for_ssh_save",
+            "github_sha": "${GITHUB_SHA}",
+            "pages_current": true,
+            "vps_saved": false,
+            "reason": "deploy_secrets_present",
+            "public_url": "$PUBLIC_URL",
+            "release_stamp_url": "${PUBLIC_URL%/}/trustgraph-release.json",
+            "protected_vfix_host": "https://5-75-224-110.sslip.io",
+            "manual_update_command": "cd /opt/trustgraph && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+            "accepted_when": "vps_release_stamp_json_matches_github_sha_and_bundle_marker_after_manual_or_secret_based_save"
+          }
+          JSON
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
             echo "::warning::Automatic TrustGraph VPS save skipped because repository secrets TRUSTGRAPH_VPS_USER and TRUSTGRAPH_VPS_SSH_KEY are missing. GitHub Pages is current, but the VPS cannot be proven current until these secrets are added or the manual updater is run."
+            cat > trustgraph-vps-save-receipt.json <<JSON
+          {
+            "app": "TrustGraph",
+            "status": "skipped_missing_ssh_secrets",
+            "github_sha": "${GITHUB_SHA}",
+            "pages_current": true,
+            "vps_saved": false,
+            "missing_secrets": ["TRUSTGRAPH_VPS_USER", "TRUSTGRAPH_VPS_SSH_KEY"],
+            "public_url": "$PUBLIC_URL",
+            "release_stamp_url": "${PUBLIC_URL%/}/trustgraph-release.json",
+            "protected_vfix_host": "https://5-75-224-110.sslip.io",
+            "manual_update_command": "cd /opt/trustgraph && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+            "accepted_when": "vps_release_stamp_json_matches_github_sha_and_bundle_marker_after_manual_or_secret_based_save"
+          }
+          JSON
             {
               echo "## TrustGraph VPS save skipped"
               echo ""
@@ -162,6 +192,13 @@ jobs:
               echo "Manual server update remains: cd /opt/trustgraph && git pull --ff-only origin main && bash tools/update-vps-from-github.sh"
             } >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      - name: Upload VPS save receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: trustgraph-vps-save-receipt
+          path: trustgraph-vps-save-receipt.json
+          if-no-files-found: error
 
       - name: Configure SSH
         if: steps.vps-secrets.outputs.enabled == 'true'

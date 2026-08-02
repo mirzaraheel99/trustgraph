@@ -161,6 +161,30 @@ const runtimeSnippets = [
   {
     source: pagesWorkflow,
     path: pagesWorkflowPath,
+    snippet: "trustgraph-vps-save-receipt.json",
+    label: "automatic VPS save writes a durable receipt artifact"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "skipped_missing_ssh_secrets",
+    label: "VPS save receipt records missing-secret skipped state"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "vps_release_stamp_json_matches_github_sha_and_bundle_marker_after_manual_or_secret_based_save",
+    label: "VPS save receipt keeps release-stamp acceptance rule machine-readable"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "name: trustgraph-vps-save-receipt",
+    label: "VPS save receipt is uploaded as a workflow artifact"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
     snippet: "if: steps.vps-secrets.outputs.enabled == 'true'",
     label: "automatic VPS SSH steps run only when deploy secrets are available"
   },
