@@ -29363,13 +29363,6 @@ function PublicSite({
                 : "Paste a localhost verification link in the recovery panel if Supabase sends the wrong callback."}
             </small>
           </div>
-          <button
-            className="primary-action"
-            disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}
-            type="submit"
-          >
-            {mode === "signin" ? "Login" : "Create account"}
-          </button>
           <div className="registration-outcome-command" aria-label="Registration outcome command">
             <div>
               <span className="status-chip success">Registration outcome command</span>

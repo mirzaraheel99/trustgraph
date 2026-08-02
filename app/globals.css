@@ -47230,3 +47230,133 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* V1 calm route cleanup: keep the real controls clickable and collapse duplicated proof paths. */
+.workspace:has(.signed-in-portal-entry-desk),
+.public-site:has(.public-login-route-cockpit),
+.public-auth-section,
+.public-auth-card,
+.public-credential-station,
+.workspace-admin-grid,
+.verify-panel,
+.corporate-directory-panel {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.public-auth-card:has(.public-credential-station) > .registration-outcome-command,
+.public-auth-card:has(.public-credential-station) > .registration-outcome-receipt,
+.public-auth-card:has(.public-credential-station) > .registration-completion-handoff,
+.public-auth-card:has(.public-credential-station) > .hosted-auth-recovery-board,
+.public-auth-card:has(.public-credential-station) > .public-recovery-route-rail,
+.public-auth-card:has(.public-credential-station) > .auth-recovery-route-receipt,
+.public-auth-card:has(.public-credential-station) > .auth-submit-acceptance,
+.public-auth-card:has(.public-credential-station) > .account-access-command {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.public-auth-card:has(.public-credential-station) {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.public-credential-station {
+  display: grid !important;
+  gap: 12px !important;
+  border-radius: 8px !important;
+}
+
+.public-credential-station-header,
+.public-credential-actions,
+.public-auth-help-strip,
+.public-auth-help-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+.public-credential-station-header > *,
+.public-credential-actions > *,
+.public-auth-help-actions > *,
+.setup-panel-grid > *,
+.workspace-admin-grid > *,
+.verify-panel > * {
+  min-width: 0 !important;
+}
+
+.public-credential-fields,
+.public-credential-readiness,
+.public-auth-action-dock {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.public-credential-actions .primary-action {
+  grid-column: 1 / -1 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) .setup-panel-grid,
+.workspace-admin-grid:has(.setup-panel-grid) .team-controls,
+.workspace-admin-grid:has(.setup-panel-grid) .record-form-grid,
+.workspace-admin-grid:has(.setup-panel-grid) .form-grid,
+.verify-panel .corporate-directory-actions,
+.verify-panel .corporate-database-home-grid,
+.verify-panel .corporate-review-flow-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) input,
+.workspace-admin-grid:has(.setup-panel-grid) select,
+.workspace-admin-grid:has(.setup-panel-grid) textarea,
+.verify-panel input,
+.verify-panel select,
+.verify-panel textarea,
+.verify-panel button,
+.public-credential-station button {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  position: relative !important;
+  z-index: 1 !important;
+  pointer-events: auto !important;
+}
+
+.verify-panel table,
+.corporate-directory-panel table,
+.records-panel table,
+.audit-panel table {
+  width: 100% !important;
+  min-width: min(620px, 100%) !important;
+}
+
+@media (max-width: 760px) {
+  .public-site:has(.public-login-route-cockpit) .public-auth-section,
+  .public-credential-station-header,
+  .public-credential-actions,
+  .public-auth-help-strip,
+  .public-auth-help-actions,
+  .public-credential-fields,
+  .public-credential-readiness,
+  .public-auth-action-dock,
+  .workspace-admin-grid:has(.setup-panel-grid) .setup-panel-grid,
+  .workspace-admin-grid:has(.setup-panel-grid) .team-controls,
+  .workspace-admin-grid:has(.setup-panel-grid) .record-form-grid,
+  .workspace-admin-grid:has(.setup-panel-grid) .form-grid,
+  .verify-panel .corporate-directory-actions,
+  .verify-panel .corporate-database-home-grid,
+  .verify-panel .corporate-review-flow-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
