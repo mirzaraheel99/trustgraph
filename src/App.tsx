@@ -26868,6 +26868,77 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className={`public-login-route-cockpit ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public login route cockpit">
+            <div className="public-login-route-header">
+              <div>
+                <span className={`status-chip ${email && password ? "success" : "warning"}`}>Start here</span>
+                <strong>{portal === "corporate" ? "Corporate portal access" : "Professional Passport access"}</strong>
+                <small>
+                  Choose the portal and action first. Then enter credentials below. Corporate access is request-and-approval scoped; there is no open user database.
+                </small>
+              </div>
+              <button
+                className="primary-action"
+                disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}
+                type="submit"
+              >
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-login-route-grid" aria-label="Choose Professional or Corporate login route">
+              <button className={portal === "professional" && mode === "signin" ? "active" : ""} onClick={() => { setPortal("professional"); setMode("signin"); }} type="button">
+                <strong>Professional login</strong>
+                <small>Open your Passport, evidence, consent, and recovery tools.</small>
+              </button>
+              <button className={portal === "professional" && mode === "signup" ? "active" : ""} onClick={() => { setPortal("professional"); setMode("signup"); }} type="button">
+                <strong>Professional register</strong>
+                <small>Create a Passport owner account and the first live profile rows.</small>
+              </button>
+              <button className={portal === "corporate" && mode === "signin" ? "active" : ""} onClick={() => { setPortal("corporate"); setMode("signin"); }} type="button">
+                <strong>Corporate login</strong>
+                <small>Open Company Admin or Corporate Verify for approved scoped rows.</small>
+              </button>
+              <button className={portal === "corporate" && mode === "signup" ? "active" : ""} onClick={() => { setPortal("corporate"); setMode("signup"); }} type="button">
+                <strong>Corporate register</strong>
+                <small>Create a company workspace, admin membership, and reviewer path.</small>
+              </button>
+            </div>
+            <div className="public-login-route-status">
+              <span>
+                <small>Selected</small>
+                <strong>{portal === "corporate" ? "Corporate" : "Professional"} {mode === "signin" ? "login" : "register"}</strong>
+              </span>
+              <span>
+                <small>Pricing</small>
+                <strong>{selectedRegistrationPath.plan}</strong>
+              </span>
+              <span>
+                <small>First database write</small>
+                <strong>{mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing account"}</strong>
+              </span>
+              <span>
+                <small>Recovery</small>
+                <strong>{email ? "Ready" : "Enter email"}</strong>
+              </span>
+            </div>
+            <div className="public-login-route-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Pricing
+              </button>
+            </div>
+            <small className="public-login-route-proof">
+              public_login_route_cockpit_keeps_professional_login_professional_register_corporate_login_corporate_register_pricing_recovery_first_database_write_submit_and_no_open_user_database_visible_before_credentials
+            </small>
+          </div>
           <div className={`public-route-decision-desk ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public route decision desk">
             <div className="public-route-decision-header">
               <div>

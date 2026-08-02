@@ -41927,6 +41927,136 @@ body,
   color: var(--tg-text);
 }
 
+.public-login-route-cockpit {
+  order: -100;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2.2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 238, 201, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 238, 201, 0.12), rgba(11, 22, 25, 0.96) 54%, rgba(143, 184, 255, 0.16)),
+    rgba(8, 15, 18, 0.96);
+}
+
+.public-login-route-cockpit.corporate {
+  border-color: rgba(143, 184, 255, 0.32);
+  background:
+    linear-gradient(135deg, rgba(143, 184, 255, 0.14), rgba(11, 22, 25, 0.96) 54%, rgba(95, 238, 201, 0.12)),
+    rgba(8, 15, 18, 0.96);
+}
+
+.public-login-route-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-login-route-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-login-route-header strong {
+  color: var(--tg-text);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.05;
+}
+
+.public-login-route-header small,
+.public-login-route-grid small,
+.public-login-route-status small,
+.public-login-route-status em,
+.public-login-route-proof {
+  color: var(--tg-muted);
+  line-height: 1.38;
+}
+
+.public-login-route-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.public-login-route-grid button {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  color: var(--tg-text);
+  text-align: left;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-login-route-grid button.active {
+  border-color: rgba(95, 238, 201, 0.55);
+  background: rgba(50, 222, 190, 0.13);
+}
+
+.public-login-route-grid strong,
+.public-login-route-status strong {
+  color: var(--tg-text);
+  line-height: 1.14;
+}
+
+.public-login-route-status,
+.public-login-route-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.public-login-route-status span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.public-login-route-status small {
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-login-route-actions button,
+.public-login-route-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.public-login-route-proof {
+  display: block;
+  min-width: 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-wrap: anywhere;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-route-decision-desk {
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .public-auth-card .public-access-hub,
 .public-auth-card .public-account-entry-launchpad,
 .public-auth-card .public-v1-access-runway,
@@ -42031,6 +42161,10 @@ body,
 
 @media (max-width: 760px) {
   .public-route-decision-header,
+  .public-login-route-header,
+  .public-login-route-grid,
+  .public-login-route-status,
+  .public-login-route-actions,
   .public-credential-station-header {
     grid-template-columns: minmax(0, 1fr);
   }
