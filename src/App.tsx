@@ -31439,6 +31439,44 @@ function PublicSite({
                 ))}
               </div>
             </div>
+            <div className={`credential-action-bar ${publicSubmitReadiness.can_submit ? "ready" : "needed"}`} aria-label="Credential action bar">
+              <div>
+                <span className={`status-chip ${publicSubmitReadiness.can_submit ? "success" : "warning"}`}>
+                  {portal === "corporate" ? "Corporate credentials" : "Professional credentials"}
+                </span>
+                <strong>{publicSubmitReadiness.can_submit ? authCredentialCommand.submit_label : "Complete required fields"}</strong>
+                <small>
+                  {publicCredentialPreflight.missing_fields.length
+                    ? `Missing: ${publicCredentialPreflight.missing_fields.join(", ")}.`
+                    : `${authCredentialCommand.selected_route} will land in ${authCredentialCommand.landing_dashboard}.`}
+                </small>
+              </div>
+              <div className="credential-action-bar-grid">
+                <span>
+                  <small>Hosted redirect</small>
+                  <strong>{authCredentialCommand.redirect_is_hosted ? "Ready" : "Needs repair"}</strong>
+                </span>
+                <span>
+                  <small>First write</small>
+                  <strong>{authCredentialCommand.first_database_write}</strong>
+                </span>
+                <span>
+                  <small>Recovery</small>
+                  <strong>{authCredentialCommand.recovery_available ? "Ready" : "Email needed"}</strong>
+                </span>
+              </div>
+              <div className="credential-action-bar-actions">
+                <button className="primary-action" disabled={busy || !publicSubmitReadiness.can_submit} type="submit">
+                  {authCredentialCommand.submit_label}
+                </button>
+                <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                  Edit fields
+                </button>
+              </div>
+              <small className="credential-action-bar-boundary">
+                credential_action_bar_keeps_selected_public_route_missing_fields_submit_button_hosted_redirect_recovery_first_database_write_landing_and_scoped_corporate_boundary_visible_before_credentials
+              </small>
+            </div>
             <div className="public-credential-fields">
               <label>
                 <span>Email</span>

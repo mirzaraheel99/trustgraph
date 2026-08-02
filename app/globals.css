@@ -49986,6 +49986,82 @@ body,
   }
 }
 
+/* Credential action bar: final clear submit state before public login/register fields. */
+.credential-action-bar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.48fr) minmax(160px, auto) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 12px !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(255, 205, 118, 0.28) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 118, 0.1), rgba(7, 15, 18, 0.88) 56%, rgba(72, 208, 174, 0.075)),
+    rgba(7, 15, 18, 0.9) !important;
+}
+
+.credential-action-bar.ready {
+  border-color: rgba(113, 242, 203, 0.3) !important;
+  background:
+    linear-gradient(135deg, rgba(72, 208, 174, 0.12), rgba(7, 15, 18, 0.9) 56%, rgba(134, 174, 246, 0.075)),
+    rgba(7, 15, 18, 0.92) !important;
+}
+
+.credential-action-bar > div:first-child,
+.credential-action-bar-grid,
+.credential-action-bar-actions {
+  display: grid !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+}
+
+.credential-action-bar-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.credential-action-bar-grid span {
+  display: grid !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  padding: 9px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.credential-action-bar-actions button {
+  min-width: 0 !important;
+  min-height: 42px !important;
+  width: 100% !important;
+  white-space: normal !important;
+}
+
+.credential-action-bar-boundary {
+  grid-column: 1 / -1 !important;
+  color: var(--muted) !important;
+  font-size: 11px !important;
+}
+
+.credential-action-bar :is(button, strong, small, span, p, em, b, code, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .credential-action-bar {
+  order: -375 !important;
+}
+
+@media (max-width: 860px) {
+  .credential-action-bar {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 /* V1 daily operator shell: keep one understandable route first and move proof boards out of the working path. */
 .workspace:has(.signed-in-portal-entry-desk) {
   --tg-daily-shell-max: 1280px;
