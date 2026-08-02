@@ -452,6 +452,24 @@ const runtimeSnippets = [
   {
     source: nginxInstaller,
     path: "tools/install-trustgraph-nginx.sh",
+    snippet: "local TrustGraph release JSON is not reachable",
+    label: "nginx installer verifies local Caddy release JSON before changing shared nginx"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "shared nginx container does not see the exact TrustGraph release JSON proxy route",
+    label: "nginx installer verifies the mounted nginx container has the exact release JSON route"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "^content-type: application/json",
+    label: "nginx installer requires the public release stamp to return application/json"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
     snippet: "docker exec \"$FIXFLOW_NGINX_CONTAINER\" nginx -t",
     label: "nginx installer tests nginx before reload"
   },
