@@ -35806,9 +35806,14 @@ function App() {
         : "A 200 server page is not enough; check release-stamp JSON",
     observed_failure: "If /trustgraph-release.json opens the TrustGraph app shell HTML, the VPS is stale or the route is falling back to index.html.",
     fix: hostedVersionReceipt.server_update_command,
+    edge_proxy_fix:
+      "sudo install -m 0644 tools/trustgraph-nginx.conf /opt/fixflow-nginx/conf.d/trustgraph.conf && docker exec fixflow-nginx nginx -t && docker exec fixflow-nginx nginx -s reload",
+    edge_proxy_verify:
+      "curl -i https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json | head -20",
+    config_source: "tools/trustgraph-nginx.conf",
     verify: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
     accepted_when:
-      "vps_release_stamp_diagnostic_requires_json_commit_not_html_shell_manual_sync_or_ssh_secrets_and_vfix_route_protection"
+      "vps_release_stamp_diagnostic_requires_json_commit_not_html_shell_manual_sync_or_ssh_secrets_edge_proxy_fix_and_vfix_route_protection"
   };
   const vpsSaveRecoverySteps = [
     {
@@ -36416,6 +36421,8 @@ function App() {
             <div className="vps-release-stamp-diagnostic-command">
               <code>{vpsReleaseStampDiagnostic.verify}</code>
               <code>{vpsReleaseStampDiagnostic.fix}</code>
+              <code>{vpsReleaseStampDiagnostic.edge_proxy_fix}</code>
+              <code>{vpsReleaseStampDiagnostic.edge_proxy_verify}</code>
             </div>
           </div>
           <div className="vps-save-recovery-boundary">
@@ -37949,6 +37956,7 @@ function App() {
             <strong>{vpsReleaseStampDiagnostic.status.replaceAll("_", " ")}</strong>
             <small>{vpsReleaseStampDiagnostic.accepted_when}</small>
             <code>{vpsReleaseStampDiagnostic.verify}</code>
+            <code>{vpsReleaseStampDiagnostic.edge_proxy_fix}</code>
           </div>
           <div className="vps-freshness-boundary">
             <span>Release stamp: {vpsFreshnessCheckpoint.release_stamp_url}</span>

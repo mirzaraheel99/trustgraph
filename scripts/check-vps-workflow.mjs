@@ -14,6 +14,7 @@ const updateVps = fs.readFileSync("tools/update-vps-from-github.sh", "utf8");
 const envValidator = fs.readFileSync("tools/validate-server-env.sh", "utf8");
 const freshnessCheck = fs.readFileSync("scripts/check-vps-freshness.mjs", "utf8");
 const stampRelease = fs.readFileSync("scripts/stamp-release.mjs", "utf8");
+const nginxConfig = fs.readFileSync("tools/trustgraph-nginx.conf", "utf8");
 
 const requiredSnippets = [
   {
@@ -337,6 +338,36 @@ const runtimeSnippets = [
     path: "tools/update-vps-from-github.sh",
     snippet: "the local container route is correct; reload the shared nginx trustgraph host proxy to 127.0.0.1:4180 and keep VFIX separate",
     label: "manual VPS update diagnoses public app-shell fallback as shared nginx proxy when local Caddy is correct"
+  },
+  {
+    source: nginxConfig,
+    path: "tools/trustgraph-nginx.conf",
+    snippet: "server_name trustgraph.5-75-224-110.sslip.io;",
+    label: "shared nginx snippet only targets the TrustGraph subdomain"
+  },
+  {
+    source: nginxConfig,
+    path: "tools/trustgraph-nginx.conf",
+    snippet: "location = /trustgraph-release.json",
+    label: "shared nginx snippet gives the release stamp an exact route"
+  },
+  {
+    source: nginxConfig,
+    path: "tools/trustgraph-nginx.conf",
+    snippet: "proxy_pass http://127.0.0.1:4180/trustgraph-release.json;",
+    label: "shared nginx snippet proxies release stamp to the TrustGraph container"
+  },
+  {
+    source: app,
+    path: "src/App.tsx",
+    snippet: "tools/trustgraph-nginx.conf",
+    label: "UI diagnostic points operators to the versioned nginx repair snippet"
+  },
+  {
+    source: app,
+    path: "src/App.tsx",
+    snippet: "edge_proxy_fix",
+    label: "UI diagnostic exposes the edge proxy repair command"
   },
   {
     source: updateVps,

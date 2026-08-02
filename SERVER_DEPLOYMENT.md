@@ -88,6 +88,18 @@ The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-rele
 
 The updater also checks that the public `https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json` response is real `application/json`. If that URL returns the app shell HTML, fix the nginx TrustGraph host proxy before treating the server as current.
 
+If the local TrustGraph container serves `/trustgraph-release.json` correctly but the public URL returns HTML, install the versioned shared-edge snippet and reload the existing nginx container:
+
+```bash
+cd /opt/trustgraph
+sudo install -m 0644 tools/trustgraph-nginx.conf /opt/fixflow-nginx/conf.d/trustgraph.conf
+docker exec fixflow-nginx nginx -t
+docker exec fixflow-nginx nginx -s reload
+curl -i https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json | head -20
+```
+
+That snippet targets only `trustgraph.5-75-224-110.sslip.io` and leaves `https://5-75-224-110.sslip.io/CRM-client-demo/login` on the protected VFIX host untouched.
+
 From the repo, run the freshness check after every server update:
 
 ```bash
