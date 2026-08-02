@@ -35413,6 +35413,21 @@ function App() {
       ready: serverSyncMonitor.status === "synced"
     }
   ];
+  const productionGateApproved = (matcher: (label: string) => boolean) =>
+    productionGateDecisions.some((gate) => matcher(gate.label) && gate.status === "approved_for_production");
+  const stripeProductionGateApproved = productionGateApproved((label) => label.includes("Stripe"));
+  const securityProductionGateApproved = productionGateApproved((label) => label.includes("RLS") || label.includes("storage"));
+  const legalProductionGateApproved = productionGateApproved((label) => label.includes("Legal") || label.includes("employment"));
+  const vpsCutoverProductionGateApproved = productionGateApproved((label) => label.includes("VPS"));
+  const latestSecurityRlsReviewReceiptForCompletion = securityRlsReviewReceipts[0] ?? null;
+  const latestPilotOwnerReadinessReceiptForCompletion = pilotOwnerReadinessReceipts[0] ?? null;
+  const confirmedPilotContactCount = pilotLaunchContacts.filter((contact) => contact.status === "confirmed").length;
+  const requiredPilotContactCount = Math.max(pilotLaunchContacts.length, 4);
+  const pilotOwnerGateReady = latestPilotOwnerReadinessReceiptForCompletion?.status === "approved_for_pilot" || confirmedPilotContactCount >= requiredPilotContactCount;
+  const securityGateReady = latestSecurityRlsReviewReceiptForCompletion?.status === "approved_for_pilot" || securityProductionGateApproved;
+  const legalGateReady = legalProductionGateApproved;
+  const billingGateReady = stripeProductionGateApproved;
+  const vpsCutoverGateReady = serverSyncMonitor.status === "synced" && vpsCutoverProductionGateApproved;
   const v1HumanGateSeparationRows = [
     {
       label: "Code and live rows",
@@ -35445,30 +35460,48 @@ function App() {
     },
     {
       label: "Pilot owners",
-      value: "Human signoff",
-      detail: "Customer owner, onboarding owner, support owner, and incident owner must be named before launch traffic.",
+      value: pilotOwnerGateReady ? "Pilot owners ready" : "Human signoff",
+      detail: latestPilotOwnerReadinessReceiptForCompletion
+        ? `${latestPilotOwnerReadinessReceiptForCompletion.contacts_ready}/${latestPilotOwnerReadinessReceiptForCompletion.contacts_total} owner contacts saved in Supabase.`
+        : "Customer owner, onboarding owner, support owner, and incident owner must be named before launch traffic.",
       owner: "Human",
-      ready: false,
+      ready: pilotOwnerGateReady,
       action: "Open Admin",
       target: "admin" as const
     },
     {
       label: "Billing boundary",
-      value: "Stripe decision",
-      detail: "The V1 path keeps ledger activation live while payment collection waits for an explicit Stripe/billing decision.",
+      value: billingGateReady ? "Stripe gate approved" : "Stripe decision",
+      detail: billingDecisionReceipts[0]
+        ? `Billing receipt saved as ${billingDecisionReceipts[0].status.replace(/_/g, " ")}; production payments still follow the Stripe production gate.`
+        : "The V1 path keeps ledger activation live while payment collection waits for an explicit Stripe/billing decision.",
       owner: "Human",
-      ready: false,
+      ready: billingGateReady,
       action: "Open billing",
       target: "billing" as const
     },
     {
       label: "Security and legal",
-      value: "External signoff",
-      detail: "RLS checklist, storage policy review, security review, and employment/legal wording remain separated from code acceptance.",
+      value: securityGateReady && legalGateReady ? "External signoff recorded" : "External signoff",
+      detail: latestSecurityRlsReviewReceiptForCompletion
+        ? `${latestSecurityRlsReviewReceiptForCompletion.checks_ready}/${latestSecurityRlsReviewReceiptForCompletion.checks_total} security checks saved; legal gate ${legalGateReady ? "approved" : "still open"}.`
+        : "RLS checklist, storage policy review, security review, and employment/legal wording remain separated from code acceptance.",
       owner: "Human",
-      ready: false,
+      ready: securityGateReady && legalGateReady,
       action: "Open readiness",
       target: "readiness" as const
+    },
+    {
+      label: "VPS cutover approval",
+      value: vpsCutoverGateReady ? "Cutover approved" : "Cutover gate",
+      detail:
+        serverSyncMonitor.status === "synced"
+          ? "Release stamp is current; production cutover still requires the VPS production gate approval."
+          : "TrustGraph VPS must serve current release JSON before a cutover approval can count.",
+      owner: "Human",
+      ready: vpsCutoverGateReady,
+      action: "Export server",
+      target: "server" as const
     }
   ];
   const v1HumanGateSeparation = {
