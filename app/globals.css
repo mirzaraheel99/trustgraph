@@ -44860,3 +44860,229 @@ body,
     font-size: clamp(1.9rem, 10vw, 2.9rem) !important;
   }
 }
+
+/* V1 operator clarity pass: one readable SaaS cockpit, bounded auth, and no corporate overflow. */
+.public-site,
+.workspace {
+  scrollbar-gutter: stable;
+}
+
+.workspace {
+  --tg-shell-max: 1120px;
+  gap: 14px !important;
+}
+
+.topbar {
+  padding: 18px !important;
+}
+
+.topbar h1 {
+  max-width: 18ch !important;
+  font-size: clamp(2rem, 3.4vw, 3.15rem) !important;
+}
+
+.session-strip {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+  max-width: 100% !important;
+}
+
+.session-command-bar {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+}
+
+.topbar-actions {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  width: auto !important;
+  grid-template-columns: repeat(2, 48px) !important;
+}
+
+.topbar-actions button,
+.topbar-actions a,
+.topbar-actions .icon-button,
+.topbar-actions button:has(svg):not(:has(strong)):not(:has(small)) {
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+  min-height: 48px !important;
+}
+
+.topbar > div:first-child {
+  padding-right: 118px !important;
+}
+
+.signed-in-portal-entry-desk,
+.portal-ux-command-center,
+.vps-saved-portal-command,
+.server-currentness-command,
+.vps-save-recovery-center {
+  padding: 16px !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  background: rgba(8, 16, 18, 0.9) !important;
+}
+
+.signed-in-portal-entry-grid,
+.portal-ux-command-grid,
+.vps-saved-portal-command-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr)) !important;
+}
+
+.signed-in-portal-entry-grid button,
+.portal-ux-command-grid button,
+.vps-saved-portal-command-grid button {
+  min-height: 108px !important;
+  padding: 12px !important;
+}
+
+.public-auth-section {
+  width: min(1080px, calc(100vw - 32px)) !important;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 430px) !important;
+  align-items: start !important;
+}
+
+.public-auth-card {
+  position: relative !important;
+  top: auto !important;
+  max-height: none !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  overflow: clip !important;
+}
+
+.public-login-route-cockpit,
+.public-route-decision-desk,
+.auth-portal-console,
+.login-portal-desk,
+.auth-credential-command {
+  padding: 14px !important;
+  border-radius: 8px !important;
+}
+
+.public-login-route-header,
+.public-route-decision-header,
+.auth-portal-console-header,
+.login-portal-desk-header,
+.auth-credential-command-header {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.public-login-route-grid,
+.public-route-decision-routes,
+.auth-portal-console-tabs,
+.login-portal-desk-routes,
+.public-access-hub-routes,
+.public-login-route-actions,
+.public-route-decision-actions,
+.auth-portal-console-actions,
+.login-portal-desk-actions,
+.auth-credential-command-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.public-auth-card input,
+.public-auth-card select,
+.public-auth-card textarea {
+  min-height: 48px !important;
+  font-size: 1rem !important;
+}
+
+.verify-panel {
+  gap: 14px !important;
+  padding: 16px !important;
+}
+
+.verify-panel > .corporate-verify-single-lane {
+  order: -20 !important;
+}
+
+.verify-panel > .corporate-verify-review-runway {
+  order: -19 !important;
+}
+
+.verify-panel > .verify-request-form {
+  order: -18 !important;
+}
+
+.verify-panel > .grant-list {
+  order: -17 !important;
+}
+
+.verify-panel > .corporate-directory-panel {
+  order: -16 !important;
+}
+
+.verify-request-form,
+.corporate-directory-panel,
+.records-panel,
+.audit-panel {
+  overflow: clip !important;
+}
+
+.verify-request-form .form-grid,
+.corporate-directory-panel .directory-controls,
+.corporate-directory-panel .corporate-access-review-controls,
+.records-panel .records-controls,
+.audit-panel .audit-controls {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.corporate-directory-panel table,
+.records-panel table,
+.audit-panel table {
+  min-width: 0 !important;
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.corporate-directory-panel th,
+.corporate-directory-panel td,
+.records-panel th,
+.records-panel td,
+.audit-panel th,
+.audit-panel td {
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 980px) {
+  .public-auth-section {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .topbar-actions {
+    position: static !important;
+    width: 100% !important;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 48px), 1fr)) !important;
+    justify-content: stretch !important;
+  }
+
+  .topbar > div:first-child {
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .public-auth-section,
+  .workspace {
+    width: min(100%, calc(100vw - 12px)) !important;
+    max-width: calc(100vw - 12px) !important;
+  }
+
+  .public-auth-card,
+  .topbar,
+  .signed-in-portal-entry-desk,
+  .portal-ux-command-center,
+  .vps-saved-portal-command,
+  .server-currentness-command,
+  .vps-save-recovery-center,
+  .verify-panel {
+    padding: 10px !important;
+  }
+}
