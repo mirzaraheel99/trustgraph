@@ -172,6 +172,8 @@ const requiredMobileStacks = [
   ".corporate-access-answer-header",
   ".corporate-access-answer-grid",
   ".corporate-access-answer-proof",
+  ".corporate-reviewer-next-action-header",
+  ".corporate-reviewer-next-action-grid",
   ".corporate-access-review-grid",
   ".corporate-visibility-grid",
   ".corporate-classification-grid",

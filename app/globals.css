@@ -38113,13 +38113,111 @@ body {
   white-space: normal;
 }
 
+.corporate-reviewer-next-action {
+  order: -34;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(130, 169, 255, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(24, 35, 54, 0.9), rgba(9, 18, 23, 0.95)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.corporate-reviewer-next-action.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+}
+
+.corporate-reviewer-next-action-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-reviewer-next-action-header > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-reviewer-next-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.corporate-reviewer-next-action-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.corporate-reviewer-next-action-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.corporate-reviewer-next-action-grid article.next {
+  border-color: rgba(225, 184, 102, 0.28);
+}
+
+.corporate-reviewer-next-action strong,
+.corporate-reviewer-next-action small,
+.corporate-reviewer-next-action span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.corporate-reviewer-next-action-header strong {
+  color: var(--text);
+  font-size: clamp(19px, 2.1vw, 28px);
+  line-height: 1.08;
+}
+
+.corporate-reviewer-next-action-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.corporate-reviewer-next-action-grid span {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-reviewer-next-action small {
+  color: var(--muted);
+  line-height: 1.38;
+}
+
+.corporate-reviewer-next-action button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .corporate-verify-review-runway {
   order: -30;
 }
 
 @media (max-width: 780px) {
   .corporate-access-answer-header,
-  .corporate-access-answer-proof {
+  .corporate-access-answer-proof,
+  .corporate-reviewer-next-action-header {
     grid-template-columns: 1fr;
   }
 }

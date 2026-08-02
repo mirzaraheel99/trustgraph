@@ -3211,6 +3211,38 @@ function VerifyRequestsPanel({
       ready: reviews.length > 0 && pendingGapCount === 0
     }
   ];
+  const corporateReviewerNextAction = {
+    mode: "corporate_reviewer_next_action",
+    headline: corporateAccessAnswer.can_access_rows
+      ? "Review approved user rows now"
+      : disabled
+        ? "Activate a corporate reviewer role first"
+        : requests.length
+          ? approvedCount
+            ? "Approval exists; reload or review scoped rows"
+            : "Wait for professional approval"
+          : "Request one professional by email",
+    primary_action: corporateAccessAnswer.next_action,
+    primary_target: corporateAccessAnswer.next_target,
+    live_counts: {
+      requests: requests.length,
+      approved_grants: approvedCount,
+      visible_scoped_rows: sharedRecords.length,
+      review_attestations: reviews.length,
+      open_gaps: pendingGapCount
+    },
+    corporate_database_rule:
+      "Corporate Verify cannot browse every user. It can request one professional by email and review approved scoped rows only.",
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_reviewer_next_action_keeps_next_click_request_approval_visible_rows_review_attestation_open_gaps_no_open_user_database_and_preview_rejection_visible_before_dense_verify_panels"
+  };
+  const corporateReviewerNextActionCards = [
+    { label: "Request", value: requests.length ? `${requests.length} sent` : "Send first", detail: "Start with one professional email.", ready: requests.length > 0 },
+    { label: "Approval", value: approvedCount ? `${approvedCount} approved` : "Waiting", detail: "Rows stay hidden until approval.", ready: approvedCount > 0 },
+    { label: "Visible rows", value: sharedRecords.length ? `${sharedRecords.length}` : "Locked", detail: "Only scoped approved rows can show.", ready: sharedRecords.length > 0 },
+    { label: "Review proof", value: reviews.length ? `${reviews.length} saved` : "Needed", detail: pendingGapCount ? `${pendingGapCount} open gaps.` : "Attest after review.", ready: reviews.length > 0 && pendingGapCount === 0 }
+  ];
   const emptyVerifyStateCommand = {
     mode: "empty_verify_state_command",
     visible_shared_rows: sharedRecords.length,
@@ -3429,6 +3461,42 @@ function VerifyRequestsPanel({
             <strong>{corporateAccessAnswer.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
           </span>
         </div>
+      </div>
+      <div className={`corporate-reviewer-next-action ${corporateAccessAnswer.can_access_rows ? "ready" : "blocked"}`} aria-label="Corporate reviewer next action">
+        <div className="corporate-reviewer-next-action-header">
+          <div>
+            <span className={`status-chip ${corporateAccessAnswer.can_access_rows ? "success" : "warning"}`}>Reviewer next action</span>
+            <strong>{corporateReviewerNextAction.headline}</strong>
+            <small>{corporateReviewerNextAction.corporate_database_rule}</small>
+          </div>
+          <button
+            className={corporateAccessAnswer.can_access_rows ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (corporateReviewerNextAction.primary_target === "export") {
+                downloadTextFile(
+                  corporateVerifyReviewRunwayPacketName,
+                  JSON.stringify({ ...corporateReviewerNextAction, steps: corporateVerifyReviewRunwaySteps }, null, 2),
+                  "application/json"
+                );
+                return;
+              }
+              document.getElementById(corporateReviewerNextAction.primary_target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            type="button"
+          >
+            {corporateReviewerNextAction.primary_action}
+          </button>
+        </div>
+        <div className="corporate-reviewer-next-action-grid">
+          {corporateReviewerNextActionCards.map((card) => (
+            <article className={card.ready ? "ready" : "next"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <small>{corporateReviewerNextAction.accepted_when} | Preview data accepted: {corporateReviewerNextAction.preview_data_accepted ? "yes" : "no"}</small>
       </div>
       <CorporateControlCenter
         activeOrganization={activeOrganization}
