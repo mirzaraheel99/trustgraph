@@ -22602,6 +22602,45 @@ function PublicSite({
       detail: "Password reset and hosted verification repair stay on this card."
     }
   ];
+  const authCredentialCommand = {
+    mode: "auth_credential_command",
+    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
+    submit_ready: publicSubmitReadiness.can_submit,
+    submit_label: mode === "signin" ? "Login" : "Create account",
+    hosted_redirect_url: authRedirectUrl,
+    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
+    recovery_available: Boolean(email),
+    pricing: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    landing_dashboard: portal === "corporate" ? "Company setup and Corporate Verify" : "Professional Passport",
+    corporate_database_boundary:
+      "Corporate users cannot browse all users; access requires an approved scoped request for a professional email.",
+    next_action: publicSubmitReadiness.can_submit ? (mode === "signin" ? "Login now" : "Create account now") : "Complete required fields",
+    accepted_when:
+      "auth_credential_command_keeps_selected_route_submit_readiness_hosted_redirect_recovery_pricing_first_database_write_landing_corporate_boundary_and_next_click_visible_immediately_before_credentials"
+  };
+  const authCredentialCommandCards = [
+    {
+      label: "Route",
+      value: authCredentialCommand.selected_route,
+      detail: authCredentialCommand.landing_dashboard
+    },
+    {
+      label: "Submit",
+      value: authCredentialCommand.submit_ready ? "Ready" : "Needs fields",
+      detail: portal === "corporate" && mode === "signup" ? "Email, password, company name, and domain." : "Email and password."
+    },
+    {
+      label: "Recovery",
+      value: authCredentialCommand.recovery_available ? "Enabled" : "Enter email",
+      detail: "Reset and verification resend use the hosted redirect."
+    },
+    {
+      label: "Redirect",
+      value: authCredentialCommand.redirect_is_hosted ? "Hosted" : "Needs repair",
+      detail: authCredentialCommand.hosted_redirect_url
+    }
+  ];
   const publicPortalSwitchboard = {
     mode: "public_portal_switchboard",
     selected_portal: portal === "corporate" ? "Corporate" : "Professional",
@@ -25596,6 +25635,54 @@ function PublicSite({
               {portal === "corporate"
                 ? "Corporate database rule: request one professional by email, wait for approval, then review scoped rows only."
                 : "User database rule: your Passport stays private until you approve a scoped sharing request."}
+            </small>
+          </div>
+          <div className={`auth-credential-command ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Auth credential command">
+            <div className="auth-credential-command-header">
+              <div>
+                <span className={`status-chip ${authCredentialCommand.submit_ready ? "success" : "warning"}`}>Credential step</span>
+                <strong>{authCredentialCommand.next_action}</strong>
+                <small>{authCredentialCommand.accepted_when}</small>
+              </div>
+              <button className="primary-action" disabled={busy || !authCredentialCommand.submit_ready} type="submit">
+                {authCredentialCommand.submit_label}
+              </button>
+            </div>
+            <div className="auth-credential-command-grid">
+              {authCredentialCommandCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <em>{item.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="auth-credential-command-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Email field
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-auth-credential-command-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...authCredentialCommand, cards: authCredentialCommandCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export auth route
+              </button>
+            </div>
+            <small className="auth-credential-command-boundary">
+              {portal === "corporate" ? authCredentialCommand.corporate_database_boundary : "Professional Passport rows stay owner-controlled until a scoped Access Grant is approved."}
             </small>
           </div>
           <div className="public-access-hub" aria-label="Public access hub">

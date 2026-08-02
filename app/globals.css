@@ -39092,6 +39092,114 @@ body {
   display: none !important;
 }
 
+.auth-credential-command {
+  order: -118;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(113, 242, 203, 0.3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(15, 36, 34, 0.95), rgba(8, 13, 17, 0.98)),
+    rgba(255, 255, 255, 0.035);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.22);
+}
+
+.auth-credential-command.corporate {
+  border-color: rgba(130, 169, 255, 0.38);
+  background:
+    linear-gradient(135deg, rgba(22, 34, 55, 0.96), rgba(8, 13, 17, 0.98)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.auth-credential-command-header,
+.auth-credential-command-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.28fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.auth-credential-command-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.auth-credential-command-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.auth-credential-command-grid span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 76px;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.auth-credential-command strong,
+.auth-credential-command small,
+.auth-credential-command span,
+.auth-credential-command em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.auth-credential-command-header strong {
+  color: #f4fbf7;
+  font-size: clamp(1.28rem, 2.1vw, 1.9rem);
+  line-height: 1.08;
+}
+
+.auth-credential-command-grid strong {
+  color: #f4fbf7;
+  font-size: 0.96rem;
+  line-height: 1.16;
+}
+
+.auth-credential-command-grid small {
+  color: rgba(113, 242, 203, 0.86);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.auth-credential-command.corporate .auth-credential-command-grid small {
+  color: rgba(166, 190, 255, 0.9);
+}
+
+.auth-credential-command-header small,
+.auth-credential-command-grid em,
+.auth-credential-command-boundary {
+  color: rgba(224, 235, 229, 0.74);
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.auth-credential-command-actions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.auth-credential-command-actions button,
+.auth-credential-command-header button {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  white-space: normal;
+}
+
 .public-access-hub {
   display: grid;
   gap: 14px;
@@ -39461,6 +39569,15 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .auth-credential-command-header,
+  .auth-credential-command-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .auth-credential-command-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .public-access-hub-hero,
   .public-access-hub-actions {
     grid-template-columns: minmax(0, 1fr);
@@ -39481,6 +39598,10 @@ body {
 
   .login-portal-desk-routes,
   .login-portal-desk-status {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .auth-credential-command-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 

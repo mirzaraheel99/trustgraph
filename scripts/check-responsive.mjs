@@ -4,6 +4,9 @@ const css = readFileSync("app/globals.css", "utf8");
 
 const requiredMobileStacks = [
   ".auth-actions",
+  ".auth-credential-command-header",
+  ".auth-credential-command-grid",
+  ".auth-credential-command-actions",
   ".account-type-chooser-header",
   ".account-type-chooser-grid",
   ".account-type-chooser-actions",
