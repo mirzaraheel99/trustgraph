@@ -1348,6 +1348,105 @@ button {
     rgba(255, 255, 255, 0.03);
 }
 
+.pricing-registration-handoff {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.18fr) minmax(220px, 0.38fr);
+  gap: 12px;
+  align-items: stretch;
+  margin: 16px 0 14px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.3);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.12), rgba(13, 24, 27, 0.92) 48%, rgba(134, 174, 246, 0.08)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.pricing-registration-handoff.corporate {
+  border-color: rgba(134, 174, 246, 0.34);
+}
+
+.pricing-registration-handoff-copy,
+.pricing-registration-handoff-grid,
+.pricing-registration-handoff-actions {
+  min-width: 0;
+}
+
+.pricing-registration-handoff-copy {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.pricing-registration-handoff-copy strong {
+  color: var(--text);
+  font-size: clamp(20px, 2.3vw, 30px);
+  line-height: 1.06;
+}
+
+.pricing-registration-handoff-copy small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.pricing-registration-handoff-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pricing-registration-handoff-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.pricing-registration-handoff span,
+.pricing-registration-handoff strong,
+.pricing-registration-handoff small {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.pricing-registration-handoff-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.pricing-registration-handoff-grid strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.12;
+}
+
+.pricing-registration-handoff-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.38;
+}
+
+.pricing-registration-handoff-actions {
+  display: grid;
+  gap: 8px;
+  align-content: center;
+}
+
+.pricing-registration-handoff-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .public-pricing-path-answer.corporate {
   border-color: rgba(134, 174, 246, 0.28);
   background:
@@ -21468,6 +21567,9 @@ p {
   .pricing-decision-strip,
   .public-pricing-access-grid,
   .public-pricing-access-actions,
+  .pricing-registration-handoff,
+  .pricing-registration-handoff-grid,
+  .pricing-registration-handoff-actions,
   .public-pricing-path-answer-grid,
   .public-pricing-path-answer-proof,
   .public-pricing-launch-decision,
@@ -46651,6 +46753,7 @@ body,
 
 .public-site:has(.public-login-route-cockpit) .public-product-answer,
 .public-site:has(.public-login-route-cockpit) .public-server-sync-receipt,
+.public-site:has(.public-login-route-cockpit) .pricing-registration-handoff,
 .public-site:has(.public-login-route-cockpit) .pricing-grid,
 .public-site:has(.public-login-route-cockpit) .public-pricing-estimator,
 .public-site:has(.public-login-route-cockpit) .public-auth-section {
@@ -46673,12 +46776,18 @@ body,
 
 .public-site:has(.public-login-route-cockpit) .public-product-answer-grid,
 .public-site:has(.public-login-route-cockpit) .public-product-answer-proof,
+.public-site:has(.public-login-route-cockpit) .pricing-registration-handoff-grid,
+.public-site:has(.public-login-route-cockpit) .pricing-registration-handoff-actions,
 .public-site:has(.public-login-route-cockpit) .pricing-grid,
 .public-site:has(.public-login-route-cockpit) .public-pricing-estimator-grid,
 .public-site:has(.public-login-route-cockpit) .public-pricing-estimator-actions {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)) !important;
   gap: 10px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .pricing-registration-handoff {
+  grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.22fr) minmax(200px, 0.34fr) !important;
 }
 
 .public-site:has(.public-login-route-cockpit) .public-auth-section {

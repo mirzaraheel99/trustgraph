@@ -23059,6 +23059,48 @@ function PublicSite({
       portal
     }
   ];
+  const pricingRegistrationHandoff = {
+    mode: "pricing_registration_handoff",
+    selected_portal: portal,
+    selected_action: mode,
+    recommended_next_step:
+      portal === "corporate"
+        ? "Start Corporate Verify registration, then activate the $149 pilot ledger after hosted login."
+        : "Start Professional registration, then create the private Passport after hosted login.",
+    professional_path: "$0 pilot account, owner-controlled Passport rows, evidence, consent, and Access Grants.",
+    corporate_path: "$149 pilot workspace, company admin, RBAC seats, team setup, and scoped user-database requests.",
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    payment_boundary: "Stripe Checkout stays disabled until the human billing decision is approved.",
+    no_open_user_database_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "pricing_registration_handoff_keeps_plan_choice_next_registration_database_write_scoped_access_stripe_gate_and_export_visible_before_signup"
+  };
+  const pricingRegistrationHandoffSteps = [
+    {
+      label: "1. Pick plan",
+      value: portal === "corporate" ? "$149 Corporate pilot" : "$0 Professional pilot",
+      detail:
+        portal === "corporate"
+          ? "Best for companies that need reviewer RBAC and approved Passport rows."
+          : "Best for one person building and sharing a private Passport."
+    },
+    {
+      label: "2. Register",
+      value: portal === "corporate" ? "Corporate account" : "Professional account",
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "3. First write",
+      value: selectedRegistrationPath.primaryWrite,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "4. Boundary",
+      value: portal === "corporate" ? "Scoped rows only" : "Owner controlled",
+      detail: pricingRegistrationHandoff.payment_boundary
+    }
+  ];
   const portalLoginSwitchboard = [
     {
       label: "Professional user login",
@@ -26373,6 +26415,43 @@ function PublicSite({
         <div className="public-section-heading">
           <span className="eyebrow">Pilot access</span>
           <h2>Start with controlled workflows, then scale</h2>
+        </div>
+        <div className={`pricing-registration-handoff ${portal}`} aria-label="Pricing registration handoff">
+          <div className="pricing-registration-handoff-copy">
+            <span className="status-chip success">Recommended next step</span>
+            <strong>{pricingRegistrationHandoff.recommended_next_step}</strong>
+            <small>{pricingRegistrationHandoff.accepted_when}</small>
+          </div>
+          <div className="pricing-registration-handoff-grid">
+            {pricingRegistrationHandoffSteps.map((step) => (
+              <article key={step.label}>
+                <span>{step.label}</span>
+                <strong>{step.value}</strong>
+                <small>{step.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="pricing-registration-handoff-actions">
+            <button className="primary-action" onClick={() => openPortal("professional")} type="button">
+              Start Professional
+            </button>
+            <button className="secondary-action" onClick={() => openPortal("corporate")} type="button">
+              Start Corporate
+            </button>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-pricing-registration-handoff-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(pricingRegistrationHandoff, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export handoff
+            </button>
+          </div>
         </div>
         <div className={`public-pricing-path-answer ${portal}`} aria-label="Public pricing path answer">
           <div className="public-pricing-path-answer-copy">
