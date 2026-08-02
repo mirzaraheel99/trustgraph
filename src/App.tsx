@@ -10869,6 +10869,24 @@ function AuditTrailPanel({
       detail: "Migration history included as context"
     }
   ];
+  const adminAuditDecisionBar = {
+    mode: "admin_audit_decision_bar",
+    recommended_export: adminAuditExportCommand.recommended_export,
+    active_scope: adminAuditExportCommand.active_scope,
+    signal: guardrailCount ? "guardrail" : highSignalCount ? "high" : filteredEvents.length ? "standard" : "empty",
+    filtered_events: filteredEvents.length,
+    raw_private_evidence_files_exported: false,
+    preview_data_accepted: false,
+    accepted_when:
+      "admin_audit_decision_bar_keeps_filter_scope_recommended_export_signal_counts_csv_json_coverage_readiness_raw_file_exclusion_and_no_preview_data_visible_before_audit_rows"
+  };
+  const adminAuditDecisionCards = [
+    { label: "Scope", value: activeFilterLabels.length ? `${activeFilterLabels.length} filters` : "All rows", detail: adminAuditDecisionBar.active_scope },
+    { label: "Signal", value: adminAuditDecisionBar.signal, detail: `${guardrailCount} guardrail, ${highSignalCount} high-signal events` },
+    { label: "Rows", value: `${filteredEvents.length}/${events.length}`, detail: "Only matching audit rows are exported." },
+    { label: "Recommended", value: adminAuditDecisionBar.recommended_export, detail: "Use coverage for high-signal or guardrail events." },
+    { label: "Boundary", value: "No raw files", detail: "Evidence files stay private; exports include metadata only." }
+  ];
   const adminOperationsAcceptanceCheckpoint = {
     mode: "admin_operations_acceptance_checkpoint",
     headline:
@@ -11049,6 +11067,42 @@ function AuditTrailPanel({
         <strong>Audit trail</strong>
       </div>
       <small>{message}</small>
+      <div className={`admin-audit-decision-bar ${adminAuditDecisionBar.signal}`} aria-label="Admin audit decision bar">
+        <div className="admin-audit-decision-header">
+          <div>
+            <span className={`status-chip ${filteredEvents.length ? "success" : "warning"}`}>Admin export decision</span>
+            <strong>{adminAuditDecisionBar.recommended_export}</strong>
+            <small>{adminAuditDecisionBar.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(exportReadinessName, JSON.stringify({ ...adminExportReadinessPacket, admin_audit_decision_bar: adminAuditDecisionBar }, null, 2), "application/json")}
+            type="button"
+          >
+            Export readiness
+          </button>
+        </div>
+        <div className="admin-audit-decision-grid">
+          {adminAuditDecisionCards.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="admin-audit-decision-actions">
+          <button className="primary-action" disabled={!filteredEvents.length} onClick={() => downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv")} type="button">
+            Export filtered CSV
+          </button>
+          <button className="secondary-action" disabled={!filteredEvents.length} onClick={() => downloadTextFile(exportJsonName, JSON.stringify(filteredEvents, null, 2), "application/json")} type="button">
+            Export filtered JSON
+          </button>
+          <button className="secondary-action" onClick={() => downloadTextFile(coveragePacketName, JSON.stringify({ ...auditCoveragePacket, admin_audit_decision_bar: adminAuditDecisionBar }, null, 2), "application/json")} type="button">
+            Export coverage
+          </button>
+        </div>
+      </div>
       <div className="admin-export-launcher" aria-label="Admin export launcher">
         <div className="admin-export-launcher-header">
           <div>
