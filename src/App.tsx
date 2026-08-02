@@ -24514,6 +24514,63 @@ function PublicSite({
       }
     ]
   };
+  const publicRegistrationPathSummary = {
+    mode: "public_registration_path_summary",
+    selected_route: `${portal}_${mode}`,
+    selected_portal: portal,
+    selected_mode: mode,
+    selected_price: selectedRegistrationPath.plan,
+    payment_boundary: selectedRegistrationPath.paymentStatus,
+    first_live_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "existing_verified_account",
+    landing_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
+    hosted_verification: mode === "signup" ? "email_verification_required" : "existing_login",
+    recovery_available: Boolean(email),
+    corporate_database_boundary:
+      portal === "corporate"
+        ? "corporate_users_request_one_professional_by_email_and_review_only_approved_scoped_rows"
+        : "professional_users_own_their_passport_and_choose_each_access_grant",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_registration_path_summary_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_first_database_write_hosted_verification_recovery_landing_and_no_open_user_database_visible_before_credentials"
+  };
+  const publicRegistrationPathSummarySteps = [
+    {
+      label: "Route",
+      value: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "register" : "login"}`,
+      detail: portal === "corporate" ? "Company workspace and Verify access." : "Personal Passport owner access.",
+      ready: true
+    },
+    {
+      label: "Pricing",
+      value: publicRegistrationPathSummary.selected_price,
+      detail: publicRegistrationPathSummary.payment_boundary,
+      ready: true
+    },
+    {
+      label: "First database write",
+      value: publicRegistrationPathSummary.first_live_database_write,
+      detail: mode === "signup" ? selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ") : "No new registration row is required for existing login.",
+      ready: mode === "signin" || Boolean(publicRegistrationPathSummary.first_live_database_write)
+    },
+    {
+      label: "Hosted verification",
+      value: publicRegistrationPathSummary.hosted_verification.replace(/_/g, " "),
+      detail: mode === "signup" ? `Email link must return to ${authRedirectUrl}` : "Use the existing verified account.",
+      ready: authReady
+    },
+    {
+      label: "Recovery",
+      value: publicRegistrationPathSummary.recovery_available ? "Ready" : "Enter email",
+      detail: "Password reset and verification resend use the hosted redirect.",
+      ready: publicRegistrationPathSummary.recovery_available
+    },
+    {
+      label: "Database boundary",
+      value: portal === "corporate" ? "Scoped only" : "Owner controlled",
+      detail: publicRegistrationPathSummary.corporate_database_boundary.replace(/_/g, " "),
+      ready: true
+    }
+  ];
   const registrationDatabaseLaunchOrder = {
     mode: "registration_database_launch_order",
     selected_portal: portal,
@@ -28326,6 +28383,91 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className={`public-registration-path-summary ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public registration path summary">
+            <div className="public-registration-path-summary-header">
+              <div>
+                <span className={`status-chip ${email && password ? "success" : "warning"}`}>Registration path</span>
+                <strong>
+                  {portal === "corporate"
+                    ? mode === "signup"
+                      ? "Register a Corporate Verify workspace"
+                      : "Login to Corporate Verify"
+                    : mode === "signup"
+                      ? "Register a Professional Passport"
+                      : "Login to your Professional Passport"}
+                </strong>
+                <small>
+                  Confirm the account path, price, first database write, hosted verification, recovery, and database boundary before entering credentials.
+                </small>
+              </div>
+              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to credentials
+              </button>
+            </div>
+            <div className="public-registration-path-summary-grid">
+              {publicRegistrationPathSummarySteps.map((step) => (
+                <button
+                  className={step.ready ? "ready" : "needed"}
+                  key={step.label}
+                  onClick={() => {
+                    if (step.label === "Pricing") {
+                      document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    document.getElementById("public-auth-email")?.focus();
+                  }}
+                  type="button"
+                >
+                  <span>{step.label}</span>
+                  <strong>{step.value}</strong>
+                  <small>{step.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-registration-path-summary-actions">
+              <button className={portal === "professional" && mode === "signup" ? "primary-action" : "secondary-action"} onClick={() => { setPortal("professional"); setMode("signup"); }} type="button">
+                Professional register
+              </button>
+              <button className={portal === "professional" && mode === "signin" ? "primary-action" : "secondary-action"} onClick={() => { setPortal("professional"); setMode("signin"); }} type="button">
+                Professional login
+              </button>
+              <button className={portal === "corporate" && mode === "signup" ? "primary-action" : "secondary-action"} onClick={() => { setPortal("corporate"); setMode("signup"); }} type="button">
+                Corporate register
+              </button>
+              <button className={portal === "corporate" && mode === "signin" ? "primary-action" : "secondary-action"} onClick={() => { setPortal("corporate"); setMode("signin"); }} type="button">
+                Corporate login
+              </button>
+            </div>
+            <div className="public-registration-path-summary-proof">
+              <span>
+                <small>Landing</small>
+                <strong>{publicRegistrationPathSummary.landing_dashboard}</strong>
+              </span>
+              <span>
+                <small>Preview data</small>
+                <strong>{publicRegistrationPathSummary.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+              </span>
+              <span>
+                <small>Corporate database</small>
+                <strong>{portal === "corporate" ? "No open browse" : "Owner grants access"}</strong>
+              </span>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-registration-path-summary-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicRegistrationPathSummary, steps: publicRegistrationPathSummarySteps }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export path
+              </button>
+            </div>
+            <small className="public-registration-path-summary-boundary">{publicRegistrationPathSummary.accepted_when}</small>
+          </div>
           <div className={`public-login-route-cockpit ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public login route cockpit">
             <div className="public-login-route-header">
               <div>

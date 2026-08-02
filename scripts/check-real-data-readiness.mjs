@@ -140,6 +140,12 @@ const appRequirements = [
     "public_portal_launch_answer_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_recovery_server_status_first_database_write_and_no_open_user_database_visible_before_credentials",
     "public portal launch answer acceptance rule"
   ],
+  ["Public registration path summary", "public registration path summary label"],
+  ["public_registration_path_summary", "public registration path summary packet mode"],
+  [
+    "public_registration_path_summary_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_first_database_write_hosted_verification_recovery_landing_and_no_open_user_database_visible_before_credentials",
+    "public registration path summary acceptance rule"
+  ],
   ["Signed evidence acceptance checkpoint", "signed evidence acceptance label"],
   ["signed_evidence_acceptance_checkpoint", "signed evidence acceptance packet mode"],
   [
