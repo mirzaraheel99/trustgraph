@@ -52225,7 +52225,7 @@ body,
   overflow-x: clip !important;
 }
 
-.workspace:has(.daily-route-data-verdict) > :is(.hero, .metrics-grid, .v1-portal-operating-center, .dashboard-front-door, .portal-ux-command-center, .portal-launch-matrix, .portal-route-shell, .signed-in-daily-operating-runway) {
+.workspace:has(.daily-route-data-verdict) > :is(.hero, .metrics-grid, .v1-portal-operating-center, .dashboard-front-door, .portal-ux-command-center, .portal-launch-matrix, .portal-route-shell, .signed-in-daily-operating-runway, .v1-remaining-work-board, .hosted-visual-qa-closeout, .server-currentness-command, .vps-freshness-checkpoint, .server-sync-monitor) {
   position: absolute !important;
   inline-size: 1px !important;
   block-size: 1px !important;
