@@ -870,6 +870,24 @@ function RecordDetail({
       ready: Boolean(lastEvidenceLink)
     }
   ];
+  const evidenceReviewRail = {
+    mode: "evidence_review_rail",
+    record_id: record.id,
+    status: fileBackedEvidenceCount ? "signed_access_ready" : evidenceDocuments.length ? "metadata_ready_file_needed" : "metadata_needed",
+    next_action: firstFileBackedEvidence ? "Preview signed file" : "Add evidence metadata",
+    private_file_policy: "raw_files_stay_private_signed_preview_5_minutes_signed_download_2_minutes",
+    corporate_boundary: "Corporate reviewers receive metadata exports and audit proof, not permanent raw file links.",
+    preview_data_accepted: false,
+    accepted_when:
+      "evidence_review_rail_keeps_add_metadata_private_file_signed_preview_signed_download_manifest_packet_last_link_corporate_boundary_and_no_preview_data_visible_before_evidence_rows"
+  };
+  const evidenceReviewRailSteps = [
+    { label: "Metadata", value: evidenceDocuments.length ? `${evidenceDocuments.length} rows` : "Add", detail: "Title, source, summary, status, and scope.", ready: evidenceDocuments.length > 0 },
+    { label: "Private file", value: fileBackedEvidenceCount ? `${fileBackedEvidenceCount} files` : "Optional", detail: "Attach raw proof only when needed.", ready: fileBackedEvidenceCount > 0 },
+    { label: "Preview", value: firstFileBackedEvidence ? "5 min" : "File needed", detail: "Short-lived signed preview URL.", ready: Boolean(firstFileBackedEvidence) },
+    { label: "Download", value: firstFileBackedEvidence ? "2 min" : "File needed", detail: "Governed signed download URL.", ready: Boolean(firstFileBackedEvidence) },
+    { label: "Export", value: filteredEvidenceDocuments.length ? "Ready" : "Empty", detail: "Manifest and packet exclude permanent file links.", ready: filteredEvidenceDocuments.length > 0 }
+  ];
 
   useEffect(() => {
     setTitle(record.title);
@@ -1031,6 +1049,80 @@ function RecordDetail({
         </div>
         <p>{record.evidence}</p>
         <small>{record.access}</small>
+        <div className={`evidence-review-rail ${evidenceReviewRail.status}`} aria-label="Evidence review rail">
+          <div className="evidence-review-rail-header">
+            <div>
+              <span className={`status-chip ${firstFileBackedEvidence ? "success" : "warning"}`}>Evidence next step</span>
+              <strong>{evidenceReviewRail.next_action}</strong>
+              <small>{evidenceReviewRail.corporate_boundary}</small>
+            </div>
+            <button
+              className={firstFileBackedEvidence ? "secondary-action" : "primary-action"}
+              onClick={() => {
+                if (firstFileBackedEvidence) {
+                  void openEvidence(firstFileBackedEvidence, "preview");
+                  return;
+                }
+                document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" });
+              }}
+              type="button"
+            >
+              {evidenceReviewRail.next_action}
+            </button>
+          </div>
+          <div className="evidence-review-rail-grid">
+            {evidenceReviewRailSteps.map((step) => (
+              <article className={step.ready ? "ready" : "needed"} key={step.label}>
+                <span>{step.label}</span>
+                <strong>{step.value}</strong>
+                <small>{step.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="evidence-review-rail-actions">
+            <button className="secondary-action" onClick={() => document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" })} type="button">
+              Add metadata
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+              onClick={() => {
+                if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "preview");
+              }}
+              type="button"
+            >
+              Preview signed file
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+              onClick={() => {
+                if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "download");
+              }}
+              type="button"
+            >
+              Download signed file
+            </button>
+            <button className="secondary-action" disabled={!filteredEvidenceDocuments.length} onClick={() => downloadTextFile(evidenceManifestName, evidenceDocumentsToCsv(filteredEvidenceDocuments), "text/csv")} type="button">
+              Export manifest
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!filteredEvidenceDocuments.length}
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-evidence-review-rail-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...signedEvidenceAccessPacket, evidence_review_rail: evidenceReviewRail, steps: evidenceReviewRailSteps }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export packet
+            </button>
+          </div>
+          <small>{evidenceReviewRail.accepted_when} | {evidenceReviewRail.private_file_policy}</small>
+        </div>
         <div className={`evidence-safe-access-command ${fileBackedEvidenceCount ? "ready" : "needed"}`} aria-label="Evidence safe access command">
           <div className="evidence-safe-access-header">
             <div>
