@@ -248,6 +248,12 @@ const appRequirements = [
     "portal_flow_compass_keeps_professional_corporate_company_pricing_account_live_data_logout_and_next_click_visible_as_one_simple_portal_path",
     "portal flow compass acceptance rule"
   ],
+  ["Session control strip", "session control strip label"],
+  ["session_control_strip", "session control strip packet mode"],
+  [
+    "session_control_strip_keeps_signed_in_email_current_portal_account_recovery_corporate_setup_logout_and_preview_rejection_visible_on_dashboard_entry",
+    "session control strip acceptance rule"
+  ],
   ["VPS freshness checkpoint", "VPS freshness checkpoint label"],
   ["vps_freshness_checkpoint", "VPS freshness checkpoint packet mode"],
   [

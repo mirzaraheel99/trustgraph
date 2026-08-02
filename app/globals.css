@@ -50638,3 +50638,88 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Session control strip: account, recovery, corporate setup, and logout stay visible at dashboard entry. */
+.session-control-strip {
+  display: grid !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(113, 242, 203, 0.24) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(72, 208, 174, 0.1), rgba(134, 174, 246, 0.06) 56%, rgba(255, 205, 118, 0.045)),
+    rgba(7, 15, 18, 0.94) !important;
+  pointer-events: auto !important;
+}
+
+.workspace:has(.portal-route-shell) > .session-control-strip,
+.workspace:has(.signed-in-portal-entry-desk) > .session-control-strip {
+  order: -785 !important;
+}
+
+.session-control-strip.login_required {
+  border-color: rgba(255, 205, 118, 0.28) !important;
+}
+
+.session-control-strip-header,
+.session-control-strip-actions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+}
+
+.session-control-strip-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr)) !important;
+}
+
+.session-control-strip-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr)) !important;
+  gap: 9px !important;
+  min-width: 0 !important;
+}
+
+.session-control-strip-grid article {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  min-height: 104px !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.session-control-strip-grid article.ready {
+  border-color: rgba(113, 242, 203, 0.24) !important;
+}
+
+.session-control-strip-grid article.next {
+  border-color: rgba(255, 205, 118, 0.24) !important;
+}
+
+.session-control-strip :is(button, strong, small, span, p, em, b, code, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.session-control-strip button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 760px) {
+  .session-control-strip-header,
+  .session-control-strip-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}

@@ -33922,6 +33922,52 @@ function App() {
     role: activeRole.label,
     organization: activeOrganization.name
   };
+  const sessionControlStrip = {
+    mode: "session_control_strip",
+    status: authSession ? "signed_in" : "login_required",
+    headline: authSession ? `Signed in as ${accountUser.email}` : "Login or register before live database work",
+    current_portal: currentWorkspaceStep.label,
+    active_role: activeRole.label,
+    active_organization: activeOrganization.name,
+    recovery_visible: true,
+    logout_visible: Boolean(authSession),
+    corporate_setup_visible: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "session_control_strip_keeps_signed_in_email_current_portal_account_recovery_corporate_setup_logout_and_preview_rejection_visible_on_dashboard_entry"
+  };
+  const sessionControlCards = [
+    {
+      label: "Session",
+      value: authSession ? "Live Supabase" : "Login needed",
+      detail: authSession ? accountUser.email : "Use hosted login or registration.",
+      ready: Boolean(authSession)
+    },
+    {
+      label: "Current portal",
+      value: currentWorkspaceStep.label,
+      detail: currentWorkspaceStep.detail,
+      ready: true
+    },
+    {
+      label: "Account and recovery",
+      value: "Visible",
+      detail: "Password reset, hosted redirect repair, and logout live in Account.",
+      ready: true
+    },
+    {
+      label: "Corporate setup",
+      value: hasLiveCorporateContext ? "Available" : "Needed",
+      detail: hasLiveCorporateContext ? activeOrganization.name : "Create employer or staffing workspace.",
+      ready: hasLiveCorporateContext
+    },
+    {
+      label: "Preview data",
+      value: "Rejected",
+      detail: "Only signed-in Supabase rows count for V1.",
+      ready: true
+    }
+  ];
   const dashboardNextAction =
     !authSession
       ? {
@@ -41389,6 +41435,59 @@ function App() {
               </button>
             ) : null}
           </div>
+        </section>
+        <section className={`session-control-strip ${sessionControlStrip.status}`} aria-label="Session control strip">
+          <div className="session-control-strip-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Session controls</span>
+              <strong>{sessionControlStrip.headline}</strong>
+              <small>
+                Current portal: {sessionControlStrip.current_portal}. Account keeps recovery, hosted link repair, corporate setup, and logout in one reachable place.
+              </small>
+            </div>
+            <button className={authSession ? "secondary-action" : "primary-action"} onClick={openAuthControls} type="button">
+              {authSession ? "Open account" : "Login or register"}
+            </button>
+          </div>
+          <div className="session-control-strip-grid">
+            {sessionControlCards.map((item) => (
+              <article className={item.ready ? "ready" : "next"} key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <small>{item.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="session-control-strip-actions">
+            <button className="secondary-action" onClick={openAuthControls} type="button">
+              Account and recovery
+            </button>
+            <button className="secondary-action" onClick={openCorporateControls} type="button">
+              Corporate setup
+            </button>
+            <button className="secondary-action" onClick={() => openWorkspaceOrSetup(workspace.id)} type="button">
+              Continue portal
+            </button>
+            {authSession ? (
+              <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                Logout
+              </button>
+            ) : null}
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-session-control-strip-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...sessionControlStrip, cards: sessionControlCards }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export session proof
+            </button>
+          </div>
+          <small>{sessionControlStrip.accepted_when}</small>
         </section>
 
         <section className="portal-choice-guide" aria-label="Portal choice guide">
