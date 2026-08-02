@@ -40402,3 +40402,372 @@ body,
     overflow-x: auto;
   }
 }
+
+/* V1 usability shell consolidation: calm the app into a premium SaaS cockpit. */
+:root {
+  --tg-shell-max: 1440px;
+  --tg-panel: rgba(11, 20, 22, 0.92);
+  --tg-panel-soft: rgba(17, 31, 34, 0.86);
+  --tg-border: rgba(197, 221, 214, 0.14);
+  --tg-border-strong: rgba(95, 238, 201, 0.28);
+  --tg-text: #f3fbf7;
+  --tg-muted: #a7bab3;
+  --tg-accent: #4edcca;
+  --tg-accent-2: #8fb8ff;
+}
+
+html,
+body,
+.app {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  background: #071012;
+}
+
+.app {
+  display: block !important;
+}
+
+.sidebar,
+.topbar-session-card {
+  display: none !important;
+}
+
+.workspace {
+  container-type: inline-size;
+  width: min(var(--tg-shell-max), calc(100vw - 28px)) !important;
+  max-width: calc(100vw - 28px) !important;
+  margin-inline: auto;
+  gap: 18px;
+  color: var(--tg-text);
+}
+
+.workspace > * {
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.topbar {
+  position: sticky;
+  top: 12px;
+  z-index: 30;
+  align-items: start;
+  border: 1px solid var(--tg-border);
+  background:
+    linear-gradient(135deg, rgba(12, 25, 26, 0.96), rgba(7, 14, 16, 0.96)),
+    var(--tg-panel);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.34);
+}
+
+.topbar h1 {
+  max-width: 22ch !important;
+  margin-block: 6px 8px;
+  font-size: clamp(32px, 4.2cqw, 58px) !important;
+  letter-spacing: 0;
+}
+
+.topbar p {
+  max-width: 920px;
+  color: var(--tg-muted);
+}
+
+.session-strip,
+.session-command-bar,
+.workspace-route-strip,
+.workspace-flow-strip {
+  max-width: 100%;
+}
+
+.session-command-bar {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  width: min(100%, 760px) !important;
+}
+
+.workspace-route-strip {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr)) !important;
+}
+
+.workspace-flow-strip {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr)) !important;
+}
+
+.session-command-bar button,
+.workspace-route-strip button,
+.workspace-flow-strip button,
+.portal-action-dock button,
+.topbar-actions button {
+  min-height: 44px;
+}
+
+.topbar-actions {
+  position: sticky;
+  top: 28px;
+  display: grid;
+  grid-template-columns: repeat(2, 48px) !important;
+  gap: 10px;
+}
+
+.topbar-actions button {
+  border-radius: 8px;
+}
+
+.vps-saved-portal-command,
+.portal-route-shell,
+.premium-launch-console,
+.v1-portal-operating-center,
+.portal-daily-command-center,
+.signed-in-landing-actions,
+.dashboard-start-map,
+.proof-export-hub,
+.workspace-admin-grid,
+.hero,
+.work-grid {
+  border: 1px solid var(--tg-border);
+  background: var(--tg-panel);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.2);
+}
+
+.vps-saved-portal-command,
+.portal-route-shell,
+.premium-launch-console,
+.v1-portal-operating-center,
+.portal-daily-command-center {
+  order: -70;
+}
+
+.portal-ux-command-center,
+.server-currentness-command,
+.vps-save-recovery-center,
+.portal-daily-navigator,
+.today-command-center,
+.portal-usability-command,
+.portal-action-dock,
+.v1-command-cockpit,
+.v1-portal-launchpad,
+.portal-readiness-board,
+.signed-in-pilot-journey-checklist,
+.signed-in-portal-flow-contract,
+.portal-welcome-path,
+.dashboard-front-door {
+  order: 20;
+}
+
+.portal-route-shell {
+  order: -74;
+}
+
+.vps-saved-portal-command {
+  order: -76;
+}
+
+.premium-launch-console {
+  order: -72;
+}
+
+.signed-in-landing-actions,
+.dashboard-start-map,
+.proof-export-hub {
+  order: -18;
+}
+
+.hero {
+  order: -12;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.02fr) minmax(260px, 0.72fr) !important;
+}
+
+.hero-card,
+.metric-card,
+.ai-card,
+.detail-panel,
+.records-panel,
+.workspace-admin-grid > *,
+.work-grid > *,
+.setup-panel-grid > *,
+.public-auth-card,
+.public-auth-section > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.hero-value {
+  font-size: clamp(48px, 8cqw, 86px) !important;
+}
+
+.vps-saved-portal-command-grid,
+.portal-route-tabs,
+.premium-launch-console-actions,
+.portal-daily-command-grid,
+.signed-in-landing-grid,
+.dashboard-start-map-grid,
+.proof-export-hub-grid,
+.setup-route-deck,
+.setup-tabs,
+.corporate-launch-lanes,
+.corporate-setup-triage-grid,
+.team-billing-handoff-grid,
+.corporate-onboarding-pricing-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+}
+
+.workspace-admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 16px;
+  padding: clamp(14px, 2vw, 22px);
+}
+
+.setup-center-header {
+  max-width: 920px;
+}
+
+.setup-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)) !important;
+  gap: 16px;
+  align-items: start;
+}
+
+.account-admin-form,
+.account-admin-row,
+.team-controls,
+.team-launch-board-actions,
+.directory-controls,
+.audit-controls,
+.evidence-controls,
+.billing-control-grid,
+.record-form-grid,
+.consent-form-grid,
+.corporate-request-controls,
+.corporate-review-controls {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr)) !important;
+}
+
+.workspace input,
+.workspace select,
+.workspace textarea,
+.workspace button {
+  min-width: 0;
+}
+
+.workspace button {
+  overflow-wrap: anywhere;
+}
+
+.workspace p,
+.workspace small,
+.workspace span,
+.workspace strong,
+.workspace em,
+.workspace code {
+  overflow-wrap: anywhere;
+}
+
+.public-auth-section {
+  width: min(1240px, calc(100vw - 28px));
+  max-width: calc(100vw - 28px);
+  margin-inline: auto;
+  grid-template-columns: minmax(0, 0.82fr) minmax(320px, 430px) !important;
+  gap: 18px;
+  align-items: start;
+}
+
+.public-auth-card {
+  position: sticky;
+  top: 18px;
+  border-radius: 8px;
+  background: rgba(9, 18, 20, 0.96);
+}
+
+.public-access-answer,
+.login-portal-desk,
+.auth-credential-command,
+.public-account-access-path,
+.public-login-command-center {
+  border-radius: 8px;
+}
+
+.public-auth-card .public-access-hub,
+.public-auth-card .public-account-entry-launchpad,
+.public-auth-card .public-v1-access-runway,
+.public-auth-card .public-auth-experience-studio {
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.corporate-directory-panel {
+  overflow: hidden;
+}
+
+.corporate-directory-panel table,
+.admin-panel table,
+.audit-table,
+.records-table {
+  width: 100%;
+  min-width: min(720px, 100%);
+}
+
+.portal-action-dock {
+  position: sticky;
+  bottom: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr)) !important;
+  border-color: var(--tg-border-strong);
+}
+
+@media (max-width: 1180px) {
+  .topbar,
+  .hero,
+  .public-auth-section {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .topbar {
+    position: relative;
+    top: auto;
+  }
+
+  .topbar-actions,
+  .public-auth-card {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace,
+  .public-auth-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-inline: 10px;
+  }
+
+  .topbar h1 {
+    max-width: 14ch !important;
+    font-size: clamp(30px, 10vw, 42px) !important;
+  }
+
+  .session-strip,
+  .topbar-actions,
+  .vps-saved-portal-command-header,
+  .vps-saved-portal-command-actions,
+  .vps-saved-portal-command-proof,
+  .portal-route-shell-header,
+  .portal-route-shell-actions,
+  .portal-route-shell-status,
+  .premium-launch-console-proof,
+  .portal-daily-command-proof,
+  .signed-in-landing-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .session-command-bar button {
+    flex-basis: auto;
+  }
+}
