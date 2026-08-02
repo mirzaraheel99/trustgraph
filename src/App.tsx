@@ -33,6 +33,7 @@ import { workspaces, type RecordItem, type Tone, type Workspace, type WorkspaceI
 import type {
   DbAuditEvent,
   DbApiClient,
+  DbAdminAuditExportReceipt,
   DbAuthRecoveryReceipt,
   DbBillingArchitectureDecisionReceipt,
   DbConsentAuthorization,
@@ -89,7 +90,12 @@ import {
   seedPilotWorkspace,
   type AccountContext
 } from "./accountRepository";
-import { auditActionLabel, loadAuditEvents } from "./auditRepository";
+import {
+  auditActionLabel,
+  loadAdminAuditExportReceipts,
+  loadAuditEvents,
+  recordAdminAuditExportReceipt
+} from "./auditRepository";
 import { buildAdvisorySummary } from "./aiAdvisor";
 import {
   authModeLabel,
@@ -11453,20 +11459,35 @@ function OperationsQueuePanel({
 }
 
 function AuditTrailPanel({
+  adminAuditExportReceipts,
   events,
   corporateAccessReviews,
   dataRightsRequests,
   evidenceDocuments,
-  message
-  ,
+  message,
+  onRecordAdminAuditExportReceipt,
   operationsCases,
   schemaMigrationRuns
 }: {
+  adminAuditExportReceipts: DbAdminAuditExportReceipt[];
   events: DbAuditEvent[];
   corporateAccessReviews: DbCorporateAccessReview[];
   dataRightsRequests: DbDataRightsRequest[];
   evidenceDocuments: DbEvidenceDocument[];
   message: string;
+  onRecordAdminAuditExportReceipt: (input: {
+    exportFormat: "csv_filtered_audit_events" | "json_filtered_audit_events" | "json_full_coverage_packet" | "json_admin_readiness_packet";
+    recommendedExport: string;
+    activeFilters: Record<string, unknown>;
+    filteredEventCount: number;
+    loadedEventCount: number;
+    guardrailEventCount: number;
+    highSignalEventCount: number;
+    verificationCaseCount: number;
+    dataRightsRequestCount: number;
+    releaseLedgerCount: number;
+    metadata?: Record<string, unknown>;
+  }) => Promise<void>;
   operationsCases: DbVerificationCase[];
   schemaMigrationRuns: DbSchemaMigrationRun[];
 }) {
@@ -11478,6 +11499,7 @@ function AuditTrailPanel({
   const [actorFilter, setActorFilter] = useState("all");
   const [timeFilter, setTimeFilter] = useState<"all" | "24h" | "7d" | "30d">("all");
   const [signalFilter, setSignalFilter] = useState<"all" | "guardrail" | "high" | "standard">("all");
+  const [adminExportReceiptStatus, setAdminExportReceiptStatus] = useState("Record a persisted receipt when this filtered export is ready to share.");
   const targetTables = Array.from(new Set(events.map((event) => event.target_table).filter(Boolean))).sort();
   const actors = Array.from(
     new Set(events.map((event) => event.actor_profile_id).filter((actor): actor is string => Boolean(actor)))
@@ -11793,6 +11815,50 @@ function AuditTrailPanel({
     admin_audit_export_command: adminAuditExportCommand,
     admin_audit_export_matrix: auditExportMatrix
   };
+  const latestAdminAuditExportReceipt = adminAuditExportReceipts[0] ?? null;
+  const adminAuditExportReceiptPacket = {
+    mode: "admin_audit_export_receipt_packet",
+    status: latestAdminAuditExportReceipt ? "persisted_export_receipt_loaded" : "receipt_not_recorded",
+    table: "admin_audit_export_receipts",
+    rpc: "record_admin_audit_export_receipt",
+    loaded_receipts: adminAuditExportReceipts.length,
+    latest_receipt: latestAdminAuditExportReceipt,
+    active_filters: adminExportReadinessPacket.active_filters,
+    recommended_export: adminAuditDecisionBar.recommended_export,
+    filtered_event_count: filteredEvents.length,
+    loaded_event_count: events.length,
+    raw_private_files_included: false,
+    preview_data_accepted: false,
+    accepted_when:
+      "admin_audit_export_receipt_requires_admin_rbac_filtered_audit_scope_case_data_rights_release_context_metadata_only_no_raw_private_files_and_no_preview_data"
+  };
+  async function saveAdminAuditExportReceipt(exportFormat: "csv_filtered_audit_events" | "json_filtered_audit_events" | "json_full_coverage_packet" | "json_admin_readiness_packet") {
+    setAdminExportReceiptStatus("Recording filtered Admin audit export receipt...");
+    try {
+      await onRecordAdminAuditExportReceipt({
+        exportFormat,
+        recommendedExport: adminAuditDecisionBar.recommended_export,
+        activeFilters: adminExportReadinessPacket.active_filters,
+        filteredEventCount: filteredEvents.length,
+        loadedEventCount: events.length,
+        guardrailEventCount: guardrailCount,
+        highSignalEventCount: highSignalCount,
+        verificationCaseCount: operationsCases.length,
+        dataRightsRequestCount: dataRightsRequests.length,
+        releaseLedgerCount: schemaMigrationRuns.length,
+        metadata: {
+          admin_audit_decision_bar: adminAuditDecisionBar,
+          admin_export_filter_cockpit: adminExportFilterCockpit,
+          admin_operations_acceptance_checkpoint: adminOperationsAcceptanceCheckpoint,
+          raw_private_files_included: false,
+          preview_data_accepted: false
+        }
+      });
+      setAdminExportReceiptStatus("Persisted Admin audit export receipt recorded.");
+    } catch (error) {
+      setAdminExportReceiptStatus(error instanceof Error ? error.message : "Could not record Admin audit export receipt.");
+    }
+  }
   const auditCoveragePacket = {
     generated_at: new Date().toISOString(),
     mode: "filtered_audit_and_verification_history",
@@ -11901,6 +11967,47 @@ function AuditTrailPanel({
           <button className="secondary-action" onClick={() => downloadTextFile(coveragePacketName, JSON.stringify({ ...auditCoveragePacket, admin_audit_decision_bar: adminAuditDecisionBar }, null, 2), "application/json")} type="button">
             Export coverage
           </button>
+          <button className="secondary-action" disabled={!filteredEvents.length} onClick={() => saveAdminAuditExportReceipt("csv_filtered_audit_events")} type="button">
+            Record export receipt
+          </button>
+        </div>
+      </div>
+      <div className="admin-audit-export-receipt" aria-label="Admin audit export receipt">
+        <div className="admin-audit-export-receipt-header">
+          <div>
+            <span className={`status-chip ${latestAdminAuditExportReceipt ? "success" : "warning"}`}>Admin audit export receipt</span>
+            <strong>
+              {latestAdminAuditExportReceipt
+                ? `${latestAdminAuditExportReceipt.export_format.replaceAll("_", " ")} saved`
+                : "No persisted filtered export receipt yet"}
+            </strong>
+            <small>{adminExportReceiptStatus}</small>
+          </div>
+          <button className="secondary-action" onClick={() => downloadTextFile(exportReadinessName, JSON.stringify({ ...adminExportReadinessPacket, admin_audit_export_receipt_packet: adminAuditExportReceiptPacket }, null, 2), "application/json")} type="button">
+            Export receipt packet
+          </button>
+        </div>
+        <div className="admin-audit-export-receipt-grid">
+          <article>
+            <span>Receipts</span>
+            <strong>{adminAuditExportReceipts.length}</strong>
+            <small>{latestAdminAuditExportReceipt?.created_at ?? "Not recorded"}</small>
+          </article>
+          <article>
+            <span>Filter scope</span>
+            <strong>{activeFilterLabels.length ? `${activeFilterLabels.length} filters` : "All rows"}</strong>
+            <small>{adminAuditExportCommand.active_scope}</small>
+          </article>
+          <article>
+            <span>Rows</span>
+            <strong>{filteredEvents.length}/{events.length}</strong>
+            <small>Filtered audit events only</small>
+          </article>
+          <article>
+            <span>Boundary</span>
+            <strong>Metadata only</strong>
+            <small>No raw private files; no preview data</small>
+          </article>
         </div>
       </div>
       <div className="admin-export-filter-cockpit" aria-label="Admin export filter cockpit">
@@ -30599,6 +30706,7 @@ function App() {
   const [operationsStatus, setOperationsStatus] = useState("Switch to Admin role for live operations");
   const [auditEvents, setAuditEvents] = useState<DbAuditEvent[]>([]);
   const [auditStatus, setAuditStatus] = useState("Switch to Admin role for audit events");
+  const [adminAuditExportReceipts, setAdminAuditExportReceipts] = useState<DbAdminAuditExportReceipt[]>([]);
   const [schemaMigrationRuns, setSchemaMigrationRuns] = useState<DbSchemaMigrationRun[]>([]);
   const [securityRlsReviewReceipts, setSecurityRlsReviewReceipts] = useState<DbSecurityRlsReviewReceipt[]>([]);
   const [productionGateDecisions, setProductionGateDecisions] = useState<DbProductionGateDecision[]>([]);
@@ -31251,6 +31359,7 @@ function App() {
       setOperationsCases([]);
       setOperationsStatus("Switch to Admin role for live operations");
       setAuditEvents([]);
+      setAdminAuditExportReceipts([]);
       setAuditStatus("Switch to Admin role for audit events");
       setSchemaMigrationRuns([]);
       setSecurityRlsReviewReceipts([]);
@@ -31268,6 +31377,7 @@ function App() {
       setOperationsCases([]);
       setOperationsStatus("Active role cannot access Admin operations");
       setAuditEvents([]);
+      setAdminAuditExportReceipts([]);
       setAuditStatus("Active role cannot access audit events");
       setSchemaMigrationRuns([]);
       setSecurityRlsReviewReceipts([]);
@@ -31290,6 +31400,7 @@ function App() {
     Promise.all([
       loadVerificationCases(authSession.accessToken),
       loadAuditEvents(authSession.accessToken),
+      loadAdminAuditExportReceipts(authSession.accessToken).catch(() => []),
       loadSchemaMigrationRuns(authSession.accessToken).catch(() => []),
       loadSecurityRlsReviewReceipts(authSession.accessToken).catch(() => []),
       loadProductionGateDecisions(authSession.accessToken).catch(() => []),
@@ -31298,10 +31409,11 @@ function App() {
       loadApiClients(authSession.accessToken),
       loadWebhookSubscriptions(authSession.accessToken)
     ])
-      .then(([items, events, migrations, securityReceipts, gates, pilotContacts, pilotReadinessReceipts, clients, webhooks]) => {
+      .then(([items, events, exportReceipts, migrations, securityReceipts, gates, pilotContacts, pilotReadinessReceipts, clients, webhooks]) => {
         if (cancelled) return;
         setOperationsCases(items);
         setAuditEvents(events);
+        setAdminAuditExportReceipts(exportReceipts);
         setSchemaMigrationRuns(migrations);
         setSecurityRlsReviewReceipts(securityReceipts);
         setProductionGateDecisions(gates);
@@ -31310,7 +31422,11 @@ function App() {
         setApiClients(clients);
         setWebhookSubscriptions(webhooks);
         setOperationsStatus(items.length ? `Live Supabase operations queue: ${items.length} cases` : "No operations cases yet");
-        setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+        setAuditStatus(
+          events.length || exportReceipts.length
+            ? `Live audit events: ${events.length} recent; export receipts: ${exportReceipts.length}`
+            : "No audit events yet"
+        );
         setReleaseStatus(
           migrations.length || gates.length || pilotContacts.length || pilotReadinessReceipts.length
             ? `Release ledger: ${migrations.length} migrations, ${gates.length} production gates, ${pilotContacts.length} pilot contacts, ${pilotReadinessReceipts.length} pilot receipts`
@@ -31326,6 +31442,7 @@ function App() {
         if (cancelled) return;
         setOperationsCases([]);
         setAuditEvents([]);
+        setAdminAuditExportReceipts([]);
         setSchemaMigrationRuns([]);
         setSecurityRlsReviewReceipts([]);
         setProductionGateDecisions([]);
@@ -32560,6 +32677,37 @@ function App() {
     setAuditEvents(events);
     setOperationsStatus(added ? `Created ${added} pilot operations cases` : "Pilot operations cases already exist");
     setAuditStatus(events.length ? `Live audit events: ${events.length} recent` : "No audit events yet");
+  }
+
+  async function recordLiveAdminAuditExportReceipt(input: {
+    exportFormat: "csv_filtered_audit_events" | "json_filtered_audit_events" | "json_full_coverage_packet" | "json_admin_readiness_packet";
+    recommendedExport: string;
+    activeFilters: Record<string, unknown>;
+    filteredEventCount: number;
+    loadedEventCount: number;
+    guardrailEventCount: number;
+    highSignalEventCount: number;
+    verificationCaseCount: number;
+    dataRightsRequestCount: number;
+    releaseLedgerCount: number;
+    metadata?: Record<string, unknown>;
+  }) {
+    if (!authSession || !accountContext || !canAccessWorkspace(activeMembership.role, "admin")) {
+      throw new Error("Sign in with an Admin, Compliance, or Auditor role before recording audit export receipts.");
+    }
+
+    await recordAdminAuditExportReceipt({
+      accessToken: authSession.accessToken,
+      organizationId: activeOrganization?.id ?? activeMembership.organizationId ?? null,
+      ...input
+    });
+    const [receipts, events] = await Promise.all([
+      loadAdminAuditExportReceipts(authSession.accessToken).catch(() => adminAuditExportReceipts),
+      loadAuditEvents(authSession.accessToken).catch(() => auditEvents)
+    ]);
+    setAdminAuditExportReceipts(receipts);
+    setAuditEvents(events);
+    setAuditStatus(`Admin audit export receipt recorded; receipts: ${receipts.length}`);
   }
 
   async function decideLiveOperationsCase(caseId: string, status: VerificationCaseStatus) {
@@ -42752,11 +42900,13 @@ function App() {
                   webhooks={webhookSubscriptions}
                 />
                 <AuditTrailPanel
+                  adminAuditExportReceipts={adminAuditExportReceipts}
                   corporateAccessReviews={corporateAccessReviews}
                   dataRightsRequests={dataRightsRequests}
                   events={auditEvents}
                   evidenceDocuments={evidenceDocuments}
                   message={auditStatus}
+                  onRecordAdminAuditExportReceipt={recordLiveAdminAuditExportReceipt}
                   operationsCases={operationsCases}
                   schemaMigrationRuns={schemaMigrationRuns}
                 />

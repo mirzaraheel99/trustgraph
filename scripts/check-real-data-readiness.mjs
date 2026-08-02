@@ -18,6 +18,7 @@ const [
   app,
   recordsRepository,
   registrationRepository,
+  auditRepository,
   databaseTypes,
   packageText,
   workflow,
@@ -29,6 +30,7 @@ const [
   readFile(new URL("../src/App.tsx", import.meta.url), "utf8"),
   readFile(new URL("../src/recordRepository.ts", import.meta.url), "utf8"),
   readFile(new URL("../src/registrationRepository.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/auditRepository.ts", import.meta.url), "utf8"),
   readFile(new URL("../src/database.ts", import.meta.url), "utf8"),
   readFile(new URL("../package.json", import.meta.url), "utf8"),
   readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),
@@ -368,6 +370,14 @@ const appRequirements = [
     "admin_export_launcher_requires_filtered_audit_scope_case_and_data_rights_context_release_ledger_context_raw_file_exclusion_and_no_preview_data",
     "admin export launcher rule"
   ],
+  ["Admin audit export receipt", "admin audit export receipt label"],
+  ["admin_audit_export_receipt_packet", "admin audit export receipt packet mode"],
+  ["admin_audit_export_receipts", "persisted admin audit export receipt table"],
+  ["record_admin_audit_export_receipt", "persisted admin audit export receipt RPC"],
+  [
+    "admin_audit_export_receipt_requires_admin_rbac_filtered_audit_scope_case_data_rights_release_context_metadata_only_no_raw_private_files_and_no_preview_data",
+    "persisted admin audit export receipt acceptance rule"
+  ],
   ["prepare_pilot_user_access_request", "pilot-named access request RPC"],
   ["ensure_pilot_employer_reviewer_membership", "pilot-named employer reviewer RPC"],
   ["create_pilot_verification_cases", "pilot-named verification cases RPC"],
@@ -404,7 +414,7 @@ for (const [phrase, label] of runbookRequirements) {
 
 assertIncludes(evidenceMap, "Working-data packet", "evidence map working-data export");
 assertIncludes(evidenceMap, "Seed reconciliation", "evidence map seed reconciliation");
-assertIncludes(evidenceMap, "Live Supabase migrations currently run through `064_registration_completion_receipts.sql`", "evidence map current migration boundary");
+assertIncludes(evidenceMap, "Live Supabase migrations currently run through `065_admin_audit_export_receipts.sql`", "evidence map current migration boundary");
 assertIncludes(evidenceMap, "043_account_context_rpc.sql", "evidence map account-context migration history");
 assertIncludes(evidenceMap, "passport_initialized", "evidence map professional registration completion status");
 assertIncludes(evidenceMap, "persisted V1 live database readiness receipts", "evidence map persisted readiness receipt");
@@ -421,6 +431,7 @@ assertMigration(migrationFiles, "061_", "pilot-named operator RPC aliases");
 assertMigration(migrationFiles, "062_", "persisted V1 pilot route run receipts");
 assertMigration(migrationFiles, "063_", "corporate scoped visible Passport rows RPC");
 assertMigration(migrationFiles, "064_", "persisted registration completion receipts");
+assertMigration(migrationFiles, "065_", "persisted admin audit export receipts");
 assertMigration(migrationFiles, "043_", "account context RPC");
 assertMigration(migrationFiles, "044_", "registration intent rows");
 assertMigration(migrationFiles, "045_", "corporate registration intent completion");
@@ -447,6 +458,10 @@ assertIncludes(databaseTypes, "export interface DbRegistrationCompletionReceipt"
 assertIncludes(registrationRepository, "loadRegistrationCompletionReceipts", "registration completion receipt loader");
 assertIncludes(registrationRepository, "recordRegistrationCompletionReceipt", "registration completion receipt writer");
 assertIncludes(registrationRepository, "record_registration_completion_receipt", "registration completion receipt RPC adapter");
+assertIncludes(databaseTypes, "export interface DbAdminAuditExportReceipt", "typed admin audit export receipt contract");
+assertIncludes(auditRepository, "loadAdminAuditExportReceipts", "admin audit export receipt loader");
+assertIncludes(auditRepository, "recordAdminAuditExportReceipt", "admin audit export receipt writer");
+assertIncludes(auditRepository, "record_admin_audit_export_receipt", "admin audit export receipt RPC adapter");
 
 console.log(
   `TrustGraph real-data readiness check passed: ${appRequirements.length} app markers, ${migrationFiles.length} migrations, runbook and readiness evidence verified.`

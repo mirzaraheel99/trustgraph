@@ -190,6 +190,33 @@ export interface DbAuditEvent {
   created_at: string;
 }
 
+export type AdminAuditExportFormat =
+  | "csv_filtered_audit_events"
+  | "json_filtered_audit_events"
+  | "json_full_coverage_packet"
+  | "json_admin_readiness_packet";
+
+export interface DbAdminAuditExportReceipt {
+  id: string;
+  recorded_by_profile_id: string;
+  organization_id: string | null;
+  export_format: AdminAuditExportFormat;
+  recommended_export: string;
+  active_filters: Record<string, unknown>;
+  filtered_event_count: number;
+  loaded_event_count: number;
+  guardrail_event_count: number;
+  high_signal_event_count: number;
+  verification_case_count: number;
+  data_rights_request_count: number;
+  release_ledger_count: number;
+  raw_private_files_included: boolean;
+  preview_data_accepted: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbVerificationCase {
   id: string;
   organization_id: string | null;
