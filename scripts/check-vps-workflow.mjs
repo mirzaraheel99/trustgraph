@@ -332,13 +332,43 @@ const runtimeSnippets = [
   {
     source: vpsStatusReport,
     path: "scripts/report-vps-status.mjs",
+    snippet: "required_env_server",
+    label: "read-only VPS status report includes required shared-edge env values"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "bridge_upstream",
+    label: "read-only VPS status report names the Docker bridge upstream"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "local_release_check_command",
+    label: "read-only VPS status report prints the local bridge release check command"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "public_release_check_command",
+    label: "read-only VPS status report prints the public release check command"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "proxy it to ${bridgeUpstream}",
+    label: "read-only VPS status report tells operators to proxy TrustGraph through the bridge upstream"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
     snippet: "docker exec fixflow-nginx nginx -s reload",
     label: "read-only VPS status report prints the nginx reload command"
   },
   {
     source: vpsStatusReport,
     path: "scripts/report-vps-status.mjs",
-    snippet: "install only the trustgraph.5-75-224-110.sslip.io server block",
+    snippet: "keep ${protectedVfixRoute} unchanged",
     label: "read-only VPS status report keeps VFIX protected during nginx repair"
   },
   {

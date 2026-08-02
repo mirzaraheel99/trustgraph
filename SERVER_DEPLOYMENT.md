@@ -88,13 +88,22 @@ The update script pulls GitHub `main`, rebuilds Docker, writes `/trustgraph-rele
 
 The updater also checks that the public `https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json` response is real `application/json`. If that URL returns the app shell HTML, fix the nginx TrustGraph host proxy before treating the server as current.
 
-If the local TrustGraph container serves `/trustgraph-release.json` correctly but the public URL returns HTML, install the versioned shared-edge snippet and reload the existing nginx container:
+If the local TrustGraph container serves `/trustgraph-release.json` correctly but the public URL returns HTML, first confirm the shared VPS bind values:
+
+```text
+TRUSTGRAPH_HOST=trustgraph.5-75-224-110.sslip.io
+TRUSTGRAPH_HTTP_BIND=172.17.0.1
+TRUSTGRAPH_HTTP_PORT=4180
+TRUSTGRAPH_HTTPS_BIND=127.0.0.1
+TRUSTGRAPH_HTTPS_PORT=4443
+```
+
+Then install the versioned shared-edge snippet and reload the existing nginx container. The snippet proxies the TrustGraph subdomain to `172.17.0.1:4180`; it does not edit the VFIX host.
 
 ```bash
 cd /opt/trustgraph
-sudo install -m 0644 tools/trustgraph-nginx.conf /opt/fixflow-nginx/conf.d/trustgraph.conf
-docker exec fixflow-nginx nginx -t
-docker exec fixflow-nginx nginx -s reload
+curl -i http://172.17.0.1:4180/trustgraph-release.json | head -20
+bash tools/install-trustgraph-nginx.sh
 curl -i https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json | head -20
 ```
 
