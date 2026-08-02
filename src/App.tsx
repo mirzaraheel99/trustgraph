@@ -34803,6 +34803,7 @@ function App() {
     }
   ];
   const latestRegistrationIntent = registrationIntents[0] ?? null;
+  const signedInHostedAuthRedirectUrl = hostedAuthRedirectUrl();
   const registrationIntentReviewPacket = {
     mode: "registration_intent_review_packet",
     status: registrationIntents.length ? "live_registration_intents_loaded" : authSession ? "no_registration_intents_loaded" : "hosted_login_required",
@@ -34900,6 +34901,99 @@ function App() {
           ? "Corporate opens after workspace creation and RBAC membership exist."
           : "Professional opens after the Passport record is initialized.",
       ready: registrationHandoffCommand.completion_status === "completed"
+    }
+  ];
+  const portalAccessNextStep = {
+    mode: "portal_access_next_step_checklist",
+    status: !authSession
+      ? "login_required"
+      : !latestRegistrationIntent
+        ? "registration_intent_required"
+        : registrationHandoffCommand.selected_portal === "corporate" && !hasLiveCorporateContext
+          ? "corporate_workspace_required"
+          : registrationHandoffCommand.selected_portal === "corporate" && !organizationSubscriptions.length
+            ? "pricing_ledger_required"
+            : registrationHandoffCommand.selected_portal === "corporate" && !sharedVerifyRecords.length
+              ? "scoped_rows_required"
+              : registrationHandoffCommand.selected_portal === "professional" && registrationHandoffCommand.completion_status !== "completed"
+                ? "passport_initialization_required"
+                : "portal_ready",
+    headline: !authSession
+      ? "Start with hosted login or registration"
+      : !latestRegistrationIntent
+        ? "Choose Professional or Corporate on the public access desk"
+        : registrationHandoffCommand.selected_portal === "corporate" && !hasLiveCorporateContext
+          ? "Corporate portal is waiting for the company workspace"
+          : registrationHandoffCommand.selected_portal === "corporate" && !organizationSubscriptions.length
+            ? "Corporate portal is waiting for the pilot pricing ledger"
+            : registrationHandoffCommand.selected_portal === "corporate" && !sharedVerifyRecords.length
+              ? "Corporate Verify is waiting for approved scoped user rows"
+              : registrationHandoffCommand.selected_portal === "professional" && registrationHandoffCommand.completion_status !== "completed"
+                ? "Professional Passport is waiting for initialization"
+                : "The selected portal is ready for the next live workflow",
+    next_action:
+      !authSession || !latestRegistrationIntent
+        ? "Open account"
+        : registrationHandoffCommand.selected_portal === "corporate" && !hasLiveCorporateContext
+          ? "Create company workspace"
+          : registrationHandoffCommand.selected_portal === "corporate" && !organizationSubscriptions.length
+            ? "Open pricing"
+            : registrationHandoffCommand.selected_portal === "corporate" && !sharedVerifyRecords.length
+              ? "Request scoped rows"
+              : registrationHandoffCommand.selected_portal === "professional"
+                ? "Open Passport"
+                : "Open Corporate Verify",
+    selected_portal: registrationHandoffCommand.selected_portal,
+    selected_mode: registrationHandoffCommand.selected_mode,
+    hosted_redirect_url: signedInHostedAuthRedirectUrl,
+    account_email: authSession?.user.email ?? "not signed in",
+    completion_status: registrationHandoffCommand.completion_status,
+    pricing_plan_id: registrationHandoffCommand.pricing_plan_id,
+    corporate_workspace_ready: hasLiveCorporateContext,
+    pricing_ledger_rows: organizationSubscriptions.length,
+    scoped_user_rows: sharedVerifyRecords.length,
+    logout_visible: Boolean(authSession),
+    recovery_visible: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "portal_access_next_step_checklist_shows_hosted_auth_registration_intent_corporate_workspace_pricing_scoped_rows_account_logout_recovery_and_preview_rejection"
+  };
+  const portalAccessNextStepRows = [
+    {
+      label: "1. Account",
+      value: authSession ? "Signed in" : "Login needed",
+      detail: authSession ? portalAccessNextStep.account_email : "Use hosted login/register. Recovery and reset are on Account.",
+      ready: Boolean(authSession)
+    },
+    {
+      label: "2. Intent",
+      value: latestRegistrationIntent ? registrationHandoffCommand.selected_portal : "Choose route",
+      detail: latestRegistrationIntent ? `${registrationHandoffCommand.selected_mode} intent captured from Supabase.` : "Pick Professional or Corporate before treating the route as real.",
+      ready: Boolean(latestRegistrationIntent)
+    },
+    {
+      label: "3. Corporate workspace",
+      value: hasLiveCorporateContext ? "Ready" : "Needed",
+      detail: hasLiveCorporateContext ? activeOrganization.name : "Corporate users need organization and RBAC rows before Verify opens.",
+      ready: registrationHandoffCommand.selected_portal !== "corporate" || hasLiveCorporateContext
+    },
+    {
+      label: "4. Pricing",
+      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : registrationHandoffCommand.pricing_plan_id,
+      detail: "Professional is free in pilot; Corporate pilot uses a Supabase ledger while Stripe stays human-gated.",
+      ready: registrationHandoffCommand.selected_portal !== "corporate" || organizationSubscriptions.length > 0
+    },
+    {
+      label: "5. User rows",
+      value: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Approval needed",
+      detail: "Corporate can review only approved, consent-scoped Passport rows. No open user database browsing.",
+      ready: registrationHandoffCommand.selected_portal !== "corporate" || sharedVerifyRecords.length > 0
+    },
+    {
+      label: "6. Account tools",
+      value: authSession ? "Logout visible" : "Available after login",
+      detail: "Logout, resend verification, reset password, redirect copy, and export stay in Account.",
+      ready: Boolean(authSession)
     }
   ];
   const onboardingHandoffCommand = {
@@ -36899,6 +36993,92 @@ function App() {
             <span>
               <small>Preview data</small>
               <strong>{registrationHandoffCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+          </div>
+        </section>
+
+        <section className={`portal-access-next-step ${portalAccessNextStep.status === "portal_ready" ? "ready" : "needed"}`} aria-label="Portal access next step checklist">
+          <div className="portal-access-next-step-header">
+            <div>
+              <span className={`status-chip ${portalAccessNextStep.status === "portal_ready" ? "success" : "warning"}`}>Portal next step</span>
+              <strong>{portalAccessNextStep.headline}</strong>
+              <small>
+                This is the live route from hosted auth to Professional Passport or Corporate Verify. Corporate access still needs workspace, pricing ledger, and approved scoped rows.
+              </small>
+            </div>
+            <div className="portal-access-next-step-actions">
+              <button
+                className={portalAccessNextStep.status === "portal_ready" ? "secondary-action" : "primary-action"}
+                onClick={() => {
+                  if (!authSession || !latestRegistrationIntent) {
+                    openAuthControls();
+                    return;
+                  }
+                  if (portalAccessNextStep.status === "corporate_workspace_required") {
+                    openCorporateControls();
+                    return;
+                  }
+                  if (portalAccessNextStep.status === "pricing_ledger_required") {
+                    setSetupView("billing");
+                    return;
+                  }
+                  if (portalAccessNextStep.status === "scoped_rows_required") {
+                    openWorkspaceOrSetup("verify");
+                    return;
+                  }
+                  openWorkspaceOrSetup(portalAccessNextStep.selected_portal === "corporate" ? "verify" : "passport");
+                }}
+                type="button"
+              >
+                {portalAccessNextStep.next_action}
+              </button>
+              {authSession ? (
+                <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              ) : null}
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-portal-access-next-step-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...portalAccessNextStep, rows: portalAccessNextStepRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export route
+              </button>
+            </div>
+          </div>
+          <div className="portal-access-next-step-grid">
+            {portalAccessNextStepRows.map((row) => (
+              <article className={row.ready ? "ready" : "next"} key={row.label}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="portal-access-next-step-proof">
+            <span>
+              <small>Hosted redirect</small>
+              <strong>{portalAccessNextStep.hosted_redirect_url}</strong>
+            </span>
+            <span>
+              <small>Completion</small>
+              <strong>{portalAccessNextStep.completion_status}</strong>
+            </span>
+            <span>
+              <small>Corporate boundary</small>
+              <strong>No open user browse</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{portalAccessNextStep.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
           </div>
         </section>

@@ -87,6 +87,8 @@ Passport evidence now uses the file access cockpit as the visible preview/downlo
 
 The signed-in workspace now includes a registration handoff command immediately after the portal command center. It shows the hosted registration intent, selected Professional or Corporate portal, selected plan, first live database write, completion state, next workspace or Passport action, and preview-data rejection so a verified user can see why Corporate remains locked until workspace/RBAC creation is complete.
 
+That handoff now includes a Portal access next-step checklist. It turns the signed-in route into six visible checks: hosted account, registration intent, corporate workspace/RBAC, pricing ledger, scoped user rows, and account tools/logout/recovery. Corporate remains blocked until the company workspace, pilot ledger, and approved scoped rows exist; preview data is still rejected.
+
 The public first viewport now includes an audience switchboard for Professionals, Corporate Verify buyers, and TrustGraph operators. It explains the pilot price, first database effect, scoped-access boundary, and human-gated operations before a visitor reaches the credential form.
 
 The signed-in VPS workspace now has a final layout guard for the hosted SaaS shell. It hides global horizontal overflow, stacks the Professional and Corporate work grids at tablet width, keeps account/logout action groups wrapping instead of clipping, and bounds dense records, setup, and Verify panels so the dashboard stays readable on desktop and mobile.

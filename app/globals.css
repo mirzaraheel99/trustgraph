@@ -48692,3 +48692,92 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Portal access next-step checklist: auth, registration, corporate workspace, pricing, rows, and logout in one route. */
+.portal-access-next-step {
+  order: -118 !important;
+  display: grid !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(134, 174, 246, 0.22) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.12), rgba(255, 255, 255, 0.018) 44%, rgba(95, 238, 201, 0.08)),
+    rgba(8, 16, 19, 0.94) !important;
+}
+
+.portal-access-next-step.ready {
+  border-color: rgba(113, 242, 203, 0.3) !important;
+}
+
+.portal-access-next-step-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.38fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.portal-access-next-step-header > div:first-child,
+.portal-access-next-step-actions,
+.portal-access-next-step-grid article,
+.portal-access-next-step-proof span {
+  min-width: 0 !important;
+}
+
+.portal-access-next-step-actions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 8px !important;
+}
+
+.portal-access-next-step-grid,
+.portal-access-next-step-proof {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.portal-access-next-step-grid article,
+.portal-access-next-step-proof span {
+  display: grid !important;
+  gap: 5px !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.portal-access-next-step-grid article.ready {
+  border-color: rgba(113, 242, 203, 0.22) !important;
+  background: rgba(72, 208, 174, 0.08) !important;
+}
+
+.portal-access-next-step-grid article.next {
+  border-color: rgba(255, 205, 118, 0.24) !important;
+  background: rgba(255, 205, 118, 0.055) !important;
+}
+
+.portal-access-next-step strong,
+.portal-access-next-step small,
+.portal-access-next-step span {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.portal-access-next-step button {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+@media (max-width: 840px) {
+  .portal-access-next-step-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
