@@ -412,6 +412,12 @@ const appRequirements = [
     "admin_export_launcher_requires_filtered_audit_scope_case_and_data_rights_context_release_ledger_context_raw_file_exclusion_and_no_preview_data",
     "admin export launcher rule"
   ],
+  ["Admin export path", "admin export decision strip label"],
+  ["admin_export_decision_strip", "admin export decision strip packet mode"],
+  [
+    "admin_export_decision_strip_keeps_filter_scope_recommended_export_csv_json_coverage_readiness_receipt_raw_file_exclusion_and_preview_rejection_visible_before_audit_table",
+    "admin export decision strip no-preview-data rule"
+  ],
   ["Admin audit export receipt", "admin audit export receipt label"],
   ["admin_audit_export_receipt_packet", "admin audit export receipt packet mode"],
   ["admin_audit_export_receipts", "persisted admin audit export receipt table"],

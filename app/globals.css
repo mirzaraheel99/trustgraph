@@ -44342,6 +44342,96 @@ body,
 }
 
 /* Admin audit decision bar: filtered scope and export choice before audit rows. */
+.admin-export-decision-strip {
+  order: -126;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.14), rgba(15, 26, 31, 0.96) 50%, rgba(143, 184, 255, 0.12)),
+    rgba(7, 15, 17, 0.97);
+}
+
+.admin-export-decision-strip-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.admin-export-decision-strip-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.admin-export-decision-strip-header strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: clamp(1.12rem, 2vw, 1.46rem);
+  line-height: 1.14;
+}
+
+.admin-export-decision-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-export-decision-strip-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 106px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 235, 229, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.admin-export-decision-strip-grid span {
+  color: var(--accent, #5ff0c9);
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.admin-export-decision-strip-grid strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: 1rem;
+  line-height: 1.14;
+}
+
+.admin-export-decision-strip-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-export-decision-strip button {
+  width: 100%;
+  min-width: 0;
+  pointer-events: auto;
+  white-space: normal;
+}
+
+.admin-export-decision-strip strong,
+.admin-export-decision-strip small,
+.admin-export-decision-strip span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .admin-audit-decision-bar {
   order: -96;
   display: grid;
@@ -44496,6 +44586,9 @@ body,
 }
 
 @media (max-width: 980px) {
+  .admin-export-decision-strip-header,
+  .admin-export-decision-strip-grid,
+  .admin-export-decision-strip-actions,
   .admin-audit-decision-header,
   .admin-audit-export-receipt-header,
   .admin-audit-decision-grid,
@@ -44517,6 +44610,10 @@ body,
 
 .audit-panel:has(.admin-audit-decision-bar) > small {
   order: -128 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .admin-export-decision-strip {
+  order: -126 !important;
 }
 
 .audit-panel:has(.admin-audit-decision-bar) > .admin-audit-decision-bar {
@@ -44562,6 +44659,7 @@ body,
 }
 
 .audit-panel:has(.admin-audit-decision-bar) > .admin-audit-decision-bar,
+.audit-panel:has(.admin-audit-decision-bar) > .admin-export-decision-strip,
 .audit-panel:has(.admin-audit-decision-bar) > .admin-audit-export-receipt,
 .audit-panel:has(.admin-audit-decision-bar) > .admin-export-filter-cockpit,
 .audit-panel:has(.admin-audit-decision-bar) > .admin-operations-acceptance-checkpoint,
@@ -44574,6 +44672,7 @@ body,
 }
 
 .audit-panel:has(.admin-audit-decision-bar) .admin-audit-decision-grid,
+.audit-panel:has(.admin-audit-decision-bar) .admin-export-decision-strip-grid,
 .audit-panel:has(.admin-audit-decision-bar) .admin-audit-export-receipt-grid,
 .audit-panel:has(.admin-audit-decision-bar) .admin-export-filter-grid,
 .audit-panel:has(.admin-audit-decision-bar) .admin-operations-acceptance-grid,
@@ -44584,6 +44683,7 @@ body,
 }
 
 .audit-panel:has(.admin-audit-decision-bar) .admin-audit-decision-header,
+.audit-panel:has(.admin-audit-decision-bar) .admin-export-decision-strip-header,
 .audit-panel:has(.admin-audit-decision-bar) .admin-audit-export-receipt-header,
 .audit-panel:has(.admin-audit-decision-bar) .admin-export-filter-header,
 .audit-panel:has(.admin-audit-decision-bar) .admin-operations-acceptance-header {
@@ -44591,6 +44691,7 @@ body,
 }
 
 .audit-panel:has(.admin-audit-decision-bar) .admin-audit-decision-actions,
+.audit-panel:has(.admin-audit-decision-bar) .admin-export-decision-strip-actions,
 .audit-panel:has(.admin-audit-decision-bar) .admin-export-filter-actions,
 .audit-panel:has(.admin-audit-decision-bar) .admin-operations-acceptance-proof {
   display: flex !important;
@@ -44599,6 +44700,7 @@ body,
 }
 
 .audit-panel:has(.admin-audit-decision-bar) .admin-audit-decision-actions > *,
+.audit-panel:has(.admin-audit-decision-bar) .admin-export-decision-strip-actions > *,
 .audit-panel:has(.admin-audit-decision-bar) .admin-export-filter-actions > *,
 .audit-panel:has(.admin-audit-decision-bar) .admin-operations-acceptance-proof > * {
   flex: 1 1 170px !important;

@@ -11883,6 +11883,54 @@ function AuditTrailPanel({
     { label: "Recommended", value: adminAuditDecisionBar.recommended_export, detail: "Use coverage for high-signal or guardrail events." },
     { label: "Boundary", value: "No raw files", detail: "Evidence files stay private; exports include metadata only." }
   ];
+  const latestAdminAuditExportReceipt = adminAuditExportReceipts[0] ?? null;
+  const adminExportDecisionStrip = {
+    mode: "admin_export_decision_strip",
+    status: filteredEvents.length ? "ready" : activeFilterLabels.length ? "filtered_empty" : "needs_live_audit_rows",
+    headline:
+      filteredEvents.length === 0
+        ? "No exportable audit rows in this view"
+        : guardrailCount || highSignalCount
+          ? "Export coverage packet first"
+          : "Export filtered audit rows",
+    recommended_export: adminAuditDecisionBar.recommended_export,
+    active_scope: adminAuditDecisionBar.active_scope,
+    filter_count: activeFilterLabels.length,
+    filtered_audit_events: filteredEvents.length,
+    loaded_audit_events: events.length,
+    persisted_receipts: adminAuditExportReceipts.length,
+    raw_private_files_exported: false,
+    preview_data_accepted: false,
+    accepted_when:
+      "admin_export_decision_strip_keeps_filter_scope_recommended_export_csv_json_coverage_readiness_receipt_raw_file_exclusion_and_preview_rejection_visible_before_audit_table"
+  };
+  const adminExportDecisionStripCards = [
+    {
+      label: "Next export",
+      value: adminExportDecisionStrip.recommended_export,
+      detail: filteredEvents.length ? adminExportDecisionStrip.headline : "Clear filters or load live Admin audit rows."
+    },
+    {
+      label: "Scope",
+      value: activeFilterLabels.length ? `${activeFilterLabels.length} filters` : "All rows",
+      detail: adminExportDecisionStrip.active_scope
+    },
+    {
+      label: "Rows",
+      value: `${filteredEvents.length}/${events.length}`,
+      detail: `${guardrailCount} guardrail and ${highSignalCount} high-signal rows`
+    },
+    {
+      label: "Receipt",
+      value: adminAuditExportReceipts.length ? `${adminAuditExportReceipts.length} saved` : "Not saved",
+      detail: latestAdminAuditExportReceipt?.created_at ?? "Record a receipt after exporting."
+    },
+    {
+      label: "Boundary",
+      value: "Metadata only",
+      detail: "No raw private files and no preview data leave Admin."
+    }
+  ];
   const adminExportFilterCockpit = {
     mode: "admin_export_filter_cockpit",
     headline:
@@ -12034,7 +12082,6 @@ function AuditTrailPanel({
     admin_audit_export_command: adminAuditExportCommand,
     admin_audit_export_matrix: auditExportMatrix
   };
-  const latestAdminAuditExportReceipt = adminAuditExportReceipts[0] ?? null;
   const adminAuditExportReceiptPacket = {
     mode: "admin_audit_export_receipt_packet",
     status: latestAdminAuditExportReceipt ? "persisted_export_receipt_loaded" : "receipt_not_recorded",
@@ -12152,6 +12199,45 @@ function AuditTrailPanel({
         <strong>Audit trail</strong>
       </div>
       <small>{message}</small>
+      <div className={`admin-export-decision-strip ${adminExportDecisionStrip.status}`} aria-label="Admin export decision strip">
+        <div className="admin-export-decision-strip-header">
+          <div>
+            <span className={`status-chip ${filteredEvents.length ? "success" : "warning"}`}>Admin export path</span>
+            <strong>{adminExportDecisionStrip.headline}</strong>
+            <small>{adminExportDecisionStrip.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(exportReadinessName, JSON.stringify({ ...adminExportReadinessPacket, admin_export_decision_strip: adminExportDecisionStrip }, null, 2), "application/json")}
+            type="button"
+          >
+            Export readiness
+          </button>
+        </div>
+        <div className="admin-export-decision-strip-grid">
+          {adminExportDecisionStripCards.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="admin-export-decision-strip-actions">
+          <button className="primary-action" disabled={!filteredEvents.length} onClick={() => downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv")} type="button">
+            Export CSV
+          </button>
+          <button className="secondary-action" disabled={!filteredEvents.length} onClick={() => downloadTextFile(exportJsonName, JSON.stringify(filteredEvents, null, 2), "application/json")} type="button">
+            Export JSON
+          </button>
+          <button className="secondary-action" onClick={() => downloadTextFile(coveragePacketName, JSON.stringify({ ...auditCoveragePacket, admin_export_decision_strip: adminExportDecisionStrip }, null, 2), "application/json")} type="button">
+            Export coverage
+          </button>
+          <button className="secondary-action" disabled={!filteredEvents.length} onClick={() => saveAdminAuditExportReceipt("json_admin_readiness_packet")} type="button">
+            Record receipt
+          </button>
+        </div>
+      </div>
       <div className={`admin-audit-decision-bar ${adminAuditDecisionBar.signal}`} aria-label="Admin audit decision bar">
         <div className="admin-audit-decision-header">
           <div>
