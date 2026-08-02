@@ -735,6 +735,10 @@ if (!css.includes(".portal-server-save-commander") || !css.includes(".portal-ser
   throw new Error("Responsive check failed: portal server-save commander must be visible, bounded, and mobile stacked.");
 }
 
+if (!css.includes('.public-pricing-estimator-controls input[type="range"]') || !css.includes("min-height: 44px") || !css.includes("::-webkit-slider-thumb") || !css.includes("::-moz-range-thumb")) {
+  throw new Error("Responsive check failed: public pricing range controls must stay touch-safe on mobile.");
+}
+
 if (!css.includes(".vps-save-handoff") || !css.includes(".vps-save-handoff-grid") || !css.includes(".vps-save-handoff-command") || !css.includes(".vps-save-handoff-header button")) {
   throw new Error("Responsive check failed: VPS save handoff must be visible, bounded, and mobile stacked.");
 }

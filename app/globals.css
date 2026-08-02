@@ -1764,8 +1764,31 @@ button {
 }
 
 .public-pricing-estimator-controls input[type="range"] {
+  min-height: 44px;
   width: 100%;
   accent-color: var(--teal);
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.public-pricing-estimator-controls input[type="range"]::-webkit-slider-runnable-track {
+  min-height: 10px;
+  border-radius: 999px;
+}
+
+.public-pricing-estimator-controls input[type="range"]::-webkit-slider-thumb {
+  min-height: 24px;
+  min-width: 24px;
+}
+
+.public-pricing-estimator-controls input[type="range"]::-moz-range-track {
+  min-height: 10px;
+  border-radius: 999px;
+}
+
+.public-pricing-estimator-controls input[type="range"]::-moz-range-thumb {
+  min-height: 24px;
+  min-width: 24px;
 }
 
 .public-pricing-estimator-grid {
