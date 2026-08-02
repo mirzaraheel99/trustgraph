@@ -1,5 +1,12 @@
 import type { RecordItem, Tone } from "./data";
-import type { DbAccessGrant, DbTrustRecord, DbVerificationCase, RecordStatus, RecordType, TrustRecordSensitivity } from "./database";
+import type {
+  DbCorporateVisiblePassportRow,
+  DbTrustRecord,
+  DbVerificationCase,
+  RecordStatus,
+  RecordType,
+  TrustRecordSensitivity
+} from "./database";
 import { supabaseRest, supabaseRpc } from "./supabase";
 
 const recordTypeLabels: Record<RecordType, string> = {
@@ -117,25 +124,52 @@ export async function loadPassportRecords(profileId: string, accessToken: string
 }
 
 export async function loadSharedVerifyRecords(accessToken: string): Promise<RecordItem[]> {
-  const rows = await supabaseRest<
+  const rows = await supabaseRpc<DbCorporateVisiblePassportRow[]>(
+    "list_corporate_visible_passport_rows",
     {
-      access_grant: DbAccessGrant;
-      trust_record: DbTrustRecord;
-    }[]
-  >(
-    [
-      "access_grant_records?select=access_grant:access_grants!inner(*),trust_record:trust_records!inner(*)",
-      "access_grant.status=eq.approved"
-    ].join("&"),
+      input_organization_id: null
+    },
     { accessToken }
   );
 
-  return rows.map(({ access_grant: grant, trust_record: record }) => ({
-    ...trustRecordToRecordItem(record),
-    owner: "Shared with Verify workspace",
-    access: grant.expires_at ? `Shared until ${dateLabel(grant.expires_at)}` : "Approved Access Grant",
-    trust: record.status === "verified" ? "Shared verified record" : "Shared Passport record"
-  }));
+  return rows.map((row) => {
+    const record = trustRecordToRecordItem({
+      id: row.trust_record_id,
+      owner_profile_id: row.subject_profile_id,
+      issuer_organization_id: null,
+      type: row.record_type,
+      title: row.record_title,
+      status: row.record_status,
+      source_name: row.source_name,
+      evidence_summary: row.evidence_summary,
+      issued_at: row.issued_at,
+      expires_at: row.expires_at,
+      metadata: {
+        ...row.record_metadata,
+        corporate_visible_passport_row: true,
+        access_grant_id: row.access_grant_id,
+        requester_organization_id: row.requester_organization_id,
+        subject_email: row.subject_email,
+        subject_full_name: row.subject_full_name,
+        consent_status: row.consent_status,
+        visibility_scope: row.visibility_scope,
+        raw_private_files_included: row.raw_private_files_included,
+        preview_data_accepted: row.preview_data_accepted,
+        accepted_when: row.accepted_when
+      },
+      created_at: row.record_created_at,
+      updated_at: row.record_updated_at,
+      sensitivity: row.record_sensitivity,
+      consent_required: row.consent_required
+    });
+
+    return {
+      ...record,
+      owner: row.subject_full_name || row.subject_email || "Shared professional",
+      access: row.access_expires_at ? `Shared until ${dateLabel(row.access_expires_at)}` : "Approved Access Grant",
+      trust: row.record_status === "verified" ? "Scoped corporate visible row" : "Scoped Passport row"
+    };
+  });
 }
 
 export async function createPassportRecord(input: {

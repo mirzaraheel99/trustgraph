@@ -14,8 +14,10 @@ function assertMigration(migrations, prefix, label) {
   assert(migrations.some((file) => file.startsWith(prefix) && file.endsWith(".sql")), `Expected migration ${prefix} for ${label}`);
 }
 
-const [app, packageText, workflow, readiness, runbook, evidenceMap, migrations] = await Promise.all([
+const [app, recordsRepository, databaseTypes, packageText, workflow, readiness, runbook, evidenceMap, migrations] = await Promise.all([
   readFile(new URL("../src/App.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../src/recordRepository.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/database.ts", import.meta.url), "utf8"),
   readFile(new URL("../package.json", import.meta.url), "utf8"),
   readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),
   readFile(new URL("../V1_READINESS_CHECKLIST.md", import.meta.url), "utf8"),
@@ -391,6 +393,7 @@ assertMigration(migrationFiles, "059_", "corporate database visibility snapshots
 assertMigration(migrationFiles, "060_", "pilot visibility snapshot seed");
 assertMigration(migrationFiles, "061_", "pilot-named operator RPC aliases");
 assertMigration(migrationFiles, "062_", "persisted V1 pilot route run receipts");
+assertMigration(migrationFiles, "063_", "corporate scoped visible Passport rows RPC");
 assertMigration(migrationFiles, "043_", "account context RPC");
 assertMigration(migrationFiles, "044_", "registration intent rows");
 assertMigration(migrationFiles, "045_", "corporate registration intent completion");
@@ -408,6 +411,11 @@ assertMigration(migrationFiles, "056_", "security RLS review receipt persistence
 
 assert(packageJson.scripts?.["check:real-data-readiness"] === "node scripts/check-real-data-readiness.mjs", "package script check:real-data-readiness");
 assertIncludes(workflow, "pnpm check:real-data-readiness", "GitHub Pages workflow real-data readiness gate");
+assertIncludes(recordsRepository, "list_corporate_visible_passport_rows", "Corporate Verify repository scoped visible rows RPC");
+assertIncludes(recordsRepository, "DbCorporateVisiblePassportRow", "Corporate Verify repository typed scoped visible rows");
+assertIncludes(recordsRepository, "corporate_visible_passport_row", "Corporate Verify row metadata marks database-scoped rows");
+assertIncludes(databaseTypes, "export interface DbCorporateVisiblePassportRow", "typed Corporate visible Passport row contract");
+assertIncludes(databaseTypes, "raw_private_files_included: boolean", "Corporate visible row raw-file exclusion field");
 
 console.log(
   `TrustGraph real-data readiness check passed: ${appRequirements.length} app markers, ${migrationFiles.length} migrations, runbook and readiness evidence verified.`

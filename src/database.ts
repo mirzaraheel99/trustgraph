@@ -135,6 +135,34 @@ export interface DbAccessGrantRecord {
   trust_record_id: string;
 }
 
+export interface DbCorporateVisiblePassportRow {
+  access_grant_id: string;
+  requester_organization_id: string;
+  subject_profile_id: string;
+  subject_email: string;
+  subject_full_name: string;
+  trust_record_id: string;
+  record_type: RecordType;
+  record_title: string;
+  record_status: RecordStatus;
+  source_name: string;
+  evidence_summary: string | null;
+  issued_at: string | null;
+  expires_at: string | null;
+  record_metadata: Record<string, unknown>;
+  record_created_at: string;
+  record_updated_at: string;
+  record_sensitivity: TrustRecordSensitivity;
+  consent_required: boolean;
+  consent_status: "not_required" | "active" | "required";
+  access_expires_at: string | null;
+  access_purpose: string;
+  visibility_scope: string;
+  raw_private_files_included: boolean;
+  preview_data_accepted: boolean;
+  accepted_when: string;
+}
+
 export interface DbCorporateAccessReview {
   id: string;
   access_grant_id: string;
