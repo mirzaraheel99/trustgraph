@@ -13822,6 +13822,46 @@ function SecurityReviewPanel({
     { label: "Corporate access", value: teamMembers.length ? "RBAC rows" : "Rows needed", detail: "Corporate access remains scoped by role, grant, consent, and audit.", ready: teamMembers.length > 0 },
     { label: "Production", value: "Blocked", detail: "External security, legal, billing, pilot owner, and VPS cutover decisions remain human-gated.", ready: false }
   ];
+  const productionSecurityChecklist = {
+    mode: "production_security_checklist",
+    launch_status: "pilot_ready_production_blocked",
+    headline: "Pilot can continue; unrestricted production is not approved",
+    code_ready_count: completed,
+    code_total_count: checks.length,
+    human_gate_count: humanDecisions.length,
+    next_action:
+      "Record external security/storage review, legal approval, billing/Stripe decision, named pilot owner, and VPS cutover before production traffic.",
+    evidence: [
+      `${rlsProtectedTables.length} RLS protected tables`,
+      `${schemaMigrationRuns.length} release ledger rows`,
+      `${auditEvents.length} audit events`,
+      `${securityRlsReviewReceipts.length} saved security receipts`
+    ],
+    accepted_when:
+      "production_security_checklist_requires_code_verified_rls_private_storage_rbac_audit_exports_saved_receipt_external_security_legal_billing_pilot_owner_vps_cutover_and_no_preview_data_before_v1_completion"
+  };
+  const productionSecurityChecklistCards = [
+    {
+      label: "Code readiness",
+      value: `${completed}/${checks.length}`,
+      detail: "Automated checks can support pilot validation, not unrestricted production."
+    },
+    {
+      label: "Data protection",
+      value: `${rlsProtectedTables.length} tables`,
+      detail: "RLS tables, private evidence boundary, consent, RBAC, and audit export paths remain visible."
+    },
+    {
+      label: "Saved proof",
+      value: `${securityRlsReviewReceipts.length}`,
+      detail: latestSecurityRlsReviewReceipt ? "Security/RLS receipt exists in Supabase." : "Record a security/RLS receipt from Admin."
+    },
+    {
+      label: "Human gates",
+      value: `${humanDecisions.length} open`,
+      detail: "Security/storage, legal, billing/Stripe, pilot owner, and VPS cutover require human approval."
+    }
+  ];
   const runbookName = `trustgraph-security-runbook-${new Date().toISOString().slice(0, 10)}.csv`;
   const signoffPacketName = `trustgraph-security-rls-signoff-${new Date().toISOString().slice(0, 10)}.json`;
   const reviewReceiptName = `trustgraph-v1-security-rls-review-receipt-${new Date().toISOString().slice(0, 10)}.json`;
@@ -13860,6 +13900,31 @@ function SecurityReviewPanel({
       <div className="mini-heading">
         <ShieldAlert size={16} />
         <strong>Security review checklist</strong>
+      </div>
+      <div className="production-security-checklist" aria-label="Production security checklist">
+        <div className="production-security-checklist-header">
+          <div>
+            <span className="status-chip warning">Production blocked</span>
+            <strong>{productionSecurityChecklist.headline}</strong>
+            <small>{productionSecurityChecklist.next_action}</small>
+          </div>
+          <button className="secondary-action" onClick={() => downloadTextFile(reviewReceiptName, JSON.stringify({ ...v1SecurityReviewReceipt, production_security_checklist: productionSecurityChecklist }, null, 2), "application/json")} type="button">
+            Export checklist
+          </button>
+        </div>
+        <div className="production-security-checklist-grid">
+          {productionSecurityChecklistCards.map((card) => (
+            <article key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="production-security-checklist-proof">
+          <span>{productionSecurityChecklist.accepted_when}</span>
+          <small>{productionSecurityChecklist.evidence.join(" | ")}</small>
+        </div>
       </div>
       <div className={`security-production-gate-command ${securityProductionGateCommand.status}`} aria-label="Security production gate command">
         <div className="security-production-gate-header">

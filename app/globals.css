@@ -43470,6 +43470,105 @@ body,
 }
 
 /* Security production gate: separate code-verified pilot readiness from human launch approval. */
+.production-security-checklist {
+  order: -97;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 117, 0.3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 117, 0.13), rgba(10, 18, 22, 0.96) 48%, rgba(95, 238, 201, 0.12)),
+    rgba(8, 15, 18, 0.96);
+}
+
+.production-security-checklist-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.production-security-checklist-header > div,
+.production-security-checklist-proof {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.production-security-checklist-header strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  line-height: 1.12;
+}
+
+.production-security-checklist-header small,
+.production-security-checklist-grid small,
+.production-security-checklist-proof small {
+  color: var(--tg-muted, #a7bab3);
+  line-height: 1.38;
+}
+
+.production-security-checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.production-security-checklist-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 235, 229, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.production-security-checklist-grid span,
+.production-security-checklist-proof span {
+  color: rgba(255, 205, 117, 0.94);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.production-security-checklist-grid strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: 1rem;
+  line-height: 1.14;
+}
+
+.production-security-checklist-header strong,
+.production-security-checklist-header small,
+.production-security-checklist-grid strong,
+.production-security-checklist-grid small,
+.production-security-checklist-proof span,
+.production-security-checklist-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.production-security-checklist-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.production-security-checklist-proof {
+  padding: 10px;
+  border: 1px solid rgba(255, 205, 117, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 205, 117, 0.055);
+}
+
 .security-production-gate-command {
   order: -96;
   display: grid;
@@ -43567,6 +43666,8 @@ body,
 }
 
 @media (max-width: 980px) {
+  .production-security-checklist-header,
+  .production-security-checklist-grid,
   .security-production-gate-header,
   .security-production-gate-grid,
   .security-production-gate-actions {
