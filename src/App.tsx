@@ -8049,6 +8049,67 @@ function CorporateDirectoryPanel({
       target: "corporate-access-review-queue"
     }
   ];
+  const corporateReviewerAccessVerdictReady =
+    isLiveCorporateDatabase &&
+    approvedAccessCount > 0 &&
+    filteredRows.length > 0 &&
+    sharedRecords.length > 0 &&
+    reviews.length > 0 &&
+    Boolean(latestVisibilitySnapshot) &&
+    Boolean(latestAccessReceipt) &&
+    openGapRequestCount === 0;
+  const corporateReviewerAccessVerdict = {
+    mode: "corporate_reviewer_access_verdict",
+    status: corporateReviewerAccessVerdictReady ? "approved_scoped_access_ready" : "access_not_ready",
+    answer: corporateReviewerAccessVerdictReady
+      ? "Yes. This company can review approved scoped user rows now."
+      : "Not yet. Corporate access needs the next live proof step first.",
+    next_step: corporateAccessDecisionDesk.current_blocker === "Ready" ? "Export scoped packet" : corporateAccessDecisionDesk.current_blocker,
+    next_click: corporateAccessDecisionDesk.next_action,
+    approved_grants: approvedAccessCount,
+    visible_professionals: filteredRows.length,
+    shared_passport_rows: sharedRecords.length,
+    review_attestations: reviews.length,
+    visibility_snapshots: corporateVisibilitySnapshots.length,
+    access_receipts: corporateDatabaseReceipts.length,
+    open_gaps: openGapRequestCount,
+    no_open_user_database: true,
+    metadata_only_export: true,
+    raw_private_files_included: false,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_reviewer_access_verdict_answers_yes_or_not_before_filters_requires_live_rbac_approved_grants_scoped_rows_review_attestation_snapshot_receipt_metadata_export_no_open_browse_and_preview_rejection"
+  };
+  const corporateReviewerAccessVerdictChecks = [
+    {
+      label: "Live RBAC",
+      value: isLiveCorporateDatabase ? "Active" : "Login needed",
+      detail: isLiveCorporateDatabase ? "Corporate role can read scoped Supabase rows." : "Sign in with a Company Admin or Corporate Verify reviewer account.",
+      ready: isLiveCorporateDatabase,
+      target: "account"
+    },
+    {
+      label: "Approved rows",
+      value: filteredRows.length ? `${filteredRows.length} visible` : "None",
+      detail: `${approvedAccessCount} approved grants, ${sharedRecords.length} shared Passport rows.`,
+      ready: approvedAccessCount > 0 && filteredRows.length > 0 && sharedRecords.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length} saved` : "Needed",
+      detail: openGapRequestCount ? `${openGapRequestCount} open gaps remain.` : "Attestation and gap state are clear.",
+      ready: reviews.length > 0 && openGapRequestCount === 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Receipt proof",
+      value: latestVisibilitySnapshot && latestAccessReceipt ? "Saved" : "Save both",
+      detail: `${corporateVisibilitySnapshots.length} snapshots, ${corporateDatabaseReceipts.length} access receipts.`,
+      ready: Boolean(latestVisibilitySnapshot && latestAccessReceipt),
+      target: "receipt"
+    }
+  ];
 
   return (
     <section className="corporate-directory-panel">
@@ -8114,6 +8175,83 @@ function CorporateDirectoryPanel({
             type="button"
           >
             Export compass
+          </button>
+        </div>
+      </div>
+      <div className={`corporate-reviewer-access-verdict ${corporateReviewerAccessVerdict.status}`} aria-label="Corporate reviewer access verdict">
+        <div className="corporate-reviewer-access-verdict-header">
+          <div>
+            <span className={`status-chip ${corporateReviewerAccessVerdictReady ? "success" : "warning"}`}>Reviewer access verdict</span>
+            <strong>{corporateReviewerAccessVerdict.answer}</strong>
+            <small>{corporateReviewerAccessVerdict.accepted_when}</small>
+          </div>
+          <div className="corporate-reviewer-access-verdict-actions">
+            <button
+              className="primary-action"
+              onClick={() => {
+                if (corporateReviewerAccessVerdictReady) {
+                  downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                  return;
+                }
+                runCorporateReviewerTask();
+              }}
+              type="button"
+            >
+              {corporateReviewerAccessVerdict.next_click}
+            </button>
+            <button className="secondary-action" disabled={!isLiveCorporateDatabase} onClick={() => void recordVisibilitySnapshot()} type="button">
+              Save snapshot
+            </button>
+            <button className="secondary-action" disabled={!isLiveCorporateDatabase} onClick={() => void recordDatabaseReceipt()} type="button">
+              Record receipt
+            </button>
+          </div>
+        </div>
+        <div className="corporate-reviewer-access-verdict-grid">
+          {corporateReviewerAccessVerdictChecks.map((check) => (
+            <button
+              className={check.ready ? "ready" : "next"}
+              key={check.label}
+              onClick={() => {
+                if (check.target === "receipt") {
+                  void recordDatabaseReceipt();
+                  return;
+                }
+                runCorporateReviewerTask(check.target);
+              }}
+              type="button"
+            >
+              <span>{check.label}</span>
+              <strong>{check.value}</strong>
+              <small>{check.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-reviewer-access-verdict-proof">
+          <span>
+            <small>Next blocker</small>
+            <strong>{corporateReviewerAccessVerdict.next_step}</strong>
+          </span>
+          <span>
+            <small>Open user browse</small>
+            <strong>{corporateReviewerAccessVerdict.no_open_user_database ? "Blocked" : "Open"}</strong>
+          </span>
+          <span>
+            <small>Export boundary</small>
+            <strong>{corporateReviewerAccessVerdict.metadata_only_export ? "Metadata only" : "Raw files"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-reviewer-access-verdict-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateReviewerAccessVerdict, checks: corporateReviewerAccessVerdictChecks }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export verdict
           </button>
         </div>
       </div>

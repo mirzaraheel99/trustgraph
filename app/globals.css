@@ -48172,6 +48172,18 @@ body,
   order: -120 !important;
 }
 
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-reviewer-access-verdict {
+  order: -116 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
 .corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-reviewer-action-bar,
 .corporate-directory-panel:has(.corporate-database-access-compass) > .directory-controls {
   order: -110 !important;
@@ -48256,7 +48268,9 @@ body,
 
 .verify-panel:has(.corporate-verify-single-lane) .corporate-verify-single-lane-header,
 .verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-header,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-header,
 .verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-proof,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-proof,
 .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-header,
 .workspace-admin-grid:has(.setup-panel-grid) .setup-command-header,
 .workspace-admin-grid:has(.setup-panel-grid) .corporate-database-handoff-header {
@@ -48268,6 +48282,8 @@ body,
 
 .verify-panel:has(.corporate-verify-single-lane) .corporate-verify-single-lane-grid,
 .verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-grid,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-grid,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-actions,
 .verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-action-grid,
 .verify-panel:has(.corporate-verify-single-lane) .directory-controls,
 .verify-panel:has(.corporate-verify-single-lane) .corporate-access-review-grid,
@@ -48281,6 +48297,33 @@ body,
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
   gap: 10px !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict {
+  border: 1px solid rgba(108, 247, 218, 0.28) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(42, 230, 201, 0.13), rgba(115, 157, 255, 0.08)),
+    rgba(10, 25, 28, 0.92) !important;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22) !important;
+  padding: 16px !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-grid > button,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-proof > span {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  padding: 12px !important;
+  text-align: left !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-grid > button.ready {
+  border-color: rgba(108, 247, 218, 0.35) !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-grid > button.next {
+  border-color: rgba(255, 205, 113, 0.35) !important;
 }
 
 .verify-panel:has(.corporate-verify-single-lane) button,
@@ -48314,7 +48357,9 @@ body,
 @media (max-width: 760px) {
   .verify-panel:has(.corporate-verify-single-lane) .corporate-verify-single-lane-header,
   .verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-header,
+  .verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-header,
   .verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-proof,
+  .verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-access-verdict-proof,
   .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-header,
   .workspace-admin-grid:has(.setup-panel-grid) .setup-command-header,
   .workspace-admin-grid:has(.setup-panel-grid) .corporate-database-handoff-header {
