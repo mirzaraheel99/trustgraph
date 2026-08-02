@@ -20677,7 +20677,7 @@ p {
   pointer-events: none;
 }
 
-/* Evidence access one-path compression: answer, setup, access desk, signed proof, acceptance, then documents. */
+/* Evidence access one-path compression: answer, handoff checklist, setup, access desk, signed proof, acceptance, then documents. */
 .evidence-box:has(.evidence-preview-download-answer) {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -20703,8 +20703,19 @@ p {
   pointer-events: auto !important;
 }
 
-.evidence-box:has(.evidence-preview-download-answer) > .evidence-setup-command {
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-handoff-checklist {
   order: -120 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  border: 1px solid rgba(95, 240, 201, 0.2) !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-setup-command {
+  order: -118 !important;
   max-height: none !important;
   margin: 0 !important;
   padding: clamp(14px, 2vw, 18px) !important;
@@ -20763,6 +20774,7 @@ p {
 }
 
 .evidence-box:has(.evidence-preview-download-answer) .evidence-preview-download-answer-grid,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-handoff-checklist-grid,
 .evidence-box:has(.evidence-preview-download-answer) .evidence-setup-command-grid,
 .evidence-box:has(.evidence-preview-download-answer) .evidence-access-desk-grid,
 .evidence-box:has(.evidence-preview-download-answer) .signed-evidence-access-grid,
@@ -20774,10 +20786,12 @@ p {
 }
 
 .evidence-box:has(.evidence-preview-download-answer) .evidence-preview-download-answer-header,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-handoff-checklist-header,
 .evidence-box:has(.evidence-preview-download-answer) .signed-evidence-acceptance-header {
   grid-template-columns: minmax(0, 1fr) !important;
 }
 
+.evidence-box:has(.evidence-preview-download-answer) .evidence-handoff-checklist-actions,
 .evidence-box:has(.evidence-preview-download-answer) .evidence-setup-command-actions,
 .evidence-box:has(.evidence-preview-download-answer) .evidence-access-desk-proof,
 .evidence-box:has(.evidence-preview-download-answer) .signed-evidence-acceptance-actions,
@@ -20787,6 +20801,7 @@ p {
   gap: 8px !important;
 }
 
+.evidence-box:has(.evidence-preview-download-answer) .evidence-handoff-checklist-actions > *,
 .evidence-box:has(.evidence-preview-download-answer) .evidence-setup-command-actions > *,
 .evidence-box:has(.evidence-preview-download-answer) .evidence-access-desk-proof > *,
 .evidence-box:has(.evidence-preview-download-answer) .signed-evidence-acceptance-actions > *,
@@ -20980,6 +20995,125 @@ p {
   width: 100%;
   min-width: 0;
   white-space: normal;
+}
+
+.evidence-handoff-checklist {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.08), rgba(134, 174, 246, 0.045) 65%, transparent),
+    rgba(255, 255, 255, 0.026);
+}
+
+.evidence-handoff-checklist-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.46fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.evidence-handoff-checklist-header > div:first-child,
+.evidence-handoff-checklist-proof {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.evidence-handoff-checklist strong,
+.evidence-handoff-checklist small,
+.evidence-handoff-checklist span,
+.evidence-handoff-checklist em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.evidence-handoff-checklist-header strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.evidence-handoff-checklist-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
+  gap: 8px;
+}
+
+.evidence-handoff-checklist-actions button {
+  min-width: 0;
+  width: 100%;
+  white-space: normal;
+}
+
+.evidence-handoff-checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+}
+
+.evidence-handoff-checklist-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 132px;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.evidence-handoff-checklist-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.35);
+  background: rgba(95, 240, 201, 0.07);
+}
+
+.evidence-handoff-checklist-grid article.needed {
+  border-color: rgba(240, 198, 107, 0.24);
+  background: rgba(240, 198, 107, 0.05);
+}
+
+.evidence-handoff-checklist-grid span {
+  color: #65f0d0;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.evidence-handoff-checklist-grid strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.14;
+}
+
+.evidence-handoff-checklist-grid small,
+.evidence-handoff-checklist-proof small,
+.evidence-handoff-checklist-header small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.evidence-handoff-checklist-grid em {
+  color: #b7f9e9;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.evidence-handoff-checklist-proof {
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.evidence-handoff-checklist-proof span {
+  color: #e8f5ee;
+  font-size: 13px;
+  font-weight: 850;
 }
 
 .evidence-preview-download-ledger {

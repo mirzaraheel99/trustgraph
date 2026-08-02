@@ -703,6 +703,56 @@ function RecordDetail({
     { label: "Download", value: firstFileBackedEvidence ? "2 min signed URL" : "File needed", detail: "Downloads are governed and auditable.", ready: Boolean(firstFileBackedEvidence) },
     { label: "Corporate boundary", value: "Metadata first", detail: "Raw evidence is not part of open exports.", ready: true }
   ];
+  const evidenceHandoffChecklist = {
+    mode: "evidence_handoff_checklist",
+    status: lastEvidenceLink && filteredEvidenceDocuments.length ? "ready_for_scoped_handoff" : fileBackedEvidenceCount ? "signed_link_proof_needed" : "metadata_or_file_needed",
+    record_id: record.id,
+    next_click: firstFileBackedEvidence ? "Preview signed file" : evidenceDocuments.length ? "Attach private file" : "Add metadata",
+    professional_path: "Add metadata, attach private source file when required, preview once, then export packet.",
+    corporate_path: "Corporate reviewers receive metadata, status, source summary, signed-link proof, and audit receipt only inside approved scope.",
+    preview_window: "5 minutes",
+    download_window: "2 minutes",
+    raw_private_files_exported: false,
+    accepted_when:
+      "evidence_handoff_checklist_keeps_next_click_professional_corporate_preview_download_windows_metadata_only_exports_raw_file_exclusion_and_signed_audit_proof_visible"
+  };
+  const evidenceHandoffChecklistSteps = [
+    {
+      label: "1. Metadata",
+      value: evidenceDocuments.length ? `${evidenceDocuments.length} rows` : "Start here",
+      detail: "Title, source, summary, status, and scope are safe for packets.",
+      ready: evidenceDocuments.length > 0,
+      action: "Add evidence"
+    },
+    {
+      label: "2. Private file",
+      value: fileBackedEvidenceCount ? `${fileBackedEvidenceCount} attached` : "Optional until source proof needed",
+      detail: "Files stay in private Supabase Storage, not open exports.",
+      ready: fileBackedEvidenceCount > 0,
+      action: "Attach file"
+    },
+    {
+      label: "3. Preview",
+      value: firstFileBackedEvidence ? evidenceHandoffChecklist.preview_window : "File needed",
+      detail: "Open a short-lived preview to prove safe access.",
+      ready: Boolean(firstFileBackedEvidence),
+      action: "Preview"
+    },
+    {
+      label: "4. Download",
+      value: firstFileBackedEvidence ? evidenceHandoffChecklist.download_window : "File needed",
+      detail: "Download links are shorter-lived and auditable.",
+      ready: Boolean(firstFileBackedEvidence),
+      action: "Download"
+    },
+    {
+      label: "5. Handoff",
+      value: lastEvidenceLink ? "Signed proof captured" : "Export packet",
+      detail: "Corporate handoff stays metadata-only unless signed access is opened.",
+      ready: filteredEvidenceDocuments.length > 0,
+      action: "Export packet"
+    }
+  ];
   const evidenceFileAccessCockpit = {
     mode: "evidence_file_access_cockpit",
     status: fileBackedEvidenceCount ? "signed_access_ready" : evidenceDocuments.length ? "metadata_ready_file_needed" : "metadata_needed",
@@ -1423,6 +1473,68 @@ function RecordDetail({
             ))}
           </div>
           <small>{evidencePreviewDownloadAnswer.accepted_when} | Raw private files exported: {evidencePreviewDownloadAnswer.raw_private_files_exported ? "yes" : "no"}</small>
+        </div>
+        <div className={`evidence-handoff-checklist ${evidenceHandoffChecklist.status}`} aria-label="Evidence handoff checklist">
+          <div className="evidence-handoff-checklist-header">
+            <div>
+              <span className={`status-chip ${signedEvidenceAcceptanceReady ? "success" : "warning"}`}>Evidence handoff checklist</span>
+              <strong>{evidenceHandoffChecklist.next_click}</strong>
+              <small>{evidenceHandoffChecklist.professional_path}</small>
+            </div>
+            <div className="evidence-handoff-checklist-actions">
+              <button
+                className={firstFileBackedEvidence ? "secondary-action" : "primary-action"}
+                onClick={() => {
+                  if (firstFileBackedEvidence) {
+                    void openEvidence(firstFileBackedEvidence, "preview");
+                    return;
+                  }
+                  document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" });
+                }}
+                type="button"
+              >
+                {evidenceHandoffChecklist.next_click}
+              </button>
+              <button
+                className="secondary-action"
+                disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+                onClick={() => {
+                  if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "download");
+                }}
+                type="button"
+              >
+                Download
+              </button>
+              <button
+                className="secondary-action"
+                disabled={!filteredEvidenceDocuments.length}
+                onClick={() =>
+                  downloadTextFile(
+                    evidenceAccessDeskPacketName,
+                    JSON.stringify({ ...evidenceAccessPacket, evidence_handoff_checklist: evidenceHandoffChecklist }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export handoff
+              </button>
+            </div>
+          </div>
+          <div className="evidence-handoff-checklist-grid">
+            {evidenceHandoffChecklistSteps.map((step) => (
+              <article className={step.ready ? "ready" : "needed"} key={step.label}>
+                <span>{step.label}</span>
+                <strong>{step.value}</strong>
+                <small>{step.detail}</small>
+                <em>{step.action}</em>
+              </article>
+            ))}
+          </div>
+          <div className="evidence-handoff-checklist-proof">
+            <span>{evidenceHandoffChecklist.corporate_path}</span>
+            <small>{evidenceHandoffChecklist.accepted_when} | Raw private files exported: {evidenceHandoffChecklist.raw_private_files_exported ? "yes" : "no"}</small>
+          </div>
         </div>
         <div className="evidence-setup-command" aria-label="Evidence setup command">
           <div className="evidence-setup-command-copy">

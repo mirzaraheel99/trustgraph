@@ -158,6 +158,12 @@ const appRequirements = [
     "signed_evidence_acceptance_requires_metadata_private_file_short_lived_signed_link_manifest_export_and_raw_private_file_exclusion",
     "signed evidence acceptance rule"
   ],
+  ["Evidence handoff checklist", "evidence handoff checklist label"],
+  ["evidence_handoff_checklist", "evidence handoff checklist packet mode"],
+  [
+    "evidence_handoff_checklist_keeps_next_click_professional_corporate_preview_download_windows_metadata_only_exports_raw_file_exclusion_and_signed_audit_proof_visible",
+    "evidence handoff checklist acceptance rule"
+  ],
   ["Evidence access summary", "evidence access summary label"],
   ["evidence_access_summary", "evidence access summary packet mode"],
   [
