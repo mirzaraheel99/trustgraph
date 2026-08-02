@@ -83,6 +83,8 @@ The public login/register card now also has a conversion runway as the visible f
 
 The public login/register card now starts with a premium Account path chooser above the conversion runway. It gives Personal, Corporate, Register, Login, pricing, recovery, first database write, portal landing, and the Corporate no-open-user-database boundary in one clean surface before credentials.
 
+The public login/register card now also includes a Public portal launch answer before credentials. It gives Professional register, Professional login, Corporate register, Corporate login, pricing, first database write, landing portal, recovery, server status, and the Corporate scoped-database boundary in one bounded card.
+
 Corporate setup now starts with one primary company setup route. It keeps login, workspace creation, RBAC activation, Corporate Verify database proof, first live database write, active role, and the no-open-user-browse boundary visible while older proof panels stay out of the daily form path.
 
 Corporate setup now also starts with a Corporate portal unlock answer. It says whether the company portal is ready, names the next setup step, shows RBAC, team, billing, and scoped user-row status, and exports the proof without suggesting open browsing of the user database.

@@ -106,6 +106,12 @@ const appRequirements = [
     "login_portal_desk_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_first_database_write_landing_and_scoped_database_rule_visible_before_credentials",
     "login portal desk acceptance rule"
   ],
+  ["Public portal launch answer", "public portal launch answer label"],
+  ["public_portal_launch_answer", "public portal launch answer packet mode"],
+  [
+    "public_portal_launch_answer_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_recovery_server_status_first_database_write_and_no_open_user_database_visible_before_credentials",
+    "public portal launch answer acceptance rule"
+  ],
   ["Signed evidence acceptance checkpoint", "signed evidence acceptance label"],
   ["signed_evidence_acceptance_checkpoint", "signed evidence acceptance packet mode"],
   [

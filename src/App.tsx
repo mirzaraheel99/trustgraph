@@ -23667,6 +23667,76 @@ function PublicSite({
     }
   ];
   const publicAuthFrontDeskPacketName = `trustgraph-public-auth-front-desk-${new Date().toISOString().slice(0, 10)}.json`;
+  const publicPortalLaunchAnswer = {
+    generated_at: new Date().toISOString(),
+    mode: "public_portal_launch_answer",
+    selected_portal: portal,
+    selected_mode: mode,
+    answer:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create the corporate admin account, then finish company workspace and RBAC setup."
+          : "Login to the corporate admin account, then open scoped Corporate Verify."
+        : mode === "signup"
+          ? "Create the Professional Passport account, then add owned records and evidence."
+          : "Login to the Professional Passport account to manage owned records and sharing.",
+    pricing: selectedRegistrationPath.plan,
+    first_database_write: selectedRegistrationPath.primaryWrite,
+    landing_portal: portal === "corporate" ? "Company setup then Corporate Verify" : "Professional Passport",
+    recovery: email ? "Reset and verification ready for entered email" : "Enter email to enable reset and verification actions",
+    server_status: serverSyncMonitor.status,
+    corporate_database_rule:
+      "Corporate users request access by professional email and see only approved scoped rows. No open user database browse.",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_portal_launch_answer_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_recovery_server_status_first_database_write_and_no_open_user_database_visible_before_credentials"
+  };
+  const publicPortalLaunchAnswerRoutes = [
+    {
+      label: "Professional register",
+      active: portal === "professional" && mode === "signup",
+      detail: "Create a private Passport owner account.",
+      onClick: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Professional login",
+      active: portal === "professional" && mode === "signin",
+      detail: "Open Passport records, evidence, consent, and sharing.",
+      onClick: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate register",
+      active: portal === "corporate" && mode === "signup",
+      detail: "Create company admin, pricing ledger, and RBAC setup.",
+      onClick: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate login",
+      active: portal === "corporate" && mode === "signin",
+      detail: "Open company setup and scoped Corporate Verify.",
+      onClick: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    }
+  ];
+  const publicPortalLaunchAnswerFacts = [
+    { label: "Pricing", value: publicPortalLaunchAnswer.pricing, detail: selectedRegistrationPath.paymentStatus },
+    { label: "First database write", value: publicPortalLaunchAnswer.first_database_write, detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ") },
+    { label: "Landing portal", value: publicPortalLaunchAnswer.landing_portal, detail: selectedRegistrationPath.nextAction },
+    { label: "Recovery", value: email ? "Ready" : "Email needed", detail: publicPortalLaunchAnswer.recovery },
+    { label: "Server", value: publicPortalLaunchAnswer.server_status.replaceAll("_", " "), detail: serverSyncMonitor.detail },
+    { label: "Corporate data", value: "Scoped rows only", detail: publicPortalLaunchAnswer.corporate_database_rule }
+  ];
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -25795,6 +25865,54 @@ function PublicSite({
                 type="button"
               >
                 Export access path
+              </button>
+            </div>
+          </div>
+          <div className={`public-portal-launch-answer ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public portal launch answer">
+            <div className="public-portal-launch-answer-copy">
+              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
+              <strong>{publicPortalLaunchAnswer.answer}</strong>
+              <small>{publicPortalLaunchAnswer.accepted_when}</small>
+            </div>
+            <div className="public-portal-launch-answer-routes">
+              {publicPortalLaunchAnswerRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.onClick} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-portal-launch-answer-grid">
+              {publicPortalLaunchAnswerFacts.map((fact) => (
+                <span key={fact.label}>
+                  <small>{fact.label}</small>
+                  <strong>{fact.value}</strong>
+                  <small>{fact.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-portal-launch-answer-actions">
+              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to {mode === "signup" ? "registration" : "login"}
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Review pricing
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-portal-launch-answer-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicPortalLaunchAnswer, facts: publicPortalLaunchAnswerFacts }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export answer
               </button>
             </div>
           </div>

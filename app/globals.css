@@ -33312,6 +33312,98 @@ body {
   white-space: normal;
 }
 
+.public-portal-launch-answer {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.105), rgba(134, 174, 246, 0.06)),
+    rgba(7, 17, 19, 0.88);
+}
+
+.public-portal-launch-answer.corporate {
+  border-color: rgba(134, 174, 246, 0.28);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.12), rgba(95, 240, 201, 0.055)),
+    rgba(7, 17, 19, 0.9);
+}
+
+.public-portal-launch-answer-copy,
+.public-portal-launch-answer-grid span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-portal-launch-answer-routes,
+.public-portal-launch-answer-grid,
+.public-portal-launch-answer-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-portal-launch-answer-routes button,
+.public-portal-launch-answer-grid span {
+  min-width: 0;
+  padding: 11px;
+  overflow: hidden;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-portal-launch-answer-routes button.active {
+  border-color: rgba(95, 240, 201, 0.36);
+  background: rgba(95, 240, 201, 0.11);
+}
+
+.public-portal-launch-answer strong,
+.public-portal-launch-answer small,
+.public-portal-launch-answer span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-portal-launch-answer-copy > strong {
+  color: var(--text);
+  font-size: clamp(18px, 1.7vw, 23px);
+  line-height: 1.12;
+}
+
+.public-portal-launch-answer-routes strong,
+.public-portal-launch-answer-grid strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.18;
+}
+
+.public-portal-launch-answer small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.public-portal-launch-answer-grid small:first-child {
+  color: #9fead5;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-launch-answer-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .public-access-desk {
   display: grid;
   gap: 12px;
@@ -35236,6 +35328,9 @@ body {
   .public-entry-sequence-header,
   .public-entry-sequence-grid,
   .public-entry-sequence-proof,
+  .public-portal-launch-answer-routes,
+  .public-portal-launch-answer-grid,
+  .public-portal-launch-answer-actions,
   .public-login-command-footer,
   .public-auth-start-strip-header,
   .public-auth-start-proof,
@@ -35254,6 +35349,7 @@ body {
   .public-login-command-footer button,
   .public-access-command-actions button,
   .public-entry-sequence-header button,
+  .public-portal-launch-answer-actions button,
   .public-auth-start-strip-header button,
   .public-auth-start-proof button,
   .public-account-access-actions button,
@@ -36692,6 +36788,7 @@ body {
 .public-v1-access-runway,
 .public-portal-route-shell,
 .public-auth-front-desk,
+.public-portal-launch-answer,
 .portal-front-door,
 .public-portal-launchpad {
   border-radius: 8px;
@@ -36708,6 +36805,7 @@ body {
 
 .public-v1-access-runway-actions,
 .public-auth-front-desk-actions,
+.public-portal-launch-answer-actions,
 .public-portal-route-footer,
 .auth-actions,
 .auth-support-actions {
