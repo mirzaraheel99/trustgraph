@@ -41773,6 +41773,279 @@ body,
   grid-template-columns: minmax(0, 1fr) minmax(min(100%, 420px), 0.48fr) !important;
 }
 
+/* Operator focus shell: final pass for hosted dashboard readability and click safety. */
+.app {
+  isolation: isolate;
+}
+
+.workspace {
+  --tg-shell-max: 1320px;
+  width: min(var(--tg-shell-max), calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  margin-inline: auto !important;
+  padding: clamp(12px, 1.8vw, 22px) !important;
+  overflow-x: clip !important;
+}
+
+.workspace-main,
+.workspace-admin-grid,
+.work-grid,
+.setup-panel-grid,
+.verify-panel,
+.corporate-directory-panel,
+.records-panel {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip;
+}
+
+.topbar,
+.workspace-command-strip,
+.workspace-route-strip,
+.workspace-flow-strip,
+.portal-route-shell,
+.portal-launch-matrix,
+.portal-daily-command-center,
+.vps-saved-portal-command,
+.vps-save-recovery-center,
+.workspace-admin-grid,
+.work-grid {
+  border-radius: 8px;
+}
+
+.topbar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, auto) !important;
+  align-items: start !important;
+  gap: clamp(12px, 2vw, 20px) !important;
+}
+
+.topbar > div:first-child,
+.topbar-actions,
+.session-command-bar,
+.workspace-command-actions,
+.portal-daily-command-next,
+.portal-daily-command-proof,
+.portal-launch-matrix-next,
+.portal-route-shell-actions,
+.setup-tabs,
+.setup-panel-grid > *,
+.workspace-admin-grid > *,
+.work-grid > *,
+.verify-panel > *,
+.corporate-directory-panel > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.topbar h1 {
+  max-width: 18ch;
+  font-size: clamp(2.25rem, 5vw, 4.8rem) !important;
+  line-height: 1.02 !important;
+}
+
+.topbar p {
+  max-width: 70ch;
+  font-size: clamp(0.98rem, 1.45vw, 1.22rem) !important;
+  line-height: 1.52 !important;
+}
+
+.topbar-actions,
+.session-command-bar,
+.workspace-command-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end;
+  gap: 10px !important;
+}
+
+.topbar-actions > *,
+.session-command-bar > *,
+.workspace-command-actions > * {
+  flex: 1 1 150px !important;
+  min-width: 0 !important;
+  max-width: 220px !important;
+}
+
+.topbar-actions button,
+.session-command-bar button,
+.workspace-command-actions button,
+.setup-tabs button,
+.setup-panel-grid button,
+.workspace-admin-grid button,
+.work-grid button,
+.verify-panel button,
+.corporate-directory-panel button {
+  min-height: 44px;
+  white-space: normal !important;
+}
+
+.workspace-route-strip,
+.workspace-flow-strip,
+.setup-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr)) !important;
+  gap: 10px !important;
+  overflow: visible !important;
+}
+
+.workspace-route-strip button,
+.workspace-flow-strip button,
+.setup-tabs button {
+  width: 100%;
+  text-align: left;
+}
+
+.workspace-admin-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: start;
+  gap: 16px !important;
+}
+
+.setup-panel-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)) !important;
+  align-items: start;
+  gap: 14px !important;
+}
+
+.work-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 16px !important;
+}
+
+.records-panel,
+.verify-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.verify-panel,
+.corporate-directory-panel {
+  border-color: rgba(95, 240, 201, 0.18);
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.07), rgba(134, 174, 246, 0.045)),
+    rgba(7, 16, 19, 0.94);
+}
+
+.verify-panel .record-form-grid,
+.verify-panel .verify-request-fields,
+.verify-panel .directory-controls,
+.verify-panel .corporate-review-controls,
+.verify-panel .corporate-request-controls,
+.corporate-directory-panel .directory-controls,
+.corporate-directory-panel .corporate-reviewer-task-grid,
+.corporate-directory-panel .corporate-review-studio-grid,
+.corporate-directory-panel .corporate-row-access-outcome-grid,
+.corporate-directory-panel .corporate-reviewer-database-workbench-grid,
+.corporate-directory-panel .corporate-row-review-answer-grid,
+.corporate-directory-panel .corporate-database-next-action-grid,
+.corporate-portal-unlock-grid,
+.corporate-portal-unlock-actions,
+.corporate-launch-lanes,
+.corporate-launch-counts,
+.corporate-setup-triage-grid,
+.corporate-setup-triage-proof,
+.corporate-database-handoff-grid,
+.corporate-database-handoff-proof,
+.corporate-onboarding-pricing-grid,
+.corporate-onboarding-pricing-actions,
+.team-billing-handoff-grid,
+.team-billing-handoff-counts {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.corporate-launch-cockpit-top,
+.corporate-setup-triage-header,
+.corporate-database-handoff-header,
+.corporate-onboarding-pricing-header,
+.team-billing-handoff-header,
+.corporate-portal-unlock-actions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.corporate-launch-cockpit-top button,
+.corporate-setup-triage-header button,
+.corporate-database-handoff-header button,
+.corporate-onboarding-pricing-header button,
+.team-billing-handoff-header button,
+.corporate-portal-unlock-actions button {
+  width: 100%;
+}
+
+.records-panel,
+.corporate-directory-panel .directory-list,
+.corporate-directory-panel .shared-record-grid,
+.audit-list {
+  scrollbar-gutter: stable;
+}
+
+.corporate-directory-panel table,
+.records-panel table,
+.audit-panel table {
+  min-width: min(640px, 100%) !important;
+}
+
+.workspace input,
+.workspace select,
+.workspace textarea {
+  width: 100%;
+}
+
+.workspace strong,
+.workspace small,
+.workspace span,
+.workspace p,
+.workspace label,
+.workspace code,
+.workspace em {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 920px) {
+  .workspace {
+    width: min(100%, calc(100vw - 20px)) !important;
+    max-width: calc(100vw - 20px) !important;
+    padding: 10px !important;
+  }
+
+  .topbar,
+  .corporate-launch-cockpit-top,
+  .corporate-setup-triage-header,
+  .corporate-database-handoff-header,
+  .corporate-onboarding-pricing-header,
+  .team-billing-handoff-header,
+  .corporate-portal-unlock-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .topbar h1 {
+    max-width: 100%;
+    font-size: clamp(2rem, 11vw, 3.4rem) !important;
+  }
+
+  .topbar-actions,
+  .session-command-bar,
+  .workspace-command-actions {
+    justify-content: stretch;
+  }
+
+  .topbar-actions > *,
+  .session-command-bar > *,
+  .workspace-command-actions > * {
+    max-width: 100% !important;
+  }
+}
+
 .public-auth-card {
   max-height: calc(100vh - 28px);
   overflow-y: auto;
