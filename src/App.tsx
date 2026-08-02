@@ -26529,6 +26529,92 @@ function PublicSite({
       detail: "GitHub is source; VPS needs release-stamp proof before final live testing."
     }
   ];
+  const publicRouteAnswerBar = {
+    mode: "public_route_answer_bar",
+    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "register" : "login"}`,
+    headline:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Register the company workspace first"
+          : "Login to the company workspace"
+        : mode === "signup"
+          ? "Register your Professional Passport"
+          : "Login to your Professional Passport",
+    pricing: selectedRegistrationPath.plan,
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing hosted account session",
+    landing_portal: portal === "corporate" ? "Company setup, billing, team, then Corporate Verify" : "Professional Passport records, evidence, consent, and sharing",
+    recovery_state: email ? "Recovery and verification tools are ready for this email" : "Enter email to unlock recovery tools",
+    corporate_database_boundary:
+      "Corporate cannot browse a user database. Corporate requests one professional by email and reviews only approved, consent-scoped rows.",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_route_answer_bar_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_recovery_first_database_write_landing_submit_and_no_open_user_database_visible_as_the_first_auth_answer"
+  };
+  const publicRouteAnswerBarRoutes = [
+    {
+      label: "Professional register",
+      active: portal === "professional" && mode === "signup",
+      detail: "Free pilot Passport owner account.",
+      action: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Professional login",
+      active: portal === "professional" && mode === "signin",
+      detail: "Open existing Passport records.",
+      action: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate register",
+      active: portal === "corporate" && mode === "signup",
+      detail: "$149 pilot company workspace.",
+      action: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate login",
+      active: portal === "corporate" && mode === "signin",
+      detail: "Open Company Admin and Verify.",
+      action: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    }
+  ];
+  const publicRouteAnswerBarFacts = [
+    {
+      label: "Selected",
+      value: publicRouteAnswerBar.selected_route,
+      detail: publicRouteAnswerBar.headline
+    },
+    {
+      label: "Pricing",
+      value: publicRouteAnswerBar.pricing,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First database write",
+      value: publicRouteAnswerBar.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Landing",
+      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
+      detail: publicRouteAnswerBar.landing_portal
+    },
+    {
+      label: "Recovery",
+      value: email ? "Ready" : "Email needed",
+      detail: publicRouteAnswerBar.recovery_state
+    }
+  ];
   const publicSignupDecisionCards = [
     {
       label: "Selected path",
@@ -28459,6 +28545,50 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className={`public-route-answer-bar ${portal}`} aria-label="Public route answer bar">
+            <div className="public-route-answer-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
+                <strong>{publicRouteAnswerBar.headline}</strong>
+                <small>{publicRouteAnswerBar.accepted_when}</small>
+              </div>
+              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to credentials
+              </button>
+            </div>
+            <div className="public-route-answer-routes">
+              {publicRouteAnswerBarRoutes.map((route) => (
+                <button aria-pressed={route.active} className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-route-answer-grid">
+              {publicRouteAnswerBarFacts.map((fact) => (
+                <span key={fact.label}>
+                  <small>{fact.label}</small>
+                  <strong>{fact.value}</strong>
+                  <em>{fact.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="public-route-answer-actions">
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+            </div>
+            <div className="public-route-answer-proof">
+              <span>Preview data accepted: {publicRouteAnswerBar.preview_data_accepted ? "yes" : "no"}</span>
+              <small>{publicRouteAnswerBar.corporate_database_boundary}</small>
+            </div>
+          </div>
           <div className={`public-access-answer ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public access answer">
             <div className="public-access-answer-header">
               <div>

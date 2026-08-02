@@ -338,6 +338,12 @@ const appRequirements = [
     "public_access_answer_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_submit_first_database_write_landing_server_status_and_no_open_user_database_before_credentials",
     "public access answer acceptance rule"
   ],
+  ["Public route answer bar", "public route answer bar label"],
+  ["public_route_answer_bar", "public route answer bar packet mode"],
+  [
+    "public_route_answer_bar_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_recovery_first_database_write_landing_submit_and_no_open_user_database_visible_as_the_first_auth_answer",
+    "public route answer bar no-open-database rule"
+  ],
   ["Pricing activation workbench", "pricing activation workbench label"],
   ["pricing_activation_workbench", "pricing activation workbench packet mode"],
   [
