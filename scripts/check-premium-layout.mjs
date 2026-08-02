@@ -756,5 +756,8 @@ assert(css.includes(".v1-security-review-receipt") && css.includes(".v1-security
 assert(css.includes(".security-rls-database-receipt") && css.includes(".security-rls-database-grid"), "security RLS database receipt must be styled and bounded.");
 assert(premiumRepair.includes(".pilot-contact-form") && premiumRepair.includes(".consent-controls"), "corporate/admin form controls must be included in overflow guards.");
 assert(!premiumRepair.includes("radial-gradient"), "premium shell repair must avoid decorative orb-style backgrounds.");
+assert(css.includes("Hosted portal readability lock") && css.includes(".portal-layout-answer {\n  display: none !important;") && css.includes("--tg-shell-max: 1180px"), "hosted portal readability lock must hide duplicate split-console panels and center the dashboard.");
+assert(css.includes(".session-command-bar,\n.topbar-actions,\n.signed-in-portal-entry-actions,\n.portal-action-dock,\n.workspace-route-strip,\n.workspace-flow-strip") && css.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr)) !important;"), "hosted portal readability lock must keep account, logout, corporate, and route actions wrapped and clickable.");
+assert(css.includes(".corporate-directory-panel table,\n.records-panel table,\n.audit-panel table {\n  min-width: min(620px, 100%) !important;"), "hosted portal readability lock must prevent corporate, record, and audit tables from forcing horizontal overflow.");
 
 console.log("TrustGraph premium layout check passed: legacy rail removed, portal home visible, logout visible, route strips, setup route, live proof, and dense forms bounded.");
