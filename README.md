@@ -63,6 +63,8 @@ To check whether the VPS has caught up to the latest GitHub Pages bundle without
 
 The repo now includes `tools/trustgraph-nginx.conf` for the specific VPS failure where `/trustgraph-release.json` returns the TrustGraph app shell instead of JSON. Install it only as `/opt/fixflow-nginx/conf.d/trustgraph.conf` for the `trustgraph.5-75-224-110.sslip.io` subdomain, reload the existing `fixflow-nginx` container, and keep the protected VFIX host separate.
 
+For that same HTML-shell VPS failure, prefer the guarded installer: `cd /opt/trustgraph && bash tools/install-trustgraph-nginx.sh`. It refuses the protected VFIX host, installs only the TrustGraph subdomain config, runs `nginx -t`, reloads `fixflow-nginx`, checks that `/trustgraph-release.json` returns JSON with the bundle marker, and confirms the VFIX login route still responds.
+
 The CI loop also runs `pnpm check:v1-pilot-route`. That verifier ties the public website, Professional and Corporate registration, pricing, hosted auth recovery, Passport evidence, Corporate scoped user database access, Admin exports, live-row repair path, and VPS release stamp into one route-level acceptance check before Pages deployment.
 
 The CI loop also runs `pnpm check:live-database-repair`. That focused gate proves the signed-in app still exposes the next missing Supabase row group, the live pilot seed action, the proof reload route, working-data export, and visible preview-data rejection before a build can deploy.

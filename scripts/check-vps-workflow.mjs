@@ -16,6 +16,7 @@ const freshnessCheck = fs.readFileSync("scripts/check-vps-freshness.mjs", "utf8"
 const vpsStatusReport = fs.readFileSync("scripts/report-vps-status.mjs", "utf8");
 const stampRelease = fs.readFileSync("scripts/stamp-release.mjs", "utf8");
 const nginxConfig = fs.readFileSync("tools/trustgraph-nginx.conf", "utf8");
+const nginxInstaller = fs.readFileSync("tools/install-trustgraph-nginx.sh", "utf8");
 
 const requiredSnippets = [
   {
@@ -429,6 +430,48 @@ const runtimeSnippets = [
     path: "tools/trustgraph-nginx.conf",
     snippet: "proxy_pass http://127.0.0.1:4180/trustgraph-release.json;",
     label: "shared nginx snippet proxies release stamp to the TrustGraph container"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "TRUSTGRAPH_NGINX_TARGET=\"${TRUSTGRAPH_NGINX_TARGET:-/opt/fixflow-nginx/conf.d/trustgraph.conf}\"",
+    label: "nginx installer only writes the TrustGraph conf.d target"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "refusing unexpected TrustGraph host",
+    label: "nginx installer refuses the wrong TrustGraph host"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "nginx source must not include the protected VFIX host or CRM-client-demo route",
+    label: "nginx installer rejects VFIX or CRM-client-demo content in the TrustGraph snippet"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "docker exec \"$FIXFLOW_NGINX_CONTAINER\" nginx -t",
+    label: "nginx installer tests nginx before reload"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "docker exec \"$FIXFLOW_NGINX_CONTAINER\" nginx -s reload",
+    label: "nginx installer reloads the shared nginx container only after validation"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "TrustGraph release JSON route still serves the app shell",
+    label: "nginx installer rejects app-shell fallback after reload"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "protected VFIX route did not remain reachable after nginx reload",
+    label: "nginx installer verifies VFIX remains reachable"
   },
   {
     source: app,

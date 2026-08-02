@@ -55,6 +55,7 @@ const report = {
           diagnosis: "the TrustGraph host is alive but /trustgraph-release.json is being routed to the app shell, so the VPS cannot prove the saved GitHub commit",
           nginx_config_source: "tools/trustgraph-nginx.conf",
           nginx_config_target: "/opt/fixflow-nginx/conf.d/trustgraph.conf",
+          guarded_installer_command: "cd /opt/trustgraph && bash tools/install-trustgraph-nginx.sh",
           nginx_test_command: "docker exec fixflow-nginx nginx -t",
           nginx_reload_command: "docker exec fixflow-nginx nginx -s reload",
           release_check_command: "curl -i https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
