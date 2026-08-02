@@ -24612,6 +24612,98 @@ function PublicSite({
       detail: "GitHub is source of truth; VPS freshness is checked before pilot acceptance."
     }
   ];
+  const publicPortalEntryDesk = {
+    mode: "public_portal_entry_desk",
+    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
+    primary_cta:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create corporate workspace"
+          : "Login to corporate portal"
+        : mode === "signup"
+          ? "Create Professional Passport"
+          : "Login to Professional Passport",
+    pricing: selectedRegistrationPath.plan,
+    payment_status: selectedRegistrationPath.paymentStatus,
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing account session first",
+    landing_portal: portal === "corporate" ? "Corporate setup, team, billing, then Verify" : "Professional Passport records and sharing",
+    recovery_route: email ? "Reset and resend enabled" : "Enter email to enable recovery",
+    server_status: serverSyncMonitor.status,
+    corporate_boundary: "Corporate users request a professional by email and review only approved consent-scoped rows.",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_portal_entry_desk_keeps_four_routes_pricing_first_database_write_landing_recovery_server_status_corporate_scope_boundary_and_submit_visible_before_credentials"
+  };
+  const publicPortalEntryDeskRoutes = [
+    {
+      label: "Professional login",
+      detail: "Existing users open Passport records, evidence, references, consent, and grants.",
+      active: portal === "professional" && mode === "signin",
+      action: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Professional registration",
+      detail: "Create the free pilot Passport account and first live user profile.",
+      active: portal === "professional" && mode === "signup",
+      action: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate login",
+      detail: "Existing teams open company setup, RBAC, billing, and Corporate Verify.",
+      active: portal === "corporate" && mode === "signin",
+      action: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate registration",
+      detail: "Create the company admin workspace before reviewer access is granted.",
+      active: portal === "corporate" && mode === "signup",
+      action: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    }
+  ];
+  const publicPortalEntryDeskStatus = [
+    {
+      label: "Selected route",
+      value: publicPortalEntryDesk.selected_route,
+      detail: publicPortalEntryDesk.primary_cta
+    },
+    {
+      label: "Pricing",
+      value: publicPortalEntryDesk.pricing,
+      detail: publicPortalEntryDesk.payment_status
+    },
+    {
+      label: "Database",
+      value: publicPortalEntryDesk.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "Landing",
+      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
+      detail: publicPortalEntryDesk.landing_portal
+    },
+    {
+      label: "Recovery",
+      value: publicPortalEntryDesk.recovery_route,
+      detail: "Hosted reset, resend, and localhost-link repair stay in this flow."
+    },
+    {
+      label: "Server",
+      value: publicPortalEntryDesk.server_status.replace(/_/g, " "),
+      detail: "GitHub is source; VPS needs release-stamp proof before final live testing."
+    }
+  ];
   const publicSignupDecisionCards = [
     {
       label: "Selected path",
@@ -27779,6 +27871,76 @@ function PublicSite({
               >
                 Export access path
               </button>
+            </div>
+          </div>
+          <div className={`public-portal-entry-desk ${portal}`} aria-label="Public portal entry desk">
+            <div className="public-portal-entry-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
+                <strong>{publicPortalEntryDesk.primary_cta}</strong>
+                <small>
+                  Pick the exact route first. Pricing, database write, recovery, hosted server status, and corporate scope are visible before credentials.
+                </small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-portal-entry-routes" aria-label="Professional and corporate portal routes">
+              {publicPortalEntryDeskRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-portal-entry-grid">
+              {publicPortalEntryDeskStatus.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-portal-entry-actions">
+              <span>
+                <strong>{publicPortalEntryDesk.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+                <small>{publicPortalEntryDesk.corporate_boundary}</small>
+              </span>
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset or resend
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-portal-entry-desk-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(
+                      {
+                        ...publicPortalEntryDesk,
+                        routes: publicPortalEntryDeskRoutes.map(({ action: _action, ...route }) => route),
+                        status: publicPortalEntryDeskStatus
+                      },
+                      null,
+                      2
+                    ),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export route
+              </button>
+            </div>
+            <div className="public-portal-entry-proof">
+              <span>{publicPortalEntryDesk.accepted_when}</span>
             </div>
           </div>
           <div className="public-auth-experience-studio" aria-label="Public auth experience studio">

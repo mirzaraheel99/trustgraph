@@ -43778,3 +43778,155 @@ body,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Public portal entry desk: one premium route chooser before credential fields. */
+.public-portal-entry-desk {
+  order: -82;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 238, 201, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 238, 201, 0.14), rgba(8, 15, 18, 0.96) 44%, rgba(134, 174, 246, 0.12)),
+    rgba(8, 15, 18, 0.96);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.32);
+}
+
+.public-portal-entry-desk.corporate {
+  border-color: rgba(134, 174, 246, 0.3);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.14), rgba(8, 15, 18, 0.96) 46%, rgba(95, 238, 201, 0.1)),
+    rgba(8, 15, 18, 0.96);
+}
+
+.public-portal-entry-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-portal-entry-header > div,
+.public-portal-entry-actions > span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-portal-entry-header strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+  line-height: 1.12;
+}
+
+.public-portal-entry-header small,
+.public-portal-entry-routes small,
+.public-portal-entry-grid small,
+.public-portal-entry-actions small,
+.public-portal-entry-proof span {
+  color: var(--tg-muted, #a7bab3);
+  line-height: 1.38;
+}
+
+.public-portal-entry-routes,
+.public-portal-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.public-portal-entry-routes button,
+.public-portal-entry-grid span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 235, 229, 0.13);
+  border-radius: 8px;
+  color: inherit;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.public-portal-entry-routes button.active {
+  border-color: rgba(95, 238, 201, 0.46);
+  background: rgba(28, 104, 95, 0.3);
+}
+
+.public-portal-entry-grid small:first-child {
+  color: rgba(95, 238, 201, 0.94);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-portal-entry-routes strong,
+.public-portal-entry-grid strong,
+.public-portal-entry-actions strong {
+  color: var(--tg-text, #f3fbf7);
+  line-height: 1.15;
+}
+
+.public-portal-entry-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(4, minmax(118px, auto));
+  gap: 10px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.public-portal-entry-actions button,
+.public-portal-entry-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.public-portal-entry-proof {
+  display: grid;
+  min-width: 0;
+  padding: 9px 10px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 238, 201, 0.16);
+  border-radius: 8px;
+  background: rgba(95, 238, 201, 0.055);
+}
+
+.public-portal-entry-header strong,
+.public-portal-entry-header small,
+.public-portal-entry-routes strong,
+.public-portal-entry-routes small,
+.public-portal-entry-grid strong,
+.public-portal-entry-grid small,
+.public-portal-entry-actions strong,
+.public-portal-entry-actions small,
+.public-portal-entry-proof span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-auth-card:has(.public-portal-entry-desk) .public-account-access-path,
+.public-auth-card:has(.public-portal-entry-desk) .public-auth-experience-studio,
+.public-auth-card:has(.public-portal-entry-desk) .public-login-primary-choice,
+.public-auth-card:has(.public-portal-entry-desk) .public-portal-route-shell,
+.public-auth-card:has(.public-portal-entry-desk) .public-portal-switchboard,
+.public-auth-card:has(.public-portal-entry-desk) .public-auth-front-desk,
+.public-auth-card:has(.public-portal-entry-desk) .public-access-desk {
+  display: none !important;
+}
+
+@media (max-width: 980px) {
+  .public-portal-entry-header,
+  .public-portal-entry-routes,
+  .public-portal-entry-grid,
+  .public-portal-entry-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
