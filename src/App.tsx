@@ -26312,6 +26312,79 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className="auth-portal-console" aria-label="Auth portal console">
+            <div className="auth-portal-console-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
+                <strong>{portal === "corporate" ? "Corporate account and reviewer portal" : "Professional Passport account"}</strong>
+                <small>
+                  One clear path for login, registration, pricing, recovery, and the first live database write before any dense proof panels.
+                </small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login now" : "Create account"}
+              </button>
+            </div>
+            <div className="auth-portal-console-tabs" role="tablist" aria-label="Choose account portal and auth action">
+              <button aria-selected={portal === "professional"} className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} role="tab" type="button">
+                <Fingerprint size={17} />
+                <span>Professional</span>
+              </button>
+              <button aria-selected={portal === "corporate"} className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} role="tab" type="button">
+                <BriefcaseBusiness size={17} />
+                <span>Corporate</span>
+              </button>
+              <button aria-selected={mode === "signup"} className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} role="tab" type="button">
+                <UserPlus size={17} />
+                <span>Register</span>
+              </button>
+              <button aria-selected={mode === "signin"} className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} role="tab" type="button">
+                <LogIn size={17} />
+                <span>Login</span>
+              </button>
+            </div>
+            <div className="auth-portal-console-grid">
+              <span>
+                <small>Selected route</small>
+                <strong>{portal === "corporate" ? "Corporate" : "Professional"}</strong>
+                <em>{mode === "signin" ? "Existing account login" : "New account registration"}</em>
+              </span>
+              <span>
+                <small>Pricing</small>
+                <strong>{selectedRegistrationPath.plan}</strong>
+                <em>{selectedRegistrationPath.paymentStatus}</em>
+              </span>
+              <span>
+                <small>First database write</small>
+                <strong>{selectedRegistrationPath.primaryWrite}</strong>
+                <em>{portal === "corporate" ? "Creates company context after auth" : "Creates Passport owner context after auth"}</em>
+              </span>
+              <span>
+                <small>Landing portal</small>
+                <strong>{portal === "corporate" ? "Company Admin then Corporate Verify" : "Professional Passport"}</strong>
+                <em>{selectedRegistrationPath.nextAction}</em>
+              </span>
+            </div>
+            <div className="auth-portal-console-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Email field
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Pricing
+              </button>
+            </div>
+            <small className="auth-portal-console-boundary">
+              {portal === "corporate"
+                ? "Corporate accounts do not browse an open user database. They request one professional, wait for approval, then review only the scoped rows shared by that user."
+                : "Professional users own the Passport record, evidence, recovery route, and sharing approvals before a company can see scoped rows."}
+            </small>
+          </div>
           <div className="login-portal-desk" aria-label="Login portal desk">
             <div className="login-portal-desk-header">
               <div>

@@ -40853,6 +40853,92 @@ body,
   background: rgba(9, 18, 20, 0.96);
 }
 
+.auth-portal-console {
+  order: -120;
+  display: grid;
+  gap: 14px;
+  padding: clamp(16px, 2.4vw, 22px);
+  border: 1px solid rgba(95, 238, 201, 0.3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(17, 45, 47, 0.98), rgba(8, 16, 19, 0.98)),
+    rgba(8, 16, 19, 0.98);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+}
+
+.auth-portal-console-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.auth-portal-console-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.auth-portal-console strong,
+.auth-portal-console small,
+.auth-portal-console span,
+.auth-portal-console em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.auth-portal-console-header strong {
+  color: var(--tg-text);
+  font-size: clamp(26px, 4cqw, 42px);
+  line-height: 1.02;
+}
+
+.auth-portal-console small,
+.auth-portal-console em {
+  color: var(--tg-muted);
+}
+
+.auth-portal-console-tabs,
+.auth-portal-console-grid,
+.auth-portal-console-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+  gap: 10px;
+}
+
+.auth-portal-console-tabs button,
+.auth-portal-console-grid span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+}
+
+.auth-portal-console-tabs button {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.auth-portal-console-tabs button.active {
+  border-color: rgba(95, 238, 201, 0.5);
+  background: rgba(50, 222, 190, 0.12);
+}
+
+.auth-portal-console-grid strong {
+  color: var(--tg-text);
+}
+
+.auth-portal-console-boundary {
+  padding: 12px;
+  border: 1px solid rgba(95, 238, 201, 0.22);
+  border-radius: 8px;
+  background: rgba(50, 222, 190, 0.08);
+}
+
 .public-access-answer,
 .login-portal-desk,
 .public-login-primary-choice,
@@ -40934,7 +41020,16 @@ body,
 .public-auth-card .public-access-hub,
 .public-auth-card .public-account-entry-launchpad,
 .public-auth-card .public-v1-access-runway,
-.public-auth-card .public-auth-experience-studio {
+.public-auth-card .public-auth-experience-studio,
+.public-auth-card .login-portal-desk,
+.public-auth-card .public-account-path-chooser,
+.public-auth-card .public-conversion-runway,
+.public-auth-card .public-account-access-path,
+.public-auth-card .public-login-primary-choice,
+.public-auth-card .public-portal-route-shell,
+.public-auth-card .registration-route-planner,
+.public-auth-card .public-auth-front-desk,
+.public-auth-card .public-access-desk {
   max-height: 0;
   margin: 0;
   padding: 0;
@@ -41124,6 +41219,10 @@ body,
 
   .session-strip,
   .topbar-actions,
+  .auth-portal-console-header,
+  .auth-portal-console-tabs,
+  .auth-portal-console-grid,
+  .auth-portal-console-actions,
   .public-login-primary-choice-header,
   .public-login-primary-choice-footer,
   .public-login-primary-choice-routes,
