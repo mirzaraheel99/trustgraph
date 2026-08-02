@@ -38898,6 +38898,35 @@ body {
   background: rgba(255, 255, 255, 0.035);
 }
 
+.registration-completion-receipt {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(137, 171, 255, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(137, 171, 255, 0.08), rgba(95, 240, 201, 0.045)),
+    rgba(255, 255, 255, 0.032);
+}
+
+.registration-completion-receipt code {
+  display: block;
+  max-height: 168px;
+  min-width: 0;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid rgba(210, 231, 223, 0.1);
+  border-radius: 8px;
+  color: rgba(228, 246, 239, 0.88);
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .registration-handoff-grid article.ready {
   border-color: rgba(95, 240, 201, 0.28);
   background: rgba(95, 240, 201, 0.065);
@@ -38909,7 +38938,8 @@ body {
 
 .registration-handoff-command strong,
 .registration-handoff-command small,
-.registration-handoff-command span {
+.registration-handoff-command span,
+.registration-completion-receipt code {
   min-width: 0;
   max-width: 100%;
   overflow-wrap: anywhere;

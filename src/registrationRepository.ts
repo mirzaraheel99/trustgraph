@@ -1,10 +1,23 @@
-import type { DbRegistrationIntent, RegistrationIntentMode, RegistrationIntentPortal } from "./database";
+import type {
+  DbRegistrationCompletionReceipt,
+  DbRegistrationIntent,
+  RegistrationCompletionReceiptStatus,
+  RegistrationIntentMode,
+  RegistrationIntentPortal
+} from "./database";
 import { supabaseRest, supabaseRpc } from "./supabase";
 
 export async function loadRegistrationIntents(accessToken: string): Promise<DbRegistrationIntent[]> {
   return supabaseRest<DbRegistrationIntent[]>("registration_intents?select=*&order=created_at.desc&limit=10", {
     accessToken
   });
+}
+
+export async function loadRegistrationCompletionReceipts(accessToken: string): Promise<DbRegistrationCompletionReceipt[]> {
+  return supabaseRest<DbRegistrationCompletionReceipt[]>(
+    "registration_completion_receipts?select=*&order=created_at.desc&limit=8",
+    { accessToken }
+  );
 }
 
 export async function recordRegistrationIntent(input: {
@@ -31,6 +44,29 @@ export async function recordRegistrationIntent(input: {
       first_database_write: input.firstDatabaseWrite,
       next_dashboard: input.nextDashboard,
       metadata: input.metadata ?? {}
+    },
+    { accessToken: input.accessToken }
+  );
+}
+
+export async function recordRegistrationCompletionReceipt(input: {
+  accessToken: string;
+  registrationIntentId: string;
+  organizationId?: string | null;
+  completionStatus: RegistrationCompletionReceiptStatus;
+  redirectUrl: string;
+  currentDashboard: string;
+  metadata?: Record<string, unknown>;
+}): Promise<DbRegistrationCompletionReceipt> {
+  return supabaseRpc<DbRegistrationCompletionReceipt>(
+    "record_registration_completion_receipt",
+    {
+      input_registration_intent_id: input.registrationIntentId,
+      input_organization_id: input.organizationId ?? null,
+      input_completion_status: input.completionStatus,
+      input_redirect_url: input.redirectUrl,
+      input_current_dashboard: input.currentDashboard,
+      input_metadata: input.metadata ?? {}
     },
     { accessToken: input.accessToken }
   );

@@ -56,6 +56,7 @@ import type {
   DbProductionGateDecision,
   DbReferenceRequest,
   DbRealDatabaseCompletionReceipt,
+  DbRegistrationCompletionReceipt,
   DbRegistrationIntent,
   DbSchemaMigrationRun,
   DbSecurityRlsReviewReceipt,
@@ -177,9 +178,11 @@ import { loadOnboardingWizardReceipts, recordOnboardingWizardReceipt } from "./o
 import { createReferenceRequest, loadReferenceRequests, markReferenceRequestStatus } from "./referenceRepository";
 import { loadRealDatabaseCompletionReceipts, recordRealDatabaseCompletionReceipt } from "./realDatabaseCompletionRepository";
 import {
+  loadRegistrationCompletionReceipts,
   loadRegistrationIntents,
   markRegistrationIntentPassportInitialized,
   markRegistrationIntentWorkspaceCreated,
+  recordRegistrationCompletionReceipt,
   recordRegistrationIntent
 } from "./registrationRepository";
 import { loadProductionGateDecisions, recordProductionGateDecision } from "./productionGateRepository";
@@ -30622,6 +30625,8 @@ function App() {
   const [passportMissingRecordStatus, setPassportMissingRecordStatus] = useState("Sign in to review requested Passport records");
   const [registrationIntents, setRegistrationIntents] = useState<DbRegistrationIntent[]>([]);
   const [registrationIntentStatus, setRegistrationIntentStatus] = useState("Sign in to load registration intent rows");
+  const [registrationCompletionReceipts, setRegistrationCompletionReceipts] = useState<DbRegistrationCompletionReceipt[]>([]);
+  const [registrationCompletionStatus, setRegistrationCompletionStatus] = useState("Sign in to load registration completion receipts");
   const [authRecoveryReceipts, setAuthRecoveryReceipts] = useState<DbAuthRecoveryReceipt[]>([]);
   const [onboardingReceipts, setOnboardingReceipts] = useState<DbOnboardingWizardReceipt[]>([]);
   const [v1ReadinessReceipts, setV1ReadinessReceipts] = useState<DbV1LiveDatabaseReadinessReceipt[]>([]);
@@ -30829,12 +30834,14 @@ function App() {
       setBillingDecisionReceipts([]);
       setPricingQuoteReceipts([]);
       setRegistrationIntents([]);
+      setRegistrationCompletionReceipts([]);
       setAuthRecoveryReceipts([]);
       setOnboardingReceipts([]);
       setV1ReadinessReceipts([]);
       setV1PilotRouteRunReceipts([]);
       setRealDatabaseCompletionReceipts([]);
       setRegistrationIntentStatus("Sign in to load registration intent rows");
+      setRegistrationCompletionStatus("Sign in to load registration completion receipts");
       setBillingStatus("Sign in to manage billing plans");
       setTeamInvitations([]);
       setTeamStatus("Sign in to invite corporate team members");
@@ -30902,6 +30909,7 @@ function App() {
       loadBillingArchitectureDecisionReceipts(authSession.accessToken).catch(() => []),
       loadPricingQuoteReceipts(authSession.accessToken).catch(() => []),
       loadRegistrationIntents(authSession.accessToken).catch(() => []),
+      loadRegistrationCompletionReceipts(authSession.accessToken).catch(() => []),
       loadAuthRecoveryReceipts(authSession.accessToken).catch(() => []),
       loadOnboardingWizardReceipts(authSession.accessToken).catch(() => []),
       loadV1LiveDatabaseReadinessReceipts(authSession.accessToken).catch(() => []),
@@ -30910,13 +30918,14 @@ function App() {
       loadOrganizationInvitations(activeMembership.organizationId, authSession.accessToken).catch(() => []),
       loadOrganizationMembers(activeMembership.organizationId, authSession.accessToken).catch(() => [])
     ])
-      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, authReceipts, onboardingRows, readinessReceipts, routeRunReceipts, realDatabaseReceipts, invitations, members]) => {
+      .then(([plans, subscriptions, decisionReceipts, quoteReceipts, intents, completionReceipts, authReceipts, onboardingRows, readinessReceipts, routeRunReceipts, realDatabaseReceipts, invitations, members]) => {
         if (cancelled) return;
         setSubscriptionPlans(plans);
         setOrganizationSubscriptions(subscriptions);
         setBillingDecisionReceipts(decisionReceipts);
         setPricingQuoteReceipts(quoteReceipts);
         setRegistrationIntents(intents);
+        setRegistrationCompletionReceipts(completionReceipts);
         setAuthRecoveryReceipts(authReceipts);
         setOnboardingReceipts(onboardingRows);
         setV1ReadinessReceipts(readinessReceipts);
@@ -30930,6 +30939,7 @@ function App() {
         setTeamStatus(invitations.length ? `Team invitations: ${invitations.length}` : "No team invitations yet");
         setMemberStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
         setRegistrationIntentStatus(intents.length ? `Registration intents: ${intents.length}` : "No registration intent rows yet");
+        setRegistrationCompletionStatus(completionReceipts.length ? `Registration completion receipts: ${completionReceipts.length}` : "No registration completion receipts yet");
         setV1ReadinessStatus(readinessReceipts.length ? `V1 readiness receipts: ${readinessReceipts.length}` : "No V1 live database readiness receipts yet");
       })
       .catch((error) => {
@@ -30939,6 +30949,7 @@ function App() {
         setBillingDecisionReceipts([]);
         setPricingQuoteReceipts([]);
         setRegistrationIntents([]);
+        setRegistrationCompletionReceipts([]);
         setAuthRecoveryReceipts([]);
         setOnboardingReceipts([]);
         setV1ReadinessReceipts([]);
@@ -30948,6 +30959,7 @@ function App() {
         setTeamMembers([]);
         setBillingStatus(operatorErrorMessage(error, "Could not load billing plans"));
         setRegistrationIntentStatus(operatorErrorMessage(error, "Could not load registration intents"));
+        setRegistrationCompletionStatus(operatorErrorMessage(error, "Could not load registration completion receipts"));
         setV1ReadinessStatus(operatorErrorMessage(error, "Could not load V1 readiness receipts"));
         setTeamStatus(operatorErrorMessage(error, "Could not load team invitations"));
         setMemberStatus(operatorErrorMessage(error, "Could not load team members"));
@@ -32052,6 +32064,59 @@ function App() {
     setWorkspaceId("verify");
     setAccountStatus("Corporate account created");
     return membership;
+  }
+
+  async function recordLiveRegistrationCompletionReceipt() {
+    if (!authSession || !latestRegistrationIntent) {
+      setRegistrationCompletionStatus("Sign in and capture a registration intent before recording completion.");
+      openAuthControls();
+      return;
+    }
+
+    const completionStatus =
+      registrationHandoffCommand.completion_status === "completed"
+        ? "first_database_write_verified"
+        : hasHostedAuthCallbackUrl()
+          ? "dashboard_landed"
+          : "hosted_callback_pending";
+    const organizationId =
+      latestRegistrationIntent.selected_portal === "corporate"
+        ? activeOrganization?.id ?? activeMembership.organizationId ?? null
+        : null;
+    const currentDashboard =
+      latestRegistrationIntent.selected_portal === "corporate"
+        ? hasLiveCorporateContext
+          ? "Corporate Verify"
+          : "Corporate setup"
+        : "Professional Passport";
+
+    setRegistrationCompletionStatus("Recording hosted registration completion receipt...");
+    try {
+      await recordRegistrationCompletionReceipt({
+        accessToken: authSession.accessToken,
+        registrationIntentId: latestRegistrationIntent.id,
+        organizationId,
+        completionStatus,
+        redirectUrl: signedInHostedAuthRedirectUrl,
+        currentDashboard,
+        metadata: {
+          source_panel: "registration_handoff_command",
+          registration_handoff_command: registrationHandoffCommand,
+          portal_access_next_step: portalAccessNextStep,
+          server_sync_status: serverSyncMonitor.status,
+          preview_data_accepted: false
+        }
+      });
+      const receipts = await loadRegistrationCompletionReceipts(authSession.accessToken).catch(
+        () => registrationCompletionReceipts
+      );
+      setRegistrationCompletionReceipts(receipts);
+      setRegistrationCompletionStatus(
+        receipts.length ? `Registration completion receipts: ${receipts.length}` : "Registration receipt recorded"
+      );
+    } catch (error) {
+      setRegistrationCompletionStatus(operatorErrorMessage(error, "Could not record registration completion receipt"));
+    }
   }
 
   async function createLiveDataRightsRequest(input: { requestType: DataRightsRequestType; requestedScope: string; reason: string }) {
@@ -35527,6 +35592,7 @@ function App() {
     }
   ];
   const latestRegistrationIntent = registrationIntents[0] ?? null;
+  const latestRegistrationCompletionReceipt = registrationCompletionReceipts[0] ?? null;
   const signedInHostedAuthRedirectUrl = hostedAuthRedirectUrl();
   const registrationIntentReviewPacket = {
     mode: "registration_intent_review_packet",
@@ -35592,6 +35658,8 @@ function App() {
     first_database_write: latestRegistrationIntent?.first_database_write ?? "registration_intent_pending",
     completion_status: registrationHandoffCompletion,
     next_action: registrationHandoffNextAction,
+    completion_receipts_loaded: registrationCompletionReceipts.length,
+    latest_completion_receipt: latestRegistrationCompletionReceipt,
     preview_data_accepted: false,
     accepted_when:
       "registration_handoff_command_shows_hosted_intent_selected_portal_completion_status_next_workspace_or_passport_action_pricing_first_database_write_and_preview_rejection"
@@ -35625,8 +35693,33 @@ function App() {
           ? "Corporate opens after workspace creation and RBAC membership exist."
           : "Professional opens after the Passport record is initialized.",
       ready: registrationHandoffCommand.completion_status === "completed"
+    },
+    {
+      label: "Receipt",
+      value: latestRegistrationCompletionReceipt?.completion_status.replaceAll("_", " ") ?? "Not recorded",
+      detail: latestRegistrationCompletionReceipt
+        ? `Hosted ${latestRegistrationCompletionReceipt.current_dashboard} receipt recorded from ${latestRegistrationCompletionReceipt.redirect_url}.`
+        : "Record a hosted completion receipt after the dashboard lands from the email/auth flow.",
+      ready: Boolean(latestRegistrationCompletionReceipt)
     }
   ];
+  const registrationCompletionReceiptPacket = {
+    mode: "registration_completion_receipt_packet",
+    status: latestRegistrationCompletionReceipt
+      ? latestRegistrationCompletionReceipt.completion_status
+      : authSession && latestRegistrationIntent
+        ? "receipt_ready_to_record"
+        : "registration_intent_required",
+    table: "registration_completion_receipts",
+    rpc: "record_registration_completion_receipt",
+    loaded_count: registrationCompletionReceipts.length,
+    latest_receipt: latestRegistrationCompletionReceipt,
+    hosted_redirect_url: signedInHostedAuthRedirectUrl,
+    localhost_redirect_detected: latestRegistrationCompletionReceipt?.localhost_redirect_detected ?? false,
+    preview_data_accepted: latestRegistrationCompletionReceipt?.preview_data_accepted ?? false,
+    accepted_when:
+      "registration_completion_receipt_requires_hosted_redirect_verified_session_registration_intent_first_database_write_correct_dashboard_and_no_preview_data"
+  };
   const portalAccessNextStep = {
     mode: "portal_access_next_step_checklist",
     status: !authSession
@@ -37681,6 +37774,14 @@ function App() {
                 Pricing
               </button>
               <button
+                className={latestRegistrationCompletionReceipt ? "secondary-action" : "primary-action"}
+                disabled={!authSession || !latestRegistrationIntent}
+                onClick={recordLiveRegistrationCompletionReceipt}
+                type="button"
+              >
+                Record receipt
+              </button>
+              <button
                 className="secondary-action"
                 onClick={() =>
                   downloadTextFile(
@@ -37715,9 +37816,25 @@ function App() {
               <strong>{registrationIntents.length}</strong>
             </span>
             <span>
+              <small>Completion receipts</small>
+              <strong>{registrationCompletionReceipts.length}</strong>
+            </span>
+            <span>
               <small>Preview data</small>
               <strong>{registrationHandoffCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
+          </div>
+          <div className="registration-completion-receipt" aria-label="Registration completion receipt">
+            <span className={`status-chip ${latestRegistrationCompletionReceipt ? "success" : "warning"}`}>
+              registration_completion_receipts
+            </span>
+            <strong>
+              {latestRegistrationCompletionReceipt
+                ? `Hosted ${latestRegistrationCompletionReceipt.current_dashboard} receipt recorded`
+                : "Hosted dashboard completion receipt is still missing"}
+            </strong>
+            <small>{registrationCompletionStatus}</small>
+            <code>{JSON.stringify(registrationCompletionReceiptPacket, null, 2)}</code>
           </div>
         </section>
 

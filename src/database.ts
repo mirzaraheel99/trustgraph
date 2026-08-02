@@ -568,6 +568,30 @@ export interface DbRegistrationIntent {
   updated_at: string;
 }
 
+export type RegistrationCompletionReceiptStatus =
+  | "hosted_callback_pending"
+  | "dashboard_landed"
+  | "first_database_write_verified";
+
+export interface DbRegistrationCompletionReceipt {
+  id: string;
+  profile_id: string;
+  registration_intent_id: string | null;
+  organization_id: string | null;
+  selected_portal: RegistrationIntentPortal;
+  selected_mode: RegistrationIntentMode;
+  completion_status: RegistrationCompletionReceiptStatus;
+  redirect_url: string;
+  current_dashboard: string;
+  first_database_write: string;
+  registration_intent_status: RegistrationIntentStatus;
+  preview_data_accepted: boolean;
+  localhost_redirect_detected: boolean;
+  accepted_when: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface DbOrganizationInvitation {
   id: string;
   organization_id: string;

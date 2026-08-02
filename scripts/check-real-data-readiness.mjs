@@ -14,9 +14,21 @@ function assertMigration(migrations, prefix, label) {
   assert(migrations.some((file) => file.startsWith(prefix) && file.endsWith(".sql")), `Expected migration ${prefix} for ${label}`);
 }
 
-const [app, recordsRepository, databaseTypes, packageText, workflow, readiness, runbook, evidenceMap, migrations] = await Promise.all([
+const [
+  app,
+  recordsRepository,
+  registrationRepository,
+  databaseTypes,
+  packageText,
+  workflow,
+  readiness,
+  runbook,
+  evidenceMap,
+  migrations
+] = await Promise.all([
   readFile(new URL("../src/App.tsx", import.meta.url), "utf8"),
   readFile(new URL("../src/recordRepository.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/registrationRepository.ts", import.meta.url), "utf8"),
   readFile(new URL("../src/database.ts", import.meta.url), "utf8"),
   readFile(new URL("../package.json", import.meta.url), "utf8"),
   readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),
@@ -330,6 +342,14 @@ const appRequirements = [
     "registration_completion_handoff_requires_hosted_verification_registration_intent_completion_professional_or_corporate_landing_dashboard_next_action_and_no_preview_data",
     "registration completion handoff acceptance rule"
   ],
+  ["Registration completion receipt", "registration completion receipt label"],
+  ["registration_completion_receipt_packet", "registration completion receipt packet mode"],
+  ["registration_completion_receipts", "persisted registration completion receipt table"],
+  ["record_registration_completion_receipt", "persisted registration completion receipt RPC"],
+  [
+    "registration_completion_receipt_requires_hosted_redirect_verified_session_registration_intent_first_database_write_correct_dashboard_and_no_preview_data",
+    "persisted registration completion receipt acceptance rule"
+  ],
   ["Signed-in pilot journey checklist", "signed-in pilot journey checklist label"],
   ["signed_in_pilot_journey_checklist", "signed-in pilot journey checklist packet mode"],
   [
@@ -384,7 +404,7 @@ for (const [phrase, label] of runbookRequirements) {
 
 assertIncludes(evidenceMap, "Working-data packet", "evidence map working-data export");
 assertIncludes(evidenceMap, "Seed reconciliation", "evidence map seed reconciliation");
-assertIncludes(evidenceMap, "Live Supabase migrations currently run through `062_v1_pilot_route_run_receipts.sql`", "evidence map current migration boundary");
+assertIncludes(evidenceMap, "Live Supabase migrations currently run through `064_registration_completion_receipts.sql`", "evidence map current migration boundary");
 assertIncludes(evidenceMap, "043_account_context_rpc.sql", "evidence map account-context migration history");
 assertIncludes(evidenceMap, "passport_initialized", "evidence map professional registration completion status");
 assertIncludes(evidenceMap, "persisted V1 live database readiness receipts", "evidence map persisted readiness receipt");
@@ -400,6 +420,7 @@ assertMigration(migrationFiles, "060_", "pilot visibility snapshot seed");
 assertMigration(migrationFiles, "061_", "pilot-named operator RPC aliases");
 assertMigration(migrationFiles, "062_", "persisted V1 pilot route run receipts");
 assertMigration(migrationFiles, "063_", "corporate scoped visible Passport rows RPC");
+assertMigration(migrationFiles, "064_", "persisted registration completion receipts");
 assertMigration(migrationFiles, "043_", "account context RPC");
 assertMigration(migrationFiles, "044_", "registration intent rows");
 assertMigration(migrationFiles, "045_", "corporate registration intent completion");
@@ -422,6 +443,10 @@ assertIncludes(recordsRepository, "DbCorporateVisiblePassportRow", "Corporate Ve
 assertIncludes(recordsRepository, "corporate_visible_passport_row", "Corporate Verify row metadata marks database-scoped rows");
 assertIncludes(databaseTypes, "export interface DbCorporateVisiblePassportRow", "typed Corporate visible Passport row contract");
 assertIncludes(databaseTypes, "raw_private_files_included: boolean", "Corporate visible row raw-file exclusion field");
+assertIncludes(databaseTypes, "export interface DbRegistrationCompletionReceipt", "typed registration completion receipt contract");
+assertIncludes(registrationRepository, "loadRegistrationCompletionReceipts", "registration completion receipt loader");
+assertIncludes(registrationRepository, "recordRegistrationCompletionReceipt", "registration completion receipt writer");
+assertIncludes(registrationRepository, "record_registration_completion_receipt", "registration completion receipt RPC adapter");
 
 console.log(
   `TrustGraph real-data readiness check passed: ${appRequirements.length} app markers, ${migrationFiles.length} migrations, runbook and readiness evidence verified.`
