@@ -45176,3 +45176,99 @@ body,
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
   gap: 10px !important;
 }
+
+/* Corporate Verify one-path compression: request, approval queue, scoped rows, review, export. */
+.verify-panel:has(.corporate-verify-single-lane) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .mini-heading {
+  order: -110 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-verify-single-lane {
+  order: -108 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-verify-review-runway {
+  order: -104 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-access-request-preflight {
+  order: -100 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .verify-request-form {
+  order: -96 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .grant-list {
+  order: -92 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .verify-user-data-proof,
+.verify-panel:has(.corporate-verify-single-lane) > .verify-shared-heading,
+.verify-panel:has(.corporate-verify-single-lane) > .shared-record-grid {
+  order: -88 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-directory-panel {
+  order: -82 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-verify-operator-cockpit,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-reviewer-command-center,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-database-home-command,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-access-answer,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-reviewer-next-action,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-database-unlock-path,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-visible-rows-handoff,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-verify-live-command,
+.verify-panel:has(.corporate-verify-single-lane) > .empty-verify-state-command,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-verify-first-use,
+.verify-panel:has(.corporate-verify-single-lane) > .verify-reviewer-flow,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-verify-access-lane,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-access-blocker-map,
+.verify-panel:has(.corporate-verify-single-lane) > .verify-summary-grid,
+.verify-panel:has(.corporate-verify-single-lane) > .grant-panel-top {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .verify-request-form,
+.verify-panel:has(.corporate-verify-single-lane) .grant-list,
+.verify-panel:has(.corporate-verify-single-lane) .shared-record-grid,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-directory-panel {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .record-form-grid,
+.verify-panel:has(.corporate-verify-single-lane) .verify-request-fields,
+.verify-panel:has(.corporate-verify-single-lane) .request-scope-receipt-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .record-form-footer,
+.verify-panel:has(.corporate-verify-single-lane) .verify-lifecycle-row,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-verify-review-runway-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .record-form-footer button,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-verify-review-runway-actions button {
+  flex: 1 1 160px !important;
+  min-width: 0 !important;
+}
