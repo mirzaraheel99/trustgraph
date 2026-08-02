@@ -28440,18 +28440,88 @@ function PublicSite({
               </button>
             </div>
           </div>
-          <input id="public-auth-email" onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" type="email" value={email} />
-          <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
-          {portal === "corporate" && mode === "signup" ? (
-            <>
-              <input onChange={(event) => setOrganizationName(event.target.value)} placeholder="Organization name" value={organizationName} />
-              <input onChange={(event) => setOrganizationDomain(event.target.value)} placeholder="company.com" value={organizationDomain} />
-              <select onChange={(event) => setOrganizationType(event.target.value as typeof organizationType)} value={organizationType}>
-                <option value="employer">Employer</option>
-                <option value="staffing_agency">Staffing agency</option>
-              </select>
-            </>
-          ) : null}
+          <div className={`public-credential-station ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public credential station">
+            <div className="public-credential-station-header">
+              <div>
+                <span className={`status-chip ${email && password ? "success" : "warning"}`}>
+                  {mode === "signin" ? "Login credentials" : "Registration credentials"}
+                </span>
+                <strong>{portal === "corporate" ? "Corporate account access" : "Professional Passport access"}</strong>
+                <small>
+                  {portal === "corporate"
+                    ? "Create or login to a company account, then open Company Admin and Corporate Verify. Corporate access to users stays request-and-approval scoped."
+                    : "Create or login to your private Passport account. You control evidence, records, consent, and company sharing."}
+                </small>
+              </div>
+              <span>
+                <small>Selected path</small>
+                <strong>{mode === "signin" ? "Login" : "Register"} · {portal === "corporate" ? "Corporate" : "Professional"}</strong>
+                <small>{selectedRegistrationPath.plan}</small>
+              </span>
+            </div>
+            <div className="public-credential-fields">
+              <label>
+                <span>Email</span>
+                <input id="public-auth-email" onChange={(event) => setEmail(event.target.value)} placeholder={portal === "corporate" ? "reviewer@company.com" : "you@example.com"} type="email" value={email} />
+              </label>
+              <label>
+                <span>Password</span>
+                <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
+              </label>
+              {portal === "corporate" && mode === "signup" ? (
+                <>
+                  <label>
+                    <span>Organization</span>
+                    <input onChange={(event) => setOrganizationName(event.target.value)} placeholder="Organization name" value={organizationName} />
+                  </label>
+                  <label>
+                    <span>Domain</span>
+                    <input onChange={(event) => setOrganizationDomain(event.target.value)} placeholder="company.com" value={organizationDomain} />
+                  </label>
+                  <label>
+                    <span>Company type</span>
+                    <select onChange={(event) => setOrganizationType(event.target.value as typeof organizationType)} value={organizationType}>
+                      <option value="employer">Employer</option>
+                      <option value="staffing_agency">Staffing agency</option>
+                    </select>
+                  </label>
+                </>
+              ) : null}
+            </div>
+            <div className="public-credential-readiness">
+              <span className={email ? "ready" : "next"}>
+                <small>Email</small>
+                <strong>{email ? "Ready" : "Required"}</strong>
+              </span>
+              <span className={password ? "ready" : "next"}>
+                <small>Password</small>
+                <strong>{password ? "Ready" : "Required"}</strong>
+              </span>
+              <span className={portal !== "corporate" || mode !== "signup" || (organizationName && organizationDomain) ? "ready" : "next"}>
+                <small>Workspace</small>
+                <strong>{portal === "corporate" && mode === "signup" ? (organizationName && organizationDomain ? "Ready" : "Required") : "Not needed"}</strong>
+              </span>
+              <span>
+                <small>First database write</small>
+                <strong>{mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing session"}</strong>
+              </span>
+            </div>
+            <div className="public-credential-actions">
+              <button
+                className="primary-action"
+                disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}
+                type="submit"
+              >
+                {mode === "signin" ? "Login to portal" : "Create portal account"}
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+            </div>
+          </div>
           <div className="public-auth-help-strip" aria-label="Public auth help strip">
             <div>
               <span className="status-chip neutral">Account help</span>

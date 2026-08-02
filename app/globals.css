@@ -41538,6 +41538,109 @@ body,
   background: rgba(95, 238, 201, 0.07);
 }
 
+.public-credential-station {
+  order: -110;
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 238, 201, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(17, 40, 43, 0.96), rgba(8, 15, 18, 0.98)),
+    rgba(8, 15, 18, 0.96);
+}
+
+.public-credential-station.corporate {
+  border-color: rgba(134, 174, 246, 0.32);
+}
+
+.public-credential-station-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.34fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.public-credential-station-header > div,
+.public-credential-station-header > span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-credential-station strong,
+.public-credential-station small,
+.public-credential-station span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-credential-station-header strong {
+  color: var(--tg-text);
+  font-size: clamp(22px, 2.7vw, 36px);
+  line-height: 1.04;
+}
+
+.public-credential-station small {
+  color: var(--tg-muted);
+  line-height: 1.42;
+}
+
+.public-credential-fields,
+.public-credential-readiness,
+.public-credential-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 10px;
+}
+
+.public-credential-fields label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-credential-fields label span,
+.public-credential-readiness small {
+  color: var(--tg-teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-credential-fields input,
+.public-credential-fields select {
+  width: 100%;
+  min-height: 46px;
+}
+
+.public-credential-readiness span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.public-credential-readiness span.ready {
+  border-color: rgba(95, 238, 201, 0.34);
+  background: rgba(95, 238, 201, 0.08);
+}
+
+.public-credential-readiness span.next {
+  border-color: rgba(255, 205, 118, 0.32);
+  background: rgba(255, 205, 118, 0.08);
+}
+
+.public-credential-actions button {
+  min-height: 44px;
+  width: 100%;
+}
+
 .public-login-primary-choice {
   display: grid;
   gap: 14px;
@@ -41649,6 +41752,23 @@ body,
   pointer-events: none;
 }
 
+.public-auth-card:has(.public-credential-station) > .public-auth-help-strip,
+.public-auth-card:has(.public-credential-station) > .registration-outcome-command,
+.public-auth-card:has(.public-credential-station) > .registration-completion-handoff,
+.public-auth-card:has(.public-credential-station) > .auth-support-actions,
+.public-auth-card:has(.public-credential-station) > .login-issue-resolver,
+.public-auth-card:has(.public-credential-station) > .hosted-auth-redirect-verification,
+.public-auth-card:has(.public-credential-station) > .email-verification-delivery-receipt,
+.public-auth-card:has(.public-credential-station) > .portal-submit-receipt {
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .public-auth-section:has(.public-route-decision-desk) > div > .public-access-answer,
 .public-auth-section:has(.public-route-decision-desk) > div > .public-login-command-center,
 .public-auth-section:has(.public-route-decision-desk) > div > .public-v1-access-runway,
@@ -41693,7 +41813,8 @@ body,
 }
 
 @media (max-width: 760px) {
-  .public-route-decision-header {
+  .public-route-decision-header,
+  .public-credential-station-header {
     grid-template-columns: minmax(0, 1fr);
   }
 
