@@ -49,6 +49,18 @@ const report = {
     : { ok: false, reason: vps.reason, url: vps.url },
   protected_vfix_host: "https://5-75-224-110.sslip.io/CRM-client-demo/login",
   manual_update_command: "cd /opt/trustgraph && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+  html_shell_repair:
+    !vps.ok && vps.reason === "served HTML app shell instead of release JSON"
+      ? {
+          diagnosis: "the TrustGraph host is alive but /trustgraph-release.json is being routed to the app shell, so the VPS cannot prove the saved GitHub commit",
+          nginx_config_source: "tools/trustgraph-nginx.conf",
+          nginx_config_target: "/opt/fixflow-nginx/conf.d/trustgraph.conf",
+          nginx_test_command: "docker exec fixflow-nginx nginx -t",
+          nginx_reload_command: "docker exec fixflow-nginx nginx -s reload",
+          release_check_command: "curl -i https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+          boundary: "install only the trustgraph.5-75-224-110.sslip.io server block and keep https://5-75-224-110.sslip.io/CRM-client-demo/login unchanged"
+        }
+      : null,
   accepted_when: "github_pages_and_vps_release_json_match_commit_short_and_premium_workspace_responsive_guard_marker"
 };
 

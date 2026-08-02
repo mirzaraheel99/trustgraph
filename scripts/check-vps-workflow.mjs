@@ -317,6 +317,30 @@ const runtimeSnippets = [
     label: "read-only VPS status report prints the guarded manual updater command"
   },
   {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "html_shell_repair",
+    label: "read-only VPS status report includes the HTML-shell repair packet"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "tools/trustgraph-nginx.conf",
+    label: "read-only VPS status report names the TrustGraph nginx repair source"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "docker exec fixflow-nginx nginx -s reload",
+    label: "read-only VPS status report prints the nginx reload command"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "install only the trustgraph.5-75-224-110.sslip.io server block",
+    label: "read-only VPS status report keeps VFIX protected during nginx repair"
+  },
+  {
     source: preflight,
     path: "tools/preflight-vps.sh",
     snippet: "PROTECTED_VFIX_HOST=\"5-75-224-110.sslip.io\"",
