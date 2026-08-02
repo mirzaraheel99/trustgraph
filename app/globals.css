@@ -44241,3 +44241,381 @@ body,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Premium portal shell: final V1 usability layer for personal and corporate workspaces. */
+.app {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  background: linear-gradient(180deg, #071012 0%, #0a1215 44%, #060b0d 100%);
+}
+
+.workspace {
+  --tg-shell-max: 1240px;
+  display: grid !important;
+  gap: clamp(14px, 2vw, 20px) !important;
+  width: min(var(--tg-shell-max), calc(100vw - 40px)) !important;
+  max-width: calc(100vw - 40px) !important;
+  min-height: auto !important;
+  margin: 0 auto !important;
+  padding: clamp(14px, 2vw, 24px) !important;
+  overflow-x: hidden !important;
+}
+
+.workspace-main {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: clamp(14px, 2vw, 20px) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.topbar {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  gap: clamp(14px, 2vw, 22px) !important;
+  padding: clamp(18px, 3vw, 30px) !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(226, 239, 232, 0.1);
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(95, 238, 201, 0.1), rgba(125, 166, 245, 0.06) 46%, rgba(255, 255, 255, 0.025)),
+    rgba(8, 16, 19, 0.94);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.26);
+}
+
+.topbar h1 {
+  max-width: 15ch !important;
+  margin: 8px 0 12px !important;
+  font-size: clamp(2.15rem, 5vw, 4.25rem) !important;
+  line-height: 0.98 !important;
+  letter-spacing: 0 !important;
+}
+
+.topbar p {
+  max-width: 74ch !important;
+  font-size: clamp(0.98rem, 1.4vw, 1.16rem) !important;
+  line-height: 1.5 !important;
+}
+
+.topbar-actions {
+  display: grid !important;
+  grid-template-columns: minmax(136px, auto) 56px !important;
+  gap: 10px !important;
+  justify-content: end !important;
+}
+
+.topbar-actions button,
+.topbar-actions a {
+  min-width: 0 !important;
+  min-height: 52px;
+  max-width: 180px !important;
+  padding: 0 16px !important;
+  white-space: normal !important;
+}
+
+.topbar-actions .icon-button,
+.topbar-actions button:has(svg):not(:has(strong)):not(:has(small)) {
+  width: 56px !important;
+  min-width: 56px !important;
+  max-width: 56px !important;
+  padding: 0 !important;
+}
+
+.hero,
+.dashboard-summary-grid,
+.workspace-command-strip,
+.portal-daily-navigator,
+.today-command-center,
+.portal-usability-command,
+.v1-command-cockpit,
+.v1-portal-launchpad,
+.portal-readiness-board,
+.workspace-admin-grid,
+.work-grid,
+.setup-panel,
+.verify-panel,
+.records-panel,
+.corporate-directory-panel,
+.v1-completion-blocker-ledger {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+  border-radius: 8px !important;
+}
+
+.workspace-command-strip,
+.portal-daily-navigator,
+.today-command-center,
+.portal-usability-command,
+.v1-command-cockpit,
+.v1-portal-launchpad,
+.portal-readiness-board,
+.v1-completion-blocker-ledger {
+  padding: clamp(14px, 2vw, 20px) !important;
+  border: 1px solid rgba(226, 239, 232, 0.11) !important;
+  background: rgba(10, 20, 23, 0.88) !important;
+}
+
+.hero {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) !important;
+  gap: 14px !important;
+}
+
+.portal-daily-navigator-grid,
+.today-command-grid,
+.portal-usability-command-grid,
+.v1-command-cockpit-lanes,
+.v1-portal-launchpad-grid,
+.portal-readiness-board-grid,
+.workspace-route-strip,
+.workspace-flow-strip,
+.setup-tabs,
+.corporate-setup-triage-grid,
+.corporate-database-handoff-grid,
+.corporate-onboarding-pricing-grid,
+.team-billing-handoff-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+.portal-action-dock {
+  position: sticky;
+  top: 10px;
+  z-index: 8;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 10px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(226, 239, 232, 0.12);
+  border-radius: 8px;
+  background: rgba(6, 12, 14, 0.92);
+  backdrop-filter: blur(16px);
+}
+
+.portal-action-dock button,
+.portal-daily-navigator-grid button,
+.today-command-grid button,
+.portal-usability-command-grid button,
+.v1-command-cockpit-lanes button,
+.v1-portal-launchpad-grid button,
+.portal-readiness-board-grid article,
+.workspace-route-strip button,
+.workspace-flow-strip button,
+.setup-tabs button {
+  display: grid !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  min-height: 92px;
+  padding: 12px !important;
+  text-align: left !important;
+  white-space: normal !important;
+  border-radius: 8px !important;
+}
+
+.portal-action-dock button {
+  min-height: 70px;
+}
+
+.workspace-admin-grid,
+.work-grid,
+.setup-panel-grid,
+.verify-panel,
+.corporate-directory-panel {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 16px !important;
+}
+
+.workspace-admin-grid > *,
+.work-grid > *,
+.setup-panel-grid > *,
+.verify-panel > *,
+.corporate-directory-panel > *,
+.records-panel > *,
+.public-auth-card > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.corporate-launch-cockpit-top,
+.corporate-setup-triage-header,
+.corporate-database-handoff-header,
+.corporate-onboarding-pricing-header,
+.team-billing-handoff-header,
+.signed-in-portal-entry-header,
+.portal-daily-navigator-header,
+.today-command-copy,
+.portal-usability-command-header,
+.v1-portal-launchpad-main,
+.v1-command-cockpit-hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.workspace button,
+.workspace input,
+.workspace select,
+.workspace textarea,
+.public-auth-card button,
+.public-auth-card input,
+.public-auth-card select,
+.public-auth-card textarea {
+  max-width: 100% !important;
+}
+
+.workspace button,
+.public-auth-card button {
+  line-height: 1.2 !important;
+}
+
+.workspace strong,
+.workspace small,
+.workspace span,
+.workspace p,
+.workspace label,
+.workspace em,
+.workspace code,
+.public-auth-card strong,
+.public-auth-card small,
+.public-auth-card span,
+.public-auth-card p,
+.public-auth-card label,
+.public-auth-card em,
+.public-auth-card code {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.workspace table {
+  width: 100%;
+  min-width: 620px;
+}
+
+.records-panel,
+.corporate-directory-panel .directory-list,
+.corporate-directory-panel .shared-record-grid,
+.audit-list {
+  overflow-x: auto !important;
+  scrollbar-gutter: stable;
+}
+
+.public-auth-section {
+  align-items: start !important;
+  width: min(1180px, calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  margin-inline: auto !important;
+  grid-template-columns: minmax(0, 1fr) minmax(min(100%, 390px), 0.42fr) !important;
+  gap: clamp(14px, 2vw, 22px) !important;
+  overflow-x: hidden !important;
+}
+
+.public-auth-card {
+  position: sticky;
+  top: 14px;
+  max-height: calc(100vh - 28px);
+  overflow-y: auto !important;
+}
+
+@media (max-width: 980px) {
+  .workspace,
+  .public-auth-section {
+    width: min(100%, calc(100vw - 20px)) !important;
+    max-width: calc(100vw - 20px) !important;
+    padding-inline: 10px !important;
+  }
+
+  .topbar,
+  .public-auth-section,
+  .corporate-launch-cockpit-top,
+  .corporate-setup-triage-header,
+  .corporate-database-handoff-header,
+  .corporate-onboarding-pricing-header,
+  .team-billing-handoff-header,
+  .signed-in-portal-entry-header,
+  .portal-daily-navigator-header,
+  .today-command-copy,
+  .portal-usability-command-header,
+  .v1-portal-launchpad-main,
+  .v1-command-cockpit-hero {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .topbar h1 {
+    max-width: 100% !important;
+    font-size: clamp(2rem, 11vw, 3.25rem) !important;
+  }
+
+  .topbar-actions {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr)) !important;
+    justify-content: stretch !important;
+  }
+
+  .topbar-actions button,
+  .topbar-actions a,
+  .topbar-actions .icon-button,
+  .topbar-actions button:has(svg):not(:has(strong)):not(:has(small)) {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .public-auth-card,
+  .portal-action-dock {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .workspace {
+    gap: 12px !important;
+    padding: 8px !important;
+  }
+
+  .topbar,
+  .workspace-command-strip,
+  .portal-daily-navigator,
+  .today-command-center,
+  .portal-usability-command,
+  .v1-command-cockpit,
+  .v1-portal-launchpad,
+  .portal-readiness-board,
+  .v1-completion-blocker-ledger,
+  .setup-panel,
+  .verify-panel,
+  .records-panel,
+  .corporate-directory-panel {
+    padding: 12px !important;
+  }
+
+  .portal-daily-navigator-grid,
+  .today-command-grid,
+  .portal-usability-command-grid,
+  .v1-command-cockpit-lanes,
+  .v1-portal-launchpad-grid,
+  .portal-readiness-board-grid,
+  .workspace-route-strip,
+  .workspace-flow-strip,
+  .setup-tabs,
+  .corporate-setup-triage-grid,
+  .corporate-database-handoff-grid,
+  .corporate-onboarding-pricing-grid,
+  .team-billing-handoff-grid,
+  .portal-action-dock {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
