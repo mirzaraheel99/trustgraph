@@ -822,6 +822,54 @@ function RecordDetail({
     { label: "Signed link", value: lastEvidenceLink ? lastEvidenceLink.mode : "Open", ready: Boolean(lastEvidenceLink) },
     { label: "Manifest", value: filteredEvidenceDocuments.length ? "Ready" : "Pending", ready: filteredEvidenceDocuments.length > 0 }
   ];
+  const evidenceSafeAccessCommand = {
+    mode: "evidence_safe_access_command",
+    headline: fileBackedEvidenceCount
+      ? "Preview or download private evidence safely"
+      : evidenceDocuments.length
+        ? "Evidence metadata is ready; attach a private file for signed access"
+        : "Add evidence metadata before preview or download",
+    next_action: firstFileBackedEvidence ? "Preview first file" : "Add evidence",
+    preview_window: "5 minutes",
+    download_window: "2 minutes",
+    metadata_export_allowed: filteredEvidenceDocuments.length > 0,
+    raw_private_files_exported: false,
+    corporate_boundary: "Corporate packets export metadata and audit proof only; raw private files require scoped signed access.",
+    accepted_when:
+      "evidence_safe_access_command_keeps_metadata_private_file_preview_download_expiry_manifest_packet_last_link_and_raw_file_exclusion_visible_before_evidence_rows"
+  };
+  const evidenceSafeAccessCommandCards = [
+    {
+      label: "Metadata",
+      value: evidenceDocuments.length ? `${evidenceDocuments.length} rows` : "Needed",
+      detail: "Evidence metadata is visible without exposing raw files.",
+      ready: evidenceDocuments.length > 0
+    },
+    {
+      label: "Private files",
+      value: fileBackedEvidenceCount ? `${fileBackedEvidenceCount}` : "None",
+      detail: "Raw files stay in private Supabase Storage.",
+      ready: fileBackedEvidenceCount > 0
+    },
+    {
+      label: "Preview",
+      value: firstFileBackedEvidence ? "5 min link" : "File needed",
+      detail: "Short-lived signed URL for preview.",
+      ready: Boolean(firstFileBackedEvidence)
+    },
+    {
+      label: "Download",
+      value: firstFileBackedEvidence ? "2 min link" : "File needed",
+      detail: "Shorter signed URL for download.",
+      ready: Boolean(firstFileBackedEvidence)
+    },
+    {
+      label: "Last link",
+      value: lastEvidenceLink ? lastEvidenceLink.mode : "None",
+      detail: lastEvidenceLink ? `${lastEvidenceLink.documentTitle} expires ${lastEvidenceLink.expiresAt}` : "Open preview or download to capture proof.",
+      ready: Boolean(lastEvidenceLink)
+    }
+  ];
 
   useEffect(() => {
     setTitle(record.title);
@@ -983,6 +1031,77 @@ function RecordDetail({
         </div>
         <p>{record.evidence}</p>
         <small>{record.access}</small>
+        <div className={`evidence-safe-access-command ${fileBackedEvidenceCount ? "ready" : "needed"}`} aria-label="Evidence safe access command">
+          <div className="evidence-safe-access-header">
+            <div>
+              <span className={`status-chip ${fileBackedEvidenceCount ? "success" : "warning"}`}>Safe evidence access</span>
+              <strong>{evidenceSafeAccessCommand.headline}</strong>
+              <small>{evidenceSafeAccessCommand.corporate_boundary}</small>
+            </div>
+            <button
+              className={firstFileBackedEvidence ? "secondary-action" : "primary-action"}
+              onClick={() => {
+                if (firstFileBackedEvidence) {
+                  void openEvidence(firstFileBackedEvidence, "preview");
+                  return;
+                }
+                document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" });
+              }}
+              type="button"
+            >
+              {evidenceSafeAccessCommand.next_action}
+            </button>
+          </div>
+          <div className="evidence-safe-access-grid">
+            {evidenceSafeAccessCommandCards.map((card) => (
+              <article className={card.ready ? "ready" : "needed"} key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="evidence-safe-access-actions">
+            <button
+              className="secondary-action"
+              disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+              onClick={() => {
+                if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "preview");
+              }}
+              type="button"
+            >
+              Preview
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+              onClick={() => {
+                if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "download");
+              }}
+              type="button"
+            >
+              Download
+            </button>
+            <button className="secondary-action" disabled={!filteredEvidenceDocuments.length} onClick={() => downloadTextFile(evidenceManifestName, evidenceDocumentsToCsv(filteredEvidenceDocuments), "text/csv")} type="button">
+              Export manifest
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!filteredEvidenceDocuments.length}
+              onClick={() =>
+                downloadTextFile(
+                  evidenceAccessPacketName,
+                  JSON.stringify({ ...evidenceAccessPacket, evidence_safe_access_command: evidenceSafeAccessCommand }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export packet
+            </button>
+          </div>
+          <small>{evidenceSafeAccessCommand.accepted_when} | Raw private files exported: {evidenceSafeAccessCommand.raw_private_files_exported ? "yes" : "no"}</small>
+        </div>
         <div className={`evidence-preview-download-answer ${evidencePreviewDownloadAnswer.status}`} aria-label="Evidence preview download answer">
           <div className="evidence-preview-download-answer-header">
             <div>

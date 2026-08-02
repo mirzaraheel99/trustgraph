@@ -40851,6 +40851,66 @@ body,
   order: 30;
 }
 
+.evidence-safe-access-command {
+  display: grid;
+  gap: 14px;
+  margin-block: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid var(--tg-border-strong);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(13, 31, 35, 0.96), rgba(10, 18, 22, 0.96));
+}
+
+.evidence-safe-access-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(136px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.evidence-safe-access-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.evidence-safe-access-header strong {
+  color: var(--tg-text);
+  font-size: clamp(22px, 3cqw, 34px);
+  line-height: 1.05;
+}
+
+.evidence-safe-access-grid,
+.evidence-safe-access-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+}
+
+.evidence-safe-access-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.evidence-safe-access-grid article.ready {
+  border-color: rgba(95, 238, 201, 0.32);
+  background: rgba(95, 238, 201, 0.08);
+}
+
+.evidence-safe-access-grid article.needed {
+  border-color: rgba(255, 206, 117, 0.24);
+}
+
+.evidence-safe-access-command small,
+.evidence-safe-access-command span {
+  color: var(--tg-muted);
+}
+
 .portal-action-dock {
   position: sticky;
   bottom: 12px;
@@ -40899,6 +40959,9 @@ body,
   .corporate-database-home-command-header,
   .corporate-database-home-command-grid,
   .corporate-database-home-command-proof,
+  .evidence-safe-access-header,
+  .evidence-safe-access-grid,
+  .evidence-safe-access-actions,
   .vps-saved-portal-command-header,
   .vps-saved-portal-command-actions,
   .vps-saved-portal-command-proof,
