@@ -19,6 +19,8 @@ const consoleLayout = consoleLayoutStart >= 0 ? css.slice(consoleLayoutStart) : 
 
 assert(authenticatedRenderStart >= 0, "authenticated app render block was not found.");
 assert(!authenticatedRender.includes('<aside className="sidebar">'), "legacy sidebar rail must not render in the authenticated workspace.");
+assert(!app.includes('getElementById("live-data-proof")'), "database proof buttons must target the existing live-database-proof anchor, not a missing live-data-proof id.");
+assert(app.includes('id="live-database-proof"'), "working database proof must expose the live-database-proof anchor for completion and blocker navigation.");
 assert(authenticatedRender.includes('className="session-command-bar"'), "session command bar must be the primary account/logout control surface.");
 assert(authenticatedRender.includes('aria-label="V1 command cockpit"'), "signed-in dashboard must expose a single first-screen V1 command cockpit.");
 assert(authenticatedRender.includes('aria-label="V1 portal launchpad"'), "signed-in dashboard must expose a compact first-screen portal launchpad.");

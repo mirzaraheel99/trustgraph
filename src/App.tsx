@@ -41203,11 +41203,11 @@ function App() {
                     return;
                   }
                   if (!livePilotRowProof.accepted) {
-                    document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
                     return;
                   }
                   if (!latestRealDatabaseCompletionReceipt) {
-                    document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
                     return;
                   }
                   setSetupView("readiness");
@@ -41341,7 +41341,7 @@ function App() {
                     return;
                   }
                   if (nextRealDatabaseStep?.target === "proof") {
-                    document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
                     return;
                   }
                   openWorkspaceOrSetup((nextRealDatabaseStep?.target ?? "readiness") as WorkspaceId);
@@ -41533,7 +41533,7 @@ function App() {
                     className="secondary-action"
                     onClick={() => {
                       if (row.target === "proof") {
-                        document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
                         return;
                       }
                       if (row.target === "receipt") {
@@ -41674,7 +41674,7 @@ function App() {
                           return;
                         }
                         if (step.target === "proof") {
-                          document.getElementById("live-data-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
                           return;
                         }
                         openWorkspaceOrSetup(step.target as WorkspaceId);
