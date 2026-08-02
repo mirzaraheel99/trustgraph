@@ -563,7 +563,8 @@ assert(css.includes(".corporate-portal-cockpit") && css.includes(".corporate-por
 assert(css.includes(".empty-verify-state-command") && css.includes(".empty-verify-state-grid") && css.includes(".empty-verify-state-actions"), "Corporate Verify empty-state command must be styled and bounded.");
 assert(css.includes(".corporate-scope-review-command") && css.includes(".corporate-scope-review-grid"), "Corporate scope review command must be styled and bounded.");
 assert(app.includes('aria-label="Corporate access next action command"'), "Corporate Verify must expose the next action required to unlock scoped user database proof.");
-assert(css.includes(".corporate-access-next-action") && css.includes(".corporate-access-next-action-grid"), "corporate access next action command must be styled and bounded.");
+assert(app.includes('aria-label="Corporate access next action controls"') && app.includes("metadata_only_export") && app.includes("no_open_user_database_browse"), "Corporate access next action must include a clickable control surface, metadata-only export proof, and no-open-user-browse boundary.");
+assert(css.includes(".corporate-access-next-action") && css.includes(".corporate-access-next-action-grid") && css.includes(".corporate-access-next-action-actions"), "corporate access next action command must be styled, actionable, and bounded.");
 assert(app.includes('aria-label="Issuer provenance receipt"'), "issuer workflow must expose source, owner, expiration, revocation, and audit provenance.");
 assert(css.includes(".issuer-provenance-receipt") && css.includes(".issuer-provenance-grid"), "issuer provenance receipt must be styled and bounded.");
 assert(app.includes('aria-label="Corporate database access decision board"'), "Corporate Verify must expose a current access decision board for request, view, attest, and export actions.");

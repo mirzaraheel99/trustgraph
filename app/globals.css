@@ -15393,6 +15393,19 @@ p {
   gap: 8px;
 }
 
+.corporate-access-next-action-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-access-next-action-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .corporate-access-next-action-grid span {
   display: grid;
   gap: 5px;

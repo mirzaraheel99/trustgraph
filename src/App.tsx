@@ -6170,8 +6170,15 @@ function CorporateDirectoryPanel({
     action: corporateAccessNextAction.action,
     target: corporateAccessNextAction.target,
     ready_for_export: corporateAccessNextAction.ready,
+    source: isLiveCorporateDatabase ? "live_supabase_corporate_rbac" : "corporate_login_required",
+    visible_scoped_rows: sharedRecords.length,
+    approved_access_grants: approvedAccessCount,
+    review_attestations: reviews.length,
+    metadata_only_export: true,
+    no_open_user_database_browse: true,
+    preview_data_accepted: false,
     acceptance_rule:
-      "corporate_access_next_action_is_complete_only_when_live_rbac_context_approved_grants_shared_rows_gap_review_and_attestation_are_ready"
+      "corporate_access_next_action_is_complete_only_when_live_rbac_context_approved_grants_shared_rows_gap_review_attestation_click_target_metadata_only_export_and_no_open_user_browse_are_ready"
   };
   const corporateReviewerTaskCommand = {
     mode: "corporate_reviewer_task_command",
@@ -9594,6 +9601,32 @@ function CorporateDirectoryPanel({
             <small>Export ready</small>
             <strong>{corporateAccessNextAction.ready ? "Yes" : "Not yet"}</strong>
           </span>
+          <span>
+            <small>Source</small>
+            <strong>{corporateAccessNextActionCommand.source.replace(/_/g, " ")}</strong>
+          </span>
+          <span>
+            <small>Boundary</small>
+            <strong>No open browse</strong>
+          </span>
+        </div>
+        <div className="corporate-access-next-action-actions" aria-label="Corporate access next action controls">
+          <button className="primary-action" onClick={() => runCorporateReviewerTask(corporateAccessNextAction.target)} type="button">
+            {corporateAccessNextAction.action}
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-access-next-action-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify(corporateAccessNextActionCommand, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export next action
+          </button>
         </div>
       </div>
       <div className="corporate-database-access-decision-board" aria-label="Corporate database access decision board">
