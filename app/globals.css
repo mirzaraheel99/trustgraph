@@ -47070,6 +47070,113 @@ body,
   }
 }
 
+/* Premium portal masthead: signed-in pages behave like a SaaS console, not a landing hero. */
+.workspace:has(.signed-in-portal-entry-desk) > .topbar {
+  min-height: 0 !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.055), rgba(134, 174, 246, 0.035)),
+    rgba(8, 16, 18, 0.72) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .topbar h1 {
+  max-width: 880px !important;
+  margin: 6px 0 4px !important;
+  font-size: clamp(30px, 4vw, 54px) !important;
+  line-height: 0.98 !important;
+  letter-spacing: 0 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .topbar p {
+  max-width: 920px !important;
+  margin: 0 !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .session-strip,
+.workspace:has(.signed-in-portal-entry-desk) .session-command-bar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  max-width: 100% !important;
+  margin-top: 10px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .session-command-bar button {
+  min-width: 0 !important;
+  min-height: 42px !important;
+  white-space: normal !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-layout-answer {
+  margin-top: 12px !important;
+  padding: 12px !important;
+  border-radius: 8px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-layout-answer-grid,
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .portal-layout-answer-grid button,
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-grid button {
+  min-height: 126px !important;
+  align-content: start !important;
+  border-radius: 8px !important;
+  text-align: left !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-desk {
+  padding: 14px !important;
+  border-radius: 8px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-header {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr) !important;
+  gap: 12px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-actions button,
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-proof button {
+  min-width: 0 !important;
+  width: 100% !important;
+  white-space: normal !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-proof {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-boundary {
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 760px) {
+  .workspace:has(.signed-in-portal-entry-desk) > .topbar {
+    padding: 12px !important;
+  }
+
+  .workspace:has(.signed-in-portal-entry-desk) > .topbar h1 {
+    font-size: clamp(28px, 12vw, 42px) !important;
+  }
+
+  .workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 /* Corporate Verify one-path compression: request, approval queue, scoped rows, review, export. */
 .verify-panel:has(.corporate-verify-single-lane) {
   display: grid !important;
