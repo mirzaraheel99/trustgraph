@@ -24319,6 +24319,26 @@ function PublicSite({
     accepted_when:
       "public_audience_switchboard_explains_professional_corporate_and_operator_paths_pricing_database_effects_scoped_access_and_human_gates_in_first_viewport"
   };
+  const publicProductAnswer = {
+    generated_at: new Date().toISOString(),
+    mode: "public_product_answer",
+    selected_portal: portal,
+    selected_mode: mode,
+    headline: "TrustGraph is a verified workforce passport and corporate review workspace.",
+    professional:
+      "Professional users create a Passport, add records and evidence, recover account access, and control exactly what can be shared.",
+    corporate:
+      "Corporate teams register a company, invite reviewers, request scoped access by email, and review approved rows only.",
+    pricing: "Professional pilot is free. Corporate Verify pilot is $149 monthly. Stripe checkout stays human-gated.",
+    database:
+      "The first registration writes a live Supabase registration intent. Corporate users never get open user-database browsing.",
+    server:
+      serverSyncMonitor.status === "synced"
+        ? "This hosted server has a current release stamp."
+        : "GitHub Pages is the current verified build until the VPS release stamp JSON is current.",
+    accepted_when:
+      "public_product_answer_keeps_professional_corporate_pricing_registration_scoped_database_server_currentness_and_no_preview_data_visible_before_dense_public_proof"
+  };
   const publicAudienceCards = [
     {
       label: "Professional",
@@ -24545,6 +24565,69 @@ function PublicSite({
             <button className="secondary-action" onClick={() => openPortal("corporate")}>
               Corporate portal
             </button>
+          </div>
+          <div className="public-product-answer" aria-label="Public product answer">
+            <div className="public-product-answer-copy">
+              <span className="status-chip success">Start here</span>
+              <h2>{publicProductAnswer.headline}</h2>
+              <p>
+                Pick the Professional path to build and share your own Passport. Pick the Corporate path to request
+                approved workforce records without browsing the user database.
+              </p>
+            </div>
+            <div className="public-product-answer-grid">
+              <article>
+                <span>Professional</span>
+                <strong>Create your Passport</strong>
+                <p>{publicProductAnswer.professional}</p>
+                <button className="primary-action" onClick={() => openPortal("professional")} type="button">
+                  Create Professional account
+                </button>
+              </article>
+              <article>
+                <span>Corporate</span>
+                <strong>Open Corporate Verify</strong>
+                <p>{publicProductAnswer.corporate}</p>
+                <button className="secondary-action" onClick={() => openPortal("corporate")} type="button">
+                  Create Corporate account
+                </button>
+              </article>
+              <article>
+                <span>Pricing</span>
+                <strong>$0 Professional, $149 Corporate pilot</strong>
+                <p>{publicProductAnswer.pricing}</p>
+                <button className="secondary-action" onClick={() => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" })} type="button">
+                  View pricing
+                </button>
+              </article>
+            </div>
+            <div className="public-product-answer-proof" aria-label="Public product database rules">
+              <span>
+                <strong>Registration</strong>
+                <small>{publicProductAnswer.database}</small>
+              </span>
+              <span>
+                <strong>Corporate access</strong>
+                <small>Request by professional email, then review only consented records, grants, references, and evidence.</small>
+              </span>
+              <span>
+                <strong>Hosted status</strong>
+                <small>{publicProductAnswer.server}</small>
+              </span>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-product-answer-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(publicProductAnswer, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Corporate database rules
+              </button>
+            </div>
           </div>
           <div className="public-audience-switchboard" aria-label="Public audience switchboard">
             <div className="public-audience-switchboard-copy">
