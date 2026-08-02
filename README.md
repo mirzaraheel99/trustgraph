@@ -63,6 +63,8 @@ The CI loop also runs `pnpm check:live-database-repair`. That focused gate prove
 
 The signed-in workspace now uses a V1 focused portal shell as the daily UI. The first visible path is the portal entry desk, VPS saved-build command, active workspace, and current-server status; older route maps, proof ledgers, and audit/export boards remain in source for receipts and CI markers, but they are hidden from the primary cockpit so Personal, Corporate Verify, Company Admin, Account/logout, pricing, and database proof do not compete on the first screen.
 
+The signed-in workspace now also applies a Portal clarity v1 layer. It centers the app as one premium SaaS console, keeps account/logout and server-save actions reachable, reduces the oversized Passport hero, and compresses Corporate setup to setup command, unlock answer, route tabs, active forms, and Corporate database handoff while preserving older proof panels away from the primary path.
+
 The public login/register card now uses the same focused shell. Visitors see one route cockpit for Professional login, Professional registration, Corporate login, and Corporate registration, then the credential station, recovery/help controls, and server freshness; duplicate pricing, recovery, route, and proof boards remain exportable in source but no longer stack above the form.
 
 Company Admin now uses a corporate focused workbench. The visible route is setup command bar, unlock answer, route deck, setup tabs, active setup panel, and Corporate Verify handoff; duplicate launch, operator, triage, onboarding, team/billing, and guide boards remain preserved for export and CI proof without crowding the admin workflow.
