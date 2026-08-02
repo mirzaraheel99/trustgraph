@@ -44093,6 +44093,21 @@ body,
   display: none !important;
 }
 
+.workspace:has(.signed-in-portal-entry-desk) > .portal-launch-matrix,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-daily-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-experience-compass,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-route-shell,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-daily-navigator,
+.workspace:has(.signed-in-portal-entry-desk) > .today-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-usability-command,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-command-deck,
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-portal-flow-contract,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-home-command,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-choice-guide,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-welcome-path {
+  display: none !important;
+}
+
 @media (max-width: 1180px) {
   .signed-in-portal-entry-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
