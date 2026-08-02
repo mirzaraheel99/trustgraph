@@ -42561,6 +42561,121 @@ function App() {
           onOpenRegistration={() => setShowPublicSite(true)}
         />
 
+        <section className="daily-route-data-verdict" aria-label="Daily route and live data verdict">
+          <div className="daily-route-data-verdict-copy">
+            <span className={`status-chip ${liveDatabaseContract.accepted ? "success" : "warning"}`}>
+              Daily route
+            </span>
+            <strong>{workspace.label} is open for {activeRole.label}</strong>
+            <small>
+              Use this first: pick the portal, finish the next required action, then export live database proof. QA fixture,
+              preview, logged-out, and browser-only rows do not count for V1 acceptance.
+            </small>
+          </div>
+          <div className="daily-route-data-verdict-grid">
+            {[
+              {
+                label: "Personal portal",
+                value: livePassportRecords.length ? `${livePassportRecords.length} rows` : "Add Passport rows",
+                action: "Open Passport",
+                ready: livePassportRecords.length > 0,
+                onClick: () => changeWorkspace("passport")
+              },
+              {
+                label: "Corporate portal",
+                value: hasPermission(activeMembership.role, "passport:view_shared") ? "Reviewer route" : "Setup needed",
+                action: hasPermission(activeMembership.role, "passport:view_shared") ? "Open Verify" : "Company setup",
+                ready: hasPermission(activeMembership.role, "passport:view_shared"),
+                onClick: () => {
+                  changeWorkspace("verify");
+                  if (!hasPermission(activeMembership.role, "passport:view_shared")) {
+                    setSetupView("account");
+                  }
+                }
+              },
+              {
+                label: "Pricing",
+                value: organizationSubscriptions.length ? "Ledger live" : "$149 pilot path",
+                action: "Open pricing",
+                ready: organizationSubscriptions.length > 0,
+                onClick: () => setShowPublicSite(true)
+              },
+              {
+                label: "Account",
+                value: authSession ? "Logout available" : "Login needed",
+                action: authSession ? "Account controls" : "Login",
+                ready: Boolean(authSession),
+                onClick: authSession ? openAuthControls : () => setShowPublicSite(true)
+              },
+              {
+                label: "Live database",
+                value: `${liveDatabaseContract.required_groups_loaded}/${liveDatabaseContract.required_groups_total}`,
+                action: "Review proof",
+                ready: liveDatabaseContract.accepted,
+                onClick: () => setSetupView("readiness")
+              },
+              {
+                label: "Server",
+                value: serverSyncMonitor.status.replace(/_/g, " "),
+                action: "Save server",
+                ready: serverSyncMonitor.status === "synced",
+                onClick: () => setSetupView("readiness")
+              }
+            ].map((route) => (
+              <button className={route.ready ? "ready" : "next"} key={route.label} onClick={route.onClick} type="button">
+                <span>{route.label}</span>
+                <strong>{route.value}</strong>
+                <small>{route.action}</small>
+              </button>
+            ))}
+          </div>
+          <div className="daily-route-data-verdict-proof">
+            <span>
+              <small>Accepted source</small>
+              <strong>{liveDatabaseContract.accepted_source.replace(/_/g, " ")}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{liveDatabaseContract.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <span>
+              <small>Current blocker</small>
+              <strong>{liveDatabaseContract.current_blocker}</strong>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-daily-route-data-verdict-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      mode: "daily_route_data_verdict",
+                      selected_workspace: workspace.label,
+                      selected_role: activeRole.label,
+                      personal_rows: livePassportRecords.length,
+                      corporate_access_ready: hasPermission(activeMembership.role, "passport:view_shared"),
+                      pricing_rows: organizationSubscriptions.length,
+                      server_status: serverSyncMonitor.status,
+                      live_database_contract: liveDatabaseContract,
+                      accepted_when:
+                        "daily_route_data_verdict_keeps_personal_corporate_pricing_account_database_server_next_actions_visible_bounded_and_rejects_demo_preview_logged_out_rows"
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export verdict
+            </button>
+          </div>
+          <small className="daily-route-data-verdict-boundary">
+            daily_route_data_verdict_keeps_personal_corporate_pricing_account_database_server_next_actions_visible_bounded_and_rejects_demo_preview_logged_out_rows
+          </small>
+        </section>
+
         <section className="v1-completion-cockpit" aria-label="V1 completion cockpit">
           <div className="v1-completion-cockpit-header">
             <div>

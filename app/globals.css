@@ -51773,3 +51773,160 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Daily route and live data verdict: one calm first-screen SaaS operator path. */
+.daily-route-data-verdict {
+  order: -470 !important;
+  display: grid !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 0 14px !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(113, 242, 203, 0.3) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(72, 208, 174, 0.14), rgba(7, 17, 19, 0.96) 48%, rgba(134, 174, 246, 0.1)),
+    rgba(7, 17, 19, 0.96) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24) !important;
+}
+
+.daily-route-data-verdict-copy,
+.daily-route-data-verdict-proof {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) repeat(3, minmax(130px, 0.22fr)) minmax(150px, auto) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+  min-width: 0 !important;
+}
+
+.daily-route-data-verdict-copy {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.daily-route-data-verdict-copy > strong {
+  max-width: 28ch !important;
+  color: var(--text) !important;
+  font-size: clamp(22px, 2.3vw, 34px) !important;
+  line-height: 1.06 !important;
+}
+
+.daily-route-data-verdict-copy > small,
+.daily-route-data-verdict-boundary {
+  max-width: 82ch !important;
+  color: var(--muted) !important;
+  font-size: 13px !important;
+  line-height: 1.42 !important;
+}
+
+.daily-route-data-verdict-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap: 9px !important;
+  min-width: 0 !important;
+}
+
+.daily-route-data-verdict-grid button,
+.daily-route-data-verdict-proof span {
+  display: grid !important;
+  align-content: start !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  min-height: 104px !important;
+  padding: 11px !important;
+  text-align: left !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+.daily-route-data-verdict-grid button.ready {
+  border-color: rgba(113, 242, 203, 0.34) !important;
+  background: rgba(72, 208, 174, 0.09) !important;
+}
+
+.daily-route-data-verdict-grid button.next {
+  border-color: rgba(240, 198, 107, 0.28) !important;
+}
+
+.daily-route-data-verdict-grid span,
+.daily-route-data-verdict-proof small {
+  color: #91f2dd !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+}
+
+.daily-route-data-verdict-grid strong,
+.daily-route-data-verdict-proof strong {
+  color: var(--text) !important;
+  font-size: 15px !important;
+  line-height: 1.15 !important;
+}
+
+.daily-route-data-verdict-grid small {
+  color: var(--muted) !important;
+  font-size: 12px !important;
+  line-height: 1.32 !important;
+}
+
+.daily-route-data-verdict :is(button, strong, small, span, p, em, b, code, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.daily-route-data-verdict-proof button {
+  min-width: 0 !important;
+  min-height: 46px !important;
+  white-space: normal !important;
+}
+
+.workspace:has(.daily-route-data-verdict) {
+  --tg-route-shell-max: 1180px;
+  width: min(100%, var(--tg-route-shell-max)) !important;
+  max-width: var(--tg-route-shell-max) !important;
+  padding-inline: clamp(14px, 2vw, 28px) !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.daily-route-data-verdict) > :is(.hero, .metrics-grid, .v1-portal-operating-center, .dashboard-front-door, .portal-ux-command-center, .portal-launch-matrix, .portal-route-shell, .signed-in-daily-operating-runway) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+.workspace:has(.daily-route-data-verdict) > .database-status-strip,
+.workspace:has(.daily-route-data-verdict) > .v1-completion-cockpit,
+.workspace:has(.daily-route-data-verdict) > .work-grid {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.daily-route-data-verdict) > .work-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+@media (max-width: 900px) {
+  .daily-route-data-verdict-proof {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)) !important;
+  }
+
+  .daily-route-data-verdict-copy > strong {
+    max-width: 18ch !important;
+  }
+}

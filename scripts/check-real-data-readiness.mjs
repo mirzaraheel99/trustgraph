@@ -52,6 +52,12 @@ const appRequirements = [
     "live_database_proof_commander_requires_hosted_login_live_supabase_rows_seed_or_manual_rows_reload_export_completion_receipt_vps_freshness_and_rejects_demo_preview_data",
     "live database proof commander acceptance rule"
   ],
+  ["Daily route and live data verdict", "daily route live-data verdict label"],
+  ["daily_route_data_verdict", "daily route live-data verdict packet mode"],
+  [
+    "daily_route_data_verdict_keeps_personal_corporate_pricing_account_database_server_next_actions_visible_bounded_and_rejects_demo_preview_logged_out_rows",
+    "daily route live-data verdict acceptance rule"
+  ],
   ["Live data acceptance answer", "live data acceptance answer label"],
   ["live_data_acceptance_answer", "live data acceptance answer packet mode"],
   [
