@@ -25965,11 +25965,10 @@ function PublicSite({
       <section className="public-hero">
         <div>
           <span className="eyebrow">Evidence-first workforce records</span>
-          <h1>Private professional Passports for high-trust hiring workflows.</h1>
+          <h1>TrustGraph Workforce Passport</h1>
           <p>
-            TrustGraph gives professionals a controlled Passport for work history, credentials, references, training, and
-            evidence. Employers use Corporate Verify to request scoped access, review approved records, and keep every
-            decision audit-ready.
+            One verified record system for Professional Passports, Corporate Verify, pricing, scoped database access,
+            account recovery, and audit-ready workforce decisions.
           </p>
           <div className="public-hero-actions">
             <button className="primary-action" onClick={() => openPortal("professional")}>

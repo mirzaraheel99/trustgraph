@@ -582,6 +582,8 @@ The signed-in portal now uses a calmer daily shell. Header navigation stays limi
 
 The public website now uses the same calm-shell rule. The buyer path keeps the hero, one product answer, the pricing cards, server status, and one login/register form visible while duplicate launch maps, pricing proof strips, route matrices, and onboarding receipts remain preserved in source but hidden from the first visitor path.
 
+The public website premium front door now makes `TrustGraph Workforce Passport` the first-viewport product signal. The visible path is one bounded SaaS shell: Professional Passport, Corporate Verify, and Pricing answer cards; a concise pricing row; then a sticky login/register context that keeps hosted recovery, first database write, scoped corporate access, and server freshness beside the credential form.
+
 The simplified signed-in portal keeps the compact VPS saved-build command visible directly under the portal desk. Duplicate route and guidance panels stay hidden, but the operator can still see whether GitHub Pages is current, whether the VPS needs the manual `/opt/trustgraph` updater or SSH secrets, and whether `/trustgraph-release.json` returns commit JSON before testing the server URL.
 
 ## Product Planning

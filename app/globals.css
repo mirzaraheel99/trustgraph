@@ -48321,3 +48321,181 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Public website premium front door final pass: product, pricing, and auth read as one SaaS path. */
+.public-site:has(.public-login-route-cockpit) {
+  --tg-public-shell-max: 1160px !important;
+  background:
+    linear-gradient(180deg, rgba(8, 18, 20, 0.98), rgba(7, 14, 17, 0.96) 52%, rgba(10, 18, 22, 0.98)),
+    #081113 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-nav,
+.public-site:has(.public-login-route-cockpit) .public-hero,
+.public-site:has(.public-login-route-cockpit) .pricing-section,
+.public-site:has(.public-login-route-cockpit) .public-auth-section {
+  width: min(var(--tg-public-shell-max), calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  margin-inline: auto !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-nav {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, auto) !important;
+  gap: 12px !important;
+  padding: 12px 0 !important;
+  backdrop-filter: blur(18px) !important;
+  background: rgba(8, 17, 19, 0.86) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-nav-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 118px), 1fr)) !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-nav-actions button,
+.public-site:has(.public-login-route-cockpit) .public-hero-actions button,
+.public-site:has(.public-login-route-cockpit) .public-product-answer button,
+.public-site:has(.public-login-route-cockpit) .pricing-grid button,
+.public-site:has(.public-login-route-cockpit) .public-auth-section button {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 16px !important;
+  padding-block: clamp(28px, 5vw, 54px) 18px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero > div:first-child {
+  display: grid !important;
+  gap: 14px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero h1 {
+  max-width: 13ch !important;
+  font-size: clamp(2.8rem, 6vw, 5.4rem) !important;
+  line-height: 0.96 !important;
+  letter-spacing: 0 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero p {
+  max-width: 68ch !important;
+  font-size: clamp(1.02rem, 1.7vw, 1.28rem) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), max-content)) !important;
+  gap: 10px !important;
+  justify-content: start !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  padding: clamp(16px, 2.4vw, 24px) !important;
+  border: 1px solid rgba(113, 242, 203, 0.22) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(95, 238, 201, 0.12), rgba(255, 255, 255, 0.022) 44%, rgba(130, 169, 255, 0.08)),
+    rgba(8, 17, 19, 0.94) !important;
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.24) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-copy h2 {
+  max-width: 20ch !important;
+  margin: 0 !important;
+  font-size: clamp(1.8rem, 3vw, 3rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: 0 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-copy p {
+  max-width: 72ch !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid article,
+.public-site:has(.public-login-route-cockpit) .pricing-grid article,
+.public-site:has(.public-login-route-cockpit) .public-product-answer-proof span {
+  border-radius: 8px !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid article {
+  display: grid !important;
+  align-content: start !important;
+  gap: 9px !important;
+  min-height: 230px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid article button {
+  align-self: end !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .pricing-section {
+  padding-block: 18px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .pricing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section {
+  align-items: start !important;
+  padding-block: 18px clamp(28px, 5vw, 54px) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child {
+  position: sticky !important;
+  top: 86px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) strong,
+.public-site:has(.public-login-route-cockpit) small,
+.public-site:has(.public-login-route-cockpit) span,
+.public-site:has(.public-login-route-cockpit) p {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 900px) {
+  .public-site:has(.public-login-route-cockpit) .public-nav,
+  .public-site:has(.public-login-route-cockpit) .public-product-answer-grid,
+  .public-site:has(.public-login-route-cockpit) .pricing-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child {
+    position: static !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .public-site:has(.public-login-route-cockpit) .public-nav,
+  .public-site:has(.public-login-route-cockpit) .public-hero,
+  .public-site:has(.public-login-route-cockpit) .pricing-section,
+  .public-site:has(.public-login-route-cockpit) .public-auth-section {
+    width: min(100%, calc(100vw - 14px)) !important;
+    max-width: calc(100vw - 14px) !important;
+  }
+
+  .public-site:has(.public-login-route-cockpit) .public-hero h1 {
+    font-size: clamp(2.35rem, 15vw, 3.4rem) !important;
+  }
+}
