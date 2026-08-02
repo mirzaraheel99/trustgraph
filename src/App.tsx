@@ -3977,6 +3977,40 @@ function VerifyRequestsPanel({
       ready: sharedRecords.length > 0 && pendingGapCount === 0
     }
   ];
+  const corporateVerifyActionDock = [
+    {
+      label: disabled ? "Setup role" : "Request access",
+      value: disabled ? "Account" : requests.length ? "Request sent" : "Start here",
+      detail: disabled ? "Create or switch to a Corporate reviewer role." : "Send one professional email and purpose.",
+      target: disabled ? "corporate-account-controls" : "corporate-verify-request-form",
+      ready: !disabled && requests.length > 0,
+      action: "scroll"
+    },
+    {
+      label: "Review rows",
+      value: sharedRecords.length ? `${sharedRecords.length} rows` : "Locked",
+      detail: sharedRecords.length ? "Open approved scoped rows and review gaps." : "Rows appear only after professional approval.",
+      target: sharedRecords.length ? "corporate-access-review-queue" : "corporate-verify-request-list",
+      ready: sharedRecords.length > 0,
+      action: "scroll"
+    },
+    {
+      label: "Export proof",
+      value: sharedRecords.length && pendingGapCount === 0 ? "Ready" : "After review",
+      detail: "Download a metadata-only proof packet for the approved scope.",
+      target: "export",
+      ready: sharedRecords.length > 0 && pendingGapCount === 0,
+      action: "export"
+    },
+    {
+      label: "Account / logout",
+      value: "Always visible",
+      detail: "Jump to Account for logout, reset, hosted link repair, and role setup.",
+      target: "corporate-account-controls",
+      ready: true,
+      action: "scroll"
+    }
+  ];
 
   return (
     <section className="verify-panel">
@@ -4126,6 +4160,30 @@ function VerifyRequestsPanel({
                 ? "Open corporate setup"
                 : "Go to request"}
           </button>
+        </div>
+        <div className="corporate-verify-action-dock" aria-label="Corporate Verify action dock">
+          {corporateVerifyActionDock.map((item) => (
+            <button
+              className={item.ready ? "ready" : "next"}
+              key={item.label}
+              onClick={() => {
+                if (item.action === "export") {
+                  downloadTextFile(
+                    `trustgraph-corporate-verify-action-dock-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...corporateVerifySingleLane, actions: corporateVerifyActionDock, steps: corporateVerifySingleLaneSteps }, null, 2),
+                    "application/json"
+                  );
+                  return;
+                }
+                document.getElementById(item.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </button>
+          ))}
         </div>
         <div className="corporate-verify-single-lane-grid">
           {corporateVerifySingleLaneSteps.map((step) => (
@@ -15031,7 +15089,7 @@ function AccountPanel({
   }
 
   return (
-    <section className="account-panel corporate-command-panel">
+    <section className="account-panel corporate-command-panel" id="corporate-account-controls">
       <div className="mini-heading">
         <LockKeyhole size={16} />
         <strong>Corporate account and RBAC</strong>
