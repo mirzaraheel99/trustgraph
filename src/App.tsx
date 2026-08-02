@@ -25109,6 +25109,38 @@ function PublicSite({
       detail: "Use hosted recovery so the inbox link returns to TrustGraph instead of a local dev URL."
     }
   ];
+  const authEmailTroubleshootingStrip = {
+    mode: "auth_email_troubleshooting_strip",
+    selected_portal: portal,
+    selected_mode: mode,
+    active_redirect_url: authRedirectUrl,
+    email_rate_limit: "Supabase built-in email can pause after 2 messages per hour project-wide; wait 60+ minutes or configure SMTP.",
+    localhost_link_repair: repairedVerificationUrl ? "Hosted replacement link is ready to copy." : "Paste the localhost email link in the repair field before requesting another email.",
+    recovery_route: email ? "Email is entered; resend verification or reset password can use the hosted redirect." : "Enter email before requesting resend or reset.",
+    preview_data_accepted: false,
+    accepted_when:
+      "auth_email_troubleshooting_strip_keeps_rate_limit_wait_smtp_localhost_link_repair_reset_password_hosted_redirect_and_no_preview_data_visible_before_more_email_requests"
+  };
+  const authEmailTroubleshootingCards = [
+    {
+      label: "Rate limit",
+      value: "Wait 60+ min",
+      detail: authEmailTroubleshootingStrip.email_rate_limit,
+      action: "Do not keep resending"
+    },
+    {
+      label: "Localhost link",
+      value: repairedVerificationUrl ? "Repair ready" : "Paste link",
+      detail: authEmailTroubleshootingStrip.localhost_link_repair,
+      action: "Copy hosted link"
+    },
+    {
+      label: "Reset path",
+      value: email ? "Ready" : "Email needed",
+      detail: authEmailTroubleshootingStrip.recovery_route,
+      action: "Reset password"
+    }
+  ];
   const hostedAuthRedirectVerificationReceipt = {
     mode: "hosted_auth_redirect_verification_receipt",
     current_browser_url:
@@ -29666,6 +29698,49 @@ function PublicSite({
                   <small>{item.detail}</small>
                 </article>
               ))}
+            </div>
+          </div>
+          <div className="auth-email-troubleshooting-strip" aria-label="Auth email troubleshooting strip">
+            <div className="auth-email-troubleshooting-header">
+              <div>
+                <span className="status-chip warning">Email troubleshooting</span>
+                <strong>Before requesting another Supabase email, choose the right recovery path</strong>
+                <small>{authEmailTroubleshootingStrip.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-auth-email-troubleshooting-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(authEmailTroubleshootingStrip, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export email help
+              </button>
+            </div>
+            <div className="auth-email-troubleshooting-grid">
+              {authEmailTroubleshootingCards.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <small>{item.detail}</small>
+                  <em>{item.action}</em>
+                </article>
+              ))}
+            </div>
+            <div className="auth-email-troubleshooting-actions">
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
+                Copy hosted link
+              </button>
             </div>
           </div>
           <div className="public-auth-recovery-command" aria-label="Public auth recovery command center">

@@ -5451,6 +5451,100 @@ p,
     rgba(255, 255, 255, 0.024);
 }
 
+.auth-email-troubleshooting-strip {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 117, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 117, 0.08), rgba(8, 15, 18, 0.92) 46%, rgba(95, 238, 201, 0.06)),
+    rgba(255, 255, 255, 0.028);
+}
+
+.auth-email-troubleshooting-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.auth-email-troubleshooting-header > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.auth-email-troubleshooting-grid,
+.auth-email-troubleshooting-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.auth-email-troubleshooting-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 235, 229, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.auth-email-troubleshooting-strip span,
+.auth-email-troubleshooting-strip strong,
+.auth-email-troubleshooting-strip small,
+.auth-email-troubleshooting-strip em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.auth-email-troubleshooting-header strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: 1rem;
+  line-height: 1.14;
+}
+
+.auth-email-troubleshooting-grid span {
+  color: rgba(255, 205, 117, 0.92);
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.auth-email-troubleshooting-grid strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: 0.95rem;
+  line-height: 1.14;
+}
+
+.auth-email-troubleshooting-strip small {
+  color: var(--tg-muted, #a7bab3);
+  line-height: 1.36;
+}
+
+.auth-email-troubleshooting-grid em {
+  color: rgba(95, 238, 201, 0.92);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.auth-email-troubleshooting-actions button,
+.auth-email-troubleshooting-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .auth-recovery-command > div:first-child,
 .public-auth-recovery-command > div:first-child {
   display: grid;
