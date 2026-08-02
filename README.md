@@ -386,6 +386,8 @@ Corporate Verify now keeps the live row proof chain as metadata evidence behind 
 
 Corporate Verify now adds a plain reviewer access verdict after the database compass and before filters. It answers whether the company can review scoped user rows now, shows the exact blocker and next click, and requires live RBAC, approved grants, visible scoped rows, review attestation, visibility snapshot, database access receipt, metadata-only export, no open user browsing, and preview-data rejection.
 
+The public login/register form now includes an email link verdict before credentials. It shows the selected Professional or Corporate path, whether an email is ready, whether the redirect is hosted, the Supabase rate-limit rule, localhost link repair guidance, landing portal, first database write, and token-redaction boundary before sending verification or recovery emails.
+
 Billing now starts with a pricing choice rail that summarizes selected plan, seats, projected monthly price, live pilot ledger state, saved quote receipt, Stripe gate, and pricing packet export before the deeper billing receipts.
 
 Passport record detail now starts evidence work with an evidence access desk: preview, download, metadata manifest export, access packet export, signed URL expiry, metadata-only boundaries, and last-link proof are visible before deeper evidence receipts.

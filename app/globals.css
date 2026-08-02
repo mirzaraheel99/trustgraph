@@ -48074,6 +48074,7 @@ body,
 
 .public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header,
+.public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-header,
 .public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-header,
 .public-auth-card:has(.public-login-route-cockpit) .current-build-server-gate-header,
 .public-auth-card:has(.public-login-route-cockpit) .public-manual-vps-sync-header {
@@ -48090,6 +48091,9 @@ body,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-readiness,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-actions,
 .public-auth-card:has(.public-login-route-cockpit) .public-auth-action-dock,
+.public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-grid,
+.public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-actions,
+.public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-proof,
 .public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-grid,
 .public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-actions,
 .public-auth-card:has(.public-login-route-cockpit) .public-auth-recovery-actions,
@@ -48098,6 +48102,37 @@ body,
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
   gap: 10px !important;
+}
+
+.auth-email-link-verdict {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  border: 1px solid rgba(108, 247, 218, 0.24) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(42, 230, 201, 0.12), rgba(118, 157, 255, 0.08)),
+    rgba(8, 18, 21, 0.92) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2) !important;
+}
+
+.auth-email-link-verdict-grid article,
+.auth-email-link-verdict-proof > span {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  padding: 12px !important;
+}
+
+.auth-email-link-verdict-grid article.ready {
+  border-color: rgba(108, 247, 218, 0.32) !important;
+}
+
+.auth-email-link-verdict-grid article.next {
+  border-color: rgba(255, 205, 113, 0.34) !important;
 }
 
 .public-auth-card:has(.public-login-route-cockpit) input,
@@ -48131,6 +48166,7 @@ body,
 
   .public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
   .public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header,
+  .public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-header,
   .public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-header,
   .public-auth-card:has(.public-login-route-cockpit) .current-build-server-gate-header,
   .public-auth-card:has(.public-login-route-cockpit) .public-manual-vps-sync-header {

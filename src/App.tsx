@@ -18379,6 +18379,55 @@ function AuthPanel({
       detail: "If the email opens localhost, keep the hash/query token and swap only the origin to the VPS URL."
     }
   ];
+  const authEmailLinkVerdictReady = Boolean(email) && !authRedirectUrl.includes("localhost");
+  const authEmailLinkVerdict = {
+    generated_at: new Date().toISOString(),
+    mode: "auth_email_link_verdict",
+    status: authEmailLinkVerdictReady ? "ready_for_hosted_email_link" : "needs_email_or_hosted_redirect",
+    answer: authEmailLinkVerdictReady
+      ? `${activeLoginPath.label} verification and recovery can use the hosted TrustGraph link.`
+      : "Enter the account email and use the hosted TrustGraph URL before sending verification or recovery.",
+    selected_portal: activeLoginPath.label,
+    account_action: "login_register_resend_verify_or_reset_password",
+    hosted_redirect_url: authRedirectUrl,
+    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
+    email_ready: Boolean(email),
+    email_rate_limit_notice: "Supabase built-in email allows 2 messages per hour project-wide; wait 60+ minutes after a rate-limit message.",
+    landing_after_login: activeLoginPath.route,
+    first_database_write: activeLoginPath.database,
+    localhost_repair: "If an old inbox link opens localhost, paste it into the repair field and swap only the origin to the hosted TrustGraph URL.",
+    tokens_redacted: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "auth_email_link_verdict_answers_selected_portal_email_ready_hosted_redirect_rate_limit_localhost_repair_landing_database_write_and_no_token_export_before_credentials"
+  };
+  const authEmailLinkVerdictRows = [
+    {
+      label: "Portal",
+      value: activeLoginPath.label,
+      detail: activeLoginPath.route,
+      ready: true
+    },
+    {
+      label: "Email",
+      value: email ? "Ready" : "Needed",
+      detail: email ? "Verification, resend, and reset actions have an address." : "Type the account email before sending another Supabase email.",
+      ready: Boolean(email)
+    },
+    {
+      label: "Hosted link",
+      value: authEmailLinkVerdict.redirect_is_hosted ? "Ready" : "Fix URL",
+      detail: authRedirectUrl,
+      ready: authEmailLinkVerdict.redirect_is_hosted
+    },
+    {
+      label: "Next database step",
+      value: activeLoginPath.label === "Corporate" ? "Workspace" : "Passport",
+      detail: activeLoginPath.database,
+      ready: true
+    }
+  ];
+  const authEmailLinkVerdictPacketName = `trustgraph-auth-email-link-verdict-${new Date().toISOString().slice(0, 10)}.json`;
   const hostedRecoveryRoutePacketName = `trustgraph-hosted-recovery-route-rail-${new Date().toISOString().slice(0, 10)}.json`;
   const hostedAuthRecoveryPacketName = `trustgraph-hosted-auth-recovery-board-${new Date().toISOString().slice(0, 10)}.json`;
   const authChecks = [
@@ -19114,6 +19163,52 @@ function AuthPanel({
               </button>
               <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
                 Reset password
+              </button>
+            </div>
+          </div>
+          <div className={`auth-email-link-verdict ${authEmailLinkVerdict.status}`} aria-label="Auth email link verdict">
+            <div className="auth-email-link-verdict-header">
+              <div>
+                <span className={`status-chip ${authEmailLinkVerdictReady ? "success" : "warning"}`}>Email link verdict</span>
+                <strong>{authEmailLinkVerdict.answer}</strong>
+                <small>{authEmailLinkVerdict.accepted_when}</small>
+              </div>
+              <div className="auth-email-link-verdict-actions">
+                <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
+                  Copy hosted URL
+                </button>
+                <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                  Resend verify
+                </button>
+                <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                  Reset password
+                </button>
+              </div>
+            </div>
+            <div className="auth-email-link-verdict-grid">
+              {authEmailLinkVerdictRows.map((row) => (
+                <article className={row.ready ? "ready" : "next"} key={row.label}>
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="auth-email-link-verdict-proof">
+              <span>Rate limit: wait 60+ minutes after Supabase blocks email</span>
+              <span>Tokens: redacted from exports</span>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    authEmailLinkVerdictPacketName,
+                    JSON.stringify({ ...authEmailLinkVerdict, rows: authEmailLinkVerdictRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export verdict
               </button>
             </div>
           </div>
