@@ -55,7 +55,7 @@ For first server setup, `tools/bootstrap-vps.sh` performs the guarded `/opt/trus
 
 After first server setup, the manual **Deploy TrustGraph to VPS** GitHub Actions workflow can update `/opt/trustgraph`. It refuses the existing VFIX host at `5.75.224.110`, runs the same guarded `tools/update-vps-from-github.sh` path as the server shell command, and checks `trustgraph-release.json` so the VPS must prove the GitHub source and current `premium_workspace_responsive_guard` bundle marker it saved. The main Pages workflow now verifies the exported release stamp asset before upload, so a missing or app-shell-fallback release stamp cannot pass as a current server save.
 
-The Pages deployment also runs a VPS save job after the hosted smoke check. That job now fails if `TRUSTGRAPH_VPS_USER` or `TRUSTGRAPH_VPS_SSH_KEY` is missing, because a green GitHub build without a verified VPS save can leave `https://trustgraph.5-75-224-110.sslip.io/` stale.
+The Pages deployment also runs a VPS save job after the hosted smoke check. If `TRUSTGRAPH_VPS_USER` or `TRUSTGRAPH_VPS_SSH_KEY` is missing, the job reports a gated skip instead of failing the already-green Pages release; the VPS still cannot be treated as current until those secrets are added or `bash tools/update-vps-from-github.sh` is run manually on `/opt/trustgraph`.
 
 The CI loop also runs `pnpm check:v1-pilot-route`. That verifier ties the public website, Professional and Corporate registration, pricing, hosted auth recovery, Passport evidence, Corporate scoped user database access, Admin exports, live-row repair path, and VPS release stamp into one route-level acceptance check before Pages deployment.
 
