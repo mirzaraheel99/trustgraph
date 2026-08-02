@@ -196,6 +196,8 @@ Corporate Verify now includes a direct attestation completion gate before the re
 
 Corporate Verify now reads visible user Passport rows through the `list_corporate_visible_passport_rows` database RPC. The function requires an active corporate role, approved non-expired Access Grants, scoped `access_grant_records`, consent state, no raw private files, and `preview_data_accepted = false` before rows appear in the reviewer database.
 
+The Corporate Verify database screen now shows a scoped RPC proof panel before the reviewer workbench. It compares visible rows against `list_corporate_visible_passport_rows` metadata, displays consent-state counts, rejects preview data, confirms raw files are excluded, and exports the same proof in the corporate user database packet.
+
 Corporate Verify now adds a next-action commander directly under the reviewer workbench. It chooses the current live database step across corporate login, request-by-email, professional approval, scoped rows, missing gaps, review attestation, snapshot, receipt, and metadata export, then exposes the primary action plus snapshot, receipt, and export controls.
 
 Corporate Verify keeps the review queue command in the source/export packet, but the visible reviewer path now routes through the reviewer workbench and action bar first so the main database screen does not stack duplicate proof panels before the row list.

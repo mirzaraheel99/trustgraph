@@ -276,6 +276,12 @@ const appRequirements = [
     "corporate_reviewer_database_workbench_requires_visible_filtered_rows_request_approval_attestation_snapshot_receipt_export_and_no_open_user_browse",
     "corporate reviewer database workbench no-open-browse acceptance rule"
   ],
+  ["Corporate scoped RPC proof", "corporate scoped RPC proof label"],
+  ["corporate_scoped_rpc_proof", "corporate scoped RPC proof packet mode"],
+  [
+    "corporate_scoped_rpc_proof_requires_list_corporate_visible_passport_rows_active_rbac_approved_non_expired_grants_consent_state_no_raw_private_files_no_preview_data_and_no_open_user_database",
+    "corporate scoped RPC proof acceptance rule"
+  ],
   ["Missing record cross-portal checkpoint", "missing-record cross-portal label"],
   ["missing_record_cross_portal_checkpoint", "missing-record cross-portal packet mode"],
   [

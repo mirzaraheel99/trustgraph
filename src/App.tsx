@@ -5912,6 +5912,66 @@ function CorporateDirectoryPanel({
   const consentRequiredSharedRecordCount = sharedRecords.filter((record) => record.consentRequired).length;
   const unavailableRequestCount = requests.filter((request) => request.status !== "approved").length;
   const isLiveCorporateDatabase = databaseMode === "live_supabase_visibility";
+  const scopedRpcRows = sharedRecords.filter((record) => record.metadata?.corporate_visible_passport_row === true);
+  const scopedRpcAcceptedRules = new Set(
+    scopedRpcRows
+      .map((record) => record.metadata?.accepted_when)
+      .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+  );
+  const scopedRpcConsentStateCounts = scopedRpcRows.reduce<Record<string, number>>((counts, record) => {
+    const status = typeof record.metadata?.consent_status === "string" ? record.metadata.consent_status : "unknown";
+    counts[status] = (counts[status] ?? 0) + 1;
+    return counts;
+  }, {});
+  const scopedRpcRawPrivateFilesIncluded = scopedRpcRows.some((record) => record.metadata?.raw_private_files_included === true);
+  const scopedRpcPreviewDataAccepted = scopedRpcRows.some((record) => record.metadata?.preview_data_accepted === true);
+  const corporateScopedRpcProof = {
+    mode: "corporate_scoped_rpc_proof",
+    source_rpc: "list_corporate_visible_passport_rows",
+    status: scopedRpcRows.length === sharedRecords.length && sharedRecords.length > 0 ? "rpc_scoped_rows_loaded" : sharedRecords.length ? "legacy_or_unmarked_rows_present" : "waiting_for_scoped_rows",
+    visible_records_from_rpc: scopedRpcRows.length,
+    visible_records_total: sharedRecords.length,
+    active_corporate_rbac: isLiveCorporateDatabase,
+    consent_state_counts: scopedRpcConsentStateCounts,
+    raw_private_files_included: scopedRpcRawPrivateFilesIncluded,
+    preview_data_accepted: scopedRpcPreviewDataAccepted,
+    no_open_user_database: true,
+    accepted_rules: [...scopedRpcAcceptedRules],
+    accepted_when:
+      "corporate_scoped_rpc_proof_requires_list_corporate_visible_passport_rows_active_rbac_approved_non_expired_grants_consent_state_no_raw_private_files_no_preview_data_and_no_open_user_database"
+  };
+  const corporateScopedRpcProofCards = [
+    {
+      label: "Database RPC",
+      value: "Scoped",
+      detail: corporateScopedRpcProof.source_rpc,
+      ready: corporateScopedRpcProof.status === "rpc_scoped_rows_loaded" || sharedRecords.length === 0
+    },
+    {
+      label: "Visible rows",
+      value: `${corporateScopedRpcProof.visible_records_from_rpc}/${corporateScopedRpcProof.visible_records_total}`,
+      detail: sharedRecords.length ? "Visible records carry the scoped RPC receipt." : "Rows appear after approval and shared record sync.",
+      ready: corporateScopedRpcProof.visible_records_from_rpc === corporateScopedRpcProof.visible_records_total
+    },
+    {
+      label: "Consent states",
+      value: Object.entries(scopedRpcConsentStateCounts).map(([status, count]) => `${status}: ${count}`).join(", ") || "Waiting",
+      detail: "Consent status comes from the database row contract.",
+      ready: scopedRpcRows.length > 0 || sharedRecords.length === 0
+    },
+    {
+      label: "Raw files",
+      value: corporateScopedRpcProof.raw_private_files_included ? "Included" : "Excluded",
+      detail: "Corporate database rows expose metadata and proof only.",
+      ready: !corporateScopedRpcProof.raw_private_files_included
+    },
+    {
+      label: "Preview data",
+      value: corporateScopedRpcProof.preview_data_accepted ? "Accepted" : "Rejected",
+      detail: "V1 corporate database proof rejects preview rows.",
+      ready: !corporateScopedRpcProof.preview_data_accepted
+    }
+  ];
   const corporateDirectoryAcceptanceChecks = [
     {
       label: "Live RBAC database",
@@ -7461,6 +7521,10 @@ function CorporateDirectoryPanel({
       ...corporateReviewerDatabaseWorkbench,
       cards: corporateReviewerDatabaseWorkbenchCards.map(({ label, value, ready }) => ({ label, value, ready }))
     },
+    corporate_scoped_rpc_proof: {
+      ...corporateScopedRpcProof,
+      cards: corporateScopedRpcProofCards.map(({ label, value, detail, ready }) => ({ label, value, detail, ready }))
+    },
     corporate_row_access_outcome_command: {
       ...corporateRowAccessOutcomeCommand,
       cards: corporateRowAccessOutcomeCards.map(({ label, value, detail, ready }) => ({ label, value, detail, ready }))
@@ -8905,6 +8969,47 @@ function CorporateDirectoryPanel({
           >
             Export outcome
           </button>
+        </div>
+      </div>
+      <div className="corporate-scoped-rpc-proof" aria-label="Corporate scoped RPC proof">
+        <div className="corporate-scoped-rpc-proof-header">
+          <div>
+            <span className={`status-chip ${corporateScopedRpcProof.status === "rpc_scoped_rows_loaded" ? "success" : "warning"}`}>Scoped database source</span>
+            <strong>{corporateScopedRpcProof.status === "rpc_scoped_rows_loaded" ? "Rows are loaded through the scoped RPC" : "Waiting for scoped RPC rows"}</strong>
+            <small>{corporateScopedRpcProof.accepted_when}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-scoped-rpc-proof-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateScopedRpcProof, cards: corporateScopedRpcProofCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export RPC proof
+          </button>
+        </div>
+        <div className="corporate-scoped-rpc-proof-grid">
+          {corporateScopedRpcProofCards.map((item) => (
+            <span className={item.ready ? "ready" : "next"} key={item.label}>
+              <small>{item.label}</small>
+              <strong>{item.value}</strong>
+              <b>{item.detail}</b>
+            </span>
+          ))}
+        </div>
+        <div className="corporate-scoped-rpc-proof-note">
+          <span>
+            <small>No open database browse</small>
+            <strong>{corporateScopedRpcProof.no_open_user_database ? "Enforced" : "Missing"}</strong>
+          </span>
+          <span>
+            <small>Accepted rules</small>
+            <strong>{corporateScopedRpcProof.accepted_rules.length || "Pending rows"}</strong>
+          </span>
         </div>
       </div>
       <div className="corporate-reviewer-database-workbench" aria-label="Corporate reviewer database workbench">
