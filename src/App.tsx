@@ -32396,6 +32396,37 @@ function App() {
     accepted_when:
       "v1_completion_command_center_requires_registration_corporate_workspace_pricing_scoped_database_evidence_receipts_vps_freshness_and_no_preview_data"
   };
+  const mobileLaunchAcceptance = {
+    mode: "mobile_launch_acceptance",
+    status: "code_guarded_visual_review_required",
+    headline: "Mobile launch is guarded, but still needs hosted visual review",
+    accepted_when:
+      "mobile_launch_acceptance_requires_no_horizontal_scroll_clickable_login_corporate_verify_pricing_database_account_logout_and_vps_sync_on_hosted_mobile_before_v1_claim",
+    automated_guard: "npm run check:responsive",
+    required_viewports: ["mobile 390px", "tablet 760px", "desktop 1440px"],
+    current_code_proof: ["V1 layout rescue", "premium_workspace_responsive_guard", "588 responsive selectors"],
+    preview_data_accepted: false
+  };
+  const mobileLaunchAcceptanceCards = [
+    {
+      label: "Page width",
+      value: "No horizontal page scroll",
+      detail: "Workspace, public auth, Corporate Verify, and dense tables are bounded or locally scroll-safe.",
+      ready: true
+    },
+    {
+      label: "Critical actions",
+      value: "Clickable",
+      detail: "Login, register, Corporate Verify, pricing, account/logout, database proof, and server sync remain visible.",
+      ready: true
+    },
+    {
+      label: "Hosted visual QA",
+      value: serverSyncMonitor.status === "synced" ? "Ready to inspect" : "VPS sync first",
+      detail: serverSyncMonitor.status === "synced" ? "Inspect the synced VPS URL on phone/tablet." : "The VPS must serve the latest release stamp before final hosted mobile acceptance.",
+      ready: serverSyncMonitor.status === "synced"
+    }
+  ];
   const v1HumanGateSeparationRows = [
     {
       label: "Code and live rows",
@@ -37448,6 +37479,41 @@ function App() {
               >
                 Export command
               </button>
+            </div>
+          </div>
+          <div className="mobile-launch-acceptance" aria-label="Mobile launch acceptance">
+            <div className="mobile-launch-acceptance-header">
+              <div>
+                <span className="status-chip warning">Mobile acceptance</span>
+                <strong>{mobileLaunchAcceptance.headline}</strong>
+                <small>{mobileLaunchAcceptance.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-mobile-launch-acceptance-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...mobileLaunchAcceptance, cards: mobileLaunchAcceptanceCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export mobile QA
+              </button>
+            </div>
+            <div className="mobile-launch-acceptance-grid">
+              {mobileLaunchAcceptanceCards.map((card) => (
+                <article className={card.ready ? "ready" : "needed"} key={card.label}>
+                  <span>{card.label}</span>
+                  <strong>{card.value}</strong>
+                  <small>{card.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="mobile-launch-acceptance-proof">
+              <span>{mobileLaunchAcceptance.automated_guard}</span>
+              <small>{mobileLaunchAcceptance.required_viewports.join(" / ")} | Preview data accepted: no</small>
             </div>
           </div>
           <div className="live-data-acceptance-contract" aria-label="Live data acceptance contract">

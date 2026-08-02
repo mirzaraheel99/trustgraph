@@ -26909,6 +26909,102 @@ body {
   white-space: normal;
 }
 
+.mobile-launch-acceptance {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin-top: 12px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(118, 160, 255, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(118, 160, 255, 0.09), rgba(95, 240, 201, 0.055)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.mobile-launch-acceptance-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.mobile-launch-acceptance-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.mobile-launch-acceptance strong,
+.mobile-launch-acceptance small,
+.mobile-launch-acceptance span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mobile-launch-acceptance-header strong {
+  color: var(--text);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.12;
+}
+
+.mobile-launch-acceptance small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.mobile-launch-acceptance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), 1fr));
+  gap: 8px;
+}
+
+.mobile-launch-acceptance-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.mobile-launch-acceptance-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+}
+
+.mobile-launch-acceptance-grid article.needed {
+  border-color: rgba(246, 198, 96, 0.32);
+}
+
+.mobile-launch-acceptance-grid span,
+.mobile-launch-acceptance-proof span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.mobile-launch-acceptance-grid strong {
+  color: var(--text);
+  font-size: 0.98rem;
+}
+
+.mobile-launch-acceptance-proof {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mobile-launch-acceptance-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .live-data-acceptance-contract {
   display: grid;
   gap: 12px;
