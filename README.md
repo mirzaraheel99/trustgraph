@@ -85,6 +85,8 @@ The public login/register card now starts with a premium Account path chooser ab
 
 Corporate setup now starts with one primary company setup route. It keeps login, workspace creation, RBAC activation, Corporate Verify database proof, first live database write, active role, and the no-open-user-browse boundary visible while older proof panels stay out of the daily form path.
 
+Corporate setup now also starts with a Corporate portal unlock answer. It says whether the company portal is ready, names the next setup step, shows RBAC, team, billing, and scoped user-row status, and exports the proof without suggesting open browsing of the user database.
+
 Corporate Verify now starts the user database with one primary database access desk. It answers whether scoped rows are visible, what the next reviewer action is, how many requests, approved grants, rows, reviews, and gaps exist, and keeps metadata-only export plus no-open-user-browse proof visible before directory controls.
 
 Corporate Verify now also starts the row area with a review queue runway. Reviewers see visible professionals, shared Passport records, open gaps, review attestations, filtered queue state, metadata-only export, and the no-open-user-database rule before the dense receipt and proof panels.

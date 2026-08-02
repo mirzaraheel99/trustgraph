@@ -130,6 +130,12 @@ const appRequirements = [
     "corporate_portal_cockpit_keeps_role_request_approved_rows_review_export_next_action_no_open_user_database_and_preview_rejection_visible_before_dense_verify_proof",
     "corporate portal cockpit acceptance rule"
   ],
+  ["Corporate portal unlock answer", "corporate portal unlock answer label"],
+  ["corporate_portal_unlock_answer", "corporate portal unlock answer packet mode"],
+  [
+    "corporate_portal_unlock_answer_shows_if_company_portal_is_ready_next_setup_step_rbac_team_billing_scoped_rows_no_open_user_database_and_preview_rejection_before_setup_controls",
+    "corporate portal unlock answer acceptance rule"
+  ],
   ["Corporate access decision desk", "corporate access decision desk label"],
   ["corporate_access_decision_desk", "corporate access decision desk packet mode"],
   [

@@ -158,6 +158,8 @@ const requiredMobileStacks = [
   ".corporate-launch-cockpit-top",
   ".corporate-launch-lanes",
   ".corporate-launch-counts",
+  ".corporate-portal-unlock-grid",
+  ".corporate-portal-unlock-actions",
   ".corporate-setup-triage-header",
   ".corporate-setup-triage-grid",
   ".corporate-setup-triage-proof",

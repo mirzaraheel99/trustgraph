@@ -29135,6 +29135,52 @@ function App() {
                 ? "Select plan"
                 : "Open Verify"
   }));
+  const corporatePortalUnlockAnswer = {
+    mode: "corporate_portal_unlock_answer",
+    status: corporateSetupComplete === corporateSetupSteps.length ? "ready_for_scoped_review" : "setup_required",
+    answer:
+      corporateSetupComplete === corporateSetupSteps.length
+        ? "Corporate portal is ready for scoped user database review."
+        : `Corporate portal is not ready yet. Next: ${nextCorporateSetupStep.label}.`,
+    next_step: nextCorporateSetupStep.label,
+    next_detail: nextCorporateSetupStep.detail,
+    ready_steps: corporateSetupComplete,
+    total_steps: corporateSetupSteps.length,
+    live_corporate_context: hasLiveCorporateContext,
+    can_manage_workspace: canManageCorporateSetup,
+    team_rows: teamMembers.length + teamInvitations.length,
+    pricing_rows: organizationSubscriptions.length,
+    scoped_user_rows: sharedVerifyRecords.length,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_portal_unlock_answer_shows_if_company_portal_is_ready_next_setup_step_rbac_team_billing_scoped_rows_no_open_user_database_and_preview_rejection_before_setup_controls"
+  };
+  const corporatePortalUnlockCards = [
+    {
+      label: "Workspace",
+      value: hasLiveCorporateContext ? "Ready" : "Needed",
+      detail: hasLiveCorporateContext ? activeOrganization.name : "Create the company workspace first.",
+      ready: hasLiveCorporateContext
+    },
+    {
+      label: "RBAC",
+      value: canManageCorporateSetup ? "Admin active" : "Needed",
+      detail: canManageCorporateSetup ? activeRole.label : "Activate an admin membership before team or billing work.",
+      ready: canManageCorporateSetup
+    },
+    {
+      label: "Team and billing",
+      value: `${teamMembers.length + teamInvitations.length}/${organizationSubscriptions.length}`,
+      detail: "Team rows and pilot subscription ledger rows must exist before client review.",
+      ready: Boolean((teamMembers.length || teamInvitations.length) && organizationSubscriptions.length)
+    },
+    {
+      label: "Scoped rows",
+      value: `${sharedVerifyRecords.length}`,
+      detail: "Corporate Verify can review only professional-approved scoped rows.",
+      ready: sharedVerifyRecords.length > 0
+    }
+  ];
   const corporateLaunchLanes = [
     {
       label: "1. Create company",
@@ -36635,6 +36681,57 @@ function App() {
                 <span className="eyebrow">Setup center</span>
                 <h2>Account, corporate access, and rollout controls</h2>
                 <p>Follow the corporate setup path in order: login, workspace, RBAC, team, billing, then readiness. Each action opens the exact panel needed for the next live database step.</p>
+              </div>
+              <div className={`corporate-portal-unlock-answer ${corporatePortalUnlockAnswer.status}`} aria-label="Corporate portal unlock answer">
+                <div className="corporate-portal-unlock-copy">
+                  <span className={`status-chip ${corporatePortalUnlockAnswer.status === "ready_for_scoped_review" ? "success" : "warning"}`}>
+                    Corporate portal answer
+                  </span>
+                  <strong>{corporatePortalUnlockAnswer.answer}</strong>
+                  <small>{corporatePortalUnlockAnswer.accepted_when}</small>
+                </div>
+                <div className="corporate-portal-unlock-grid">
+                  {corporatePortalUnlockCards.map((card) => (
+                    <article className={card.ready ? "ready" : "next"} key={card.label}>
+                      <span>{card.label}</span>
+                      <strong>{card.value}</strong>
+                      <small>{card.detail}</small>
+                    </article>
+                  ))}
+                </div>
+                <div className="corporate-portal-unlock-actions">
+                  <span>
+                    <small>Next step</small>
+                    <strong>{corporatePortalUnlockAnswer.next_step}</strong>
+                    <small>{corporatePortalUnlockAnswer.next_detail}</small>
+                  </span>
+                  <button
+                    className="primary-action"
+                    onClick={() => {
+                      if (nextCorporateSetupStep.id === "verify") {
+                        openWorkspaceOrSetup("verify");
+                        return;
+                      }
+                      setSetupView(nextCorporateSetupStep.target);
+                    }}
+                    type="button"
+                  >
+                    {nextCorporateSetupStep.id === "verify" ? "Open Verify" : `Open ${nextCorporateSetupStep.label}`}
+                  </button>
+                  <button
+                    className="secondary-action"
+                    onClick={() =>
+                      downloadTextFile(
+                        `trustgraph-corporate-portal-unlock-answer-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify({ ...corporatePortalUnlockAnswer, cards: corporatePortalUnlockCards }, null, 2),
+                        "application/json"
+                      )
+                    }
+                    type="button"
+                  >
+                    Export unlock proof
+                  </button>
+                </div>
               </div>
               <div className="corporate-launch-cockpit" aria-label="Corporate launch cockpit">
                 <div className="corporate-launch-cockpit-top">
