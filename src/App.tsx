@@ -35706,6 +35706,55 @@ function App() {
       target: "readiness" as const
     }
   ];
+  const launchGapNavigator = {
+    mode: "launch_gap_navigator",
+    status: v1CompletionBlockerLedger.completion_claim_allowed ? "ready_for_final_audit" : "active_gaps",
+    headline: v1CompletionBlockerLedger.completion_claim_allowed
+      ? "All launch gaps are cleared"
+      : `${v1CompletionBlockerLedger.total_count - v1CompletionBlockerLedger.passed_count} launch gaps remain`,
+    code_owned_blockers: v1CompletionBlockerLedger.code_blockers,
+    human_owned_blockers: v1CompletionBlockerLedger.human_blockers,
+    next_engineering_action: v1RemainingWorkAnswer.next_code_action,
+    next_human_action:
+      v1CompletionBlockerLedger.human_blockers[0] ??
+      (v1CompletionBlockerLedger.code_blockers.length ? "Wait for engineering blockers" : "Run final completion audit"),
+    vps_manual_command: "cd /opt/trustgraph && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+    github_source_commit: serverSyncMonitor.commit ?? "build-time-placeholder",
+    server_release_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "launch_gap_navigator_separates_code_owned_blockers_human_gates_vps_manual_sync_current_github_commit_next_click_and_preview_rejection_before_final_goal_claim"
+  };
+  const launchGapNavigatorCards = [
+    {
+      label: "Code-owned",
+      value: launchGapNavigator.code_owned_blockers.length ? `${launchGapNavigator.code_owned_blockers.length} open` : "Clear",
+      detail: launchGapNavigator.code_owned_blockers.length ? launchGapNavigator.code_owned_blockers.join(", ") : "Hosted login, live rows, receipt, and VPS freshness are code-ready.",
+      ready: launchGapNavigator.code_owned_blockers.length === 0,
+      target: "proof" as const
+    },
+    {
+      label: "Human gates",
+      value: launchGapNavigator.human_owned_blockers.length ? `${launchGapNavigator.human_owned_blockers.length} open` : "Clear",
+      detail: launchGapNavigator.human_owned_blockers.length ? launchGapNavigator.human_owned_blockers.join(", ") : "Billing, pilot owner, security/legal, and cutover signoffs are clear.",
+      ready: launchGapNavigator.human_owned_blockers.length === 0,
+      target: "readiness" as const
+    },
+    {
+      label: "VPS release proof",
+      value: launchGapNavigator.server_release_status.replaceAll("_", " "),
+      detail: "The server must return trustgraph-release.json for the latest GitHub commit.",
+      ready: launchGapNavigator.server_release_status === "synced",
+      target: "server" as const
+    },
+    {
+      label: "Next click",
+      value: launchGapNavigator.code_owned_blockers.length ? "Engineering" : "Human",
+      detail: launchGapNavigator.code_owned_blockers.length ? launchGapNavigator.next_engineering_action : launchGapNavigator.next_human_action,
+      ready: v1CompletionBlockerLedger.completion_claim_allowed,
+      target: launchGapNavigator.code_owned_blockers.length ? "proof" as const : "readiness" as const
+    }
+  ];
   const v1CompletionCommandCards = [
     {
       label: "Registration",
@@ -41298,6 +41347,82 @@ function App() {
                 <strong>{v1RemainingWorkAnswer.preview_data_accepted ? "Preview accepted" : "Preview rejected"}</strong>
                 <small>Completion requires hosted login, live Supabase rows, completion receipt, VPS freshness, and human-gate signoff.</small>
               </span>
+            </div>
+          </div>
+          <div className={`launch-gap-navigator ${launchGapNavigator.status}`} aria-label="Launch gap navigator">
+            <div className="launch-gap-navigator-header">
+              <div>
+                <span className={`status-chip ${launchGapNavigator.status === "ready_for_final_audit" ? "success" : "warning"}`}>Launch gaps</span>
+                <strong>{launchGapNavigator.headline}</strong>
+                <small>{launchGapNavigator.accepted_when}</small>
+              </div>
+              <button
+                className="primary-action"
+                onClick={() => {
+                  if (launchGapNavigator.code_owned_blockers.includes("Hosted login")) {
+                    openAuthControls();
+                    return;
+                  }
+                  if (launchGapNavigator.code_owned_blockers.includes("Live Supabase rows") || launchGapNavigator.code_owned_blockers.includes("Completion receipt")) {
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                  }
+                  if (launchGapNavigator.code_owned_blockers.includes("VPS freshness")) {
+                    downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                    return;
+                  }
+                  setSetupView("readiness");
+                  document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                type="button"
+              >
+                Open next gap
+              </button>
+            </div>
+            <div className="launch-gap-navigator-grid">
+              {launchGapNavigatorCards.map((card) => (
+                <button
+                  className={card.ready ? "ready" : "needed"}
+                  key={card.label}
+                  onClick={() => {
+                    if (card.target === "server") {
+                      downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                      return;
+                    }
+                    if (card.target === "readiness") {
+                      setSetupView("readiness");
+                      document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      return;
+                    }
+                    document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  type="button"
+                >
+                  <span>{card.label}</span>
+                  <strong>{card.value}</strong>
+                  <small>{card.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="launch-gap-navigator-command">
+              <span>
+                <small>GitHub source</small>
+                <strong>{launchGapNavigator.github_source_commit}</strong>
+              </span>
+              <code>{launchGapNavigator.vps_manual_command}</code>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-launch-gap-navigator-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...launchGapNavigator, cards: launchGapNavigatorCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export gaps
+              </button>
             </div>
           </div>
           <div className={`v1-completion-blocker-ledger ${v1CompletionBlockerLedger.status}`} aria-label="V1 completion blocker ledger">

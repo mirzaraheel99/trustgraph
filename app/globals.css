@@ -50067,3 +50067,84 @@ body,
     max-width: calc(100vw - 12px) !important;
   }
 }
+
+/* Launch gap navigator: one compact answer for what remains before V1 can be claimed complete. */
+.launch-gap-navigator {
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(255, 205, 118, 0.24) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 118, 0.08), rgba(134, 174, 246, 0.06) 48%, rgba(113, 242, 203, 0.06)),
+    rgba(7, 15, 18, 0.92) !important;
+}
+
+.launch-gap-navigator.ready_for_final_audit {
+  border-color: rgba(113, 242, 203, 0.3) !important;
+}
+
+.launch-gap-navigator-header,
+.launch-gap-navigator-command {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.launch-gap-navigator-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap: 9px !important;
+}
+
+.launch-gap-navigator-grid button,
+.launch-gap-navigator-command span,
+.launch-gap-navigator-command code {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.launch-gap-navigator-grid button.ready {
+  border-color: rgba(113, 242, 203, 0.24) !important;
+  background: rgba(72, 208, 174, 0.08) !important;
+}
+
+.launch-gap-navigator-grid button.needed {
+  border-color: rgba(255, 205, 118, 0.24) !important;
+  background: rgba(255, 205, 118, 0.055) !important;
+}
+
+.launch-gap-navigator-command code {
+  grid-column: 1 / -1 !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
+
+.launch-gap-navigator :is(button, strong, small, span, code) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.launch-gap-navigator button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 760px) {
+  .launch-gap-navigator-header,
+  .launch-gap-navigator-command {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
