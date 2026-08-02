@@ -34167,6 +34167,76 @@ function App() {
       ready: v1RemainingWorkAnswer.human_gates_remaining === 0
     }
   ];
+  const v1CompletionBlockerLedgerRows = [
+    {
+      label: "Hosted login",
+      owner: "Engineering",
+      status: authSession && accountContext ? "passed" : "blocked",
+      value: authSession && accountContext ? "Signed-in Supabase session" : "Hosted login required",
+      detail: authSession && accountContext ? "Repository loaders can read owner-scoped rows." : "Use the hosted TrustGraph URL before loading real database proof.",
+      next_action: authSession && accountContext ? "Keep session active" : "Login or register",
+      target: "account" as const
+    },
+    {
+      label: "Live Supabase rows",
+      owner: "Engineering",
+      status: livePilotRowProof.accepted ? "passed" : "blocked",
+      value: `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups}`,
+      detail: livePilotRowProof.missingRequiredGroups.length ? livePilotRowProof.missingRequiredGroups.join(", ") : "All required row groups are loaded.",
+      next_action: livePilotRowProof.accepted ? "Export proof" : "Run seed, create rows, or reload",
+      target: "proof" as const
+    },
+    {
+      label: "Completion receipt",
+      owner: "Engineering",
+      status: latestRealDatabaseCompletionReceipt ? "passed" : "blocked",
+      value: latestRealDatabaseCompletionReceipt ? latestRealDatabaseCompletionReceipt.status.replace(/_/g, " ") : "No receipt",
+      detail: latestRealDatabaseCompletionReceipt
+        ? `${latestRealDatabaseCompletionReceipt.completed_steps}/${latestRealDatabaseCompletionReceipt.total_steps} live groups persisted.`
+        : "Record the real database completion receipt after live rows load.",
+      next_action: latestRealDatabaseCompletionReceipt ? "Review receipt" : "Record receipt",
+      target: "receipt" as const
+    },
+    {
+      label: "VPS freshness",
+      owner: "Engineering",
+      status: serverSyncMonitor.status === "synced" ? "passed" : "blocked",
+      value: serverSyncMonitor.status.replaceAll("_", " "),
+      detail: "TrustGraph server acceptance requires release-stamp JSON from the VPS, not only a 200 page.",
+      next_action: serverSyncMonitor.status === "synced" ? "Keep stamp proof" : "Save latest GitHub build",
+      target: "server" as const
+    },
+    {
+      label: "Billing",
+      owner: "Human",
+      status: v1HumanGateSeparationRows.find((row) => row.label === "Billing boundary")?.ready ? "passed" : "blocked",
+      value: v1HumanGateSeparationRows.find((row) => row.label === "Billing boundary")?.ready ? "Approved" : "Stripe decision needed",
+      detail: "Pricing can be reviewed now; payment collection stays human-gated.",
+      next_action: "Open pricing",
+      target: "billing" as const
+    },
+    {
+      label: "Security and legal",
+      owner: "Human",
+      status: v1HumanGateSeparationRows.find((row) => row.label === "Security and legal")?.ready ? "passed" : "blocked",
+      value: "External signoff",
+      detail: "External security/storage review and regulated wording approval are not code-owned completion.",
+      next_action: "Open readiness",
+      target: "readiness" as const
+    }
+  ];
+  const v1CompletionBlockerLedger = {
+    mode: "v1_completion_blocker_ledger",
+    status: v1CompletionBlockerLedgerRows.every((row) => row.status === "passed") ? "v1_completion_proven" : "v1_completion_blocked",
+    passed_count: v1CompletionBlockerLedgerRows.filter((row) => row.status === "passed").length,
+    total_count: v1CompletionBlockerLedgerRows.length,
+    code_blockers: v1CompletionBlockerLedgerRows.filter((row) => row.owner === "Engineering" && row.status !== "passed").map((row) => row.label),
+    human_blockers: v1CompletionBlockerLedgerRows.filter((row) => row.owner === "Human" && row.status !== "passed").map((row) => row.label),
+    preview_data_accepted: false,
+    completion_claim_allowed: v1CompletionBlockerLedgerRows.every((row) => row.status === "passed"),
+    accepted_when:
+      "v1_completion_blocker_ledger_requires_hosted_login_live_supabase_rows_completion_receipt_vps_release_stamp_billing_security_legal_signoff_and_no_preview_data_before_goal_complete"
+  };
   const v1CompletionCommandCards = [
     {
       label: "Registration",
@@ -39344,6 +39414,78 @@ function App() {
               <span>
                 <strong>{v1RemainingWorkAnswer.preview_data_accepted ? "Preview accepted" : "Preview rejected"}</strong>
                 <small>Completion requires hosted login, live Supabase rows, completion receipt, VPS freshness, and human-gate signoff.</small>
+              </span>
+            </div>
+          </div>
+          <div className={`v1-completion-blocker-ledger ${v1CompletionBlockerLedger.status}`} aria-label="V1 completion blocker ledger">
+            <div className="v1-completion-blocker-header">
+              <div>
+                <span className={`status-chip ${v1CompletionBlockerLedger.completion_claim_allowed ? "success" : "warning"}`}>Completion blocker ledger</span>
+                <strong>
+                  {v1CompletionBlockerLedger.completion_claim_allowed
+                    ? "Every V1 completion blocker is cleared"
+                    : `${v1CompletionBlockerLedger.total_count - v1CompletionBlockerLedger.passed_count} blocker${v1CompletionBlockerLedger.total_count - v1CompletionBlockerLedger.passed_count === 1 ? "" : "s"} still prevent completion`}
+                </strong>
+                <small>{v1CompletionBlockerLedger.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-v1-completion-blocker-ledger-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...v1CompletionBlockerLedger, rows: v1CompletionBlockerLedgerRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export blocker ledger
+              </button>
+            </div>
+            <div className="v1-completion-blocker-grid">
+              {v1CompletionBlockerLedgerRows.map((row) => (
+                <article className={row.status === "passed" ? "ready" : "blocked"} key={row.label}>
+                  <span>{row.owner}</span>
+                  <strong>{row.label}</strong>
+                  <small>{row.value}</small>
+                  <small>{row.detail}</small>
+                  <button
+                    className={row.status === "passed" ? "secondary-action" : "primary-action"}
+                    onClick={() => {
+                      if (row.target === "account") {
+                        openAuthControls();
+                        return;
+                      }
+                      if (row.target === "billing" || row.target === "readiness") {
+                        setSetupView(row.target);
+                        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        return;
+                      }
+                      if (row.target === "server") {
+                        downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json");
+                        return;
+                      }
+                      document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                    type="button"
+                  >
+                    {row.next_action}
+                  </button>
+                </article>
+              ))}
+            </div>
+            <div className="v1-completion-blocker-proof">
+              <span>
+                <small>Code blockers</small>
+                <strong>{v1CompletionBlockerLedger.code_blockers.length ? v1CompletionBlockerLedger.code_blockers.join(", ") : "None"}</strong>
+              </span>
+              <span>
+                <small>Human blockers</small>
+                <strong>{v1CompletionBlockerLedger.human_blockers.length ? v1CompletionBlockerLedger.human_blockers.join(", ") : "None"}</strong>
+              </span>
+              <span>
+                <small>Preview data</small>
+                <strong>{v1CompletionBlockerLedger.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
               </span>
             </div>
           </div>
