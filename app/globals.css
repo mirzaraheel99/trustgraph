@@ -42777,7 +42777,6 @@ body,
 }
 
 .verify-panel:has(.corporate-database-home-command) > .corporate-portal-quick-start,
-.verify-panel:has(.corporate-reviewer-command-center) > .corporate-verify-single-lane,
 .verify-panel:has(.corporate-database-home-command) > .corporate-access-progress-strip,
 .verify-panel:has(.corporate-database-home-command) > .verify-summary-grid,
 .verify-panel:has(.corporate-database-home-command) > .corporate-verify-live-command,
@@ -42796,6 +42795,22 @@ body,
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
+}
+
+/* Corporate Verify lane focus: keep one request-to-export path visible before dense reviewer tools. */
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-verify-operator-cockpit,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-reviewer-command-center,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-database-home-command,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-access-answer,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-reviewer-next-action,
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-database-unlock-path {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
 }
 
 .public-auth-section {
