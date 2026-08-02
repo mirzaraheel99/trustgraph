@@ -51747,6 +51747,114 @@ body,
   }
 }
 
+/* Hosted portal product shell: one calm SaaS surface for personal and corporate work. */
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) {
+  --tg-hosted-shell-max: 1180px !important;
+  width: min(var(--tg-hosted-shell-max), calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  padding: 12px clamp(8px, 1.8vw, 18px) 44px !important;
+  gap: 12px !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .topbar {
+  position: relative !important;
+  top: auto !important;
+  z-index: 1 !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  overflow: hidden !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar h1 {
+  max-width: 24ch !important;
+  font-size: clamp(1.85rem, 3.4vw, 3.2rem) !important;
+  line-height: 1.03 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar p {
+  max-width: 78ch !important;
+  font-size: 0.96rem !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(
+  .session-control-strip,
+  .portal-route-shell,
+  .work-grid,
+  .workspace-admin-grid,
+  .auth-panel,
+  .verify-panel,
+  .records-panel,
+  .corporate-directory-panel,
+  .passport-panel,
+  .billing-panel,
+  .audit-panel
+) {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .hero {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .hero-card h2 {
+  max-width: 22ch !important;
+  font-size: clamp(2rem, 4.2vw, 3.5rem) !important;
+  line-height: 1 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(
+  .setup-panel-grid,
+  .record-form-grid,
+  .form-grid,
+  .directory-controls,
+  .corporate-reviewer-action-grid,
+  .corporate-reviewer-access-verdict-grid,
+  .session-control-strip-grid,
+  .portal-route-tabs
+) {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)) !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(button, a, input, select, textarea) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 42px !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(strong, small, span, p, em, b, code, label, div, td, th) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(table, thead, tbody, tr) {
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+}
+
+@media (max-width: 760px) {
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) {
+    width: min(100%, calc(100vw - 10px)) !important;
+    max-width: calc(100vw - 10px) !important;
+    padding-inline: 6px !important;
+  }
+
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar h1 {
+    font-size: clamp(1.72rem, 9vw, 2.55rem) !important;
+  }
+}
+
 /* Public route answer bar: first visible user/corporate decision before credentials. */
 .public-route-answer-bar {
   display: grid !important;
