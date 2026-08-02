@@ -19,6 +19,7 @@
     "check:live-database-repair": "node scripts/check-live-database-repair.mjs",
     "check:real-data-readiness": "node scripts/check-real-data-readiness.mjs",
     "check:hosted-auth-flow": "node scripts/check-hosted-auth-flow.mjs",
+    "check:v1-completion-gate": "node scripts/check-v1-completion-gate.mjs",
     "check:vps-workflow": "node scripts/check-vps-workflow.mjs",
     "check:vps-freshness": "node scripts/check-vps-freshness.mjs",
     "report:vps-status": "node scripts/report-vps-status.mjs",

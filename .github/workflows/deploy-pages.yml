@@ -72,6 +72,9 @@ jobs:
       - name: Verify hosted auth flow
         run: pnpm check:hosted-auth-flow
 
+      - name: Verify V1 completion gate
+        run: pnpm check:v1-completion-gate
+
       - name: Verify Supabase migration workflow
         run: pnpm check:migrations-workflow
 
