@@ -21481,6 +21481,98 @@ function PublicSite({
       onClick: () => void recoverPassword()
     }
   ];
+  const publicAccessAnswer = {
+    mode: "public_access_answer",
+    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
+    primary_action:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create corporate admin account"
+          : "Login to corporate workspace"
+        : mode === "signup"
+          ? "Create professional Passport"
+          : "Login to professional Passport",
+    price: selectedRegistrationPath.plan,
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing hosted session opens first.",
+    landing_portal: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
+    recovery_path: email ? "Reset, resend, and hosted link repair are ready." : "Enter email to enable reset, resend, and hosted link repair.",
+    corporate_database_boundary:
+      "Corporate accounts request access by professional email and review only approved scoped rows; there is no open user database browse.",
+    server_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "public_access_answer_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_submit_first_database_write_landing_server_status_and_no_open_user_database_before_credentials"
+  };
+  const publicAccessAnswerRoutes = [
+    {
+      label: "User register",
+      detail: "Free Passport",
+      active: portal === "professional" && mode === "signup",
+      action: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "User login",
+      detail: "Open Passport",
+      active: portal === "professional" && mode === "signin",
+      action: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate register",
+      detail: "$149 pilot workspace",
+      active: portal === "corporate" && mode === "signup",
+      action: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate login",
+      detail: "Open Verify",
+      active: portal === "corporate" && mode === "signin",
+      action: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    }
+  ];
+  const publicAccessAnswerCards = [
+    {
+      label: "Route",
+      value: publicAccessAnswer.selected_route,
+      detail: publicAccessAnswer.primary_action
+    },
+    {
+      label: "Pricing",
+      value: publicAccessAnswer.price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First database write",
+      value: publicAccessAnswer.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Landing",
+      value: publicAccessAnswer.landing_portal,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Recovery",
+      value: email ? "Ready" : "Enter email",
+      detail: publicAccessAnswer.recovery_path
+    },
+    {
+      label: "Corporate data",
+      value: "Scoped only",
+      detail: publicAccessAnswer.corporate_database_boundary
+    }
+  ];
   const publicAccountEntryLaunchpad = {
     mode: "public_account_entry_launchpad",
     selected_portal: portal,
@@ -24737,6 +24829,64 @@ function PublicSite({
               ? "Create a user account, verify email, then provision an employer or staffing workspace."
               : "Create a user account, verify email if prompted, then start your private Passport."}
           </p>
+          <div className={`public-access-answer ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public access answer">
+            <div className="public-access-answer-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Access answer</span>
+                <strong>{publicAccessAnswer.primary_action}</strong>
+                <small>
+                  Pick one route, enter credentials once, and land in the correct portal. Pricing, recovery, first database write, and the no-open-user-database rule stay visible before submit.
+                </small>
+              </div>
+              <button className="primary-action" disabled={busy || !email || !password} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-access-answer-routes" aria-label="Public access answer routes">
+              {publicAccessAnswerRoutes.map((route) => (
+                <button aria-pressed={route.active} className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-access-answer-grid">
+              {publicAccessAnswerCards.map((item) => (
+                <span key={item.label}>
+                  <small>{item.label}</small>
+                  <strong>{item.value}</strong>
+                  <em>{item.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="public-access-answer-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to email
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-access-answer-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicAccessAnswer, routes: publicAccessAnswerRoutes.map(({ action: _action, ...route }) => route), cards: publicAccessAnswerCards }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export answer
+              </button>
+            </div>
+            <small className="public-access-answer-boundary">
+              {publicAccessAnswer.accepted_when} | Server: {publicAccessAnswer.server_status.replaceAll("_", " ")} | Preview data accepted: {publicAccessAnswer.preview_data_accepted ? "yes" : "no"}
+            </small>
+          </div>
           <div className="public-login-command-center" aria-label="Public login command center">
             <div className="public-login-command-copy">
               <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>

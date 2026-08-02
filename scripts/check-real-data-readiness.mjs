@@ -250,6 +250,12 @@ const appRequirements = [
     "public_pricing_path_answer_recommends_professional_free_corporate_149_or_scale_quote_with_first_live_write_scoped_access_and_stripe_gate_before_plan_cards",
     "public pricing path answer acceptance rule"
   ],
+  ["Public access answer", "public access answer label"],
+  ["public_access_answer", "public access answer packet mode"],
+  [
+    "public_access_answer_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_submit_first_database_write_landing_server_status_and_no_open_user_database_before_credentials",
+    "public access answer acceptance rule"
+  ],
   ["Pricing activation workbench", "pricing activation workbench label"],
   ["pricing_activation_workbench", "pricing activation workbench packet mode"],
   [

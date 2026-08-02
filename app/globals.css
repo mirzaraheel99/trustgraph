@@ -38557,6 +38557,162 @@ body {
 }
 
 /* Public access hub: one premium user/corporate login path before credentials. */
+.public-access-answer {
+  order: -120;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(16px, 2.4vw, 22px);
+  overflow: hidden;
+  border: 1px solid rgba(113, 242, 203, 0.34);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(18, 45, 41, 0.96), rgba(8, 13, 17, 0.98)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+}
+
+.public-access-answer.corporate {
+  border-color: rgba(130, 169, 255, 0.4);
+  background:
+    linear-gradient(135deg, rgba(24, 36, 58, 0.96), rgba(8, 13, 17, 0.98)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.public-access-answer-header,
+.public-access-answer-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.26fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-access-answer-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-access-answer-routes,
+.public-access-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.public-access-answer-routes button,
+.public-access-answer-grid span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 72px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #dce9e3;
+  text-align: left;
+}
+
+.public-access-answer-routes button.active {
+  border-color: rgba(113, 242, 203, 0.58);
+  background: rgba(113, 242, 203, 0.16);
+  color: #f4fbf7;
+}
+
+.public-access-answer.corporate .public-access-answer-routes button.active {
+  border-color: rgba(130, 169, 255, 0.58);
+  background: rgba(130, 169, 255, 0.16);
+}
+
+.public-access-answer strong,
+.public-access-answer small,
+.public-access-answer span,
+.public-access-answer em {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-access-answer-header strong {
+  color: #f4fbf7;
+  font-size: clamp(1.5rem, 2.7vw, 2.3rem);
+  line-height: 1.04;
+}
+
+.public-access-answer-routes strong,
+.public-access-answer-grid strong {
+  color: #f4fbf7;
+  font-size: 0.98rem;
+  line-height: 1.16;
+}
+
+.public-access-answer-header small,
+.public-access-answer-routes small,
+.public-access-answer-grid em,
+.public-access-answer-boundary {
+  color: rgba(224, 235, 229, 0.74);
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.public-access-answer-grid small {
+  color: rgba(113, 242, 203, 0.86);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.public-access-answer.corporate .public-access-answer-grid small {
+  color: rgba(166, 190, 255, 0.9);
+}
+
+.public-access-answer-actions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.public-access-answer-actions button,
+.public-access-answer-header button {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  white-space: normal;
+}
+
+.public-auth-card:has(.public-access-answer) .public-login-command-center,
+.public-auth-card:has(.public-access-answer) .login-portal-desk,
+.public-auth-card:has(.public-access-answer) .public-access-hub,
+.public-auth-card:has(.public-access-answer) .public-account-entry-launchpad,
+.public-auth-card:has(.public-access-answer) .public-auth-start-strip,
+.public-auth-card:has(.public-access-answer) .public-account-access-path,
+.public-auth-card:has(.public-access-answer) .public-auth-experience-studio,
+.public-auth-card:has(.public-access-answer) .public-account-path-chooser,
+.public-auth-card:has(.public-access-answer) .public-conversion-runway,
+.public-auth-card:has(.public-access-answer) .public-v1-access-runway,
+.public-auth-card:has(.public-access-answer) .public-portal-route-shell,
+.public-auth-card:has(.public-access-answer) .public-auth-front-desk,
+.public-auth-card:has(.public-access-answer) .public-access-desk,
+.public-auth-card:has(.public-access-answer) .registration-route-planner,
+.public-auth-card:has(.public-access-answer) .corporate-access-route-preview,
+.public-auth-card:has(.public-access-answer) .public-account-route-confirmation,
+.public-auth-card:has(.public-access-answer) .public-submit-readiness,
+.public-auth-card:has(.public-access-answer) .public-portal-route-board,
+.public-auth-card:has(.public-access-answer) .portal-auth-command,
+.public-auth-card:has(.public-access-answer) .portal-start-desk,
+.public-auth-card:has(.public-access-answer) .portal-entry-path,
+.public-auth-card:has(.public-access-answer) .portal-launch-decision-strip,
+.public-auth-card:has(.public-access-answer) .public-auth-flow-command,
+.public-auth-card:has(.public-access-answer) .registration-decision-receipt,
+.public-auth-card:has(.public-access-answer) .live-onboarding-contract,
+.public-auth-card:has(.public-access-answer) .account-type-chooser,
+.public-auth-card:has(.public-access-answer) .auth-choice-summary,
+.public-auth-card:has(.public-access-answer) .portal-auth-summary-panel {
+  display: none !important;
+}
+
 .public-access-hub {
   display: grid;
   gap: 14px;
@@ -38906,6 +39062,16 @@ body {
 }
 
 @media (max-width: 920px) {
+  .public-access-answer-header,
+  .public-access-answer-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .public-access-answer-routes,
+  .public-access-answer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .login-portal-desk-header,
   .login-portal-desk-actions {
     grid-template-columns: minmax(0, 1fr);
@@ -38929,6 +39095,11 @@ body {
 }
 
 @media (max-width: 560px) {
+  .public-access-answer-routes,
+  .public-access-answer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .login-portal-desk-routes,
   .login-portal-desk-status {
     grid-template-columns: minmax(0, 1fr);
