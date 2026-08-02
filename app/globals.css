@@ -44154,6 +44154,92 @@ body,
   min-width: 0 !important;
 }
 
+/* V1 database focus: keep one completion cockpit and suppress older duplicate database proof boards. */
+.workspace:has(.v1-completion-cockpit) > .live-database-run-answer,
+.workspace:has(.v1-completion-cockpit) > .live-data-acceptance-answer,
+.workspace:has(.v1-completion-cockpit) > .live-database-proof-commander,
+.workspace:has(.v1-completion-cockpit) > .real-data-mission-control,
+.workspace:has(.v1-completion-cockpit) > .live-row-gap-resolver {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.workspace:has(.v1-completion-cockpit) > .v1-completion-cockpit {
+  order: -98 !important;
+}
+
+.v1-completion-cockpit {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: clamp(12px, 2vw, 16px) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.v1-completion-cockpit > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.v1-completion-cockpit .v1-remaining-work-answer {
+  order: -124 !important;
+}
+
+.v1-completion-cockpit .v1-completion-command-center {
+  order: -120 !important;
+}
+
+.v1-completion-cockpit .live-database-contract {
+  order: -116 !important;
+}
+
+.v1-completion-cockpit .live-database-repair-guide,
+.v1-completion-cockpit .live-row-completion-command {
+  order: -112 !important;
+}
+
+.v1-completion-cockpit .real-database-launch-gate,
+.v1-completion-cockpit .real-data-acceptance-ledger,
+.v1-completion-cockpit .v1-completion-blocker-ledger,
+.v1-completion-cockpit .live-data-acceptance-contract,
+.v1-completion-cockpit .v1-human-gate-separation,
+.v1-completion-cockpit .real-database-completion-plan {
+  order: 20 !important;
+}
+
+.v1-completion-cockpit .real-database-completion-grid,
+.v1-completion-cockpit .real-data-acceptance-grid,
+.v1-completion-cockpit .v1-completion-blocker-grid,
+.v1-completion-cockpit .live-data-acceptance-grid,
+.v1-completion-cockpit .v1-human-gate-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+}
+
+.v1-completion-cockpit button,
+.v1-completion-cockpit input,
+.v1-completion-cockpit select,
+.v1-completion-cockpit textarea {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+.v1-completion-cockpit strong,
+.v1-completion-cockpit small,
+.v1-completion-cockpit span,
+.v1-completion-cockpit p,
+.v1-completion-cockpit em {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 /* Security production gate: separate code-verified pilot readiness from human launch approval. */
 .production-security-checklist {
   order: -97;

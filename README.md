@@ -564,6 +564,8 @@ The current UI applies a V1 premium flow compression layer. The public site keep
 
 The signed-in workspace also includes a Real data mission control directly below the portal command center. It shows live-row progress, next missing Supabase group, row source, completion receipt status, VPS freshness, and direct actions for login/recovery, live pilot seed, proof reload, working-data export, and real database completion receipt recording before the deeper proof panels.
 
+The signed-in database proof path now uses the V1 completion cockpit as the primary answer. Older live database run, live data answer, proof commander, mission control, and gap resolver boards remain in source for receipts and export coverage, but they are hidden from the daily cockpit so operators see one remaining-work answer, one command center, one live row repair path, and one completion ledger.
+
 The simplified signed-in portal keeps the compact VPS saved-build command visible directly under the portal desk. Duplicate route and guidance panels stay hidden, but the operator can still see whether GitHub Pages is current, whether the VPS needs the manual `/opt/trustgraph` updater or SSH secrets, and whether `/trustgraph-release.json` returns commit JSON before testing the server URL.
 
 ## Product Planning
