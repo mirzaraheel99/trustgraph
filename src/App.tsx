@@ -23412,6 +23412,67 @@ function PublicSite({
       detail: selectedRegistrationPath.nextAction
     }
   ];
+  const publicPlanPortalChooser = {
+    mode: "public_plan_portal_chooser",
+    selected_portal: selectedRegistrationPath.portal,
+    selected_action: mode === "signup" ? "Register" : "Login",
+    selected_price: selectedRegistrationPath.plan,
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing verified account session",
+    payment_boundary: selectedRegistrationPath.paymentStatus,
+    corporate_database_boundary:
+      "Corporate Verify is not an open user database. Corporate reviewers request one professional by email and see only approved, consent-scoped rows.",
+    preview_data_accepted: false,
+    accepted_when:
+      "public_plan_portal_chooser_keeps_professional_login_register_corporate_login_register_pricing_first_database_write_corporate_database_boundary_recovery_and_no_preview_data_visible_before_credentials"
+  };
+  const publicPlanPortalChooserRoutes = [
+    {
+      label: "Professional login",
+      active: portal === "professional" && mode === "signin",
+      detail: "Open Passport records, evidence, references, consent, and sharing.",
+      price: "Free pilot",
+      action: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Professional register",
+      active: portal === "professional" && mode === "signup",
+      detail: "Create a Passport owner account and personal workspace.",
+      price: "Free pilot",
+      action: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate login",
+      active: portal === "corporate" && mode === "signin",
+      detail: "Open Company Admin or Corporate Verify for approved scoped rows.",
+      price: "$149 pilot",
+      action: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate register",
+      active: portal === "corporate" && mode === "signup",
+      detail: "Create company workspace, admin membership, and reviewer path.",
+      price: "$149 pilot",
+      action: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    }
+  ];
+  const publicPlanPortalChooserFacts = [
+    { label: "Selected price", value: publicPlanPortalChooser.selected_price, detail: publicPlanPortalChooser.payment_boundary },
+    { label: "First write", value: publicPlanPortalChooser.first_database_write, detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ") },
+    { label: "Landing portal", value: portal === "corporate" ? "Company Admin then Verify" : "Professional Passport", detail: selectedRegistrationPath.nextAction },
+    { label: "Database boundary", value: portal === "corporate" ? "Scoped rows only" : "Owner controlled", detail: portal === "corporate" ? "Request by email, approve, then review shared rows." : "Professional owns sharing and consent." }
+  ];
   const portalRouteBoard = {
     mode: "public_portal_route_board",
     selected_portal: portal,
@@ -28761,6 +28822,63 @@ function PublicSite({
               </button>
             </div>
             <small className="public-auth-help-strip-boundary">{publicAuthHelpStrip.accepted_when}</small>
+          </div>
+          <div className={`public-plan-portal-chooser ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public plan and portal chooser">
+            <div className="public-plan-portal-chooser-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Plan and portal</span>
+                <strong>{publicPlanPortalChooser.selected_portal} {publicPlanPortalChooser.selected_action}</strong>
+                <small>{publicPlanPortalChooser.accepted_when}</small>
+              </div>
+              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to credentials
+              </button>
+            </div>
+            <div className="public-plan-portal-chooser-routes" aria-label="Choose plan and portal route">
+              {publicPlanPortalChooserRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                  <em>{route.price}</em>
+                </button>
+              ))}
+            </div>
+            <div className="public-plan-portal-chooser-grid">
+              {publicPlanPortalChooserFacts.map((fact) => (
+                <span key={fact.label}>
+                  <small>{fact.label}</small>
+                  <strong>{fact.value}</strong>
+                  <em>{fact.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="public-plan-portal-chooser-actions">
+              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                View pricing
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-plan-portal-chooser-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicPlanPortalChooser, routes: publicPlanPortalChooserRoutes.map(({ action: _action, ...route }) => route), facts: publicPlanPortalChooserFacts }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export choice
+              </button>
+            </div>
+            <small className="public-plan-portal-chooser-boundary">
+              {portal === "corporate" ? publicPlanPortalChooser.corporate_database_boundary : "Professional users own their Passport, evidence, consent, and sharing decisions."}
+            </small>
           </div>
           <div className={`public-login-route-cockpit ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public login route cockpit">
             <div className="public-login-route-header">

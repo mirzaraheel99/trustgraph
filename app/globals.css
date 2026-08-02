@@ -50227,6 +50227,10 @@ body,
   order: -400 !important;
 }
 
+.public-auth-card:has(.public-login-route-cockpit) > .public-plan-portal-chooser {
+  order: -410 !important;
+}
+
 .public-auth-card:has(.public-login-route-cockpit) > .public-credential-station {
   order: -390 !important;
 }
@@ -50295,6 +50299,7 @@ body,
 }
 
 .public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-header,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header,
 .public-auth-card:has(.public-login-route-cockpit) .public-auth-help-strip,
 .public-auth-card:has(.public-login-route-cockpit) .public-hosted-server-freshness-copy {
@@ -50307,6 +50312,9 @@ body,
 .public-auth-card:has(.public-login-route-cockpit) .public-login-route-grid,
 .public-auth-card:has(.public-login-route-cockpit) .public-login-route-status,
 .public-auth-card:has(.public-login-route-cockpit) .public-login-route-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-routes,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-grid,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-actions,
 .public-auth-card:has(.public-login-route-cockpit) .public-auth-action-dock,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-preflight-grid,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-fields,
@@ -50326,6 +50334,66 @@ body,
   max-width: 100% !important;
   white-space: normal !important;
   overflow-wrap: anywhere !important;
+  pointer-events: auto !important;
+}
+
+.public-plan-portal-chooser {
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(113, 242, 203, 0.26) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(72, 208, 174, 0.12), rgba(134, 174, 246, 0.07) 52%, rgba(255, 205, 118, 0.045)),
+    rgba(7, 15, 18, 0.96) !important;
+}
+
+.public-plan-portal-chooser.corporate {
+  border-color: rgba(134, 174, 246, 0.28) !important;
+}
+
+.public-plan-portal-chooser-header,
+.public-plan-portal-chooser-actions,
+.public-plan-portal-chooser-boundary {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.public-plan-portal-chooser-routes button,
+.public-plan-portal-chooser-grid span,
+.public-plan-portal-chooser-boundary {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.public-plan-portal-chooser-routes button.active {
+  border-color: rgba(113, 242, 203, 0.32) !important;
+  background: rgba(72, 208, 174, 0.1) !important;
+}
+
+.public-plan-portal-chooser.corporate .public-plan-portal-chooser-routes button.active {
+  border-color: rgba(134, 174, 246, 0.34) !important;
+  background: rgba(134, 174, 246, 0.1) !important;
+}
+
+.public-plan-portal-chooser :is(button, strong, small, span, p, em, b, code, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.public-plan-portal-chooser button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
   pointer-events: auto !important;
 }
 

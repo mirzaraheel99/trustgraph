@@ -302,6 +302,12 @@ const appRequirements = [
     "public_portal_route_shell_requires_one_bounded_login_register_surface_for_professional_corporate_pricing_first_database_write_recovery_server_save_and_no_preview_data",
     "public portal route shell no-preview-data acceptance rule"
   ],
+  ["Public plan and portal chooser", "public plan and portal chooser label"],
+  ["public_plan_portal_chooser", "public plan and portal chooser packet mode"],
+  [
+    "public_plan_portal_chooser_keeps_professional_login_register_corporate_login_register_pricing_first_database_write_corporate_database_boundary_recovery_and_no_preview_data_visible_before_credentials",
+    "public plan and portal chooser no-preview-data rule"
+  ],
   ["Public pricing path answer", "public pricing path answer label"],
   ["public_pricing_path_answer", "public pricing path answer packet mode"],
   [
