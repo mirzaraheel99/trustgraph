@@ -87,6 +87,8 @@ docker exec "$web_container" sh -c "cat > /srv/trustgraph/trustgraph-release.jso
 JSON
 docker exec "$web_container" sh -c "test -s /srv/trustgraph/trustgraph-release.json && grep -q '\"commit_short\": \"$commit_short\"' /srv/trustgraph/trustgraph-release.json" \
   || fail "release stamp was not written inside the TrustGraph web container"
+docker exec "$web_container" sh -c "wget -qO- http://127.0.0.1/trustgraph-release.json | grep -q '\"commit_short\": \"$commit_short\"'" \
+  || fail "local TrustGraph container route did not serve release stamp JSON; check Caddy /trustgraph-release.json before nginx proxy debugging"
 
 fetch_public_bundle "$PUBLIC_URL" /tmp/trustgraph-vps-smoke.html
 grep -q "TrustGraph" /tmp/trustgraph-vps-smoke.html || fail "public smoke did not contain TrustGraph"
@@ -96,7 +98,11 @@ curl --fail --location --silent --show-error --dump-header "$release_headers" "$
 grep -qi '^content-type: application/json' "$release_headers" \
   || fail "public release stamp did not return application/json; check the nginx TrustGraph host proxy and Caddy /trustgraph-release.json route"
 if grep -qi '<!DOCTYPE html\|<html' /tmp/trustgraph-vps-release.json; then
-  fail "public release stamp served the app shell instead of trustgraph-release.json; check that trustgraph.${TRUSTGRAPH_HOST#trustgraph.} proxies to the TrustGraph container, not the fallback app"
+  docker exec "$web_container" sh -c "wget -qO- http://127.0.0.1/trustgraph-release.json" >/tmp/trustgraph-local-release.json || true
+  if grep -q "$commit_short" /tmp/trustgraph-local-release.json; then
+    fail "public release stamp served the app shell instead of trustgraph-release.json, but the local container route is correct; reload the shared nginx trustgraph host proxy to 127.0.0.1:4180 and keep VFIX separate"
+  fi
+  fail "public release stamp served the app shell instead of trustgraph-release.json and the local container route was not proven; check Caddy /trustgraph-release.json before nginx proxy debugging"
 fi
 grep -q "$commit_short" /tmp/trustgraph-vps-release.json || fail "release stamp does not match current commit"
 grep -q "$EXPECTED_BUNDLE_MARKER" /tmp/trustgraph-vps-release.json || fail "release stamp does not contain expected bundle marker: $EXPECTED_BUNDLE_MARKER"

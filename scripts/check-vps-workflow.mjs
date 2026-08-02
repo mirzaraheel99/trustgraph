@@ -311,6 +311,12 @@ const runtimeSnippets = [
   {
     source: updateVps,
     path: "tools/update-vps-from-github.sh",
+    snippet: "local TrustGraph container route did not serve release stamp JSON",
+    label: "manual VPS update checks the local container release stamp route before proxy debugging"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
     snippet: "grep -q \"$commit_short\" /tmp/trustgraph-vps-release.json",
     label: "manual VPS update verifies release stamp matches current commit"
   },
@@ -325,6 +331,12 @@ const runtimeSnippets = [
     path: "tools/update-vps-from-github.sh",
     snippet: "public release stamp served the app shell instead of trustgraph-release.json",
     label: "manual VPS update rejects public app-shell release stamp fallback"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "the local container route is correct; reload the shared nginx trustgraph host proxy to 127.0.0.1:4180 and keep VFIX separate",
+    label: "manual VPS update diagnoses public app-shell fallback as shared nginx proxy when local Caddy is correct"
   },
   {
     source: updateVps,
