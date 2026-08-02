@@ -69,6 +69,9 @@ jobs:
       - name: Verify premium layout shell
         run: pnpm check:premium-layout
 
+      - name: Verify hosted auth flow
+        run: pnpm check:hosted-auth-flow
+
       - name: Verify Supabase migration workflow
         run: pnpm check:migrations-workflow
 
