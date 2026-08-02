@@ -218,6 +218,12 @@ const appRequirements = [
     "portal_route_shell_requires_one_bounded_tabbed_surface_for_professional_corporate_company_pricing_account_database_vps_freshness_logout_and_no_preview_data",
     "portal route shell no-preview-data acceptance rule"
   ],
+  ["Portal flow compass", "portal flow compass label"],
+  ["portal_flow_compass", "portal flow compass packet mode"],
+  [
+    "portal_flow_compass_keeps_professional_corporate_company_pricing_account_live_data_logout_and_next_click_visible_as_one_simple_portal_path",
+    "portal flow compass acceptance rule"
+  ],
   ["VPS freshness checkpoint", "VPS freshness checkpoint label"],
   ["vps_freshness_checkpoint", "VPS freshness checkpoint packet mode"],
   [

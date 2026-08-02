@@ -37135,6 +37135,70 @@ function App() {
     accepted_when:
       "portal_route_shell_requires_one_bounded_tabbed_surface_for_professional_corporate_company_pricing_account_database_vps_freshness_logout_and_no_preview_data"
   };
+  const portalFlowCompass = {
+    mode: "portal_flow_compass",
+    status: authSession ? "signed_in_route_ready" : "hosted_login_required",
+    current_portal: workspace.label,
+    next_portal: nextV1PortalLane.label,
+    next_action: authSession ? nextV1PortalLane.action : "Login / register",
+    signed_in: Boolean(authSession),
+    corporate_access_model: "corporate reviewers access only approved consent-scoped user rows",
+    pricing_model: portalRouteShell.pricing_boundary,
+    live_data_status: liveDataRealityStrip.status,
+    preview_data_accepted: false,
+    accepted_when:
+      "portal_flow_compass_keeps_professional_corporate_company_pricing_account_live_data_logout_and_next_click_visible_as_one_simple_portal_path"
+  };
+  const portalFlowCompassSteps = [
+    {
+      label: "Professional",
+      value: workspaces.find((candidate) => candidate.id === "passport")?.label ?? "Professional",
+      detail: "Passport, evidence, consent, references, and share readiness.",
+      action: "Open passport",
+      ready: workspaceId === "passport",
+      onClick: () => setWorkspaceId("passport")
+    },
+    {
+      label: "Corporate",
+      value: "Verify",
+      detail: "Review only approved, consent-scoped user rows.",
+      action: "Open corporate",
+      ready: workspaceId === "verify",
+      onClick: () => setWorkspaceId("verify")
+    },
+    {
+      label: "Company",
+      value: activeOrganization?.name ?? "Setup required",
+      detail: "Create organization, activate RBAC, invite team, then review rows.",
+      action: "Open setup",
+      ready: Boolean(activeOrganization),
+      onClick: () => document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Pricing",
+      value: "Pilot pricing",
+      detail: "Professional free pilot, Corporate Verify $149 pilot until Stripe is connected.",
+      action: "View pricing",
+      ready: true,
+      onClick: () => setShowPublicSite(true)
+    },
+    {
+      label: "Live data",
+      value: `${liveDataRealityStrip.ready_groups}/${liveDataRealityStrip.required_groups}`,
+      detail: liveDataRealityStrip.accepted ? "Real Supabase rows loaded." : "Preview or missing rows still blocked.",
+      action: "Open proof",
+      ready: liveDataRealityStrip.accepted,
+      onClick: () => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    },
+    {
+      label: "Account",
+      value: authSession ? "Signed in" : "Login needed",
+      detail: authSession ? "Logout and account actions stay visible." : "Use hosted login or registration first.",
+      action: authSession ? "Logout" : "Login",
+      ready: Boolean(authSession),
+      onClick: authSession ? handleSignOut : openAuthControls
+    }
+  ];
   const portalServerSaveCommander = {
     mode: "portal_server_save_commander",
     status: serverSyncMonitor.status === "synced" ? "server_current" : "server_save_required",
@@ -37808,6 +37872,73 @@ function App() {
             ))}
           </div>
           <div className="live-data-reality-boundary">{liveDataRealityStrip.accepted_when}</div>
+        </section>
+
+        <section className={`portal-flow-compass ${portalFlowCompass.status}`} aria-label="Portal flow compass">
+          <div className="portal-flow-compass-header">
+            <div>
+              <span className={`status-chip ${portalFlowCompass.signed_in ? "success" : "warning"}`}>Portal flow</span>
+              <strong>{portalFlowCompass.signed_in ? `You are in ${portalFlowCompass.current_portal}` : "Login, then choose the right workspace"}</strong>
+              <small>
+                One path for Professional Passport, Corporate Verify, company setup, pricing, account actions, and real database proof.
+              </small>
+            </div>
+            <div className="portal-flow-compass-next">
+              <span>
+                <small>Next click</small>
+                <strong>{portalFlowCompass.next_action}</strong>
+              </span>
+              <button className={portalFlowCompass.signed_in ? "secondary-action" : "primary-action"} onClick={portalFlowCompass.signed_in ? nextV1PortalLane.onClick : openAuthControls} type="button">
+                {portalFlowCompass.signed_in ? portalFlowCompass.next_portal : "Login / register"}
+              </button>
+            </div>
+          </div>
+          <div className="portal-flow-compass-grid">
+            {portalFlowCompassSteps.map((step) => (
+              <button className={step.ready ? "ready" : "needed"} key={step.label} onClick={step.onClick} type="button">
+                <span>{step.label}</span>
+                <strong>{step.value}</strong>
+                <small>{step.detail}</small>
+                <em>{step.action}</em>
+              </button>
+            ))}
+          </div>
+          <div className="portal-flow-compass-proof">
+            <span>
+              <small>Corporate boundary</small>
+              <strong>{portalFlowCompass.corporate_access_model}</strong>
+            </span>
+            <span>
+              <small>Pricing</small>
+              <strong>{portalFlowCompass.pricing_model.replace(/_/g, " ")}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{portalFlowCompass.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-portal-flow-compass-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify(
+                    {
+                      ...portalFlowCompass,
+                      steps: portalFlowCompassSteps.map(({ onClick: _onClick, ...step }) => step)
+                    },
+                    null,
+                    2
+                  ),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              <Download size={16} />
+              Export flow
+            </button>
+          </div>
+          <div className="portal-flow-compass-boundary">{portalFlowCompass.accepted_when}</div>
         </section>
 
         <section className={`vps-saved-portal-command ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="VPS saved portal command">

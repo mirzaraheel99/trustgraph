@@ -50231,3 +50231,85 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Portal flow compass: one plain route map for personal, corporate, pricing, account, and live data work. */
+.portal-flow-compass {
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(134, 174, 246, 0.22) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.09), rgba(72, 208, 174, 0.07) 50%, rgba(255, 255, 255, 0.025)),
+    rgba(7, 15, 18, 0.94) !important;
+}
+
+.workspace:has(.portal-route-shell) > .portal-flow-compass,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-flow-compass {
+  order: -452 !important;
+}
+
+.portal-flow-compass-header,
+.portal-flow-compass-next,
+.portal-flow-compass-proof {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.portal-flow-compass-next {
+  grid-template-columns: minmax(0, 1fr) minmax(136px, auto) !important;
+}
+
+.portal-flow-compass-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr)) !important;
+  gap: 9px !important;
+}
+
+.portal-flow-compass-grid button,
+.portal-flow-compass-proof span,
+.portal-flow-compass-boundary {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.portal-flow-compass-grid button.ready {
+  border-color: rgba(113, 242, 203, 0.24) !important;
+  background: rgba(72, 208, 174, 0.08) !important;
+}
+
+.portal-flow-compass-grid button.needed {
+  border-color: rgba(134, 174, 246, 0.24) !important;
+  background: rgba(134, 174, 246, 0.065) !important;
+}
+
+.portal-flow-compass :is(button, strong, small, span, p, em, b, code, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.portal-flow-compass button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 760px) {
+  .portal-flow-compass-header,
+  .portal-flow-compass-next,
+  .portal-flow-compass-proof {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
