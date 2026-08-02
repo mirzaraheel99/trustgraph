@@ -4020,12 +4020,142 @@ function VerifyRequestsPanel({
       action: "scroll"
     }
   ];
+  const corporateAccessPathSummary = {
+    mode: "corporate_access_path_summary",
+    status: disabled
+      ? "corporate_role_needed"
+      : sharedRecords.length
+        ? "scoped_user_rows_visible"
+        : approvedCount
+          ? "approval_ready_reload_rows"
+          : requests.length
+            ? "waiting_for_professional_approval"
+            : "request_access_first",
+    active_organization: activeOrganization.name,
+    can_view_user_rows: !disabled && sharedRecords.length > 0,
+    visible_scoped_rows: sharedRecords.length,
+    access_requests: requests.length,
+    approved_grants: approvedCount,
+    review_attestations: reviews.length,
+    open_review_gaps: pendingGapCount,
+    next_click: corporateVerifySingleLane.next_target === "export" ? "Export metadata proof" : corporateVerifySingleLane.next_target,
+    no_open_user_database_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_access_path_summary_keeps_company_role_request_professional_approval_scoped_user_rows_review_export_logout_and_no_open_database_visible_before_corporate_forms"
+  };
+  const corporateAccessPathSummarySteps = [
+    {
+      label: "Company role",
+      value: disabled ? "Needed" : "Active",
+      detail: disabled ? "Activate Corporate reviewer access from Company setup." : activeOrganization.name,
+      ready: !disabled,
+      target: "corporate-account-controls"
+    },
+    {
+      label: "Request access",
+      value: requests.length ? `${requests.length} sent` : "Send first",
+      detail: "Ask one professional by email with a clear business purpose.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: "No user Passport rows are visible before professional approval.",
+      ready: approvedCount > 0,
+      target: "corporate-verify-request-list"
+    },
+    {
+      label: "Scoped rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Locked",
+      detail: "Corporate sees only approved, consent-scoped user rows.",
+      ready: sharedRecords.length > 0,
+      target: sharedRecords.length ? "corporate-access-review-queue" : "corporate-verify-request-list"
+    },
+    {
+      label: "Review/export",
+      value: sharedRecords.length && pendingGapCount === 0 ? "Ready" : `${pendingGapCount} gaps`,
+      detail: "Review gaps, attest access, then export metadata proof.",
+      ready: sharedRecords.length > 0 && pendingGapCount === 0,
+      target: sharedRecords.length ? "corporate-access-review-queue" : "corporate-verify-request-form"
+    },
+    {
+      label: "Account",
+      value: "Logout visible",
+      detail: "Use Account for logout, recovery, roles, and organization setup.",
+      ready: true,
+      target: "corporate-account-controls"
+    }
+  ];
 
   return (
     <section className="verify-panel">
       <div className="mini-heading">
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
+      </div>
+      <div className={`corporate-access-path-summary ${corporateAccessPathSummary.status}`} aria-label="Corporate access path summary">
+        <div className="corporate-access-path-summary-header">
+          <div>
+            <span className={`status-chip ${corporateAccessPathSummary.can_view_user_rows ? "success" : "warning"}`}>Corporate access path</span>
+            <strong>
+              {corporateAccessPathSummary.can_view_user_rows
+                ? "Approved scoped user rows are visible for review"
+                : disabled
+                  ? "Activate corporate access before requesting user rows"
+                  : "Request, approval, then scoped user rows"}
+            </strong>
+            <small>
+              Corporate reviewers do not browse an open user database. Rows appear only through company role, professional approval, consent scope, review, and metadata export.
+            </small>
+          </div>
+          <button
+            className={corporateAccessPathSummary.can_view_user_rows ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (corporateVerifySingleLane.next_target === "export") {
+                downloadTextFile(
+                  `trustgraph-corporate-access-path-summary-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...corporateAccessPathSummary, steps: corporateAccessPathSummarySteps }, null, 2),
+                  "application/json"
+                );
+                return;
+              }
+              document.getElementById(corporateVerifySingleLane.next_target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            type="button"
+          >
+            {corporateAccessPathSummary.next_click}
+          </button>
+        </div>
+        <div className="corporate-access-path-summary-grid">
+          {corporateAccessPathSummarySteps.map((step) => (
+            <button className={step.ready ? "ready" : "needed"} key={step.label} onClick={() => document.getElementById(step.target)?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-access-path-summary-proof">
+          <span>
+            <small>Organization</small>
+            <strong>{corporateAccessPathSummary.active_organization}</strong>
+          </span>
+          <span>
+            <small>Visible rows</small>
+            <strong>{corporateAccessPathSummary.visible_scoped_rows}</strong>
+          </span>
+          <span>
+            <small>Open database browse</small>
+            <strong>{corporateAccessPathSummary.no_open_user_database_browse ? "Blocked" : "Allowed"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateAccessPathSummary.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+        </div>
+        <div className="corporate-access-path-summary-boundary">{corporateAccessPathSummary.accepted_when}</div>
       </div>
       <div className={`corporate-verify-operator-cockpit ${!disabled && sharedRecords.length > 0 ? "ready" : "next"}`} aria-label="Corporate Verify operator cockpit">
         <div className="corporate-verify-operator-header">

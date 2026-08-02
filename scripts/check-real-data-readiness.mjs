@@ -200,6 +200,12 @@ const appRequirements = [
     "corporate_visible_rows_handoff_requires_approved_grant_visible_scoped_rows_consent_scope_review_attestation_export_and_no_open_user_database_browse",
     "corporate visible rows handoff acceptance rule"
   ],
+  ["Corporate access path summary", "corporate access path summary label"],
+  ["corporate_access_path_summary", "corporate access path summary packet mode"],
+  [
+    "corporate_access_path_summary_keeps_company_role_request_professional_approval_scoped_user_rows_review_export_logout_and_no_open_database_visible_before_corporate_forms",
+    "corporate access path summary acceptance rule"
+  ],
   ["Corporate attestation completion gate", "corporate attestation completion gate label"],
   ["corporate_attestation_completion_gate", "corporate attestation completion gate packet mode"],
   [
