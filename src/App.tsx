@@ -17860,8 +17860,29 @@ function TeamMembersPanel({
 
 const TRUSTGRAPH_VPS_URL = "https://trustgraph.5-75-224-110.sslip.io/";
 const TRUSTGRAPH_GITHUB_PAGES_URL = "https://mirzaraheel99.github.io/trustgraph/";
-const TRUSTGRAPH_AUTH_REDIRECT_URL =
-  process.env.NEXT_PUBLIC_TRUSTGRAPH_AUTH_REDIRECT_URL?.trim() || TRUSTGRAPH_VPS_URL;
+const TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL = process.env.NEXT_PUBLIC_TRUSTGRAPH_AUTH_REDIRECT_URL?.trim() || "";
+function normalizeHostedRedirectUrl(url: string) {
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+
+  try {
+    const parsed = new URL(trimmed);
+    const isLocalhost = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
+    const isHostedHttps = parsed.protocol === "https:" && !isLocalhost;
+    if (!isHostedHttps) return "";
+
+    parsed.hash = "";
+    parsed.search = "";
+    const normalized = parsed.toString();
+    return normalized.endsWith("/") ? normalized : `${normalized}/`;
+  } catch {
+    return "";
+  }
+}
+const TRUSTGRAPH_AUTH_REDIRECT_URL = normalizeHostedRedirectUrl(TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL) || TRUSTGRAPH_VPS_URL;
+const TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED = Boolean(
+  TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL && !normalizeHostedRedirectUrl(TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL)
+);
 const TRUSTGRAPH_ALLOWED_REDIRECTS = [
   TRUSTGRAPH_AUTH_REDIRECT_URL,
   TRUSTGRAPH_GITHUB_PAGES_URL,
@@ -25054,6 +25075,8 @@ function PublicSite({
     github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
     trustgraph_vps_redirect: TRUSTGRAPH_VPS_URL,
     allowed_redirects_required: TRUSTGRAPH_ALLOWED_REDIRECTS,
+    configured_redirect_url: TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL || "not_set",
+    invalid_config_fallback_used: TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED,
     localhost_redirect_accepted: false,
     current_browser_is_localhost:
       typeof window === "undefined" ? false : window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
@@ -25095,6 +25118,7 @@ function PublicSite({
     selected_portal: selectedRegistrationPath.portal,
     selected_mode: mode,
     active_redirect_url: authRedirectUrl,
+    invalid_config_fallback_used: TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED,
     localhost_redirect_accepted: false,
     repaired_link_ready: Boolean(repairedVerificationUrl),
     email_rate_limit_note: "Supabase built-in email allows 2 messages per hour project-wide unless custom SMTP is configured.",
