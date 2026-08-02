@@ -46648,6 +46648,15 @@ body,
   overflow-x: clip !important;
 }
 
+.public-site:has(.public-login-route-cockpit) .public-server-sync-receipt {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.38fr) !important;
+  gap: 10px !important;
+  padding: 12px !important;
+  border: 1px solid rgba(255, 205, 117, 0.22) !important;
+  opacity: 1 !important;
+}
+
 .public-site:has(.public-login-route-cockpit) .public-product-answer-grid,
 .public-site:has(.public-login-route-cockpit) .public-product-answer-proof,
 .public-site:has(.public-login-route-cockpit) .pricing-grid,
@@ -46704,6 +46713,10 @@ body,
 
 @media (max-width: 880px) {
   .public-site:has(.public-login-route-cockpit) .public-auth-section {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .public-site:has(.public-login-route-cockpit) .public-server-sync-receipt {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
