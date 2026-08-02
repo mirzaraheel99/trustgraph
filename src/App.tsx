@@ -21496,6 +21496,8 @@ function PublicSite({
     first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing hosted session opens first.",
     landing_portal: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
     recovery_path: email ? "Reset, resend, and hosted link repair are ready." : "Enter email to enable reset, resend, and hosted link repair.",
+    email_delivery:
+      "Supabase built-in email can rate-limit around 2 messages per hour. Use the newest inbox link, or repair localhost links before requesting more emails.",
     corporate_database_boundary:
       "Corporate accounts request access by professional email and review only approved scoped rows; there is no open user database browse.",
     server_status: serverSyncMonitor.status,
@@ -21566,6 +21568,11 @@ function PublicSite({
       label: "Recovery",
       value: email ? "Ready" : "Enter email",
       detail: publicAccessAnswer.recovery_path
+    },
+    {
+      label: "Email delivery",
+      value: "Hosted links only",
+      detail: publicAccessAnswer.email_delivery
     },
     {
       label: "Corporate data",
