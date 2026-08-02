@@ -48137,3 +48137,187 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Corporate portal studio final pass: one reviewer lane, one admin setup lane, no receipt wall. */
+.verify-panel:has(.corporate-verify-single-lane),
+.corporate-directory-panel:has(.corporate-database-access-compass),
+.workspace-admin-grid:has(.setup-panel-grid) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-verify-single-lane {
+  order: -160 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-access-request-preflight,
+.verify-panel:has(.corporate-verify-single-lane) > .verify-request-form {
+  order: -150 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .grant-list {
+  order: -140 !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) > .corporate-directory-panel {
+  order: -130 !important;
+}
+
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-database-access-compass {
+  order: -120 !important;
+}
+
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-reviewer-action-bar,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .directory-controls {
+  order: -110 !important;
+}
+
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-access-review-queue,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .directory-list {
+  order: -100 !important;
+}
+
+.corporate-directory-panel:has(.corporate-database-access-compass) > .shared-record-grid {
+  order: -96 !important;
+}
+
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-access-decision-desk,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-portal-cockpit,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-verify-hub,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-access-command-center,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-database-primary-desk,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-review-queue-runway,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-review-studio,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-scoped-access-journey,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-reviewer-workflow-strip,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-reviewer-task-command,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-row-access-outcome-command,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-reviewer-database-workbench,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-database-next-action-commander,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-row-review-answer-bar,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-database-path-strip,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-database-action-cockpit,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-live-row-proof-chain,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .persisted-corporate-database-acceptance,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-database-access-receipt,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-database-visibility-snapshot,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-directory-filter-receipt,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-directory-acceptance,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-review-handoff-receipt,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-persisted-export-gate,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-review-attestations,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-attestation-completion-gate,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .directory-review-board,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .directory-source-strip,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .directory-source-detail,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .directory-packet-note {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-portal-unlock-answer,
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-command-bar,
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-tabs,
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-panel-grid,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-database-handoff-command {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-launch-cockpit,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-operator-strip,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-setup-triage-board,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-onboarding-pricing-cockpit,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-setup-guide,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-account-flow-map,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-account-proof-board,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-account-operator-guide {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .corporate-verify-single-lane-header,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-header,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-proof,
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-header,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-command-header,
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-database-handoff-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) .corporate-verify-single-lane-grid,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-grid,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-reviewer-action-grid,
+.verify-panel:has(.corporate-verify-single-lane) .directory-controls,
+.verify-panel:has(.corporate-verify-single-lane) .corporate-access-review-grid,
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-grid,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-command-actions,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-tabs,
+.workspace-admin-grid:has(.setup-panel-grid) .account-admin-form,
+.workspace-admin-grid:has(.setup-panel-grid) .account-admin-row,
+.workspace-admin-grid:has(.setup-panel-grid) .team-controls,
+.workspace-admin-grid:has(.setup-panel-grid) .billing-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) button,
+.verify-panel:has(.corporate-verify-single-lane) input,
+.verify-panel:has(.corporate-verify-single-lane) select,
+.verify-panel:has(.corporate-verify-single-lane) textarea,
+.workspace-admin-grid:has(.setup-panel-grid) button,
+.workspace-admin-grid:has(.setup-panel-grid) input,
+.workspace-admin-grid:has(.setup-panel-grid) select,
+.workspace-admin-grid:has(.setup-panel-grid) textarea {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+.verify-panel:has(.corporate-verify-single-lane) strong,
+.verify-panel:has(.corporate-verify-single-lane) small,
+.verify-panel:has(.corporate-verify-single-lane) span,
+.verify-panel:has(.corporate-verify-single-lane) em,
+.workspace-admin-grid:has(.setup-panel-grid) strong,
+.workspace-admin-grid:has(.setup-panel-grid) small,
+.workspace-admin-grid:has(.setup-panel-grid) span,
+.workspace-admin-grid:has(.setup-panel-grid) em {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 760px) {
+  .verify-panel:has(.corporate-verify-single-lane) .corporate-verify-single-lane-header,
+  .verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-header,
+  .verify-panel:has(.corporate-verify-single-lane) .corporate-database-access-compass-proof,
+  .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-header,
+  .workspace-admin-grid:has(.setup-panel-grid) .setup-command-header,
+  .workspace-admin-grid:has(.setup-panel-grid) .corporate-database-handoff-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
