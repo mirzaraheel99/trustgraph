@@ -43768,6 +43768,100 @@ body,
   }
 }
 
+/* Admin export one-path compression: decision, filter cockpit, acceptance, controls, receipt, rows. */
+.audit-panel:has(.admin-audit-decision-bar) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .mini-heading {
+  order: -130 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > small {
+  order: -128 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .admin-audit-decision-bar {
+  order: -124 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .admin-export-filter-cockpit {
+  order: -120 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .admin-operations-acceptance-checkpoint {
+  order: -116 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .audit-controls {
+  order: -112 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .audit-filter-receipt {
+  order: -108 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .audit-list {
+  order: -104 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .admin-export-launcher,
+.audit-panel:has(.admin-audit-decision-bar) > .admin-audit-export-command,
+.audit-panel:has(.admin-audit-decision-bar) > .admin-audit-export-matrix,
+.audit-panel:has(.admin-audit-decision-bar) > .audit-summary-grid,
+.audit-panel:has(.admin-audit-decision-bar) > .audit-coverage-note {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) > .admin-audit-decision-bar,
+.audit-panel:has(.admin-audit-decision-bar) > .admin-export-filter-cockpit,
+.audit-panel:has(.admin-audit-decision-bar) > .admin-operations-acceptance-checkpoint,
+.audit-panel:has(.admin-audit-decision-bar) > .audit-controls,
+.audit-panel:has(.admin-audit-decision-bar) > .audit-filter-receipt,
+.audit-panel:has(.admin-audit-decision-bar) > .audit-list {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) .admin-audit-decision-grid,
+.audit-panel:has(.admin-audit-decision-bar) .admin-export-filter-grid,
+.audit-panel:has(.admin-audit-decision-bar) .admin-operations-acceptance-grid,
+.audit-panel:has(.admin-audit-decision-bar) .audit-controls {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) .admin-audit-decision-header,
+.audit-panel:has(.admin-audit-decision-bar) .admin-export-filter-header,
+.audit-panel:has(.admin-audit-decision-bar) .admin-operations-acceptance-header {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) .admin-audit-decision-actions,
+.audit-panel:has(.admin-audit-decision-bar) .admin-export-filter-actions,
+.audit-panel:has(.admin-audit-decision-bar) .admin-operations-acceptance-proof {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.audit-panel:has(.admin-audit-decision-bar) .admin-audit-decision-actions > *,
+.audit-panel:has(.admin-audit-decision-bar) .admin-export-filter-actions > *,
+.audit-panel:has(.admin-audit-decision-bar) .admin-operations-acceptance-proof > * {
+  flex: 1 1 170px !important;
+  min-width: 0 !important;
+}
+
 /* Security production gate: separate code-verified pilot readiness from human launch approval. */
 .production-security-checklist {
   order: -97;
