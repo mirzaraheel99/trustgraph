@@ -46365,6 +46365,106 @@ body,
   }
 }
 
+/* Signed-in workspace viewport clamp: one premium SaaS lane, no sidebar-width ghosts or horizontal drag. */
+.app:has(.signed-in-portal-entry-desk) {
+  width: 100% !important;
+  max-width: 100vw !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) {
+  width: min(100%, calc(100vw - 28px)) !important;
+  max-width: 1240px !important;
+  min-width: 0 !important;
+  margin-inline: auto !important;
+  padding-inline: clamp(10px, 2vw, 18px) !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > *,
+.workspace:has(.signed-in-portal-entry-desk) .topbar > *,
+.workspace:has(.signed-in-portal-entry-desk) .work-grid > *,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid > *,
+.workspace:has(.signed-in-portal-entry-desk) .verify-panel > *,
+.workspace:has(.signed-in-portal-entry-desk) .billing-panel > *,
+.workspace:has(.signed-in-portal-entry-desk) .records-panel > *,
+.workspace:has(.signed-in-portal-entry-desk) .account-panel > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .topbar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr) !important;
+  align-items: start !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .topbar-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 52px), 1fr)) !important;
+  justify-content: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .topbar-actions button,
+.workspace:has(.signed-in-portal-entry-desk) .topbar-actions a,
+.workspace:has(.signed-in-portal-entry-desk) .topbar-actions .icon-button {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .work-grid,
+.workspace:has(.signed-in-portal-entry-desk) .workspace-admin-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .setup-panel,
+.workspace:has(.signed-in-portal-entry-desk) .verify-panel,
+.workspace:has(.signed-in-portal-entry-desk) .records-panel,
+.workspace:has(.signed-in-portal-entry-desk) .billing-panel,
+.workspace:has(.signed-in-portal-entry-desk) .account-panel,
+.workspace:has(.signed-in-portal-entry-desk) .directory-list,
+.workspace:has(.signed-in-portal-entry-desk) .shared-record-grid,
+.workspace:has(.signed-in-portal-entry-desk) .grant-list {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) table {
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) th,
+.workspace:has(.signed-in-portal-entry-desk) td,
+.workspace:has(.signed-in-portal-entry-desk) code {
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 900px) {
+  .workspace:has(.signed-in-portal-entry-desk) {
+    width: min(100%, calc(100vw - 16px)) !important;
+    padding-inline: 8px !important;
+  }
+
+  .workspace:has(.signed-in-portal-entry-desk) > .topbar {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 /* Corporate Verify one-path compression: request, approval queue, scoped rows, review, export. */
 .verify-panel:has(.corporate-verify-single-lane) {
   display: grid !important;
