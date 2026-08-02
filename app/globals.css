@@ -46560,6 +46560,47 @@ body,
   min-width: 0 !important;
 }
 
+/* Daily portal calm shell: the portal desk owns navigation, while the header stays account-focused. */
+.workspace:has(.signed-in-portal-entry-desk) .topbar .portal-layout-answer,
+.workspace:has(.signed-in-portal-entry-desk) .topbar .workspace-route-strip,
+.workspace:has(.signed-in-portal-entry-desk) .topbar .workspace-flow-strip {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .topbar {
+  min-height: auto !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .topbar h1 {
+  max-width: 17ch !important;
+  font-size: clamp(1.85rem, 3vw, 2.95rem) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .session-command-bar {
+  max-width: 760px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-portal-entry-desk {
+  border-color: rgba(95, 238, 201, 0.22) !important;
+  background:
+    linear-gradient(135deg, rgba(28, 104, 95, 0.18), rgba(11, 18, 21, 0.96) 48%, rgba(37, 52, 70, 0.18)),
+    rgba(8, 15, 18, 0.96) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-grid button {
+  min-height: 128px !important;
+}
+
 @media (max-width: 760px) {
   .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-grid,
   .workspace-admin-grid:has(.setup-panel-grid) .setup-command-metrics,
