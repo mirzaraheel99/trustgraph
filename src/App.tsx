@@ -3464,11 +3464,112 @@ function VerifyRequestsPanel({
     }
   }
 
+  const corporateDatabaseHomeCommand = {
+    mode: "corporate_database_home_command",
+    answer: corporateAccessAnswer.can_access_rows
+      ? "Yes. This company can review approved scoped user rows."
+      : disabled
+        ? "Not yet. A Corporate reviewer role is required first."
+        : requests.length
+          ? approvedCount
+            ? "Almost. Approval exists; continue to scoped row review."
+            : "Not yet. The professional still needs to approve access."
+          : "Not yet. Start by requesting one professional by email.",
+    next_button: corporateAccessAnswer.next_action,
+    next_target: corporateAccessAnswer.next_target,
+    path: ["Company role", "Request by email", "Professional approval", "Scoped rows", "Review proof", "Metadata export"],
+    no_open_user_database_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_database_home_command_answers_current_access_next_click_request_approval_scoped_rows_review_export_no_open_browse_and_preview_rejection_before_verify_forms"
+  };
+  const corporateDatabaseHomeCommandSteps = [
+    {
+      label: "Role",
+      value: disabled ? "Needed" : "Active",
+      detail: disabled ? "Create or switch to a Corporate reviewer role." : activeOrganization.name,
+      ready: !disabled
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length} sent` : "Send first",
+      detail: "Request one professional by email and purpose.",
+      ready: requests.length > 0
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: "No Passport rows appear before professional approval.",
+      ready: approvedCount > 0
+    },
+    {
+      label: "Rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Locked",
+      detail: "Only approved, consent-scoped rows load for this company.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Proof",
+      value: reviews.length && pendingGapCount === 0 ? "Ready" : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} open gaps remain.` : "Record review attestation, then export.",
+      ready: reviews.length > 0 && pendingGapCount === 0
+    }
+  ];
+
   return (
     <section className="verify-panel">
       <div className="mini-heading">
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
+      </div>
+      <div className={`corporate-database-home-command ${corporateAccessAnswer.can_access_rows ? "ready" : "next"}`} aria-label="Corporate database home command">
+        <div className="corporate-database-home-command-header">
+          <div>
+            <span className={`status-chip ${corporateAccessAnswer.can_access_rows ? "success" : "warning"}`}>Corporate database home</span>
+            <strong>{corporateDatabaseHomeCommand.answer}</strong>
+            <small>Corporate Verify never opens a full user database. It follows request, approval, scoped rows, review, and metadata export.</small>
+          </div>
+          <button
+            className={corporateAccessAnswer.can_access_rows ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (corporateDatabaseHomeCommand.next_target === "export") {
+                downloadTextFile(
+                  corporateVerifyReviewRunwayPacketName,
+                  JSON.stringify({ ...corporateDatabaseHomeCommand, steps: corporateDatabaseHomeCommandSteps }, null, 2),
+                  "application/json"
+                );
+                return;
+              }
+              document.getElementById(corporateDatabaseHomeCommand.next_target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            type="button"
+          >
+            {corporateDatabaseHomeCommand.next_button}
+          </button>
+        </div>
+        <div className="corporate-database-home-command-grid">
+          {corporateDatabaseHomeCommandSteps.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="corporate-database-home-command-proof">
+          <span>
+            <small>Open browse</small>
+            <strong>{corporateDatabaseHomeCommand.no_open_user_database_browse ? "Blocked" : "Allowed"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateDatabaseHomeCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <span>
+            <small>Accepted when</small>
+            <strong>{corporateDatabaseHomeCommand.accepted_when}</strong>
+          </span>
+        </div>
       </div>
       <div className={`corporate-access-answer ${corporateAccessAnswer.can_access_rows ? "ready" : "blocked"}`} aria-label="Corporate access answer">
         <div className="corporate-access-answer-header">
