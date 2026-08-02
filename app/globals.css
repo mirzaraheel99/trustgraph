@@ -39769,6 +39769,119 @@ body {
   white-space: normal;
 }
 
+.vps-next-command-strip {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(143, 178, 255, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(20, 33, 55, 0.78), rgba(8, 14, 18, 0.96) 62%, rgba(20, 75, 72, 0.42)),
+    rgba(8, 14, 18, 0.96);
+  overflow: hidden;
+}
+
+.vps-next-command-strip.needed {
+  border-color: rgba(246, 198, 96, 0.34);
+}
+
+.vps-next-command-copy,
+.vps-next-command-grid,
+.vps-next-command-actions {
+  min-width: 0;
+}
+
+.vps-next-command-copy {
+  display: grid;
+  gap: 7px;
+}
+
+.vps-next-command-copy strong {
+  color: #f4fbf7;
+  font-size: clamp(1.12rem, 1.7vw, 1.55rem);
+  line-height: 1.12;
+}
+
+.vps-next-command-copy small {
+  color: rgba(224, 235, 229, 0.74);
+  overflow-wrap: anywhere;
+}
+
+.vps-next-command-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 9px;
+}
+
+.vps-next-command-grid article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 108px;
+  padding: 11px;
+  border: 1px solid rgba(201, 214, 207, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vps-next-command-grid article.ready {
+  border-color: rgba(113, 242, 203, 0.28);
+}
+
+.vps-next-command-grid article.needed {
+  border-color: rgba(246, 198, 96, 0.28);
+}
+
+.vps-next-command-grid span {
+  color: rgba(113, 242, 203, 0.9);
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.vps-next-command-grid strong,
+.vps-next-command-grid small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.vps-next-command-grid strong {
+  color: #f4fbf7;
+  font-size: 0.98rem;
+  line-height: 1.12;
+}
+
+.vps-next-command-grid small {
+  color: rgba(224, 235, 229, 0.72);
+  line-height: 1.35;
+}
+
+.vps-next-command-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 9px;
+}
+
+.vps-next-command-actions code {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  padding: 11px;
+  color: #dffaf2;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.24);
+  font-size: 0.76rem;
+  line-height: 1.44;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.vps-next-command-actions button {
+  min-width: 0;
+  white-space: normal;
+}
+
 .vps-save-recovery-center {
   display: grid;
   gap: 14px;

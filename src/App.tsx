@@ -35682,6 +35682,47 @@ function App() {
       ready: true
     }
   ];
+  const vpsNextCommandStrip = {
+    mode: "vps_next_command_strip",
+    status: serverSyncMonitor.status === "synced" ? "vps_verified" : "manual_save_required",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "Server release stamp is current"
+        : "Run one VPS save command before testing the server URL",
+    primary_command: serverCurrentnessCommand.manual_update_command,
+    verify_command: serverCurrentnessCommand.verify_command,
+    accepted_when:
+      "vps_next_command_strip_keeps_manual_update_verify_release_stamp_missing_ssh_secrets_browser_200_not_enough_and_vfix_boundary_visible",
+    missing_ssh_secrets: serverCurrentnessCommand.missing_automation_secrets,
+    browser_200_not_enough: true,
+    protected_vfix_route: serverCurrentnessCommand.protected_vfix_route
+  };
+  const vpsNextCommandCards = [
+    {
+      label: "1. Save build",
+      value: serverSyncMonitor.status === "synced" ? "Already current" : "Run on VPS",
+      detail: serverCurrentnessCommand.manual_update_command,
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "2. Verify JSON",
+      value: "Release stamp",
+      detail: serverCurrentnessCommand.verify_command,
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "3. Automation",
+      value: serverCurrentnessCommand.missing_automation_secrets.length ? "Secrets missing" : "Ready",
+      detail: serverCurrentnessCommand.missing_automation_secrets.join(", ") || "GitHub can run save-vps automatically.",
+      ready: !serverCurrentnessCommand.missing_automation_secrets.length
+    },
+    {
+      label: "4. VFIX",
+      value: "Do not touch",
+      detail: serverCurrentnessCommand.protected_vfix_route,
+      ready: true
+    }
+  ];
   const vpsSaveRecoveryCenter = {
     mode: "vps_save_recovery_center",
     status: serverSyncMonitor.status === "synced" ? "server_saved" : "human_or_secret_save_required",
@@ -36228,6 +36269,37 @@ function App() {
             >
               <Download size={16} />
               Export server command
+            </button>
+          </div>
+        </section>
+
+        <section className={`vps-next-command-strip ${vpsNextCommandStrip.status === "vps_verified" ? "ready" : "needed"}`} aria-label="VPS next command strip">
+          <div className="vps-next-command-copy">
+            <span className={`status-chip ${vpsNextCommandStrip.status === "vps_verified" ? "success" : "warning"}`}>
+              VPS next command
+            </span>
+            <strong>{vpsNextCommandStrip.headline}</strong>
+            <small>{vpsNextCommandStrip.accepted_when}</small>
+          </div>
+          <div className="vps-next-command-grid">
+            {vpsNextCommandCards.map((card) => (
+              <article className={card.ready ? "ready" : "needed"} key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="vps-next-command-actions">
+            <code>{vpsNextCommandStrip.primary_command}</code>
+            <code>{vpsNextCommandStrip.verify_command}</code>
+            <button
+              className="secondary-action"
+              onClick={() => downloadTextFile("trustgraph-vps-next-command-strip.json", JSON.stringify({ ...vpsNextCommandStrip, cards: vpsNextCommandCards }, null, 2), "application/json")}
+              type="button"
+            >
+              <Download size={16} />
+              Export VPS command
             </button>
           </div>
         </section>
