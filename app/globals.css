@@ -46023,6 +46023,102 @@ body,
   white-space: normal !important;
 }
 
+/* Corporate reviewer focused queue: answer, queue command, controls, rows, export. */
+.corporate-directory-panel:has(.corporate-review-queue-command) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  overflow-x: clip !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) > .mini-heading {
+  order: -120 !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-database-access-compass {
+  order: -112 !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-review-queue-command {
+  order: -108 !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-reviewer-action-bar {
+  order: -104 !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) > .directory-controls {
+  order: -100 !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) > .directory-list,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .shared-record-grid {
+  order: -96 !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-access-decision-desk,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-portal-cockpit,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-verify-hub,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-access-command-center,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-database-primary-desk,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-review-queue-runway,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-review-studio,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-reviewer-task-command,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-row-access-outcome-command,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-reviewer-database-workbench,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-database-next-action-commander,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-row-review-answer-bar,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-database-path-strip,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-database-action-cockpit,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-scoped-access-journey,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-reviewer-workflow-strip,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-live-row-proof-chain,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .persisted-corporate-database-acceptance,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-database-access-receipt,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-database-visibility-snapshot {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-database-access-compass,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-review-queue-command,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .corporate-reviewer-action-bar,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .directory-controls,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .directory-list,
+.corporate-directory-panel:has(.corporate-review-queue-command) > .shared-record-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) .corporate-review-queue-command-actions,
+.corporate-directory-panel:has(.corporate-review-queue-command) .corporate-review-queue-command-grid,
+.corporate-directory-panel:has(.corporate-review-queue-command) .corporate-reviewer-action-grid,
+.corporate-directory-panel:has(.corporate-review-queue-command) .directory-controls {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.corporate-directory-panel:has(.corporate-review-queue-command) button,
+.corporate-directory-panel:has(.corporate-review-queue-command) input,
+.corporate-directory-panel:has(.corporate-review-queue-command) select {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+@media (max-width: 760px) {
+  .corporate-directory-panel:has(.corporate-review-queue-command) {
+    gap: 10px !important;
+  }
+}
+
 @media (max-width: 760px) {
   .workspace-admin-grid:has(.setup-command-bar) {
     gap: 10px !important;
