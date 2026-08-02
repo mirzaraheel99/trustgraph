@@ -37869,6 +37869,76 @@ function App() {
     lanes: serverReleaseLanes,
     accepted_when: "github_actions_passes_pages_smoke_passes_server_head_matches_latest_main_vps_url_returns_200_and_release_stamp_matches_commit"
   };
+  const hostedVisualQaCloseout = {
+    mode: "hosted_visual_qa_closeout",
+    status:
+      serverSyncMonitor.status !== "synced"
+        ? "vps_sync_required"
+        : liveDatabaseContract.accepted && sharedVerifyRecords.length
+          ? "ready_for_human_visual_review"
+          : "live_proof_required",
+    headline:
+      serverSyncMonitor.status !== "synced"
+        ? "Hosted visual QA waits for the VPS release stamp"
+        : liveDatabaseContract.accepted && sharedVerifyRecords.length
+          ? "Run final desktop and mobile visual QA on the hosted server"
+          : "Load live rows before final visual acceptance",
+    accepted_when:
+      "hosted_visual_qa_closeout_requires_vps_release_stamp_current_desktop_mobile_personal_corporate_login_pricing_scoped_database_logout_and_no_preview_data_verified",
+    vps_url: "https://trustgraph.5-75-224-110.sslip.io/",
+    github_pages_status: "green_build_and_smoke_required",
+    server_status: serverSyncMonitor.status,
+    personal_portal: authSession && livePassportRecords.length ? "ready_for_visual_review" : "login_and_passport_rows_required",
+    corporate_portal: sharedVerifyRecords.length ? "scoped_rows_ready_for_visual_review" : "approved_scoped_rows_required",
+    pricing: subscriptionPlans.length ? "pricing_visible" : "pricing_catalog_required",
+    account_controls: authSession ? "logout_and_recovery_visible" : "hosted_login_required",
+    preview_data_accepted: false
+  };
+  const hostedVisualQaCloseoutRows = [
+    {
+      label: "VPS release",
+      value: serverSyncMonitor.status === "synced" ? "Current" : "Sync required",
+      detail: serverSyncMonitor.commit ? `Release stamp reports ${serverSyncMonitor.commit}.` : "Release stamp must return JSON for the current GitHub commit.",
+      ready: serverSyncMonitor.status === "synced",
+      action: "Export server packet",
+      onClick: () => downloadTextFile(serverReleasePacketName, JSON.stringify(serverReleasePacket, null, 2), "application/json")
+    },
+    {
+      label: "Personal portal",
+      value: hostedVisualQaCloseout.personal_portal.replaceAll("_", " "),
+      detail: "Check Professional Passport layout, evidence controls, grants, account recovery, and logout.",
+      ready: Boolean(authSession && livePassportRecords.length),
+      action: authSession ? "Open Passport" : "Login",
+      onClick: () => (authSession ? openWorkspaceOrSetup("passport") : openAuthControls())
+    },
+    {
+      label: "Corporate portal",
+      value: hostedVisualQaCloseout.corporate_portal.replaceAll("_", " "),
+      detail: "Check Corporate Verify, scoped user rows, request controls, export actions, and no open database browsing.",
+      ready: sharedVerifyRecords.length > 0,
+      action: "Open Verify",
+      onClick: () => openWorkspaceOrSetup("verify")
+    },
+    {
+      label: "Pricing",
+      value: hostedVisualQaCloseout.pricing.replaceAll("_", " "),
+      detail: "Check Professional pilot, Corporate Verify pilot, quote/export state, and Stripe human gate wording.",
+      ready: subscriptionPlans.length > 0,
+      action: "Open pricing",
+      onClick: () => {
+        setSetupView("billing");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Responsive",
+      value: "Desktop and mobile",
+      detail: "Check no horizontal overflow, clipped panels, overlapping text, hidden logout, or unclickable controls.",
+      ready: false,
+      action: "Export QA packet",
+      onClick: () => downloadTextFile(`trustgraph-hosted-visual-qa-closeout-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(hostedVisualQaCloseout, null, 2), "application/json")
+    }
+  ];
   const authorizedReport = {
     generated_at: new Date().toISOString(),
     workspace: {
@@ -42601,6 +42671,59 @@ function App() {
             </span>
           </div>
           <small className="v1-remaining-work-boundary">{v1RemainingWorkBoard.accepted_when}</small>
+        </section>
+
+        <section className={`hosted-visual-qa-closeout ${hostedVisualQaCloseout.status === "ready_for_human_visual_review" ? "ready" : "needed"}`} aria-label="Hosted visual QA closeout">
+          <div className="hosted-visual-qa-header">
+            <div>
+              <span className={`status-chip ${hostedVisualQaCloseout.status === "ready_for_human_visual_review" ? "success" : "warning"}`}>Hosted visual QA</span>
+              <strong>{hostedVisualQaCloseout.headline}</strong>
+              <small>{hostedVisualQaCloseout.accepted_when}</small>
+            </div>
+            <button
+              className="secondary-action"
+              onClick={() =>
+                downloadTextFile(
+                  `trustgraph-hosted-visual-qa-closeout-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...hostedVisualQaCloseout, rows: hostedVisualQaCloseoutRows.map(({ onClick: _onClick, ...row }) => row) }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export QA packet
+            </button>
+          </div>
+          <div className="hosted-visual-qa-grid">
+            {hostedVisualQaCloseoutRows.map((row) => (
+              <article className={row.ready ? "ready" : "next"} key={row.label}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+                <button className={row.ready ? "secondary-action" : "primary-action"} onClick={row.onClick} type="button">
+                  {row.action}
+                </button>
+              </article>
+            ))}
+          </div>
+          <div className="hosted-visual-qa-proof">
+            <span>
+              <small>Server</small>
+              <strong>{hostedVisualQaCloseout.server_status.replaceAll("_", " ")}</strong>
+            </span>
+            <span>
+              <small>Corporate database</small>
+              <strong>{hostedVisualQaCloseout.corporate_portal.replaceAll("_", " ")}</strong>
+            </span>
+            <span>
+              <small>Account controls</small>
+              <strong>{hostedVisualQaCloseout.account_controls.replaceAll("_", " ")}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{hostedVisualQaCloseout.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+          </div>
         </section>
 
         {!workspaceAllowed ? (

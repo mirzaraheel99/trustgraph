@@ -448,6 +448,12 @@ const appRequirements = [
     "v1_remaining_work_board_keeps_public_site_user_registration_corporate_registration_pricing_scoped_database_exports_vps_freshness_and_no_preview_data_visible_before_dense_panels",
     "V1 remaining work board acceptance rule"
   ],
+  ["Hosted visual QA closeout", "hosted visual QA closeout label"],
+  ["hosted_visual_qa_closeout", "hosted visual QA closeout packet mode"],
+  [
+    "hosted_visual_qa_closeout_requires_vps_release_stamp_current_desktop_mobile_personal_corporate_login_pricing_scoped_database_logout_and_no_preview_data_verified",
+    "hosted visual QA closeout acceptance rule"
+  ],
   ["Admin operations acceptance checkpoint", "admin operations acceptance label"],
   ["admin_operations_acceptance_checkpoint", "admin operations acceptance packet mode"],
   [
