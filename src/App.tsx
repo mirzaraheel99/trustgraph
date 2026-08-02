@@ -694,6 +694,32 @@ function RecordDetail({
     { label: "Download", value: firstFileBackedEvidence ? "2 min signed URL" : "File needed", detail: "Downloads are governed and auditable.", ready: Boolean(firstFileBackedEvidence) },
     { label: "Corporate boundary", value: "Metadata first", detail: "Raw evidence is not part of open exports.", ready: true }
   ];
+  const evidenceFileAccessCockpit = {
+    mode: "evidence_file_access_cockpit",
+    status: fileBackedEvidenceCount ? "signed_access_ready" : evidenceDocuments.length ? "metadata_ready_file_needed" : "metadata_needed",
+    headline: fileBackedEvidenceCount
+      ? "Private evidence is ready for signed preview or download"
+      : evidenceDocuments.length
+        ? "Evidence metadata is ready; attach a private file for signed preview/download"
+        : "Add evidence metadata before file access",
+    next_action: firstFileBackedEvidence ? "Preview signed evidence" : "Add evidence metadata",
+    signed_preview_window: "5 minutes",
+    signed_download_window: "2 minutes",
+    metadata_exports_only: true,
+    raw_private_files_exported: false,
+    last_signed_link: lastEvidenceLink ? `${lastEvidenceLink.mode} link for ${lastEvidenceLink.documentTitle}` : "No signed link opened yet",
+    corporate_boundary: "Corporate reviewers receive metadata exports and audit proof; raw private files require scoped signed access.",
+    accepted_when:
+      "evidence_file_access_cockpit_keeps_add_metadata_signed_preview_signed_download_manifest_packet_last_link_expiry_raw_file_exclusion_and_corporate_boundary_visible_first"
+  };
+  const evidenceFileAccessCockpitCards = [
+    { label: "Metadata", value: evidenceDocuments.length ? `${evidenceDocuments.length} rows` : "Needed", detail: "Titles, source, summary, scope, and status.", ready: evidenceDocuments.length > 0 },
+    { label: "Private files", value: fileBackedEvidenceCount ? `${fileBackedEvidenceCount}` : "None", detail: "Raw files stay in private storage.", ready: fileBackedEvidenceCount > 0 },
+    { label: "Preview", value: firstFileBackedEvidence ? evidenceFileAccessCockpit.signed_preview_window : "File needed", detail: "Short-lived signed preview URL.", ready: Boolean(firstFileBackedEvidence) },
+    { label: "Download", value: firstFileBackedEvidence ? evidenceFileAccessCockpit.signed_download_window : "File needed", detail: "Short-lived signed download URL.", ready: Boolean(firstFileBackedEvidence) },
+    { label: "Last link", value: lastEvidenceLink ? lastEvidenceLink.mode : "None", detail: lastEvidenceLink ? lastEvidenceLink.expiresAt : "Open preview or download to capture proof.", ready: Boolean(lastEvidenceLink) },
+    { label: "Raw export", value: evidenceFileAccessCockpit.raw_private_files_exported ? "Included" : "Excluded", detail: "Packets and manifests are metadata-only.", ready: !evidenceFileAccessCockpit.raw_private_files_exported }
+  ];
   const evidenceAccessDeskPacketName = `trustgraph-evidence-access-desk-${record.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.json`;
   const signedEvidenceAcceptanceSteps = [
     {
@@ -1049,6 +1075,80 @@ function RecordDetail({
         </div>
         <p>{record.evidence}</p>
         <small>{record.access}</small>
+        <div className={`evidence-file-access-cockpit ${evidenceFileAccessCockpit.status}`} aria-label="Evidence file access cockpit">
+          <div className="evidence-file-access-cockpit-header">
+            <div>
+              <span className={`status-chip ${fileBackedEvidenceCount ? "success" : "warning"}`}>Evidence file access</span>
+              <strong>{evidenceFileAccessCockpit.headline}</strong>
+              <small>{evidenceFileAccessCockpit.corporate_boundary}</small>
+            </div>
+            <button
+              className={firstFileBackedEvidence ? "secondary-action" : "primary-action"}
+              onClick={() => {
+                if (firstFileBackedEvidence) {
+                  void openEvidence(firstFileBackedEvidence, "preview");
+                  return;
+                }
+                document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" });
+              }}
+              type="button"
+            >
+              {evidenceFileAccessCockpit.next_action}
+            </button>
+          </div>
+          <div className="evidence-file-access-cockpit-grid">
+            {evidenceFileAccessCockpitCards.map((card) => (
+              <article className={card.ready ? "ready" : "needed"} key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="evidence-file-access-cockpit-actions">
+            <button className="secondary-action" onClick={() => document.getElementById("evidence-metadata-form")?.scrollIntoView({ block: "start", behavior: "smooth" })} type="button">
+              Add metadata
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+              onClick={() => {
+                if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "preview");
+              }}
+              type="button"
+            >
+              Preview signed file
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!firstFileBackedEvidence || openingEvidenceId === firstFileBackedEvidence.id}
+              onClick={() => {
+                if (firstFileBackedEvidence) void openEvidence(firstFileBackedEvidence, "download");
+              }}
+              type="button"
+            >
+              Download signed file
+            </button>
+            <button className="secondary-action" disabled={!filteredEvidenceDocuments.length} onClick={() => downloadTextFile(evidenceManifestName, evidenceDocumentsToCsv(filteredEvidenceDocuments), "text/csv")} type="button">
+              Export manifest
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!filteredEvidenceDocuments.length}
+              onClick={() =>
+                downloadTextFile(
+                  evidenceAccessPacketName,
+                  JSON.stringify({ ...signedEvidenceAccessPacket, evidence_file_access_cockpit: evidenceFileAccessCockpit, cards: evidenceFileAccessCockpitCards }, null, 2),
+                  "application/json"
+                )
+              }
+              type="button"
+            >
+              Export packet
+            </button>
+          </div>
+          <small>{evidenceFileAccessCockpit.accepted_when} | {evidenceFileAccessCockpit.last_signed_link}</small>
+        </div>
         <div className={`evidence-review-rail ${evidenceReviewRail.status}`} aria-label="Evidence review rail">
           <div className="evidence-review-rail-header">
             <div>
