@@ -29192,6 +29192,28 @@ function PublicSite({
                 <small>{selectedRegistrationPath.plan}</small>
               </span>
             </div>
+            <div className="public-auth-action-dock" aria-label="Public auth action dock">
+              <button className={portal === "professional" ? "ready" : "next"} onClick={() => setPortal("professional")} type="button">
+                <span>Personal</span>
+                <strong>Passport user</strong>
+                <small>Private records, evidence, consent, and controlled company sharing.</small>
+              </button>
+              <button className={portal === "corporate" ? "ready" : "next"} onClick={() => setPortal("corporate")} type="button">
+                <span>Corporate</span>
+                <strong>Company access</strong>
+                <small>Company workspace, reviewer role, request approval, and scoped rows only.</small>
+              </button>
+              <button className={mode === "signup" ? "ready" : "next"} onClick={() => setMode(mode === "signup" ? "signin" : "signup")} type="button">
+                <span>{mode === "signup" ? "Switch" : "New account"}</span>
+                <strong>{mode === "signup" ? "Use login" : "Create account"}</strong>
+                <small>{mode === "signup" ? "Already verified? Login instead." : "Need access? Register from this card."}</small>
+              </button>
+              <button className={email ? "ready" : "next"} disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                <span>Recovery</span>
+                <strong>{email ? "Reset ready" : "Enter email"}</strong>
+                <small>Password reset uses the hosted TrustGraph redirect, not localhost.</small>
+              </button>
+            </div>
             <div className="public-credential-fields">
               <label>
                 <span>Email</span>

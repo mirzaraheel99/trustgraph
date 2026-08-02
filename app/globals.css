@@ -45551,6 +45551,66 @@ body,
   order: -20 !important;
 }
 
+.public-auth-action-dock {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-auth-action-dock button {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  min-height: 108px;
+  padding: 11px;
+  text-align: left;
+  color: var(--tg-text, #f3fbf7);
+  border: 1px solid rgba(226, 239, 232, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+}
+
+.public-auth-action-dock button.ready {
+  border-color: rgba(113, 242, 203, 0.32);
+  background: rgba(21, 93, 86, 0.2);
+}
+
+.public-auth-action-dock button.next {
+  border-color: rgba(143, 178, 255, 0.22);
+  background: rgba(28, 43, 68, 0.24);
+}
+
+.public-auth-action-dock button:disabled {
+  cursor: not-allowed;
+  opacity: 0.66;
+}
+
+.public-auth-action-dock span {
+  color: rgba(113, 242, 203, 0.9);
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-auth-action-dock strong,
+.public-auth-action-dock small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-auth-action-dock strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: 0.96rem;
+  line-height: 1.12;
+}
+
+.public-auth-action-dock small {
+  color: var(--tg-muted, #a7bab3);
+  line-height: 1.35;
+}
+
 .public-auth-card:has(.public-login-route-cockpit) > .public-auth-help-strip {
   order: -10 !important;
 }
@@ -45561,6 +45621,7 @@ body,
 
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-fields,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-readiness,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-action-dock,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-actions,
 .public-auth-card:has(.public-login-route-cockpit) .public-auth-help-actions {
   display: grid !important;
