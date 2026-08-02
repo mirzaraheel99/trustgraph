@@ -27454,8 +27454,9 @@ body {
 .v1-portal-launchpad,
 .role-workspace-switchboard,
 .v1-launch-flow-command,
-.onboarding-handoff-command,
-.portal-command-deck,
+  .onboarding-handoff-command,
+  .onboarding-real-database-bridge,
+  .portal-command-deck,
 .signed-in-portal-flow-contract,
 .dashboard-next-action,
 .portal-home-command,
@@ -28551,6 +28552,79 @@ body {
 
 .onboarding-handoff-grid button {
   width: 100%;
+}
+
+.onboarding-real-database-bridge {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.08), transparent 62%),
+    rgba(8, 20, 22, 0.86);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.24);
+}
+
+.onboarding-real-database-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.onboarding-real-database-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.onboarding-real-database-bridge strong,
+.onboarding-real-database-bridge small,
+.onboarding-real-database-bridge span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.onboarding-real-database-header strong {
+  color: var(--text);
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.1;
+}
+
+.onboarding-real-database-bridge small,
+.onboarding-real-database-bridge span {
+  color: rgba(222, 239, 233, 0.7);
+}
+
+.onboarding-real-database-grid,
+.onboarding-real-database-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 10px;
+}
+
+.onboarding-real-database-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(210, 231, 223, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.034);
+}
+
+.onboarding-real-database-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.065);
+}
+
+.onboarding-real-database-grid article.next {
+  border-color: rgba(255, 206, 117, 0.24);
+}
+
+.onboarding-real-database-grid strong {
+  color: var(--text);
 }
 
 .portal-command-deck {
@@ -40213,6 +40287,8 @@ body {
 .portal-readiness-board-grid,
 .signed-in-pilot-journey-grid,
 .onboarding-handoff-grid,
+.onboarding-real-database-grid,
+.onboarding-real-database-actions,
 .corporate-onboarding-pricing-grid,
 .team-billing-handoff-grid,
 .team-billing-handoff-counts,

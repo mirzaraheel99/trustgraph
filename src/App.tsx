@@ -37296,6 +37296,84 @@ function App() {
           </div>
         </section>
 
+        <section className={`onboarding-real-database-bridge ${realDatabaseLaunchGate.accepted ? "ready" : "needed"}`} aria-label="Onboarding real database bridge">
+          <div className="onboarding-real-database-header">
+            <div>
+              <span className={`status-chip ${realDatabaseLaunchGate.accepted ? "success" : "warning"}`}>Real database bridge</span>
+              <strong>{realDatabaseLaunchGate.accepted ? "Onboarding has live database proof" : realDatabaseLaunchGate.current_blocker}</strong>
+              <small>
+                Onboarding is not complete until hosted login, registration, Professional Passport, Corporate workspace, pricing, scoped user database, evidence, consent, team, review, release, and completion receipt rows are loaded from Supabase.
+              </small>
+            </div>
+            <button
+              className={realDatabaseLaunchGate.accepted ? "secondary-action" : "primary-action"}
+              onClick={() => {
+                if (!authSession || !accountContext) {
+                  openAuthControls();
+                  return;
+                }
+                if (!realDatabaseLaunchGate.accepted) {
+                  document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  return;
+                }
+                downloadTextFile(
+                  `trustgraph-onboarding-real-database-bridge-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ launch_gate: realDatabaseLaunchGate, completion_plan: realDatabaseCompletionPlan }, null, 2),
+                  "application/json"
+                );
+              }}
+              type="button"
+            >
+              {realDatabaseLaunchGate.accepted ? "Export bridge" : authSession ? "Open live proof" : "Login first"}
+            </button>
+          </div>
+          <div className="onboarding-real-database-grid">
+            {[
+              {
+                label: "Live groups",
+                value: `${realDatabaseCompletionPlan.completed_steps}/${realDatabaseCompletionPlan.total_steps}`,
+                detail: `${realDatabaseCompletionPlan.next_step.label}: ${realDatabaseCompletionPlan.next_step.status}`,
+                ready: realDatabaseCompletionPlan.completed_steps === realDatabaseCompletionPlan.total_steps
+              },
+              {
+                label: "Completion receipt",
+                value: realDatabaseCompletionReceipts.length ? `${realDatabaseCompletionReceipts.length}` : "Missing",
+                detail: latestRealDatabaseCompletionReceipt?.status ?? "Record a live completion receipt after row groups are loaded.",
+                ready: Boolean(realDatabaseCompletionReceipts.length)
+              },
+              {
+                label: "Preview data",
+                value: realDatabaseLaunchGate.preview_data_accepted ? "Accepted" : "Rejected",
+                detail: "Non-live preview, fixture, and browser-only rows cannot complete V1.",
+                ready: !realDatabaseLaunchGate.preview_data_accepted
+              },
+              {
+                label: "Server proof",
+                value: serverSyncMonitor.status === "synced" ? "Synced" : "Manual sync needed",
+                detail: realDatabaseCompletionPlan.server_save_rule,
+                ready: serverSyncMonitor.status === "synced"
+              }
+            ].map((item) => (
+              <article className={item.ready ? "ready" : "next"} key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <small>{item.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="onboarding-real-database-actions">
+            <button className="secondary-action" onClick={() => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+              Live proof
+            </button>
+            <button className="secondary-action" onClick={openCorporateControls} type="button">
+              Corporate setup
+            </button>
+            <button className="secondary-action" onClick={() => downloadTextFile(`trustgraph-real-database-completion-plan-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(realDatabaseCompletionPlan, null, 2), "application/json")} type="button">
+              Export plan
+            </button>
+          </div>
+        </section>
+
         <section className="portal-command-deck" aria-label="Portal command deck">
           <div className="portal-command-deck-header">
             <div>
