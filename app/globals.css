@@ -38843,6 +38843,27 @@ body {
   white-space: normal;
 }
 
+.public-auth-section > div:first-child > .public-access-answer ~ .public-login-command-center,
+.public-auth-section > div:first-child > .public-access-answer ~ .public-v1-access-runway,
+.public-auth-section > div:first-child > .public-access-answer ~ .portal-access-cockpit,
+.public-auth-section > div:first-child > .public-access-answer ~ .public-portal-flow-map,
+.public-auth-section > div:first-child > .public-access-answer ~ .public-portal-route-board,
+.public-auth-section > div:first-child > .public-access-answer ~ .portal-auth-command,
+.public-auth-section > div:first-child > .public-access-answer ~ .portal-start-desk,
+.public-auth-section > div:first-child > .public-access-answer ~ .portal-entry-path,
+.public-auth-section > div:first-child > .public-access-answer ~ .portal-launch-decision-strip,
+.public-auth-section > div:first-child > .public-access-answer ~ .public-auth-flow-command,
+.public-auth-section > div:first-child > .public-access-answer ~ .registration-decision-receipt,
+.public-auth-section > div:first-child > .public-access-answer ~ .live-onboarding-contract,
+.public-auth-section > div:first-child > .public-access-answer ~ .account-type-chooser,
+.public-auth-section > div:first-child > .public-access-answer ~ .auth-choice-summary,
+.public-auth-section > div:first-child > .public-access-answer ~ .portal-auth-summary-panel,
+.public-auth-section > div:first-child > .public-access-answer ~ .portal-access-guide,
+.public-auth-section > div:first-child > .public-access-answer ~ .portal-outcome-list,
+.public-auth-section > div:first-child > .public-access-answer ~ details {
+  display: none !important;
+}
+
 .public-auth-card:has(.public-access-answer) .public-login-command-center,
 .public-auth-card:has(.public-access-answer) .login-portal-desk,
 .public-auth-card:has(.public-access-answer) .public-access-hub,

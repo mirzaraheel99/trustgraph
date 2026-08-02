@@ -24838,8 +24838,8 @@ function PublicSite({
                   Pick one route, enter credentials once, and land in the correct portal. Pricing, recovery, first database write, and the no-open-user-database rule stay visible before submit.
                 </small>
               </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
+              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
+                Continue to credentials
               </button>
             </div>
             <div className="public-access-answer-routes" aria-label="Public access answer routes">
