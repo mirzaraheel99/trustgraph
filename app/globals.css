@@ -45391,3 +45391,100 @@ body,
   flex: 1 1 170px !important;
   min-width: 0 !important;
 }
+
+/* Setup center one-path compression: unlock, route, tabs, active form, then optional proof exports. */
+.workspace-admin-grid:has(.setup-panel-grid) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-center-header {
+  order: -130 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-portal-unlock-answer {
+  order: -126 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-route-deck {
+  order: -122 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-command-bar {
+  order: -118 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-tabs {
+  order: -114 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-panel-grid {
+  order: -110 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-launch-cockpit,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-operator-strip,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-setup-triage-board,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-database-handoff-command,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-onboarding-pricing-cockpit,
+.workspace-admin-grid:has(.setup-panel-grid) > .team-billing-handoff,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-setup-guide {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-center-header,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-portal-unlock-answer,
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-route-deck,
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-command-bar,
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-tabs,
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-panel-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-grid,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-command-metrics,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-route-deck,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-tabs,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-panel-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) .setup-panel-grid > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-actions,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-command-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-actions > *,
+.workspace-admin-grid:has(.setup-panel-grid) .setup-command-actions > * {
+  flex: 1 1 170px !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 760px) {
+  .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-grid,
+  .workspace-admin-grid:has(.setup-panel-grid) .setup-command-metrics,
+  .workspace-admin-grid:has(.setup-panel-grid) .setup-route-deck,
+  .workspace-admin-grid:has(.setup-panel-grid) .setup-tabs,
+  .workspace-admin-grid:has(.setup-panel-grid) .setup-panel-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
