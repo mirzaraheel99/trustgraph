@@ -3363,6 +3363,60 @@ function VerifyRequestsPanel({
     cards: corporateReviewerFrontDeskCards.map(({ label, value, ready }) => ({ label, value, ready }))
   };
   const corporateReviewerFrontDeskPacketName = `trustgraph-corporate-reviewer-front-desk-${new Date().toISOString().slice(0, 10)}.json`;
+  const corporateReviewerCommandCenter = {
+    mode: "corporate_reviewer_command_center",
+    status: disabled
+      ? "corporate_role_required"
+      : sharedRecords.length
+        ? pendingGapCount
+          ? "review_gaps"
+          : "export_ready"
+        : requests.length
+          ? "approval_pending"
+          : "request_needed",
+    primary_action: disabled
+      ? "Activate corporate role"
+      : sharedRecords.length
+        ? pendingGapCount
+          ? "Review gaps"
+          : "Export review proof"
+        : requests.length
+          ? "Open request list"
+          : "Request access",
+    primary_target: sharedRecords.length ? "corporate-access-review-queue" : requests.length ? "corporate-verify-request-list" : "corporate-verify-request-form",
+    accepted_when:
+      "corporate_reviewer_command_center_keeps_request_approval_visible_rows_review_attestation_export_logout_and_no_open_user_database_before_duplicate_panels"
+  };
+  const corporateReviewerCommandCards = [
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "Not sent",
+      detail: "Start with one professional email and purpose.",
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount}` : "Waiting",
+      detail: "Records stay locked until scoped approval exists.",
+      ready: approvedCount > 0,
+      target: "corporate-verify-request-list"
+    },
+    {
+      label: "Visible rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Locked",
+      detail: "Corporate sees only approved Passport rows.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} open gaps before export.` : "Attestation and export receipt.",
+      ready: reviews.length > 0 && pendingGapCount === 0,
+      target: "corporate-access-review-queue"
+    }
+  ];
   const corporateVerifyReviewRunway = {
     mode: "corporate_verify_review_runway",
     active_organization: activeOrganization.name,
@@ -3784,6 +3838,57 @@ function VerifyRequestsPanel({
       <div className="mini-heading">
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
+      </div>
+      <div className={`corporate-reviewer-command-center ${corporateReviewerCommandCenter.status}`} aria-label="Corporate reviewer command center">
+        <div className="corporate-reviewer-command-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Corporate reviewer path</span>
+            <strong>{corporateReviewerCommandCenter.primary_action}</strong>
+            <small>
+              Request access, wait for approval, review visible scoped rows, attest the review, and export proof. There is no open user database browse.
+            </small>
+          </div>
+          <button
+            className={sharedRecords.length && pendingGapCount === 0 ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (sharedRecords.length && pendingGapCount === 0) {
+                downloadTextFile(
+                  `trustgraph-corporate-reviewer-command-center-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...corporateReviewerCommandCenter, cards: corporateReviewerCommandCards }, null, 2),
+                  "application/json"
+                );
+                return;
+              }
+              document.getElementById(corporateReviewerCommandCenter.primary_target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            type="button"
+          >
+            {sharedRecords.length && pendingGapCount === 0 ? "Export proof" : corporateReviewerCommandCenter.primary_action}
+          </button>
+        </div>
+        <div className="corporate-reviewer-command-grid">
+          {corporateReviewerCommandCards.map((card) => (
+            <button className={card.ready ? "ready" : "next"} key={card.label} onClick={() => document.getElementById(card.target)?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-reviewer-command-proof">
+          <span>
+            <small>Organization</small>
+            <strong>{activeOrganization.name}</strong>
+          </span>
+          <span>
+            <small>Database boundary</small>
+            <strong>No open browse</strong>
+          </span>
+          <span>
+            <small>Logout path</small>
+            <strong>Account controls</strong>
+          </span>
+        </div>
       </div>
       <div className={`corporate-verify-single-lane ${corporateVerifySingleLane.current_state}`} aria-label="Corporate Verify single lane">
         <div className="corporate-verify-single-lane-header">

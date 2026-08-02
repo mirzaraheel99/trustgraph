@@ -41189,6 +41189,81 @@ body,
   color: var(--tg-muted);
 }
 
+.corporate-reviewer-command-center {
+  order: -110;
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid rgba(95, 238, 201, 0.28);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(13, 34, 37, 0.96), rgba(8, 16, 19, 0.96));
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.24);
+}
+
+.corporate-reviewer-command-header,
+.corporate-reviewer-command-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.corporate-reviewer-command-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-reviewer-command-center strong,
+.corporate-reviewer-command-center small,
+.corporate-reviewer-command-center span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-reviewer-command-header strong {
+  color: var(--tg-text);
+  font-size: clamp(24px, 3.2cqw, 38px);
+  line-height: 1.04;
+}
+
+.corporate-reviewer-command-center small,
+.corporate-reviewer-command-center span {
+  color: var(--tg-muted);
+}
+
+.corporate-reviewer-command-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 10px;
+}
+
+.corporate-reviewer-command-grid button,
+.corporate-reviewer-command-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  text-align: left;
+}
+
+.corporate-reviewer-command-grid button.ready {
+  border-color: rgba(95, 238, 201, 0.36);
+  background: rgba(95, 238, 201, 0.08);
+}
+
+.corporate-reviewer-command-grid button.next {
+  border-color: rgba(255, 206, 117, 0.24);
+}
+
+.corporate-reviewer-command-grid strong,
+.corporate-reviewer-command-proof strong {
+  color: var(--tg-text);
+}
+
 .verify-panel:has(.corporate-database-home-command) > .corporate-access-answer,
 .verify-panel:has(.corporate-database-home-command) > .corporate-reviewer-next-action {
   order: 30;
@@ -41304,7 +41379,10 @@ body,
   .public-login-primary-choice-routes,
   .public-login-primary-choice-grid,
   .corporate-database-home-command-header,
+  .corporate-reviewer-command-header,
   .corporate-database-home-command-grid,
+  .corporate-reviewer-command-grid,
+  .corporate-reviewer-command-proof,
   .corporate-database-home-command-proof,
   .evidence-safe-access-header,
   .evidence-safe-access-grid,
@@ -41464,6 +41542,7 @@ body,
 }
 
 .verify-panel:has(.corporate-database-home-command) > .corporate-portal-quick-start,
+.verify-panel:has(.corporate-reviewer-command-center) > .corporate-verify-single-lane,
 .verify-panel:has(.corporate-database-home-command) > .corporate-access-progress-strip,
 .verify-panel:has(.corporate-database-home-command) > .verify-summary-grid,
 .verify-panel:has(.corporate-database-home-command) > .corporate-verify-live-command,
