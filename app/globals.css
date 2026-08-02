@@ -49001,6 +49001,88 @@ body,
   min-width: min(680px, 100%) !important;
 }
 
+.real-database-verdict {
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: clamp(12px, 2vw, 16px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(255, 205, 118, 0.24) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 118, 0.09), rgba(134, 174, 246, 0.055) 48%, rgba(255, 255, 255, 0.02)),
+    rgba(5, 13, 17, 0.82) !important;
+}
+
+.real-database-verdict.ready {
+  border-color: rgba(113, 242, 203, 0.28) !important;
+  background:
+    linear-gradient(135deg, rgba(113, 242, 203, 0.1), rgba(134, 174, 246, 0.055) 48%, rgba(255, 255, 255, 0.02)),
+    rgba(5, 13, 17, 0.82) !important;
+}
+
+.real-database-verdict-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.real-database-verdict-header > div,
+.real-database-verdict-next {
+  display: grid !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+}
+
+.real-database-verdict-next {
+  padding: 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+}
+
+.real-database-verdict-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.real-database-verdict-grid article {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.real-database-verdict-grid article.ready {
+  border-color: rgba(113, 242, 203, 0.22) !important;
+  background: rgba(72, 208, 174, 0.075) !important;
+}
+
+.real-database-verdict-grid article.next {
+  border-color: rgba(255, 205, 118, 0.24) !important;
+  background: rgba(255, 205, 118, 0.055) !important;
+}
+
+.real-database-verdict strong,
+.real-database-verdict small,
+.real-database-verdict span {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.real-database-verdict button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
 @media (max-width: 760px) {
   .workspace:has(.signed-in-portal-entry-desk) {
     width: min(100%, calc(100vw - 12px)) !important;
@@ -49010,6 +49092,7 @@ body,
   .workspace:has(.signed-in-portal-entry-desk) > .topbar,
   .workspace:has(.signed-in-portal-entry-desk) .signed-in-portal-entry-header,
   .workspace:has(.signed-in-portal-entry-desk) .portal-route-shell-header,
+  .workspace:has(.signed-in-portal-entry-desk) .real-database-verdict-header,
   .workspace:has(.signed-in-portal-entry-desk) .real-data-mission-header {
     grid-template-columns: 1fr !important;
   }

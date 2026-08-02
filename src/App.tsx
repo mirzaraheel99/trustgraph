@@ -33830,6 +33830,67 @@ function App() {
       ready: serverSyncMonitor.status === "synced"
     }
   ];
+  const realDatabaseVerdict = {
+    mode: "real_database_verdict",
+    status:
+      livePilotRowProof.accepted && latestRealDatabaseCompletionReceipt && serverSyncMonitor.status === "synced"
+        ? "accepted_for_v1_review"
+        : "blocked_until_live_proof",
+    headline:
+      livePilotRowProof.accepted && latestRealDatabaseCompletionReceipt && serverSyncMonitor.status === "synced"
+        ? "Real database path is accepted for V1 review"
+        : "Real database path is not accepted yet",
+    next_blocker:
+      !authSession || !accountContext
+        ? "Hosted login and account context"
+        : !livePilotRowProof.accepted
+          ? `Missing live row groups: ${livePilotRowProof.missingRequiredGroups.join(", ") || realDataMissionControl.next_missing_group}`
+          : !latestRealDatabaseCompletionReceipt
+            ? "Persisted real database completion receipt"
+            : serverSyncMonitor.status !== "synced"
+              ? "VPS release JSON for the latest GitHub commit"
+              : "Export working-data packet",
+    accepted_when:
+      "real_database_verdict_requires_hosted_login_signed_in_supabase_rows_completion_receipt_vps_release_json_working_data_export_and_no_preview_data",
+    live_row_groups: `${livePilotRowProof.readyGroups}/${livePilotRowProof.totalRequiredGroups}`,
+    missing_groups: livePilotRowProof.missingRequiredGroups,
+    completion_receipt: latestRealDatabaseCompletionReceipt ? "saved" : "missing",
+    vps_release_json: serverSyncMonitor.status,
+    working_data_export: "available",
+    preview_data_accepted: false
+  };
+  const realDatabaseVerdictRows = [
+    {
+      label: "Verdict",
+      value: realDatabaseVerdict.status === "accepted_for_v1_review" ? "Accepted" : "Blocked",
+      detail: realDatabaseVerdict.headline,
+      ready: realDatabaseVerdict.status === "accepted_for_v1_review"
+    },
+    {
+      label: "Live rows",
+      value: realDatabaseVerdict.live_row_groups,
+      detail: realDatabaseVerdict.missing_groups.length ? `Missing: ${realDatabaseVerdict.missing_groups.join(", ")}` : "All required groups loaded.",
+      ready: livePilotRowProof.accepted
+    },
+    {
+      label: "Receipt",
+      value: realDatabaseVerdict.completion_receipt,
+      detail: latestRealDatabaseCompletionReceipt ? "Completion receipt is persisted." : "Record receipt after live rows are loaded.",
+      ready: Boolean(latestRealDatabaseCompletionReceipt)
+    },
+    {
+      label: "Server",
+      value: realDatabaseVerdict.vps_release_json.replaceAll("_", " "),
+      detail: serverSyncMonitor.status === "synced" ? "Release JSON is available." : "Run VPS updater or add SSH secrets.",
+      ready: serverSyncMonitor.status === "synced"
+    },
+    {
+      label: "Preview data",
+      value: realDatabaseVerdict.preview_data_accepted ? "Accepted" : "Rejected",
+      detail: "Only signed-in Supabase rows count.",
+      ready: !realDatabaseVerdict.preview_data_accepted
+    }
+  ];
   const liveRowGapResolver = {
     mode: "live_row_gap_resolver",
     status: livePilotRowProof.accepted ? "all_live_rows_loaded" : authSession && accountContext ? "missing_live_rows" : "hosted_login_required",
@@ -37552,6 +37613,43 @@ function App() {
               >
                 Record receipt
               </button>
+            </div>
+          </div>
+          <div className={`real-database-verdict ${realDatabaseVerdict.status === "accepted_for_v1_review" ? "ready" : "blocked"}`} aria-label="Real database verdict">
+            <div className="real-database-verdict-header">
+              <div>
+                <span className={`status-chip ${realDatabaseVerdict.status === "accepted_for_v1_review" ? "success" : "warning"}`}>
+                  Real database verdict
+                </span>
+                <strong>{realDatabaseVerdict.headline}</strong>
+                <small>{realDatabaseVerdict.accepted_when}</small>
+              </div>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-real-database-verdict-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...realDatabaseVerdict, rows: realDatabaseVerdictRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export verdict
+              </button>
+            </div>
+            <div className="real-database-verdict-next">
+              <small>Next blocker</small>
+              <strong>{realDatabaseVerdict.next_blocker}</strong>
+            </div>
+            <div className="real-database-verdict-grid">
+              {realDatabaseVerdictRows.map((row) => (
+                <article className={row.ready ? "ready" : "next"} key={row.label}>
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </article>
+              ))}
             </div>
           </div>
           <div className="real-data-mission-grid">

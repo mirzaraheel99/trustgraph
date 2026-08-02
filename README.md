@@ -582,6 +582,8 @@ The corporate portal studio final pass tightens Corporate Verify and Company Adm
 
 The signed-in workspace also includes a Real data mission control directly below the portal command center. It shows live-row progress, next missing Supabase group, row source, completion receipt status, VPS freshness, and direct actions for login/recovery, live pilot seed, proof reload, working-data export, and real database completion receipt recording before the deeper proof panels.
 
+Real data mission control now begins with a Real database verdict. V1 stays blocked until hosted login, signed-in Supabase row groups, a persisted completion receipt, working-data export, VPS release JSON, and preview-data rejection are all visible; the verdict names the exact blocker before the operator reaches the detailed checklist.
+
 The signed-in database proof path now uses the V1 completion cockpit as the primary answer. Older live database run, live data answer, proof commander, mission control, and gap resolver boards remain in source for receipts and export coverage, but they are hidden from the daily cockpit so operators see one remaining-work answer, one command center, one live row repair path, and one completion ledger.
 
 Company Admin now keeps the Corporate database handoff visible inside the focused setup route. The admin sees account, company workspace, RBAC/team/billing setup, the active form, and the handoff into Corporate Verify scoped user rows without duplicate launch and triage boards hiding the database path.
