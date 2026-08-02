@@ -40978,3 +40978,227 @@ body,
     flex-basis: auto;
   }
 }
+
+/* V1 layout rescue: keep the hosted SaaS portals bounded, readable, and click-safe. */
+html,
+body,
+.app,
+.workspace,
+.workspace-main,
+.public-auth-section,
+.verify-panel,
+.corporate-directory-panel {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.workspace {
+  width: min(var(--tg-shell-max), calc(100vw - 24px)) !important;
+  margin-inline: auto !important;
+  padding-inline: clamp(10px, 2vw, 22px) !important;
+}
+
+.workspace-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 16px;
+}
+
+.topbar,
+.session-command-bar,
+.portal-action-dock,
+.workspace-command-strip,
+.workspace-route-strip,
+.workspace-flow-strip {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.topbar-actions,
+.session-command-bar,
+.portal-home-actions,
+.workspace-command-actions,
+.context-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.topbar-actions button,
+.session-command-bar button,
+.portal-home-actions button,
+.workspace-command-actions button,
+.context-actions button {
+  flex: 1 1 148px;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+
+.hero {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)) !important;
+}
+
+.hero-card,
+.metric-card,
+.detail-panel,
+.records-panel,
+.setup-panel,
+.verify-panel,
+.corporate-directory-panel,
+.audit-panel,
+.public-auth-card {
+  container-type: inline-size;
+}
+
+.verify-panel {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(12px, 2vw, 18px);
+}
+
+.verify-panel > *,
+.corporate-directory-panel > *,
+.public-auth-card > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.verify-panel .record-form-grid,
+.verify-panel .verify-request-fields,
+.verify-panel .directory-controls,
+.verify-panel .corporate-review-controls,
+.verify-panel .corporate-request-controls,
+.public-auth-card .auth-form,
+.public-auth-card .auth-actions,
+.public-auth-card .auth-support-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+}
+
+.verify-panel input,
+.verify-panel select,
+.verify-panel textarea,
+.verify-panel button,
+.corporate-directory-panel input,
+.corporate-directory-panel select,
+.corporate-directory-panel textarea,
+.corporate-directory-panel button,
+.public-auth-card input,
+.public-auth-card select,
+.public-auth-card textarea,
+.public-auth-card button {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal;
+}
+
+.corporate-directory-panel .directory-list,
+.corporate-directory-panel .shared-record-grid,
+.records-panel,
+.audit-list {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.corporate-directory-panel table,
+.records-panel table,
+.audit-panel table {
+  min-width: 640px;
+}
+
+.verify-panel:has(.corporate-database-home-command) > .corporate-reviewer-front-desk,
+.verify-panel:has(.corporate-database-home-command) > .corporate-database-home-command,
+.verify-panel:has(.corporate-database-home-command) > .corporate-verify-review-runway,
+.verify-panel:has(.corporate-database-home-command) > .verify-request-form,
+.verify-panel:has(.corporate-database-home-command) > .grant-list,
+.verify-panel:has(.corporate-database-home-command) > .corporate-directory-panel {
+  display: grid;
+}
+
+.verify-panel:has(.corporate-database-home-command) > .corporate-portal-quick-start,
+.verify-panel:has(.corporate-database-home-command) > .corporate-access-progress-strip,
+.verify-panel:has(.corporate-database-home-command) > .verify-summary-grid,
+.verify-panel:has(.corporate-database-home-command) > .corporate-verify-live-command,
+.verify-panel:has(.corporate-database-home-command) > .corporate-verify-first-use,
+.verify-panel:has(.corporate-database-home-command) > .verify-reviewer-flow,
+.verify-panel:has(.corporate-database-home-command) > .corporate-access-blocker-map,
+.verify-panel:has(.corporate-database-home-command) > .verify-user-data-proof,
+.verify-panel:has(.corporate-database-home-command) .corporate-directory-panel > .corporate-access-command-center,
+.verify-panel:has(.corporate-database-home-command) .corporate-directory-panel > .corporate-scoped-access-journey,
+.verify-panel:has(.corporate-database-home-command) .corporate-directory-panel > .corporate-reviewer-workflow-strip,
+.verify-panel:has(.corporate-database-home-command) .corporate-directory-panel > .corporate-reviewer-task-command {
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.public-auth-section {
+  grid-template-columns: minmax(0, 1fr) minmax(min(100%, 420px), 0.48fr) !important;
+}
+
+.public-auth-card {
+  max-height: calc(100vh - 28px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.public-auth-card:has(.public-login-primary-choice) .hosted-auth-recovery-board,
+.public-auth-card:has(.public-login-primary-choice) .hosted-recovery-route-rail,
+.public-auth-card:has(.public-login-primary-choice) .auth-recovery-command,
+.public-auth-card:has(.public-login-primary-choice) .auth-recovery-database-receipt,
+.public-auth-card:has(.public-login-primary-choice) .email-verification-delivery-receipt,
+.public-auth-card:has(.public-login-primary-choice) .portal-submit-receipt,
+.public-auth-card:has(.public-login-primary-choice) .registration-completion-handoff,
+.public-auth-card:has(.public-login-primary-choice) .registration-outcome-command {
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 1180px) {
+  .public-auth-section {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .public-auth-card {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    width: 100% !important;
+    padding-inline: 10px !important;
+  }
+
+  .topbar-actions,
+  .session-command-bar,
+  .portal-home-actions,
+  .workspace-command-actions,
+  .context-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .topbar-actions button,
+  .session-command-bar button,
+  .portal-home-actions button,
+  .workspace-command-actions button,
+  .context-actions button {
+    width: 100%;
+  }
+
+  .hero-value {
+    font-size: clamp(42px, 18vw, 68px) !important;
+  }
+}
