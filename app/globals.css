@@ -46496,10 +46496,13 @@ body,
   order: -110 !important;
 }
 
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-database-handoff-command {
+  order: -106 !important;
+}
+
 .workspace-admin-grid:has(.setup-panel-grid) > .corporate-launch-cockpit,
 .workspace-admin-grid:has(.setup-panel-grid) > .corporate-operator-strip,
 .workspace-admin-grid:has(.setup-panel-grid) > .corporate-setup-triage-board,
-.workspace-admin-grid:has(.setup-panel-grid) > .corporate-database-handoff-command,
 .workspace-admin-grid:has(.setup-panel-grid) > .corporate-onboarding-pricing-cockpit,
 .workspace-admin-grid:has(.setup-panel-grid) > .team-billing-handoff,
 .workspace-admin-grid:has(.setup-panel-grid) > .corporate-setup-guide {
@@ -46517,7 +46520,8 @@ body,
 .workspace-admin-grid:has(.setup-panel-grid) > .setup-route-deck,
 .workspace-admin-grid:has(.setup-panel-grid) > .setup-command-bar,
 .workspace-admin-grid:has(.setup-panel-grid) > .setup-tabs,
-.workspace-admin-grid:has(.setup-panel-grid) > .setup-panel-grid {
+.workspace-admin-grid:has(.setup-panel-grid) > .setup-panel-grid,
+.workspace-admin-grid:has(.setup-panel-grid) > .corporate-database-handoff-command {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
@@ -46525,6 +46529,8 @@ body,
 
 .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-grid,
 .workspace-admin-grid:has(.setup-panel-grid) .setup-command-metrics,
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-database-handoff-grid,
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-database-handoff-proof,
 .workspace-admin-grid:has(.setup-panel-grid) .setup-route-deck,
 .workspace-admin-grid:has(.setup-panel-grid) .setup-tabs,
 .workspace-admin-grid:has(.setup-panel-grid) .setup-panel-grid {
@@ -46540,14 +46546,16 @@ body,
 }
 
 .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-actions,
-.workspace-admin-grid:has(.setup-panel-grid) .setup-command-actions {
+.workspace-admin-grid:has(.setup-panel-grid) .setup-command-actions,
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-database-handoff-header {
   display: flex !important;
   flex-wrap: wrap !important;
   gap: 8px !important;
 }
 
 .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-actions > *,
-.workspace-admin-grid:has(.setup-panel-grid) .setup-command-actions > * {
+.workspace-admin-grid:has(.setup-panel-grid) .setup-command-actions > *,
+.workspace-admin-grid:has(.setup-panel-grid) .corporate-database-handoff-header > * {
   flex: 1 1 170px !important;
   min-width: 0 !important;
 }

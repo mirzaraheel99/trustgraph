@@ -566,6 +566,8 @@ The signed-in workspace also includes a Real data mission control directly below
 
 The signed-in database proof path now uses the V1 completion cockpit as the primary answer. Older live database run, live data answer, proof commander, mission control, and gap resolver boards remain in source for receipts and export coverage, but they are hidden from the daily cockpit so operators see one remaining-work answer, one command center, one live row repair path, and one completion ledger.
 
+Company Admin now keeps the Corporate database handoff visible inside the focused setup route. The admin sees account, company workspace, RBAC/team/billing setup, the active form, and the handoff into Corporate Verify scoped user rows without duplicate launch and triage boards hiding the database path.
+
 The simplified signed-in portal keeps the compact VPS saved-build command visible directly under the portal desk. Duplicate route and guidance panels stay hidden, but the operator can still see whether GitHub Pages is current, whether the VPS needs the manual `/opt/trustgraph` updater or SSH secrets, and whether `/trustgraph-release.json` returns commit JSON before testing the server URL.
 
 ## Product Planning
