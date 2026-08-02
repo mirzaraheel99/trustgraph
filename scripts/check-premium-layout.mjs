@@ -513,6 +513,12 @@ assert(css.includes(".production-gate-cockpit") && css.includes(".production-gat
 assert(app.includes('aria-label="Launch decision board"') && app.includes("launch_decision_board"), "Admin readiness must expose one plain launch decision board above detailed production gates.");
 assert(app.includes("launch_decision_board_requires_stripe_security_legal_pilot_owner_and_vps_cutover_decisions_recorded_before_production_payments_or_regulated_traffic"), "launch decision board must keep payments and regulated traffic blocked until human decisions are recorded.");
 assert(css.includes(".launch-decision-board") && css.includes(".launch-decision-board-grid") && css.includes(".launch-decision-board-proof"), "launch decision board must be styled and bounded.");
+assert(css.includes("Launch readiness one-path compression")
+  && css.includes(".production-gate-panel:has(.launch-decision-board) > .launch-decision-board")
+  && css.includes(".production-gate-panel:has(.launch-decision-board) > .production-gate-register")
+  && css.includes(".production-gate-panel:has(.pilot-owner-readiness-receipt) > .pilot-owner-readiness-database-receipt")
+  && css.includes(".production-gate-panel:has(.launch-decision-board) .production-gate-cockpit-grid"),
+  "launch readiness one-path compression must keep decision board, gate cockpit, pilot-owner receipts, and forms visible while minimizing duplicate gate registers.");
 assert(premiumRepair.includes(".setup-route-deck") && premiumRepair.includes("repeat(auto-fit, minmax(min(100%, 230px), 1fr))"), "setup route deck must auto-fit without overflow.");
 assert(premiumRepair.includes(".corporate-launch-cockpit") && premiumRepair.includes(".corporate-launch-lanes"), "corporate launch cockpit must be styled and bounded.");
 assert(premiumRepair.includes(".team-billing-handoff") && premiumRepair.includes(".team-billing-handoff-grid"), "team and billing handoff must be styled and bounded.");

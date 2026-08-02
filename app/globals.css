@@ -19375,6 +19375,91 @@ p {
   min-height: 36px;
 }
 
+/* Launch readiness one-path compression: decision proof first, duplicate ledgers minimized, forms last. */
+.production-gate-panel:has(.launch-decision-board),
+.production-gate-panel:has(.pilot-owner-readiness-receipt) {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 14px;
+}
+
+.production-gate-panel:has(.launch-decision-board) > .production-stop-summary,
+.production-gate-panel:has(.launch-decision-board) > .production-gate-heading,
+.production-gate-panel:has(.launch-decision-board) > .launch-decision-board,
+.production-gate-panel:has(.launch-decision-board) > .production-gate-cockpit,
+.production-gate-panel:has(.launch-decision-board) > .v1-completion-card,
+.production-gate-panel:has(.launch-decision-board) > .production-gate-form,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) > .production-gate-heading,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) > .pilot-owner-readiness-receipt,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) > .pilot-owner-readiness-database-receipt,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) > .production-gate-form {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.production-gate-panel:has(.launch-decision-board) > .production-gate-register,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) > .production-gate-register {
+  max-height: 130px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px dashed rgba(201, 214, 207, 0.14);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.production-gate-panel:has(.launch-decision-board) > .production-gate-register::before,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) > .production-gate-register::before {
+  grid-column: 1 / -1;
+  content: "Detailed register, retained for audit";
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.production-gate-panel:has(.launch-decision-board) .launch-decision-board-grid,
+.production-gate-panel:has(.launch-decision-board) .production-gate-cockpit-grid,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) .pilot-owner-readiness-grid,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) .pilot-owner-readiness-database-grid {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.production-gate-panel:has(.launch-decision-board) .production-gate-cockpit-grid article,
+.production-gate-panel:has(.launch-decision-board) .launch-decision-board-grid article {
+  min-height: 0;
+}
+
+.production-gate-panel:has(.launch-decision-board) .launch-decision-board-proof,
+.production-gate-panel:has(.launch-decision-board) .production-gate-cockpit-proof {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.production-gate-panel:has(.launch-decision-board) .production-gate-heading,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) .production-gate-heading {
+  align-items: stretch;
+}
+
+.production-gate-panel:has(.launch-decision-board) .button-cluster {
+  max-width: 440px;
+}
+
+.production-gate-panel:has(.launch-decision-board) .button-cluster .secondary-action,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) .production-gate-heading > .secondary-action {
+  min-width: 150px;
+  white-space: normal;
+}
+
+.production-gate-panel:has(.launch-decision-board) .production-gate-form,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) .production-gate-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.production-gate-panel:has(.launch-decision-board) .production-gate-form .secondary-action,
+.production-gate-panel:has(.pilot-owner-readiness-receipt) .production-gate-form .secondary-action {
+  justify-self: start;
+  min-width: 190px;
+}
+
 .plan-track-card {
   min-height: 116px;
   display: grid;
@@ -21586,6 +21671,40 @@ p {
 }
 
 @media (max-width: 760px) {
+  .production-gate-panel:has(.launch-decision-board) > .production-gate-register,
+  .production-gate-panel:has(.pilot-owner-readiness-receipt) > .production-gate-register {
+    max-height: 170px;
+  }
+
+  .production-gate-panel:has(.launch-decision-board) .production-gate-heading,
+  .production-gate-panel:has(.pilot-owner-readiness-receipt) .production-gate-heading,
+  .production-gate-panel:has(.launch-decision-board) .launch-decision-board-header,
+  .production-gate-panel:has(.launch-decision-board) .production-gate-cockpit-header,
+  .production-gate-panel:has(.pilot-owner-readiness-receipt) .pilot-owner-readiness-database-receipt > div:first-child {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .production-gate-panel:has(.pilot-owner-readiness-receipt) .pilot-owner-readiness-database-receipt > div:first-child > button {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
+  }
+
+  .production-gate-panel:has(.launch-decision-board) .button-cluster,
+  .production-gate-panel:has(.launch-decision-board) .button-cluster .secondary-action,
+  .production-gate-panel:has(.pilot-owner-readiness-receipt) .production-gate-heading > .secondary-action,
+  .production-gate-panel:has(.launch-decision-board) .production-gate-form .secondary-action,
+  .production-gate-panel:has(.pilot-owner-readiness-receipt) .production-gate-form .secondary-action {
+    width: 100%;
+    max-width: none;
+  }
+
+  .production-gate-panel:has(.launch-decision-board) .production-gate-form,
+  .production-gate-panel:has(.pilot-owner-readiness-receipt) .production-gate-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .workspace,
   .sidebar {
     padding: 16px;
