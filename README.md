@@ -145,6 +145,8 @@ The signed-in working database path now starts with a Live database proof comman
 
 The signed-in working database path now also includes a Live data acceptance answer before the proof commander. It states whether V1 can use the current live Supabase rows, names the next missing row group, keeps seed/reload/receipt/export actions visible, shows VPS save status, and rejects demo or preview rows as completion evidence.
 
+The signed-in working database path now includes a Live database run answer before dense proof panels. It gives the current run state, next action, seed, reload, receipt, export, live row counts, VPS status, and explicit demo/preview rejection in one operator command.
+
 The signed-in dashboard front door now exposes clickable cards for Professional Passport, Corporate Verify, Company Admin, Account and recovery, Pricing, Database proof, and Server sync. Pricing opens the billing setup panel, Database proof scrolls to the live-row proof cockpit, and Server sync exports the GitHub-to-VPS release packet.
 
 The billing setup panel now starts with a Pricing checkout readiness hub. It keeps Corporate package, seats, projected monthly price, live subscription ledger, quote receipt, billing decision, Stripe-off boundary, and export packet in one primary SaaS-style workflow while older billing proof receipts stay out of the main path.

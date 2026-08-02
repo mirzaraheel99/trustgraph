@@ -30663,6 +30663,67 @@ function App() {
       ready: liveDataAcceptanceAnswer.completion_receipt
     }
   ];
+  const liveDatabaseRunAnswer = {
+    mode: "live_database_run_answer",
+    status: realRowAcceptanceGate.accepted ? "ready_for_receipt" : authSession && accountContext ? "run_live_seed" : "hosted_login_required",
+    answer: realRowAcceptanceGate.accepted
+      ? latestRealDatabaseCompletionReceipt
+        ? "Live database rows are loaded and the completion receipt is recorded."
+        : "Live database rows are loaded. Record the completion receipt next."
+      : authSession && accountContext
+        ? `Live database is not complete yet. Run seed or add rows for ${realRowAcceptanceGate.next_missing_group}.`
+        : "Login from the hosted TrustGraph URL before any database row proof counts.",
+    next_action: realRowAcceptanceGate.accepted
+      ? latestRealDatabaseCompletionReceipt
+        ? "Export working-data proof"
+        : "Record completion receipt"
+      : authSession && accountContext
+        ? "Run live seed"
+        : "Login or register",
+    next_missing_group: realRowAcceptanceGate.next_missing_group,
+    next_missing_table: realRowAcceptanceGate.next_missing_table,
+    ready_groups: realRowAcceptanceGate.ready_groups,
+    required_groups: realRowAcceptanceGate.required_groups,
+    live_row_total: realRowAcceptanceGate.live_row_total,
+    completion_receipt_loaded: Boolean(latestRealDatabaseCompletionReceipt),
+    server_save_status: serverSyncMonitor.status,
+    preview_data_accepted: false,
+    fixture_data_accepted: false,
+    accepted_when:
+      "live_database_run_answer_shows_current_run_state_next_action_seed_reload_receipt_export_live_row_counts_vps_status_and_rejects_demo_preview_data_before_database_proof_panels"
+  };
+  const liveDatabaseRunAnswerCards = [
+    {
+      label: "Current run",
+      value: liveDatabaseRunAnswer.status.replaceAll("_", " "),
+      detail: liveDatabaseRunAnswer.answer,
+      ready: realRowAcceptanceGate.accepted
+    },
+    {
+      label: "Live row groups",
+      value: `${liveDatabaseRunAnswer.ready_groups}/${liveDatabaseRunAnswer.required_groups}`,
+      detail: `${liveDatabaseRunAnswer.live_row_total} signed-in repository rows counted.`,
+      ready: realRowAcceptanceGate.accepted
+    },
+    {
+      label: "Next missing",
+      value: liveDatabaseRunAnswer.next_missing_group,
+      detail: liveDatabaseRunAnswer.next_missing_table,
+      ready: realRowAcceptanceGate.accepted
+    },
+    {
+      label: "Receipt",
+      value: liveDatabaseRunAnswer.completion_receipt_loaded ? "Recorded" : "Needed",
+      detail: "Persist real database completion after live rows are loaded.",
+      ready: liveDatabaseRunAnswer.completion_receipt_loaded
+    },
+    {
+      label: "VPS",
+      value: liveDatabaseRunAnswer.server_save_status.replaceAll("_", " "),
+      detail: "Server acceptance still needs release JSON proof for the latest GitHub commit.",
+      ready: liveDatabaseRunAnswer.server_save_status === "synced"
+    }
+  ];
   const realDataMissionControl = {
     mode: "real_data_mission_control",
     status: livePilotRowProof.accepted ? "live_rows_loaded" : authSession && accountContext ? "load_live_rows" : "hosted_login_required",
@@ -33351,6 +33412,106 @@ function App() {
             <span>
               <small>Preview data</small>
               <strong>{registrationHandoffCommand.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+          </div>
+        </section>
+
+        <section className={`live-database-run-answer ${liveDatabaseRunAnswer.status}`} aria-label="Live database run answer">
+          <div className="live-database-run-answer-header">
+            <div>
+              <span className={`status-chip ${realRowAcceptanceGate.accepted ? "success" : "warning"}`}>Run live database</span>
+              <strong>{liveDatabaseRunAnswer.answer}</strong>
+              <small>{liveDatabaseRunAnswer.accepted_when}</small>
+            </div>
+            <div className="live-database-run-answer-actions">
+              <button className={!authSession || !accountContext ? "primary-action" : "secondary-action"} onClick={openAuthControls} type="button">
+                {authSession && accountContext ? "Account / recovery" : "Login or register"}
+              </button>
+              <button
+                className={authSession && accountContext && !realRowAcceptanceGate.accepted ? "primary-action" : "secondary-action"}
+                disabled={!authSession || !accountContext}
+                onClick={() => {
+                  if (!authSession || !accountContext) {
+                    openAuthControls();
+                    return;
+                  }
+                  setV1ReadinessStatus("Running live pilot seed from live database run answer...");
+                  seedLivePilotWorkspace()
+                    .then(() => setV1ReadinessStatus("Live pilot seed completed. Reload proof and export the packet."))
+                    .catch((error) => {
+                      setV1ReadinessStatus(error instanceof Error ? error.message : "Could not run live pilot seed.");
+                    });
+                }}
+                type="button"
+              >
+                Run live seed
+              </button>
+              <button className="secondary-action" onClick={() => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+                Reload proof
+              </button>
+              <button
+                className="secondary-action"
+                disabled={!authSession || !accountContext}
+                onClick={() =>
+                  void recordLiveRealDatabaseCompletionReceipt({
+                    status: realRowAcceptanceGate.accepted ? "ready_for_v1_review" : "live_rows_missing",
+                    completedSteps: livePilotRowProof.readyGroups,
+                    totalSteps: livePilotRowProof.totalRequiredGroups,
+                    missingGroups: livePilotRowProof.missingRequiredGroups,
+                    liveRowGroups: livePilotRowProof.rows.map((row) => ({
+                      label: row.label,
+                      table: row.table,
+                      count: row.count,
+                      ready: row.ready,
+                      evidence: row.evidence
+                    })),
+                    metadata: {
+                      source: "live_database_run_answer",
+                      next_action: liveDatabaseRunAnswer.next_action,
+                      server_save_status: serverSyncMonitor.status
+                    }
+                  })
+                }
+                type="button"
+              >
+                Record receipt
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-live-database-run-answer-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...liveDatabaseRunAnswer, cards: liveDatabaseRunAnswerCards, rows: livePilotRowProof.rows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export run proof
+              </button>
+            </div>
+          </div>
+          <div className="live-database-run-answer-grid">
+            {liveDatabaseRunAnswerCards.map((card) => (
+              <article className={card.ready ? "ready" : "next"} key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </article>
+            ))}
+          </div>
+          <div className="live-database-run-answer-proof">
+            <span>
+              <small>Next action</small>
+              <strong>{liveDatabaseRunAnswer.next_action}</strong>
+            </span>
+            <span>
+              <small>Fixture rows</small>
+              <strong>{liveDatabaseRunAnswer.fixture_data_accepted ? "Accepted" : "Rejected"}</strong>
+            </span>
+            <span>
+              <small>Preview data</small>
+              <strong>{liveDatabaseRunAnswer.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
           </div>
         </section>

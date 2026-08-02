@@ -42,6 +42,12 @@ const appRequirements = [
     "live_data_acceptance_answer_keeps_current_live_row_answer_next_missing_group_seed_reload_receipt_export_vps_status_and_demo_preview_rejection_visible_before_database_proof",
     "live data acceptance answer rule"
   ],
+  ["Live database run answer", "live database run answer label"],
+  ["live_database_run_answer", "live database run answer packet mode"],
+  [
+    "live_database_run_answer_shows_current_run_state_next_action_seed_reload_receipt_export_live_row_counts_vps_status_and_rejects_demo_preview_data_before_database_proof_panels",
+    "live database run answer acceptance rule"
+  ],
   ["Live rows checklist", "live rows checklist label"],
   ["live_rows_checklist", "live rows checklist packet mode"],
   [

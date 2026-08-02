@@ -36556,6 +36556,124 @@ body {
   }
 }
 
+/* Live database run answer: one operator command before dense live-row proof panels. */
+.live-database-run-answer {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.12), rgba(134, 174, 246, 0.06)),
+    rgba(7, 17, 20, 0.9);
+}
+
+.live-database-run-answer.hosted_login_required,
+.live-database-run-answer.run_live_seed {
+  border-color: rgba(255, 209, 102, 0.28);
+  background:
+    linear-gradient(135deg, rgba(255, 209, 102, 0.1), rgba(95, 240, 201, 0.06)),
+    rgba(7, 17, 20, 0.9);
+}
+
+.live-database-run-answer-header,
+.live-database-run-answer-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
+  gap: 12px;
+  min-width: 0;
+}
+
+.live-database-run-answer-header > div:first-child,
+.live-database-run-answer-actions,
+.live-database-run-answer-grid article,
+.live-database-run-answer-proof span {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.live-database-run-answer-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 126px), 1fr));
+}
+
+.live-database-run-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.live-database-run-answer-grid article,
+.live-database-run-answer-proof span {
+  min-width: 0;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.live-database-run-answer-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.32);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.live-database-run-answer-grid article.next {
+  border-color: rgba(255, 209, 102, 0.32);
+}
+
+.live-database-run-answer strong,
+.live-database-run-answer small,
+.live-database-run-answer span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.live-database-run-answer-header strong {
+  color: var(--text);
+  font-size: clamp(18px, 2vw, 25px);
+  line-height: 1.12;
+}
+
+.live-database-run-answer-grid strong,
+.live-database-run-answer-proof strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.18;
+}
+
+.live-database-run-answer-grid span,
+.live-database-run-answer-proof small:first-child {
+  color: #9fead5;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.live-database-run-answer small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.live-database-run-answer-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+@media (max-width: 760px) {
+  .live-database-run-answer-header,
+  .live-database-run-answer-proof {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Live data acceptance answer: the short V1 go/no-go before dense proof ledgers. */
 .live-data-acceptance-answer {
   display: grid;
