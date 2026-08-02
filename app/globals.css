@@ -17302,6 +17302,119 @@ p {
   font-weight: 850;
 }
 
+.admin-export-filter-cockpit {
+  order: -95;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.11), rgba(10, 18, 22, 0.96) 48%, rgba(143, 184, 255, 0.16)),
+    rgba(8, 15, 18, 0.96);
+}
+
+.admin-export-filter-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.admin-export-filter-header > div,
+.admin-export-filter-proof {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.admin-export-filter-header strong,
+.admin-export-filter-header small,
+.admin-export-filter-grid strong,
+.admin-export-filter-grid small,
+.admin-export-filter-proof span,
+.admin-export-filter-proof small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-export-filter-header strong {
+  color: var(--text);
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  line-height: 1.12;
+}
+
+.admin-export-filter-header small,
+.admin-export-filter-grid small,
+.admin-export-filter-proof small {
+  color: var(--muted);
+  line-height: 1.38;
+}
+
+.admin-export-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-export-filter-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 235, 229, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.admin-export-filter-grid span,
+.admin-export-filter-proof span {
+  color: rgba(95, 240, 201, 0.96);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.admin-export-filter-grid strong {
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.14;
+}
+
+.admin-export-filter-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-export-filter-header button,
+.admin-export-filter-actions button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.admin-export-filter-proof {
+  padding: 10px;
+  border: 1px solid rgba(95, 240, 201, 0.15);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.055);
+}
+
+.audit-panel .admin-audit-export-command,
+.audit-panel .admin-audit-export-matrix,
+.audit-panel .audit-coverage-note {
+  display: none;
+}
+
 .admin-audit-export-command {
   display: grid;
   gap: 12px;
@@ -21073,6 +21186,9 @@ p {
   .admin-export-launcher-grid,
   .admin-export-launcher-actions,
   .admin-export-launcher-boundary,
+  .admin-export-filter-header,
+  .admin-export-filter-grid,
+  .admin-export-filter-actions,
   .billing-estimate-card,
   .billing-decision-card,
   .billing-ledger-acceptance,

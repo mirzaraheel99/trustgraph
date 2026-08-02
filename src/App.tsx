@@ -11207,6 +11207,51 @@ function AuditTrailPanel({
     { label: "Recommended", value: adminAuditDecisionBar.recommended_export, detail: "Use coverage for high-signal or guardrail events." },
     { label: "Boundary", value: "No raw files", detail: "Evidence files stay private; exports include metadata only." }
   ];
+  const adminExportFilterCockpit = {
+    mode: "admin_export_filter_cockpit",
+    headline:
+      filteredEvents.length === 0
+        ? "Set a filter or load audit rows before export"
+        : activeFilterLabels.length
+          ? "Filtered admin export is ready"
+          : "Admin export is ready for the full visible audit scope",
+    operator_path:
+      "Choose filters, review the receipt, export CSV/JSON for rows, or export coverage/readiness for handoff.",
+    recommended_export: adminAuditDecisionBar.recommended_export,
+    active_scope: adminAuditDecisionBar.active_scope,
+    next_action:
+      filteredEvents.length === 0
+        ? "Clear filters, switch to Admin, or load live audit events."
+        : guardrailCount || highSignalCount
+          ? "Export coverage with case, data-rights, release, and evidence metadata context."
+          : "Export filtered CSV for review, then attach readiness if sharing outside operations.",
+    included: ["filtered audit events", "verification case status", "data-rights status", "release ledger context"],
+    excluded: ["raw private evidence files", "unfiltered hidden rows", "preview-only proof"],
+    accepted_when:
+      "admin_export_filter_cockpit_requires_filters_recommended_export_csv_json_coverage_readiness_case_context_data_rights_release_ledger_raw_file_exclusion_and_no_preview_data"
+  };
+  const adminExportFilterCockpitCards = [
+    {
+      label: "Filter receipt",
+      value: activeFilterLabels.length ? activeFilterLabels.join(" / ") : "All loaded rows",
+      detail: `${filteredEvents.length} rows visible to export`
+    },
+    {
+      label: "Recommended",
+      value: adminExportFilterCockpit.recommended_export,
+      detail: adminExportFilterCockpit.next_action
+    },
+    {
+      label: "Context packet",
+      value: `${operationsCases.length + dataRightsRequests.length + schemaMigrationRuns.length} rows`,
+      detail: "Cases, data rights, and release ledger travel with coverage exports"
+    },
+    {
+      label: "File boundary",
+      value: "Metadata only",
+      detail: "Raw private evidence files never leave the Admin export"
+    }
+  ];
   const adminOperationsAcceptanceCheckpoint = {
     mode: "admin_operations_acceptance_checkpoint",
     headline:
@@ -11421,6 +11466,46 @@ function AuditTrailPanel({
           <button className="secondary-action" onClick={() => downloadTextFile(coveragePacketName, JSON.stringify({ ...auditCoveragePacket, admin_audit_decision_bar: adminAuditDecisionBar }, null, 2), "application/json")} type="button">
             Export coverage
           </button>
+        </div>
+      </div>
+      <div className="admin-export-filter-cockpit" aria-label="Admin export filter cockpit">
+        <div className="admin-export-filter-header">
+          <div>
+            <span className={`status-chip ${filteredEvents.length ? "success" : "warning"}`}>Admin export filter cockpit</span>
+            <strong>{adminExportFilterCockpit.headline}</strong>
+            <small>{adminExportFilterCockpit.operator_path}</small>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => downloadTextFile(exportReadinessName, JSON.stringify({ ...adminExportReadinessPacket, admin_export_filter_cockpit: adminExportFilterCockpit }, null, 2), "application/json")}
+            type="button"
+          >
+            Export readiness
+          </button>
+        </div>
+        <div className="admin-export-filter-grid">
+          {adminExportFilterCockpitCards.map((card) => (
+            <article key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="admin-export-filter-actions">
+          <button className="primary-action" disabled={!filteredEvents.length} onClick={() => downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv")} type="button">
+            Export filtered CSV
+          </button>
+          <button className="secondary-action" disabled={!filteredEvents.length} onClick={() => downloadTextFile(exportJsonName, JSON.stringify(filteredEvents, null, 2), "application/json")} type="button">
+            Export filtered JSON
+          </button>
+          <button className="secondary-action" onClick={() => downloadTextFile(coveragePacketName, JSON.stringify({ ...auditCoveragePacket, admin_export_filter_cockpit: adminExportFilterCockpit }, null, 2), "application/json")} type="button">
+            Export coverage packet
+          </button>
+        </div>
+        <div className="admin-export-filter-proof">
+          <span>{adminExportFilterCockpit.accepted_when}</span>
+          <small>Includes: {adminExportFilterCockpit.included.join(", ")}. Excludes: {adminExportFilterCockpit.excluded.join(", ")}.</small>
         </div>
       </div>
       <div className="admin-export-launcher" aria-label="Admin export launcher">
