@@ -35838,6 +35838,133 @@ body {
   min-height: 44px;
 }
 
+.billing-ready-answer {
+  order: -100;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.16), rgba(134, 174, 246, 0.08) 58%, rgba(255, 255, 255, 0.02)),
+    rgba(6, 15, 18, 0.94);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.billing-ready-answer.needed {
+  border-color: rgba(255, 205, 118, 0.3);
+}
+
+.billing-ready-answer-header,
+.billing-ready-answer-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.billing-ready-answer-header > div:first-child,
+.billing-ready-answer-actions,
+.billing-ready-answer-grid article,
+.billing-ready-answer-proof span {
+  min-width: 0;
+}
+
+.billing-ready-answer strong,
+.billing-ready-answer small,
+.billing-ready-answer span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.billing-ready-answer-header strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.1vw, 32px);
+  line-height: 1.05;
+}
+
+.billing-ready-answer-header small,
+.billing-ready-answer-grid small,
+.billing-ready-answer-proof small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.billing-ready-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 10px;
+}
+
+.billing-ready-answer-grid article {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.billing-ready-answer-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.26);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.billing-ready-answer-grid article.next {
+  border-color: rgba(255, 205, 118, 0.28);
+  background: rgba(255, 205, 118, 0.08);
+}
+
+.billing-ready-answer-grid span,
+.billing-ready-answer-proof small {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.billing-ready-answer-grid strong,
+.billing-ready-answer-proof strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.14;
+}
+
+.billing-ready-answer-actions {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) repeat(4, minmax(132px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.billing-ready-answer-actions label {
+  display: grid;
+  gap: 5px;
+}
+
+.billing-ready-answer-actions label span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.billing-ready-answer-actions input,
+.billing-ready-answer-actions button {
+  width: 100%;
+  min-height: 44px;
+}
+
+.billing-ready-answer-proof span {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
 .billing-panel .pilot-package-board {
   order: -75;
 }
@@ -35875,6 +36002,7 @@ body {
 }
 
 .billing-panel .pricing-choice-rail,
+.billing-panel .billing-ready-answer,
 .billing-panel .pricing-checkout-readiness-hub,
 .billing-panel .billing-decision-center,
 .billing-panel .pilot-package-board,
@@ -35893,6 +36021,7 @@ body {
 }
 
 .billing-panel .pricing-choice-copy > strong,
+.billing-panel .billing-ready-answer-header strong,
 .billing-panel .billing-decision-center-copy > strong,
 .billing-panel .pilot-package-board-header strong,
 .billing-panel .pricing-activation-workbench strong,
@@ -35907,6 +36036,7 @@ body {
 }
 
 .billing-panel .pricing-choice-grid,
+.billing-panel .billing-ready-answer-grid,
 .billing-panel .pricing-checkout-readiness-grid,
 .billing-panel .billing-decision-center-grid,
 .billing-panel .pilot-package-board-grid,
@@ -35923,6 +36053,8 @@ body {
 }
 
 .billing-panel .pricing-choice-actions,
+.billing-panel .billing-ready-answer-actions,
+.billing-panel .billing-ready-answer-proof,
 .billing-panel .pricing-checkout-readiness-actions,
 .billing-panel .billing-decision-center-actions,
 .billing-panel .pilot-package-board-proof,
@@ -35938,6 +36070,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions button,
+.billing-panel .billing-ready-answer-actions button,
 .billing-panel .pricing-checkout-readiness-actions button,
 .billing-panel .billing-decision-center-actions button,
 .billing-panel .pilot-package-board-proof button,
@@ -35953,6 +36086,9 @@ body {
 
 @media (max-width: 780px) {
   .billing-panel .pricing-choice-actions,
+  .billing-panel .billing-ready-answer-header,
+  .billing-panel .billing-ready-answer-actions,
+  .billing-panel .billing-ready-answer-proof,
   .billing-panel .pricing-checkout-readiness-actions,
   .billing-panel .billing-decision-center-actions,
   .billing-panel .pilot-package-board-header,
@@ -35972,6 +36108,7 @@ body {
 }
 
 .billing-panel .pricing-launch-command,
+.billing-panel:has(.billing-ready-answer) .pricing-checkout-readiness-hub,
 .billing-panel:has(.pricing-checkout-readiness-hub) .billing-decision-center,
 .billing-panel .pricing-quote-receipt,
 .billing-panel .pricing-decision-board,

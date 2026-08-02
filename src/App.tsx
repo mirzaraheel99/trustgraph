@@ -14489,6 +14489,73 @@ function BillingPanel({
       ready: true
     }
   ];
+  const billingReadyAnswer = {
+    mode: "billing_ready_answer",
+    status:
+      activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt
+        ? "ready_for_corporate_billing_review"
+        : "finish_billing_setup",
+    selected_package: selectedProjectedPlan?.name ?? primaryPlan?.name ?? "Corporate Verify Pilot",
+    selected_plan_id: selectedProjectedPlan?.plan_id ?? primaryPlan?.id ?? null,
+    selected_seats: seats,
+    projected_monthly_usd: estimatedSeatTotal,
+    live_subscription_rows: activeSubscriptions.length,
+    quote_receipt_rows: pricingQuoteReceipts.length,
+    billing_decision_rows: decisionReceipts.length,
+    professional_plan: "Free pilot",
+    corporate_plan: "$149/month pilot package",
+    scale_plan: "Human approved quote",
+    corporate_database_boundary: "Corporate users only see approved scoped Passport rows through RBAC, consent, and access grants.",
+    stripe_checkout_status: "disabled_until_human_gate",
+    preview_data_accepted: false,
+    next_action: !activeSubscriptions.length
+      ? "Activate Corporate pilot ledger"
+      : !latestPricingQuoteReceipt
+        ? "Record Corporate quote"
+        : !latestDecisionReceipt
+          ? "Record Stripe gate decision"
+          : "Export billing answer",
+    accepted_when:
+      "billing_ready_answer_keeps_professional_free_corporate_149_pilot_seats_live_subscription_ledger_quote_decision_stripe_human_gate_scoped_database_boundary_and_preview_rejection_before_billing_receipts"
+  };
+  const billingReadyAnswerCards = [
+    {
+      label: "Recommended path",
+      value: activeSubscriptions.length ? "Corporate pilot active" : "$149 pilot ledger",
+      detail: "Keep Professional free, sell Corporate Verify as the pilot package, and quote Scale by approval.",
+      ready: plans.length > 0
+    },
+    {
+      label: "Seats and price",
+      value: estimatedSeatTotal ? `${seats} seats - $${estimatedSeatTotal}/mo` : `${seats} seats`,
+      detail: "The quote comes from the live pricing catalog and selected corporate seats.",
+      ready: estimatedSeatTotal > 0
+    },
+    {
+      label: "Database proof",
+      value: activeSubscriptions.length ? `${activeSubscriptions.length} ledger row${activeSubscriptions.length === 1 ? "" : "s"}` : "Ledger needed",
+      detail: activeSubscriptions.length ? "The corporate subscription ledger is stored in Supabase." : "Activate the pilot ledger before buyer review.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Quote receipt",
+      value: latestPricingQuoteReceipt ? "Saved" : "Record quote",
+      detail: latestPricingQuoteReceipt ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month receipt is saved.` : "Persist the selected seats and monthly price.",
+      ready: Boolean(latestPricingQuoteReceipt)
+    },
+    {
+      label: "Stripe gate",
+      value: latestDecisionReceipt ? "Decision saved" : "Human gate",
+      detail: "Checkout, invoices, tax, refunds, dunning, and payment webhooks stay off until approved.",
+      ready: Boolean(latestDecisionReceipt)
+    },
+    {
+      label: "Corporate access",
+      value: "Scoped only",
+      detail: "No open user database browsing; reviewers need RBAC, consent, and grants.",
+      ready: true
+    }
+  ];
   const pricingCheckoutReadinessHub = {
     mode: "pricing_checkout_readiness_hub",
     status: activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt ? "ready_for_human_billing_review" : "setup_required",
@@ -14780,6 +14847,10 @@ function BillingPanel({
     billing_activation_receipt: billingActivationReceipt,
     billing_operator_path: billingOperatorSteps,
     billing_pilot_acceptance_checkpoint: billingPilotAcceptanceCheckpoint,
+    billing_ready_answer: {
+      ...billingReadyAnswer,
+      cards: billingReadyAnswerCards.map(({ label, value, ready }) => ({ label, value, ready }))
+    },
     billing_decision_center: {
       ...billingDecisionCenter,
       cards: billingDecisionCenterCards.map(({ label, value, ready }) => ({ label, value, ready }))
@@ -14919,6 +14990,76 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className={`billing-ready-answer ${billingReadyAnswer.status === "ready_for_corporate_billing_review" ? "ready" : "needed"}`} aria-label="Billing ready answer">
+        <div className="billing-ready-answer-header">
+          <div>
+            <span className={`status-chip ${billingReadyAnswer.status === "ready_for_corporate_billing_review" ? "success" : "warning"}`}>
+              Billing answer
+            </span>
+            <strong>{billingReadyAnswer.next_action}</strong>
+            <small>
+              Use this as the operating path: Professional stays free, Corporate starts with the pilot ledger, Scale remains a human quote, and Stripe stays gated until approval.
+            </small>
+          </div>
+          <span className="status-chip neutral">Scoped database only</span>
+        </div>
+        <div className="billing-ready-answer-grid">
+          {billingReadyAnswerCards.map((item) => (
+            <article className={item.ready ? "ready" : "next"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="billing-ready-answer-actions">
+          <label>
+            <span>Corporate seats</span>
+            <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
+          </label>
+          <button
+            className="primary-action"
+            disabled={disabled || !billingReadyAnswer.selected_plan_id || activeSubscriptions.length > 0 || Boolean(busyPlanId)}
+            onClick={() => billingReadyAnswer.selected_plan_id ? void activate(billingReadyAnswer.selected_plan_id) : undefined}
+            type="button"
+          >
+            Activate ledger
+          </button>
+          <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+            Record quote
+          </button>
+          <button className="secondary-action" disabled={disabled || decisionBusy} onClick={() => void recordDecisionReceipt()} type="button">
+            Record decision
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-billing-ready-answer-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...billingReadyAnswer, cards: billingReadyAnswerCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export answer
+          </button>
+        </div>
+        <div className="billing-ready-answer-proof">
+          <span>
+            <strong>{billingReadyAnswer.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+            <small>Acceptance source</small>
+          </span>
+          <span>
+            <strong>{billingReadyAnswer.stripe_checkout_status.replace(/_/g, " ")}</strong>
+            <small>Payment collection</small>
+          </span>
+          <span>
+            <strong>{billingReadyAnswer.accepted_when}</strong>
+            <small>Audit rule</small>
+          </span>
+        </div>
+      </div>
       <div className="pricing-checkout-readiness-hub" aria-label="Pricing checkout readiness hub">
         <div className="pricing-checkout-readiness-copy">
           <span className={`status-chip ${pricingCheckoutReadinessHub.status === "ready_for_human_billing_review" ? "success" : "warning"}`}>

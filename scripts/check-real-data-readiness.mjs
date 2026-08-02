@@ -280,6 +280,12 @@ const appRequirements = [
     "billing_pilot_acceptance_requires_live_pricing_catalog_selected_seats_projected_totals_live_subscription_ledger_quote_receipt_payment_decision_stripe_gate_and_no_preview_data",
     "billing pilot acceptance rule"
   ],
+  ["Billing ready answer", "billing ready answer label"],
+  ["billing_ready_answer", "billing ready answer packet mode"],
+  [
+    "billing_ready_answer_keeps_professional_free_corporate_149_pilot_seats_live_subscription_ledger_quote_decision_stripe_human_gate_scoped_database_boundary_and_preview_rejection_before_billing_receipts",
+    "billing ready answer acceptance rule"
+  ],
   ["V1 pilot route run checkpoint", "V1 pilot route run label"],
   ["v1_pilot_route_run_checkpoint", "V1 pilot route run packet mode"],
   [
