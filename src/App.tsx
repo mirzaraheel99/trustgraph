@@ -17769,11 +17769,14 @@ function TeamMembersPanel({
 
 const TRUSTGRAPH_VPS_URL = "https://trustgraph.5-75-224-110.sslip.io/";
 const TRUSTGRAPH_GITHUB_PAGES_URL = "https://mirzaraheel99.github.io/trustgraph/";
+const TRUSTGRAPH_AUTH_REDIRECT_URL =
+  process.env.NEXT_PUBLIC_TRUSTGRAPH_AUTH_REDIRECT_URL?.trim() || TRUSTGRAPH_VPS_URL;
 const TRUSTGRAPH_ALLOWED_REDIRECTS = [
+  TRUSTGRAPH_AUTH_REDIRECT_URL,
   TRUSTGRAPH_GITHUB_PAGES_URL,
   TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
   TRUSTGRAPH_VPS_URL
-];
+].filter((url, index, urls) => urls.indexOf(url) === index);
 
 function authFailureMessage(error: unknown, redirectUrl: string, fallback = "Authentication failed.") {
   const message = error instanceof Error ? error.message : fallback;
@@ -17799,10 +17802,16 @@ function authFailureMessage(error: unknown, redirectUrl: string, fallback = "Aut
 }
 
 function hostedAuthRedirectUrl() {
-  if (typeof window === "undefined") return TRUSTGRAPH_VPS_URL;
+  const configuredRedirect = TRUSTGRAPH_AUTH_REDIRECT_URL.endsWith("/")
+    ? TRUSTGRAPH_AUTH_REDIRECT_URL
+    : `${TRUSTGRAPH_AUTH_REDIRECT_URL}/`;
+  if (typeof window === "undefined") return configuredRedirect;
 
   const currentUrl = `${window.location.origin}${window.location.pathname}`;
-  return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? TRUSTGRAPH_VPS_URL : currentUrl;
+  const currentIsAllowedHostedRedirect =
+    TRUSTGRAPH_ALLOWED_REDIRECTS.includes(currentUrl) ||
+    TRUSTGRAPH_ALLOWED_REDIRECTS.includes(currentUrl.replace(/\/$/, ""));
+  return currentIsAllowedHostedRedirect ? currentUrl : configuredRedirect;
 }
 
 function hasHostedAuthCallbackUrl() {

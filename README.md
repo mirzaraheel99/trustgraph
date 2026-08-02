@@ -116,7 +116,10 @@ Add these repository/deployment environment variables for hosted live mode:
 ```text
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_TRUSTGRAPH_AUTH_REDIRECT_URL=https://trustgraph.5-75-224-110.sslip.io/
 ```
+
+`NEXT_PUBLIC_TRUSTGRAPH_AUTH_REDIRECT_URL` is the preferred return URL sent with signup, resend verification, and password recovery. Keep it pointed at the VPS TrustGraph app for pilot testing so emails do not choose a local development origin.
 
 In Supabase Auth URL settings, set the Site URL to the active hosted TrustGraph URL and add `https://mirzaraheel99.github.io/trustgraph/`, `https://trustgraph.5-75-224-110.sslip.io`, and `https://trustgraph.5-75-224-110.sslip.io/` under Redirect URLs before VPS login tests. If Site URL remains `localhost`, verification emails will open a localhost link instead of the hosted app.
 Until those variables are present, the app stays in product preview mode and keeps a local RBAC account context available.

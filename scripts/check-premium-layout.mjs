@@ -712,6 +712,7 @@ assert(app.includes("registration_outcome_command_requires_selected_portal_mode_
 assert(css.includes(".registration-outcome-command") && css.includes(".registration-outcome-grid") && css.includes(".registration-outcome-actions"), "registration outcome command must be styled, actionable, and bounded.");
 assert(css.includes(".registration-completion-handoff") && css.includes(".registration-completion-grid"), "registration completion handoff must be styled and bounded.");
 assert(app.includes('aria-label="Hosted auth redirect verification receipt"'), "public auth must expose the hosted redirect verification receipt.");
+assert(app.includes("NEXT_PUBLIC_TRUSTGRAPH_AUTH_REDIRECT_URL") && app.includes("currentIsAllowedHostedRedirect") && !app.includes("return window.location.hostname === \"localhost\""), "hosted auth redirect policy must use an explicit hosted return URL and never choose localhost for verification or recovery emails.");
 assert(premiumRepair.includes(".hosted-auth-redirect-verification") && premiumRepair.includes(".hosted-auth-redirect-grid"), "hosted auth redirect verification must be styled and bounded.");
 assert(app.includes('aria-label="Email verification delivery receipt"'), "public auth must expose email verification delivery receipt.");
 assert(css.includes(".email-verification-delivery-receipt") && css.includes(".email-verification-delivery-grid"), "email verification delivery receipt must be styled and bounded.");

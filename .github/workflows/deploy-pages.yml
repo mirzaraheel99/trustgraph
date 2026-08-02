@@ -84,6 +84,7 @@ jobs:
           GITHUB_PAGES: "true"
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_TRUSTGRAPH_AUTH_REDIRECT_URL: https://trustgraph.5-75-224-110.sslip.io/
 
       - name: Verify release stamp asset
         run: |
