@@ -1335,6 +1335,97 @@ button {
     rgba(255, 255, 255, 0.028);
 }
 
+.public-pricing-path-answer {
+  display: grid;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(82, 214, 196, 0.26);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(82, 214, 196, 0.11), rgba(134, 174, 246, 0.07) 58%, rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.03);
+}
+
+.public-pricing-path-answer.corporate {
+  border-color: rgba(134, 174, 246, 0.28);
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.11), rgba(82, 214, 196, 0.07) 58%, rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.03);
+}
+
+.public-pricing-path-answer-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-pricing-path-answer-copy strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.4vw, 34px);
+  line-height: 1.05;
+}
+
+.public-pricing-path-answer-grid,
+.public-pricing-path-answer-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.public-pricing-path-answer-grid article,
+.public-pricing-path-answer-proof span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-pricing-path-answer-grid article.active {
+  border-color: rgba(82, 214, 196, 0.38);
+  background: rgba(82, 214, 196, 0.08);
+}
+
+.public-pricing-path-answer strong,
+.public-pricing-path-answer small,
+.public-pricing-path-answer span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.public-pricing-path-answer small {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.public-pricing-path-answer-grid span,
+.public-pricing-path-answer-proof small {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.public-pricing-path-answer-grid strong,
+.public-pricing-path-answer-proof strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.14;
+}
+
+.public-pricing-path-answer-grid button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 .public-pricing-access-copy {
   display: grid;
   gap: 7px;
@@ -20711,6 +20802,8 @@ p {
   .pricing-decision-strip,
   .public-pricing-access-grid,
   .public-pricing-access-actions,
+  .public-pricing-path-answer-grid,
+  .public-pricing-path-answer-proof,
   .public-pricing-launch-decision,
   .public-pricing-launch-decision-grid,
   .public-pricing-estimator,

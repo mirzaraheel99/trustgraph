@@ -21195,6 +21195,48 @@ function PublicSite({
       portal
     }
   ];
+  const publicPricingPathAnswer = {
+    mode: "public_pricing_path_answer",
+    selected_portal: portal,
+    recommended_path:
+      portal === "corporate"
+        ? "Choose Corporate Verify pilot when a company needs reviewer RBAC, team seats, and scoped user database access."
+        : "Choose Professional free when one person needs a private Passport, evidence, consent, and controlled sharing.",
+    professional_price: "$0 pilot",
+    corporate_price: "$149/month pilot",
+    scale_price: "Human-approved quote",
+    first_live_write:
+      portal === "corporate"
+        ? "registration_intents, organizations, organization_members, organization_subscriptions"
+        : "registration_intents, profiles, personal organization, Passport rows",
+    corporate_access_rule: "Corporate never receives open user browsing; reviewers see only professional-approved scoped rows.",
+    payment_boundary: "Stripe checkout, tax, invoices, refunds, dunning, and webhooks stay off until the billing decision is approved.",
+    accepted_when:
+      "public_pricing_path_answer_recommends_professional_free_corporate_149_or_scale_quote_with_first_live_write_scoped_access_and_stripe_gate_before_plan_cards"
+  };
+  const publicPricingPathAnswerCards = [
+    {
+      label: "Professional",
+      value: publicPricingPathAnswer.professional_price,
+      detail: "Best for a worker creating and controlling their own Passport.",
+      action: "Start free",
+      portal: "professional" as const
+    },
+    {
+      label: "Corporate",
+      value: publicPricingPathAnswer.corporate_price,
+      detail: "Best for employers or staffing teams that review approved Passport rows.",
+      action: "Start pilot",
+      portal: "corporate" as const
+    },
+    {
+      label: "Scale",
+      value: publicPricingPathAnswer.scale_price,
+      detail: "Use only after pilot-owner, billing, legal, security, and VPS cutover decisions.",
+      action: "Export quote path",
+      portal
+    }
+  ];
   const portalLoginSwitchboard = [
     {
       label: "Professional user login",
@@ -24078,6 +24120,53 @@ function PublicSite({
         <div className="public-section-heading">
           <span className="eyebrow">Pilot access</span>
           <h2>Start with controlled workflows, then scale</h2>
+        </div>
+        <div className={`public-pricing-path-answer ${portal}`} aria-label="Public pricing path answer">
+          <div className="public-pricing-path-answer-copy">
+            <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Which plan?</span>
+            <strong>{publicPricingPathAnswer.recommended_path}</strong>
+            <small>{publicPricingPathAnswer.accepted_when}</small>
+          </div>
+          <div className="public-pricing-path-answer-grid">
+            {publicPricingPathAnswerCards.map((item) => (
+              <article className={item.portal === portal ? "active" : ""} key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <small>{item.detail}</small>
+                <button
+                  className={item.portal === "professional" ? "primary-action" : "secondary-action"}
+                  onClick={() => {
+                    if (item.label === "Scale") {
+                      downloadTextFile(
+                        `trustgraph-public-pricing-path-answer-${new Date().toISOString().slice(0, 10)}.json`,
+                        JSON.stringify(publicPricingPathAnswer, null, 2),
+                        "application/json"
+                      );
+                      return;
+                    }
+                    openPortal(item.portal);
+                  }}
+                  type="button"
+                >
+                  {item.action}
+                </button>
+              </article>
+            ))}
+          </div>
+          <div className="public-pricing-path-answer-proof">
+            <span>
+              <small>First live write</small>
+              <strong>{publicPricingPathAnswer.first_live_write}</strong>
+            </span>
+            <span>
+              <small>Corporate access</small>
+              <strong>{publicPricingPathAnswer.corporate_access_rule}</strong>
+            </span>
+            <span>
+              <small>Payment gate</small>
+              <strong>{publicPricingPathAnswer.payment_boundary}</strong>
+            </span>
+          </div>
         </div>
         <div className="pricing-grid">
           {pricing.map((plan) => (

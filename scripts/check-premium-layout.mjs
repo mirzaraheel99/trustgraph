@@ -205,6 +205,8 @@ assert(app.includes('aria-label="Public portal flow map"') && app.includes("publ
 assert(app.includes('aria-label="Public buyer decision board"') && app.includes("public_buyer_decision_board"), "public website must expose a buyer decision board for Professional, Corporate, Scale, pricing, and database boundaries.");
 assert(app.includes('aria-label="Public buyer launch path"'), "public website must expose a plain-language buyer launch path before signup.");
 assert(app.includes('aria-label="Public pricing access summary"') && app.includes("public_pricing_access_summary"), "public pricing section must expose Professional free, Corporate $149 pilot, first database write, scoped user access, and Stripe boundary before signup.");
+assert(app.includes('aria-label="Public pricing path answer"') && app.includes("public_pricing_path_answer"), "public pricing section must answer which plan to choose before plan cards.");
+assert(app.includes("public_pricing_path_answer_recommends_professional_free_corporate_149_or_scale_quote_with_first_live_write_scoped_access_and_stripe_gate_before_plan_cards"), "public pricing path answer must recommend Professional, Corporate, or Scale with first write, scoped access, and Stripe gate.");
 assert(app.includes('aria-label="Registration database launch order"'), "public website must expose the selected registration-to-database launch order before signup.");
 assert(app.includes('aria-label="Registration focus strip"'), "public auth must expose a compact registration focus strip before form fields.");
 assert(app.includes('aria-label="Portal launch decision strip"'), "public auth must expose a plain-language portal launch decision strip.");
@@ -342,6 +344,7 @@ assert(css.includes(".public-portal-database-contract") && css.includes(".public
 assert(css.includes(".public-portal-flow-map") && css.includes(".public-portal-flow-map-grid") && css.includes(".public-portal-flow-map-proof"), "public portal flow map must be styled and bounded.");
 assert(css.includes(".public-buyer-launch-path") && css.includes(".public-buyer-launch-grid"), "public buyer launch path must be styled and bounded.");
 assert(css.includes(".public-pricing-access-summary") && css.includes(".public-pricing-access-grid") && css.includes(".public-pricing-access-actions"), "public pricing access summary must be styled and bounded.");
+assert(css.includes(".public-pricing-path-answer") && css.includes(".public-pricing-path-answer-grid") && css.includes(".public-pricing-path-answer-proof"), "public pricing path answer must be styled and bounded.");
 assert(app.includes('aria-label="Public pricing launch decision"') && app.includes("public_pricing_launch_decision"), "public pricing must expose one launch decision before signup for Professional, Corporate, database writes, and Stripe-off boundary.");
 assert(css.includes(".public-pricing-launch-decision") && css.includes(".public-pricing-launch-decision-grid") && css.includes(".public-pricing-launch-decision-copy"), "public pricing launch decision must be styled and bounded.");
 assert(css.includes(".registration-database-launch-order") && css.includes(".registration-database-launch-grid"), "registration database launch order must be styled and bounded.");

@@ -226,6 +226,12 @@ const appRequirements = [
     "public_portal_route_shell_requires_one_bounded_login_register_surface_for_professional_corporate_pricing_first_database_write_recovery_server_save_and_no_preview_data",
     "public portal route shell no-preview-data acceptance rule"
   ],
+  ["Public pricing path answer", "public pricing path answer label"],
+  ["public_pricing_path_answer", "public pricing path answer packet mode"],
+  [
+    "public_pricing_path_answer_recommends_professional_free_corporate_149_or_scale_quote_with_first_live_write_scoped_access_and_stripe_gate_before_plan_cards",
+    "public pricing path answer acceptance rule"
+  ],
   ["Pricing activation workbench", "pricing activation workbench label"],
   ["pricing_activation_workbench", "pricing activation workbench packet mode"],
   [

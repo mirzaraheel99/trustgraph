@@ -295,6 +295,8 @@ The public website now includes a hosted build source contract before login. It 
 
 The public pricing section now includes a Pricing and access summary before the seat estimator, connecting the free Professional pilot, `$149` Corporate Verify pilot, first database write, scoped Corporate user access, and Stripe-off billing boundary in one visible buyer decision point.
 
+The public pricing section now starts with a Pricing path answer before plan cards. It recommends Professional free, Corporate `$149` pilot, or Scale quote, then shows the first live database write, the scoped Corporate access rule, and the Stripe/payment human gate before signup.
+
 The public pricing section now also includes a Pricing launch decision before the estimator. It shows the Professional free path, Corporate `$149` pilot path, selected first database write, and Stripe-off billing boundary with direct Professional, Corporate, and export actions before signup.
 
 The public portal launch checklist now includes a pre-signup acceptance gate. It shows portal choice, hosted auth readiness, selected price, first database write, Corporate scoped database boundary, live-data contract, and VPS release-stamp requirement before pilot testing starts.

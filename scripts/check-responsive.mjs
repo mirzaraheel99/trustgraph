@@ -444,6 +444,8 @@ const requiredMobileStacks = [
   ".pricing-decision-strip",
   ".public-pricing-access-grid",
   ".public-pricing-access-actions",
+  ".public-pricing-path-answer-grid",
+  ".public-pricing-path-answer-proof",
   ".public-pricing-estimator",
   ".public-pricing-estimator-grid",
   ".public-pricing-estimator-actions",
