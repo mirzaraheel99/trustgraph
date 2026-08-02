@@ -14907,6 +14907,54 @@ function SecurityReviewPanel({
     accepted_when:
       "production_security_checklist_requires_code_verified_rls_private_storage_rbac_audit_exports_saved_receipt_external_security_legal_billing_pilot_owner_vps_cutover_and_no_preview_data_before_v1_completion"
   };
+  const securityLaunchChecklist = {
+    mode: "security_launch_checklist",
+    launch_status: "corporate_scope_visible_production_blocked",
+    headline: "Corporate access is scoped; production launch still needs signoff",
+    ci_rls_guard: `${rlsProtectedTables.length} protected tables`,
+    corporate_scoped_access: teamMembers.length
+      ? "RBAC membership rows loaded for scoped corporate review"
+      : "Corporate membership rows still required before reviewer acceptance",
+    private_evidence_boundary: evidenceDocuments.some((item) => item.storage_path)
+      ? "Private evidence uses short-lived signed preview/download"
+      : "Evidence remains metadata-only until pilot upload",
+    audit_export_boundary: auditEvents.length
+      ? "Filtered audit exports are available without raw private files"
+      : "Audit events still need live activity before export signoff",
+    saved_receipt: latestSecurityRlsReviewReceipt?.id ?? null,
+    preview_data_accepted: false,
+    accepted_when:
+      "security_launch_checklist_requires_ci_rls_guard_corporate_scoped_rows_private_signed_evidence_metadata_only_exports_saved_receipt_external_signoff_and_no_preview_data_before_v1_launch"
+  };
+  const securityLaunchChecklistCards = [
+    {
+      label: "RLS guard",
+      value: `${rlsProtectedTables.length} tables`,
+      detail: "CI verifies protected tables before hosted deployment."
+    },
+    {
+      label: "Corporate rows",
+      value: teamMembers.length ? "Scoped" : "Needs rows",
+      detail: "Reviewers see only approved grant, consent, role, and audit-scoped rows."
+    },
+    {
+      label: "Evidence files",
+      value: evidenceDocuments.some((item) => item.storage_path) ? "Signed" : "Metadata",
+      detail: "Raw private files stay excluded from corporate and admin exports."
+    },
+    {
+      label: "Audit exports",
+      value: auditEvents.length ? "Filtered" : "Awaiting events",
+      detail: "Exports stay tied to filters, cases, release context, and access receipts."
+    },
+    {
+      label: "Receipt",
+      value: latestSecurityRlsReviewReceipt ? "Saved" : "Record",
+      detail: latestSecurityRlsReviewReceipt
+        ? "Supabase receipt can be used for reviewer handoff."
+        : "Record the review receipt after live row checks are loaded."
+    }
+  ];
   const productionSecurityChecklistCards = [
     {
       label: "Code readiness",
@@ -14948,6 +14996,7 @@ function SecurityReviewPanel({
         metadata: {
           security_signoff_packet: securitySignoffPacket,
           v1_security_review_receipt: v1SecurityReviewReceipt,
+          security_launch_checklist: securityLaunchChecklist,
           acceptance_rule: SECURITY_RLS_REVIEW_RECEIPT_ACCEPTANCE_RULE,
           api_clients: apiClients.length,
           webhooks: webhookSubscriptions.length,
@@ -14967,6 +15016,38 @@ function SecurityReviewPanel({
       <div className="mini-heading">
         <ShieldAlert size={16} />
         <strong>Security review checklist</strong>
+      </div>
+      <div className="security-launch-checklist" aria-label="Security launch checklist">
+        <div className="security-launch-checklist-header">
+          <div>
+            <span className="status-chip warning">Launch safety</span>
+            <strong>{securityLaunchChecklist.headline}</strong>
+            <small>{securityLaunchChecklist.accepted_when}</small>
+          </div>
+          <div className="security-launch-checklist-actions">
+            <button className="secondary-action" onClick={() => downloadTextFile(reviewReceiptName, JSON.stringify({ ...v1SecurityReviewReceipt, security_launch_checklist: securityLaunchChecklist }, null, 2), "application/json")} type="button">
+              Export launch checklist
+            </button>
+            <button className="secondary-action" disabled={receiptBusy} onClick={() => void saveSecurityReviewReceipt()} type="button">
+              Record receipt
+            </button>
+          </div>
+        </div>
+        <div className="security-launch-checklist-grid">
+          {securityLaunchChecklistCards.map((card) => (
+            <article key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="security-launch-checklist-proof">
+          <span>Preview data accepted: {securityLaunchChecklist.preview_data_accepted ? "yes" : "no"}</span>
+          <small>
+            {securityLaunchChecklist.ci_rls_guard} | {securityLaunchChecklist.corporate_scoped_access} | {securityLaunchChecklist.private_evidence_boundary} | {securityLaunchChecklist.audit_export_boundary}
+          </small>
+        </div>
       </div>
       <div className="production-security-checklist" aria-label="Production security checklist">
         <div className="production-security-checklist-header">

@@ -182,6 +182,12 @@ const appRequirements = [
     "evidence_setup_command_requires_metadata_private_file_signed_preview_or_download_manifest_export_and_raw_file_exclusion",
     "evidence setup command rule"
   ],
+  ["Security launch checklist", "security launch checklist label"],
+  ["security_launch_checklist", "security launch checklist packet mode"],
+  [
+    "security_launch_checklist_requires_ci_rls_guard_corporate_scoped_rows_private_signed_evidence_metadata_only_exports_saved_receipt_external_signoff_and_no_preview_data_before_v1_launch",
+    "security launch checklist no-preview-data rule"
+  ],
   ["Persisted corporate database acceptance checkpoint", "persisted corporate database acceptance label"],
   ["persisted_corporate_database_acceptance_checkpoint", "persisted corporate database acceptance packet mode"],
   [
