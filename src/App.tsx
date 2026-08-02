@@ -34053,6 +34053,42 @@ function App() {
     }
   ];
 
+  const portalLayoutAnswer = {
+    generated_at: new Date().toISOString(),
+    mode: "portal_layout_answer",
+    active_portal: workspace.title,
+    active_role: activeRole.label,
+    active_organization: activeOrganization.name,
+    session_status: authSession ? "signed_in_logout_visible" : "preview_login_visible",
+    portal_rule:
+      "Personal Passport is owned by the professional. Corporate Verify requests approved user rows. Company Admin manages organization, roles, invites, and billing.",
+    accepted_when:
+      "portal_layout_answer_keeps_personal_corporate_verify_company_admin_logout_account_recovery_and_scoped_database_rules_visible_before_dense_workspace_controls"
+  };
+  const portalLayoutCards = [
+    {
+      label: "Personal",
+      title: "Professional Passport",
+      detail: "Own records, evidence, references, consent, and sharing grants.",
+      action: "Open Passport",
+      target: "passport" as WorkspaceId
+    },
+    {
+      label: "Corporate",
+      title: "Corporate Verify",
+      detail: "Request one professional by email and review only approved scoped rows.",
+      action: "Open Verify",
+      target: "verify" as WorkspaceId
+    },
+    {
+      label: "Admin",
+      title: "Company setup",
+      detail: "Set organization, RBAC roles, reviewer invites, pricing, and exports.",
+      action: "Setup company",
+      target: "setup" as WorkspaceId
+    }
+  ];
+
   if (showPublicSite) {
     return (
       <PublicSite
@@ -34122,6 +34158,47 @@ function App() {
                   </button>
                 </>
               )}
+            </div>
+            <div className="portal-layout-answer" aria-label="Portal layout answer">
+              <div className="portal-layout-answer-header">
+                <span className={`status-chip ${authSession ? "success" : "warning"}`}>
+                  {authSession ? "Signed in" : "Preview mode"}
+                </span>
+                <strong>{authSession ? `${activeRole.label} in ${activeOrganization.name}` : "Login first, then choose the correct portal"}</strong>
+                <small>{portalLayoutAnswer.portal_rule}</small>
+              </div>
+              <div className="portal-layout-answer-grid">
+                {portalLayoutCards.map((item) => (
+                  <button
+                    className={workspace.id === item.target ? "active" : ""}
+                    key={item.label}
+                    onClick={() => openWorkspaceOrSetup(item.target)}
+                    type="button"
+                  >
+                    <span>{item.label}</span>
+                    <strong>{item.title}</strong>
+                    <small>{item.detail}</small>
+                    <em>{item.action}</em>
+                  </button>
+                ))}
+              </div>
+              <div className="portal-layout-answer-actions">
+                <button className="secondary-action" onClick={openAuthControls} type="button">
+                  Account and recovery
+                </button>
+                <button className="secondary-action" onClick={() => setShowPublicSite(true)} type="button">
+                  Public website
+                </button>
+                {authSession ? (
+                  <button className="secondary-action danger-action" onClick={handleSignOut} type="button">
+                    Sign out
+                  </button>
+                ) : (
+                  <button className="primary-action" onClick={openAuthControls} type="button">
+                    Login or register
+                  </button>
+                )}
+              </div>
             </div>
             <div className="workspace-route-strip" aria-label="Primary workspace routes">
               {workspaces.map((item) => {

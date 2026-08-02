@@ -41471,3 +41471,111 @@ body,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Portal layout answer: make signed-in Professional, Corporate Verify, and Admin routes obvious. */
+.portal-layout-answer {
+  order: -74;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  max-width: 1040px;
+  min-width: 0;
+  margin-top: 14px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(143, 184, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.portal-layout-answer-header {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.portal-layout-answer-header strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.portal-layout-answer-header small,
+.portal-layout-answer-grid small {
+  color: var(--tg-muted, #a7bab3);
+  line-height: 1.38;
+}
+
+.portal-layout-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.portal-layout-answer-grid button {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 122px;
+  padding: 12px;
+  text-align: left;
+  white-space: normal;
+  border: 1px solid rgba(224, 235, 229, 0.13);
+  background: rgba(9, 17, 20, 0.68);
+}
+
+.portal-layout-answer-grid button.active {
+  border-color: rgba(113, 242, 203, 0.42);
+  background: rgba(21, 93, 86, 0.34);
+}
+
+.portal-layout-answer-grid span {
+  color: rgba(113, 242, 203, 0.92);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.portal-layout-answer-grid strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: 0.98rem;
+  line-height: 1.14;
+}
+
+.portal-layout-answer-grid em {
+  margin-top: auto;
+  color: rgba(143, 184, 255, 0.95);
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.portal-layout-answer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
+.portal-layout-answer-actions button {
+  flex: 1 1 160px;
+  min-width: 0;
+  white-space: normal;
+}
+
+@media (max-width: 760px) {
+  .portal-layout-answer {
+    max-width: 100%;
+  }
+
+  .portal-layout-answer-grid,
+  .portal-layout-answer-actions {
+    grid-template-columns: minmax(0, 1fr);
+    display: grid;
+  }
+
+  .portal-layout-answer-actions button {
+    width: 100%;
+  }
+}
