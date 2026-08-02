@@ -488,6 +488,42 @@ const runtimeSnippets = [
   {
     source: updateVps,
     path: "tools/update-vps-from-github.sh",
+    snippet: "RELEASE_STAMP_CONTRACT=\"trustgraph_release_stamp_static_asset_then_vps_updater_overwrites_with_current_git_commit_and_marker\"",
+    label: "manual VPS update uses the same server-save release stamp contract as GitHub Pages"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "\"server_save_contract\": \"$RELEASE_STAMP_CONTRACT\"",
+    label: "hosted release stamp includes the server-save contract"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "release stamp does not contain the server-save contract",
+    label: "manual VPS update verifies the public release stamp contract"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "PROTECTED_VFIX_ROUTE=\"https://5-75-224-110.sslip.io/CRM-client-demo/login\"",
+    label: "manual VPS update keeps the protected VFIX route explicit"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "protected VFIX route did not remain reachable after TrustGraph update",
+    label: "manual VPS update fails when the protected VFIX route is not reachable"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
+    snippet: "VFIX route checked:",
+    label: "manual VPS update reports the protected VFIX route smoke result"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
     snippet: "EXPECTED_BUNDLE_MARKER",
     label: "manual VPS update has a configurable latest bundle marker"
   },

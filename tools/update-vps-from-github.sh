@@ -6,6 +6,8 @@ TRUSTGRAPH_HOST="${TRUSTGRAPH_HOST:-trustgraph.5-75-224-110.sslip.io}"
 PUBLIC_URL="${PUBLIC_URL:-https://trustgraph.5-75-224-110.sslip.io/}"
 EXPECTED_ORIGIN="${EXPECTED_ORIGIN:-https://github.com/mirzaraheel99/trustgraph.git}"
 EXPECTED_BUNDLE_MARKER="${EXPECTED_BUNDLE_MARKER:-premium_workspace_responsive_guard}"
+RELEASE_STAMP_CONTRACT="trustgraph_release_stamp_static_asset_then_vps_updater_overwrites_with_current_git_commit_and_marker"
+PROTECTED_VFIX_ROUTE="https://5-75-224-110.sslip.io/CRM-client-demo/login"
 
 fail() {
   echo "TrustGraph VPS update failed: $*" >&2
@@ -81,12 +83,15 @@ docker exec "$web_container" sh -c "cat > /srv/trustgraph/trustgraph-release.jso
   "commit_short": "$commit_short",
   "updated_at": "$updated_at",
   "bundle_marker": "$EXPECTED_BUNDLE_MARKER",
+  "server_save_contract": "$RELEASE_STAMP_CONTRACT",
   "public_url": "$PUBLIC_URL",
   "protected_vfix_host": "https://5-75-224-110.sslip.io"
 }
 JSON
 docker exec "$web_container" sh -c "test -s /srv/trustgraph/trustgraph-release.json && grep -q '\"commit_short\": \"$commit_short\"' /srv/trustgraph/trustgraph-release.json" \
   || fail "release stamp was not written inside the TrustGraph web container"
+docker exec "$web_container" sh -c "grep -q '\"server_save_contract\": \"$RELEASE_STAMP_CONTRACT\"' /srv/trustgraph/trustgraph-release.json" \
+  || fail "release stamp was written without the required server-save contract"
 docker exec "$web_container" sh -c "wget -qO- http://127.0.0.1/trustgraph-release.json | grep -q '\"commit_short\": \"$commit_short\"'" \
   || fail "local TrustGraph container route did not serve release stamp JSON; check Caddy /trustgraph-release.json before nginx proxy debugging"
 
@@ -106,10 +111,21 @@ if grep -qi '<!DOCTYPE html\|<html' /tmp/trustgraph-vps-release.json; then
 fi
 grep -q "$commit_short" /tmp/trustgraph-vps-release.json || fail "release stamp does not match current commit"
 grep -q "$EXPECTED_BUNDLE_MARKER" /tmp/trustgraph-vps-release.json || fail "release stamp does not contain expected bundle marker: $EXPECTED_BUNDLE_MARKER"
+grep -q "$RELEASE_STAMP_CONTRACT" /tmp/trustgraph-vps-release.json || fail "release stamp does not contain the server-save contract"
 rm -f "$release_headers"
+
+vfix_status="$(curl --location --silent --show-error --output /tmp/trustgraph-vfix-smoke.html --write-out "%{http_code}" "$PROTECTED_VFIX_ROUTE" || true)"
+case "$vfix_status" in
+  200|301|302|401|403)
+    ;;
+  *)
+    fail "protected VFIX route did not remain reachable after TrustGraph update: $PROTECTED_VFIX_ROUTE returned $vfix_status"
+    ;;
+esac
 
 echo "TrustGraph VPS updated from GitHub."
 echo "Commit: $commit_short"
 echo "Bundle marker: $EXPECTED_BUNDLE_MARKER"
 echo "Release stamp: ${PUBLIC_URL%/}/trustgraph-release.json"
+echo "VFIX route checked: $PROTECTED_VFIX_ROUTE returned $vfix_status"
 echo "Open: $PUBLIC_URL"
