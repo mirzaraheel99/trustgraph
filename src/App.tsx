@@ -3634,12 +3634,113 @@ function VerifyRequestsPanel({
       ready: reviews.length > 0 && pendingGapCount === 0
     }
   ];
+  const corporateVerifySingleLane = {
+    generated_at: new Date().toISOString(),
+    mode: "corporate_verify_single_lane",
+    current_state: disabled
+      ? "corporate_role_needed"
+      : !requests.length
+        ? "send_access_request"
+        : !approvedCount
+          ? "waiting_for_professional_approval"
+          : !sharedRecords.length
+            ? "waiting_for_scoped_rows"
+            : pendingGapCount
+              ? "review_open_gaps"
+              : "ready_to_export_review_proof",
+    next_target: disabled
+      ? "corporate-account-controls"
+      : !requests.length || !approvedCount || !sharedRecords.length
+        ? "corporate-verify-request-form"
+        : pendingGapCount
+          ? "corporate-access-review-queue"
+          : "export",
+    database_rule:
+      "Corporate Verify requests one professional by email, waits for approval, then reviews only approved consent-scoped user rows.",
+    accepted_when:
+      "corporate_verify_single_lane_keeps_request_approval_scoped_rows_review_export_no_open_user_browse_and_next_click_visible_before_dense_verify_panels"
+  };
+  const corporateVerifySingleLaneSteps = [
+    {
+      label: "1. Request",
+      value: requests.length ? `${requests.length} sent` : "Send request",
+      detail: "Start with one professional email and a business purpose.",
+      ready: requests.length > 0
+    },
+    {
+      label: "2. Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: "No user rows appear before professional consent.",
+      ready: approvedCount > 0
+    },
+    {
+      label: "3. Rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Locked",
+      detail: "Only approved scoped rows load for this company.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "4. Export",
+      value: pendingGapCount ? `${pendingGapCount} gaps` : reviews.length ? "Ready" : "Review",
+      detail: "Finish review, resolve gaps, and export metadata proof.",
+      ready: sharedRecords.length > 0 && pendingGapCount === 0
+    }
+  ];
 
   return (
     <section className="verify-panel">
       <div className="mini-heading">
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
+      </div>
+      <div className={`corporate-verify-single-lane ${corporateVerifySingleLane.current_state}`} aria-label="Corporate Verify single lane">
+        <div className="corporate-verify-single-lane-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Corporate Verify next step</span>
+            <strong>
+              {disabled
+                ? "Activate a corporate reviewer role"
+                : sharedRecords.length
+                  ? pendingGapCount
+                    ? "Review approved rows and close gaps"
+                    : "Approved user rows are ready for review proof"
+                  : requests.length
+                    ? "Wait for approval, then review scoped rows"
+                    : "Request access from one professional"}
+            </strong>
+            <small>{corporateVerifySingleLane.database_rule}</small>
+          </div>
+          <button
+            className={sharedRecords.length && pendingGapCount === 0 ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (corporateVerifySingleLane.next_target === "export") {
+                downloadTextFile(
+                  `trustgraph-corporate-verify-single-lane-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...corporateVerifySingleLane, steps: corporateVerifySingleLaneSteps }, null, 2),
+                  "application/json"
+                );
+                return;
+              }
+              document.getElementById(corporateVerifySingleLane.next_target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            type="button"
+          >
+            {corporateVerifySingleLane.next_target === "export"
+              ? "Export review proof"
+              : disabled
+                ? "Open corporate setup"
+                : "Go to request"}
+          </button>
+        </div>
+        <div className="corporate-verify-single-lane-grid">
+          {corporateVerifySingleLaneSteps.map((step) => (
+            <article className={step.ready ? "ready" : "next"} key={step.label}>
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </article>
+          ))}
+        </div>
       </div>
       <div className={`corporate-database-home-command ${corporateAccessAnswer.can_access_rows ? "ready" : "next"}`} aria-label="Corporate database home command">
         <div className="corporate-database-home-command-header">

@@ -41579,3 +41579,94 @@ body,
     width: 100%;
   }
 }
+
+/* Corporate Verify single lane: request, approval, scoped rows, review, export. */
+.corporate-verify-single-lane {
+  order: -96;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(113, 242, 203, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(21, 93, 86, 0.44), rgba(11, 20, 22, 0.94) 52%, rgba(30, 43, 61, 0.76)),
+    rgba(8, 15, 18, 0.95);
+}
+
+.corporate-verify-single-lane-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.corporate-verify-single-lane-header > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-verify-single-lane-header strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.16;
+}
+
+.corporate-verify-single-lane-header small,
+.corporate-verify-single-lane-grid small {
+  color: var(--tg-muted, #a7bab3);
+  line-height: 1.38;
+}
+
+.corporate-verify-single-lane-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+.corporate-verify-single-lane-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.corporate-verify-single-lane-grid article {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(224, 235, 229, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.corporate-verify-single-lane-grid article.ready {
+  border-color: rgba(113, 242, 203, 0.34);
+  background: rgba(21, 93, 86, 0.24);
+}
+
+.corporate-verify-single-lane-grid span {
+  color: rgba(113, 242, 203, 0.92);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.corporate-verify-single-lane-grid strong {
+  color: var(--tg-text, #f3fbf7);
+  font-size: 1rem;
+  line-height: 1.14;
+}
+
+@media (max-width: 900px) {
+  .corporate-verify-single-lane-header,
+  .corporate-verify-single-lane-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
