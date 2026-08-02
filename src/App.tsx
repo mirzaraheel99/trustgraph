@@ -18575,6 +18575,19 @@ function AuthPanel({
       detail: "Use Sign out to clear this browser session before switching accounts."
     }
   ];
+  const accountActionBar = {
+    mode: "account_action_bar",
+    session_state: session ? "signed_in" : "signed_out",
+    active_email: session?.user.email ?? "none",
+    selected_path: activeLoginPath.label,
+    recovery_ready: recoverySessionReady,
+    hosted_redirect_url: authRedirectUrl,
+    data_export_requests: dataRightsRequests.filter((request) => request.request_type === "data_export").length,
+    open_data_rights_reviews: openDataRightsRequests.length,
+    controls_visible: ["sign_out", "reset_password", "resend_verification", "set_new_password", "data_export", "copy_hosted_redirect"],
+    accepted_when:
+      "account_action_bar_keeps_logout_recovery_password_update_data_export_and_hosted_redirect_visible_before_deep_audit_panels"
+  };
 
   return (
     <section className="auth-panel" id="live-auth-controls">
@@ -18584,8 +18597,51 @@ function AuthPanel({
       </div>
       {session ? (
         <div className="auth-session">
-          <span>{session.user.email}</span>
-          <small>Supabase session stored in this browser</small>
+          <div className="account-action-bar" aria-label="Account action bar">
+            <div className="account-action-bar-copy">
+              <span className={`status-chip ${recoverySessionReady ? "success" : "neutral"}`}>Account</span>
+              <strong>{session.user.email}</strong>
+              <small>
+                Sign out, recovery, password update, hosted redirect, and data export stay here before the deeper account receipts.
+              </small>
+            </div>
+            <div className="account-action-bar-status">
+              <span>
+                <strong>{recoverySessionReady ? "Recovery ready" : "Signed in"}</strong>
+                <small>{activeLoginPath.route}</small>
+              </span>
+              <span>
+                <strong>{openDataRightsRequests.length ? `${openDataRightsRequests.length} open` : "No open review"}</strong>
+                <small>Data rights</small>
+              </span>
+              <span>
+                <strong>{authRedirectUrl.includes("localhost") ? "Fix URL" : "Hosted ready"}</strong>
+                <small>Auth redirect</small>
+              </span>
+            </div>
+            <div className="account-action-bar-actions">
+              {signedInRecoveryControlActions.map((action) => (
+                <button
+                  className={action.label === "Sign out" ? "danger-action" : "secondary-action"}
+                  disabled={action.disabled}
+                  key={action.label}
+                  onClick={action.onClick}
+                  type="button"
+                >
+                  {action.icon}
+                  <span>{action.label}</span>
+                </button>
+              ))}
+              <button
+                className="secondary-action"
+                onClick={() => downloadTextFile(`trustgraph-account-action-bar-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(accountActionBar, null, 2), "application/json")}
+                type="button"
+              >
+                <Download size={16} />
+                <span>Export account</span>
+              </button>
+            </div>
+          </div>
           <div className="auth-session-meta">
             <span>Live database access</span>
             <span>RBAC context loading</span>

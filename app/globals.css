@@ -46452,3 +46452,123 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Account action bar: logout, recovery, password update, and data export stay first. */
+.auth-panel:has(.account-action-bar) {
+  display: grid !important;
+  gap: 12px !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.auth-panel:has(.account-action-bar) > .mini-heading {
+  order: -120 !important;
+}
+
+.auth-panel:has(.account-action-bar) > .auth-session {
+  order: -116 !important;
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.auth-panel:has(.account-action-bar) .account-action-bar {
+  order: -110 !important;
+  display: grid !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding: 14px !important;
+  border: 1px solid rgba(113, 242, 203, 0.24) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(21, 93, 86, 0.24), rgba(28, 43, 68, 0.2)),
+    rgba(255, 255, 255, 0.035) !important;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.22) !important;
+}
+
+.account-action-bar-copy,
+.account-action-bar-copy strong,
+.account-action-bar-copy small,
+.account-action-bar-status,
+.account-action-bar-status span,
+.account-action-bar-status strong,
+.account-action-bar-status small {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.account-action-bar-copy {
+  display: grid !important;
+  gap: 6px !important;
+}
+
+.account-action-bar-copy strong {
+  color: var(--tg-text, #f3fbf7) !important;
+  font-size: clamp(1.1rem, 2vw, 1.55rem) !important;
+  line-height: 1.05 !important;
+}
+
+.account-action-bar-copy small {
+  color: var(--tg-muted, #a7bab3) !important;
+  line-height: 1.45 !important;
+}
+
+.account-action-bar-status,
+.account-action-bar-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.account-action-bar-status span {
+  display: grid !important;
+  gap: 5px !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.1) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+}
+
+.account-action-bar-actions button {
+  width: 100% !important;
+  min-width: 0 !important;
+  justify-content: center !important;
+  white-space: normal !important;
+}
+
+.auth-panel:has(.account-action-bar) .signed-in-recovery-control-strip {
+  order: -90 !important;
+}
+
+.auth-panel:has(.account-action-bar) .password-update-form {
+  order: -86 !important;
+}
+
+.auth-panel:has(.account-action-bar) .data-rights-panel {
+  order: -82 !important;
+}
+
+.auth-panel:has(.account-action-bar) .auth-session-meta,
+.auth-panel:has(.account-action-bar) .signed-in-recovery-route {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 760px) {
+  .account-action-bar {
+    padding: 12px !important;
+  }
+
+  .account-action-bar-status,
+  .account-action-bar-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
