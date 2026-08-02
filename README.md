@@ -65,6 +65,8 @@ The signed-in workspace now uses a V1 focused portal shell as the daily UI. The 
 
 The public login/register card now uses the same focused shell. Visitors see one route cockpit for Professional login, Professional registration, Corporate login, and Corporate registration, then the credential station, recovery/help controls, and server freshness; duplicate pricing, recovery, route, and proof boards remain exportable in source but no longer stack above the form.
 
+Company Admin now uses a corporate focused workbench. The visible route is setup command bar, unlock answer, route deck, setup tabs, active setup panel, and Corporate Verify handoff; duplicate launch, operator, triage, onboarding, team/billing, and guide boards remain preserved for export and CI proof without crowding the admin workflow.
+
 The signed-in workspace now includes a registration handoff command immediately after the portal command center. It shows the hosted registration intent, selected Professional or Corporate portal, selected plan, first live database write, completion state, next workspace or Passport action, and preview-data rejection so a verified user can see why Corporate remains locked until workspace/RBAC creation is complete.
 
 The public first viewport now includes an audience switchboard for Professionals, Corporate Verify buyers, and TrustGraph operators. It explains the pilot price, first database effect, scoped-access boundary, and human-gated operations before a visitor reaches the credential form.

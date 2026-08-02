@@ -45942,6 +45942,98 @@ body,
   overflow-x: clip !important;
 }
 
+/* Corporate focused workbench: one admin route, one active panel, then Verify handoff. */
+.workspace-admin-grid:has(.setup-command-bar) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  overflow-x: clip !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) > .setup-center-header {
+  order: -120 !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) > .setup-command-bar {
+  order: -112 !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) > .corporate-portal-unlock-answer {
+  order: -108 !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) > .setup-route-deck {
+  order: -104 !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) > .setup-tabs {
+  order: -100 !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) > .setup-panel-grid {
+  order: -96 !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) > .corporate-database-handoff-command {
+  order: -90 !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) > .corporate-launch-cockpit,
+.workspace-admin-grid:has(.setup-command-bar) > .corporate-operator-strip,
+.workspace-admin-grid:has(.setup-command-bar) > .corporate-setup-triage-board,
+.workspace-admin-grid:has(.setup-command-bar) > .corporate-onboarding-pricing-cockpit,
+.workspace-admin-grid:has(.setup-command-bar) > .team-billing-handoff,
+.workspace-admin-grid:has(.setup-command-bar) > .corporate-setup-guide {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) .setup-command-bar,
+.workspace-admin-grid:has(.setup-command-bar) .corporate-portal-unlock-answer,
+.workspace-admin-grid:has(.setup-command-bar) .setup-route-deck,
+.workspace-admin-grid:has(.setup-command-bar) .setup-tabs,
+.workspace-admin-grid:has(.setup-command-bar) .setup-panel-grid,
+.workspace-admin-grid:has(.setup-command-bar) .corporate-database-handoff-command {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) .setup-command-actions,
+.workspace-admin-grid:has(.setup-command-bar) .corporate-portal-unlock-actions,
+.workspace-admin-grid:has(.setup-command-bar) .corporate-database-handoff-proof,
+.workspace-admin-grid:has(.setup-command-bar) .corporate-database-handoff-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.workspace-admin-grid:has(.setup-command-bar) .setup-command-actions button,
+.workspace-admin-grid:has(.setup-command-bar) .corporate-portal-unlock-actions button,
+.workspace-admin-grid:has(.setup-command-bar) .corporate-database-handoff-grid button,
+.workspace-admin-grid:has(.setup-command-bar) .corporate-database-handoff-proof button {
+  min-width: 0 !important;
+  width: 100% !important;
+  white-space: normal !important;
+}
+
+@media (max-width: 760px) {
+  .workspace-admin-grid:has(.setup-command-bar) {
+    gap: 10px !important;
+  }
+
+  .workspace-admin-grid:has(.setup-command-bar) > .corporate-database-handoff-command {
+    max-height: 420px !important;
+    overflow-y: auto !important;
+  }
+}
+
 @media (max-width: 760px) {
   .workspace:has(.signed-in-portal-entry-desk) > .vps-saved-portal-command {
     max-height: 360px !important;
