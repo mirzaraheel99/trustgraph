@@ -34363,6 +34363,56 @@ function App() {
     rows: livePilotRowProofRows
   };
   const firstMissingRealRow = livePilotRowProofRows.find((row) => row.required && !row.ready) ?? null;
+  const liveDataRealityStrip = {
+    mode: "live_data_reality_strip",
+    status: livePilotRowProof.accepted ? "accepted_live_supabase_rows" : "preview_or_incomplete_rows",
+    source: livePilotRowProof.source,
+    accepted: livePilotRowProof.accepted,
+    preview_data_accepted: false,
+    ready_groups: livePilotRowProof.readyGroups,
+    required_groups: livePilotRowProof.totalRequiredGroups,
+    missing_groups: livePilotRowProof.missingRequiredGroups,
+    total_loaded_rows: livePilotRowProofRows.reduce((total, row) => total + row.count, 0),
+    account_context: authSession && accountContext ? "hosted_signed_in_context" : "login_required",
+    next_action: livePilotRowProof.accepted
+      ? "Export the live row proof and record the completion receipt."
+      : authSession && accountContext
+        ? `Load ${firstMissingRealRow?.label ?? "the missing Supabase row group"} before V1 can be accepted.`
+        : "Login or register on the hosted TrustGraph URL before V1 live-data testing.",
+    accepted_when:
+      "live_data_reality_strip_accepts_only_signed_in_supabase_rows_rejects_preview_or_logged_out_rows_shows_missing_groups_next_action_and_total_loaded_rows_before_completion_claim"
+  };
+  const liveDataRealityStripRows = [
+    {
+      label: "Source",
+      value: liveDataRealityStrip.source.replace(/_/g, " "),
+      detail:
+        liveDataRealityStrip.source === "signed_in_supabase_rows"
+          ? "Hosted signed-in Supabase repositories are active."
+          : "Logged-out or preview state cannot finish V1.",
+      ready: liveDataRealityStrip.source === "signed_in_supabase_rows"
+    },
+    {
+      label: "Required rows",
+      value: `${liveDataRealityStrip.ready_groups}/${liveDataRealityStrip.required_groups}`,
+      detail: liveDataRealityStrip.missing_groups.length
+        ? `Missing: ${liveDataRealityStrip.missing_groups.slice(0, 3).join(", ")}${liveDataRealityStrip.missing_groups.length > 3 ? "..." : ""}`
+        : "All required live row groups are loaded.",
+      ready: liveDataRealityStrip.accepted
+    },
+    {
+      label: "Loaded rows",
+      value: String(liveDataRealityStrip.total_loaded_rows),
+      detail: "Counted from the current repository state in this browser session.",
+      ready: liveDataRealityStrip.total_loaded_rows > 0
+    },
+    {
+      label: "Preview data",
+      value: liveDataRealityStrip.preview_data_accepted ? "Accepted" : "Rejected",
+      detail: "Static, preview, and logged-out rows never satisfy the launch goal.",
+      ready: true
+    }
+  ];
   const realRowAcceptanceGate = {
     mode: "real_row_acceptance_gate",
     decision: livePilotRowProof.accepted ? "real_database_rows_loaded" : "blocked_until_real_rows_loaded",
@@ -37700,6 +37750,64 @@ function App() {
               <strong>{firstScreenGoalStatusStrip.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
             </span>
           </div>
+        </section>
+
+        <section className={`live-data-reality-strip ${liveDataRealityStrip.status}`} aria-label="Live data reality strip">
+          <div className="live-data-reality-header">
+            <div>
+              <span className={`status-chip ${liveDataRealityStrip.accepted ? "success" : "warning"}`}>Live data reality</span>
+              <strong>
+                {liveDataRealityStrip.accepted
+                  ? "Real Supabase rows are loaded for this session"
+                  : "Preview or incomplete live rows cannot complete V1"}
+              </strong>
+              <small>{liveDataRealityStrip.next_action}</small>
+            </div>
+            <div className="live-data-reality-actions">
+              <button
+                className={liveDataRealityStrip.accepted ? "secondary-action" : "primary-action"}
+                onClick={() => {
+                  if (!authSession) {
+                    openAuthControls();
+                    return;
+                  }
+                  document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                type="button"
+              >
+                {authSession ? "Open live proof" : "Login first"}
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-live-data-reality-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...liveDataRealityStrip, rows: livePilotRowProofRows }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                <Download size={16} />
+                Export reality
+              </button>
+            </div>
+          </div>
+          <div className="live-data-reality-grid">
+            {liveDataRealityStripRows.map((row) => (
+              <button
+                className={row.ready ? "ready" : "needed"}
+                key={row.label}
+                onClick={() => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                type="button"
+              >
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+                <small>{row.detail}</small>
+              </button>
+            ))}
+          </div>
+          <div className="live-data-reality-boundary">{liveDataRealityStrip.accepted_when}</div>
         </section>
 
         <section className={`vps-saved-portal-command ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="VPS saved portal command">

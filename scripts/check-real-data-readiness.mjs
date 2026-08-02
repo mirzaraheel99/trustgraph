@@ -101,6 +101,12 @@ const appRequirements = [
   ],
   ["Live pilot row proof", "live pilot row proof label"],
   ["live_pilot_row_proof", "live pilot row proof packet mode"],
+  ["Live data reality strip", "live data reality strip label"],
+  ["live_data_reality_strip", "live data reality strip packet mode"],
+  [
+    "live_data_reality_strip_accepts_only_signed_in_supabase_rows_rejects_preview_or_logged_out_rows_shows_missing_groups_next_action_and_total_loaded_rows_before_completion_claim",
+    "live data reality strip acceptance rule"
+  ],
   ["Working database proof ready", "working database ready state"],
   ["Preview data accepted: {liveRowCompletionCommand.preview_data_accepted ? \"yes\" : \"no\"}", "visible preview-data rejection state"],
   ["signed_in_supabase_rows", "live row source marker"],

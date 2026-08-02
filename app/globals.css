@@ -50148,3 +50148,86 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Live data reality strip: a first-screen truth check for real Supabase rows vs preview state. */
+.live-data-reality-strip {
+  display: grid !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(113, 242, 203, 0.22) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(72, 208, 174, 0.1), rgba(134, 174, 246, 0.055) 54%, rgba(255, 205, 118, 0.05)),
+    rgba(7, 15, 18, 0.94) !important;
+}
+
+.live-data-reality-strip.preview_or_incomplete_rows {
+  border-color: rgba(255, 205, 118, 0.28) !important;
+}
+
+.workspace:has(.portal-route-shell) > .live-data-reality-strip,
+.workspace:has(.signed-in-portal-entry-desk) > .live-data-reality-strip {
+  order: -455 !important;
+}
+
+.live-data-reality-header,
+.live-data-reality-actions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.live-data-reality-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.live-data-reality-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr)) !important;
+  gap: 9px !important;
+}
+
+.live-data-reality-grid button,
+.live-data-reality-boundary {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.live-data-reality-grid button.ready {
+  border-color: rgba(113, 242, 203, 0.24) !important;
+  background: rgba(72, 208, 174, 0.08) !important;
+}
+
+.live-data-reality-grid button.needed {
+  border-color: rgba(255, 205, 118, 0.24) !important;
+  background: rgba(255, 205, 118, 0.055) !important;
+}
+
+.live-data-reality-strip :is(button, strong, small, span, code, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.live-data-reality-strip button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 760px) {
+  .live-data-reality-header,
+  .live-data-reality-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
