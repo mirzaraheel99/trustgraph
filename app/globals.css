@@ -11801,11 +11801,12 @@ p {
 
 .topbar-actions {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 46px);
   justify-content: flex-end;
+  align-content: start;
   gap: 8px;
-  width: 100%;
-  max-width: 300px;
+  width: max-content;
+  max-width: 100%;
   min-width: 0;
 }
 
@@ -11879,6 +11880,7 @@ p {
 
 .workspace-admin-grid > section {
   min-width: 0;
+  overflow: hidden;
   box-shadow: none;
 }
 
@@ -22726,12 +22728,28 @@ p {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
-  max-width: none;
+  justify-content: flex-end;
+  width: max-content;
+  max-width: 100%;
 }
 
 .public-site-action {
   order: -1;
+}
+
+.topbar-actions > button {
+  position: relative;
+  flex: 0 0 46px;
+  width: 46px;
+  min-height: 46px;
+  padding: 0;
+  justify-content: center;
+}
+
+.topbar-actions > button span {
+  position: absolute;
+  min-width: 18px;
+  transform: translate(14px, -14px);
 }
 
 .workspace-route-strip,
@@ -22786,6 +22804,43 @@ p {
 .workspace-admin-grid small,
 .workspace-admin-grid p {
   overflow-wrap: anywhere;
+}
+
+.workspace-admin-grid,
+.workspace-admin-grid > section,
+.corporate-setup-guide,
+.corporate-portal-unlock-answer,
+.corporate-launch-cockpit,
+.account-panel,
+.team-panel,
+.billing-panel,
+.notification-panel {
+  overflow: hidden;
+}
+
+.workspace-admin-grid input,
+.workspace-admin-grid select,
+.workspace-admin-grid textarea,
+.workspace-admin-grid button {
+  max-width: 100%;
+}
+
+.workspace-admin-grid form,
+.workspace-admin-grid .account-admin-form,
+.workspace-admin-grid .account-admin-row,
+.workspace-admin-grid .membership-list,
+.workspace-admin-grid .corporate-account-rbac-path,
+.workspace-admin-grid .account-operator-path {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+}
+
+.corporate-setup-guide,
+.corporate-portal-unlock-actions,
+.corporate-launch-cockpit-top,
+.corporate-launch-lanes article,
+.dashboard-start-map-grid article,
+.proof-export-hub-grid article {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .workspace-command-strip {

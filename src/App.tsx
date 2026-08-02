@@ -33416,34 +33416,7 @@ function App() {
               })}
             </div>
           </div>
-          <div className="topbar-actions">
-            {authSession ? (
-              <div className="topbar-session-card">
-                <span>{authSession.user.email}</span>
-                <small>{sessionSummary}</small>
-                <button className="secondary-action" onClick={openAuthControls} type="button">
-                  <KeyRound size={16} />
-                  Account
-                </button>
-                <button className="secondary-action" onClick={openCorporateControls} type="button">
-                  <BriefcaseBusiness size={16} />
-                  Corporate
-                </button>
-                <button className="secondary-action" onClick={handleSignOut} type="button">
-                  <LogOut size={16} />
-                  Sign out
-                </button>
-              </div>
-            ) : null}
-            {!authSession ? (
-              <button className="secondary-action" onClick={openAuthControls} type="button">
-                <KeyRound size={16} />
-                Login
-              </button>
-            ) : null}
-            <button className="secondary-action public-site-action" onClick={() => setShowPublicSite(true)} type="button">
-              Public site
-            </button>
+          <div className="topbar-actions" aria-label="Quick actions">
             <button aria-label="View notifications" onClick={openNotifications} type="button">
               <Bell size={18} />
               {queuedNotificationCount ? <span>{queuedNotificationCount}</span> : null}
