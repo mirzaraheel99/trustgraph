@@ -13,6 +13,7 @@ const preflight = fs.readFileSync("tools/preflight-vps.sh", "utf8");
 const updateVps = fs.readFileSync("tools/update-vps-from-github.sh", "utf8");
 const envValidator = fs.readFileSync("tools/validate-server-env.sh", "utf8");
 const freshnessCheck = fs.readFileSync("scripts/check-vps-freshness.mjs", "utf8");
+const vpsStatusReport = fs.readFileSync("scripts/report-vps-status.mjs", "utf8");
 const stampRelease = fs.readFileSync("scripts/stamp-release.mjs", "utf8");
 const nginxConfig = fs.readFileSync("tools/trustgraph-nginx.conf", "utf8");
 
@@ -290,6 +291,30 @@ const runtimeSnippets = [
     path: "scripts/check-vps-freshness.mjs",
     snippet: "VPS release stamp served the app shell instead of trustgraph-release.json",
     label: "freshness checker rejects HTML fallback release stamps"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "vps_sync_required",
+    label: "read-only VPS status report distinguishes stale VPS from current VPS"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "github_pages_and_vps_release_json_match_commit_short_and_premium_workspace_responsive_guard_marker",
+    label: "read-only VPS status report requires matching release JSON commit and marker"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "https://5-75-224-110.sslip.io/CRM-client-demo/login",
+    label: "read-only VPS status report preserves the protected VFIX route boundary"
+  },
+  {
+    source: vpsStatusReport,
+    path: "scripts/report-vps-status.mjs",
+    snippet: "cd /opt/trustgraph && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
+    label: "read-only VPS status report prints the guarded manual updater command"
   },
   {
     source: preflight,

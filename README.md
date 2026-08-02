@@ -59,6 +59,8 @@ The Pages deployment also runs a VPS save job after the hosted smoke check. If `
 
 Each Pages deploy now uploads a `trustgraph-vps-save-receipt` artifact. When SSH secrets are missing it records `skipped_missing_ssh_secrets`, the current GitHub SHA, the manual update command, the TrustGraph release-stamp URL, and the protected VFIX host so a green Pages deployment cannot be mistaken for a saved VPS deployment.
 
+To check whether the VPS has caught up to the latest GitHub Pages bundle without changing the server, run `npm run report:vps-status`. It compares the GitHub Pages and VPS `trustgraph-release.json` files, reports `vps_current` only when the commit and `premium_workspace_responsive_guard` marker match, and prints the guarded manual update command for `/opt/trustgraph` when the server still needs syncing.
+
 The repo now includes `tools/trustgraph-nginx.conf` for the specific VPS failure where `/trustgraph-release.json` returns the TrustGraph app shell instead of JSON. Install it only as `/opt/fixflow-nginx/conf.d/trustgraph.conf` for the `trustgraph.5-75-224-110.sslip.io` subdomain, reload the existing `fixflow-nginx` container, and keep the protected VFIX host separate.
 
 The CI loop also runs `pnpm check:v1-pilot-route`. That verifier ties the public website, Professional and Corporate registration, pricing, hosted auth recovery, Passport evidence, Corporate scoped user database access, Admin exports, live-row repair path, and VPS release stamp into one route-level acceptance check before Pages deployment.
