@@ -47957,3 +47957,183 @@ body,
     justify-content: start !important;
   }
 }
+
+/* Public access studio final pass: one buyer-facing path before credentials. */
+.public-auth-card:has(.public-login-route-cockpit) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: min(100%, 1120px) !important;
+  margin-inline: auto !important;
+  overflow-x: clip !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-login-route-cockpit,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-card-heading,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-selected-route,
+.public-auth-card:has(.public-login-route-cockpit) > .public-credential-station,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-email-troubleshooting-strip,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-recovery-command,
+.public-auth-card:has(.public-login-route-cockpit) > .current-build-server-gate.public,
+.public-auth-card:has(.public-login-route-cockpit) > .public-manual-vps-sync-launcher,
+.public-auth-card:has(.public-login-route-cockpit) > .public-hosted-server-freshness-alert {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  max-height: none !important;
+  opacity: 1 !important;
+  overflow-x: clip !important;
+  pointer-events: auto !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-login-route-cockpit {
+  order: -220 !important;
+  padding: clamp(14px, 2vw, 20px) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(95, 238, 201, 0.12), rgba(255, 255, 255, 0.02) 42%, rgba(130, 169, 255, 0.08)),
+    rgba(8, 17, 19, 0.94) !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .auth-card-heading {
+  order: -210 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .auth-selected-route {
+  order: -205 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-credential-station {
+  order: -200 !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  border: 1px solid rgba(226, 239, 232, 0.14) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.016)),
+    rgba(7, 15, 18, 0.9) !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .auth-email-troubleshooting-strip {
+  order: -190 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-recovery-command {
+  order: -185 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .current-build-server-gate.public {
+  order: -180 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-manual-vps-sync-launcher,
+.public-auth-card:has(.public-login-route-cockpit) > .public-hosted-server-freshness-alert {
+  order: -175 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-route-decision-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-portal-console,
+.public-auth-card:has(.public-login-route-cockpit) > .login-portal-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-credential-command,
+.public-auth-card:has(.public-login-route-cockpit) > .public-access-hub,
+.public-auth-card:has(.public-login-route-cockpit) > .public-account-entry-launchpad,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-start-strip,
+.public-auth-card:has(.public-login-route-cockpit) > .public-account-access-path,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-experience-studio,
+.public-auth-card:has(.public-login-route-cockpit) > .public-account-path-chooser,
+.public-auth-card:has(.public-login-route-cockpit) > .public-conversion-runway,
+.public-auth-card:has(.public-login-route-cockpit) > .public-v1-access-runway,
+.public-auth-card:has(.public-login-route-cockpit) > .public-portal-route-shell,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-front-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .public-access-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .public-login-primary-choice,
+.public-auth-card:has(.public-login-route-cockpit) > .public-portal-entry-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .public-portal-switchboard,
+.public-auth-card:has(.public-login-route-cockpit) > .public-access-command-center,
+.public-auth-card:has(.public-login-route-cockpit) > .public-entry-sequence,
+.public-auth-card:has(.public-login-route-cockpit) > .public-registration-pricing-gate,
+.public-auth-card:has(.public-login-route-cockpit) > .public-signup-answer-bar,
+.public-auth-card:has(.public-login-route-cockpit) > .registration-outcome-command,
+.public-auth-card:has(.public-login-route-cockpit) > .registration-completion-handoff,
+.public-auth-card:has(.public-login-route-cockpit) > .public-portal-acceptance-checkpoint,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-server-checkpoint,
+.public-auth-card:has(.public-login-route-cockpit) > .hosted-auth-redirect-verification,
+.public-auth-card:has(.public-login-route-cockpit) > .email-verification-delivery-receipt,
+.public-auth-card:has(.public-login-route-cockpit) > .login-issue-resolver,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-recovery-database-receipt,
+.public-auth-card:has(.public-login-route-cockpit) > .hosted-callback-proof,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-operator-details {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header,
+.public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-header,
+.public-auth-card:has(.public-login-route-cockpit) .current-build-server-gate-header,
+.public-auth-card:has(.public-login-route-cockpit) .public-manual-vps-sync-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-grid,
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-status,
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-fields,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-readiness,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-action-dock,
+.public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-grid,
+.public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-recovery-actions,
+.public-auth-card:has(.public-login-route-cockpit) .current-build-server-gate-grid,
+.public-auth-card:has(.public-login-route-cockpit) .public-manual-vps-sync-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) input,
+.public-auth-card:has(.public-login-route-cockpit) select,
+.public-auth-card:has(.public-login-route-cockpit) textarea,
+.public-auth-card:has(.public-login-route-cockpit) button {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) strong,
+.public-auth-card:has(.public-login-route-cockpit) small,
+.public-auth-card:has(.public-login-route-cockpit) span,
+.public-auth-card:has(.public-login-route-cockpit) code {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) code {
+  white-space: pre-wrap !important;
+}
+
+@media (max-width: 760px) {
+  .public-auth-card:has(.public-login-route-cockpit) {
+    max-width: calc(100vw - 14px) !important;
+    padding: 10px !important;
+  }
+
+  .public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
+  .public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header,
+  .public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-header,
+  .public-auth-card:has(.public-login-route-cockpit) .current-build-server-gate-header,
+  .public-auth-card:has(.public-login-route-cockpit) .public-manual-vps-sync-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
