@@ -47548,6 +47548,72 @@ body,
   }
 }
 
+/* Evidence access summary: metadata, signed files, receipts, and exports in one bounded control. */
+.evidence-access-summary {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  padding: clamp(14px, 2vw, 18px);
+  border: 1px solid rgba(113, 242, 203, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(21, 112, 95, 0.22), rgba(18, 27, 36, 0.9)),
+    rgba(8, 16, 18, 0.92);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  pointer-events: auto !important;
+}
+
+.evidence-access-summary-header,
+.evidence-access-summary-grid,
+.evidence-access-summary-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.evidence-access-summary-header {
+  align-items: start;
+}
+
+.evidence-access-summary-header > div,
+.evidence-access-summary-grid article {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.evidence-access-summary-header strong {
+  display: block;
+  margin-top: 6px;
+}
+
+.evidence-access-summary-grid article {
+  display: grid;
+  gap: 5px;
+  min-height: 116px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.evidence-access-summary-grid article.ready {
+  border-color: rgba(113, 242, 203, 0.28);
+}
+
+.evidence-access-summary-grid article.needed {
+  border-color: rgba(245, 196, 94, 0.28);
+}
+
+.evidence-access-summary-actions button,
+.evidence-access-summary-header button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
 /* Evidence cockpit focus: signed preview/download wins over older receipt panels. */
 .evidence-box:has(.evidence-file-access-cockpit) {
   display: grid !important;
@@ -47564,6 +47630,15 @@ body,
 .evidence-box:has(.evidence-file-access-cockpit) > p,
 .evidence-box:has(.evidence-file-access-cockpit) > small {
   order: -126 !important;
+}
+
+.evidence-box:has(.evidence-file-access-cockpit) > .evidence-access-summary {
+  order: -124 !important;
+  max-height: none !important;
+  margin-block: 0 !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
 }
 
 .evidence-box:has(.evidence-file-access-cockpit) > .evidence-file-access-cockpit {
@@ -47613,6 +47688,9 @@ body,
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-header,
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-grid,
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-actions,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-access-summary-header,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-access-summary-grid,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-access-summary-actions,
 .evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-access-grid,
 .evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-acceptance-grid,
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-controls {
@@ -47624,6 +47702,8 @@ body,
 
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-header > div,
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-grid article,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-access-summary-header > div,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-access-summary-grid article,
 .evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-access-grid article,
 .evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-acceptance-grid article {
   min-width: 0 !important;
@@ -47632,6 +47712,8 @@ body,
 
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-actions button,
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-file-access-cockpit-header button,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-access-summary-actions button,
+.evidence-box:has(.evidence-file-access-cockpit) .evidence-access-summary-header button,
 .evidence-box:has(.evidence-file-access-cockpit) .signed-evidence-acceptance-actions button,
 .evidence-box:has(.evidence-file-access-cockpit) .evidence-document-actions button {
   width: 100% !important;

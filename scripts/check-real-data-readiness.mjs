@@ -158,6 +158,12 @@ const appRequirements = [
     "signed_evidence_acceptance_requires_metadata_private_file_short_lived_signed_link_manifest_export_and_raw_private_file_exclusion",
     "signed evidence acceptance rule"
   ],
+  ["Evidence access summary", "evidence access summary label"],
+  ["evidence_access_summary", "evidence access summary packet mode"],
+  [
+    "evidence_access_summary_keeps_metadata_private_file_signed_preview_download_access_receipt_manifest_export_raw_file_exclusion_and_no_preview_data_visible_before_evidence_actions",
+    "evidence access summary rule"
+  ],
   ["Evidence setup command", "evidence setup command label"],
   ["evidence_setup_command", "evidence setup command packet mode"],
   [
