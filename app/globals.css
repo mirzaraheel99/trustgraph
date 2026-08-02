@@ -46783,6 +46783,10 @@ body,
   order: -116 !important;
 }
 
+.billing-panel:has(.pricing-decision-console) > .payment-collection-verdict {
+  order: -114 !important;
+}
+
 .billing-panel:has(.pricing-decision-console) > .pilot-package-board {
   order: -112 !important;
 }
@@ -46832,6 +46836,7 @@ body,
 }
 
 .billing-panel:has(.pricing-decision-console) .pricing-decision-console,
+.billing-panel:has(.pricing-decision-console) .payment-collection-verdict,
 .billing-panel:has(.pricing-decision-console) .pilot-package-board,
 .billing-panel:has(.pricing-decision-console) .pricing-choice-rail,
 .billing-panel:has(.pricing-decision-console) .pricing-activation-workbench,
@@ -46845,6 +46850,7 @@ body,
 }
 
 .billing-panel:has(.pricing-decision-console) .pricing-decision-console-grid,
+.billing-panel:has(.pricing-decision-console) .payment-collection-verdict-grid,
 .billing-panel:has(.pricing-decision-console) .pilot-package-board-grid,
 .billing-panel:has(.pricing-decision-console) .pricing-choice-grid,
 .billing-panel:has(.pricing-decision-console) .pricing-activation-workbench-grid,
@@ -46858,6 +46864,8 @@ body,
 }
 
 .billing-panel:has(.pricing-decision-console) .pricing-decision-console-actions,
+.billing-panel:has(.pricing-decision-console) .payment-collection-verdict-actions,
+.billing-panel:has(.pricing-decision-console) .payment-collection-verdict-proof,
 .billing-panel:has(.pricing-decision-console) .pilot-package-board-proof,
 .billing-panel:has(.pricing-decision-console) .pricing-choice-actions,
 .billing-panel:has(.pricing-decision-console) .pricing-activation-workbench-footer,
@@ -46872,6 +46880,8 @@ body,
 }
 
 .billing-panel:has(.pricing-decision-console) .pricing-decision-console-actions > *,
+.billing-panel:has(.pricing-decision-console) .payment-collection-verdict-actions > *,
+.billing-panel:has(.pricing-decision-console) .payment-collection-verdict-proof > *,
 .billing-panel:has(.pricing-decision-console) .pilot-package-board-proof > *,
 .billing-panel:has(.pricing-decision-console) .pricing-choice-actions > *,
 .billing-panel:has(.pricing-decision-console) .pricing-activation-workbench-footer > *,
@@ -46881,6 +46891,48 @@ body,
 .billing-panel:has(.pricing-decision-console) .paid-launch-decision-proof > * {
   flex: 1 1 170px !important;
   min-width: 0 !important;
+}
+
+.payment-collection-verdict {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  border: 1px solid rgba(255, 205, 113, 0.26) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 205, 113, 0.12), rgba(42, 230, 201, 0.08)),
+    rgba(9, 18, 21, 0.93) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22) !important;
+}
+
+.payment-collection-verdict-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.payment-collection-verdict-grid article,
+.payment-collection-verdict-proof > span {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  padding: 12px !important;
+}
+
+.payment-collection-verdict-grid article.ready {
+  border-color: rgba(108, 247, 218, 0.32) !important;
+}
+
+.payment-collection-verdict-grid article.next {
+  border-color: rgba(255, 205, 113, 0.36) !important;
+}
+
+@media (max-width: 780px) {
+  .payment-collection-verdict-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
 }
 
 /* Setup center one-path compression: unlock, route, tabs, active form, then optional proof exports. */

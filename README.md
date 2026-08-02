@@ -388,6 +388,8 @@ Corporate Verify now adds a plain reviewer access verdict after the database com
 
 The public login/register form now includes an email link verdict before credentials. It shows the selected Professional or Corporate path, whether an email is ready, whether the redirect is hosted, the Supabase rate-limit rule, localhost link repair guidance, landing portal, first database write, and token-redaction boundary before sending verification or recovery emails.
 
+Billing now includes a payment collection verdict at the top of the pricing flow. It says whether pilot pricing is ready for buyer review, keeps Supabase ledger and quote receipts allowed, blocks card capture and Stripe Checkout, and lists the human-gated tax, invoice, refund, dunning, and webhook decisions required before paid launch.
+
 Billing now starts with a pricing choice rail that summarizes selected plan, seats, projected monthly price, live pilot ledger state, saved quote receipt, Stripe gate, and pricing packet export before the deeper billing receipts.
 
 Passport record detail now starts evidence work with an evidence access desk: preview, download, metadata manifest export, access packet export, signed URL expiry, metadata-only boundaries, and last-link proof are visible before deeper evidence receipts.

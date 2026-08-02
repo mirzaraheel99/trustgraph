@@ -16145,6 +16145,75 @@ function BillingPanel({
       ready: Boolean(latestDecisionReceipt)
     }
   ];
+  const paymentCollectionVerdictReady = activeSubscriptions.length > 0 && Boolean(latestPricingQuoteReceipt && latestDecisionReceipt);
+  const paymentCollectionVerdict = {
+    mode: "payment_collection_verdict",
+    status: paymentCollectionVerdictReady ? "pilot_pricing_ready_payment_collection_blocked" : "pilot_pricing_setup_needed",
+    answer: paymentCollectionVerdictReady
+      ? "Pilot pricing is ready for buyer review. Do not collect card payments yet."
+      : "Do not collect payments yet. Finish the pilot ledger, quote, and billing decision first.",
+    allowed_now: [
+      "Show Professional free pilot pricing",
+      "Show Corporate Verify pilot pricing",
+      "Activate Supabase pilot subscription ledger",
+      "Record pricing quote receipt",
+      "Record billing architecture decision receipt",
+      "Export pricing and payment boundary packet"
+    ],
+    blocked_until_human_gate: [
+      "Stripe Checkout",
+      "Card capture",
+      "Customer portal",
+      "Invoice email delivery",
+      "Tax calculation",
+      "Refunds and dunning",
+      "Payment webhook reconciliation"
+    ],
+    selected_package: selectedProjectedPlan?.name ?? primaryPlan?.name ?? "Corporate Verify Pilot",
+    selected_seats: seats,
+    projected_monthly_usd: estimatedSeatTotal,
+    live_subscription_rows: activeSubscriptions.length,
+    quote_receipt_status: latestPricingQuoteReceipt ? "saved" : "not_recorded",
+    billing_decision_status: latestDecisionReceipt?.status ?? "not_recorded",
+    stripe_checkout_enabled: false,
+    payment_collection_live: false,
+    preview_data_accepted: false,
+    next_action: !activeSubscriptions.length
+      ? "Activate pilot ledger"
+      : !latestPricingQuoteReceipt
+        ? "Record pricing quote"
+        : !latestDecisionReceipt
+          ? "Record billing decision"
+          : "Export payment verdict",
+    accepted_when:
+      "payment_collection_verdict_answers_pilot_pricing_ready_but_no_card_capture_requires_live_ledger_quote_decision_stripe_tax_invoice_refund_dunning_webhooks_human_gate_and_preview_rejection"
+  };
+  const paymentCollectionVerdictCards = [
+    {
+      label: "Pilot ledger",
+      value: activeSubscriptions.length ? "Active" : "Needed",
+      detail: activeSubscriptions.length ? `${activeSubscriptions.length} live subscription row${activeSubscriptions.length === 1 ? "" : "s"}.` : "Activate the Supabase pilot ledger first.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Quote",
+      value: latestPricingQuoteReceipt ? "Saved" : "Record",
+      detail: latestPricingQuoteReceipt ? `$${latestPricingQuoteReceipt.projected_monthly_usd}/month saved for review.` : "Persist selected seats and projected monthly total.",
+      ready: Boolean(latestPricingQuoteReceipt)
+    },
+    {
+      label: "Decision",
+      value: latestDecisionReceipt ? "Saved" : "Record",
+      detail: latestDecisionReceipt ? "Billing architecture decision receipt exists." : "Record ledger-now, Stripe-later architecture.",
+      ready: Boolean(latestDecisionReceipt)
+    },
+    {
+      label: "Card payments",
+      value: "Blocked",
+      detail: "Stripe Checkout, tax, invoices, refunds, dunning, and webhooks wait for human approval.",
+      ready: true
+    }
+  ];
   const billingLaunchBoard = {
     mode: "billing_launch_board",
     status: activeSubscriptions.length ? "pilot_ledger_active" : "activate_pilot_ledger",
@@ -16578,6 +16647,63 @@ function BillingPanel({
         <small className="pricing-decision-console-boundary">
           Corporate database access remains scoped by RBAC, user consent, and Access Grants. Payment collection is not live.
         </small>
+      </div>
+      <div className={`payment-collection-verdict ${paymentCollectionVerdict.status}`} aria-label="Payment collection verdict">
+        <div className="payment-collection-verdict-header">
+          <div>
+            <span className={`status-chip ${paymentCollectionVerdictReady ? "success" : "warning"}`}>Payment collection verdict</span>
+            <strong>{paymentCollectionVerdict.answer}</strong>
+            <small>{paymentCollectionVerdict.accepted_when}</small>
+          </div>
+          <div className="payment-collection-verdict-actions">
+            <button
+              className="primary-action"
+              disabled={disabled || !billingLaunchBoard.selected_plan_id || activeSubscriptions.length > 0 || Boolean(busyPlanId)}
+              onClick={() => billingLaunchBoard.selected_plan_id ? void activate(billingLaunchBoard.selected_plan_id) : undefined}
+              type="button"
+            >
+              Activate ledger
+            </button>
+            <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+              Record quote
+            </button>
+            <button className="secondary-action" disabled={disabled || decisionBusy} onClick={() => void recordDecisionReceipt()} type="button">
+              Record decision
+            </button>
+          </div>
+        </div>
+        <div className="payment-collection-verdict-grid">
+          {paymentCollectionVerdictCards.map((card) => (
+            <article className={card.ready ? "ready" : "next"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="payment-collection-verdict-proof">
+          <span>
+            <small>Allowed now</small>
+            <strong>{paymentCollectionVerdict.allowed_now.length} pilot actions</strong>
+          </span>
+          <span>
+            <small>Blocked</small>
+            <strong>{paymentCollectionVerdict.blocked_until_human_gate.length} payment flows</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-payment-collection-verdict-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...paymentCollectionVerdict, cards: paymentCollectionVerdictCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export verdict
+          </button>
+        </div>
       </div>
       <div className={`billing-ready-answer ${billingReadyAnswer.status === "ready_for_corporate_billing_review" ? "ready" : "needed"}`} aria-label="Billing ready answer">
         <div className="billing-ready-answer-header">
