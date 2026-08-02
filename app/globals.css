@@ -41927,6 +41927,68 @@ body,
   color: var(--tg-text);
 }
 
+.public-submit-path-checklist {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 238, 201, 0.24);
+  border-radius: 8px;
+  background: rgba(7, 17, 19, 0.92);
+}
+
+.public-submit-path-checklist.corporate {
+  border-color: rgba(143, 184, 255, 0.28);
+}
+
+.public-submit-path-header,
+.public-submit-path-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+
+.public-submit-path-header > div,
+.public-submit-path-footer > span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.public-submit-path-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.public-submit-path-grid span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(226, 239, 232, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-submit-path-checklist strong,
+.public-submit-path-checklist small,
+.public-submit-path-checklist span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-submit-path-checklist button {
+  min-height: 44px;
+  width: 100%;
+  white-space: normal;
+}
+
 .public-login-route-cockpit {
   order: -100;
   display: grid;

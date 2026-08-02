@@ -24310,6 +24310,51 @@ function PublicSite({
       detail: "Corporate reviewers do not browse the full user database."
     }
   ];
+  const publicSubmitPathChecklist = {
+    mode: "public_submit_path_checklist",
+    selected_route: publicEntrySequence.selected_route,
+    submit_ready: publicSubmitReadiness.can_submit,
+    hosted_redirect_url: authRedirectUrl,
+    first_database_write: publicEntrySequence.first_database_write,
+    landing_portal: publicEntrySequence.landing_portal,
+    corporate_database_boundary: publicEntrySequence.corporate_database_boundary,
+    recovery_available: Boolean(email),
+    preview_data_accepted: false,
+    accepted_when:
+      "public_submit_path_checklist_shows_credentials_hosted_verification_live_database_write_landing_portal_corporate_scope_recovery_and_no_preview_data_before_submit"
+  };
+  const publicSubmitPathChecklistSteps = [
+    {
+      label: "Credentials",
+      value: publicSubmitPathChecklist.submit_ready ? "Ready" : "Needs fields",
+      detail: portal === "corporate" && mode === "signup" ? "Email, password, organization, and domain." : "Email and password."
+    },
+    {
+      label: "Hosted verification",
+      value: authRedirectUrl.includes("localhost") ? "Repair needed" : "Hosted",
+      detail: publicSubmitPathChecklist.hosted_redirect_url
+    },
+    {
+      label: "Live database write",
+      value: publicSubmitPathChecklist.first_database_write,
+      detail: mode === "signin" ? "Login opens existing live rows." : selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
+    },
+    {
+      label: "Landing portal",
+      value: publicSubmitPathChecklist.landing_portal,
+      detail: selectedRegistrationPath.nextAction
+    },
+    {
+      label: "Corporate scope",
+      value: portal === "corporate" ? "Request by email" : "Owner consent",
+      detail: "Corporate sees only approved scoped user rows; no open user database browse."
+    },
+    {
+      label: "Recovery",
+      value: publicSubmitPathChecklist.recovery_available ? "Ready" : "Enter email",
+      detail: "Reset password and resend verification use the hosted redirect."
+    }
+  ];
   const publicAccountRouteConfirmation = {
     mode: "public_account_route_confirmation",
     selected_route: `${publicAccountAccessPath.selected_portal} / ${publicAccountAccessPath.selected_action}`,
@@ -28043,6 +28088,46 @@ function PublicSite({
               </span>
               <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
                 Reset or resend
+              </button>
+            </div>
+          </div>
+          <div className={`public-submit-path-checklist ${portal}`} aria-label="Public submit path checklist">
+            <div className="public-submit-path-header">
+              <div>
+                <span className={`status-chip ${publicSubmitPathChecklist.submit_ready ? "success" : "warning"}`}>Before submit</span>
+                <strong>{publicSubmitPathChecklist.selected_route}</strong>
+                <small>{publicSubmitPathChecklist.accepted_when}</small>
+              </div>
+              <button className="primary-action" disabled={busy || !publicSubmitPathChecklist.submit_ready} type="submit">
+                {mode === "signin" ? "Login now" : "Create account"}
+              </button>
+            </div>
+            <div className="public-submit-path-grid">
+              {publicSubmitPathChecklistSteps.map((step) => (
+                <span key={step.label}>
+                  <small>{step.label}</small>
+                  <strong>{step.value}</strong>
+                  <small>{step.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-submit-path-footer">
+              <span>
+                <strong>{publicSubmitPathChecklist.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
+                <small>{publicSubmitPathChecklist.corporate_database_boundary}</small>
+              </span>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-submit-path-checklist-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify({ ...publicSubmitPathChecklist, steps: publicSubmitPathChecklistSteps }, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export checklist
               </button>
             </div>
           </div>
