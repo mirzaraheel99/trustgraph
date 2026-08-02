@@ -412,9 +412,11 @@ Set `TRUSTGRAPH_SMOKE_URL` to smoke-check a different hosted URL.
 
 ```bash
 npm run check:v1-demo-flow
+npm run check:v1-e2e-demo
 ```
 
 This validates the end-to-end v1 demo path from public portal selection through registration, dashboard actions, professional records, Corporate Verify user database access, working database proof, V1 operating map, server release save path, billing boundary, and launch gates.
+Use `check:v1-e2e-demo` when you want the full ordered acceptance loop: RLS, claims, pilot route, demo flow, real-data readiness, responsive layout, premium layout, migration workflow, server env, and VPS guardrails.
 
 ## Server Env Check
 

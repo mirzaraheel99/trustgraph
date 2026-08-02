@@ -54,6 +54,9 @@ jobs:
       - name: Verify v1 demo flow
         run: pnpm check:v1-demo-flow
 
+      - name: Verify v1 E2E demo loop
+        run: pnpm check:v1-e2e-demo
+
       - name: Verify live database repair path
         run: pnpm check:live-database-repair
 
