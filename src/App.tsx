@@ -15325,6 +15325,40 @@ function BillingPanel({
     accepted_when:
       "billing_ready_answer_keeps_professional_free_corporate_149_pilot_seats_live_subscription_ledger_quote_decision_stripe_human_gate_scoped_database_boundary_and_preview_rejection_before_billing_receipts"
   };
+  const pricingDecisionConsole = {
+    mode: "pricing_decision_console",
+    status: activeSubscriptions.length && latestPricingQuoteReceipt && latestDecisionReceipt ? "buyer_ready_stripe_still_gated" : "pricing_setup_in_progress",
+    headline: activeSubscriptions.length ? "Corporate pilot pricing is ledger-backed" : "Start with the Corporate pilot ledger",
+    next_action: billingReadyAnswer.next_action,
+    accepted_when:
+      "pricing_decision_console_keeps_professional_free_corporate_149_scale_quote_live_ledger_quote_decision_stripe_human_gate_and_scoped_database_boundary_first"
+  };
+  const pricingDecisionConsoleCards = [
+    {
+      label: "Professional",
+      value: "Free pilot",
+      detail: "User Passport, evidence, consent, and sharing approvals start without payment collection.",
+      ready: true
+    },
+    {
+      label: "Corporate",
+      value: "$149/month pilot",
+      detail: activeSubscriptions.length ? `${activeSubscriptions.length} live ledger row${activeSubscriptions.length === 1 ? "" : "s"} loaded.` : "Activate the live Supabase subscription ledger.",
+      ready: activeSubscriptions.length > 0
+    },
+    {
+      label: "Scale",
+      value: "Human quote",
+      detail: "Enterprise pricing remains approval-based before paid launch.",
+      ready: true
+    },
+    {
+      label: "Stripe",
+      value: latestDecisionReceipt ? "Decision saved" : "Human gate",
+      detail: "Checkout, invoices, tax, refunds, dunning, and webhooks stay off until approved.",
+      ready: Boolean(latestDecisionReceipt)
+    }
+  ];
   const billingReadyAnswerCards = [
     {
       label: "Recommended path",
@@ -15797,6 +15831,62 @@ function BillingPanel({
         <strong>Billing and plans</strong>
       </div>
       <small>{message}</small>
+      <div className={`pricing-decision-console ${pricingDecisionConsole.status}`} aria-label="Pricing decision console">
+        <div className="pricing-decision-console-header">
+          <div>
+            <span className={`status-chip ${activeSubscriptions.length ? "success" : "warning"}`}>Pricing decision</span>
+            <strong>{pricingDecisionConsole.headline}</strong>
+            <small>
+              Professional is free, Corporate Verify starts with the $149 pilot ledger, Scale is quote-based, and Stripe payment collection stays human-gated.
+            </small>
+          </div>
+          <button
+            className={activeSubscriptions.length ? "secondary-action" : "primary-action"}
+            disabled={disabled || !billingReadyAnswer.selected_plan_id || Boolean(busyPlanId)}
+            onClick={() => billingReadyAnswer.selected_plan_id ? void activate(billingReadyAnswer.selected_plan_id) : undefined}
+            type="button"
+          >
+            {activeSubscriptions.length ? "Ledger active" : "Activate ledger"}
+          </button>
+        </div>
+        <div className="pricing-decision-console-grid">
+          {pricingDecisionConsoleCards.map((card) => (
+            <article className={card.ready ? "ready" : "next"} key={card.label}>
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="pricing-decision-console-actions">
+          <label>
+            <span>Corporate seats</span>
+            <input min={1} onChange={(event) => setSeats(Number(event.target.value) || 1)} type="number" value={seats} />
+          </label>
+          <button className="secondary-action" disabled={disabled || quoteBusy || !plans.length} onClick={() => void recordPricingQuote()} type="button">
+            Record quote
+          </button>
+          <button className="secondary-action" disabled={disabled || decisionBusy} onClick={() => void recordDecisionReceipt()} type="button">
+            Record decision
+          </button>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-pricing-decision-console-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...pricingDecisionConsole, cards: pricingDecisionConsoleCards }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export pricing
+          </button>
+        </div>
+        <small className="pricing-decision-console-boundary">
+          Corporate database access remains scoped by RBAC, user consent, and Access Grants. Payment collection is not live.
+        </small>
+      </div>
       <div className={`billing-ready-answer ${billingReadyAnswer.status === "ready_for_corporate_billing_review" ? "ready" : "needed"}`} aria-label="Billing ready answer">
         <div className="billing-ready-answer-header">
           <div>

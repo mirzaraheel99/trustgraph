@@ -36461,6 +36461,129 @@ body {
   background: rgba(255, 255, 255, 0.045);
 }
 
+.pricing-decision-console {
+  order: -105;
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.14), rgba(134, 174, 246, 0.08) 56%, rgba(255, 205, 118, 0.04)),
+    rgba(5, 14, 17, 0.96);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+}
+
+.pricing-decision-console.pricing_setup_in_progress {
+  border-color: rgba(255, 205, 118, 0.34);
+}
+
+.pricing-decision-console-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.pricing-decision-console-header > div,
+.pricing-decision-console-actions,
+.pricing-decision-console-grid article {
+  min-width: 0;
+}
+
+.pricing-decision-console strong,
+.pricing-decision-console small,
+.pricing-decision-console span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pricing-decision-console-header strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1.05;
+}
+
+.pricing-decision-console-header small,
+.pricing-decision-console-grid small,
+.pricing-decision-console-boundary {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.pricing-decision-console-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 10px;
+}
+
+.pricing-decision-console-grid article {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.pricing-decision-console-grid article.ready {
+  border-color: rgba(95, 240, 201, 0.28);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.pricing-decision-console-grid article.next {
+  border-color: rgba(255, 205, 118, 0.3);
+  background: rgba(255, 205, 118, 0.08);
+}
+
+.pricing-decision-console-grid span {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.pricing-decision-console-grid strong {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.14;
+}
+
+.pricing-decision-console-actions {
+  display: grid;
+  grid-template-columns: minmax(118px, 0.7fr) repeat(3, minmax(132px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.pricing-decision-console-actions label {
+  display: grid;
+  gap: 5px;
+}
+
+.pricing-decision-console-actions label span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.pricing-decision-console-actions input,
+.pricing-decision-console-actions button {
+  width: 100%;
+  min-height: 44px;
+}
+
+.pricing-decision-console-boundary {
+  padding: 12px;
+  border: 1px solid rgba(95, 240, 201, 0.22);
+  border-radius: 8px;
+  background: rgba(95, 240, 201, 0.07);
+}
+
 .billing-panel .pilot-package-board {
   order: -75;
 }
@@ -36498,6 +36621,7 @@ body {
 }
 
 .billing-panel .pricing-choice-rail,
+.billing-panel .pricing-decision-console,
 .billing-panel .billing-ready-answer,
 .billing-panel .pricing-checkout-readiness-hub,
 .billing-panel .billing-decision-center,
@@ -36517,6 +36641,7 @@ body {
 }
 
 .billing-panel .pricing-choice-copy > strong,
+.billing-panel .pricing-decision-console-header strong,
 .billing-panel .billing-ready-answer-header strong,
 .billing-panel .billing-decision-center-copy > strong,
 .billing-panel .pilot-package-board-header strong,
@@ -36532,6 +36657,7 @@ body {
 }
 
 .billing-panel .pricing-choice-grid,
+.billing-panel .pricing-decision-console-grid,
 .billing-panel .billing-ready-answer-grid,
 .billing-panel .pricing-checkout-readiness-grid,
 .billing-panel .billing-decision-center-grid,
@@ -36549,6 +36675,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions,
+.billing-panel .pricing-decision-console-actions,
 .billing-panel .billing-ready-answer-actions,
 .billing-panel .billing-ready-answer-proof,
 .billing-panel .pricing-checkout-readiness-actions,
@@ -36566,6 +36693,7 @@ body {
 }
 
 .billing-panel .pricing-choice-actions button,
+.billing-panel .pricing-decision-console-actions button,
 .billing-panel .billing-ready-answer-actions button,
 .billing-panel .pricing-checkout-readiness-actions button,
 .billing-panel .billing-decision-center-actions button,
@@ -36582,6 +36710,8 @@ body {
 
 @media (max-width: 780px) {
   .billing-panel .pricing-choice-actions,
+  .billing-panel .pricing-decision-console-header,
+  .billing-panel .pricing-decision-console-actions,
   .billing-panel .billing-ready-answer-header,
   .billing-panel .billing-ready-answer-actions,
   .billing-panel .billing-ready-answer-proof,
