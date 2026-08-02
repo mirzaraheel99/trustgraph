@@ -6468,6 +6468,65 @@ function CorporateDirectoryPanel({
     acceptance_rule:
       "corporate_access_next_action_is_complete_only_when_live_rbac_context_approved_grants_shared_rows_gap_review_attestation_click_target_metadata_only_export_and_no_open_user_browse_are_ready"
   };
+  const corporateDatabaseAccessSequence = {
+    mode: "corporate_database_access_sequence",
+    status: corporateAccessNextAction.ready ? "ready_to_export" : "next_action_required",
+    headline: corporateAccessNextAction.ready ? "Corporate can review approved scoped user rows" : "Finish the next access step before rows appear",
+    next_action: corporateAccessNextAction.action,
+    next_target: corporateAccessNextAction.target,
+    visible_scoped_rows: sharedRecords.length,
+    approved_access_grants: approvedAccessCount,
+    review_attestations: reviews.length,
+    open_gap_requests: openGapRequestCount,
+    no_open_user_database_browse: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_database_access_sequence_keeps_role_request_professional_approval_scoped_user_rows_review_attestation_export_no_open_user_browse_and_no_preview_data_visible_first"
+  };
+  const corporateDatabaseAccessSequenceSteps = [
+    {
+      label: "Role",
+      value: isLiveCorporateDatabase ? "Corporate active" : "Login needed",
+      detail: isLiveCorporateDatabase ? "RBAC context is loaded." : "Corporate reviewer or admin role required.",
+      ready: isLiveCorporateDatabase,
+      target: "account"
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "Start",
+      detail: "Request one professional by email and business purpose.",
+      ready: requests.length > 0,
+      target: "request"
+    },
+    {
+      label: "Approval",
+      value: approvedAccessCount ? `${approvedAccessCount}` : "Waiting",
+      detail: "Professional approval unlocks scoped Passport rows.",
+      ready: approvedAccessCount > 0,
+      target: "refresh"
+    },
+    {
+      label: "Rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Hidden",
+      detail: "Only approved, consent-scoped rows can appear.",
+      ready: sharedRecords.length > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Review",
+      value: reviews.length ? `${reviews.length}` : "Record",
+      detail: openGapRequestCount ? `${openGapRequestCount} open gaps remain.` : "Save an attestation before export.",
+      ready: reviews.length > 0 && openGapRequestCount === 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Export",
+      value: corporateAccessNextAction.ready ? "Ready" : "Locked",
+      detail: "Export metadata and audit proof only.",
+      ready: corporateAccessNextAction.ready,
+      target: "export"
+    }
+  ];
   const corporateReviewerTaskCommand = {
     mode: "corporate_reviewer_task_command",
     current_task: corporateAccessNextAction.label,
@@ -8405,6 +8464,55 @@ function CorporateDirectoryPanel({
 
   return (
     <section className="corporate-directory-panel">
+      <div className={`corporate-database-access-sequence ${corporateDatabaseAccessSequence.status}`} aria-label="Corporate database access sequence">
+        <div className="corporate-database-access-sequence-header">
+          <div>
+            <span className={`status-chip ${corporateAccessNextAction.ready ? "success" : "warning"}`}>Corporate database path</span>
+            <strong>{corporateDatabaseAccessSequence.headline}</strong>
+            <small>{corporateDatabaseAccessSequence.accepted_when}</small>
+          </div>
+          <button
+            className={corporateAccessNextAction.ready ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (corporateAccessNextAction.ready) {
+                downloadTextFile(packetName, JSON.stringify({ ...corporateUserDatabasePacket, corporate_database_access_sequence: corporateDatabaseAccessSequence }, null, 2), "application/json");
+                return;
+              }
+              runCorporateReviewerTask(corporateAccessNextAction.target);
+            }}
+            type="button"
+          >
+            {corporateDatabaseAccessSequence.next_action}
+          </button>
+        </div>
+        <div className="corporate-database-access-sequence-grid">
+          {corporateDatabaseAccessSequenceSteps.map((step) => (
+            <button className={step.ready ? "ready" : "next"} key={step.label} onClick={() => runCorporateReviewerTask(step.target)} type="button">
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-database-access-sequence-proof">
+          <span>
+            <small>Visible scoped rows</small>
+            <strong>{corporateDatabaseAccessSequence.visible_scoped_rows}</strong>
+          </span>
+          <span>
+            <small>Approved grants</small>
+            <strong>{corporateDatabaseAccessSequence.approved_access_grants}</strong>
+          </span>
+          <span>
+            <small>Open user browse</small>
+            <strong>{corporateDatabaseAccessSequence.no_open_user_database_browse ? "Blocked" : "Allowed"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateDatabaseAccessSequence.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+        </div>
+      </div>
       <div className={`corporate-database-access-compass ${corporateDatabaseAccessCompass.status}`} aria-label="Corporate database access compass">
         <div className="corporate-database-access-compass-header">
           <div>

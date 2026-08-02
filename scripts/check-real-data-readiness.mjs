@@ -332,6 +332,12 @@ const appRequirements = [
     "corporate_reviewer_database_home_requires_request_approval_visible_scoped_rows_review_attestation_export_and_no_open_user_browse",
     "corporate reviewer database home no-open-browse acceptance rule"
   ],
+  ["Corporate database access sequence", "corporate database access sequence label"],
+  ["corporate_database_access_sequence", "corporate database access sequence packet mode"],
+  [
+    "corporate_database_access_sequence_keeps_role_request_professional_approval_scoped_user_rows_review_attestation_export_no_open_user_browse_and_no_preview_data_visible_first",
+    "corporate database access sequence no-preview-data rule"
+  ],
   ["Corporate reviewer database workbench", "corporate reviewer database workbench label"],
   ["corporate_reviewer_database_workbench", "corporate reviewer database workbench packet mode"],
   [
