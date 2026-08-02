@@ -24200,6 +24200,70 @@ function PublicSite({
       detail: "Password reset and hosted verification repair stay on this card."
     }
   ];
+  const publicCredentialPreflight = {
+    mode: "public_credential_preflight",
+    selected_portal: portal,
+    selected_mode: mode,
+    status: publicSubmitReadiness.can_submit ? "ready_to_submit" : "missing_required_fields",
+    headline: publicSubmitReadiness.can_submit
+      ? `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"} is ready`
+      : `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"} needs required fields`,
+    required_fields:
+      portal === "corporate" && mode === "signup"
+        ? ["email", "password", "organization", "domain", "company_type"]
+        : ["email", "password"],
+    missing_fields: [
+      !email ? "email" : null,
+      !password ? "password" : null,
+      portal === "corporate" && mode === "signup" && !organizationName ? "organization" : null,
+      portal === "corporate" && mode === "signup" && !organizationDomain ? "domain" : null
+    ].filter(Boolean),
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "existing_supabase_session",
+    completion_row: portal === "corporate" ? "workspace_created" : "passport_initialized",
+    hosted_verification: mode === "signup" ? "required_before_login" : "existing_account_expected",
+    recovery_available: Boolean(email),
+    corporate_scope_boundary: "Corporate users request approved Passport rows by professional email; no open user database browse.",
+    accepted_when:
+      "public_credential_preflight_shows_required_fields_missing_fields_hosted_verification_first_database_write_corporate_scope_recovery_and_no_preview_data_before_submit"
+  };
+  const publicCredentialPreflightRows = [
+    {
+      label: "Required",
+      value: `${publicCredentialPreflight.required_fields.length} fields`,
+      detail: publicCredentialPreflight.required_fields.join(", ").replace(/_/g, " "),
+      ready: publicCredentialPreflight.missing_fields.length === 0
+    },
+    {
+      label: "Missing",
+      value: publicCredentialPreflight.missing_fields.length ? publicCredentialPreflight.missing_fields.join(", ") : "None",
+      detail: publicCredentialPreflight.missing_fields.length ? "Complete these before submit." : "All required fields are present.",
+      ready: publicCredentialPreflight.missing_fields.length === 0
+    },
+    {
+      label: "First database write",
+      value: publicCredentialPreflight.first_database_write,
+      detail: mode === "signup" ? selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ") : "Login uses the existing verified account.",
+      ready: true
+    },
+    {
+      label: "Hosted email",
+      value: publicCredentialPreflight.hosted_verification.replace(/_/g, " "),
+      detail: `Email links must return to ${authRedirectUrl}`,
+      ready: !authRedirectUrl.includes("localhost")
+    },
+    {
+      label: "Corporate scope",
+      value: portal === "corporate" ? "Request and approval" : "Owner controlled",
+      detail: portal === "corporate" ? publicCredentialPreflight.corporate_scope_boundary : "Professional Passport rows stay private until sharing is approved.",
+      ready: true
+    },
+    {
+      label: "Recovery",
+      value: publicCredentialPreflight.recovery_available ? "Enabled" : "Enter email",
+      detail: "Resend verification and reset password stay on this card.",
+      ready: publicCredentialPreflight.recovery_available
+    }
+  ];
   const authCredentialCommand = {
     mode: "auth_credential_command",
     selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
@@ -29436,6 +29500,41 @@ function PublicSite({
                 <strong>{email ? "Reset ready" : "Enter email"}</strong>
                 <small>Password reset uses the hosted TrustGraph redirect, not localhost.</small>
               </button>
+            </div>
+            <div className={`public-credential-preflight ${publicCredentialPreflight.status}`} aria-label="Public credential preflight">
+              <div className="public-credential-preflight-header">
+                <div>
+                  <span className={`status-chip ${publicSubmitReadiness.can_submit ? "success" : "warning"}`}>
+                    {publicSubmitReadiness.can_submit ? "Ready" : "Preflight"}
+                  </span>
+                  <strong>{publicCredentialPreflight.headline}</strong>
+                  <small>
+                    Corporate registration needs company fields before Supabase signup. Hosted email verification and recovery use the active TrustGraph redirect.
+                  </small>
+                </div>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(
+                      `trustgraph-public-credential-preflight-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
+                      JSON.stringify({ ...publicCredentialPreflight, rows: publicCredentialPreflightRows }, null, 2),
+                      "application/json"
+                    )
+                  }
+                  type="button"
+                >
+                  Export preflight
+                </button>
+              </div>
+              <div className="public-credential-preflight-grid">
+                {publicCredentialPreflightRows.map((row) => (
+                  <article className={row.ready ? "ready" : "next"} key={row.label}>
+                    <span>{row.label}</span>
+                    <strong>{row.value}</strong>
+                    <small>{row.detail}</small>
+                  </article>
+                ))}
+              </div>
             </div>
             <div className="public-credential-fields">
               <label>

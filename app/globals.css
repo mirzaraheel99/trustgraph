@@ -48781,3 +48781,80 @@ body,
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Public credential preflight: show missing signup fields and hosted email expectations before submit. */
+.public-credential-preflight {
+  display: grid !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 12px !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(134, 174, 246, 0.2) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(134, 174, 246, 0.1), rgba(255, 255, 255, 0.018) 48%, rgba(95, 238, 201, 0.07)),
+    rgba(7, 15, 18, 0.78) !important;
+}
+
+.public-credential-preflight.ready_to_submit {
+  border-color: rgba(113, 242, 203, 0.26) !important;
+}
+
+.public-credential-preflight-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.public-credential-preflight-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+.public-credential-preflight-grid article {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  padding: 9px !important;
+  border: 1px solid rgba(226, 239, 232, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.public-credential-preflight-grid article.ready {
+  border-color: rgba(113, 242, 203, 0.2) !important;
+  background: rgba(72, 208, 174, 0.075) !important;
+}
+
+.public-credential-preflight-grid article.next {
+  border-color: rgba(255, 205, 118, 0.24) !important;
+  background: rgba(255, 205, 118, 0.055) !important;
+}
+
+.public-credential-preflight strong,
+.public-credential-preflight small,
+.public-credential-preflight span {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.public-credential-preflight button {
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-preflight {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+@media (max-width: 720px) {
+  .public-credential-preflight-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
