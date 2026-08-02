@@ -18368,6 +18368,59 @@ function AuthPanel({
     ],
     signed_in_recovery_control: session ? "password_update_available" : "password_update_requires_recovery_session"
   };
+  const currentBrowserAuthHost =
+    typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`;
+  const currentBrowserAuthIsLocalhost =
+    typeof window === "undefined" ? false : window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  const currentBrowserAuthIsAllowed =
+    currentBrowserAuthHost === "server-render" ||
+    TRUSTGRAPH_ALLOWED_REDIRECTS.includes(currentBrowserAuthHost) ||
+    TRUSTGRAPH_ALLOWED_REDIRECTS.includes(currentBrowserAuthHost.replace(/\/$/, ""));
+  const hostedRedirectDecision = {
+    generated_at: new Date().toISOString(),
+    mode: "hosted_redirect_decision",
+    status: !authRedirectUrl.includes("localhost") && !currentBrowserAuthIsLocalhost ? "hosted_ready" : "localhost_rejected",
+    selected_redirect_url: authRedirectUrl,
+    current_browser_host: currentBrowserAuthHost,
+    current_browser_is_allowed: currentBrowserAuthIsAllowed,
+    current_browser_is_localhost: currentBrowserAuthIsLocalhost,
+    configured_redirect_url: TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL || "not_set",
+    configured_redirect_rejected: TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED,
+    github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
+    vps_redirect: TRUSTGRAPH_VPS_URL,
+    localhost_outbound_email_link_allowed: false,
+    outbound_email_actions: ["signup_verification", "resend_verification", "password_recovery"],
+    accepted_when:
+      "hosted_redirect_decision_requires_github_pages_or_vps_redirect_current_host_allowed_localhost_rejected_signup_resend_reset_email_links_and_visible_copy_export_before_credentials"
+  };
+  const hostedRedirectDecisionRows = [
+    {
+      label: "Selected redirect",
+      value: hostedRedirectDecision.selected_redirect_url.includes("localhost") ? "Rejected" : "Hosted",
+      detail: hostedRedirectDecision.selected_redirect_url,
+      ready: !hostedRedirectDecision.selected_redirect_url.includes("localhost")
+    },
+    {
+      label: "Current host",
+      value: currentBrowserAuthIsAllowed ? "Allowed" : "Fallback",
+      detail: currentBrowserAuthHost,
+      ready: currentBrowserAuthIsAllowed && !currentBrowserAuthIsLocalhost
+    },
+    {
+      label: "Localhost email",
+      value: "Blocked",
+      detail: "Verification, resend, and reset emails must use GitHub Pages or VPS, never localhost.",
+      ready: true
+    },
+    {
+      label: "Configured env",
+      value: TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED ? "Rejected" : TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL ? "Accepted" : "Defaulted",
+      detail: TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED
+        ? "Configured redirect was not hosted HTTPS, so TrustGraph falls back to the VPS URL."
+        : TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL || "No env override; using hosted default.",
+      ready: !TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED
+    }
+  ];
   const authRedirectPacket = {
     generated_at: new Date().toISOString(),
     configured: isSupabaseConfigured(),
@@ -18554,6 +18607,7 @@ function AuthPanel({
     }
   ];
   const authEmailLinkVerdictPacketName = `trustgraph-auth-email-link-verdict-${new Date().toISOString().slice(0, 10)}.json`;
+  const hostedRedirectDecisionPacketName = `trustgraph-hosted-redirect-decision-${new Date().toISOString().slice(0, 10)}.json`;
   const hostedRecoveryRoutePacketName = `trustgraph-hosted-recovery-route-rail-${new Date().toISOString().slice(0, 10)}.json`;
   const hostedAuthRecoveryPacketName = `trustgraph-hosted-auth-recovery-board-${new Date().toISOString().slice(0, 10)}.json`;
   const authChecks = [
@@ -19290,6 +19344,52 @@ function AuthPanel({
               <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
                 Reset password
               </button>
+            </div>
+          </div>
+          <div className={`hosted-redirect-decision ${hostedRedirectDecision.status}`} aria-label="Hosted redirect decision">
+            <div className="hosted-redirect-decision-header">
+              <div>
+                <span className={`status-chip ${hostedRedirectDecision.status === "hosted_ready" ? "success" : "warning"}`}>
+                  Hosted redirect decision
+                </span>
+                <strong>
+                  {hostedRedirectDecision.status === "hosted_ready"
+                    ? "Verification and reset emails will use a hosted TrustGraph URL"
+                    : "Localhost is rejected for outbound auth emails"}
+                </strong>
+                <small>{hostedRedirectDecision.accepted_when}</small>
+              </div>
+              <div className="hosted-redirect-decision-actions">
+                <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
+                  Copy redirect
+                </button>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(
+                      hostedRedirectDecisionPacketName,
+                      JSON.stringify({ ...hostedRedirectDecision, rows: hostedRedirectDecisionRows }, null, 2),
+                      "application/json"
+                    )
+                  }
+                  type="button"
+                >
+                  Export decision
+                </button>
+              </div>
+            </div>
+            <div className="hosted-redirect-decision-grid">
+              {hostedRedirectDecisionRows.map((row) => (
+                <article className={row.ready ? "ready" : "next"} key={row.label}>
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </article>
+              ))}
+            </div>
+            <div className="hosted-redirect-decision-proof">
+              <span>Signup, resend verification, and reset password use the same hosted redirect.</span>
+              <span>Allowed: GitHub Pages and TrustGraph VPS. Rejected: localhost email links.</span>
             </div>
           </div>
           <div className={`auth-email-link-verdict ${authEmailLinkVerdict.status}`} aria-label="Auth email link verdict">

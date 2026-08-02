@@ -600,6 +600,8 @@ The public website now uses the same calm-shell rule. The buyer path keeps the h
 
 The public website premium front door now makes `TrustGraph Workforce Passport` the first-viewport product signal. The visible path is one bounded SaaS shell: Professional Passport, Corporate Verify, and Pricing answer cards; a concise pricing row; then a sticky login/register context that keeps hosted recovery, first database write, scoped corporate access, and server freshness beside the credential form.
 
+The public login/register form now includes a hosted redirect decision before verification and recovery email actions. It shows the selected GitHub Pages or VPS redirect, marks the current hosted browser URL as allowed or fallback, rejects localhost for outbound signup/resend/reset links, and exports the redirect decision without token values.
+
 The simplified signed-in portal keeps the compact VPS saved-build command visible directly under the portal desk. Duplicate route and guidance panels stay hidden, but the operator can still see whether GitHub Pages is current, whether the VPS needs the manual `/opt/trustgraph` updater or SSH secrets, and whether `/trustgraph-release.json` returns commit JSON before testing the server URL.
 
 The signed-in workspace now has a V1 daily operator shell. The visible daily flow is entry desk, VPS freshness, route shell, real-data mission control, and the active workspace; older route strips, duplicated launch maps, release ledgers, and proof boards stay preserved for export/CI evidence but are clipped out of the working UI so account, Corporate Verify, Company Admin, pricing, database proof, and logout remain understandable and mobile-safe.

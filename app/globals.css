@@ -48166,6 +48166,9 @@ body,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-readiness,
 .public-auth-card:has(.public-login-route-cockpit) .public-credential-actions,
 .public-auth-card:has(.public-login-route-cockpit) .public-auth-action-dock,
+.public-auth-card:has(.public-login-route-cockpit) .hosted-redirect-decision-grid,
+.public-auth-card:has(.public-login-route-cockpit) .hosted-redirect-decision-actions,
+.public-auth-card:has(.public-login-route-cockpit) .hosted-redirect-decision-proof,
 .public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-grid,
 .public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-actions,
 .public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-proof,
@@ -48210,6 +48213,48 @@ body,
   border-color: rgba(255, 205, 113, 0.34) !important;
 }
 
+.hosted-redirect-decision {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  overflow-x: clip !important;
+  border: 1px solid rgba(108, 247, 218, 0.24) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(42, 230, 201, 0.1), rgba(118, 157, 255, 0.07)),
+    rgba(8, 18, 21, 0.9) !important;
+}
+
+.hosted-redirect-decision.localhost_rejected {
+  border-color: rgba(255, 205, 113, 0.34) !important;
+}
+
+.hosted-redirect-decision-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.hosted-redirect-decision-grid article,
+.hosted-redirect-decision-proof > span {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  padding: 12px !important;
+}
+
+.hosted-redirect-decision-grid article.ready {
+  border-color: rgba(108, 247, 218, 0.32) !important;
+}
+
+.hosted-redirect-decision-grid article.next {
+  border-color: rgba(255, 205, 113, 0.34) !important;
+}
+
 .public-auth-card:has(.public-login-route-cockpit) input,
 .public-auth-card:has(.public-login-route-cockpit) select,
 .public-auth-card:has(.public-login-route-cockpit) textarea,
@@ -48241,6 +48286,7 @@ body,
 
   .public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
   .public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header,
+  .public-auth-card:has(.public-login-route-cockpit) .hosted-redirect-decision-header,
   .public-auth-card:has(.public-login-route-cockpit) .auth-email-link-verdict-header,
   .public-auth-card:has(.public-login-route-cockpit) .auth-email-troubleshooting-header,
   .public-auth-card:has(.public-login-route-cockpit) .current-build-server-gate-header,
