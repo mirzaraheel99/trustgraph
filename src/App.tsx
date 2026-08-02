@@ -13397,6 +13397,26 @@ function SecurityReviewPanel({
       detail: "External security/RLS review must be recorded before production traffic."
     }
   ];
+  const securityProductionGateCommand = {
+    mode: "security_production_gate_command",
+    status: openChecks.length ? "pilot_only_external_security_open" : "ready_for_external_security_review",
+    pilot_traffic_allowed: true,
+    production_traffic_allowed: false,
+    code_verified_items: completed,
+    total_items: checks.length,
+    rls_protected_tables: rlsProtectedTables.length,
+    open_items: openChecks.map((check) => check.label),
+    external_human_gates: humanDecisions,
+    accepted_when:
+      "security_production_gate_command_separates_code_verified_rls_private_evidence_rbac_audit_exports_from_external_security_storage_legal_billing_and_pilot_owner_human_gates_before_v1_completion"
+  };
+  const securityProductionGateCards = [
+    { label: "Code verified", value: `${completed}/${checks.length}`, detail: "CI and local checks cover RLS, claims, layout, pilot route, and build.", ready: completed > 0 },
+    { label: "RLS tables", value: `${rlsProtectedTables.length}`, detail: "Protected table list is exportable for reviewer traceability.", ready: true },
+    { label: "Private evidence", value: evidenceDocuments.some((item) => item.storage_path) ? "Signed URL" : "Metadata only", detail: "Raw evidence stays private; signed access needs external storage review.", ready: evidenceDocuments.some((item) => item.storage_path) },
+    { label: "Corporate access", value: teamMembers.length ? "RBAC rows" : "Rows needed", detail: "Corporate access remains scoped by role, grant, consent, and audit.", ready: teamMembers.length > 0 },
+    { label: "Production", value: "Blocked", detail: "External security, legal, billing, pilot owner, and VPS cutover decisions remain human-gated.", ready: false }
+  ];
   const runbookName = `trustgraph-security-runbook-${new Date().toISOString().slice(0, 10)}.csv`;
   const signoffPacketName = `trustgraph-security-rls-signoff-${new Date().toISOString().slice(0, 10)}.json`;
   const reviewReceiptName = `trustgraph-v1-security-rls-review-receipt-${new Date().toISOString().slice(0, 10)}.json`;
@@ -13435,6 +13455,42 @@ function SecurityReviewPanel({
       <div className="mini-heading">
         <ShieldAlert size={16} />
         <strong>Security review checklist</strong>
+      </div>
+      <div className={`security-production-gate-command ${securityProductionGateCommand.status}`} aria-label="Security production gate command">
+        <div className="security-production-gate-header">
+          <div>
+            <span className="status-chip warning">Production traffic blocked</span>
+            <strong>
+              {openChecks.length
+                ? `${openChecks.length} security item${openChecks.length === 1 ? "" : "s"} still need review`
+                : "Code checks are ready for external security review"}
+            </strong>
+            <small>{securityProductionGateCommand.accepted_when}</small>
+          </div>
+          <button className="secondary-action" onClick={() => downloadTextFile(signoffPacketName, JSON.stringify({ ...securitySignoffPacket, security_production_gate_command: securityProductionGateCommand }, null, 2), "application/json")} type="button">
+            Export security gate
+          </button>
+        </div>
+        <div className="security-production-gate-grid">
+          {securityProductionGateCards.map((item) => (
+            <article className={item.ready ? "ready" : "blocked"} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
+        <div className="security-production-gate-actions">
+          <button className="secondary-action" onClick={() => downloadTextFile(runbookName, securityRunbookToCsv(checks, humanDecisions, rlsProtectedTables), "text/csv")} type="button">
+            Export runbook
+          </button>
+          <button className="secondary-action" onClick={() => downloadTextFile(reviewReceiptName, JSON.stringify({ ...v1SecurityReviewReceipt, security_production_gate_command: securityProductionGateCommand }, null, 2), "application/json")} type="button">
+            Export review receipt
+          </button>
+          <button className="secondary-action" disabled={receiptBusy} onClick={() => void saveSecurityReviewReceipt()} type="button">
+            Record security receipt
+          </button>
+        </div>
       </div>
       <div className="security-review-topline">
         <div>
