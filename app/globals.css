@@ -45742,6 +45742,117 @@ body,
   gap: 10px !important;
 }
 
+/* V1 focused portal shell: keep daily work readable before audit/export evidence. */
+.workspace:has(.signed-in-portal-entry-desk) {
+  --tg-shell-max: 1180px;
+  gap: 14px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .topbar {
+  order: -120 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-portal-entry-desk {
+  order: -110 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .vps-saved-portal-command {
+  order: -104 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .work-grid {
+  order: -90 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .server-currentness-command,
+.workspace:has(.signed-in-portal-entry-desk) > .vps-next-command-strip,
+.workspace:has(.signed-in-portal-entry-desk) > .current-build-server-gate {
+  order: -80 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .dashboard-next-action,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-home-command,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-choice-guide,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-welcome-path,
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-landing-actions,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-daily-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-experience-compass,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-launch-matrix,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-route-shell,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-daily-navigator,
+.workspace:has(.signed-in-portal-entry-desk) > .today-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-usability-command,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-command-deck,
+.workspace:has(.signed-in-portal-entry-desk) > .signed-in-portal-flow-contract,
+.workspace:has(.signed-in-portal-entry-desk) > .portal-action-dock,
+.workspace:has(.signed-in-portal-entry-desk) > .workspace-command-strip,
+.workspace:has(.signed-in-portal-entry-desk) > .workspace-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .console-layout-receipt,
+.workspace:has(.signed-in-portal-entry-desk) > .server-release-cockpit,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-operating-map,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-command-cockpit,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-completion-command-center,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-proof-collection-command,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-remaining-work-command,
+.workspace:has(.signed-in-portal-entry-desk) > .v1-human-gate-separation,
+.workspace:has(.signed-in-portal-entry-desk) > .real-database-completion-plan,
+.workspace:has(.signed-in-portal-entry-desk) > .live-data-acceptance-contract,
+.workspace:has(.signed-in-portal-entry-desk) > .mobile-launch-acceptance {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) > .work-grid,
+.workspace:has(.signed-in-portal-entry-desk) .setup-panel,
+.workspace:has(.signed-in-portal-entry-desk) .verify-panel,
+.workspace:has(.signed-in-portal-entry-desk) .records-panel,
+.workspace:has(.signed-in-portal-entry-desk) .billing-panel,
+.workspace:has(.signed-in-portal-entry-desk) .account-panel {
+  border-radius: 8px !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .setup-route-deck,
+.workspace:has(.signed-in-portal-entry-desk) .setup-tabs,
+.workspace:has(.signed-in-portal-entry-desk) .setup-panel-grid,
+.workspace:has(.signed-in-portal-entry-desk) .corporate-onboarding-pricing-grid,
+.workspace:has(.signed-in-portal-entry-desk) .team-billing-handoff-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .setup-route-deck button,
+.workspace:has(.signed-in-portal-entry-desk) .setup-tabs button,
+.workspace:has(.signed-in-portal-entry-desk) .corporate-onboarding-pricing-grid button,
+.workspace:has(.signed-in-portal-entry-desk) .team-billing-handoff-grid button {
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) .team-billing-handoff,
+.workspace:has(.signed-in-portal-entry-desk) .corporate-setup-guide,
+.workspace:has(.signed-in-portal-entry-desk) .corporate-onboarding-pricing-cockpit {
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+@media (max-width: 760px) {
+  .workspace:has(.signed-in-portal-entry-desk) > .vps-saved-portal-command {
+    max-height: 360px !important;
+    overflow-y: auto !important;
+  }
+
+  .workspace:has(.signed-in-portal-entry-desk) > .work-grid {
+    gap: 10px !important;
+  }
+}
+
 /* Corporate Verify one-path compression: request, approval queue, scoped rows, review, export. */
 .verify-panel:has(.corporate-verify-single-lane) {
   display: grid !important;
