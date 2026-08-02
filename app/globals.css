@@ -46601,6 +46601,113 @@ body,
   min-height: 128px !important;
 }
 
+/* Public website calm shell: one buyer answer, one pricing row, one login/register form. */
+.public-site:has(.public-login-route-cockpit) .public-hero .public-audience-switchboard,
+.public-site:has(.public-login-route-cockpit) .public-hero .portal-front-door,
+.public-site:has(.public-login-route-cockpit) .public-hero .public-portal-launchpad,
+.public-site:has(.public-login-route-cockpit) .public-hero .public-portal-rail,
+.public-site:has(.public-login-route-cockpit) .public-hero .portal-launch-map,
+.public-site:has(.public-login-route-cockpit) .public-hero .public-saved-build-verification,
+.public-site:has(.public-login-route-cockpit) .public-hero .public-hosted-build-source-contract,
+.public-site:has(.public-login-route-cockpit) .portal-route-section,
+.public-site:has(.public-login-route-cockpit) .registration-section,
+.public-site:has(.public-login-route-cockpit) .public-pricing-path-answer,
+.public-site:has(.public-login-route-cockpit) .public-pricing-access-summary,
+.public-site:has(.public-login-route-cockpit) .public-pricing-launch-decision,
+.public-site:has(.public-login-route-cockpit) .pricing-decision-strip {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero {
+  grid-template-columns: minmax(0, 1fr) !important;
+  min-height: auto !important;
+  gap: clamp(18px, 3vw, 34px) !important;
+  padding-block: clamp(30px, 5vw, 58px) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero h1 {
+  max-width: 16ch !important;
+  font-size: clamp(2.45rem, 5.4vw, 4.9rem) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer,
+.public-site:has(.public-login-route-cockpit) .public-server-sync-receipt,
+.public-site:has(.public-login-route-cockpit) .pricing-grid,
+.public-site:has(.public-login-route-cockpit) .public-pricing-estimator,
+.public-site:has(.public-login-route-cockpit) .public-auth-section {
+  width: 100% !important;
+  max-width: 1120px !important;
+  min-width: 0 !important;
+  margin-inline: auto !important;
+  overflow-x: clip !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid,
+.public-site:has(.public-login-route-cockpit) .public-product-answer-proof,
+.public-site:has(.public-login-route-cockpit) .pricing-grid,
+.public-site:has(.public-login-route-cockpit) .public-pricing-estimator-grid,
+.public-site:has(.public-login-route-cockpit) .public-pricing-estimator-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section {
+  grid-template-columns: minmax(0, 0.78fr) minmax(320px, 430px) !important;
+  gap: clamp(14px, 3vw, 28px) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .public-login-command-center,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .public-v1-access-runway,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .portal-access-cockpit,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .public-portal-flow-map,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .public-portal-route-board,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .portal-auth-command,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .portal-start-desk,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .portal-entry-path,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .portal-launch-decision-strip,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .public-auth-flow-command,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .registration-decision-receipt,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .live-onboarding-contract,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .account-type-chooser,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .auth-choice-summary,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .portal-auth-summary-panel,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > details,
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .portal-outcome-list {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-access-answer {
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-access-answer-routes,
+.public-site:has(.public-login-route-cockpit) .public-access-answer-grid,
+.public-site:has(.public-login-route-cockpit) .public-access-answer-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)) !important;
+  gap: 8px !important;
+}
+
+@media (max-width: 880px) {
+  .public-site:has(.public-login-route-cockpit) .public-auth-section {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 @media (max-width: 760px) {
   .workspace-admin-grid:has(.setup-panel-grid) .corporate-portal-unlock-grid,
   .workspace-admin-grid:has(.setup-panel-grid) .setup-command-metrics,

@@ -570,6 +570,8 @@ Company Admin now keeps the Corporate database handoff visible inside the focuse
 
 The signed-in portal now uses a calmer daily shell. Header navigation stays limited to account, corporate setup, public site, and logout, while the portal entry desk owns Personal, Corporate Verify, Company Admin, pricing, database proof, and server sync routing. Older header route strips remain in source for acceptance markers but no longer compete with the primary portal desk.
 
+The public website now uses the same calm-shell rule. The buyer path keeps the hero, one product answer, the pricing cards, server status, and one login/register form visible while duplicate launch maps, pricing proof strips, route matrices, and onboarding receipts remain preserved in source but hidden from the first visitor path.
+
 The simplified signed-in portal keeps the compact VPS saved-build command visible directly under the portal desk. Duplicate route and guidance panels stay hidden, but the operator can still see whether GitHub Pages is current, whether the VPS needs the manual `/opt/trustgraph` updater or SSH secrets, and whether `/trustgraph-release.json` returns commit JSON before testing the server URL.
 
 ## Product Planning
