@@ -20282,6 +20282,124 @@ p {
   pointer-events: none;
 }
 
+/* Evidence access one-path compression: answer, setup, access desk, signed proof, acceptance, then documents. */
+.evidence-box:has(.evidence-preview-download-answer) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .mini-heading {
+  order: -130 !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > p {
+  order: -128 !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-preview-download-answer {
+  order: -124 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  border: 1px solid rgba(95, 240, 201, 0.22) !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-setup-command {
+  order: -120 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  border: 1px solid rgba(95, 240, 201, 0.2) !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-access-desk {
+  order: -116 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: clamp(14px, 2vw, 18px) !important;
+  border: 1px solid rgba(121, 190, 255, 0.22) !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .last-signed-evidence-link {
+  order: -112 !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .signed-evidence-access-audit {
+  order: -108 !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .signed-evidence-acceptance-checkpoint {
+  order: -104 !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-controls {
+  order: -100 !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-document-list {
+  order: -96 !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-review-rail,
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-safe-access-command,
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-file-access-cockpit,
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-summary-grid,
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-preview-download-ledger,
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-source-strip,
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-access-chain,
+.evidence-box:has(.evidence-preview-download-answer) > .evidence-action-queue {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) .evidence-preview-download-answer-grid,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-setup-command-grid,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-access-desk-grid,
+.evidence-box:has(.evidence-preview-download-answer) .signed-evidence-access-grid,
+.evidence-box:has(.evidence-preview-download-answer) .signed-evidence-acceptance-grid,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-controls {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) .evidence-preview-download-answer-header,
+.evidence-box:has(.evidence-preview-download-answer) .signed-evidence-acceptance-header {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) .evidence-setup-command-actions,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-access-desk-proof,
+.evidence-box:has(.evidence-preview-download-answer) .signed-evidence-acceptance-actions,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-document-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.evidence-box:has(.evidence-preview-download-answer) .evidence-setup-command-actions > *,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-access-desk-proof > *,
+.evidence-box:has(.evidence-preview-download-answer) .signed-evidence-acceptance-actions > *,
+.evidence-box:has(.evidence-preview-download-answer) .evidence-document-actions > * {
+  flex: 1 1 160px !important;
+  min-width: 0 !important;
+}
+
 .evidence-action-queue {
   display: grid;
   gap: 12px;
