@@ -35998,6 +35998,91 @@ function App() {
           </div>
         </section>
 
+        <section className="portal-experience-compass" aria-label="Portal experience compass">
+          <div className="portal-experience-compass-header">
+            <div>
+              <span className={`status-chip ${authSession ? "success" : "warning"}`}>Portal map</span>
+              <strong>{authSession ? "Choose one workspace and keep moving" : "Login first, then choose the right workspace"}</strong>
+              <small>
+                Professional, Corporate Verify, Company Admin, Account, Pricing, and Database proof are separated so users do not have to decode the whole dashboard.
+              </small>
+            </div>
+            <button className="primary-action" onClick={authSession ? nextV1PortalLane.onClick : openAuthControls} type="button">
+              {authSession ? nextV1PortalLane.action : "Login / register"}
+            </button>
+          </div>
+          <div className="portal-experience-compass-grid">
+            {[
+              {
+                label: "Professional",
+                detail: "Own Passport, evidence, references, consent, and sharing approvals.",
+                action: authSession ? "Open Passport" : "Login / register",
+                onClick: authSession ? () => setWorkspaceId("passport") : openAuthControls,
+                ready: Boolean(authSession)
+              },
+              {
+                label: "Corporate Verify",
+                detail: "Request approved user rows and review only scoped shared records.",
+                action: hasLiveCorporateContext ? "Open Verify" : "Create company",
+                onClick: hasLiveCorporateContext ? () => setWorkspaceId("verify") : openCorporateControls,
+                ready: hasLiveCorporateContext
+              },
+              {
+                label: "Company Admin",
+                detail: "Create organization, roles, invites, billing, and launch readiness.",
+                action: hasLiveCorporateContext ? "Manage company" : "Register company",
+                onClick: openCorporateControls,
+                ready: hasLiveCorporateContext
+              },
+              {
+                label: "Account",
+                detail: "Hosted recovery, verification repair, session export, and logout.",
+                action: authSession ? "Account / logout" : "Login / reset",
+                onClick: openAuthControls,
+                ready: Boolean(authSession)
+              },
+              {
+                label: "Pricing",
+                detail: "Professional free, Corporate pilot, Scale quote, and Stripe boundary.",
+                action: "View pricing",
+                onClick: () => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" }),
+                ready: true
+              },
+              {
+                label: "Database proof",
+                detail: "Only live signed-in Supabase rows count. Preview data is rejected.",
+                action: authSession ? "Open proof" : "Login first",
+                onClick: authSession ? () => document.getElementById("live-database-proof")?.scrollIntoView({ behavior: "smooth", block: "start" }) : openAuthControls,
+                ready: livePilotRowProof.accepted
+              }
+            ].map((item) => (
+              <button className={item.ready ? "ready" : "next"} key={item.label} onClick={item.onClick} type="button">
+                <span>{item.label}</span>
+                <strong>{item.action}</strong>
+                <small>{item.detail}</small>
+              </button>
+            ))}
+          </div>
+          <div className="portal-experience-compass-proof">
+            <span>
+              <small>Current user</small>
+              <strong>{authSession ? authSession.user.email : "Not logged in"}</strong>
+            </span>
+            <span>
+              <small>Corporate context</small>
+              <strong>{hasLiveCorporateContext ? activeOrganization.name : "Setup needed"}</strong>
+            </span>
+            <span>
+              <small>Live rows</small>
+              <strong>{realRowAcceptanceGate.live_row_total}</strong>
+            </span>
+            <span>
+              <small>Logout</small>
+              <strong>{authSession ? "Visible in Account and header" : "Available after login"}</strong>
+            </span>
+          </div>
+        </section>
+
         <section className="portal-route-shell" aria-label="Portal route shell">
           <div className="portal-route-shell-header">
             <div>

@@ -40523,6 +40523,7 @@ body,
 
   .topbar,
   .hero,
+  .portal-experience-compass-header,
   .workspace-command-strip {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -40686,6 +40687,7 @@ body,
 }
 
 .vps-saved-portal-command,
+.portal-experience-compass,
 .portal-route-shell,
 .premium-launch-console,
 .v1-portal-operating-center,
@@ -40702,6 +40704,7 @@ body,
 }
 
 .vps-saved-portal-command,
+.portal-experience-compass,
 .portal-route-shell,
 .premium-launch-console,
 .v1-portal-operating-center,
@@ -40732,6 +40735,79 @@ body,
 
 .vps-saved-portal-command {
   order: -76;
+}
+
+.portal-experience-compass {
+  order: -75;
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid rgba(95, 238, 201, 0.24);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(13, 32, 35, 0.94), rgba(8, 15, 18, 0.94));
+}
+
+.portal-experience-compass-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.portal-experience-compass-header > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.portal-experience-compass strong,
+.portal-experience-compass small,
+.portal-experience-compass span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.portal-experience-compass-header strong {
+  color: var(--tg-text);
+  font-size: clamp(24px, 3.2cqw, 38px);
+  line-height: 1.04;
+}
+
+.portal-experience-compass small {
+  color: var(--tg-muted);
+}
+
+.portal-experience-compass-grid,
+.portal-experience-compass-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 10px;
+}
+
+.portal-experience-compass-grid button,
+.portal-experience-compass-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  text-align: left;
+}
+
+.portal-experience-compass-grid button.ready {
+  border-color: rgba(95, 238, 201, 0.34);
+  background: rgba(95, 238, 201, 0.08);
+}
+
+.portal-experience-compass-grid button.next {
+  border-color: rgba(255, 206, 117, 0.22);
+}
+
+.portal-experience-compass-grid strong,
+.portal-experience-compass-proof strong {
+  color: var(--tg-text);
 }
 
 .premium-launch-console {
