@@ -33805,7 +33805,22 @@ function App() {
     verify_command: serverCurrentnessCommand.verify_command,
     accepted_when:
       "vps_save_recovery_center_keeps_github_primary_pages_smoke_manual_update_required_secrets_release_stamp_json_and_vfix_route_visible_before_server_testing",
-    protected_vfix_route: serverCurrentnessCommand.protected_vfix_route
+    protected_vfix_route: serverCurrentnessCommand.protected_vfix_route,
+    release_stamp_failure_mode: "release_stamp_html_shell_means_vps_serves_index_html_instead_of_current_commit_json",
+    browser_200_is_not_enough: true
+  };
+  const vpsReleaseStampDiagnostic = {
+    mode: "vps_release_stamp_diagnostic",
+    status: serverSyncMonitor.status === "synced" ? "json_current" : "html_or_stale_stamp_possible",
+    headline:
+      serverSyncMonitor.status === "synced"
+        ? "Release stamp returned current commit JSON"
+        : "A 200 server page is not enough; check release-stamp JSON",
+    observed_failure: "If /trustgraph-release.json opens the TrustGraph app shell HTML, the VPS is stale or the route is falling back to index.html.",
+    fix: hostedVersionReceipt.server_update_command,
+    verify: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
+    accepted_when:
+      "vps_release_stamp_diagnostic_requires_json_commit_not_html_shell_manual_sync_or_ssh_secrets_and_vfix_route_protection"
   };
   const vpsSaveRecoverySteps = [
     {
@@ -34184,6 +34199,31 @@ function App() {
               <Download size={16} />
               Export save packet
             </button>
+          </div>
+          <div className={`vps-release-stamp-diagnostic ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="VPS release stamp diagnostic">
+            <div>
+              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Release stamp diagnostic</span>
+              <strong>{vpsReleaseStampDiagnostic.headline}</strong>
+              <small>{vpsReleaseStampDiagnostic.observed_failure}</small>
+            </div>
+            <div className="vps-release-stamp-diagnostic-grid">
+              <span>
+                <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
+                <small>Current VPS status</small>
+              </span>
+              <span>
+                <strong>{serverSyncMonitor.commit ?? "No JSON commit"}</strong>
+                <small>Reported release commit</small>
+              </span>
+              <span>
+                <strong>{serverSyncMonitor.bundleMarker ?? "Marker not proven"}</strong>
+                <small>Bundle marker</small>
+              </span>
+            </div>
+            <div className="vps-release-stamp-diagnostic-command">
+              <code>{vpsReleaseStampDiagnostic.verify}</code>
+              <code>{vpsReleaseStampDiagnostic.fix}</code>
+            </div>
           </div>
           <div className="vps-save-recovery-boundary">
             <ShieldCheck size={16} />
@@ -35625,6 +35665,12 @@ function App() {
               <strong>GitHub secrets needed</strong>
               <small>{vpsFreshnessCheckpoint.deploy_secret_blocker.join(", ")}</small>
             </span>
+          </div>
+          <div className={`vps-release-stamp-diagnostic compact ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="VPS release stamp diagnostic compact">
+            <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Release stamp JSON</span>
+            <strong>{vpsReleaseStampDiagnostic.status.replaceAll("_", " ")}</strong>
+            <small>{vpsReleaseStampDiagnostic.accepted_when}</small>
+            <code>{vpsReleaseStampDiagnostic.verify}</code>
           </div>
           <div className="vps-freshness-boundary">
             <span>Release stamp: {vpsFreshnessCheckpoint.release_stamp_url}</span>

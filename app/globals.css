@@ -38942,6 +38942,82 @@ body {
   white-space: normal;
 }
 
+.vps-release-stamp-diagnostic {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(246, 198, 96, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(246, 198, 96, 0.1), rgba(113, 242, 203, 0.045)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.vps-release-stamp-diagnostic.ready {
+  border-color: rgba(113, 242, 203, 0.28);
+}
+
+.vps-release-stamp-diagnostic.compact {
+  margin-top: 10px;
+}
+
+.vps-release-stamp-diagnostic > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.vps-release-stamp-diagnostic strong,
+.vps-release-stamp-diagnostic small,
+.vps-release-stamp-diagnostic span,
+.vps-release-stamp-diagnostic code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.vps-release-stamp-diagnostic > div:first-child > strong {
+  color: #f4fbf7;
+  font-size: clamp(1rem, 1.5vw, 1.28rem);
+  line-height: 1.12;
+}
+
+.vps-release-stamp-diagnostic small {
+  color: rgba(224, 235, 229, 0.72);
+  line-height: 1.42;
+}
+
+.vps-release-stamp-diagnostic-grid,
+.vps-release-stamp-diagnostic-command {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.vps-release-stamp-diagnostic-grid span,
+.vps-release-stamp-diagnostic-command code {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(201, 214, 207, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.vps-release-stamp-diagnostic-grid strong {
+  color: #f4fbf7;
+  font-size: 0.95rem;
+}
+
+.vps-release-stamp-diagnostic-command code {
+  color: #dffaf2;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
 .vps-save-recovery-boundary {
   display: inline-flex;
   align-items: center;
