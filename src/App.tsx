@@ -14881,7 +14881,7 @@ function AccountPanel({
     {
       label: "Active workspace",
       value: activeOrg.name,
-      detail: `${activeOrg.type.replace(/_/g, " ")} · ${activeOrg.status.replace(/_/g, " ")}`,
+      detail: `${activeOrg.type.replace(/_/g, " ")} - ${activeOrg.status.replace(/_/g, " ")}`,
       ready: Boolean(activeMembership.organizationId)
     },
     {
@@ -16755,7 +16755,7 @@ function BillingPanel({
         </div>
         <div className="billing-pilot-acceptance-actions">
           <small>
-            Preview data accepted: {billingPilotAcceptanceCheckpoint.preview_data_accepted ? "yes" : "no"} · Projected annual:
+            Preview data accepted: {billingPilotAcceptanceCheckpoint.preview_data_accepted ? "yes" : "no"} - Projected annual:
             ${billingPilotAcceptanceCheckpoint.projected_annual_usd}
           </small>
           <button
@@ -29130,7 +29130,7 @@ function PublicSite({
               </div>
               <span>
                 <small>Selected path</small>
-                <strong>{mode === "signin" ? "Login" : "Register"} · {portal === "corporate" ? "Corporate" : "Professional"}</strong>
+                <strong>{mode === "signin" ? "Login" : "Register"} - {portal === "corporate" ? "Corporate" : "Professional"}</strong>
                 <small>{selectedRegistrationPath.plan}</small>
               </span>
             </div>

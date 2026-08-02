@@ -45086,3 +45086,93 @@ body,
     padding: 10px !important;
   }
 }
+
+/* Public auth one-path compression: show route, credentials, recovery, and current-server warning without the proof wall. */
+.public-auth-card:has(.public-login-route-cockpit) > .auth-portal-console,
+.public-auth-card:has(.public-login-route-cockpit) > .login-portal-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .public-access-hub,
+.public-auth-card:has(.public-login-route-cockpit) > .public-account-path-chooser,
+.public-auth-card:has(.public-login-route-cockpit) > .public-account-entry-launchpad,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-start-strip,
+.public-auth-card:has(.public-login-route-cockpit) > .public-v1-access-runway,
+.public-auth-card:has(.public-login-route-cockpit) > .public-portal-route-shell,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-front-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .public-access-desk,
+.public-auth-card:has(.public-login-route-cockpit) > .public-portal-launch-answer,
+.public-auth-card:has(.public-login-route-cockpit) > .registration-focus-strip,
+.public-auth-card:has(.public-login-route-cockpit) > .portal-handoff-checklist,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-path-summary,
+.public-auth-card:has(.public-login-route-cockpit) > .public-portal-acceptance-checkpoint,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-server-checkpoint,
+.public-auth-card:has(.public-login-route-cockpit) > .public-access-command-center,
+.public-auth-card:has(.public-login-route-cockpit) > .public-entry-sequence,
+.public-auth-card:has(.public-login-route-cockpit) > .public-portal-switchboard,
+.public-auth-card:has(.public-login-route-cockpit) > .registration-outcome-command,
+.public-auth-card:has(.public-login-route-cockpit) > .registration-completion-handoff,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-operator-details {
+  display: none !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-login-route-cockpit {
+  order: -50 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-route-decision-desk {
+  order: -48 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .current-build-server-gate.public,
+.public-auth-card:has(.public-login-route-cockpit) > .public-hosted-server-freshness-alert {
+  order: -42 !important;
+  max-height: 220px !important;
+  overflow: auto !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .auth-card-heading,
+.public-auth-card:has(.public-login-route-cockpit) > .auth-selected-route,
+.public-auth-card:has(.public-login-route-cockpit) > .public-credential-station,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-help-strip {
+  display: grid !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .auth-card-heading {
+  order: -32 !important;
+  padding: 12px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .auth-selected-route {
+  order: -30 !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr)) !important;
+  gap: 8px !important;
+  padding: 10px !important;
+  border: 1px solid rgba(226, 239, 232, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-credential-station {
+  order: -20 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-help-strip {
+  order: -10 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > button.primary-action[type="submit"] {
+  display: none !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-fields,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-readiness,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-help-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+  gap: 10px !important;
+}
