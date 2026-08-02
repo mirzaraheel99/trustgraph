@@ -45272,3 +45272,122 @@ body,
   flex: 1 1 160px !important;
   min-width: 0 !important;
 }
+
+/* Billing pricing one-path compression: package, plan choice, ledger, quote, and Stripe gate without a receipt wall. */
+.billing-panel:has(.pricing-decision-console) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .mini-heading {
+  order: -120 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > small {
+  order: -118 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .pricing-decision-console {
+  order: -116 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .pilot-package-board {
+  order: -112 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .pricing-choice-rail {
+  order: -108 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .pricing-activation-workbench {
+  order: -104 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .billing-ready-answer {
+  order: -100 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .billing-pilot-acceptance-checkpoint {
+  order: -96 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .billing-launch-board {
+  order: -92 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .paid-launch-decision-bridge {
+  order: -88 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) > .pricing-checkout-readiness-hub,
+.billing-panel:has(.pricing-decision-console) > .billing-decision-center,
+.billing-panel:has(.pricing-decision-console) > .pricing-decision-board,
+.billing-panel:has(.pricing-decision-console) > .pricing-quote-receipt,
+.billing-panel:has(.pricing-decision-console) > .stripe-checkout-decision,
+.billing-panel:has(.pricing-decision-console) > .billing-architecture-receipt,
+.billing-panel:has(.pricing-decision-console) > .billing-activation-receipt,
+.billing-panel:has(.pricing-decision-console) > .billing-operator-path,
+.billing-panel:has(.pricing-decision-console) > .billing-decision-row,
+.billing-panel:has(.pricing-decision-console) > .billing-plan-list,
+.billing-panel:has(.pricing-decision-console) > .billing-gate-grid {
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.billing-panel:has(.pricing-decision-console) .pricing-decision-console,
+.billing-panel:has(.pricing-decision-console) .pilot-package-board,
+.billing-panel:has(.pricing-decision-console) .pricing-choice-rail,
+.billing-panel:has(.pricing-decision-console) .pricing-activation-workbench,
+.billing-panel:has(.pricing-decision-console) .billing-ready-answer,
+.billing-panel:has(.pricing-decision-console) .billing-pilot-acceptance-checkpoint,
+.billing-panel:has(.pricing-decision-console) .billing-launch-board,
+.billing-panel:has(.pricing-decision-console) .paid-launch-decision-bridge {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.billing-panel:has(.pricing-decision-console) .pricing-decision-console-grid,
+.billing-panel:has(.pricing-decision-console) .pilot-package-board-grid,
+.billing-panel:has(.pricing-decision-console) .pricing-choice-grid,
+.billing-panel:has(.pricing-decision-console) .pricing-activation-workbench-grid,
+.billing-panel:has(.pricing-decision-console) .billing-ready-answer-grid,
+.billing-panel:has(.pricing-decision-console) .billing-pilot-acceptance-grid,
+.billing-panel:has(.pricing-decision-console) .billing-launch-board-grid,
+.billing-panel:has(.pricing-decision-console) .paid-launch-decision-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.billing-panel:has(.pricing-decision-console) .pricing-decision-console-actions,
+.billing-panel:has(.pricing-decision-console) .pilot-package-board-proof,
+.billing-panel:has(.pricing-decision-console) .pricing-choice-actions,
+.billing-panel:has(.pricing-decision-console) .pricing-activation-workbench-footer,
+.billing-panel:has(.pricing-decision-console) .billing-ready-answer-actions,
+.billing-panel:has(.pricing-decision-console) .billing-ready-answer-proof,
+.billing-panel:has(.pricing-decision-console) .billing-pilot-acceptance-actions,
+.billing-panel:has(.pricing-decision-console) .billing-launch-board-actions,
+.billing-panel:has(.pricing-decision-console) .paid-launch-decision-proof {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.billing-panel:has(.pricing-decision-console) .pricing-decision-console-actions > *,
+.billing-panel:has(.pricing-decision-console) .pilot-package-board-proof > *,
+.billing-panel:has(.pricing-decision-console) .pricing-choice-actions > *,
+.billing-panel:has(.pricing-decision-console) .pricing-activation-workbench-footer > *,
+.billing-panel:has(.pricing-decision-console) .billing-ready-answer-actions > *,
+.billing-panel:has(.pricing-decision-console) .billing-pilot-acceptance-actions > *,
+.billing-panel:has(.pricing-decision-console) .billing-launch-board-actions > *,
+.billing-panel:has(.pricing-decision-console) .paid-launch-decision-proof > * {
+  flex: 1 1 170px !important;
+  min-width: 0 !important;
+}
