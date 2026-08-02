@@ -21209,6 +21209,89 @@ function PublicSite({
       detail: authRedirectUrl.includes("localhost") ? "Add hosted URL in Supabase redirects." : "Hosted redirect is configured."
     }
   ];
+  const publicLoginPrimaryChoice = {
+    mode: "public_login_primary_choice",
+    selected_route: loginPortalDesk.selected_route,
+    headline:
+      portal === "corporate"
+        ? mode === "signup"
+          ? "Create a company account"
+          : "Login to your company workspace"
+        : mode === "signup"
+          ? "Create your personal Passport"
+          : "Login to your personal Passport",
+    helper:
+      portal === "corporate"
+        ? "Corporate teams request access to a professional by email, then review only approved scoped rows."
+        : "Personal users own their records, evidence, references, consent, and company sharing decisions.",
+    price: selectedRegistrationPath.plan,
+    submit_ready: Boolean(email && password && (portal !== "corporate" || mode !== "signup" || (organizationName && organizationDomain))),
+    next_dashboard: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
+    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing session opens the saved workspace.",
+    recovery_action: email ? "Reset password or resend verification" : "Enter email to enable recovery",
+    accepted_when:
+      "public_login_primary_choice_keeps_user_login_user_register_corporate_login_corporate_register_price_next_dashboard_recovery_and_scoped_database_rule_visible_before_credentials"
+  };
+  const publicLoginPrimaryChoiceRoutes = [
+    {
+      label: "User login",
+      active: portal === "professional" && mode === "signin",
+      detail: "Open your Passport",
+      onClick: () => {
+        setPortal("professional");
+        setMode("signin");
+      }
+    },
+    {
+      label: "User register",
+      active: portal === "professional" && mode === "signup",
+      detail: "Free pilot account",
+      onClick: () => {
+        setPortal("professional");
+        setMode("signup");
+      }
+    },
+    {
+      label: "Corporate login",
+      active: portal === "corporate" && mode === "signin",
+      detail: "Open company workspace",
+      onClick: () => {
+        setPortal("corporate");
+        setMode("signin");
+      }
+    },
+    {
+      label: "Corporate register",
+      active: portal === "corporate" && mode === "signup",
+      detail: "$149 pilot workspace",
+      onClick: () => {
+        setPortal("corporate");
+        setMode("signup");
+      }
+    }
+  ];
+  const publicLoginPrimaryChoiceFacts = [
+    {
+      label: "Selected",
+      value: publicLoginPrimaryChoice.selected_route,
+      detail: publicLoginPrimaryChoice.next_dashboard
+    },
+    {
+      label: "Price",
+      value: publicLoginPrimaryChoice.price,
+      detail: selectedRegistrationPath.paymentStatus
+    },
+    {
+      label: "First database write",
+      value: publicLoginPrimaryChoice.first_database_write,
+      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
+    },
+    {
+      label: "Recovery",
+      value: publicLoginPrimaryChoice.recovery_action,
+      detail: authRedirectUrl.includes("localhost") ? "Hosted redirect still needs repair." : "Hosted redirect is active."
+    }
+  ];
   const publicAccessHubProof = [
     {
       label: "Pricing",
@@ -26231,6 +26314,44 @@ function PublicSite({
                 type="button"
               >
                 Export path
+              </button>
+            </div>
+          </div>
+          <div className="public-login-primary-choice" aria-label="Public login primary choice">
+            <div className="public-login-primary-choice-header">
+              <div>
+                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Choose account</span>
+                <strong>{publicLoginPrimaryChoice.headline}</strong>
+                <small>{publicLoginPrimaryChoice.helper}</small>
+              </div>
+              <button className="primary-action" disabled={busy || !publicLoginPrimaryChoice.submit_ready} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+            </div>
+            <div className="public-login-primary-choice-routes" aria-label="User and corporate login routes">
+              {publicLoginPrimaryChoiceRoutes.map((route) => (
+                <button className={route.active ? "active" : ""} key={route.label} onClick={route.onClick} type="button">
+                  <strong>{route.label}</strong>
+                  <small>{route.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-login-primary-choice-grid">
+              {publicLoginPrimaryChoiceFacts.map((fact) => (
+                <span key={fact.label}>
+                  <small>{fact.label}</small>
+                  <strong>{fact.value}</strong>
+                  <small>{fact.detail}</small>
+                </span>
+              ))}
+            </div>
+            <div className="public-login-primary-choice-footer">
+              <span>
+                <strong>{publicLoginPrimaryChoice.submit_ready ? "Ready for credentials" : "Complete the required fields"}</strong>
+                <small>{publicLoginPrimaryChoice.accepted_when}</small>
+              </span>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset or resend
               </button>
             </div>
           </div>

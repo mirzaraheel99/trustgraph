@@ -40683,10 +40683,80 @@ body,
 
 .public-access-answer,
 .login-portal-desk,
+.public-login-primary-choice,
 .auth-credential-command,
 .public-account-access-path,
 .public-login-command-center {
   border-radius: 8px;
+}
+
+.public-login-primary-choice {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid var(--tg-border-strong);
+  background: linear-gradient(135deg, rgba(15, 37, 39, 0.96), rgba(9, 18, 20, 0.96));
+}
+
+.public-login-primary-choice-header,
+.public-login-primary-choice-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(140px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.public-login-primary-choice-header > div,
+.public-login-primary-choice-footer > span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.public-login-primary-choice-header strong {
+  color: var(--tg-text);
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.04;
+}
+
+.public-login-primary-choice small {
+  color: var(--tg-muted);
+}
+
+.public-login-primary-choice-routes,
+.public-login-primary-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+}
+
+.public-login-primary-choice-routes button,
+.public-login-primary-choice-grid span {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.public-login-primary-choice-routes button {
+  display: grid;
+  gap: 5px;
+  text-align: left;
+}
+
+.public-login-primary-choice-routes button.active {
+  border-color: rgba(95, 238, 201, 0.48);
+  background: rgba(50, 222, 190, 0.12);
+}
+
+.public-login-primary-choice-grid span {
+  display: grid;
+  gap: 5px;
+}
+
+.public-login-primary-choice-grid strong {
+  color: var(--tg-text);
 }
 
 .public-auth-card .public-access-hub,
@@ -40755,6 +40825,10 @@ body,
 
   .session-strip,
   .topbar-actions,
+  .public-login-primary-choice-header,
+  .public-login-primary-choice-footer,
+  .public-login-primary-choice-routes,
+  .public-login-primary-choice-grid,
   .vps-saved-portal-command-header,
   .vps-saved-portal-command-actions,
   .vps-saved-portal-command-proof,
