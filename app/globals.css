@@ -40727,8 +40727,31 @@ body {
 .public-auth-card:has(.login-portal-desk) .registration-route-planner,
 .public-auth-card:has(.login-portal-desk) .corporate-access-route-preview,
 .public-auth-card:has(.login-portal-desk) .public-account-route-confirmation,
-.public-auth-card:has(.login-portal-desk) .public-submit-readiness {
+.public-auth-card:has(.login-portal-desk) .public-submit-readiness,
+.public-auth-card:has(.login-portal-desk) .public-portal-entry-desk,
+.public-auth-card:has(.login-portal-desk) .public-login-primary-choice,
+.public-auth-card:has(.login-portal-desk) .public-portal-launch-answer,
+.public-auth-card:has(.login-portal-desk) .public-portal-acceptance-checkpoint,
+.public-auth-card:has(.login-portal-desk) .public-access-command-center,
+.public-auth-card:has(.login-portal-desk) .public-portal-switchboard,
+.public-auth-card:has(.login-portal-desk) .public-registration-pricing-gate,
+.public-auth-card:has(.login-portal-desk) .auth-route-summary,
+.public-auth-card:has(.login-portal-desk) .registration-pricing-receipt {
   display: none !important;
+}
+
+.public-auth-card:has(.login-portal-desk) .login-portal-desk {
+  order: -120 !important;
+}
+
+.public-auth-card:has(.login-portal-desk) .auth-credential-command {
+  order: -112 !important;
+}
+
+.public-auth-card:has(.login-portal-desk) .auth-form,
+.public-auth-card:has(.login-portal-desk) .auth-actions,
+.public-auth-card:has(.login-portal-desk) .auth-support-actions {
+  order: -104 !important;
 }
 
 .public-auth-card:has(.public-access-hub) .public-account-entry-launchpad,
