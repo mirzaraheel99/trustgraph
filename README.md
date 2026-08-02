@@ -604,6 +604,8 @@ The simplified signed-in portal keeps the compact VPS saved-build command visibl
 
 The signed-in workspace now has a V1 daily operator shell. The visible daily flow is entry desk, VPS freshness, route shell, real-data mission control, and the active workspace; older route strips, duplicated launch maps, release ledgers, and proof boards stay preserved for export/CI evidence but are clipped out of the working UI so account, Corporate Verify, Company Admin, pricing, database proof, and logout remain understandable and mobile-safe.
 
+The signed-in workspace now also has a V1 premium shell clarity lock. It constrains the hosted dashboard to one bounded SaaS console, keeps the route shell and active Personal/Corporate/Admin workspace as the visible operating path, stacks account/logout, setup, Corporate Verify, forms, filters, and records into responsive grids, and retires duplicate proof walls from the daily UI while keeping their source and export coverage intact.
+
 ## Product Planning
 
 The `docs/` folder contains the planning documents used to shape this foundation. Root-level runbooks capture the live v1 operating checklist.

@@ -49242,3 +49242,173 @@ body,
     flex: 1 1 min(100%, 160px) !important;
   }
 }
+
+/* V1 premium shell clarity lock: one daily route, bounded panels, no competing proof wall. */
+.workspace:has(.portal-route-shell):has(.work-grid) {
+  --tg-v1-shell-max: 1320px;
+  isolation: isolate !important;
+  width: min(var(--tg-v1-shell-max), calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  margin-inline: auto !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  overflow-x: clip !important;
+  background:
+    linear-gradient(180deg, rgba(7, 15, 18, 0.98), rgba(8, 17, 20, 0.96)) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) > .topbar,
+.workspace:has(.portal-route-shell):has(.work-grid) > .portal-route-shell,
+.workspace:has(.portal-route-shell):has(.work-grid) > .work-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) > .topbar {
+  order: -320 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, auto) !important;
+  gap: 14px !important;
+  border-radius: 8px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) > .portal-route-shell {
+  order: -310 !important;
+  display: grid !important;
+  gap: 12px !important;
+  border-color: rgba(113, 242, 203, 0.26) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) > .work-grid {
+  order: -300 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 16px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) .portal-route-shell-header,
+.workspace:has(.portal-route-shell):has(.work-grid) .portal-route-shell-footer,
+.workspace:has(.portal-route-shell):has(.work-grid) .session-command-bar,
+.workspace:has(.portal-route-shell):has(.work-grid) .account-action-bar,
+.workspace:has(.portal-route-shell):has(.work-grid) .setup-center-header,
+.workspace:has(.portal-route-shell):has(.work-grid) .corporate-portal-unlock-header,
+.workspace:has(.portal-route-shell):has(.work-grid) .corporate-reviewer-access-verdict-header,
+.workspace:has(.portal-route-shell):has(.work-grid) .corporate-verify-single-lane-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, auto) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) .portal-route-tabs,
+.workspace:has(.portal-route-shell):has(.work-grid) .portal-route-shell-status,
+.workspace:has(.portal-route-shell):has(.work-grid) .account-action-bar-actions,
+.workspace:has(.portal-route-shell):has(.work-grid) .setup-tabs,
+.workspace:has(.portal-route-shell):has(.work-grid) .setup-command-actions,
+.workspace:has(.portal-route-shell):has(.work-grid) .setup-panel-grid,
+.workspace:has(.portal-route-shell):has(.work-grid) .corporate-portal-unlock-grid,
+.workspace:has(.portal-route-shell):has(.work-grid) .corporate-reviewer-access-verdict-grid,
+.workspace:has(.portal-route-shell):has(.work-grid) .corporate-reviewer-action-grid,
+.workspace:has(.portal-route-shell):has(.work-grid) .directory-controls,
+.workspace:has(.portal-route-shell):has(.work-grid) .record-form-grid,
+.workspace:has(.portal-route-shell):has(.work-grid) .form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) .auth-panel,
+.workspace:has(.portal-route-shell):has(.work-grid) .workspace-admin-grid,
+.workspace:has(.portal-route-shell):has(.work-grid) .verify-panel,
+.workspace:has(.portal-route-shell):has(.work-grid) .records-panel,
+.workspace:has(.portal-route-shell):has(.work-grid) .passport-panel,
+.workspace:has(.portal-route-shell):has(.work-grid) .corporate-directory-panel {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+  border-radius: 8px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) .auth-panel {
+  order: -30 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) .workspace-admin-grid {
+  order: -20 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) .verify-panel {
+  order: -10 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) .records-panel,
+.workspace:has(.portal-route-shell):has(.work-grid) .passport-panel {
+  order: 10 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) :is(button, input, select, textarea) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) :is(strong, small, span, p, em, b, code) {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.workspace:has(.portal-route-shell):has(.work-grid) > :is(
+  .real-data-mission-control,
+  .real-database-verdict,
+  .real-row-acceptance-gate,
+  .live-rows-checklist,
+  .live-row-gap-resolver,
+  .vps-save-handoff,
+  .vps-freshness-checkpoint,
+  .portal-server-save-commander,
+  .current-build-server-gate,
+  .console-layout-receipt,
+  .v1-launch-flow-command,
+  .role-workspace-switchboard,
+  .dashboard-start-map,
+  .portal-welcome-path,
+  .today-command-center,
+  .v1-command-cockpit,
+  .v1-portal-launchpad,
+  .portal-readiness-board,
+  .signed-in-pilot-journey-checklist
+) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 860px) {
+  .workspace:has(.portal-route-shell):has(.work-grid) {
+    width: min(100%, calc(100vw - 12px)) !important;
+    max-width: calc(100vw - 12px) !important;
+    padding-inline: 8px !important;
+  }
+
+  .workspace:has(.portal-route-shell):has(.work-grid) > .topbar,
+  .workspace:has(.portal-route-shell):has(.work-grid) .portal-route-shell-header,
+  .workspace:has(.portal-route-shell):has(.work-grid) .portal-route-shell-footer,
+  .workspace:has(.portal-route-shell):has(.work-grid) .session-command-bar,
+  .workspace:has(.portal-route-shell):has(.work-grid) .account-action-bar,
+  .workspace:has(.portal-route-shell):has(.work-grid) .setup-center-header,
+  .workspace:has(.portal-route-shell):has(.work-grid) .corporate-portal-unlock-header,
+  .workspace:has(.portal-route-shell):has(.work-grid) .corporate-reviewer-access-verdict-header,
+  .workspace:has(.portal-route-shell):has(.work-grid) .corporate-verify-single-lane-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
