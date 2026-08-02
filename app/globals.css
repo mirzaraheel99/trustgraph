@@ -21722,6 +21722,66 @@ p {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.corporate-verify-entry-route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: stretch;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(130, 169, 255, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(130, 169, 255, 0.08), rgba(82, 214, 196, 0.04)),
+    rgba(255, 255, 255, 0.032);
+}
+
+.corporate-verify-entry-route > div:first-child {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.corporate-verify-entry-route-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.corporate-verify-entry-route-grid span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.corporate-verify-entry-route strong,
+.corporate-verify-entry-route small,
+.corporate-verify-entry-route span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-verify-entry-route > div:first-child > strong,
+.corporate-verify-entry-route-grid strong {
+  color: var(--text-strong);
+}
+
+.corporate-verify-entry-route small {
+  color: var(--muted);
+  line-height: 1.36;
+}
+
+.corporate-verify-entry-route button {
+  min-width: 0;
+  white-space: normal;
+}
+
 .corporate-command-panel:has(.corporate-admin-primary-route) > .account-portal-route-acceptance,
 .corporate-command-panel:has(.corporate-admin-primary-route) > .corporate-setup-stepper,
 .corporate-command-panel:has(.corporate-admin-primary-route) > .corporate-launch-command,
@@ -21732,15 +21792,21 @@ p {
 
 @media (max-width: 980px) {
   .corporate-admin-primary-grid,
-  .corporate-admin-primary-proof {
+  .corporate-admin-primary-proof,
+  .corporate-verify-entry-route-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .corporate-verify-entry-route {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 680px) {
   .corporate-admin-primary-header,
   .corporate-admin-primary-grid,
-  .corporate-admin-primary-proof {
+  .corporate-admin-primary-proof,
+  .corporate-verify-entry-route-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 

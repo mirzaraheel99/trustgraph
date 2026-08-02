@@ -13631,6 +13631,7 @@ function AccountPanel({
   onCreateCorporateAccount,
   onCreateOperationsRole,
   onAssignRole,
+  onOpenWorkspace,
   onSwitch
 }: {
   accountUser: SessionUser;
@@ -13645,6 +13646,7 @@ function AccountPanel({
   }) => Promise<DbOrganizationMembership>;
   onCreateOperationsRole: () => Promise<void>;
   onAssignRole: (organizationId: string, role: RoleKey) => Promise<void>;
+  onOpenWorkspace: (workspaceId: WorkspaceId) => void;
   onSwitch: (membershipId: string) => void;
 }) {
   const activeRole = getRole(activeMembership.role);
@@ -13743,6 +13745,35 @@ function AccountPanel({
     })),
     accepted_when: "corporate_admin_can_follow_stepper_to_workspace_rbac_team_billing_and_verify"
   };
+  const verifyMembership =
+    accountUser.memberships.find((membership) => membership.organizationId === activeOrg.id && getRole(membership.role).portal === "verify") ??
+    accountUser.memberships.find((membership) => getRole(membership.role).portal === "verify");
+  const corporateVerifyEntryRoute = {
+    mode: "corporate_verify_entry_route",
+    status: verifyMembership ? "reviewer_membership_available" : canManageActiveOrg ? "admin_can_create_reviewer" : "setup_required",
+    active_organization: activeOrg.name,
+    active_role: activeRole.label,
+    reviewer_membership_available: Boolean(verifyMembership),
+    verify_membership_role: verifyMembership ? getRole(verifyMembership.role).label : "Not created",
+    next_click: verifyMembership ? "Switch to reviewer and open Verify" : canManageActiveOrg ? "Create or activate reviewer role" : "Finish workspace and RBAC setup",
+    corporate_database_boundary: "Verify opens only through corporate RBAC and still requires approved scoped Access Grants before rows appear.",
+    accepted_when:
+      "corporate_verify_entry_route_switches_to_reviewer_membership_or_names_missing_rbac_before_opening_verify_and_preserves_no_open_user_database_boundary"
+  };
+
+  function openCorporateVerifyRoute() {
+    if (verifyMembership && verifyMembership.id !== activeMembership.id) {
+      onSwitch(verifyMembership.id);
+      return;
+    }
+
+    if (verifyMembership || canManageActiveOrg) {
+      onOpenWorkspace("verify");
+      return;
+    }
+
+    document.getElementById(activeCorporateStepperStep.target)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
   const accountPortalRouteAcceptanceSteps = [
     {
       label: "Hosted session",
@@ -13828,10 +13859,8 @@ function AccountPanel({
       detail: "Open Corporate Verify to request access, review visible users, and export database evidence.",
       action: "Open Verify",
       state: canManageActiveOrg ? "next" : "locked",
-      disabled: !canManageActiveOrg,
-      onClick: () => {
-        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      disabled: !canManageActiveOrg && !verifyMembership,
+      onClick: openCorporateVerifyRoute
     }
   ];
   const corporateAdminPrimaryRoute = {
@@ -13965,6 +13994,31 @@ function AccountPanel({
             <strong>{corporateAdminPrimaryRoute.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
           </span>
         </div>
+      </div>
+      <div className={`corporate-verify-entry-route ${corporateVerifyEntryRoute.status}`} aria-label="Corporate Verify entry route">
+        <div>
+          <span className={`status-chip ${verifyMembership ? "success" : canManageActiveOrg ? "warning" : "neutral"}`}>Verify route</span>
+          <strong>{corporateVerifyEntryRoute.next_click}</strong>
+          <small>{corporateVerifyEntryRoute.corporate_database_boundary}</small>
+        </div>
+        <div className="corporate-verify-entry-route-grid">
+          <span>
+            <small>Active role</small>
+            <strong>{corporateVerifyEntryRoute.active_role}</strong>
+          </span>
+          <span>
+            <small>Reviewer route</small>
+            <strong>{corporateVerifyEntryRoute.verify_membership_role}</strong>
+          </span>
+          <span>
+            <small>Status</small>
+            <strong>{corporateVerifyEntryRoute.status.replace(/_/g, " ")}</strong>
+          </span>
+        </div>
+        <button className="primary-action" disabled={!verifyMembership && !canManageActiveOrg} onClick={openCorporateVerifyRoute} type="button">
+          Open Corporate Verify
+        </button>
+        <small>{corporateVerifyEntryRoute.accepted_when}</small>
       </div>
       <div className="account-portal-route-acceptance" aria-label="Account portal route acceptance checkpoint">
         <div className="account-portal-route-header">
@@ -38131,6 +38185,7 @@ function App() {
                       onAssignRole={assignLiveCorporateRole}
                       onCreateCorporateAccount={createLiveCorporateAccount}
                       onCreateOperationsRole={createLiveOperationsRole}
+                      onOpenWorkspace={changeWorkspace}
                       onSwitch={switchMembership}
                     />
                     <MyInvitationsPanel
