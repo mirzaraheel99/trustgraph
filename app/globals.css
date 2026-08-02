@@ -13595,6 +13595,133 @@ p {
   white-space: normal;
 }
 
+.corporate-database-access-compass {
+  order: -120;
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(95, 240, 201, 0.32);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(95, 240, 201, 0.13), rgba(134, 174, 246, 0.08) 56%, rgba(255, 205, 118, 0.04)),
+    rgba(6, 15, 18, 0.96);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.corporate-database-access-compass.next_action_required {
+  border-color: rgba(255, 205, 118, 0.34);
+}
+
+.corporate-database-access-compass-header,
+.corporate-database-access-compass-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+  gap: 12px;
+  align-items: start;
+}
+
+.corporate-database-access-compass-header > div,
+.corporate-database-access-compass-grid button,
+.corporate-database-access-compass-proof span {
+  min-width: 0;
+}
+
+.corporate-database-access-compass strong,
+.corporate-database-access-compass small,
+.corporate-database-access-compass span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.corporate-database-access-compass-header strong {
+  color: var(--text);
+  font-size: clamp(22px, 2.6vw, 38px);
+  line-height: 1.04;
+}
+
+.corporate-database-access-compass small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.corporate-database-access-compass-grid,
+.corporate-database-access-compass-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+  gap: 10px;
+}
+
+.corporate-database-access-compass-grid button,
+.corporate-database-access-compass-proof span {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.corporate-database-access-compass-grid button.ready {
+  border-color: rgba(95, 240, 201, 0.3);
+  background: rgba(95, 240, 201, 0.08);
+}
+
+.corporate-database-access-compass-grid button.next {
+  border-color: rgba(255, 205, 118, 0.3);
+  background: rgba(255, 205, 118, 0.08);
+}
+
+.corporate-database-access-compass-grid span,
+.corporate-database-access-compass-proof small {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.corporate-database-access-compass-grid strong,
+.corporate-database-access-compass-proof strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.14;
+}
+
+.corporate-database-access-compass-header button,
+.corporate-database-access-compass-proof button {
+  width: 100%;
+  min-height: 44px;
+}
+
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-access-decision-desk,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-portal-cockpit,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-verify-hub,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-access-command-center,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-database-primary-desk,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-review-queue-runway,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-review-studio,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-scoped-access-journey,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-reviewer-workflow-strip,
+.corporate-directory-panel:has(.corporate-database-access-compass) > .corporate-reviewer-task-command {
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 759px) {
+  .corporate-database-access-compass-header,
+  .corporate-database-access-compass-proof {
+    grid-template-columns: 1fr;
+  }
+}
+
 .corporate-row-review-answer-bar {
   display: grid;
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
@@ -20809,6 +20936,9 @@ p {
   .corporate-review-queue-command-grid,
   .corporate-database-action-buttons,
   .corporate-database-next-action-commander,
+  .corporate-database-access-compass-header,
+  .corporate-database-access-compass-grid,
+  .corporate-database-access-compass-proof,
   .corporate-database-next-action-grid,
   .corporate-database-next-action-controls,
   .corporate-verify-review-runway-header,

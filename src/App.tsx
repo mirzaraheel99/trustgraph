@@ -7736,9 +7736,124 @@ function CorporateDirectoryPanel({
       ready: Boolean(latestVisibilitySnapshot && latestAccessReceipt)
     }
   ];
+  const corporateDatabaseAccessCompass = {
+    mode: "corporate_database_access_compass",
+    status: corporateAccessDecisionDesk.status,
+    answer:
+      corporateAccessDecisionDesk.status === "ready_to_export"
+        ? "Corporate access is ready for metadata-only proof export"
+        : "Corporate access is still gated by the next live database step",
+    next_click: corporateAccessDecisionDesk.next_action,
+    current_blocker: corporateAccessDecisionDesk.current_blocker,
+    visible_scope:
+      filteredRows.length > 0
+        ? `${filteredRows.length} professional row${filteredRows.length === 1 ? "" : "s"} visible through approved scope`
+        : "No user rows visible until request, approval, and consent scope are complete",
+    database_boundary:
+      "Corporate Verify is not an open user database. Reviewers request one professional by email and see only approved scoped rows.",
+    proof_required: "review_attestation_visibility_snapshot_database_access_receipt_metadata_export",
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_database_access_compass_keeps_current_answer_next_click_blocker_visible_scope_review_proof_metadata_export_no_open_user_database_and_preview_rejection_first"
+  };
+  const corporateDatabaseAccessCompassSteps = [
+    {
+      label: "Role",
+      value: isLiveCorporateDatabase ? "Active" : "Login needed",
+      detail: isLiveCorporateDatabase ? databaseModeDetail : "Use a Corporate reviewer or Company Admin role.",
+      ready: isLiveCorporateDatabase,
+      target: "account"
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length}` : "Ask by email",
+      detail: "One professional request starts the access path.",
+      ready: requests.length > 0,
+      target: "request"
+    },
+    {
+      label: "Approval",
+      value: approvedAccessCount ? `${approvedAccessCount}` : "Waiting",
+      detail: "Professional approval and consent scope unlock rows.",
+      ready: approvedAccessCount > 0,
+      target: "corporate-directory-list"
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length}` : "Needed",
+      detail: latestVisibilitySnapshot && latestAccessReceipt ? "Snapshot and receipt are saved." : "Save attestation, snapshot, and access receipt before handoff.",
+      ready: reviews.length > 0 && Boolean(latestVisibilitySnapshot && latestAccessReceipt),
+      target: "corporate-access-review-queue"
+    }
+  ];
 
   return (
     <section className="corporate-directory-panel">
+      <div className={`corporate-database-access-compass ${corporateDatabaseAccessCompass.status}`} aria-label="Corporate database access compass">
+        <div className="corporate-database-access-compass-header">
+          <div>
+            <span className={`status-chip ${corporateDatabaseAccessCompass.status === "ready_to_export" ? "success" : "warning"}`}>
+              Corporate database access
+            </span>
+            <strong>{corporateDatabaseAccessCompass.answer}</strong>
+            <small>{corporateDatabaseAccessCompass.database_boundary}</small>
+          </div>
+          <button
+            className="primary-action"
+            onClick={() => {
+              if (corporateDatabaseAccessCompass.status === "ready_to_export") {
+                downloadTextFile(packetName, JSON.stringify(corporateUserDatabasePacket, null, 2), "application/json");
+                return;
+              }
+              runCorporateReviewerTask();
+            }}
+            type="button"
+          >
+            {corporateDatabaseAccessCompass.next_click}
+          </button>
+        </div>
+        <div className="corporate-database-access-compass-grid">
+          {corporateDatabaseAccessCompassSteps.map((step) => (
+            <button
+              className={step.ready ? "ready" : "next"}
+              key={step.label}
+              onClick={() => runCorporateReviewerTask(step.target)}
+              type="button"
+            >
+              <span>{step.label}</span>
+              <strong>{step.value}</strong>
+              <small>{step.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-database-access-compass-proof">
+          <span>
+            <small>Current blocker</small>
+            <strong>{corporateDatabaseAccessCompass.current_blocker}</strong>
+          </span>
+          <span>
+            <small>Visible scope</small>
+            <strong>{corporateDatabaseAccessCompass.visible_scope}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateDatabaseAccessCompass.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <button
+            className="secondary-action"
+            onClick={() =>
+              downloadTextFile(
+                `trustgraph-corporate-database-access-compass-${new Date().toISOString().slice(0, 10)}.json`,
+                JSON.stringify({ ...corporateDatabaseAccessCompass, steps: corporateDatabaseAccessCompassSteps }, null, 2),
+                "application/json"
+              )
+            }
+            type="button"
+          >
+            Export compass
+          </button>
+        </div>
+      </div>
       <div className="mini-heading">
         <UserPlus size={16} />
         <strong>Corporate user database</strong>
