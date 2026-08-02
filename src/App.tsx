@@ -3517,6 +3517,51 @@ function VerifyRequestsPanel({
       target: "corporate-access-review-queue"
     }
   ];
+  const corporateVerifyOperatorCockpit = {
+    mode: "corporate_verify_operator_cockpit",
+    headline: !disabled && sharedRecords.length > 0
+      ? "Corporate Verify can review approved scoped user rows"
+      : corporateReviewerCommandCenter.primary_action,
+    next_action: corporateReviewerCommandCenter.primary_action,
+    next_target: corporateReviewerCommandCenter.primary_target,
+    allowed_database_access: "approved_consent_scoped_rows_only",
+    no_open_user_database: true,
+    preview_data_accepted: false,
+    accepted_when:
+      "corporate_verify_operator_cockpit_keeps_role_request_approval_visible_rows_review_export_next_click_no_open_user_database_and_preview_rejection_visible_before_forms"
+  };
+  const corporateVerifyOperatorCockpitCards = [
+    {
+      label: "Role",
+      value: disabled ? "Needed" : "Active",
+      detail: disabled ? "Create or switch into a Corporate reviewer role." : activeOrganization.name,
+      ready: !disabled
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length} sent` : "Send first",
+      detail: "Start with one professional email and business purpose.",
+      ready: requests.length > 0
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : "Waiting",
+      detail: "User rows stay hidden until professional approval.",
+      ready: approvedCount > 0
+    },
+    {
+      label: "Visible rows",
+      value: sharedRecords.length ? `${sharedRecords.length}` : "Locked",
+      detail: "Only approved, consent-scoped rows appear.",
+      ready: sharedRecords.length > 0
+    },
+    {
+      label: "Review/export",
+      value: reviews.length && pendingGapCount === 0 ? "Ready" : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} gaps before handoff.` : "Record attestation and export metadata proof.",
+      ready: reviews.length > 0 && pendingGapCount === 0
+    }
+  ];
   const corporateVerifyReviewRunway = {
     mode: "corporate_verify_review_runway",
     active_organization: activeOrganization.name,
@@ -3938,6 +3983,59 @@ function VerifyRequestsPanel({
       <div className="mini-heading">
         <ShieldCheck size={16} />
         <strong>Live Verify requests</strong>
+      </div>
+      <div className={`corporate-verify-operator-cockpit ${!disabled && sharedRecords.length > 0 ? "ready" : "next"}`} aria-label="Corporate Verify operator cockpit">
+        <div className="corporate-verify-operator-header">
+          <div>
+            <span className={`status-chip ${!disabled && sharedRecords.length > 0 ? "success" : "warning"}`}>Corporate Verify operator cockpit</span>
+            <strong>{corporateVerifyOperatorCockpit.headline}</strong>
+            <small>One working path: role, request, approval, scoped rows, review proof, metadata export. Corporate cannot browse every user.</small>
+          </div>
+          <button
+            className={!disabled && sharedRecords.length > 0 ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (corporateVerifyOperatorCockpit.next_target === "export") {
+                downloadTextFile(
+                  `trustgraph-corporate-verify-operator-cockpit-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...corporateVerifyOperatorCockpit, cards: corporateVerifyOperatorCockpitCards }, null, 2),
+                  "application/json"
+                );
+                return;
+              }
+              document.getElementById(corporateVerifyOperatorCockpit.next_target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            type="button"
+          >
+            {corporateVerifyOperatorCockpit.next_action}
+          </button>
+        </div>
+        <div className="corporate-verify-operator-grid">
+          {corporateVerifyOperatorCockpitCards.map((card) => (
+            <button className={card.ready ? "ready" : "next"} key={card.label} onClick={() => document.getElementById(corporateVerifyOperatorCockpit.next_target)?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
+              <span>{card.label}</span>
+              <strong>{card.value}</strong>
+              <small>{card.detail}</small>
+            </button>
+          ))}
+        </div>
+        <div className="corporate-verify-operator-proof">
+          <span>
+            <small>Database access</small>
+            <strong>{corporateVerifyOperatorCockpit.allowed_database_access.replace(/_/g, " ")}</strong>
+          </span>
+          <span>
+            <small>Open user browse</small>
+            <strong>{corporateVerifyOperatorCockpit.no_open_user_database ? "Blocked" : "Allowed"}</strong>
+          </span>
+          <span>
+            <small>Preview data</small>
+            <strong>{corporateVerifyOperatorCockpit.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
+          </span>
+          <span>
+            <small>Accepted when</small>
+            <strong>{corporateVerifyOperatorCockpit.accepted_when}</strong>
+          </span>
+        </div>
       </div>
       <div className={`corporate-reviewer-command-center ${corporateReviewerCommandCenter.status}`} aria-label="Corporate reviewer command center">
         <div className="corporate-reviewer-command-header">
