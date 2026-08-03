@@ -72,6 +72,9 @@ jobs:
       - name: Verify hosted auth flow
         run: pnpm check:hosted-auth-flow
 
+      - name: Verify hosted console usability
+        run: pnpm check:hosted-console-usability
+
       - name: Verify V1 completion gate
         run: pnpm check:v1-completion-gate
 

@@ -52260,3 +52260,165 @@ body,
     max-width: 18ch !important;
   }
 }
+
+/* Hosted console closeout: keep the visible route calm, bounded, and clickable on the VPS build. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+.app,
+.public-site,
+.workspace,
+.public-auth-card,
+.work-grid,
+.workspace-admin-grid,
+.records-panel,
+.verify-panel,
+.corporate-directory-panel,
+.auth-panel {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.workspace:has(.daily-route-data-verdict) {
+  width: min(100%, 1180px) !important;
+  max-width: min(1180px, calc(100vw - 16px)) !important;
+  margin-inline: auto !important;
+  padding: clamp(10px, 2vw, 22px) !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.daily-route-data-verdict) > .daily-route-data-verdict {
+  order: -500 !important;
+}
+
+.workspace:has(.daily-route-data-verdict) > .database-status-strip {
+  order: -490 !important;
+}
+
+.workspace:has(.daily-route-data-verdict) > .v1-completion-cockpit {
+  order: -480 !important;
+}
+
+.workspace:has(.daily-route-data-verdict) > .work-grid {
+  order: -470 !important;
+}
+
+.workspace:has(.daily-route-data-verdict) > :is(
+  .topbar,
+  .hero,
+  .metrics-grid,
+  .signed-in-portal-entry-desk,
+  .portal-access-next-step,
+  .portal-route-shell,
+  .real-data-mission-control,
+  .portal-welcome-path,
+  .portal-daily-navigator,
+  .portal-launch-matrix,
+  .portal-daily-command-center,
+  .signed-in-daily-operating-runway,
+  .signed-in-pilot-journey-rail,
+  .portal-experience-compass,
+  .portal-ux-command-center,
+  .v1-portal-operating-center,
+  .premium-launch-console,
+  .portal-home-command,
+  .portal-choice-guide,
+  .portal-command-deck,
+  .portal-action-dock,
+  .portal-usability-command,
+  .v1-operating-map,
+  .v1-remaining-work-board,
+  .hosted-visual-qa-closeout,
+  .server-currentness-command,
+  .vps-freshness-checkpoint,
+  .server-sync-monitor,
+  .server-release-cockpit,
+  .server-release-save-path,
+  .hosted-version-receipt,
+  .vps-save-handoff,
+  .current-build-server-gate,
+  .first-screen-goal-status-strip,
+  .live-data-loading-command
+) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+.workspace:has(.daily-route-data-verdict) .work-grid,
+.workspace:has(.daily-route-data-verdict) .workspace-admin-grid,
+.workspace:has(.daily-route-data-verdict) .setup-panel-grid,
+.workspace:has(.daily-route-data-verdict) .verify-panel,
+.workspace:has(.daily-route-data-verdict) .corporate-directory-panel,
+.workspace:has(.daily-route-data-verdict) .records-panel,
+.workspace:has(.daily-route-data-verdict) .auth-panel {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.daily-route-data-verdict) .setup-panel-grid,
+.workspace:has(.daily-route-data-verdict) .corporate-portal-unlock-grid,
+.workspace:has(.daily-route-data-verdict) .corporate-launch-lanes,
+.workspace:has(.daily-route-data-verdict) .corporate-setup-triage-grid,
+.workspace:has(.daily-route-data-verdict) .corporate-database-handoff-grid,
+.workspace:has(.daily-route-data-verdict) .corporate-onboarding-pricing-grid,
+.workspace:has(.daily-route-data-verdict) .corporate-reviewer-front-desk-grid,
+.workspace:has(.daily-route-data-verdict) .corporate-review-queue-command-grid,
+.workspace:has(.daily-route-data-verdict) .corporate-database-next-action-grid,
+.workspace:has(.daily-route-data-verdict) .corporate-verify-action-dock,
+.workspace:has(.daily-route-data-verdict) .corporate-verify-single-lane-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.workspace:has(.daily-route-data-verdict) :is(button, input, select, textarea) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.workspace:has(.daily-route-data-verdict) button {
+  min-height: 44px !important;
+  white-space: normal !important;
+}
+
+.workspace:has(.daily-route-data-verdict) :is(strong, small, span, p, label, code, em, b) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 760px) {
+  .workspace:has(.daily-route-data-verdict) {
+    max-width: calc(100vw - 10px) !important;
+    padding: 8px !important;
+  }
+
+  .daily-route-data-verdict,
+  .daily-route-data-verdict-header,
+  .daily-route-data-verdict-grid,
+  .daily-route-data-verdict-proof,
+  .corporate-verify-single-lane-header,
+  .corporate-review-queue-command-header,
+  .corporate-database-next-action-controls,
+  .corporate-launch-cockpit-top,
+  .corporate-setup-triage-header,
+  .corporate-database-handoff-header,
+  .corporate-onboarding-pricing-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
