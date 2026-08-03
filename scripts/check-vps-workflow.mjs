@@ -187,6 +187,24 @@ const runtimeSnippets = [
   {
     source: pagesWorkflow,
     path: pagesWorkflowPath,
+    snippet: "Require VPS save proof",
+    label: "Pages workflow fails clearly when the VPS cannot be saved"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "steps.vps-secrets.outputs.enabled != 'true'",
+    label: "VPS save proof gate runs only when deploy secrets are missing"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
+    snippet: "TrustGraph GitHub Pages is current, but the VPS was not saved because TRUSTGRAPH_VPS_USER or TRUSTGRAPH_VPS_SSH_KEY is missing.",
+    label: "missing VPS secrets produce a failing error instead of a false green run"
+  },
+  {
+    source: pagesWorkflow,
+    path: pagesWorkflowPath,
     snippet: "if: steps.vps-secrets.outputs.enabled == 'true'",
     label: "automatic VPS SSH steps run only when deploy secrets are available"
   },

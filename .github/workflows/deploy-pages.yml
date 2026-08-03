@@ -209,6 +209,13 @@ jobs:
           path: trustgraph-vps-save-receipt.json
           if-no-files-found: error
 
+      - name: Require VPS save proof
+        if: steps.vps-secrets.outputs.enabled != 'true'
+        run: |
+          echo "::error::TrustGraph GitHub Pages is current, but the VPS was not saved because TRUSTGRAPH_VPS_USER or TRUSTGRAPH_VPS_SSH_KEY is missing. Run the manual updater on the server or add the deploy secrets before treating https://trustgraph.5-75-224-110.sslip.io/ as current."
+          echo "Manual server update: cd /opt/trustgraph && git pull --ff-only origin main && bash tools/update-vps-from-github.sh"
+          exit 1
+
       - name: Configure SSH
         if: steps.vps-secrets.outputs.enabled == 'true'
         run: |
