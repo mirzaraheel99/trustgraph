@@ -74,7 +74,7 @@ docker compose --env-file .env.server -f docker-compose.server.yml ps
 
 web_container="$(docker compose --env-file .env.server -f docker-compose.server.yml ps -q trustgraph-web)"
 [[ -n "$web_container" ]] || fail "could not find running trustgraph-web container"
-docker exec "$web_container" sh -c "cat > /srv/trustgraph/trustgraph-release.json" <<JSON
+docker exec -i "$web_container" sh -c "cat > /srv/trustgraph/trustgraph-release.json" <<JSON
 {
   "app": "TrustGraph",
   "source": "https://github.com/mirzaraheel99/trustgraph",

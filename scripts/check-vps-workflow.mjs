@@ -416,6 +416,12 @@ const runtimeSnippets = [
   {
     source: updateVps,
     path: "tools/update-vps-from-github.sh",
+    snippet: "docker exec -i \"$web_container\" sh -c \"cat > /srv/trustgraph/trustgraph-release.json\"",
+    label: "manual VPS update keeps stdin open while writing the release stamp into the web container"
+  },
+  {
+    source: updateVps,
+    path: "tools/update-vps-from-github.sh",
     snippet: "\"commit_short\": \"$commit_short\"",
     label: "hosted release stamp includes the deployed commit"
   },
@@ -496,6 +502,12 @@ const runtimeSnippets = [
     path: "tools/install-trustgraph-nginx.sh",
     snippet: "nginx source must not include the protected VFIX host or CRM-client-demo route",
     label: "nginx installer rejects VFIX or CRM-client-demo content in the TrustGraph snippet"
+  },
+  {
+    source: nginxInstaller,
+    path: "tools/install-trustgraph-nginx.sh",
+    snippet: "grep -q \"server_name $PROTECTED_VFIX_HOST;\" \"$TRUSTGRAPH_NGINX_SOURCE\"",
+    label: "nginx installer checks the protected VFIX host as an exact server_name, not a substring of the TrustGraph subdomain"
   },
   {
     source: nginxInstaller,

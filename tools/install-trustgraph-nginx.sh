@@ -29,7 +29,7 @@ grep -q "location = /trustgraph-release.json" "$TRUSTGRAPH_NGINX_SOURCE" \
   || fail "nginx source must include the exact release JSON route"
 grep -q "proxy_pass http://$TRUSTGRAPH_EDGE_UPSTREAM/trustgraph-release.json;" "$TRUSTGRAPH_NGINX_SOURCE" \
   || fail "nginx source must proxy release JSON to the TrustGraph bridge upstream"
-if grep -q "$PROTECTED_VFIX_HOST" "$TRUSTGRAPH_NGINX_SOURCE" || grep -q "CRM-client-demo" "$TRUSTGRAPH_NGINX_SOURCE"; then
+if grep -q "server_name $PROTECTED_VFIX_HOST;" "$TRUSTGRAPH_NGINX_SOURCE" || grep -q "CRM-client-demo" "$TRUSTGRAPH_NGINX_SOURCE"; then
   fail "nginx source must not include the protected VFIX host or CRM-client-demo route"
 fi
 
