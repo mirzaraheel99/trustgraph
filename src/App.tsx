@@ -27598,7 +27598,7 @@ function PublicSite({
         </div>
         <div className="public-nav-actions">
           <button className="secondary-action" onClick={onOpenProductPreview}>
-            Open product
+            Product preview
           </button>
           {currentSession ? (
             <button className="secondary-action" onClick={onSignOut} type="button">
@@ -27613,18 +27613,18 @@ function PublicSite({
 
       <section className="public-hero">
         <div>
-          <span className="eyebrow">Evidence-first workforce records</span>
-          <h1>TrustGraph Workforce Passport</h1>
+          <span className="eyebrow">Verified workforce record platform</span>
+          <h1>Verified work records, owned by the worker.</h1>
           <p>
-            One verified record system for Professional Passports, Corporate Verify, pricing, scoped database access,
-            account recovery, and audit-ready workforce decisions.
+            Professionals keep one private record of identity, work history, credentials, references, and evidence.
+            Companies request access to only what they need.
           </p>
           <div className="public-hero-actions">
             <button className="primary-action" onClick={() => openPortal("professional")}>
-              Professional portal
+              Create your Passport
             </button>
             <button className="secondary-action" onClick={() => openPortal("corporate")}>
-              Corporate portal
+              Start Corporate Verify
             </button>
           </div>
           <div className="public-product-answer" aria-label="Public product answer">
@@ -27655,7 +27655,7 @@ function PublicSite({
               </article>
               <article>
                 <span>Pricing</span>
-                <strong>$0 Professional, $149 Corporate pilot</strong>
+                <strong>$0 Professional, $149/month per company</strong>
                 <p>{publicProductAnswer.pricing}</p>
                 <button className="secondary-action" onClick={() => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" })} type="button">
                   View pricing

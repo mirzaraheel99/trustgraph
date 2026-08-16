@@ -21,6 +21,243 @@
   --radius: 8px;
 }
 
+/* Phase B public SaaS shell: one calm homepage/auth path from the visual spec. */
+.public-site:has(.public-login-route-cockpit) {
+  --tg-public-shell-max: 1200px;
+  background: var(--tg-public-ground, #fbfbfa) !important;
+  color: var(--tg-text, #16181a) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-nav {
+  position: sticky !important;
+  top: 12px !important;
+  z-index: 20 !important;
+  width: min(var(--tg-public-shell-max), calc(100vw - 32px)) !important;
+  margin: 12px auto 0 !important;
+  padding: 10px 12px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .brand strong {
+  color: var(--tg-text, #16181a) !important;
+  font-size: 17px !important;
+  font-weight: 550 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .brand span {
+  color: var(--tg-muted, #5e6763) !important;
+  font-size: 12px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero {
+  width: min(var(--tg-public-shell-max), calc(100vw - 32px)) !important;
+  min-height: min(760px, calc(100vh - 88px)) !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 0.48fr) !important;
+  align-items: start !important;
+  gap: clamp(28px, 4vw, 72px) !important;
+  padding: clamp(48px, 6vw, 76px) 0 clamp(34px, 4vw, 56px) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero > div:first-child {
+  display: grid !important;
+  gap: 18px !important;
+  max-width: 720px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero h1 {
+  max-width: 12.5ch !important;
+  margin: 0 !important;
+  color: var(--tg-text, #16181a) !important;
+  font-size: clamp(34px, 5vw, 56px) !important;
+  font-weight: 550 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero p {
+  max-width: 58ch !important;
+  color: var(--tg-muted, #5e6763) !important;
+  font-size: 17px !important;
+  line-height: 1.55 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 220px)) !important;
+  gap: 12px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer {
+  display: grid !important;
+  gap: 16px !important;
+  margin-top: 8px !important;
+  padding: var(--tg-card-padding, 24px) !important;
+  color: var(--tg-text, #16181a) !important;
+  border: 1px solid var(--tg-border, #e4e1db) !important;
+  border-radius: var(--tg-radius-xl, 12px) !important;
+  background: #ffffff !important;
+  box-shadow: var(--tg-shadow, 0 1px 2px rgba(22, 24, 26, 0.08)) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid article,
+.public-site:has(.public-login-route-cockpit) .public-pricing-estimator-grid span,
+.public-site:has(.public-login-route-cockpit) .pricing-card {
+  border: 1px solid var(--tg-border, #e4e1db) !important;
+  border-radius: var(--tg-radius-lg, 10px) !important;
+  background: #ffffff !important;
+  box-shadow: var(--tg-shadow, 0 1px 2px rgba(22, 24, 26, 0.08)) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-proof,
+.public-site:has(.public-login-route-cockpit) .public-audience-switchboard,
+.public-site:has(.public-login-route-cockpit) .portal-front-door,
+.public-site:has(.public-login-route-cockpit) .public-portal-launchpad,
+.public-site:has(.public-login-route-cockpit) .portal-route-section,
+.public-site:has(.public-login-route-cockpit) .registration-section {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-proof.public-command-center {
+  position: sticky !important;
+  top: 92px !important;
+  align-self: start !important;
+  max-height: calc(100vh - 116px) !important;
+  overflow: auto !important;
+  color: var(--tg-text, #16181a) !important;
+  border: 1px solid var(--tg-border, #e4e1db) !important;
+  background: #ffffff !important;
+  box-shadow: var(--tg-shadow, 0 1px 2px rgba(22, 24, 26, 0.08)) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .pricing-section,
+.public-site:has(.public-login-route-cockpit) .public-auth-section {
+  width: min(var(--tg-public-shell-max), calc(100vw - 32px)) !important;
+  margin-inline: auto !important;
+  padding-block: clamp(48px, 7vw, 88px) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .pricing-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-pricing-estimator {
+  border-color: rgba(15, 97, 91, 0.22) !important;
+  background: var(--tg-accent-tint, #e6f2f0) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section {
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.72fr) minmax(360px, 520px) !important;
+  gap: clamp(20px, 4vw, 48px) !important;
+  align-items: start !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child {
+  position: sticky !important;
+  top: 92px !important;
+  display: grid !important;
+  gap: 14px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > :is(
+  .public-access-answer,
+  .public-login-command-center,
+  .public-v1-access-runway,
+  .portal-access-cockpit,
+  .public-portal-flow-map,
+  .public-portal-route-board,
+  .portal-auth-command,
+  .portal-start-desk,
+  .portal-entry-path,
+  .portal-launch-decision-strip,
+  .public-auth-flow-command,
+  .registration-decision-receipt,
+  .live-onboarding-contract,
+  .account-type-chooser,
+  .auth-choice-summary,
+  .portal-auth-summary-panel,
+  .portal-support-details,
+  .portal-outcome-list
+) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-route-answer-bar,
+.public-site:has(.public-login-route-cockpit) .public-auth-card {
+  color: var(--tg-text, #16181a) !important;
+  border: 1px solid var(--tg-border, #e4e1db) !important;
+  border-radius: var(--tg-radius-xl, 12px) !important;
+  background: #ffffff !important;
+  box-shadow: var(--tg-shadow, 0 1px 2px rgba(22, 24, 26, 0.08)) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-card {
+  position: sticky !important;
+  top: 92px !important;
+  max-height: calc(100vh - 116px) !important;
+  overflow: auto !important;
+}
+
+.public-site:has(.public-login-route-cockpit) :is(button, input, select, textarea) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  touch-action: manipulation !important;
+}
+
+.public-site:has(.public-login-route-cockpit) :is(strong, small, span, p, label, em, code) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 900px) {
+  .public-site:has(.public-login-route-cockpit) .public-hero,
+  .public-site:has(.public-login-route-cockpit) .public-auth-section {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .public-site:has(.public-login-route-cockpit) .public-product-answer-grid,
+  .public-site:has(.public-login-route-cockpit) .pricing-grid,
+  .public-site:has(.public-login-route-cockpit) .public-hero-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child,
+  .public-site:has(.public-login-route-cockpit) .public-auth-card,
+  .public-site:has(.public-login-route-cockpit) .public-proof.public-command-center {
+    position: relative !important;
+    top: auto !important;
+    max-height: none !important;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

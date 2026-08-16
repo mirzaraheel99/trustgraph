@@ -11,7 +11,7 @@ function assert(condition, message) {
 }
 
 const requiredAppMarkers = [
-  ["<h1>TrustGraph Workforce Passport</h1>", "public product H1"],
+  ["<h1>Verified work records, owned by the worker.</h1>", "public product H1"],
   ["Professional Passport", "personal portal wording"],
   ["Corporate Verify", "corporate portal wording"],
   ["public_login_route_cockpit_keeps_professional_login_professional_register_corporate_login_corporate_register_pricing_recovery_first_database_write_submit_and_no_open_user_database_visible_before_credentials", "four-route login/register cockpit"],
