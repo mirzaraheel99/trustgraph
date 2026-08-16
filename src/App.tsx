@@ -23580,7 +23580,6 @@ function PublicSite({
   const [organizationName, setOrganizationName] = useState("");
   const [organizationDomain, setOrganizationDomain] = useState("");
   const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
-  const [pilotSeatCount, setPilotSeatCount] = useState(5);
   const [message, setMessage] = useState("Create an account. Email verification may be required; Supabase built-in email allows 2 messages per hour.");
   const [hasPendingCorporateRegistration, setHasPendingCorporateRegistration] = useState(false);
   const [verificationLinkInput, setVerificationLinkInput] = useState("");
@@ -23596,14 +23595,14 @@ function PublicSite({
     portal === "corporate"
       ? {
           portal: "Corporate Verify",
-          plan: "Corporate Verify - $149 pilot monthly",
+          plan: "Corporate Verify - $149/month per company pilot",
           primaryWrite: "organization + admin membership",
           databaseWrites: ["profiles", "organizations", "organization_memberships", "subscriptions", "access_grants"],
           nextAction:
             mode === "signup"
               ? "Verify email, then login here to create the live company workspace."
               : "Login to load the corporate account, RBAC role, team, billing, and Verify database panels.",
-          paymentStatus: "Supabase subscription ledger live; Stripe checkout remains human-gated."
+          paymentStatus: "Company-level Supabase subscription ledger live; Stripe checkout remains human-gated."
         }
       : {
           portal: "Professional Passport",
@@ -23700,7 +23699,7 @@ function PublicSite({
     {
       label: "Pricing",
       value: selectedRegistrationPath.plan,
-      detail: selectedRegistrationPath.paymentStatus
+      detail: portal === "corporate" ? "One price per company - invite as many reviewers as your pilot needs." : selectedRegistrationPath.paymentStatus
     },
     {
       label: "First write",
@@ -23751,7 +23750,7 @@ function PublicSite({
       label: "Corporate login",
       active: portal === "corporate" && mode === "signin",
       detail: "Open Company Admin or Corporate Verify for approved scoped rows.",
-      price: "$149 pilot",
+      price: "$149/company pilot",
       action: () => {
         setPortal("corporate");
         setMode("signin");
@@ -23761,7 +23760,7 @@ function PublicSite({
       label: "Corporate register",
       active: portal === "corporate" && mode === "signup",
       detail: "Create company workspace, admin membership, and reviewer path.",
-      price: "$149 pilot",
+      price: "$149/company pilot",
       action: () => {
         setPortal("corporate");
         setMode("signup");
@@ -23793,7 +23792,7 @@ function PublicSite({
       {
         portal: "corporate",
         label: "Corporate company",
-        price: "$149/month pilot",
+        price: "$149/month per company pilot",
         first_write: "organization + admin membership",
         dashboard: "Company Admin then Corporate Verify",
         boundary: "Request access by professional email; review approved scoped rows only."
@@ -23846,7 +23845,7 @@ function PublicSite({
     },
     {
       label: "Corporate register",
-      detail: "$149 pilot company workspace",
+      detail: "$149/month per company pilot workspace",
       active: portal === "corporate" && mode === "signup",
       action: () => {
         setPortal("corporate");
@@ -24249,8 +24248,8 @@ function PublicSite({
     },
     {
       label: "Corporate pilot",
-      value: "$149 monthly",
-      detail: "Used for plan selection, seat planning, readiness checks, and pilot acceptance evidence."
+      value: "$149/month per company",
+      detail: "Used for plan selection, company-level billing visibility, readiness checks, and pilot acceptance evidence."
     },
     {
       label: "Human gate",
@@ -24258,27 +24257,21 @@ function PublicSite({
       detail: "Real payment collection waits for product, tax, invoice, refund, dunning, and webhook decisions."
     }
   ];
-  const pilotSeatPrice = 149;
-  const normalizedPilotSeats = Math.min(250, Math.max(1, Number.isFinite(pilotSeatCount) ? pilotSeatCount : 1));
-  const pilotMonthlyEstimate = normalizedPilotSeats * pilotSeatPrice;
-  const pilotAnnualPlanningEstimate = pilotMonthlyEstimate * 12;
   const pricingEstimatorPacket = {
-    mode: "public_pricing_pilot_estimator",
+    mode: "public_pricing_company_pilot",
     selected_portal: portal,
-    corporate_seats: normalizedPilotSeats,
-    pilot_monthly_price_per_seat: pilotSeatPrice,
-    pilot_monthly_ledger_estimate: pilotMonthlyEstimate,
-    annualized_planning_estimate: pilotAnnualPlanningEstimate,
+    corporate_monthly_company_price: 149,
+    reviewer_tracking: "visibility_only_no_quota_no_per_seat_arithmetic",
     live_now: "Supabase organization_subscriptions ledger activation",
     payment_collection: "stripe_checkout_disabled_until_human_gate",
     human_gate_required_for: ["Stripe Checkout", "customer portal", "invoice emails", "taxes", "refunds", "dunning", "payment webhooks"],
-    database_path: "organization_subscriptions rows are accepted for pilot planning; external payment collection is not enabled"
+    database_path: "organization_subscriptions rows are accepted for company-level pilot planning; external payment collection is not enabled"
   };
   const publicPricingAccessSummary = {
     mode: "public_pricing_access_summary",
     selected_portal: portal,
     professional_plan: "$0 Professional Passport pilot",
-    corporate_plan: "$149 Corporate Verify pilot monthly",
+    corporate_plan: "$149/month per company Corporate Verify pilot",
     selected_plan: selectedRegistrationPath.plan,
     first_database_write: selectedRegistrationPath.primaryWrite,
     corporate_database_rule: "Corporate reviewers request access by professional email and see approved shared rows only.",
@@ -24323,7 +24316,7 @@ function PublicSite({
     selected_price: selectedRegistrationPath.plan,
     selected_first_write: selectedRegistrationPath.primaryWrite,
     professional_outcome: "Professional Passport stays free for the pilot and writes owner-controlled profile, Passport, evidence, consent, and sharing rows after hosted login.",
-    corporate_outcome: "Corporate Verify uses the $149 pilot ledger for company workspace, RBAC, reviewer access, team setup, and scoped user-database requests.",
+    corporate_outcome: "Corporate Verify uses the $149/month per company pilot ledger for company workspace, RBAC, reviewer access, team setup, and scoped user-database requests.",
     payment_boundary: "No card capture, Stripe Checkout, invoice email, refund flow, dunning, tax, or payment webhook is live before the human billing gate.",
     accepted_when:
       "public_pricing_launch_decision_makes_professional_free_corporate_149_pilot_database_writes_scoped_access_and_stripe_off_boundary_clear_before_signup"
@@ -24338,7 +24331,7 @@ function PublicSite({
     },
     {
       label: "Company path",
-      value: "$149 pilot",
+      value: "$149/month per company",
       detail: publicPricingLaunchDecision.corporate_outcome,
       action: "Create company",
       portal: "corporate" as const
@@ -24363,10 +24356,10 @@ function PublicSite({
     selected_portal: portal,
     recommended_path:
       portal === "corporate"
-        ? "Choose Corporate Verify pilot when a company needs reviewer RBAC, team seats, and scoped user database access."
+        ? "Choose Corporate Verify pilot when a company needs reviewer RBAC, team visibility, and scoped user database access."
         : "Choose Professional free when one person needs a private Passport, evidence, consent, and controlled sharing.",
     professional_price: "$0 pilot",
-    corporate_price: "$149/month pilot",
+    corporate_price: "$149/month per company pilot",
     scale_price: "Human-approved quote",
     first_live_write:
       portal === "corporate"
@@ -28293,65 +28286,45 @@ function PublicSite({
             ))}
           </div>
         </div>
-        <div className="public-pricing-estimator" aria-label="Public pricing pilot estimator">
-          <div className="public-pricing-estimator-copy">
-            <span className="status-chip neutral">Pilot pricing estimator</span>
-            <strong>Estimate Corporate Verify seats before signup</strong>
-            <small>Use this for pilot ledger planning only. TrustGraph writes subscription intent to Supabase; Stripe payment collection stays off until the human billing gate is approved.</small>
+          <div className="public-pricing-estimator" aria-label="Public company pilot pricing">
+            <div className="public-pricing-estimator-copy">
+              <span className="status-chip neutral">Corporate Verify Pilot</span>
+              <strong>$149/month per company</strong>
+              <small>One price per company - invite as many reviewers as your pilot needs. Seat tracking is shown for admin visibility only.</small>
+            </div>
+            <div className="public-pricing-estimator-grid">
+              <span>
+                <strong>Admin workspace</strong>
+                <small>Initial company setup and reviewer routing.</small>
+              </span>
+              <span>
+                <strong>Review queue</strong>
+                <small>Corporate Verify requests and scoped approvals.</small>
+              </span>
+              <span>
+                <strong>Audit exports</strong>
+                <small>Pilot team setup, access receipts, and export proof.</small>
+              </span>
+            </div>
+            <div className="public-pricing-estimator-actions">
+              <button className="primary-action" onClick={() => openPortal("corporate")} type="button">
+                Start Corporate Verify
+              </button>
+              <button
+                className="secondary-action"
+                onClick={() =>
+                  downloadTextFile(
+                    `trustgraph-public-company-pilot-pricing-${new Date().toISOString().slice(0, 10)}.json`,
+                    JSON.stringify(pricingEstimatorPacket, null, 2),
+                    "application/json"
+                  )
+                }
+                type="button"
+              >
+                Export pricing summary
+              </button>
+            </div>
           </div>
-          <div className="public-pricing-estimator-controls">
-            <label>
-              <span>Corporate seats</span>
-              <input
-                max="250"
-                min="1"
-                onChange={(event) => setPilotSeatCount(Number(event.target.value))}
-                type="number"
-                value={normalizedPilotSeats}
-              />
-            </label>
-            <input
-              aria-label="Corporate pilot seats"
-              max="250"
-              min="1"
-              onChange={(event) => setPilotSeatCount(Number(event.target.value))}
-              type="range"
-              value={normalizedPilotSeats}
-            />
-          </div>
-          <div className="public-pricing-estimator-grid">
-            <span>
-              <strong>${pilotSeatPrice}</strong>
-              <small>pilot monthly per seat</small>
-            </span>
-            <span>
-              <strong>${pilotMonthlyEstimate.toLocaleString()}</strong>
-              <small>monthly ledger estimate</small>
-            </span>
-            <span>
-              <strong>${pilotAnnualPlanningEstimate.toLocaleString()}</strong>
-              <small>annualized planning estimate</small>
-            </span>
-          </div>
-          <div className="public-pricing-estimator-actions">
-            <button className="primary-action" onClick={() => openPortal("corporate")} type="button">
-              Start Corporate with {normalizedPilotSeats} seats
-            </button>
-            <button
-              className="secondary-action"
-              onClick={() =>
-                downloadTextFile(
-                  `trustgraph-public-pricing-estimator-${new Date().toISOString().slice(0, 10)}.json`,
-                  JSON.stringify(pricingEstimatorPacket, null, 2),
-                  "application/json"
-                )
-              }
-              type="button"
-            >
-              Export pricing estimate
-            </button>
-          </div>
-        </div>
         <div className="pilot-signal-row">
           {pilotSignals.map((signal) => (
             <span key={signal}>{signal}</span>

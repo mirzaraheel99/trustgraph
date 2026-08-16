@@ -25,6 +25,7 @@
     "check:vps-freshness": "node scripts/check-vps-freshness.mjs",
     "report:vps-status": "node scripts/report-vps-status.mjs",
     "check:premium-layout": "node scripts/check-premium-layout.mjs",
+    "check:visual-design-tokens": "node scripts/check-visual-design-tokens.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {

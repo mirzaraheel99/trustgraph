@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./design-tokens.css";
 
 export const metadata: Metadata = {
   title: "TrustGraph",

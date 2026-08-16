@@ -1,0 +1,278 @@
+/*
+  TrustGraph Visual Design Spec foundation.
+  Identity: Precise, owned, calm. One accent, white app surfaces, bounded SaaS layout.
+*/
+:root {
+  color-scheme: light;
+  --tg-accent: #0f615b;
+  --tg-accent-hover: #137c74;
+  --tg-accent-tint: #e6f2f0;
+  --tg-public-ground: #fbfbfa;
+  --tg-app-ground: #ffffff;
+  --tg-ink: #16181a;
+  --tg-text: #16181a;
+  --tg-muted: #5e6763;
+  --tg-faint: #8b938f;
+  --tg-border: #e4e1db;
+  --tg-border-strong: #d2cec6;
+  --tg-card: #ffffff;
+  --tg-card-muted: #f5f4f1;
+  --tg-sidebar-width: 256px;
+  --tg-topbar-height: 56px;
+  --tg-content-max: 1200px;
+  --tg-card-padding: 24px;
+  --tg-row-height: 48px;
+  --tg-radius-sm: 6px;
+  --tg-radius: 8px;
+  --tg-radius-lg: 10px;
+  --tg-radius-xl: 12px;
+  --tg-shadow: 0 1px 2px rgba(22, 24, 26, 0.08);
+  --tg-shadow-raised: 0 1px 2px rgba(22, 24, 26, 0.1);
+  --tg-success-text: #166534;
+  --tg-success-tint: #eaf7ee;
+  --tg-warning-text: #915f16;
+  --tg-warning-tint: #fff5da;
+  --tg-danger-text: #9f1d1d;
+  --tg-danger-tint: #fff0ef;
+  --tg-info-text: #1e4f87;
+  --tg-info-tint: #eef5ff;
+
+  --bg: var(--tg-app-ground);
+  --bg-2: var(--tg-public-ground);
+  --panel: var(--tg-card);
+  --panel-strong: var(--tg-card);
+  --panel-soft: var(--tg-card-muted);
+  --line: var(--tg-border);
+  --line-strong: var(--tg-border-strong);
+  --text: var(--tg-text);
+  --muted: var(--tg-muted);
+  --faint: var(--tg-faint);
+  --teal: var(--tg-accent);
+  --teal-2: var(--tg-accent-hover);
+  --gold: var(--tg-warning-text);
+  --red: var(--tg-danger-text);
+  --blue: var(--tg-info-text);
+  --green: var(--tg-success-text);
+  --shadow: var(--tg-shadow);
+  --shadow-tight: var(--tg-shadow);
+  --radius: var(--tg-radius);
+}
+
+html,
+body {
+  background: var(--tg-public-ground) !important;
+  color: var(--tg-text) !important;
+  font-family: "Geist", "Geist Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0 !important;
+}
+
+body {
+  background-image: none !important;
+}
+
+.public-site,
+.app {
+  background: var(--tg-public-ground) !important;
+  color: var(--tg-text) !important;
+}
+
+.public-nav,
+.topbar {
+  min-height: var(--tg-topbar-height) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid var(--tg-border) !important;
+  border-radius: var(--tg-radius-xl) !important;
+  box-shadow: var(--tg-shadow) !important;
+  backdrop-filter: blur(16px);
+}
+
+.brand-symbol {
+  position: relative !important;
+  width: 32px !important;
+  height: 32px !important;
+  flex: 0 0 32px !important;
+  overflow: hidden !important;
+  color: transparent !important;
+  border-radius: var(--tg-radius) !important;
+  background: var(--tg-accent) !important;
+  box-shadow: none !important;
+}
+
+.brand-symbol::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 7px !important;
+  background:
+    radial-gradient(circle at 2px 14px, #ffffff 0 2px, transparent 2.5px),
+    radial-gradient(circle at 10px 9px, #ffffff 0 2px, transparent 2.5px),
+    radial-gradient(circle at 18px 4px, #ffffff 0 2px, transparent 2.5px),
+    linear-gradient(25deg, transparent 0 20%, #ffffff 21% 28%, transparent 29% 53%, #ffffff 54% 61%, transparent 62%) !important;
+}
+
+.public-hero,
+.public-section > div,
+.pricing-section > div,
+.public-auth-section > div,
+.workspace {
+  width: min(var(--tg-content-max), calc(100vw - 32px)) !important;
+  max-width: var(--tg-content-max) !important;
+  margin-inline: auto !important;
+}
+
+.public-hero h1 {
+  max-width: 12ch !important;
+  color: var(--tg-text) !important;
+  font-size: clamp(34px, 6vw, 56px) !important;
+  font-weight: 550 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.topbar h1,
+.public-section h2,
+.pricing-section h2,
+.public-auth-section h2 {
+  color: var(--tg-text) !important;
+  font-size: 24px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0 !important;
+}
+
+p,
+small,
+label,
+input,
+select,
+textarea,
+button {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0 !important;
+}
+
+.public-auth-card,
+.auth-panel,
+.records-panel,
+.verify-panel,
+.audit-panel,
+.workspace-admin-grid > section,
+.pricing-card,
+.portal-card,
+.workflow-grid article,
+.registration-grid article,
+.public-proof,
+.daily-route-data-verdict,
+.v1-completion-cockpit,
+.database-status-strip {
+  color: var(--tg-text) !important;
+  border: 1px solid var(--tg-border) !important;
+  border-radius: var(--tg-radius-xl) !important;
+  background: var(--tg-card) !important;
+  box-shadow: var(--tg-shadow) !important;
+}
+
+.primary-action,
+button.primary-action,
+.public-site-action.primary,
+.public-auth-card button[type="submit"] {
+  min-height: var(--tg-row-height) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--tg-accent) !important;
+  border-radius: var(--tg-radius) !important;
+  background: var(--tg-accent) !important;
+  box-shadow: none !important;
+  font-weight: 550 !important;
+}
+
+.primary-action:hover,
+button.primary-action:hover,
+.public-site-action.primary:hover,
+.public-auth-card button[type="submit"]:hover {
+  background: var(--tg-accent-hover) !important;
+  border-color: var(--tg-accent-hover) !important;
+}
+
+.secondary-action,
+button.secondary-action,
+.public-site-action.secondary {
+  min-height: var(--tg-row-height) !important;
+  color: var(--tg-text) !important;
+  border: 1px solid var(--tg-border-strong) !important;
+  border-radius: var(--tg-radius) !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  font-weight: 550 !important;
+}
+
+.status-chip,
+.pill,
+.metric-badge {
+  border-radius: 999px !important;
+  background: var(--tg-card-muted) !important;
+  border: 1px solid var(--tg-border) !important;
+  color: var(--tg-muted) !important;
+  font-weight: 550 !important;
+  text-transform: none !important;
+}
+
+.status-chip.success,
+.ready .status-chip,
+.status-chip.ready {
+  background: var(--tg-success-tint) !important;
+  border-color: #bfe7c9 !important;
+  color: var(--tg-success-text) !important;
+}
+
+.status-chip.warning {
+  background: var(--tg-warning-tint) !important;
+  border-color: #f2d99a !important;
+  color: var(--tg-warning-text) !important;
+}
+
+.status-chip.danger,
+.status-chip.error {
+  background: var(--tg-danger-tint) !important;
+  border-color: #ffc4bf !important;
+  color: var(--tg-danger-text) !important;
+}
+
+input,
+select,
+textarea {
+  min-height: var(--tg-row-height) !important;
+  color: var(--tg-text) !important;
+  background: #ffffff !important;
+  border: 1px solid var(--tg-border-strong) !important;
+  border-radius: var(--tg-radius) !important;
+  box-shadow: none !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(15, 97, 91, 0.18) !important;
+  outline-offset: 2px !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit),
+.workspace:has(.daily-route-data-verdict) {
+  overflow-x: clip !important;
+}
+
+@media (max-width: 760px) {
+  .public-hero,
+  .public-section > div,
+  .pricing-section > div,
+  .public-auth-section > div,
+  .workspace {
+    width: min(100%, calc(100vw - 20px)) !important;
+  }
+
+  .public-hero h1 {
+    font-size: 34px !important;
+    max-width: 13ch !important;
+  }
+}
