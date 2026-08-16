@@ -258,6 +258,259 @@
   }
 }
 
+/* Phase C app shell focus: restore the real dashboard shell and make it match the calm SaaS spec. */
+.app:has(.portal-route-shell):has(.session-control-strip),
+.app:has(.signed-in-portal-entry-desk):has(.session-control-strip) {
+  background: #ffffff !important;
+  color: #16181a !important;
+  overflow-x: hidden !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) {
+  --tg-console-max: 1120px !important;
+  width: min(var(--tg-console-max), calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  margin-inline: auto !important;
+  padding: 16px !important;
+  gap: 12px !important;
+  background: #ffffff !important;
+  color: #16181a !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .topbar,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .topbar,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .session-control-strip,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .session-control-strip,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .portal-route-shell,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .portal-route-shell,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .signed-in-portal-entry-desk,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .signed-in-portal-entry-desk,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .work-grid,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .work-grid,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .daily-route-data-verdict,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .daily-route-data-verdict,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .database-status-strip,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .database-status-strip {
+  position: relative !important;
+  inline-size: auto !important;
+  block-size: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  clip-path: none !important;
+  pointer-events: auto !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .topbar,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .topbar {
+  order: -800 !important;
+  position: sticky !important;
+  top: 8px !important;
+  z-index: 40 !important;
+  min-height: 56px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 14px 16px !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) .topbar h1,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar h1 {
+  max-width: 34ch !important;
+  color: #16181a !important;
+  font-size: 24px !important;
+  font-weight: 550 !important;
+  line-height: 1.18 !important;
+  letter-spacing: 0 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) .topbar p,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) .topbar p,
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(.portal-route-shell p, .session-control-strip p, .signed-in-portal-entry-desk p),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.portal-route-shell p, .session-control-strip p, .signed-in-portal-entry-desk p) {
+  color: #5b6470 !important;
+  font-size: 15px !important;
+  line-height: 1.48 !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .session-control-strip,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .session-control-strip {
+  order: -790 !important;
+  display: grid !important;
+  gap: 12px !important;
+  padding: 16px !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .daily-route-data-verdict,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .daily-route-data-verdict {
+  order: -780 !important;
+  border: 1px solid #d7e8e5 !important;
+  border-radius: 10px !important;
+  background: #e6f2f0 !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .portal-route-shell,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .portal-route-shell,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .signed-in-portal-entry-desk,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .signed-in-portal-entry-desk {
+  order: -760 !important;
+  display: grid !important;
+  gap: 14px !important;
+  padding: 20px !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .work-grid,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .work-grid {
+  order: -740 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 14px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(.topbar-actions, .session-control-strip-actions, .portal-route-shell-actions),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.topbar-actions, .session-control-strip-actions, .portal-route-shell-actions) {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr)) !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(.auth-panel, .records-panel, .verify-panel, .audit-panel, .passport-panel, .billing-panel, .corporate-directory-panel, .workspace-admin-grid, .setup-panel-grid),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.auth-panel, .records-panel, .verify-panel, .audit-panel, .passport-panel, .billing-panel, .corporate-directory-panel, .workspace-admin-grid, .setup-panel-grid) {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  color: #16181a !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+  overflow-x: clip !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(.workspace-admin-grid, .setup-panel-grid, .verify-panel, .corporate-directory-panel) :is(button, input, select, textarea),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.workspace-admin-grid, .setup-panel-grid, .verify-panel, .corporate-directory-panel) :is(button, input, select, textarea),
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(.topbar, .session-control-strip, .portal-route-shell) button,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.topbar, .session-control-strip, .portal-route-shell) button {
+  min-height: 44px !important;
+  max-width: 100% !important;
+  border-radius: 8px !important;
+  pointer-events: auto !important;
+  white-space: normal !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) table,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) :is(th, td, strong, small, span, p, label, code, em, b),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(th, td, strong, small, span, p, label, code, em, b) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > :is(
+  .portal-daily-command-center,
+  .signed-in-daily-operating-runway,
+  .signed-in-pilot-journey-rail,
+  .portal-experience-compass,
+  .portal-ux-command-center,
+  .portal-launch-matrix,
+  .v1-portal-operating-center,
+  .premium-launch-console,
+  .v1-remaining-work-board,
+  .hosted-visual-qa-closeout,
+  .server-currentness-command,
+  .vps-freshness-checkpoint,
+  .server-sync-monitor,
+  .server-release-cockpit,
+  .server-release-save-path,
+  .hosted-version-receipt,
+  .vps-save-handoff,
+  .current-build-server-gate,
+  .first-screen-goal-status-strip
+),
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > :is(
+  .portal-daily-command-center,
+  .signed-in-daily-operating-runway,
+  .signed-in-pilot-journey-rail,
+  .portal-experience-compass,
+  .portal-ux-command-center,
+  .portal-launch-matrix,
+  .v1-portal-operating-center,
+  .premium-launch-console,
+  .v1-remaining-work-board,
+  .hosted-visual-qa-closeout,
+  .server-currentness-command,
+  .vps-freshness-checkpoint,
+  .server-sync-monitor,
+  .server-release-cockpit,
+  .server-release-save-path,
+  .hosted-version-receipt,
+  .vps-save-handoff,
+  .current-build-server-gate,
+  .first-screen-goal-status-strip
+) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 860px) {
+  .workspace:has(.portal-route-shell):has(.session-control-strip),
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) {
+    width: min(100%, calc(100vw - 12px)) !important;
+    max-width: calc(100vw - 12px) !important;
+    padding: 8px !important;
+  }
+
+  .workspace:has(.portal-route-shell):has(.session-control-strip) > .topbar,
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .topbar {
+    position: relative !important;
+    top: auto !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .workspace:has(.portal-route-shell):has(.session-control-strip) > .portal-route-shell,
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .portal-route-shell,
+  .workspace:has(.portal-route-shell):has(.session-control-strip) > .signed-in-portal-entry-desk,
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .signed-in-portal-entry-desk,
+  .workspace:has(.portal-route-shell):has(.session-control-strip) :is(.session-control-strip-grid, .portal-route-shell-grid, .workspace-admin-grid, .setup-panel-grid),
+  .workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) :is(.session-control-strip-grid, .portal-route-shell-grid, .workspace-admin-grid, .setup-panel-grid) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -52658,4 +52911,49 @@ body {
   .corporate-onboarding-pricing-header {
     grid-template-columns: minmax(0, 1fr) !important;
   }
+}
+
+/* Phase C cascade lock: final app shell visibility override after hosted closeout guards. */
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .topbar,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .topbar,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .session-control-strip,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .session-control-strip,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .portal-route-shell,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .portal-route-shell,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .signed-in-portal-entry-desk,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .signed-in-portal-entry-desk,
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .work-grid,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .work-grid {
+  position: relative !important;
+  inline-size: auto !important;
+  block-size: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  clip-path: none !important;
+  pointer-events: auto !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .topbar,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .topbar {
+  order: -800 !important;
+  min-height: 56px !important;
+  background: #ffffff !important;
+  color: #16181a !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .portal-route-shell,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .portal-route-shell {
+  order: -760 !important;
+  background: #ffffff !important;
+  color: #16181a !important;
+}
+
+.workspace:has(.portal-route-shell):has(.session-control-strip) > .work-grid,
+.workspace:has(.signed-in-portal-entry-desk):has(.session-control-strip) > .work-grid {
+  order: -740 !important;
+  grid-template-columns: minmax(0, 1fr) !important;
 }

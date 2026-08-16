@@ -34460,7 +34460,7 @@ function App() {
     },
     {
       label: "Pricing ledger",
-      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} rows` : "$149 pilot",
+      value: organizationSubscriptions.length ? `${organizationSubscriptions.length} rows` : "$149/month company",
       detail: "Activate the Corporate Verify pilot ledger before client review.",
       action: "Open pricing",
       target: "billing" as const,
@@ -34838,7 +34838,7 @@ function App() {
     },
     {
       label: "Pricing",
-      detail: "Review Professional and Corporate pilot pricing, seat planning, and Stripe launch boundary.",
+      detail: "Review Professional and Corporate pilot pricing, reviewer visibility, and Stripe launch boundary.",
       status: organizationSubscriptions.length ? `${organizationSubscriptions.length} ledger rows` : "Pilot pricing ready",
       action: "Open Pricing",
       target: "billing" as const,
@@ -34905,7 +34905,7 @@ function App() {
     },
     {
       label: "Pricing",
-      value: "Free user / $149 corporate pilot",
+      value: "Free user / $149 company pilot",
       detail: organizationSubscriptions.length ? `${organizationSubscriptions.length} subscription ledger rows.` : "Pilot pricing and Stripe boundary.",
       status: "ready",
       action: "Open Pricing",
