@@ -54342,3 +54342,119 @@ body {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Phase J hotfix: keep recovery/debug receipts out of the visible signup form */
+.public-site:has(.public-login-route-cockpit) {
+  writing-mode: horizontal-tb !important;
+}
+
+.public-site:has(.public-login-route-cockpit) :is(
+  div,
+  section,
+  article,
+  form,
+  button,
+  input,
+  select,
+  textarea,
+  strong,
+  small,
+  span,
+  p,
+  em,
+  b,
+  code,
+  label
+) {
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child,
+.public-site:has(.public-login-route-cockpit) .public-auth-card > :is(
+  .public-auth-status-strip,
+  .public-registration-path-summary,
+  .public-plan-portal-chooser,
+  .public-login-route-cockpit,
+  .public-route-decision-desk,
+  .auth-portal-console,
+  .login-portal-desk,
+  .auth-credential-command,
+  .public-access-hub,
+  .public-account-path-chooser,
+  .public-conversion-runway,
+  .public-account-entry-launchpad,
+  .public-auth-start-strip,
+  .public-auth-rescue-checklist,
+  .public-account-access-path,
+  .public-portal-entry-desk,
+  .public-auth-experience-studio,
+  .public-login-primary-choice,
+  .public-submit-path-checklist,
+  .public-portal-route-shell,
+  .public-access-command-center,
+  .public-entry-sequence,
+  .public-portal-switchboard,
+  .corporate-access-route-preview,
+  .portal-tabs,
+  .auth-route-summary,
+  .public-submit-readiness,
+  .selected-portal-command,
+  .portal-submit-receipt,
+  .registration-pre-submit-checklist,
+  .public-signup-decision-desk,
+  .public-registration-pricing-gate,
+  .public-signup-answer-bar,
+  .public-hosted-server-freshness-alert,
+  .registration-outcome-command,
+  .registration-completion-handoff,
+  .auth-email-troubleshooting-strip,
+  .hosted-auth-redirect-verification,
+  .hosted-auth-recovery-board,
+  .current-build-server-gate.public,
+  .email-verification-delivery-receipt,
+  .auth-support-actions,
+  .login-issue-resolver
+) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  max-inline-size: 1px !important;
+  max-block-size: 1px !important;
+  max-height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-card > .public-credential-station,
+.public-site:has(.public-login-route-cockpit) .public-auth-card > .public-auth-help-strip {
+  position: relative !important;
+  inline-size: auto !important;
+  block-size: auto !important;
+  max-inline-size: none !important;
+  max-block-size: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  clip-path: none !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-card > .public-credential-station {
+  order: -2000 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-card > .public-auth-help-strip {
+  order: -1900 !important;
+}
