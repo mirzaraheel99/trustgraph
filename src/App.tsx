@@ -12602,6 +12602,78 @@ function AuditTrailPanel({
     accepted_when:
       "admin_audit_export_receipt_requires_admin_rbac_filtered_audit_scope_case_data_rights_release_context_metadata_only_no_raw_private_files_and_no_preview_data"
   };
+  const adminExportDesk = {
+    mode: "admin_export_desk",
+    status: filteredEvents.length
+      ? latestAdminAuditExportReceipt
+        ? "filtered_export_receipt_ready"
+        : "filtered_export_ready_receipt_needed"
+      : activeFilterLabels.length
+        ? "filters_return_no_rows"
+        : "audit_rows_needed",
+    headline: filteredEvents.length
+      ? `${adminAuditDecisionBar.recommended_export} is ready`
+      : activeFilterLabels.length
+        ? "No audit rows match the current filters"
+        : "Load live audit rows before export",
+    next_action: filteredEvents.length ? "Export filtered CSV" : "Clear filters or load rows",
+    active_scope: adminAuditDecisionBar.active_scope,
+    receipt_status: latestAdminAuditExportReceipt ? "Persisted receipt loaded" : "Receipt not recorded",
+    raw_private_files_exported: false,
+    preview_data_accepted: false,
+    accepted_when:
+      "admin_export_desk_keeps_filter_scope_recommended_export_csv_json_coverage_readiness_receipt_audit_filters_raw_file_exclusion_and_no_preview_data_visible_first"
+  };
+  const adminExportDeskCards = [
+    {
+      label: "Filter scope",
+      value: activeFilterLabels.length ? `${activeFilterLabels.length} filters` : "All rows",
+      detail: adminExportDesk.active_scope,
+      icon: Filter,
+      ready: true,
+      action: "readiness" as const
+    },
+    {
+      label: "Audit rows",
+      value: `${filteredEvents.length}/${events.length}`,
+      detail: `${guardrailCount} guardrail and ${highSignalCount} high-signal rows`,
+      icon: Activity,
+      ready: filteredEvents.length > 0,
+      action: "csv" as const
+    },
+    {
+      label: "Recommended export",
+      value: adminAuditDecisionBar.recommended_export,
+      detail: guardrailCount || highSignalCount ? "Coverage packet is safest for high-signal rows." : "CSV is enough for standard filtered rows.",
+      icon: Download,
+      ready: filteredEvents.length > 0,
+      action: guardrailCount || highSignalCount ? "coverage" as const : "csv" as const
+    },
+    {
+      label: "Receipt",
+      value: latestAdminAuditExportReceipt ? "Saved" : "Needed",
+      detail: latestAdminAuditExportReceipt?.created_at ?? "Record a receipt after export.",
+      icon: ClipboardCheck,
+      ready: Boolean(latestAdminAuditExportReceipt),
+      action: "receipt" as const
+    },
+    {
+      label: "Context",
+      value: `${operationsCases.length + dataRightsRequests.length + schemaMigrationRuns.length} rows`,
+      detail: "Cases, data rights, and release ledger travel in coverage packets.",
+      icon: ShieldCheck,
+      ready: operationsCases.length + dataRightsRequests.length + schemaMigrationRuns.length > 0,
+      action: "coverage" as const
+    },
+    {
+      label: "Boundary",
+      value: "Metadata only",
+      detail: "No raw private evidence files and no preview data leave Admin.",
+      icon: LockKeyhole,
+      ready: true,
+      action: "readiness" as const
+    }
+  ];
   async function saveAdminAuditExportReceipt(exportFormat: "csv_filtered_audit_events" | "json_filtered_audit_events" | "json_full_coverage_packet" | "json_admin_readiness_packet") {
     setAdminExportReceiptStatus("Recording filtered Admin audit export receipt...");
     try {
@@ -12703,6 +12775,63 @@ function AuditTrailPanel({
         <strong>Audit trail</strong>
       </div>
       <small>{message}</small>
+      <div className={`admin-export-desk ${adminExportDesk.status}`} aria-label="Admin export desk">
+        <div className="admin-export-desk-header">
+          <div>
+            <span className={`status-chip ${filteredEvents.length ? "success" : "warning"}`}>Admin export desk</span>
+            <strong>{adminExportDesk.headline}</strong>
+            <small>Filter first, export only the scoped audit rows, then save a receipt before sharing outside operations.</small>
+          </div>
+          <button
+            className={filteredEvents.length ? "primary-action" : "secondary-action"}
+            disabled={!filteredEvents.length}
+            onClick={() => downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv")}
+            type="button"
+          >
+            {adminExportDesk.next_action}
+          </button>
+        </div>
+        <div className="admin-export-desk-grid">
+          {adminExportDeskCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <button
+                className={card.ready ? "ready" : "needed"}
+                key={card.label}
+                onClick={() => {
+                  if (card.action === "csv") {
+                    if (filteredEvents.length) downloadTextFile(exportName, auditEventsToCsv(filteredEvents), "text/csv");
+                    return;
+                  }
+                  if (card.action === "coverage") {
+                    downloadTextFile(coveragePacketName, JSON.stringify({ ...auditCoveragePacket, admin_export_desk: adminExportDesk }, null, 2), "application/json");
+                    return;
+                  }
+                  if (card.action === "receipt") {
+                    if (filteredEvents.length) void saveAdminAuditExportReceipt("json_admin_readiness_packet");
+                    return;
+                  }
+                  downloadTextFile(exportReadinessName, JSON.stringify({ ...adminExportReadinessPacket, admin_export_desk: adminExportDesk }, null, 2), "application/json");
+                }}
+                type="button"
+              >
+                <span>
+                  <Icon size={16} />
+                  {card.label}
+                </span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </button>
+            );
+          })}
+        </div>
+        <div className="admin-export-desk-proof">
+          <span>{adminExportDesk.receipt_status}</span>
+          <span>CSV / JSON / coverage ready by scope</span>
+          <span>Raw private files excluded</span>
+          <span>No preview data accepted</span>
+        </div>
+      </div>
       <div className={`admin-export-decision-strip ${adminExportDecisionStrip.status}`} aria-label="Admin export decision strip">
         <div className="admin-export-decision-strip-header">
           <div>
