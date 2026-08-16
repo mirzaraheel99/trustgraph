@@ -28,6 +28,7 @@ const trustgraphHost = entries.get("TRUSTGRAPH_HOST") || "trustgraph.5-75-224-11
 const postgresPassword = entries.get("POSTGRES_PASSWORD") || "";
 const supabaseUrl = entries.get("NEXT_PUBLIC_SUPABASE_URL") || "";
 const supabaseKey = entries.get("NEXT_PUBLIC_SUPABASE_ANON_KEY") || "";
+const authProvider = entries.get("NEXT_PUBLIC_AUTH_PROVIDER") || "supabase";
 
 if (trustgraphHost === "5-75-224-110.sslip.io" || trustgraphHost === "5.75.224.110" || trustgraphHost.includes("/CRM-client-demo")) {
   fail(`TRUSTGRAPH_HOST points at protected VFIX target: ${trustgraphHost}`);
@@ -41,7 +42,13 @@ if (!postgresPassword) fail("POSTGRES_PASSWORD is required");
 if (postgresPassword === "replace-with-a-long-random-password") fail("POSTGRES_PASSWORD still uses the example placeholder");
 if (postgresPassword.length < 20) fail("POSTGRES_PASSWORD must be at least 20 characters");
 
-if (!supabaseUrl || !supabaseKey) {
+if (authProvider !== "supabase" && authProvider !== "postgres") {
+  fail("NEXT_PUBLIC_AUTH_PROVIDER must be supabase or postgres");
+}
+
+if (authProvider === "postgres") {
+  warn("NEXT_PUBLIC_AUTH_PROVIDER=postgres; static app signup/login will use the VPS Postgres auth API");
+} else if (!supabaseUrl || !supabaseKey) {
   warn("Supabase public env is incomplete; static app will use preview/local adapter mode");
 } else {
   if (!/^https:\/\/.+\.supabase\.co$/.test(supabaseUrl)) {

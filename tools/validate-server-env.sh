@@ -32,8 +32,10 @@ trustgraph_host="$(read_env TRUSTGRAPH_HOST)"
 postgres_password="$(read_env POSTGRES_PASSWORD)"
 supabase_url="$(read_env NEXT_PUBLIC_SUPABASE_URL)"
 supabase_key="$(read_env NEXT_PUBLIC_SUPABASE_ANON_KEY)"
+auth_provider="$(read_env NEXT_PUBLIC_AUTH_PROVIDER)"
 
 trustgraph_host="${trustgraph_host:-trustgraph.5-75-224-110.sslip.io}"
+auth_provider="${auth_provider:-supabase}"
 
 case "$trustgraph_host" in
   trustgraph.5-75-224-110.sslip.io)
@@ -50,7 +52,11 @@ esac
 [[ "$postgres_password" != "replace-with-a-long-random-password" ]] || fail "POSTGRES_PASSWORD still uses the example placeholder"
 [[ ${#postgres_password} -ge 20 ]] || fail "POSTGRES_PASSWORD must be at least 20 characters"
 
-if [[ -z "$supabase_url" || -z "$supabase_key" ]]; then
+[[ "$auth_provider" == "supabase" || "$auth_provider" == "postgres" ]] || fail "NEXT_PUBLIC_AUTH_PROVIDER must be supabase or postgres"
+
+if [[ "$auth_provider" == "postgres" ]]; then
+  warn "NEXT_PUBLIC_AUTH_PROVIDER=postgres; static app signup/login will use the VPS Postgres auth API"
+elif [[ -z "$supabase_url" || -z "$supabase_key" ]]; then
   warn "Supabase public env is incomplete; static app will use preview/local adapter mode"
 else
   [[ "$supabase_url" == https://*.supabase.co ]] || fail "NEXT_PUBLIC_SUPABASE_URL must be a Supabase HTTPS project URL"

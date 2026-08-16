@@ -99,6 +99,7 @@ import {
 import { buildAdvisorySummary } from "./aiAdvisor";
 import {
   authModeLabel,
+  getAuthProvider,
   loadStoredSession,
   readSessionFromUrl,
   requestPasswordRecovery,
@@ -19581,6 +19582,7 @@ function AuthPanel({
   const [selectedLoginPath, setSelectedLoginPath] = useState<"professional" | "corporate">("professional");
   const [busy, setBusy] = useState(false);
   const authRedirectUrl = hostedAuthRedirectUrl();
+  const authProvider = getAuthProvider();
   const recoverySessionReady = Boolean(session && accountStatus.toLowerCase().includes("password recovery"));
   const authPacketName = `trustgraph-auth-redirect-readiness-${new Date().toISOString().slice(0, 10)}.json`;
   const recoveryActions = [
@@ -20064,9 +20066,15 @@ function AuthPanel({
 
     try {
       const nextSession =
-        mode === "signin" ? await signInWithPassword(email, password) : await signUpWithPassword(email, password, authRedirectUrl);
+        mode === "signin" ? await signInWithPassword(email, password) : await signUpWithPassword(email, password, authRedirectUrl, { portal: selectedLoginPath });
       onSession(nextSession);
-      setMessage(nextSession ? "Live Supabase session connected" : "Check your email to confirm the account. Built-in Supabase email may pause after 2 emails per hour.");
+      setMessage(
+        nextSession
+          ? authProvider === "postgres"
+            ? "VPS Postgres session connected"
+            : "Live Supabase session connected"
+          : "Check your email to confirm the account. Built-in Supabase email may pause after 2 emails per hour."
+      );
       setPassword("");
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl));
@@ -20081,7 +20089,11 @@ function AuthPanel({
     setMessage("Sending recovery email...");
     try {
       await requestPasswordRecovery(recoveryEmail, authRedirectUrl);
-      setMessage("Password recovery email requested. Use the inbox link to return to TrustGraph; wait 60+ minutes if Supabase rate-limits email.");
+      setMessage(
+        authProvider === "postgres"
+          ? "Postgres auth is active. Email reset needs the next SMTP/reset slice; use the current password or ask an admin reset."
+          : "Password recovery email requested. Use the inbox link to return to TrustGraph; wait 60+ minutes if Supabase rate-limits email."
+      );
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not request password recovery."));
     } finally {
@@ -20095,7 +20107,11 @@ function AuthPanel({
     setMessage("Sending verification email...");
     try {
       await resendSignupConfirmation(verificationEmail, authRedirectUrl);
-      setMessage("Verification email requested. If Supabase says rate limit exceeded, wait 60+ minutes or configure custom SMTP.");
+      setMessage(
+        authProvider === "postgres"
+          ? "Postgres auth is active. No Supabase verification email is required for this account."
+          : "Verification email requested. If Supabase says rate limit exceeded, wait 60+ minutes or configure custom SMTP."
+      );
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not resend verification email."));
     } finally {
@@ -24080,7 +24096,8 @@ function PublicSite({
   const [verificationLinkInput, setVerificationLinkInput] = useState("");
   const [verificationLinkMessage, setVerificationLinkMessage] = useState("Paste a localhost verification or recovery link to convert it for this hosted app.");
   const [busy, setBusy] = useState(false);
-  const authReady = isSupabaseConfigured();
+  const authProvider = getAuthProvider();
+  const authReady = authProvider === "postgres" || isSupabaseConfigured();
   const authRedirectUrl = hostedAuthRedirectUrl();
   const pendingCorporateRegistrationKey = "trustgraph.pendingCorporateRegistration";
   const repairedVerificationUrl = repairHostedAuthLink(verificationLinkInput, authRedirectUrl);
@@ -27549,7 +27566,11 @@ function PublicSite({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!authReady) {
-      setMessage("Hosted auth is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in GitHub secrets.");
+      setMessage(
+        authProvider === "postgres"
+          ? "Hosted Postgres auth API is not reachable yet. Update the VPS containers and try again."
+          : "Hosted auth is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in GitHub secrets."
+      );
       return;
     }
     if (portal === "corporate" && mode === "signup" && (!organizationName.trim() || !organizationDomain.trim())) {
@@ -27563,9 +27584,14 @@ function PublicSite({
       const session =
         mode === "signin"
           ? await signInWithPassword(email, password)
-          : await signUpWithPassword(email, password, authRedirectUrl);
+          : await signUpWithPassword(email, password, authRedirectUrl, {
+              portal,
+              organizationName,
+              organizationType,
+              organizationDomain
+            });
       if (session) {
-        const intentRecorded = await recordLiveRegistrationIntent(session);
+        const intentRecorded = authProvider === "postgres" ? false : await recordLiveRegistrationIntent(session);
         const storedCorporateRegistration = portal === "corporate" ? readPendingCorporateRegistration() : null;
         if (portal === "corporate" && (mode === "signup" || storedCorporateRegistration)) {
           onCorporateSession(session, storedCorporateRegistration ?? pendingCorporateRegistration());
@@ -27576,18 +27602,34 @@ function PublicSite({
         setMessage(
           intentRecorded
             ? portal === "corporate"
-              ? "Corporate portal ready. Registration intent recorded in Supabase."
-              : "Professional Passport ready. Registration intent recorded in Supabase."
+              ? authProvider === "postgres"
+                ? "Corporate portal ready. VPS Postgres account created."
+                : "Corporate portal ready. Registration intent recorded in Supabase."
+              : authProvider === "postgres"
+                ? "Professional Passport ready. VPS Postgres account created."
+                : "Professional Passport ready. Registration intent recorded in Supabase."
             : portal === "corporate"
-              ? "Corporate portal ready. Apply migration 044 to record registration intent rows."
-              : "Professional Passport ready. Apply migration 044 to record registration intent rows."
+              ? authProvider === "postgres"
+                ? "Corporate portal ready. Postgres auth is live; data repository migration is next."
+                : "Corporate portal ready. Apply migration 044 to record registration intent rows."
+              : authProvider === "postgres"
+                ? "Professional Passport ready. Postgres auth is live; data repository migration is next."
+                : "Professional Passport ready. Apply migration 044 to record registration intent rows."
         );
       } else {
         if (portal === "corporate" && mode === "signup") {
           savePendingCorporateRegistration();
-          setMessage("Check your email to confirm the account, then return here and login. Corporate workspace details are saved in this browser. If email is rate-limited, wait 60+ minutes.");
+          setMessage(
+            authProvider === "postgres"
+              ? "Corporate Postgres account created. Login is ready on this VPS."
+              : "Check your email to confirm the account, then return here and login. Corporate workspace details are saved in this browser. If email is rate-limited, wait 60+ minutes."
+          );
         } else {
-          setMessage("Check your email to confirm the account, then login. If email is rate-limited, wait 60+ minutes.");
+          setMessage(
+            authProvider === "postgres"
+              ? "Professional Postgres account created. Login is ready on this VPS."
+              : "Check your email to confirm the account, then login. If email is rate-limited, wait 60+ minutes."
+          );
         }
       }
     } catch (error) {
@@ -27599,7 +27641,7 @@ function PublicSite({
 
   async function resendVerification() {
     if (!authReady) {
-      setMessage("Hosted auth is not configured.");
+      setMessage(authProvider === "postgres" ? "Postgres auth does not need Supabase verification email." : "Hosted auth is not configured.");
       return;
     }
     if (!email) {
@@ -27612,7 +27654,11 @@ function PublicSite({
     try {
       await resendSignupConfirmation(email, authRedirectUrl);
       await saveAuthRecoveryReceipt("signup_verification", false);
-      setMessage("Verification email requested. If the rate limit is active, wait 60+ minutes or configure custom SMTP.");
+      setMessage(
+        authProvider === "postgres"
+          ? "Postgres auth is active. No Supabase verification email is required."
+          : "Verification email requested. If the rate limit is active, wait 60+ minutes or configure custom SMTP."
+      );
     } catch (error) {
       setMessage(authFailureMessage(error, authRedirectUrl, "Could not resend verification email."));
     } finally {
@@ -27622,7 +27668,7 @@ function PublicSite({
 
   async function recoverPassword() {
     if (!authReady) {
-      setMessage("Hosted auth is not configured.");
+      setMessage(authProvider === "postgres" ? "Postgres auth reset will use the next SMTP/reset slice." : "Hosted auth is not configured.");
       return;
     }
     if (!email) {

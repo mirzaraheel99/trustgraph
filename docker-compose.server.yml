@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        NEXT_PUBLIC_AUTH_PROVIDER: ${NEXT_PUBLIC_AUTH_PROVIDER:-postgres}
         NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
     restart: unless-stopped
@@ -17,6 +18,24 @@ services:
       - caddy_config:/config
     depends_on:
       - trustgraph-postgres
+      - trustgraph-auth-api
+
+  trustgraph-auth-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.auth
+    restart: unless-stopped
+    environment:
+      TRUSTGRAPH_AUTH_API_PORT: 4181
+      POSTGRES_HOST: trustgraph-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-trustgraph}
+      POSTGRES_USER: ${POSTGRES_USER:-trustgraph}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.server}
+      TRUSTGRAPH_SESSION_TTL_SECONDS: ${TRUSTGRAPH_SESSION_TTL_SECONDS:-1209600}
+    depends_on:
+      trustgraph-postgres:
+        condition: service_healthy
 
   trustgraph-postgres:
     image: postgres:16-alpine

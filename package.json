@@ -35,16 +35,18 @@
     "check:admin-export-phase-i": "node scripts/check-admin-export-phase-i.mjs",
     "check:public-signup-phase-j": "node scripts/check-public-signup-phase-j.mjs",
     "check:product-preview-phase-k": "node scripts/check-product-preview-phase-k.mjs",
+    "check:postgres-auth-phase-l": "node scripts/check-postgres-auth-phase-l.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "lucide-react": "^0.468.0",
     "next": "^16.0.10",
+    "pg": "^8.23.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "typescript": "^5.7.2",
-    "lucide-react": "^0.468.0"
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@types/node": "^24.0.0"

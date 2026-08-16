@@ -6,5 +6,6 @@ TRUSTGRAPH_HTTPS_PORT=4443
 POSTGRES_DB=trustgraph
 POSTGRES_USER=trustgraph
 POSTGRES_PASSWORD=local-validation-password-12345
+NEXT_PUBLIC_AUTH_PROVIDER=postgres
 NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_validation_only

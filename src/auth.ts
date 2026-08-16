@@ -1,6 +1,7 @@
 import { getSupabaseConfig, isSupabaseConfigured } from "./supabase";
 
 const STORAGE_KEY = "trustgraph.supabase.session";
+const POSTGRES_AUTH_PROVIDER = "postgres";
 
 export interface AuthUser {
   id: string;
@@ -12,6 +13,13 @@ export interface AuthSession {
   refreshToken: string;
   expiresAt: number;
   user: AuthUser;
+}
+
+export interface SignUpOptions {
+  portal?: "professional" | "corporate";
+  organizationName?: string;
+  organizationType?: "employer" | "staffing_agency";
+  organizationDomain?: string;
 }
 
 interface SupabaseAuthResponse {
@@ -27,6 +35,14 @@ interface SupabaseAuthResponse {
 interface SupabaseUserResponse {
   id: string;
   email?: string;
+}
+
+export function getAuthProvider() {
+  return process.env.NEXT_PUBLIC_AUTH_PROVIDER === POSTGRES_AUTH_PROVIDER ? POSTGRES_AUTH_PROVIDER : "supabase";
+}
+
+function isPostgresAuth() {
+  return getAuthProvider() === POSTGRES_AUTH_PROVIDER;
 }
 
 function toSession(response: SupabaseAuthResponse): AuthSession {
@@ -62,6 +78,35 @@ async function readAuthError(response: Response, fallback: string) {
   } catch {
     return text;
   }
+}
+
+async function readPostgresAuthError(response: Response, fallback: string) {
+  const text = await response.text();
+  if (!text) return fallback;
+
+  try {
+    const payload = JSON.parse(text) as { message?: string; error?: string };
+    return payload.message || payload.error || fallback;
+  } catch {
+    return text;
+  }
+}
+
+async function postgresAuth<T>(path: string, body?: Record<string, unknown>, accessToken?: string): Promise<T> {
+  const response = await fetch(`/api/auth/${path.replace(/^\//, "")}`, {
+    method: body ? "POST" : "GET",
+    headers: {
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(body ? { "Content-Type": "application/json" } : {})
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+
+  if (!response.ok) {
+    throw new Error(await readPostgresAuthError(response, "TrustGraph Postgres auth request failed."));
+  }
+
+  return response.json() as Promise<T>;
 }
 
 function authUrl(path: string, redirectTo?: string) {
@@ -105,6 +150,12 @@ export function readStoredSessionUnsafe(): AuthSession | null {
 }
 
 export async function refreshStoredSession(session: AuthSession): Promise<AuthSession> {
+  if (isPostgresAuth()) {
+    const nextSession = await postgresAuth<AuthSession>("session", undefined, session.accessToken);
+    persistSession(nextSession);
+    return nextSession;
+  }
+
   const config = getSupabaseConfig();
   if (!config) {
     throw new Error("Supabase is not configured for this deployment.");
@@ -141,6 +192,8 @@ export async function loadStoredSession(): Promise<AuthSession | null> {
 }
 
 export async function readSessionFromUrl(): Promise<AuthSession | null> {
+  if (isPostgresAuth()) return null;
+
   const config = getSupabaseConfig();
   if (!config || typeof window === "undefined") return null;
 
@@ -184,6 +237,12 @@ export async function readSessionFromUrl(): Promise<AuthSession | null> {
 }
 
 export async function signInWithPassword(email: string, password: string): Promise<AuthSession> {
+  if (isPostgresAuth()) {
+    const session = await postgresAuth<AuthSession>("login", { email, password });
+    persistSession(session);
+    return session;
+  }
+
   const config = getSupabaseConfig();
   if (!config) {
     throw new Error("Supabase is not configured for this deployment.");
@@ -207,7 +266,20 @@ export async function signInWithPassword(email: string, password: string): Promi
   return session;
 }
 
-export async function signUpWithPassword(email: string, password: string, redirectTo?: string): Promise<AuthSession | null> {
+export async function signUpWithPassword(email: string, password: string, redirectTo?: string, options: SignUpOptions = {}): Promise<AuthSession | null> {
+  if (isPostgresAuth()) {
+    const session = await postgresAuth<AuthSession>("signup", {
+      email,
+      password,
+      portal: options.portal ?? "professional",
+      organizationName: options.organizationName,
+      organizationType: options.organizationType,
+      organizationDomain: options.organizationDomain
+    });
+    persistSession(session);
+    return session;
+  }
+
   const { config, url } = authUrl("signup", redirectTo);
 
   const response = await fetch(url, {
@@ -234,6 +306,11 @@ export async function signUpWithPassword(email: string, password: string, redire
 }
 
 export async function requestPasswordRecovery(email: string, redirectTo?: string): Promise<void> {
+  if (isPostgresAuth()) {
+    await postgresAuth("recover", { email, redirectTo });
+    return;
+  }
+
   const { config, url } = authUrl("recover", redirectTo);
 
   const response = await fetch(url, {
@@ -251,6 +328,10 @@ export async function requestPasswordRecovery(email: string, redirectTo?: string
 }
 
 export async function updatePassword(accessToken: string, password: string): Promise<void> {
+  if (isPostgresAuth()) {
+    throw new Error("Password update for VPS Postgres auth will be handled by the admin reset flow in the next backend slice.");
+  }
+
   const config = getSupabaseConfig();
   if (!config) {
     throw new Error("Supabase is not configured for this deployment.");
@@ -272,6 +353,11 @@ export async function updatePassword(accessToken: string, password: string): Pro
 }
 
 export async function resendSignupConfirmation(email: string, redirectTo?: string): Promise<void> {
+  if (isPostgresAuth()) {
+    await postgresAuth("recover", { email, redirectTo, action: "resend_verification" });
+    return;
+  }
+
   const { config, url } = authUrl("resend", redirectTo);
 
   const response = await fetch(url, {
@@ -293,9 +379,14 @@ export async function resendSignupConfirmation(email: string, redirectTo?: strin
 }
 
 export function signOut() {
+  const session = readStoredSessionUnsafe();
+  if (isPostgresAuth() && session?.accessToken) {
+    void postgresAuth("logout", {}, session.accessToken).catch(() => undefined);
+  }
   persistSession(null);
 }
 
 export function authModeLabel() {
+  if (isPostgresAuth()) return "VPS Postgres Auth ready";
   return isSupabaseConfigured() ? "Live Supabase Auth ready" : "Preview mode - add Supabase env vars";
 }
