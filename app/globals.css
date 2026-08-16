@@ -53516,3 +53516,170 @@ body {
     justify-content: center !important;
   }
 }
+
+/* Phase G Corporate Verify review desk */
+.verify-panel:has(.corporate-verify-review-desk) {
+  display: grid !important;
+  gap: 16px !important;
+}
+
+.verify-panel:has(.corporate-verify-review-desk) > .corporate-verify-review-desk {
+  order: -950 !important;
+}
+
+.verify-panel:has(.corporate-verify-review-desk) > .corporate-verify-review-runway {
+  order: -930 !important;
+}
+
+.verify-panel:has(.corporate-verify-review-desk) > .verify-request-form {
+  order: -910 !important;
+}
+
+.verify-panel:has(.corporate-verify-review-desk) > .grant-list {
+  order: -900 !important;
+}
+
+.verify-panel:has(.corporate-verify-review-desk) > :is(
+  .corporate-verify-operator-cockpit,
+  .corporate-reviewer-command-center,
+  .corporate-reviewer-next-action,
+  .corporate-access-answer,
+  .corporate-database-home-command,
+  .corporate-access-path-summary,
+  .corporate-verify-live-command,
+  .empty-verify-state-command,
+  .corporate-verify-first-use,
+  .corporate-verify-access-lane
+) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+.corporate-verify-review-desk {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 20px !important;
+  border: 1px solid rgba(15, 97, 91, 0.18) !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+  display: grid !important;
+  gap: 14px !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+.corporate-verify-review-desk-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  min-width: 0 !important;
+}
+
+.corporate-verify-review-desk-header > div {
+  display: grid !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+}
+
+.corporate-verify-review-desk-header strong {
+  color: #16181a !important;
+  font-size: 22px !important;
+  font-weight: 550 !important;
+  line-height: 1.15 !important;
+}
+
+.corporate-verify-review-desk-header small,
+.corporate-verify-review-desk-grid small,
+.corporate-verify-review-desk-proof span {
+  color: #5f6866 !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+}
+
+.corporate-verify-review-desk-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr)) !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.corporate-verify-review-desk-grid button {
+  min-height: 44px !important;
+  min-width: 0 !important;
+  padding: 14px !important;
+  border: 1px solid #e1e5e3 !important;
+  border-radius: 10px !important;
+  background: #fbfbfa !important;
+  color: #16181a !important;
+  display: grid !important;
+  gap: 8px !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.corporate-verify-review-desk-grid button.ready {
+  border-color: rgba(15, 97, 91, 0.28) !important;
+  background: #e6f2f0 !important;
+}
+
+.corporate-verify-review-desk-grid button:hover {
+  border-color: #137c74 !important;
+  background: #ffffff !important;
+}
+
+.corporate-verify-review-desk-grid span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #0f615b !important;
+  font-size: 12px !important;
+  font-weight: 550 !important;
+}
+
+.corporate-verify-review-desk-grid strong {
+  color: #16181a !important;
+  font-size: 16px !important;
+  font-weight: 550 !important;
+  line-height: 1.25 !important;
+}
+
+.corporate-verify-review-desk-proof {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.corporate-verify-review-desk-proof span {
+  min-height: 32px !important;
+  padding: 7px 10px !important;
+  border: 1px solid rgba(15, 97, 91, 0.18) !important;
+  border-radius: 999px !important;
+  background: #e6f2f0 !important;
+  color: #0f615b !important;
+  font-weight: 550 !important;
+}
+
+@media (max-width: 900px) {
+  .corporate-verify-review-desk-header {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .corporate-verify-review-desk-header .primary-action,
+  .corporate-verify-review-desk-header .secondary-action {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}

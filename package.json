@@ -30,6 +30,7 @@
     "check:public-phase-d": "node scripts/check-public-phase-d.mjs",
     "check:auth-phase-e": "node scripts/check-auth-phase-e.mjs",
     "check:corporate-phase-f": "node scripts/check-corporate-phase-f.mjs",
+    "check:corporate-verify-phase-g": "node scripts/check-corporate-verify-phase-g.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {

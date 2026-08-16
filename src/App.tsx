@@ -3920,6 +3920,83 @@ function VerifyRequestsPanel({
     { label: "Visible rows", value: sharedRecords.length ? `${sharedRecords.length}` : "Locked", detail: "Only scoped approved rows can show.", ready: sharedRecords.length > 0 },
     { label: "Review proof", value: reviews.length ? `${reviews.length} saved` : "Needed", detail: pendingGapCount ? `${pendingGapCount} open gaps.` : "Attest after review.", ready: reviews.length > 0 && pendingGapCount === 0 }
   ];
+  const corporateVerifyReviewDesk = {
+    mode: "corporate_verify_review_desk",
+    status: disabled
+      ? "corporate_role_required"
+      : sharedRecords.length
+        ? reviews.length && pendingGapCount === 0
+          ? "ready_for_metadata_export"
+          : "review_scoped_rows"
+        : approvedCount
+          ? "approval_ready_reload_rows"
+          : requests.length
+            ? "waiting_for_professional_approval"
+            : "request_one_professional",
+    headline: disabled
+      ? "Activate Corporate Verify access"
+      : sharedRecords.length
+        ? "Review approved scoped rows"
+        : requests.length
+          ? "Approval controls what appears"
+          : "Start with one professional request",
+    next_action: corporateReviewerNextAction.primary_action,
+    next_target: corporateReviewerNextAction.primary_target,
+    no_open_user_database: true,
+    metadata_only_export: true,
+    accepted_when:
+      "corporate_verify_review_desk_keeps_role_request_approval_scoped_rows_review_proof_metadata_export_empty_state_and_no_open_user_database_visible_before_dense_verify_panels"
+  };
+  const corporateVerifyReviewDeskCards = [
+    {
+      label: "Role",
+      value: disabled ? "Locked" : "Active",
+      detail: disabled ? "Switch into a Corporate reviewer role first." : activeOrganization.name,
+      icon: KeyRound,
+      ready: !disabled,
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Request",
+      value: requests.length ? `${requests.length} sent` : "Send first",
+      detail: "Request one professional by email with a clear business purpose.",
+      icon: UserPlus,
+      ready: requests.length > 0,
+      target: "corporate-verify-request-form"
+    },
+    {
+      label: "Approval",
+      value: approvedCount ? `${approvedCount} approved` : requestedCount ? `${requestedCount} waiting` : "Waiting",
+      detail: "Professional approval is required before any Passport rows appear.",
+      icon: ShieldCheck,
+      ready: approvedCount > 0,
+      target: "corporate-verify-request-list"
+    },
+    {
+      label: "Scoped rows",
+      value: sharedRecords.length ? `${sharedRecords.length} visible` : "Hidden",
+      detail: "Only approved, consent-scoped rows load for this company.",
+      icon: Eye,
+      ready: sharedRecords.length > 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Review proof",
+      value: reviews.length ? `${reviews.length} saved` : "Needed",
+      detail: pendingGapCount ? `${pendingGapCount} open gaps need action.` : "Record an attestation after row review.",
+      icon: ClipboardCheck,
+      ready: reviews.length > 0 && pendingGapCount === 0,
+      target: "corporate-access-review-queue"
+    },
+    {
+      label: "Export",
+      value: sharedRecords.length && reviews.length ? "Ready" : "After review",
+      detail: "Export metadata proof only. Private evidence files stay protected.",
+      icon: Download,
+      ready: sharedRecords.length > 0 && reviews.length > 0,
+      target: "export"
+    }
+  ];
   const emptyVerifyStateCommand = {
     mode: "empty_verify_state_command",
     visible_shared_rows: sharedRecords.length,
@@ -4356,7 +4433,72 @@ function VerifyRequestsPanel({
             <strong>{corporateAccessPathSummary.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
           </span>
         </div>
-        <div className="corporate-access-path-summary-boundary">{corporateAccessPathSummary.accepted_when}</div>
+      <div className="corporate-access-path-summary-boundary">{corporateAccessPathSummary.accepted_when}</div>
+      </div>
+      <div className={`corporate-verify-review-desk ${corporateVerifyReviewDesk.status}`} aria-label="Corporate Verify review desk">
+        <div className="corporate-verify-review-desk-header">
+          <div>
+            <span className={`status-chip ${sharedRecords.length ? "success" : "warning"}`}>Corporate Verify review desk</span>
+            <strong>{corporateVerifyReviewDesk.headline}</strong>
+            <small>
+              A corporate reviewer cannot browse every user. The work is request, approval, scoped rows, review proof, and metadata export.
+            </small>
+          </div>
+          <button
+            className={corporateVerifyReviewDesk.status === "ready_for_metadata_export" ? "secondary-action" : "primary-action"}
+            onClick={() => {
+              if (corporateVerifyReviewDesk.next_target === "export") {
+                downloadTextFile(
+                  `trustgraph-corporate-verify-review-desk-${new Date().toISOString().slice(0, 10)}.json`,
+                  JSON.stringify({ ...corporateVerifyReviewDesk, cards: corporateVerifyReviewDeskCards.map(({ icon: _icon, ...card }) => card) }, null, 2),
+                  "application/json"
+                );
+                return;
+              }
+              document.getElementById(corporateVerifyReviewDesk.next_target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            type="button"
+          >
+            {corporateVerifyReviewDesk.next_action}
+          </button>
+        </div>
+        <div className="corporate-verify-review-desk-grid">
+          {corporateVerifyReviewDeskCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <button
+                className={card.ready ? "ready" : "needed"}
+                key={card.label}
+                onClick={() => {
+                  if (card.target === "export") {
+                    downloadTextFile(
+                      `trustgraph-corporate-verify-review-desk-${new Date().toISOString().slice(0, 10)}.json`,
+                      JSON.stringify({ ...corporateVerifyReviewDesk, cards: corporateVerifyReviewDeskCards.map(({ icon: _icon, ...row }) => row) }, null, 2),
+                      "application/json"
+                    );
+                    return;
+                  }
+                  document.getElementById(card.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                type="button"
+              >
+                <span>
+                  <Icon size={16} />
+                  {card.label}
+                </span>
+                <strong>{card.value}</strong>
+                <small>{card.detail}</small>
+              </button>
+            );
+          })}
+        </div>
+        <div className="corporate-verify-review-desk-proof">
+          <span>Approved grants: {approvedCount}</span>
+          <span>Visible scoped rows: {sharedRecords.length}</span>
+          <span>Review attestations: {reviews.length}</span>
+          <span>No open user database</span>
+          <span>Metadata-only export</span>
+        </div>
       </div>
       <div className={`corporate-verify-operator-cockpit ${!disabled && sharedRecords.length > 0 ? "ready" : "next"}`} aria-label="Corporate Verify operator cockpit">
         <div className="corporate-verify-operator-header">
