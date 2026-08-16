@@ -27,6 +27,7 @@
     "check:premium-layout": "node scripts/check-premium-layout.mjs",
     "check:visual-design-tokens": "node scripts/check-visual-design-tokens.mjs",
     "check:app-shell-phase-c": "node scripts/check-app-shell-phase-c.mjs",
+    "check:public-phase-d": "node scripts/check-public-phase-d.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {

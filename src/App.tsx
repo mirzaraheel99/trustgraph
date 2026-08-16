@@ -24864,7 +24864,7 @@ function PublicSite({
       bestFor: "Employers and staffing teams reviewing approved professional records.",
       firstDatabaseWrite: "Company organization and admin membership",
       afterLogin: "RBAC team, billing ledger, Verify requests, and review queue",
-      pricing: "$149 pilot monthly"
+      pricing: "$149/month per company"
     }
   ];
   const publicAuthFlowCommand = {
@@ -26886,7 +26886,7 @@ function PublicSite({
       corporate: {
         buyer: "Employer or staffing company",
         start_here: "Register a company",
-        pricing: "$149 pilot monthly",
+        pricing: "$149/month per company",
         live_database_result: "Company organization, admin membership, team controls, billing ledger, and Verify requests"
       }
     },
@@ -27319,7 +27319,7 @@ function PublicSite({
     {
       label: "Corporate company",
       action: "Create company",
-      plan: "$149 pilot monthly",
+      plan: "$149/month per company",
       firstWrite: "Company organization and admin membership",
       dashboard: "Corporate Verify, RBAC team, billing, and user access requests",
       portal: "corporate" as const
@@ -27337,7 +27337,7 @@ function PublicSite({
     },
     {
       label: "Corporate Verify",
-      price: "$149 pilot monthly",
+      price: "$149/month per company",
       chooseWhen: "You review candidates, staff, contractors, or clinicians after they approve scoped access.",
       firstWrite: "Company organization, admin membership, pricing ledger, team, and Verify workspace.",
       portalOutcome: "Corporate portal can request one professional by email and see approved shared rows only.",
@@ -27805,7 +27805,7 @@ function PublicSite({
               ))}
               <button className="pricing" onClick={() => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" })} type="button">
                 <span>Pricing</span>
-                <strong>{portal === "corporate" ? "$149 pilot monthly" : "$0 professional pilot"}</strong>
+                <strong>{portal === "corporate" ? "$149/month per company" : "$0 professional pilot"}</strong>
                 <small>{selectedRegistrationPath.paymentStatus}</small>
                 <small>Review price and database path before signup.</small>
               </button>
@@ -28353,7 +28353,7 @@ function PublicSite({
             </span>
             <span>
               <strong>Corporate company</strong>
-              <small>Start with Corporate Verify at $149 pilot monthly, then provision RBAC, team seats, and review workflows.</small>
+              <small>Start with Corporate Verify at $149/month per company, then provision RBAC, reviewer tracking, and review workflows.</small>
             </span>
           </div>
         </div>
@@ -32285,7 +32285,7 @@ function App() {
           subscriptions.length ? `Live subscriptions: ${subscriptions.length}` : "Choose a plan for corporate workflows"
         );
         setTeamStatus(invitations.length ? `Team invitations: ${invitations.length}` : "No team invitations yet");
-        setMemberStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
+        setMemberStatus(members.length ? `Reviewers tracked: ${members.length}` : "No team members loaded yet");
         setRegistrationIntentStatus(intents.length ? `Registration intents: ${intents.length}` : "No registration intent rows yet");
         setRegistrationCompletionStatus(completionReceipts.length ? `Registration completion receipts: ${completionReceipts.length}` : "No registration completion receipts yet");
         setV1ReadinessStatus(readinessReceipts.length ? `V1 readiness receipts: ${readinessReceipts.length}` : "No V1 live database readiness receipts yet");
@@ -33686,7 +33686,7 @@ function App() {
     setGrantStatus(grants.length ? "Live Supabase Access Grants" : "No Access Grants yet");
     setConsentStatus(consents.length ? `Live consent authorizations: ${consents.length}` : "No consent authorizations yet");
     setBillingStatus(subscriptions.length ? `Live subscriptions: ${subscriptions.length}` : "Choose a plan for corporate workflows");
-    setTeamStatus(members.length ? `Team seats: ${members.length}` : "No team members loaded yet");
+    setTeamStatus(members.length ? `Reviewers tracked: ${members.length}` : "No team members loaded yet");
     setVerifyStatus(
       verifyRequests.length || sharedRecords.length
         ? `Live Supabase Verify data: ${verifyRequests.length} requests, ${sharedRecords.length} shared records, ${reviews.length} review attestations, ${visibilitySnapshots.length} visibility snapshots`

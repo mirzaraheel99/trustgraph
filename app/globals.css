@@ -52957,3 +52957,335 @@ body {
   order: -740 !important;
   grid-template-columns: minmax(0, 1fr) !important;
 }
+
+/* Phase D public SaaS front door: one premium website, pricing, and auth entry flow. */
+.public-site:has(.public-login-route-cockpit) {
+  --tg-public-shell-max: 1200px !important;
+  background: #fbfbfa !important;
+  color: #16181a !important;
+  overflow-x: hidden !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-nav,
+.public-site:has(.public-login-route-cockpit) .public-hero,
+.public-site:has(.public-login-route-cockpit) .pricing-section,
+.public-site:has(.public-login-route-cockpit) .public-auth-section {
+  width: min(var(--tg-public-shell-max), calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  margin-inline: auto !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-nav {
+  min-height: 64px !important;
+  padding: 12px 0 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  background: #fbfbfa !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .brand-symbol {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+  background: #0f615b !important;
+  color: #ffffff !important;
+  font-size: 0 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .brand-symbol::after {
+  content: "TG" !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .brand strong {
+  color: #16181a !important;
+  font-size: 18px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .brand span,
+.public-site:has(.public-login-route-cockpit) .eyebrow {
+  color: #5b6470 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero {
+  min-height: auto !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.58fr) minmax(360px, 0.42fr) !important;
+  gap: clamp(28px, 4vw, 56px) !important;
+  align-items: start !important;
+  padding: clamp(48px, 7vw, 86px) 0 40px !important;
+  background: #fbfbfa !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero > div:first-child {
+  display: grid !important;
+  gap: 22px !important;
+  min-width: 0 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero h1 {
+  max-width: 12ch !important;
+  color: #16181a !important;
+  font-size: clamp(34px, 5.6vw, 56px) !important;
+  font-weight: 550 !important;
+  line-height: 1.02 !important;
+  letter-spacing: 0 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero p {
+  max-width: 58ch !important;
+  color: #5b6470 !important;
+  font-size: 17px !important;
+  line-height: 1.55 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-hero-actions,
+.public-site:has(.public-login-route-cockpit) .public-nav-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) :is(button, input, select, textarea) {
+  min-height: 44px !important;
+  max-width: 100% !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  pointer-events: auto !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .primary-action {
+  border-color: #0f615b !important;
+  background: #0f615b !important;
+  color: #ffffff !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .primary-action:hover {
+  border-color: #137c74 !important;
+  background: #137c74 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .secondary-action,
+.public-site:has(.public-login-route-cockpit) .pricing {
+  border: 1px solid #d5d9de !important;
+  background: #ffffff !important;
+  color: #16181a !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer,
+.public-site:has(.public-login-route-cockpit) .pricing-card,
+.public-site:has(.public-login-route-cockpit) .public-pricing-estimator,
+.public-site:has(.public-login-route-cockpit) .public-auth-card,
+.public-site:has(.public-login-route-cockpit) .public-route-answer-bar,
+.public-auth-card:has(.public-login-route-cockpit) > .public-login-route-cockpit,
+.public-auth-card:has(.public-login-route-cockpit) > .public-credential-station,
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-help-strip,
+.public-auth-card:has(.public-login-route-cockpit) > .public-plan-portal-chooser {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  color: #16181a !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer {
+  padding: 24px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid,
+.public-site:has(.public-login-route-cockpit) .pricing-grid,
+.public-site:has(.public-login-route-cockpit) .public-pricing-estimator-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important;
+  gap: 12px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-product-answer-grid article,
+.public-site:has(.public-login-route-cockpit) .pricing-grid article,
+.public-site:has(.public-login-route-cockpit) .public-pricing-estimator-grid span {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  color: #16181a !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .pricing-section {
+  padding-block: 32px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section {
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.58fr) minmax(360px, 0.42fr) !important;
+  gap: clamp(20px, 3vw, 36px) !important;
+  align-items: start !important;
+  padding-block: 42px 64px !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child {
+  position: sticky !important;
+  top: 82px !important;
+  display: grid !important;
+  gap: 16px !important;
+  min-width: 0 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-card {
+  display: grid !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 20px !important;
+  overflow-x: clip !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-login-route-cockpit {
+  order: -600 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-credential-station {
+  order: -590 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-help-strip {
+  order: -580 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > .public-plan-portal-chooser {
+  order: -570 !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-help-strip-header,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-grid,
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-status,
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-fields,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-readiness,
+.public-auth-card:has(.public-login-route-cockpit) .public-credential-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-help-strip-grid,
+.public-auth-card:has(.public-login-route-cockpit) .public-auth-help-strip-actions,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-routes,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-grid,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) .public-login-route-grid button.active,
+.public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-routes button.active {
+  border-color: #0f615b !important;
+  background: #e6f2f0 !important;
+  color: #0f615b !important;
+}
+
+.public-auth-card:has(.public-login-route-cockpit) > :is(
+  .public-route-decision-desk,
+  .auth-portal-console,
+  .login-portal-desk,
+  .auth-credential-command,
+  .public-access-hub,
+  .public-account-entry-launchpad,
+  .public-auth-start-strip,
+  .public-account-access-path,
+  .public-auth-experience-studio,
+  .public-account-path-chooser,
+  .public-conversion-runway,
+  .public-v1-access-runway,
+  .public-portal-route-shell,
+  .public-auth-front-desk,
+  .public-access-desk,
+  .public-login-primary-choice,
+  .public-portal-entry-desk,
+  .public-portal-switchboard,
+  .public-access-command-center,
+  .public-entry-sequence,
+  .public-registration-pricing-gate,
+  .public-signup-answer-bar,
+  .registration-outcome-command,
+  .registration-outcome-receipt,
+  .registration-completion-handoff,
+  .public-portal-acceptance-checkpoint,
+  .public-auth-server-checkpoint,
+  .hosted-auth-redirect-verification,
+  .email-verification-delivery-receipt,
+  .login-issue-resolver,
+  .auth-recovery-database-receipt,
+  .hosted-callback-proof,
+  .auth-operator-details
+) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+.public-site:has(.public-login-route-cockpit) :is(strong, small, span, p, label, em, code, b) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 900px) {
+  .public-site:has(.public-login-route-cockpit) .public-hero,
+  .public-site:has(.public-login-route-cockpit) .public-auth-section {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child {
+    position: relative !important;
+    top: auto !important;
+  }
+
+  .public-auth-card:has(.public-login-route-cockpit) .public-login-route-header,
+  .public-auth-card:has(.public-login-route-cockpit) .public-credential-station-header,
+  .public-auth-card:has(.public-login-route-cockpit) .public-auth-help-strip-header,
+  .public-auth-card:has(.public-login-route-cockpit) .public-plan-portal-chooser-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .public-site:has(.public-login-route-cockpit) .public-nav,
+  .public-site:has(.public-login-route-cockpit) .public-hero,
+  .public-site:has(.public-login-route-cockpit) .pricing-section,
+  .public-site:has(.public-login-route-cockpit) .public-auth-section {
+    width: min(100%, calc(100vw - 16px)) !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  .public-site:has(.public-login-route-cockpit) .public-hero h1 {
+    max-width: 13ch !important;
+    font-size: 34px !important;
+  }
+
+  .public-site:has(.public-login-route-cockpit) .public-auth-card,
+  .public-site:has(.public-login-route-cockpit) .public-product-answer {
+    padding: 14px !important;
+  }
+}
