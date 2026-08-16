@@ -93,6 +93,9 @@ jobs:
       - name: Verify Phase I admin export
         run: pnpm check:admin-export-phase-i
 
+      - name: Verify Phase J public signup rescue
+        run: pnpm check:public-signup-phase-j
+
       - name: Verify hosted auth flow
         run: pnpm check:hosted-auth-flow
 

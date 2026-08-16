@@ -33,6 +33,7 @@
     "check:corporate-verify-phase-g": "node scripts/check-corporate-verify-phase-g.mjs",
     "check:evidence-phase-h": "node scripts/check-evidence-phase-h.mjs",
     "check:admin-export-phase-i": "node scripts/check-admin-export-phase-i.mjs",
+    "check:public-signup-phase-j": "node scripts/check-public-signup-phase-j.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {
