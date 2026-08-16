@@ -41288,6 +41288,102 @@ body {
   }
 }
 
+/* Phase E auth recovery polish: make login, reset, resend, and logout obvious. */
+.public-auth-card:has(.public-login-route-cockpit) > .public-auth-status-strip {
+  order: -620 !important;
+}
+
+.public-auth-status-strip,
+.account-recovery-status-strip {
+  display: grid !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 16px !important;
+  border: 1px solid #d7e8e5 !important;
+  border-radius: 10px !important;
+  background: #e6f2f0 !important;
+  color: #16181a !important;
+  box-shadow: 0 1px 2px rgba(22, 24, 26, 0.08) !important;
+  overflow-x: clip !important;
+}
+
+.public-auth-status-strip.needed,
+.account-recovery-status-strip.needed {
+  border-color: #efd8a3 !important;
+  background: #fff8e7 !important;
+}
+
+.public-auth-status-strip-header,
+.account-recovery-status-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.public-auth-status-strip-grid,
+.account-recovery-status-grid,
+.public-auth-status-strip-actions,
+.account-recovery-status-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.public-auth-status-strip-grid button,
+.account-recovery-status-grid span {
+  display: grid !important;
+  align-content: start !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  min-height: 82px !important;
+  padding: 10px !important;
+  text-align: left !important;
+  border: 1px solid #d5d9de !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #16181a !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+.public-auth-status-strip-grid button.ready,
+.account-recovery-status-grid span.ready {
+  border-color: #b7d7d2 !important;
+}
+
+.public-auth-status-strip-grid button.needed,
+.account-recovery-status-grid span.needed {
+  border-color: #efd8a3 !important;
+}
+
+.public-auth-status-strip :is(button, strong, small, span, p, em, b, code, div),
+.account-recovery-status-strip :is(button, strong, small, span, p, em, b, code, div) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.public-auth-status-strip button,
+.account-recovery-status-strip button {
+  min-height: 44px !important;
+  pointer-events: auto !important;
+}
+
+.account-recovery-status-strip {
+  order: -820 !important;
+  background: #ffffff !important;
+}
+
+@media (max-width: 760px) {
+  .public-auth-status-strip-header,
+  .account-recovery-status-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 /* Public access hub: one premium user/corporate login path before credentials. */
 .public-access-answer {
   order: -120;

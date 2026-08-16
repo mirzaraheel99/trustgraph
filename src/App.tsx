@@ -19830,6 +19830,46 @@ function AuthPanel({
     accepted_when:
       "account_action_bar_keeps_logout_recovery_password_update_data_export_and_hosted_redirect_visible_before_deep_audit_panels"
   };
+  const accountRecoveryStatusStrip = {
+    mode: "account_recovery_status_strip",
+    session_state: session ? "signed_in" : "signed_out",
+    active_email: session?.user.email ?? email,
+    recovery_session_ready: recoverySessionReady,
+    hosted_redirect_url: authRedirectUrl,
+    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
+    next_action: recoverySessionReady
+      ? "Set the new password, then keep working in the same hosted session."
+      : "Use Reset password only when the account cannot login; use Sign out before switching users.",
+    controls_visible: ["sign_out", "reset_password", "resend_verification", "set_new_password", "copy_hosted_redirect"],
+    accepted_when:
+      "account_recovery_status_strip_keeps_signed_in_email_logout_reset_resend_set_new_password_hosted_redirect_rate_limit_and_session_switching_visible"
+  };
+  const accountRecoveryStatusRows = [
+    {
+      label: "Session",
+      value: session ? "Signed in" : "Signed out",
+      detail: session?.user.email ?? "Login before account actions.",
+      ready: Boolean(session)
+    },
+    {
+      label: "Recovery",
+      value: recoverySessionReady ? "Ready" : "Optional",
+      detail: accountRecoveryStatusStrip.next_action,
+      ready: true
+    },
+    {
+      label: "Redirect",
+      value: accountRecoveryStatusStrip.redirect_is_hosted ? "Hosted" : "Fix URL",
+      detail: authRedirectUrl,
+      ready: accountRecoveryStatusStrip.redirect_is_hosted
+    },
+    {
+      label: "Logout",
+      value: session ? "Visible" : "After login",
+      detail: "Clear this browser session before testing another account.",
+      ready: Boolean(session)
+    }
+  ];
 
   return (
     <section className="auth-panel" id="live-auth-controls">
@@ -19839,6 +19879,48 @@ function AuthPanel({
       </div>
       {session ? (
         <div className="auth-session">
+          <div className={`account-recovery-status-strip ${accountRecoveryStatusStrip.redirect_is_hosted ? "ready" : "needed"}`} aria-label="Account recovery status strip">
+            <div className="account-recovery-status-header">
+              <div>
+                <span className={`status-chip ${recoverySessionReady ? "success" : "neutral"}`}>Recovery</span>
+                <strong>{recoverySessionReady ? "Set a new password now" : "Account controls are ready"}</strong>
+                <small>{accountRecoveryStatusStrip.next_action}</small>
+              </div>
+              <button
+                className="secondary-action danger-action"
+                onClick={() => {
+                  signOut();
+                  onSession(null);
+                  setMessage(authModeLabel());
+                }}
+                type="button"
+              >
+                <LogOut size={16} />
+                Sign out
+              </button>
+            </div>
+            <div className="account-recovery-status-grid">
+              {accountRecoveryStatusRows.map((row) => (
+                <span className={row.ready ? "ready" : "needed"} key={row.label}>
+                  <small>{row.label}</small>
+                  <strong>{row.value}</strong>
+                  <em>{row.detail}</em>
+                </span>
+              ))}
+            </div>
+            <div className="account-recovery-status-actions">
+              <button className="secondary-action" disabled={busy || !session} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={busy || !session} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+              <button className="secondary-action" onClick={() => void copyRedirectUrl()} type="button">
+                Copy hosted redirect
+              </button>
+            </div>
+            <small className="account-recovery-status-proof">{accountRecoveryStatusStrip.accepted_when}</small>
+          </div>
           <div className="account-action-bar" aria-label="Account action bar">
             <div className="account-action-bar-copy">
               <span className={`status-chip ${recoverySessionReady ? "success" : "neutral"}`}>Account</span>
@@ -27580,6 +27662,52 @@ function PublicSite({
     { label: "Server", value: publicPortalLaunchAnswer.server_status.replaceAll("_", " "), detail: serverSyncMonitor.detail },
     { label: "Corporate data", value: "Scoped rows only", detail: publicPortalLaunchAnswer.corporate_database_rule }
   ];
+  const publicAuthStatusStrip = {
+    mode: "public_auth_status_strip",
+    selected_portal: portal,
+    selected_action: mode,
+    email_ready: Boolean(email),
+    password_ready: Boolean(password),
+    corporate_workspace_ready: portal !== "corporate" || mode !== "signup" || Boolean(organizationName && organizationDomain),
+    hosted_redirect_url: authRedirectUrl,
+    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
+    rate_limit_guidance: "Supabase project email can rate-limit; use one resend or reset, then wait 60+ minutes if limited.",
+    controls_visible: ["login_or_create", "reset_password", "resend_verification", "copy_hosted_redirect", "repair_localhost_callback"],
+    accepted_when:
+      "public_auth_status_strip_keeps_selected_portal_login_register_email_password_company_fields_reset_resend_hosted_redirect_rate_limit_and_localhost_repair_visible_before_submit"
+  };
+  const publicAuthStatusRows = [
+    {
+      label: "Route",
+      value: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signin" ? "login" : "register"}`,
+      detail: portal === "corporate" ? "Company workspace after account verification." : "Private Passport after account verification.",
+      ready: true
+    },
+    {
+      label: "Email",
+      value: email ? "Ready" : "Required",
+      detail: email || "Use the same address for login, verification, and reset.",
+      ready: Boolean(email)
+    },
+    {
+      label: "Password",
+      value: password ? "Ready" : "Required",
+      detail: mode === "signin" ? "Existing account password." : "New account password.",
+      ready: Boolean(password)
+    },
+    {
+      label: "Company fields",
+      value: publicAuthStatusStrip.corporate_workspace_ready ? "Ready" : "Required",
+      detail: portal === "corporate" && mode === "signup" ? "Organization and domain are needed." : "Not needed for this route.",
+      ready: publicAuthStatusStrip.corporate_workspace_ready
+    },
+    {
+      label: "Email links",
+      value: publicAuthStatusStrip.redirect_is_hosted ? "Hosted" : "Fix redirect",
+      detail: authRedirectUrl,
+      ready: publicAuthStatusStrip.redirect_is_hosted
+    }
+  ];
   function openPortal(nextPortal: "professional" | "corporate") {
     setPortal(nextPortal);
     setMode("signup");
@@ -29131,6 +29259,50 @@ function PublicSite({
           </div>
         </div>
         <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
+          <div className={`public-auth-status-strip ${publicAuthStatusStrip.redirect_is_hosted ? "ready" : "needed"}`} aria-label="Public auth status strip">
+            <div className="public-auth-status-strip-header">
+              <div>
+                <span className={`status-chip ${email && password && publicAuthStatusStrip.corporate_workspace_ready ? "success" : "warning"}`}>Auth status</span>
+                <strong>{email && password && publicAuthStatusStrip.corporate_workspace_ready ? "Ready to continue" : "Complete the account fields first"}</strong>
+                <small>{publicAuthStatusStrip.rate_limit_guidance}</small>
+              </div>
+              <button className="secondary-action" onClick={() => void copyHostedRedirectUrl()} type="button">
+                Copy hosted redirect
+              </button>
+            </div>
+            <div className="public-auth-status-strip-grid">
+              {publicAuthStatusRows.map((row) => (
+                <button
+                  className={row.ready ? "ready" : "needed"}
+                  key={row.label}
+                  onClick={() => {
+                    if (row.label === "Email links") {
+                      void copyHostedRedirectUrl();
+                      return;
+                    }
+                    document.getElementById("public-auth-email")?.focus();
+                  }}
+                  type="button"
+                >
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                  <small>{row.detail}</small>
+                </button>
+              ))}
+            </div>
+            <div className="public-auth-status-strip-actions">
+              <button className="primary-action" disabled={busy || !email || !password || !publicAuthStatusStrip.corporate_workspace_ready} type="submit">
+                {mode === "signin" ? "Login" : "Create account"}
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
+                Reset password
+              </button>
+              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
+                Resend verification
+              </button>
+            </div>
+            <small className="public-auth-status-strip-proof">{publicAuthStatusStrip.accepted_when}</small>
+          </div>
           <div className={`public-registration-path-summary ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public registration path summary">
             <div className="public-registration-path-summary-header">
               <div>

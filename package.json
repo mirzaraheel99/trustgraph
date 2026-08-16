@@ -28,6 +28,7 @@
     "check:visual-design-tokens": "node scripts/check-visual-design-tokens.mjs",
     "check:app-shell-phase-c": "node scripts/check-app-shell-phase-c.mjs",
     "check:public-phase-d": "node scripts/check-public-phase-d.mjs",
+    "check:auth-phase-e": "node scripts/check-auth-phase-e.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {

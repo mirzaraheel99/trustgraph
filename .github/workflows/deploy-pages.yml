@@ -78,6 +78,9 @@ jobs:
       - name: Verify Phase D public shell
         run: pnpm check:public-phase-d
 
+      - name: Verify Phase E auth polish
+        run: pnpm check:auth-phase-e
+
       - name: Verify hosted auth flow
         run: pnpm check:hosted-auth-flow
 
