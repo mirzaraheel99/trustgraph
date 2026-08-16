@@ -28146,7 +28146,7 @@ function PublicSite({
               Sign out
             </button>
           ) : null}
-          <button className="primary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView()}>
+          <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()}>
             Get started
           </button>
         </div>

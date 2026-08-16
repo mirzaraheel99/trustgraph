@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 
 const css = readFileSync("app/globals.css", "utf8");
+const app = readFileSync("src/App.tsx", "utf8");
 
 function assert(condition, message) {
   if (!condition) {
@@ -17,6 +18,9 @@ const markers = [
   "grid-template-columns: repeat(2, minmax(0, 1fr)) !important;",
   ".public-auth-action-dock",
   ".public-auth-card > :is(",
+  ".public-auth-section > .public-auth-card",
+  "order: -1200 !important;",
+  ".public-auth-section > div:first-child > .public-route-answer-bar",
   ".public-proof.public-command-center",
   "display: none !important;",
   "clip-path: inset(50%) !important;",
@@ -30,5 +34,6 @@ for (const marker of markers) {
 assert(css.includes(".registration-completion-handoff"), "duplicate completion handoff must be hidden from the first auth flow.");
 assert(css.includes(".public-hosted-server-freshness-alert"), "server proof panel must be demoted from the first auth flow.");
 assert(!css.includes("letter-spacing: -"), "public signup rescue must not add negative letter spacing.");
+assert(app.includes('onClick={() => document.getElementById("public-auth-email")?.focus()}>\n            Get started'), "Get started must focus the email credential field.");
 
 console.log(`TrustGraph Phase J public signup check passed: ${markers.length} CSS markers verified.`);

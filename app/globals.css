@@ -54089,6 +54089,27 @@ body {
   padding-block: 28px 56px !important;
 }
 
+.public-site:has(.public-login-route-cockpit) .public-auth-section > .public-auth-card {
+  order: -1200 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child {
+  order: 20 !important;
+}
+
+.public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child > .public-route-answer-bar {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
 .public-site:has(.public-login-route-cockpit) .public-auth-section > div:first-child,
 .public-site:has(.public-login-route-cockpit) .public-auth-card,
 .public-site:has(.public-login-route-cockpit) .public-proof.public-command-center {
