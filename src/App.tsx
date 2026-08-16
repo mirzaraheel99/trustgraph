@@ -39047,6 +39047,85 @@ function App() {
       target: "setup" as WorkspaceId
     }
   ];
+  const corporateWorkspaceCommandStrip = {
+    mode: "corporate_workspace_command_strip",
+    organization: activeOrganization.name,
+    role: activeRole.label,
+    signed_in: Boolean(authSession),
+    billing: "$149/month per company",
+    scoped_access: "Corporate Verify requests one professional by email and reviews only approved, consent-scoped rows.",
+    no_open_database_browse: true,
+    accepted_when:
+      "corporate_workspace_command_strip_keeps_company_setup_rbac_roles_reviewer_roster_invitations_company_level_billing_scoped_access_and_no_open_user_database_visible"
+  };
+  const corporateWorkspaceCommandRows = [
+    {
+      label: "Company setup",
+      value: activeOrganization.name,
+      detail: "Create or switch the company workspace before assigning reviewer roles.",
+      action: "Open setup",
+      icon: BriefcaseBusiness,
+      ready: activeOrganization.type !== "professional",
+      onClick: openCorporateControls
+    },
+    {
+      label: "RBAC roles",
+      value: activeRole.label,
+      detail: "Admins manage roles; reviewers enter Corporate Verify with scoped permissions.",
+      action: "Manage roles",
+      icon: KeyRound,
+      ready: hasPermission(activeMembership.role, "organization:manage"),
+      onClick: () => {
+        setSetupView("team");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Reviewer roster",
+      value: teamMembers.length ? `${teamMembers.length} tracked` : "No reviewers",
+      detail: "Reviewer count is visibility only, never per-seat billing.",
+      action: "View roster",
+      icon: Users,
+      ready: teamMembers.length > 0,
+      onClick: () => {
+        setSetupView("team");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Team invitations",
+      value: teamInvitations.length ? `${teamInvitations.filter((invitation) => invitation.status === "pending").length} pending` : "Invite team",
+      detail: "Invite reviewers into the company workspace without exposing all users.",
+      action: "Invite",
+      icon: UserPlus,
+      ready: teamInvitations.length > 0,
+      onClick: () => {
+        setSetupView("team");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "Billing",
+      value: "$149/month per company",
+      detail: "Pilot billing is company-level; reviewer seats are unlimited during pilot.",
+      action: "Open billing",
+      icon: BadgeCheck,
+      ready: organizationSubscriptions.some((subscription) => subscription.status !== "cancelled"),
+      onClick: () => {
+        setSetupView("billing");
+        document.getElementById("corporate-account-controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    {
+      label: "No open user database",
+      value: sharedVerifyRecords.length ? `${sharedVerifyRecords.length} scoped rows` : "Request first",
+      detail: corporateWorkspaceCommandStrip.scoped_access,
+      action: "Open Verify",
+      icon: Database,
+      ready: sharedVerifyRecords.length > 0,
+      onClick: () => openWorkspaceOrSetup("verify")
+    }
+  ];
 
   if (showPublicSite) {
     return (
@@ -39194,6 +39273,56 @@ function App() {
                 );
               })}
             </div>
+            <section className="corporate-workspace-command-strip" aria-label="Corporate workspace command strip">
+              <div className="corporate-workspace-command-header">
+                <div>
+                  <span className={`status-chip ${authSession ? "success" : "warning"}`}>
+                    {authSession ? "Corporate workspace" : "Login required"}
+                  </span>
+                  <strong>{authSession ? `${activeOrganization.name} operating path` : "Create account before company setup"}</strong>
+                  <small>
+                    Company setup, RBAC roles, reviewer roster, team invitations, billing, and scoped access stay visible without opening the user database.
+                  </small>
+                </div>
+                <button className="secondary-action" onClick={openCorporateControls} type="button">
+                  <BriefcaseBusiness size={16} />
+                  Company setup
+                </button>
+              </div>
+              <div className="corporate-workspace-command-grid">
+                {corporateWorkspaceCommandRows.map((row) => {
+                  const Icon = row.icon;
+                  return (
+                    <button className={row.ready ? "ready" : ""} key={row.label} onClick={row.onClick} type="button">
+                      <span>
+                        <Icon size={16} />
+                        {row.label}
+                      </span>
+                      <strong>{row.value}</strong>
+                      <small>{row.detail}</small>
+                      <em>{row.action}</em>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="corporate-workspace-command-actions">
+                <span>{corporateWorkspaceCommandStrip.billing}</span>
+                <span>No open user database</span>
+                <button
+                  className="secondary-action"
+                  onClick={() =>
+                    downloadTextFile(
+                      `trustgraph-corporate-workspace-command-${new Date().toISOString().slice(0, 10)}.json`,
+                      JSON.stringify({ ...corporateWorkspaceCommandStrip, rows: corporateWorkspaceCommandRows.map(({ icon: _icon, onClick: _onClick, ...row }) => row) }, null, 2),
+                      "application/json"
+                    )
+                  }
+                  type="button"
+                >
+                  Export corporate path
+                </button>
+              </div>
+            </section>
           </div>
           <div className="topbar-actions" aria-label="Quick actions">
             <button aria-label="View notifications" onClick={openNotifications} type="button">

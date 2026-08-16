@@ -29,6 +29,7 @@
     "check:app-shell-phase-c": "node scripts/check-app-shell-phase-c.mjs",
     "check:public-phase-d": "node scripts/check-public-phase-d.mjs",
     "check:auth-phase-e": "node scripts/check-auth-phase-e.mjs",
+    "check:corporate-phase-f": "node scripts/check-corporate-phase-f.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {

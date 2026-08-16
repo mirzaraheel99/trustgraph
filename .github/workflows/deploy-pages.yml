@@ -81,6 +81,9 @@ jobs:
       - name: Verify Phase E auth polish
         run: pnpm check:auth-phase-e
 
+      - name: Verify Phase F corporate workspace
+        run: pnpm check:corporate-phase-f
+
       - name: Verify hosted auth flow
         run: pnpm check:hosted-auth-flow
 
