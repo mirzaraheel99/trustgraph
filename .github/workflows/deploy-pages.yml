@@ -87,6 +87,9 @@ jobs:
       - name: Verify Phase G Corporate Verify
         run: pnpm check:corporate-verify-phase-g
 
+      - name: Verify Phase H evidence handoff
+        run: pnpm check:evidence-phase-h
+
       - name: Verify hosted auth flow
         run: pnpm check:hosted-auth-flow
 

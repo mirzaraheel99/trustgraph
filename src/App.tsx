@@ -900,6 +900,78 @@ function RecordDetail({
       action: "packet" as const
     }
   ];
+  const evidenceHandoffDesk = {
+    mode: "evidence_handoff_desk",
+    status: firstFileBackedEvidence
+      ? lastEvidenceLink
+        ? "signed_access_proven"
+        : "signed_access_ready"
+      : evidenceDocuments.length
+        ? "metadata_ready_file_needed"
+        : "metadata_needed",
+    headline: firstFileBackedEvidence
+      ? "Evidence handoff is ready for signed preview"
+      : evidenceDocuments.length
+        ? "Evidence metadata is ready; attach a private file when source proof is needed"
+        : "Start evidence handoff with metadata",
+    next_action: firstFileBackedEvidence ? "Preview signed evidence" : "Add evidence metadata",
+    preview_window: "5 minutes",
+    download_window: "2 minutes",
+    manifest_scope: "metadata_only",
+    raw_private_files_exported: false,
+    accepted_when:
+      "evidence_handoff_desk_keeps_metadata_private_file_signed_preview_download_manifest_packet_audit_receipt_raw_file_exclusion_and_corporate_metadata_boundary_visible_first"
+  };
+  const evidenceHandoffDeskCards = [
+    {
+      label: "Metadata",
+      value: evidenceDocuments.length ? `${evidenceDocuments.length} rows` : "Needed",
+      detail: "Title, source, status, scope, and summary are safe to export.",
+      icon: FileText,
+      ready: evidenceDocuments.length > 0,
+      action: "form" as const
+    },
+    {
+      label: "Private file",
+      value: fileBackedEvidenceCount ? `${fileBackedEvidenceCount} attached` : "Optional",
+      detail: "Raw files stay in private Supabase Storage.",
+      icon: LockKeyhole,
+      ready: fileBackedEvidenceCount > 0,
+      action: "form" as const
+    },
+    {
+      label: "Preview",
+      value: firstFileBackedEvidence ? "5 min link" : "File needed",
+      detail: "Short-lived signed URL for inspection.",
+      icon: Eye,
+      ready: Boolean(firstFileBackedEvidence),
+      action: "preview" as const
+    },
+    {
+      label: "Download",
+      value: firstFileBackedEvidence ? "2 min link" : "File needed",
+      detail: "Shorter signed URL for governed download.",
+      icon: Download,
+      ready: Boolean(firstFileBackedEvidence),
+      action: "download" as const
+    },
+    {
+      label: "Manifest",
+      value: filteredEvidenceDocuments.length ? "Metadata only" : "Empty",
+      detail: "CSV and JSON exclude permanent raw file URLs.",
+      icon: ClipboardCheck,
+      ready: filteredEvidenceDocuments.length > 0,
+      action: "manifest" as const
+    },
+    {
+      label: "Audit receipt",
+      value: lastEvidenceLink ? "Captured" : "Pending",
+      detail: lastEvidenceLink ? `${lastEvidenceLink.documentTitle} expires ${lastEvidenceLink.expiresAt}` : "Open preview or download to capture proof.",
+      icon: BadgeCheck,
+      ready: Boolean(lastEvidenceLink),
+      action: "packet" as const
+    }
+  ];
   const signedEvidenceAccessPacket = {
     ...evidenceAccessPacket,
     evidence_action_queue: {
@@ -1157,6 +1229,76 @@ function RecordDetail({
         </div>
         <p>{record.evidence}</p>
         <small>{record.access}</small>
+        <div className={`evidence-handoff-desk ${evidenceHandoffDesk.status}`} aria-label="Evidence handoff desk">
+          <div className="evidence-handoff-desk-header">
+            <div>
+              <span className={`status-chip ${firstFileBackedEvidence ? "success" : evidenceDocuments.length ? "neutral" : "warning"}`}>
+                Evidence handoff
+              </span>
+              <strong>{evidenceHandoffDesk.headline}</strong>
+              <small>
+                Corporate handoff exports metadata and audit proof only. Raw private files require scoped, short-lived signed access.
+              </small>
+            </div>
+            <button
+              className={firstFileBackedEvidence ? "primary-action" : "secondary-action"}
+              onClick={() => {
+                if (firstFileBackedEvidence) {
+                  void openEvidence(firstFileBackedEvidence, "preview");
+                  return;
+                }
+                document.getElementById("evidence-metadata-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              type="button"
+            >
+              {evidenceHandoffDesk.next_action}
+            </button>
+          </div>
+          <div className="evidence-handoff-desk-grid">
+            {evidenceHandoffDeskCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <button
+                  className={card.ready ? "ready" : "needed"}
+                  key={card.label}
+                  onClick={() => {
+                    if (card.action === "preview" && firstFileBackedEvidence) {
+                      void openEvidence(firstFileBackedEvidence, "preview");
+                      return;
+                    }
+                    if (card.action === "download" && firstFileBackedEvidence) {
+                      void openEvidence(firstFileBackedEvidence, "download");
+                      return;
+                    }
+                    if (card.action === "manifest") {
+                      downloadTextFile(evidenceManifestName, evidenceDocumentsToCsv(filteredEvidenceDocuments), "text/csv");
+                      return;
+                    }
+                    if (card.action === "packet") {
+                      downloadTextFile(evidenceAccessDeskPacketName, JSON.stringify({ ...signedEvidenceAccessPacket, evidence_handoff_desk: evidenceHandoffDesk }, null, 2), "application/json");
+                      return;
+                    }
+                    document.getElementById("evidence-metadata-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  type="button"
+                >
+                  <span>
+                    <Icon size={16} />
+                    {card.label}
+                  </span>
+                  <strong>{card.value}</strong>
+                  <small>{card.detail}</small>
+                </button>
+              );
+            })}
+          </div>
+          <div className="evidence-handoff-desk-proof">
+            <span>Preview: {evidenceHandoffDesk.preview_window}</span>
+            <span>Download: {evidenceHandoffDesk.download_window}</span>
+            <span>Manifest: metadata only</span>
+            <span>Raw private files excluded</span>
+          </div>
+        </div>
         <div className={`evidence-access-summary ${evidenceAccessSummary.status}`} aria-label="Evidence access summary">
           <div className="evidence-access-summary-header">
             <div>
