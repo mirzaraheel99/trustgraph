@@ -27566,11 +27566,7 @@ function PublicSite({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!authReady) {
-      setMessage(
-        authProvider === "postgres"
-          ? "Hosted Postgres auth API is not reachable yet. Update the VPS containers and try again."
-          : "Hosted auth is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in GitHub secrets."
-      );
+      setMessage("Hosted auth is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in GitHub secrets, or set NEXT_PUBLIC_AUTH_PROVIDER=postgres on the VPS.");
       return;
     }
     if (portal === "corporate" && mode === "signup" && (!organizationName.trim() || !organizationDomain.trim())) {
@@ -27641,7 +27637,7 @@ function PublicSite({
 
   async function resendVerification() {
     if (!authReady) {
-      setMessage(authProvider === "postgres" ? "Postgres auth does not need Supabase verification email." : "Hosted auth is not configured.");
+      setMessage("Hosted auth is not configured.");
       return;
     }
     if (!email) {
@@ -27668,7 +27664,7 @@ function PublicSite({
 
   async function recoverPassword() {
     if (!authReady) {
-      setMessage(authProvider === "postgres" ? "Postgres auth reset will use the next SMTP/reset slice." : "Hosted auth is not configured.");
+      setMessage("Hosted auth is not configured.");
       return;
     }
     if (!email) {
