@@ -54458,3 +54458,103 @@ body {
 .public-site:has(.public-login-route-cockpit) .public-auth-card > .public-auth-help-strip {
   order: -1900 !important;
 }
+
+/* Phase K product preview formatting: no vertical text, no diagnostic card columns */
+.workspace,
+.workspace :is(
+  div,
+  section,
+  article,
+  form,
+  button,
+  input,
+  select,
+  textarea,
+  strong,
+  small,
+  span,
+  p,
+  em,
+  b,
+  code,
+  label
+) {
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) {
+  overflow-x: clip !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) :is(
+  .auth-email-link-verdict,
+  .auth-email-troubleshooting-strip,
+  .hosted-auth-redirect-verification,
+  .hosted-auth-recovery-board,
+  .current-build-server-gate.public,
+  .email-verification-delivery-receipt,
+  .public-auth-help-strip,
+  .public-route-answer-bar,
+  .registration-outcome-command,
+  .registration-completion-handoff,
+  .portal-submit-receipt,
+  .auth-submit-acceptance,
+  .account-access-command
+) {
+  position: absolute !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  max-inline-size: 1px !important;
+  max-block-size: 1px !important;
+  max-height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) :is(
+  .workspace-admin-grid,
+  .setup-panel-grid,
+  .auth-panel,
+  .records-panel,
+  .verify-panel,
+  .passport-panel,
+  .billing-panel,
+  .corporate-directory-panel
+) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) !important;
+  gap: 16px !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) :is(
+  .workspace-admin-grid,
+  .setup-panel-grid,
+  .auth-panel,
+  .records-panel,
+  .verify-panel,
+  .passport-panel,
+  .billing-panel,
+  .corporate-directory-panel
+) > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+}
+
+.workspace:has(.signed-in-portal-entry-desk) :is(button, input, select, textarea) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 44px !important;
+}

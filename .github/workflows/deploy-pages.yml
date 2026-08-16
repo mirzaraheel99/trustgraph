@@ -96,6 +96,9 @@ jobs:
       - name: Verify Phase J public signup rescue
         run: pnpm check:public-signup-phase-j
 
+      - name: Verify Phase K product preview formatting
+        run: pnpm check:product-preview-phase-k
+
       - name: Verify hosted auth flow
         run: pnpm check:hosted-auth-flow
 

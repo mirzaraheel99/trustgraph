@@ -34,6 +34,7 @@
     "check:evidence-phase-h": "node scripts/check-evidence-phase-h.mjs",
     "check:admin-export-phase-i": "node scripts/check-admin-export-phase-i.mjs",
     "check:public-signup-phase-j": "node scripts/check-public-signup-phase-j.mjs",
+    "check:product-preview-phase-k": "node scripts/check-product-preview-phase-k.mjs",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {
