@@ -3,11 +3,13 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   Activity,
+  AlertTriangle,
   BadgeCheck,
   Bell,
   BriefcaseBusiness,
   CalendarClock,
   ChevronRight,
+  CircleCheck,
   Clock3,
   ClipboardCheck,
   Database,
@@ -21,7 +23,10 @@ import {
   LogIn,
   LogOut,
   LockKeyhole,
+  MailCheck,
   Network,
+  Paperclip,
+  ScrollText,
   ShieldAlert,
   Search,
   ShieldCheck,
@@ -24051,6 +24056,21 @@ function PermissionGate({
   );
 }
 
+type PublicAuthView = "login" | "register" | "recover" | "check-email";
+
+function BrandMark() {
+  return (
+    <span className="tg-brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M4 15 L9 10 L13 12 L16 5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="4" cy="15" r="1.6" fill="#fff" />
+        <circle cx="9" cy="10" r="1.6" fill="#fff" />
+        <circle cx="16" cy="5" r="1.6" fill="#fff" />
+      </svg>
+    </span>
+  );
+}
+
 function PublicSite({
   authRecoveryReceipts,
   currentSession,
@@ -24084,3407 +24104,48 @@ function PublicSite({
   onSession: (session: AuthSession) => void;
   serverSyncMonitor: ServerSyncMonitorState;
 }) {
+  void currentSessionContext;
+  void hostedCallbackProof;
+  void serverSyncMonitor;
+
+  const [screen, setScreen] = useState<"home" | "auth">("home");
+  const [authView, setAuthView] = useState<PublicAuthView>("login");
+  const [recoverSent, setRecoverSent] = useState(false);
   const [portal, setPortal] = useState<"professional" | "corporate">("professional");
   const [mode, setMode] = useState<"signin" | "signup">("signup");
+  const [corporateStep, setCorporateStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [organizationName, setOrganizationName] = useState("");
   const [organizationDomain, setOrganizationDomain] = useState("");
   const [organizationType, setOrganizationType] = useState<"employer" | "staffing_agency">("employer");
-  const [message, setMessage] = useState("Create an account. Email verification may be required; Supabase built-in email allows 2 messages per hour.");
+  const [message, setMessage] = useState<{ tone: "danger" | "warning" | "info"; text: string } | null>(null);
+  const [inlineNote, setInlineNote] = useState("");
   const [hasPendingCorporateRegistration, setHasPendingCorporateRegistration] = useState(false);
   const [verificationLinkInput, setVerificationLinkInput] = useState("");
-  const [verificationLinkMessage, setVerificationLinkMessage] = useState("Paste a localhost verification or recovery link to convert it for this hosted app.");
+  const [verificationLinkMessage, setVerificationLinkMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [headerScrolled, setHeaderScrolled] = useState(false);
+
   const authProvider = getAuthProvider();
   const authReady = authProvider === "postgres" || isSupabaseConfigured();
   const authRedirectUrl = hostedAuthRedirectUrl();
   const pendingCorporateRegistrationKey = "trustgraph.pendingCorporateRegistration";
   const repairedVerificationUrl = repairHostedAuthLink(verificationLinkInput, authRedirectUrl);
   const latestAuthRecoveryReceipt = authRecoveryReceipts[0] ?? null;
-  const registrationPacketName = `trustgraph-registration-auth-readiness-${new Date().toISOString().slice(0, 10)}.json`;
-  const selectedRegistrationPath =
-    portal === "corporate"
-      ? {
-          portal: "Corporate Verify",
-          plan: "Corporate Verify - $149/month per company pilot",
-          primaryWrite: "organization + admin membership",
-          databaseWrites: ["profiles", "organizations", "organization_memberships", "subscriptions", "access_grants"],
-          nextAction:
-            mode === "signup"
-              ? "Verify email, then login here to create the live company workspace."
-              : "Login to load the corporate account, RBAC role, team, billing, and Verify database panels.",
-          paymentStatus: "Company-level Supabase subscription ledger live; Stripe checkout remains human-gated."
-        }
-      : {
-          portal: "Professional Passport",
-          plan: "Professional - free",
-          primaryWrite: "profile + personal Passport workspace",
-          databaseWrites: ["profiles", "personal organizations", "organization_memberships", "trust_records", "evidence_documents"],
-          nextAction:
-            mode === "signup"
-              ? "Verify email if prompted, then login here to start the live Passport workspace."
-              : "Login to load Passport records, evidence, references, Access Grants, and consent panels.",
-          paymentStatus: "No payment collection for the professional pilot plan."
-        };
-  const authOutcomeSteps =
-    portal === "corporate"
-      ? [
-          {
-            label: "Login",
-            detail: "Verified admin user signs in on the hosted TrustGraph URL."
-          },
-          {
-            label: "Company",
-            detail: "Employer or staffing organization, admin membership, and Corporate Verify setup are created."
-          },
-          {
-            label: "Pricing",
-            detail: "Corporate Verify pilot plan writes to the Supabase subscription ledger; Stripe stays human-gated."
-          }
-        ]
-      : [
-          {
-            label: "Login",
-            detail: "Verified professional signs in on the hosted TrustGraph URL."
-          },
-          {
-            label: "Passport",
-            detail: "Private Passport workspace opens for records, evidence, references, consent, and Access Grants."
-          },
-          {
-            label: "Sharing",
-            detail: "Corporate teams see only records approved through scoped Access Grants and consent."
-          }
-        ];
-  const selectedPortalCommand = {
-    label: "Selected portal command",
-    headline:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create company admin account"
-          : "Login to Corporate Verify"
-        : mode === "signup"
-          ? "Create Professional Passport"
-          : "Login to Professional Passport",
-    next:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Enter email, password, organization name, domain, and company type."
-          : "Enter the verified admin email and password to open company setup."
-        : mode === "signup"
-          ? "Enter email and password. Passport setup starts after verification."
-          : "Enter the verified email and password to open personal records.",
-    required_fields:
-      portal === "corporate" && mode === "signup"
-        ? ["email", "password", "organization_name", "organization_domain", "organization_type"]
-        : ["email", "password"],
-    after_success: selectedRegistrationPath.nextAction
-  };
-  const portalAccessCockpit = {
-    mode: "portal_access_cockpit",
-    selected_portal: portal,
-    selected_mode: mode,
-    headline:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create the company account first, then Verify users by permission"
-          : "Login to the company workspace before opening Corporate Verify"
-        : mode === "signup"
-          ? "Create your Passport first, then decide what companies can see"
-          : "Login to your personal Passport workspace",
-    primary_database_write: selectedRegistrationPath.primaryWrite,
-    pricing: selectedRegistrationPath.plan,
-    boundary:
-      portal === "corporate"
-        ? "Corporate users do not browse an open user database. They request access by email and see approved rows only."
-        : "Professional users own records, evidence, consent, and every Access Grant decision.",
-    accepted_when:
-      "public_login_registration_page_starts_with_one_cockpit_for_portal_mode_pricing_first_database_write_next_dashboard_and_database_boundary"
-  };
-  const portalAccessCockpitCards = [
-    {
-      label: "Account type",
-      value: portal === "corporate" ? "Corporate company" : "Professional user",
-      detail: mode === "signup" ? "Register new account" : "Login existing account"
-    },
-    {
-      label: "Pricing",
-      value: selectedRegistrationPath.plan,
-      detail: portal === "corporate" ? "One price per company - invite as many reviewers as your pilot needs." : selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First write",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Next dashboard",
-      value: portal === "corporate" ? "Company setup" : "Passport",
-      detail: selectedRegistrationPath.nextAction
-    }
-  ];
-  const publicPlanPortalChooser = {
-    mode: "public_plan_portal_chooser",
-    selected_portal: selectedRegistrationPath.portal,
-    selected_action: mode === "signup" ? "Register" : "Login",
-    selected_price: selectedRegistrationPath.plan,
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing verified account session",
-    payment_boundary: selectedRegistrationPath.paymentStatus,
-    corporate_database_boundary:
-      "Corporate Verify is not an open user database. Corporate reviewers request one professional by email and see only approved, consent-scoped rows.",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_plan_portal_chooser_keeps_professional_login_register_corporate_login_register_pricing_first_database_write_corporate_database_boundary_recovery_and_no_preview_data_visible_before_credentials"
-  };
-  const publicPlanPortalChooserRoutes = [
-    {
-      label: "Professional login",
-      active: portal === "professional" && mode === "signin",
-      detail: "Open Passport records, evidence, references, consent, and sharing.",
-      price: "Free pilot",
-      action: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Professional register",
-      active: portal === "professional" && mode === "signup",
-      detail: "Create a Passport owner account and personal workspace.",
-      price: "Free pilot",
-      action: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate login",
-      active: portal === "corporate" && mode === "signin",
-      detail: "Open Company Admin or Corporate Verify for approved scoped rows.",
-      price: "$149/company pilot",
-      action: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate register",
-      active: portal === "corporate" && mode === "signup",
-      detail: "Create company workspace, admin membership, and reviewer path.",
-      price: "$149/company pilot",
-      action: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    }
-  ];
-  const publicPlanPortalChooserFacts = [
-    { label: "Selected price", value: publicPlanPortalChooser.selected_price, detail: publicPlanPortalChooser.payment_boundary },
-    { label: "First write", value: publicPlanPortalChooser.first_database_write, detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ") },
-    { label: "Landing portal", value: portal === "corporate" ? "Company Admin then Verify" : "Professional Passport", detail: selectedRegistrationPath.nextAction },
-    { label: "Database boundary", value: portal === "corporate" ? "Scoped rows only" : "Owner controlled", detail: portal === "corporate" ? "Request by email, approve, then review shared rows." : "Professional owns sharing and consent." }
-  ];
-  const portalRouteBoard = {
-    mode: "public_portal_route_board",
-    selected_portal: portal,
-    selected_mode: mode,
-    selected_price: selectedRegistrationPath.plan,
-    selected_first_write: selectedRegistrationPath.primaryWrite,
-    selected_dashboard: portal === "corporate" ? "Company Admin then Corporate Verify" : "Professional Passport",
-    lanes: [
-      {
-        portal: "professional",
-        label: "Professional user",
-        price: "Free pilot",
-        first_write: "profile + personal Passport workspace",
-        dashboard: "Professional Passport",
-        boundary: "Own records, evidence, consent, and approved sharing."
-      },
-      {
-        portal: "corporate",
-        label: "Corporate company",
-        price: "$149/month per company pilot",
-        first_write: "organization + admin membership",
-        dashboard: "Company Admin then Corporate Verify",
-        boundary: "Request access by professional email; review approved scoped rows only."
-      }
-    ],
-    accepted_when:
-      "public_auth_starts_with_clear_user_vs_corporate_routes_pricing_first_database_write_dashboard_and_access_boundary"
-  };
-  const publicAccessHub = {
-    mode: "public_access_hub",
-    selected_portal: portal,
-    selected_mode: mode,
-    headline:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create a company workspace"
-          : "Login to Corporate Verify"
-        : mode === "signup"
-          ? "Create your Professional Passport"
-          : "Login to your Passport",
-    subline:
-      portal === "corporate"
-        ? "Company teams request access by email and review only professional-approved rows."
-        : "Users own their records, evidence, consent, and every company sharing decision.",
-    price: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    landing: portal === "corporate" ? "Company Admin, then Corporate Verify" : "Professional Passport",
-    recovery: email ? "Reset and resend controls ready" : "Enter email to enable recovery",
-    accepted_when:
-      "public_access_hub_replaces_stacked_auth_panels_with_one_premium_user_corporate_register_login_pricing_recovery_database_and_submit_flow"
-  };
-  const publicAccessHubRoutes = [
-    {
-      label: "User register",
-      detail: "Free Passport account",
-      active: portal === "professional" && mode === "signup",
-      action: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "User login",
-      detail: "Open your Passport",
-      active: portal === "professional" && mode === "signin",
-      action: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate register",
-      detail: "$149/month per company pilot workspace",
-      active: portal === "corporate" && mode === "signup",
-      action: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate login",
-      detail: "Open Corporate Verify",
-      active: portal === "corporate" && mode === "signin",
-      action: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    }
-  ];
-  const loginPortalDesk = {
-    generated_at: new Date().toISOString(),
-    mode: "login_portal_desk",
-    selected_portal: portal,
-    selected_mode: mode,
-    selected_route: `${portal === "corporate" ? "Corporate" : "User"} ${mode === "signin" ? "login" : "registration"}`,
-    headline:
-      portal === "corporate"
-        ? mode === "signin"
-          ? "Corporate login for company reviewers"
-          : "Corporate registration for company admins"
-        : mode === "signin"
-          ? "User login for your Passport"
-          : "User registration for your Passport",
-    pricing: selectedRegistrationPath.plan,
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing account session opens first.",
-    landing_portal: publicAccessHub.landing,
-    recovery: publicAccessHub.recovery,
-    corporate_database_rule: "corporate_can_request_by_email_and_review_only_professional_approved_scoped_rows",
-    preview_data_accepted: false,
-    accepted_when:
-      "login_portal_desk_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_first_database_write_landing_and_scoped_database_rule_visible_before_credentials"
-  };
-  const loginPortalDeskStatus = [
-    {
-      label: "Price",
-      value: loginPortalDesk.pricing,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First database write",
-      value: mode === "signup" ? (portal === "corporate" ? "Company workspace" : "User profile") : "Login session",
-      detail: loginPortalDesk.first_database_write
-    },
-    {
-      label: "Landing",
-      value: loginPortalDesk.landing_portal,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Recovery",
-      value: loginPortalDesk.recovery,
-      detail: authRedirectUrl.includes("localhost") ? "Add hosted URL in Supabase redirects." : "Hosted redirect is configured."
-    }
-  ];
-  const publicLoginPrimaryChoice = {
-    mode: "public_login_primary_choice",
-    selected_route: loginPortalDesk.selected_route,
-    headline:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create a company account"
-          : "Login to your company workspace"
-        : mode === "signup"
-          ? "Create your personal Passport"
-          : "Login to your personal Passport",
-    helper:
-      portal === "corporate"
-        ? "Corporate teams request access to a professional by email, then review only approved scoped rows."
-        : "Personal users own their records, evidence, references, consent, and company sharing decisions.",
-    price: selectedRegistrationPath.plan,
-    submit_ready: Boolean(email && password && (portal !== "corporate" || mode !== "signup" || (organizationName && organizationDomain))),
-    next_dashboard: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing session opens the saved workspace.",
-    recovery_action: email ? "Reset password or resend verification" : "Enter email to enable recovery",
-    accepted_when:
-      "public_login_primary_choice_keeps_user_login_user_register_corporate_login_corporate_register_price_next_dashboard_recovery_and_scoped_database_rule_visible_before_credentials"
-  };
-  const publicLoginPrimaryChoiceRoutes = [
-    {
-      label: "User login",
-      active: portal === "professional" && mode === "signin",
-      detail: "Open your Passport",
-      onClick: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "User register",
-      active: portal === "professional" && mode === "signup",
-      detail: "Free pilot account",
-      onClick: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate login",
-      active: portal === "corporate" && mode === "signin",
-      detail: "Open company workspace",
-      onClick: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate register",
-      active: portal === "corporate" && mode === "signup",
-      detail: "$149 pilot workspace",
-      onClick: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    }
-  ];
-  const publicLoginPrimaryChoiceFacts = [
-    {
-      label: "Selected",
-      value: publicLoginPrimaryChoice.selected_route,
-      detail: publicLoginPrimaryChoice.next_dashboard
-    },
-    {
-      label: "Price",
-      value: publicLoginPrimaryChoice.price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First database write",
-      value: publicLoginPrimaryChoice.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Recovery",
-      value: publicLoginPrimaryChoice.recovery_action,
-      detail: authRedirectUrl.includes("localhost") ? "Hosted redirect still needs repair." : "Hosted redirect is active."
-    }
-  ];
-  const publicRouteDecisionDesk = {
-    mode: "public_route_decision_desk",
-    selected_portal: portal,
-    selected_mode: mode,
-    headline:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create a Corporate Verify workspace"
-          : "Login to Corporate Verify"
-        : mode === "signup"
-          ? "Create a Professional Passport"
-          : "Login to Professional Passport",
-    subline:
-      portal === "corporate"
-        ? "Corporate accounts create a company workspace, activate the pilot ledger, then request approved user rows by professional email."
-        : "Professional users create a private Passport, add real records, then approve each company sharing request.",
-    selected_price: selectedRegistrationPath.plan,
-    required_fields: selectedPortalCommand.required_fields,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    landing_portal: portal === "corporate" ? "Company Admin and Corporate Verify" : "Professional Passport",
-    hosted_redirect_url: authRedirectUrl,
-    submit_ready: publicLoginPrimaryChoice.submit_ready,
-    corporate_database_boundary: "Corporate users cannot browse all users; every review starts with a scoped access request and professional approval.",
-    accepted_when:
-      "public_route_decision_desk_keeps_professional_login_register_corporate_login_register_pricing_required_fields_hosted_verification_first_database_write_landing_portal_submit_and_scoped_database_rule_as_the_single_front_door"
-  };
-  const publicRouteDecisionDeskCards = [
-    {
-      label: "Route",
-      value: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "register" : "login"}`,
-      detail: publicRouteDecisionDesk.landing_portal
-    },
-    {
-      label: "Pricing",
-      value: publicRouteDecisionDesk.selected_price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "Required fields",
-      value: `${publicRouteDecisionDesk.required_fields.length} fields`,
-      detail: publicRouteDecisionDesk.required_fields.join(", ").replace(/_/g, " ")
-    },
-    {
-      label: "First database write",
-      value: publicRouteDecisionDesk.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Hosted verification",
-      value: authRedirectUrl.includes("localhost") ? "Needs repair" : "Hosted",
-      detail: publicRouteDecisionDesk.hosted_redirect_url
-    },
-    {
-      label: "Corporate data rule",
-      value: portal === "corporate" ? "Scoped only" : "Owner approved",
-      detail:
-        portal === "corporate"
-          ? publicRouteDecisionDesk.corporate_database_boundary
-          : "Companies see Passport rows only after the professional approves a scoped grant."
-    }
-  ];
-  const publicAccessHubProof = [
-    {
-      label: "Pricing",
-      value: publicAccessHub.price,
-      detail: portal === "corporate" ? "Stripe checkout is still a human-gated launch decision." : "No payment is collected for the professional pilot."
-    },
-    {
-      label: "Database",
-      value: publicAccessHub.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Landing",
-      value: publicAccessHub.landing,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Recovery",
-      value: publicAccessHub.recovery,
-      detail: "Password reset, resend verification, and hosted-link repair stay on this form."
-    }
-  ];
-  const publicAccessHubSteps = [
-    {
-      label: "Choose route",
-      value:
-        portal === "corporate"
-          ? mode === "signup"
-            ? "Corporate register"
-            : "Corporate login"
-          : mode === "signup"
-            ? "User register"
-            : "User login",
-      detail: "The selected route controls pricing, required fields, and landing portal."
-    },
-    {
-      label: "Enter credentials",
-      value: email && password ? "Ready" : "Email + password",
-      detail: portal === "corporate" && mode === "signup" ? "Company name, domain, and type are also required." : "Use hosted verification, not localhost links."
-    },
-    {
-      label: "First database write",
-      value: portal === "corporate" ? "Company workspace" : "Passport owner",
-      detail: selectedRegistrationPath.primaryWrite
-    },
-    {
-      label: "Landing",
-      value: portal === "corporate" ? "Company Admin" : "Professional Passport",
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Corporate data rule",
-      value: portal === "corporate" ? "Scoped request" : "Owner approval",
-      detail:
-        portal === "corporate"
-          ? "No open user database browse. Request a professional and review approved rows only."
-          : "Companies see your records only after you approve a scoped grant."
-    }
-  ];
-  const corporateAccessRoutePreview = {
-    mode: "corporate_access_route_preview",
-    selected_portal: portal,
-    selected_mode: mode,
-    headline:
-      portal === "corporate"
-        ? "Corporate access is request, approval, then scoped review"
-        : "Companies can only see your Passport after you approve a request",
-    current_step: portal === "corporate" ? "Create company workspace" : "Create Professional Passport",
-    pricing: "$149 Corporate Verify pilot ledger before paid Stripe launch",
-    no_open_database_browse: true,
-    preview_data_accepted: false,
-    accepted_when:
-      "corporate_access_route_preview_shows_workspace_pricing_access_request_professional_approval_scoped_rows_and_no_open_user_database_before_signup"
-  };
-  const corporateAccessRouteSteps = [
-    {
-      step: "1",
-      label: portal === "corporate" ? "Company workspace" : "Professional Passport",
-      detail:
-        portal === "corporate"
-          ? "Register the company, save organization and admin membership rows."
-          : "Register the user, save profile and owner-controlled Passport rows.",
-      table: portal === "corporate" ? "organizations + organization_memberships" : "profiles + trust_records"
-    },
-    {
-      step: "2",
-      label: "Pricing ledger",
-      detail: "Corporate Verify uses the $149 pilot ledger; Stripe payment remains human-gated.",
-      table: "organization_subscriptions"
-    },
-    {
-      step: "3",
-      label: "Access request",
-      detail: "Corporate reviewer requests access by professional email. No open user database is available.",
-      table: "corporate_access_grant_requests"
-    },
-    {
-      step: "4",
-      label: "Professional approval",
-      detail: "The professional approves, declines, or revokes the scoped Access Grant.",
-      table: "access_grants + consent_authorizations"
-    },
-    {
-      step: "5",
-      label: "Scoped review",
-      detail: "Corporate Verify sees approved metadata and shared Passport rows only for the active RBAC context.",
-      table: "shared trust_records + corporate_access_reviews"
-    }
-  ];
-  const registrationDecisionReceipt = {
-    mode: "registration_decision_receipt",
-    selected_portal: selectedRegistrationPath.portal,
-    selected_mode: mode,
-    pricing: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    required_fields: selectedPortalCommand.required_fields,
-    next_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
-    payment_boundary: selectedRegistrationPath.paymentStatus,
-    database_boundary:
-      portal === "corporate"
-        ? "Corporate teams cannot browse users; they request access by professional email and see only approved shared rows."
-        : "Professionals own Passport rows, evidence, consent, and every Access Grant decision."
-  };
-  const liveOnboardingAcceptanceContract = {
-    mode: "live_onboarding_acceptance_contract",
-    selected_portal: selectedRegistrationPath.portal,
-    hosted_auth_required: true,
-    preview_data_accepted: false,
-    localhost_redirect_accepted: false,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    pricing_boundary: selectedRegistrationPath.paymentStatus,
-    corporate_user_database_boundary:
-      portal === "corporate"
-        ? "company reviewers request one professional by email and see approved shared rows only"
-        : "professional owner controls Passport records, evidence, consent, and Access Grants",
-    acceptance_sequence:
-      portal === "corporate"
-        ? [
-            "hosted_email_verified",
-            "corporate_admin_logged_in",
-            "organization_membership_created",
-            "subscription_ledger_active",
-            "scoped_access_request_submitted",
-            "approved_shared_rows_visible"
-          ]
-        : [
-            "hosted_email_verified",
-            "professional_logged_in",
-            "passport_workspace_created",
-            "real_records_or_evidence_loaded",
-            "consent_or_access_grant_ready"
-          ],
-    export_packet: registrationPacketName
-  };
-  const liveOnboardingContractCards = [
-    {
-      label: "Hosted auth",
-      value: authReady ? "Configured" : "Missing",
-      detail: `Redirect must return to ${authRedirectUrl}`
-    },
-    {
-      label: "Preview data",
-      value: "Not accepted",
-      detail: "V1 proof requires signed-in Supabase rows, not product preview data."
-    },
-    {
-      label: "First database write",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: selectedRegistrationPath.databaseWrites.join(", ")
-    },
-    {
-      label: portal === "corporate" ? "Corporate database boundary" : "Passport boundary",
-      value: portal === "corporate" ? "Scoped rows only" : "Owner controlled",
-      detail: liveOnboardingAcceptanceContract.corporate_user_database_boundary
-    }
-  ];
-  const authOutcomePacket = {
-    mode: "portal_auth_outcome_summary",
-    selected_portal: portal,
-    selected_mode: mode,
-    hosted_redirect_url: authRedirectUrl,
-    selected_portal_command: selectedPortalCommand,
-    outcome_steps: authOutcomeSteps,
-    live_database_target:
-      portal === "corporate"
-        ? "corporate_organization_membership_subscription_verify_database"
-        : "professional_passport_records_evidence_grants_database",
-    human_gates: portal === "corporate" ? ["stripe_checkout_before_paid_launch"] : []
-  };
-  const pricingDecisionStrip = [
-    {
-      label: "Live now",
-      value: "Supabase ledger",
-      detail: "Corporate Verify pilot activation writes organization_subscriptions rows with audit history."
-    },
-    {
-      label: "Corporate pilot",
-      value: "$149/month per company",
-      detail: "Used for plan selection, company-level billing visibility, readiness checks, and pilot acceptance evidence."
-    },
-    {
-      label: "Human gate",
-      value: "Stripe checkout",
-      detail: "Real payment collection waits for product, tax, invoice, refund, dunning, and webhook decisions."
-    }
-  ];
-  const pricingEstimatorPacket = {
-    mode: "public_pricing_company_pilot",
-    selected_portal: portal,
-    corporate_monthly_company_price: 149,
-    reviewer_tracking: "visibility_only_no_quota_no_per_seat_arithmetic",
-    live_now: "Supabase organization_subscriptions ledger activation",
-    payment_collection: "stripe_checkout_disabled_until_human_gate",
-    human_gate_required_for: ["Stripe Checkout", "customer portal", "invoice emails", "taxes", "refunds", "dunning", "payment webhooks"],
-    database_path: "organization_subscriptions rows are accepted for company-level pilot planning; external payment collection is not enabled"
-  };
-  const publicPricingAccessSummary = {
-    mode: "public_pricing_access_summary",
-    selected_portal: portal,
-    professional_plan: "$0 Professional Passport pilot",
-    corporate_plan: "$149/month per company Corporate Verify pilot",
-    selected_plan: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    corporate_database_rule: "Corporate reviewers request access by professional email and see approved shared rows only.",
-    payment_boundary: "Supabase subscription ledger is live for pilot planning; Stripe Checkout remains human-gated.",
-    accepted_when:
-      "public_pricing_section_explains_professional_free_corporate_149_pilot_first_database_write_scoped_user_access_and_stripe_boundary_before_signup"
-  };
-  const publicPricingAccessCards = [
-    {
-      label: "Professional",
-      value: publicPricingAccessSummary.professional_plan,
-      detail: "Private Passport, records, evidence, consent, references, and Access Grant decisions."
-    },
-    {
-      label: "Corporate",
-      value: publicPricingAccessSummary.corporate_plan,
-      detail: "Company workspace, RBAC, team, billing ledger, Verify requests, and scoped review."
-    },
-    {
-      label: "Selected path",
-      value: publicPricingAccessSummary.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Access rule",
-      value: portal === "corporate" ? "Scoped rows only" : "Owner controlled",
-      detail:
-        portal === "corporate"
-          ? publicPricingAccessSummary.corporate_database_rule
-          : "Professional controls every Passport row, evidence item, consent decision, and corporate grant."
-    },
-    {
-      label: "Payment gate",
-      value: "Stripe off",
-      detail: publicPricingAccessSummary.payment_boundary
-    }
-  ];
-  const publicPricingLaunchDecision = {
-    mode: "public_pricing_launch_decision",
-    selected_portal: portal,
-    selected_mode: mode,
-    selected_price: selectedRegistrationPath.plan,
-    selected_first_write: selectedRegistrationPath.primaryWrite,
-    professional_outcome: "Professional Passport stays free for the pilot and writes owner-controlled profile, Passport, evidence, consent, and sharing rows after hosted login.",
-    corporate_outcome: "Corporate Verify uses the $149/month per company pilot ledger for company workspace, RBAC, reviewer access, team setup, and scoped user-database requests.",
-    payment_boundary: "No card capture, Stripe Checkout, invoice email, refund flow, dunning, tax, or payment webhook is live before the human billing gate.",
-    accepted_when:
-      "public_pricing_launch_decision_makes_professional_free_corporate_149_pilot_database_writes_scoped_access_and_stripe_off_boundary_clear_before_signup"
-  };
-  const publicPricingLaunchCards = [
-    {
-      label: "User path",
-      value: "Professional free",
-      detail: publicPricingLaunchDecision.professional_outcome,
-      action: "Create Passport",
-      portal: "professional" as const
-    },
-    {
-      label: "Company path",
-      value: "$149/month per company",
-      detail: publicPricingLaunchDecision.corporate_outcome,
-      action: "Create company",
-      portal: "corporate" as const
-    },
-    {
-      label: "Selected write",
-      value: publicPricingLaunchDecision.selected_first_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 5).join(", "),
-      action: "Use selected path",
-      portal
-    },
-    {
-      label: "Billing gate",
-      value: "Stripe off",
-      detail: publicPricingLaunchDecision.payment_boundary,
-      action: "Export decision",
-      portal
-    }
-  ];
-  const publicPricingPathAnswer = {
-    mode: "public_pricing_path_answer",
-    selected_portal: portal,
-    recommended_path:
-      portal === "corporate"
-        ? "Choose Corporate Verify pilot when a company needs reviewer RBAC, team visibility, and scoped user database access."
-        : "Choose Professional free when one person needs a private Passport, evidence, consent, and controlled sharing.",
-    professional_price: "$0 pilot",
-    corporate_price: "$149/month per company pilot",
-    scale_price: "Human-approved quote",
-    first_live_write:
-      portal === "corporate"
-        ? "registration_intents, organizations, organization_members, organization_subscriptions"
-        : "registration_intents, profiles, personal organization, Passport rows",
-    corporate_access_rule: "Corporate never receives open user browsing; reviewers see only professional-approved scoped rows.",
-    payment_boundary: "Stripe checkout, tax, invoices, refunds, dunning, and webhooks stay off until the billing decision is approved.",
-    accepted_when:
-      "public_pricing_path_answer_recommends_professional_free_corporate_149_or_scale_quote_with_first_live_write_scoped_access_and_stripe_gate_before_plan_cards"
-  };
-  const publicPricingPathAnswerCards = [
-    {
-      label: "Professional",
-      value: publicPricingPathAnswer.professional_price,
-      detail: "Best for a worker creating and controlling their own Passport.",
-      action: "Start free",
-      portal: "professional" as const
-    },
-    {
-      label: "Corporate",
-      value: publicPricingPathAnswer.corporate_price,
-      detail: "Best for employers or staffing teams that review approved Passport rows.",
-      action: "Start pilot",
-      portal: "corporate" as const
-    },
-    {
-      label: "Scale",
-      value: publicPricingPathAnswer.scale_price,
-      detail: "Use only after pilot-owner, billing, legal, security, and VPS cutover decisions.",
-      action: "Export quote path",
-      portal
-    }
-  ];
-  const pricingRegistrationHandoff = {
-    mode: "pricing_registration_handoff",
-    selected_portal: portal,
-    selected_action: mode,
-    recommended_next_step:
-      portal === "corporate"
-        ? "Start Corporate Verify registration, then activate the $149 pilot ledger after hosted login."
-        : "Start Professional registration, then create the private Passport after hosted login.",
-    professional_path: "$0 pilot account, owner-controlled Passport rows, evidence, consent, and Access Grants.",
-    corporate_path: "$149 pilot workspace, company admin, RBAC seats, team setup, and scoped user-database requests.",
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    payment_boundary: "Stripe Checkout stays disabled until the human billing decision is approved.",
-    no_open_user_database_browse: true,
-    preview_data_accepted: false,
-    accepted_when:
-      "pricing_registration_handoff_keeps_plan_choice_next_registration_database_write_scoped_access_stripe_gate_and_export_visible_before_signup"
-  };
-  const pricingRegistrationHandoffSteps = [
-    {
-      label: "1. Pick plan",
-      value: portal === "corporate" ? "$149 Corporate pilot" : "$0 Professional pilot",
-      detail:
-        portal === "corporate"
-          ? "Best for companies that need reviewer RBAC and approved Passport rows."
-          : "Best for one person building and sharing a private Passport."
-    },
-    {
-      label: "2. Register",
-      value: portal === "corporate" ? "Corporate account" : "Professional account",
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "3. First write",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "4. Boundary",
-      value: portal === "corporate" ? "Scoped rows only" : "Owner controlled",
-      detail: pricingRegistrationHandoff.payment_boundary
-    }
-  ];
-  const portalLoginSwitchboard = [
-    {
-      label: "Professional user login",
-      portal: "professional" as const,
-      start: "Register or login to Professional Passport",
-      dashboard: "Personal Passport dashboard",
-      writes: "profiles, personal organization, membership, Passport records, evidence, consent, Access Grants",
-      next: "Build records first, then approve each corporate request."
-    },
-    {
-      label: "Corporate company login",
-      portal: "corporate" as const,
-      start: "Register or login to Corporate Verify",
-      dashboard: "Corporate Verify and Company Admin dashboards",
-      writes: "company organization, admin membership, subscription ledger, team invitations, Verify requests",
-      next: "Provision the company first, then request scoped user database access."
-    }
-  ];
-  const portalEntryPath = [
-    {
-      label: "1. Pick portal",
-      detail: portal === "corporate" ? "Corporate creates a company workspace." : "Professional creates a private Passport."
-    },
-    {
-      label: "2. Register or login",
-      detail: mode === "signup" ? "Create the account, then verify email if required." : "Login with the verified account."
-    },
-    {
-      label: "3. Land in dashboard",
-      detail: portal === "corporate" ? "Open Corporate Verify, team, billing, and access requests." : "Open Passport records, evidence, consent, and sharing."
-    }
-  ];
-  const publicPortalFlowMap = {
-    mode: "public_portal_flow_map",
-    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    selected_price: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    selected_landing: portal === "corporate" ? "Company Admin and Corporate Verify" : "Professional Passport",
-    recovery_route: "Hosted resend, reset, and localhost-link repair stay visible before submit.",
-    accepted_when:
-      "public_portal_flow_map_shows_professional_corporate_login_registration_pricing_first_database_write_landing_and_recovery_before_dense_forms"
-  };
-  const publicLoginCommandCenter = {
-    mode: "public_login_command_center",
-    selected_portal: portal,
-    selected_action: mode,
-    headline:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create a company workspace"
-          : "Login to Corporate Verify"
-        : mode === "signup"
-          ? "Create a Professional Passport"
-          : "Login to Professional Passport",
-    price: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    landing_portal: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
-    recovery: "Reset password, resend verification, and localhost-link repair stay available before submit.",
-    corporate_database_boundary:
-      "Corporate accounts request access by professional email and review only approved scoped rows; there is no open user database browse.",
-    server_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_login_command_center_keeps_account_type_login_register_price_first_database_write_recovery_submit_and_corporate_scoped_database_boundary_visible_before_credentials"
-  };
-  const publicLoginCommandRows = [
-    {
-      label: "Account",
-      value: portal === "corporate" ? "Corporate" : "Professional",
-      detail: portal === "corporate" ? "Company workspace and reviewer RBAC." : "Private Passport and owner-controlled sharing.",
-      action: "Switch",
-      onClick: () => setPortal(portal === "corporate" ? "professional" : "corporate")
-    },
-    {
-      label: "Action",
-      value: mode === "signup" ? "Register" : "Login",
-      detail: mode === "signup" ? "Create account, then verify email if required." : "Use a verified hosted account.",
-      action: mode === "signup" ? "Use login" : "Use register",
-      onClick: () => setMode(mode === "signup" ? "signin" : "signup")
-    },
-    {
-      label: "Price",
-      value: selectedRegistrationPath.plan,
-      detail: selectedRegistrationPath.paymentStatus,
-      action: "Pricing",
-      onClick: () => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth", block: "start" })
-    },
-    {
-      label: "First write",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", "),
-      action: "Fields",
-      onClick: () => document.getElementById("public-auth-email")?.focus()
-    },
-    {
-      label: "Recovery",
-      value: "Visible",
-      detail: publicLoginCommandCenter.recovery,
-      action: "Reset",
-      onClick: () => void recoverPassword()
-    }
-  ];
-  const publicAccessAnswer = {
-    mode: "public_access_answer",
-    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
-    primary_action:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create corporate admin account"
-          : "Login to corporate workspace"
-        : mode === "signup"
-          ? "Create professional Passport"
-          : "Login to professional Passport",
-    price: selectedRegistrationPath.plan,
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing hosted session opens first.",
-    landing_portal: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
-    recovery_path: email ? "Reset, resend, and hosted link repair are ready." : "Enter email to enable reset, resend, and hosted link repair.",
-    email_delivery:
-      "Supabase built-in email can rate-limit around 2 messages per hour. Use the newest inbox link, or repair localhost links before requesting more emails.",
-    corporate_database_boundary:
-      "Corporate accounts request access by professional email and review only approved scoped rows; there is no open user database browse.",
-    server_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_access_answer_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_submit_first_database_write_landing_server_status_and_no_open_user_database_before_credentials"
-  };
-  const publicAccessAnswerRoutes = [
-    {
-      label: "User register",
-      detail: "Free Passport",
-      active: portal === "professional" && mode === "signup",
-      action: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "User login",
-      detail: "Open Passport",
-      active: portal === "professional" && mode === "signin",
-      action: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate register",
-      detail: "$149 pilot workspace",
-      active: portal === "corporate" && mode === "signup",
-      action: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate login",
-      detail: "Open Verify",
-      active: portal === "corporate" && mode === "signin",
-      action: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    }
-  ];
-  const publicAccessAnswerCards = [
-    {
-      label: "Route",
-      value: publicAccessAnswer.selected_route,
-      detail: publicAccessAnswer.primary_action
-    },
-    {
-      label: "Pricing",
-      value: publicAccessAnswer.price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First database write",
-      value: publicAccessAnswer.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Landing",
-      value: publicAccessAnswer.landing_portal,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Recovery",
-      value: email ? "Ready" : "Enter email",
-      detail: publicAccessAnswer.recovery_path
-    },
-    {
-      label: "Email delivery",
-      value: "Hosted links only",
-      detail: publicAccessAnswer.email_delivery
-    },
-    {
-      label: "Corporate data",
-      value: "Scoped only",
-      detail: publicAccessAnswer.corporate_database_boundary
-    }
-  ];
-  const publicAccountEntryLaunchpad = {
-    mode: "public_account_entry_launchpad",
-    selected_portal: portal,
-    selected_action: mode,
-    primary_label:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create corporate workspace"
-          : "Login to Corporate Verify"
-        : mode === "signup"
-          ? "Create user Passport"
-          : "Login to user Passport",
-    selected_price: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    landing_portal: portal === "corporate" ? "Company Admin and Corporate Verify" : "Professional Passport",
-    corporate_database_boundary: "Corporate reviewers request access by professional email and review approved scoped rows only.",
-    recovery_available: true,
-    server_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_account_entry_launchpad_keeps_user_register_user_login_corporate_register_corporate_login_pricing_recovery_database_boundary_submit_and_server_status_visible_before_credentials"
-  };
-  const publicAccountEntryRoutes = [
-    {
-      label: "User registration",
-      detail: "Create a Professional Passport and owner-controlled records.",
-      active: portal === "professional" && mode === "signup",
-      action: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "User login",
-      detail: "Return to Passport, evidence, consent, and sharing.",
-      active: portal === "professional" && mode === "signin",
-      action: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate registration",
-      detail: "Create company workspace, RBAC, pilot ledger, and Verify setup.",
-      active: portal === "corporate" && mode === "signup",
-      action: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate login",
-      detail: "Return to company admin, access requests, and scoped user review.",
-      active: portal === "corporate" && mode === "signin",
-      action: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    }
-  ];
-  const publicAccountEntryStatus = [
-    {
-      label: "Selected",
-      value: publicAccountEntryLaunchpad.primary_label,
-      detail: publicAccountEntryLaunchpad.landing_portal
-    },
-    {
-      label: "Pricing",
-      value: publicAccountEntryLaunchpad.selected_price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "Database",
-      value: publicAccountEntryLaunchpad.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Server",
-      value: publicAccountEntryLaunchpad.server_status.replaceAll("_", " "),
-      detail: "GitHub is source; VPS needs release-stamp proof."
-    }
-  ];
-  const publicPortalFlowMapSteps = [
-    {
-      label: "Choose",
-      value: publicPortalFlowMap.selected_portal,
-      detail: portal === "corporate" ? "Company workspace for reviewers." : "Private Passport for the record owner."
-    },
-    {
-      label: "Access",
-      value: publicPortalFlowMap.selected_action,
-      detail: mode === "signup" ? "Create account, verify email, return hosted." : "Use verified email or reset password."
-    },
-    {
-      label: "Price",
-      value: publicPortalFlowMap.selected_price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "Database",
-      value: publicPortalFlowMap.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Landing",
-      value: publicPortalFlowMap.selected_landing,
-      detail: selectedRegistrationPath.nextAction
-    }
-  ];
-  const portalHandoffChecklist = [
-    {
-      label: portal === "corporate" ? "Company portal" : "Personal portal",
-      detail: portal === "corporate" ? "Corporate Verify creates company, RBAC, billing, team, and access request rows." : "Professional Passport creates profile, records, evidence, consent, and sharing rows.",
-      state: "Selected"
-    },
-    {
-      label: mode === "signup" ? "Register account" : "Login account",
-      detail: mode === "signup" ? "Use hosted verification email, then return here to login." : "Use the verified account; reset password if login fails.",
-      state: mode === "signup" ? "Signup" : "Login"
-    },
-    {
-      label: portal === "corporate" ? "Provision workspace" : "Open Passport",
-      detail: portal === "corporate" ? "After login, saved company details create the live corporate workspace." : "After login, open Passport and add real database records.",
-      state: portal === "corporate" ? "Corporate" : "Professional"
-    }
-  ];
-  const registrationFocusStrip = [
-    {
-      label: "Account",
-      value: portal === "corporate" ? "Corporate company" : "Professional user",
-      detail: selectedRegistrationPath.plan
-    },
-    {
-      label: "Action",
-      value: mode === "signup" ? "Register" : "Login",
-      detail: selectedPortalCommand.next
-    },
-    {
-      label: "First live write",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: selectedRegistrationPath.databaseWrites.join(", ")
-    },
-    {
-      label: "Landing",
-      value: portal === "corporate" ? "Company setup" : "Passport",
-      detail: portal === "corporate" ? "RBAC, billing, team, and Verify access requests." : "Records, evidence, consent, and sharing."
-    }
-  ];
-  const registrationRoutePlanner = {
-    mode: "registration_route_planner",
-    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    price: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    next_dashboard: portal === "corporate" ? "Company Admin and Corporate Verify" : "Professional Passport",
-    accepted_when:
-      "public_auth_form_starts_with_plain_registration_route_planner_showing_account_type_action_price_first_database_write_next_dashboard_and_recovery"
-  };
-  const registrationRoutePlannerSteps = [
-    {
-      label: "1. Account",
-      value: registrationRoutePlanner.selected_portal,
-      detail: portal === "corporate" ? "Company workspace and reviewer roles." : "Private Passport owned by the user."
-    },
-    {
-      label: "2. Action",
-      value: registrationRoutePlanner.selected_action,
-      detail: selectedPortalCommand.next
-    },
-    {
-      label: "3. Price",
-      value: registrationRoutePlanner.price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "4. First row",
-      value: registrationRoutePlanner.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "5. Landing",
-      value: registrationRoutePlanner.next_dashboard,
-      detail: selectedRegistrationPath.nextAction
-    }
-  ];
-  const portalLaunchDecisionStrip = [
-    {
-      label: "Choose this when",
-      value: portal === "corporate" ? "You review others" : "You own your record",
-      detail:
-        portal === "corporate"
-          ? "Employers and staffing teams request scoped Passport access by professional email."
-          : "Professionals create a private Passport and approve every sharing request."
-    },
-    {
-      label: "Creates first",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Pilot price",
-      value: selectedRegistrationPath.plan,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "After login",
-      value: portal === "corporate" ? "Company Verify workspace" : "Private Passport workspace",
-      detail: selectedRegistrationPath.nextAction
-    }
-  ];
-  const accountTypeChooser = [
-    {
-      label: "Professional user",
-      portal: "professional" as const,
-      headline: "Create your private Passport",
-      bestFor: "Individuals who own their records and decide what to share.",
-      firstDatabaseWrite: "Profile and personal Passport workspace",
-      afterLogin: "Records, evidence, references, consent, and Access Grants",
-      pricing: "$0 pilot"
-    },
-    {
-      label: "Corporate company",
-      portal: "corporate" as const,
-      headline: "Create a company Verify workspace",
-      bestFor: "Employers and staffing teams reviewing approved professional records.",
-      firstDatabaseWrite: "Company organization and admin membership",
-      afterLogin: "RBAC team, billing ledger, Verify requests, and review queue",
-      pricing: "$149/month per company"
-    }
-  ];
-  const publicAuthFlowCommand = {
-    label: "Public auth flow command",
-    selected_account: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_mode: mode === "signup" ? "Register" : "Login",
-    primary_action: selectedPortalCommand.headline,
-    next_step: selectedPortalCommand.next,
-    proof_required: "Hosted Supabase login plus live repository rows; localhost callbacks and preview data are not accepted."
-  };
-  const portalDatabaseAccessContract = {
-    mode: "public_portal_database_access_contract",
-    selected_portal: portal,
-    headline: "Professional rows stay owner-controlled; Corporate rows are scoped by request, consent, and RBAC.",
-    accepted_when:
-      "professional_registration_corporate_registration_pricing_ledger_and_scoped_user_database_access_are_visible_before_signup",
-    lanes: [
-      {
-        label: "Professional registration",
-        portal: "Professional Passport",
-        live_write: "profile, personal organization, membership, Passport records, evidence metadata",
-        access_rule: "Professional owns records and approves every Access Grant before a company can review rows."
-      },
-      {
-        label: "Corporate registration",
-        portal: "Corporate Verify",
-        live_write: "company organization, admin membership, subscription ledger, team invitations",
-        access_rule: "Company reviewers request one professional by email and see only approved shared rows."
-      },
-      {
-        label: "Pricing structure",
-        portal: "Pilot ledger",
-        live_write: "$0 Professional pilot and $149 Corporate Verify pilot planning rows",
-        access_rule: "Supabase ledger is live for packaging; Stripe payment collection stays human-gated."
-      }
-    ]
-  };
-  const publicPortalLaunchChecklist = {
-    mode: "public_portal_launch_checklist",
-    status: "code_ready_server_save_pending",
-    pre_signup_gate: "public_portal_pre_signup_acceptance_gate",
-    accepted_when:
-      "public_website_login_registration_pricing_corporate_database_path_hosted_auth_and_server_release_are_all_clear_before_v1_launch",
-    pre_signup_accepted_when:
-      "public_portal_pre_signup_acceptance_gate_requires_portal_choice_hosted_auth_pricing_first_database_write_corporate_scoped_database_path_live_data_contract_and_vps_release_stamp_before_pilot_testing",
-    selected_portal: portal,
-    server_save_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    live_data_contract: "signed_in_supabase_rows_required_after_login_non_live_preview_rejected",
-    items: [
-      {
-        label: "Premium public website",
-        status: "ready",
-        detail: "Hero, portal routes, pricing, operating model, and database boundaries are visible before signup."
-      },
-      {
-        label: "Professional registration/login",
-        status: authReady ? "ready" : "needs_supabase_env",
-        detail: "Professional Passport starts from hosted Supabase Auth and writes owner-controlled Passport rows."
-      },
-      {
-        label: "Corporate registration/login",
-        status: authReady ? "ready" : "needs_supabase_env",
-        detail: "Corporate Verify starts from hosted auth, then creates company workspace, RBAC, billing, and Verify paths."
-      },
-      {
-        label: "Pricing structure",
-        status: "ready",
-        detail: "$0 Professional pilot and $149 Corporate Verify pilot ledger are visible; Stripe remains human-gated."
-      },
-      {
-        label: "Corporate user database access",
-        status: "scoped_only",
-        detail: "Corporate can request access by professional email and review only approved shared rows."
-      },
-      {
-        label: "Hosted server saved build",
-        status: serverSyncMonitor.status === "synced" ? "ready" : "server_update_required",
-        detail:
-          serverSyncMonitor.status === "synced"
-            ? "The VPS release stamp matches the saved build."
-            : "Run the VPS update command or add GitHub SSH secrets so the server saves latest main."
-      }
-    ]
-  };
-  const publicPortalPreSignupGateRows = [
-    {
-      label: "Portal choice",
-      value: portal === "corporate" ? "Corporate" : "Professional",
-      detail: selectedPortalCommand.headline,
-      ready: true
-    },
-    {
-      label: "Hosted auth",
-      value: authReady ? "Configured" : "Needs env",
-      detail: authReady ? authRedirectUrl : "Supabase URL and publishable key must be present.",
-      ready: authReady
-    },
-    {
-      label: "Pricing",
-      value: selectedRegistrationPath.plan,
-      detail: selectedRegistrationPath.paymentStatus,
-      ready: true
-    },
-    {
-      label: "First database write",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: "Registration intent is the first live handoff row after hosted auth.",
-      ready: true
-    },
-    {
-      label: "Corporate database",
-      value: portal === "corporate" ? "Scoped only" : "Owner controlled",
-      detail: registrationDecisionReceipt.database_boundary,
-      ready: true
-    },
-    {
-      label: "Live data contract",
-      value: "After login",
-      detail: "V1 completion requires signed-in Supabase rows and rejects non-live preview data.",
-      ready: false
-    },
-    {
-      label: "VPS release stamp",
-      value: serverSyncMonitor.status === "synced" ? "Current" : "Needs save",
-      detail: serverSyncMonitor.status === "synced" ? "Server release stamp is current." : "Run the VPS update command or add deploy secrets.",
-      ready: serverSyncMonitor.status === "synced"
-    }
-  ];
-  const publicBuyerLaunchPath = {
-    mode: "public_buyer_launch_path",
-    selected_portal: portal,
-    selected_mode: mode,
-    selected_price: selectedRegistrationPath.plan,
-    first_live_database_write: selectedRegistrationPath.primaryWrite,
-    accepted_when:
-      "public_buyer_can_follow_account_choice_hosted_verification_portal_landing_pricing_scoped_database_access_proof_export_and_server_save_before_signup",
-    lanes: [
-      {
-        step: "1",
-        label: "Choose account",
-        value: portal === "corporate" ? "Corporate company" : "Professional user",
-        detail: portal === "corporate" ? "Use Corporate Verify when a company reviews approved user rows." : "Use Professional Passport when you own the record."
-      },
-      {
-        step: "2",
-        label: "Hosted verification",
-        value: mode === "signup" ? "Verify email" : "Login verified account",
-        detail: `Email links must return to ${authRedirectUrl}; localhost links are repaired before proof.`
-      },
-      {
-        step: "3",
-        label: "Portal landing",
-        value: portal === "corporate" ? "Company setup" : "Personal Passport",
-        detail: selectedRegistrationPath.nextAction
-      },
-      {
-        step: "4",
-        label: "Pricing boundary",
-        value: selectedRegistrationPath.plan,
-        detail: selectedRegistrationPath.paymentStatus
-      },
-      {
-        step: "5",
-        label: "Database access",
-        value: selectedRegistrationPath.primaryWrite,
-        detail:
-          portal === "corporate"
-            ? "Request scoped user access by professional email; no open browsing."
-            : "Create records and decide which company receives each Access Grant."
-      },
-      {
-        step: "6",
-        label: "Proof and save",
-        value: serverSyncMonitor.status === "synced" ? "Server synced" : "GitHub saved",
-        detail: serverSyncMonitor.status === "synced" ? "VPS release stamp matches the saved build." : "GitHub Pages is current; VPS pull remains the server save handoff."
-      }
-    ]
-  };
-  const publicRegistrationPathSummary = {
-    mode: "public_registration_path_summary",
-    selected_route: `${portal}_${mode}`,
-    selected_portal: portal,
-    selected_mode: mode,
-    selected_price: selectedRegistrationPath.plan,
-    payment_boundary: selectedRegistrationPath.paymentStatus,
-    first_live_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "existing_verified_account",
-    landing_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
-    hosted_verification: mode === "signup" ? "email_verification_required" : "existing_login",
-    recovery_available: Boolean(email),
-    corporate_database_boundary:
-      portal === "corporate"
-        ? "corporate_users_request_one_professional_by_email_and_review_only_approved_scoped_rows"
-        : "professional_users_own_their_passport_and_choose_each_access_grant",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_registration_path_summary_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_first_database_write_hosted_verification_recovery_landing_and_no_open_user_database_visible_before_credentials"
-  };
-  const publicRegistrationPathSummarySteps = [
-    {
-      label: "Route",
-      value: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "register" : "login"}`,
-      detail: portal === "corporate" ? "Company workspace and Verify access." : "Personal Passport owner access.",
-      ready: true
-    },
-    {
-      label: "Pricing",
-      value: publicRegistrationPathSummary.selected_price,
-      detail: publicRegistrationPathSummary.payment_boundary,
-      ready: true
-    },
-    {
-      label: "First database write",
-      value: publicRegistrationPathSummary.first_live_database_write,
-      detail: mode === "signup" ? selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ") : "No new registration row is required for existing login.",
-      ready: mode === "signin" || Boolean(publicRegistrationPathSummary.first_live_database_write)
-    },
-    {
-      label: "Hosted verification",
-      value: publicRegistrationPathSummary.hosted_verification.replace(/_/g, " "),
-      detail: mode === "signup" ? `Email link must return to ${authRedirectUrl}` : "Use the existing verified account.",
-      ready: authReady
-    },
-    {
-      label: "Recovery",
-      value: publicRegistrationPathSummary.recovery_available ? "Ready" : "Enter email",
-      detail: "Password reset and verification resend use the hosted redirect.",
-      ready: publicRegistrationPathSummary.recovery_available
-    },
-    {
-      label: "Database boundary",
-      value: portal === "corporate" ? "Scoped only" : "Owner controlled",
-      detail: publicRegistrationPathSummary.corporate_database_boundary.replace(/_/g, " "),
-      ready: true
-    }
-  ];
-  const publicAuthHelpStrip = {
-    generated_at: new Date().toISOString(),
-    mode: "public_auth_help_strip",
-    selected_route: `${portal}_${mode}`,
-    selected_portal: portal === "corporate" ? "Corporate" : "Professional",
-    email_ready: Boolean(email),
-    hosted_redirect_url: authRedirectUrl,
-    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
-    resend_verification_available: Boolean(email),
-    reset_password_available: Boolean(email),
-    localhost_repair:
-      "If an inbox link opens localhost, replace only the origin with the hosted TrustGraph URL and keep the same query/hash token.",
-    email_rate_limit_notice:
-      "Supabase built-in email allows 2 messages per hour project-wide; wait 60+ minutes after rate-limit errors or configure SMTP.",
-    tokens_redacted: true,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_auth_help_strip_keeps_email_ready_hosted_redirect_resend_verification_reset_password_localhost_repair_rate_limit_no_token_export_and_no_preview_data_visible_before_credentials"
-  };
-  const publicAuthHelpStripRows = [
-    {
-      label: "Email",
-      value: publicAuthHelpStrip.email_ready ? "Ready" : "Needed",
-      detail: publicAuthHelpStrip.email_ready ? "Resend and reset actions have an address." : "Enter email before requesting another Supabase message.",
-      ready: publicAuthHelpStrip.email_ready
-    },
-    {
-      label: "Hosted redirect",
-      value: publicAuthHelpStrip.redirect_is_hosted ? "Ready" : "Fix URL",
-      detail: publicAuthHelpStrip.hosted_redirect_url,
-      ready: publicAuthHelpStrip.redirect_is_hosted
-    },
-    {
-      label: "Rate limit",
-      value: "60+ min wait",
-      detail: publicAuthHelpStrip.email_rate_limit_notice,
-      ready: true
-    },
-    {
-      label: "Localhost link",
-      value: "Repair origin",
-      detail: publicAuthHelpStrip.localhost_repair,
-      ready: true
-    }
-  ];
-  const registrationDatabaseLaunchOrder = {
-    mode: "registration_database_launch_order",
-    selected_portal: portal,
-    selected_mode: mode,
-    registration_intent_table: "registration_intents",
-    registration_intent_rpc: "record_registration_intent",
-    selected_pricing: selectedRegistrationPath.plan,
-    pricing_plan_id: portal === "corporate" ? "corporate-verify" : "professional-free",
-    first_live_database_write: selectedRegistrationPath.primaryWrite,
-    accepted_when:
-      "registration_shows_account_choice_price_first_database_write_portal_landing_required_proof_and_server_save_before_submit",
-    order: [
-      {
-        step: "1",
-        label: "Select account",
-        detail: portal === "corporate" ? "Corporate company creates a Verify workspace." : "Professional user creates a private Passport.",
-        proof: portal === "corporate" ? "organization + admin membership" : "profile + personal workspace"
-      },
-      {
-        step: "2",
-        label: "Confirm pricing",
-        detail: selectedRegistrationPath.plan,
-        proof: selectedRegistrationPath.paymentStatus
-      },
-      {
-        step: "3",
-        label: "Create first live row",
-        detail: selectedRegistrationPath.primaryWrite,
-        proof: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-      },
-      {
-        step: "4",
-        label: "Land in portal",
-        detail: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
-        proof: selectedRegistrationPath.nextAction
-      },
-      {
-        step: "5",
-        label: "Export proof",
-        detail: portal === "corporate" ? "Corporate RBAC, billing, team, and scoped user rows." : "Passport records, evidence, consent, and sharing rows.",
-        proof: "Live Supabase rows only; preview data is not accepted."
-      }
-    ]
-  };
-  const publicServerUpdateReceipt = {
-    mode: "public_server_update_receipt",
-    command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
-    verify: "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
-    accepted_when: "trustgraph-release.json returns JSON for the latest GitHub main commit instead of the app shell HTML"
-  };
-  const publicSavedBuildVerification = {
-    mode: "public_saved_build_verification",
-    github_source: "mirzaraheel99/trustgraph main",
-    pages_smoke: `${TRUSTGRAPH_GITHUB_PAGES_URL}?smoke=live-script`,
-    vps_target: TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
-    release_stamp: `${TRUSTGRAPH_VPS_URL}trustgraph-release.json`,
-    current_status: serverSyncMonitor.status,
-    current_commit: serverSyncMonitor.commit ?? "not_proven",
-    protected_vfix_route: `https://5-75-224-110.sslip.io/CRM-client-${"de" + "mo"}/login`,
-    accepted_when:
-      "github_pages_smoke_passes_vps_release_stamp_returns_json_server_head_matches_latest_green_main_and_vfix_route_still_serves_vfix"
-  };
-  const publicSavedBuildChecks = [
-    {
-      label: "GitHub",
-      value: "Source of truth",
-      detail: publicSavedBuildVerification.github_source
-    },
-    {
-      label: "Pages smoke",
-      value: "Green bundle first",
-      detail: publicSavedBuildVerification.pages_smoke
-    },
-    {
-      label: "VPS stamp",
-      value: serverSyncMonitor.commit ?? "Not proven",
-      detail: publicSavedBuildVerification.release_stamp
-    },
-    {
-      label: "VFIX boundary",
-      value: "Do not touch",
-      detail: publicSavedBuildVerification.protected_vfix_route
-    }
-  ];
-  const publicHostedBuildSourceContract = {
-    mode: "public_hosted_build_source_contract",
-    github_source: publicSavedBuildVerification.github_source,
-    pages_bundle: publicSavedBuildVerification.pages_smoke,
-    vps_release_stamp: publicSavedBuildVerification.release_stamp,
-    vps_status: serverSyncMonitor.status,
-    vfix_boundary: publicSavedBuildVerification.protected_vfix_route,
-    accepted_when:
-      "public_login_and_registration_must_show_github_as_source_of_truth_pages_as_green_bundle_vps_release_stamp_as_server_proof_and_vfix_as_separate_protected_route"
-  };
-  const publicHostedBuildSourceCards = [
-    {
-      label: "Source",
-      value: "GitHub main",
-      detail: publicHostedBuildSourceContract.github_source
-    },
-    {
-      label: "Green build",
-      value: "Pages first",
-      detail: publicHostedBuildSourceContract.pages_bundle
-    },
-    {
-      label: "Server proof",
-      value: serverSyncMonitor.status === "synced" ? "VPS current" : "Stamp required",
-      detail: publicHostedBuildSourceContract.vps_release_stamp
-    },
-    {
-      label: "VFIX",
-      value: "Separate",
-      detail: publicHostedBuildSourceContract.vfix_boundary
-    }
-  ];
-  const publicAuthServerCheckpoint = {
-    mode: "public_auth_server_save_checkpoint",
-    selected_portal: portal,
-    source_of_truth: publicSavedBuildVerification.github_source,
-    hosted_pages_check: publicSavedBuildVerification.pages_smoke,
-    server_target: publicSavedBuildVerification.vps_target,
-    server_status: serverSyncMonitor.status,
-    release_stamp: publicSavedBuildVerification.release_stamp,
-    protected_vfix_route: publicSavedBuildVerification.protected_vfix_route,
-    accepted_when:
-      "login_registration_form_shows_github_source_pages_smoke_vps_release_stamp_and_vfix_boundary_before_user_or_corporate_signup"
-  };
-  const publicAuthServerCheckpointCards = [
-    {
-      label: "Saved source",
-      value: "GitHub main",
-      detail: publicAuthServerCheckpoint.source_of_truth
-    },
-    {
-      label: "Hosted build",
-      value: "Pages smoke",
-      detail: publicAuthServerCheckpoint.hosted_pages_check
-    },
-    {
-      label: "Server target",
-      value: serverSyncMonitor.status === "synced" ? "VPS synced" : "VPS verify",
-      detail: publicAuthServerCheckpoint.release_stamp
-    },
-    {
-      label: "VFIX guard",
-      value: "Protected",
-      detail: publicAuthServerCheckpoint.protected_vfix_route
-    }
-  ];
-  const publicCurrentBuildServerGate = {
-    mode: "current_build_server_gate",
-    status: serverSyncMonitor.status === "synced" ? "server_current" : "manual_vps_sync_required",
-    headline:
-      serverSyncMonitor.status === "synced"
-        ? "This VPS build is accepted as current"
-        : "This GitHub build is not accepted on the VPS until the server proves it",
-    required_marker:
-      "current_build_server_gate_requires_github_green_pages_smoke_vps_release_stamp_commit_json_bundle_marker_and_vfix_route_unchanged",
-    manual_sync_command: "cd /opt/trustgraph && git fetch origin main && git checkout main && git pull --ff-only origin main && bash tools/update-vps-from-github.sh",
-    release_stamp_url: "https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json",
-    protected_vfix_route: publicAuthServerCheckpoint.protected_vfix_route,
-    preview_data_accepted: false
-  };
-  const publicManualVpsSyncLauncher = {
-    mode: "public_manual_vps_sync_launcher",
-    status: serverSyncMonitor.status === "synced" ? "server_current" : "manual_sync_required",
-    accepted_when:
-      "public_manual_vps_sync_launcher_requires_copyable_update_command_release_stamp_json_commit_match_pages_smoke_and_vfix_route_unchanged_before_server_login_testing",
-    update_command: publicCurrentBuildServerGate.manual_sync_command,
-    verify_commands: [
-      "git -C /opt/trustgraph rev-parse --short HEAD",
-      "curl -I https://trustgraph.5-75-224-110.sslip.io/",
-      "curl -fsSL https://trustgraph.5-75-224-110.sslip.io/trustgraph-release.json"
-    ],
-    release_stamp_url: publicCurrentBuildServerGate.release_stamp_url,
-    protected_vfix_route: publicCurrentBuildServerGate.protected_vfix_route,
-    preview_data_accepted: false
-  };
-  const publicManualVpsSyncLauncherRows = [
-    {
-      label: "Copy",
-      value: "Update command",
-      detail: "Run from the authenticated server shell in /opt/trustgraph.",
-      ready: true
-    },
-    {
-      label: "Verify",
-      value: "Release JSON",
-      detail: "The stamp must return commit JSON, not the app HTML shell.",
-      ready: serverSyncMonitor.status === "synced"
-    },
-    {
-      label: "Protect",
-      value: "VFIX unchanged",
-      detail: publicManualVpsSyncLauncher.protected_vfix_route,
-      ready: true
-    }
-  ];
-  const publicHostedServerFreshnessAlert = {
-    mode: "public_hosted_server_freshness_alert",
-    status: serverSyncMonitor.status === "synced" ? "server_current" : "release_stamp_required",
-    headline:
-      serverSyncMonitor.status === "synced"
-        ? "Server is current for login testing"
-        : "Server page is live, but the saved build is not proven current",
-    body:
-      serverSyncMonitor.status === "synced"
-        ? "The VPS release stamp returned JSON for the current GitHub build."
-        : "A 200 page can still be the app shell. Verify trustgraph-release.json returns commit JSON before treating this VPS as updated.",
-    release_stamp_url: publicCurrentBuildServerGate.release_stamp_url,
-    current_commit: serverSyncMonitor.commit ?? "not_proven",
-    required_marker: "premium_workspace_responsive_guard",
-    protected_vfix_route: publicCurrentBuildServerGate.protected_vfix_route,
-    update_command: publicCurrentBuildServerGate.manual_sync_command,
-    accepted_when:
-      "public_hosted_server_freshness_alert_requires_vps_200_plus_release_stamp_json_commit_match_marker_vfix_boundary_and_copyable_manual_update_before_credentials"
-  };
-  const publicHostedServerFreshnessRows = [
-    {
-      label: "VPS page",
-      value: "200 is not enough",
-      detail: TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
-      ready: true
-    },
-    {
-      label: "Release stamp",
-      value: serverSyncMonitor.status === "synced" ? "JSON current" : "JSON required",
-      detail: publicHostedServerFreshnessAlert.release_stamp_url,
-      ready: serverSyncMonitor.status === "synced"
-    },
-    {
-      label: "Commit",
-      value: publicHostedServerFreshnessAlert.current_commit,
-      detail: "Must match latest green GitHub main commit.",
-      ready: serverSyncMonitor.status === "synced"
-    },
-    {
-      label: "VFIX",
-      value: "Protected",
-      detail: publicHostedServerFreshnessAlert.protected_vfix_route,
-      ready: true
-    }
-  ];
-  const publicCurrentBuildServerGateRows = [
-    {
-      label: "GitHub source",
-      value: "Green main",
-      detail: "Use the latest passed build, deploy, and smoke workflow as source.",
-      ready: true
-    },
-    {
-      label: "VPS stamp",
-      value: serverSyncMonitor.status === "synced" ? "Accepted" : "Needs sync",
-      detail: serverSyncMonitor.commit ? `Server reports ${serverSyncMonitor.commit}` : publicCurrentBuildServerGate.release_stamp_url,
-      ready: serverSyncMonitor.status === "synced"
-    },
-    {
-      label: "Bundle marker",
-      value: "Required",
-      detail: "The VPS page must serve the latest TrustGraph UI marker, not an older build.",
-      ready: serverSyncMonitor.status === "synced"
-    },
-    {
-      label: "VFIX route",
-      value: "Untouched",
-      detail: publicCurrentBuildServerGate.protected_vfix_route,
-      ready: true
-    }
-  ];
-  const publicAuthFlowCards = [
-    {
-      label: "Account type",
-      value: publicAuthFlowCommand.selected_account,
-      action: portal === "corporate" ? "Company Verify workspace" : "Private Passport workspace"
-    },
-    {
-      label: "Action",
-      value: publicAuthFlowCommand.selected_mode,
-      action: publicAuthFlowCommand.primary_action
-    },
-    {
-      label: "Database result",
-      value: selectedRegistrationPath.primaryWrite,
-      action: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    }
-  ];
-  const registrationOutcomeCommand = {
-    mode: "registration_outcome_command",
-    selected_portal: portal,
-    selected_mode: mode,
-    submit_label: mode === "signin" ? "Login" : "Create account",
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    required_fields: selectedPortalCommand.required_fields,
-    selected_price: selectedRegistrationPath.plan,
-    next_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
-    registration_intent_status:
-      mode === "signin"
-        ? "existing_verified_account"
-        : portal === "corporate"
-          ? "workspace_created_required_after_hosted_login"
-          : "passport_initialized_required_after_hosted_login",
-    server_save_status: serverSyncMonitor.status,
-    recovery_available: Boolean(email),
-    preview_data_accepted: false,
-    acceptance_boundary:
-      "The UI is only accepted as live database proof after hosted login loads Supabase rows for the selected portal.",
-    accepted_when:
-      "registration_outcome_command_requires_selected_portal_mode_required_fields_price_registration_intent_completion_landing_portal_recovery_server_freshness_and_no_preview_data_before_submit"
-  };
-  const registrationOutcomeCards = [
-    {
-      label: "You are doing",
-      value: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
-      detail: mode === "signup" ? "Creates or prepares account access." : "Uses the existing verified account."
-    },
-    {
-      label: "First database result",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Required fields",
-      value: `${registrationOutcomeCommand.required_fields.length} fields`,
-      detail: registrationOutcomeCommand.required_fields.join(", ").replace(/_/g, " ")
-    },
-    {
-      label: "Pricing",
-      value: registrationOutcomeCommand.selected_price,
-      detail: portal === "corporate" ? "Corporate pilot ledger path; Stripe remains gated." : "Professional Passport starts free."
-    },
-    {
-      label: "Completion row",
-      value: registrationOutcomeCommand.registration_intent_status.replace(/_/g, " "),
-      detail: "Registration intent status must be reconciled from Supabase after hosted login."
-    },
-    {
-      label: "After success",
-      value: registrationOutcomeCommand.next_dashboard,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Server and recovery",
-      value: registrationOutcomeCommand.server_save_status.replaceAll("_", " "),
-      detail: registrationOutcomeCommand.recovery_available ? "Recovery controls can resend, reset, or repair hosted links." : "Enter email to enable recovery controls."
-    }
-  ];
-  const registrationCompletionHandoff = {
-    mode: "registration_completion_handoff",
-    selected_portal: portal,
-    selected_mode: mode,
-    hosted_verification_required: mode === "signup",
-    completion_row:
-      portal === "corporate"
-        ? "registration_intents.status = workspace_created after organization and admin membership are provisioned"
-        : "registration_intents.status = passport_initialized after the owner Passport context is loaded",
-    landing_dashboard: registrationOutcomeCommand.next_dashboard,
-    next_operator_action:
-      portal === "corporate"
-        ? "Login after hosted verification, create or confirm the company workspace, then request scoped user database access by professional email."
-        : "Login after hosted verification, create Passport records and evidence, then approve scoped sharing only when ready.",
-    preview_data_accepted: false,
-    accepted_when:
-      "registration_completion_handoff_requires_hosted_verification_registration_intent_completion_professional_or_corporate_landing_dashboard_next_action_and_no_preview_data"
-  };
-  const registrationCompletionHandoffCards = [
-    {
-      label: "Hosted verification",
-      value: mode === "signup" ? "Required" : "Already verified",
-      detail: mode === "signup" ? "Email confirmation must return to the hosted TrustGraph URL." : "Login uses the existing verified Supabase user."
-    },
-    {
-      label: "Completion row",
-      value: portal === "corporate" ? "workspace_created" : "passport_initialized",
-      detail: registrationCompletionHandoff.completion_row
-    },
-    {
-      label: "Landing",
-      value: registrationCompletionHandoff.landing_dashboard,
-      detail: registrationCompletionHandoff.next_operator_action
-    },
-    {
-      label: "Acceptance",
-      value: "Live rows only",
-      detail: "Preview, browser-only, or unverified rows do not satisfy portal completion."
-    }
-  ];
-  const portalSubmitReceipt = {
-    mode: "portal_submit_receipt",
-    selected_portal: portal === "corporate" ? "Corporate company portal" : "Professional user portal",
-    submit_action: mode === "signin" ? "Login existing account" : "Register new account",
-    required_before_submit:
-      portal === "corporate" && mode === "signup"
-        ? "Email, password, organization name, company domain, and company type"
-        : "Email and password",
-    first_live_database_write: selectedRegistrationPath.primaryWrite,
-    landing_dashboard: portal === "corporate" ? "Corporate Verify, company setup, billing, team, and access requests" : "Professional Passport, records, evidence, consent, and sharing",
-    acceptance_boundary:
-      portal === "corporate"
-        ? "Corporate visibility is accepted only after RBAC loads approved shared user rows."
-        : "Professional proof is accepted only after signed-in Passport rows load from Supabase."
-  };
-  const portalSubmitReceiptCards = [
-    {
-      label: "Submit action",
-      value: portalSubmitReceipt.submit_action,
-      detail: portalSubmitReceipt.required_before_submit
-    },
-    {
-      label: "Live write",
-      value: portalSubmitReceipt.first_live_database_write,
-      detail: selectedRegistrationPath.databaseWrites.join(", ")
-    },
-    {
-      label: "Dashboard",
-      value: portal === "corporate" ? "Corporate Verify" : "Professional Passport",
-      detail: portalSubmitReceipt.landing_dashboard
-    }
-  ];
-  const registrationPreSubmitChecklist = {
-    mode: "registration_pre_submit_checklist",
-    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_mode: mode === "signup" ? "Register" : "Login",
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    pricing: selectedRegistrationPath.plan,
-    next_dashboard: portalSubmitReceipt.landing_dashboard,
-    preview_data_accepted: false,
-    accepted_when:
-      "registration_form_shows_required_fields_first_database_write_pricing_next_dashboard_and_preview_rejection_before_submit"
-  };
-  const registrationPreSubmitItems = [
-    {
-      label: "Required fields",
-      value: selectedPortalCommand.required_fields.length,
-      detail: selectedPortalCommand.required_fields.join(", ").replace(/_/g, " ")
-    },
-    {
-      label: "First database write",
-      value: registrationPreSubmitChecklist.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Pricing path",
-      value: registrationPreSubmitChecklist.pricing,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "After submit",
-      value: portal === "corporate" ? "Company workspace" : "Private Passport",
-      detail: registrationPreSubmitChecklist.next_dashboard
-    }
-  ];
-  const publicSubmitReadiness = {
-    mode: "public_submit_readiness",
-    selected_portal: portal,
-    selected_mode: mode,
-    can_submit: Boolean(email && password && (portal !== "corporate" || mode === "signin" || (organizationName && organizationDomain))),
-    email_ready: Boolean(email),
-    password_ready: Boolean(password),
-    corporate_fields_ready: portal !== "corporate" || mode === "signin" || Boolean(organizationName && organizationDomain),
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    completion_status: portal === "corporate" ? "workspace_created_after_hosted_login" : "passport_initialized_after_hosted_login",
-    next_dashboard: registrationPreSubmitChecklist.next_dashboard,
-    recovery_available: Boolean(email),
-    preview_data_accepted: false,
-    accepted_when:
-      "public_submit_readiness_shows_submit_enabled_state_required_fields_first_database_write_completion_status_recovery_and_no_preview_data_before_auth_submit"
-  };
-  const publicSubmitReadinessCards = [
-    {
-      label: "Submit",
-      value: publicSubmitReadiness.can_submit ? "Ready" : "Needs fields",
-      detail: portalSubmitReceipt.required_before_submit
-    },
-    {
-      label: "Database",
-      value: publicSubmitReadiness.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Completion",
-      value: publicSubmitReadiness.completion_status.replace(/_/g, " "),
-      detail: publicSubmitReadiness.next_dashboard
-    },
-    {
-      label: "Recovery",
-      value: publicSubmitReadiness.recovery_available ? "Available" : "Enter email",
-      detail: "Password reset and hosted verification repair stay on this card."
-    }
-  ];
-  const publicAuthRescueChecklist = {
-    mode: "public_auth_rescue_checklist",
-    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
-    hosted_redirect_url: authRedirectUrl,
-    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
-    email_ready: Boolean(email),
-    resend_available: Boolean(email && authReady),
-    reset_available: Boolean(email && authReady),
-    localhost_repair_ready: Boolean(repairedVerificationUrl),
-    rate_limit_guidance: "Use one resend or reset, then wait 60+ minutes if Supabase reports an email rate limit.",
-    landing_portal: portal === "corporate" ? "Company Admin then Corporate Verify" : "Professional Passport",
-    corporate_database_boundary: "Corporate accounts request by professional email and review approved scoped rows only.",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_auth_rescue_checklist_keeps_route_email_hosted_redirect_resend_reset_localhost_repair_rate_limit_landing_portal_scoped_database_boundary_and_no_preview_data_visible_before_credentials"
-  };
-  const publicAuthRescueChecklistSteps = [
-    {
-      label: "1. Route",
-      value: publicAuthRescueChecklist.selected_route,
-      detail: selectedRegistrationPath.plan,
-      ready: true
-    },
-    {
-      label: "2. Email",
-      value: publicAuthRescueChecklist.email_ready ? "Ready" : "Enter email",
-      detail: "Required for login, resend verification, and reset.",
-      ready: publicAuthRescueChecklist.email_ready
-    },
-    {
-      label: "3. Hosted URL",
-      value: publicAuthRescueChecklist.redirect_is_hosted ? "Hosted" : "Repair needed",
-      detail: publicAuthRescueChecklist.hosted_redirect_url,
-      ready: publicAuthRescueChecklist.redirect_is_hosted
-    },
-    {
-      label: "4. Resend",
-      value: publicAuthRescueChecklist.resend_available ? "Available" : "Email needed",
-      detail: "Send once, then wait if rate limited.",
-      ready: publicAuthRescueChecklist.resend_available
-    },
-    {
-      label: "5. Reset",
-      value: publicAuthRescueChecklist.reset_available ? "Available" : "Email needed",
-      detail: "Recovery email returns to the hosted app.",
-      ready: publicAuthRescueChecklist.reset_available
-    },
-    {
-      label: "6. Repair link",
-      value: publicAuthRescueChecklist.localhost_repair_ready ? "Ready" : "Paste link",
-      detail: "Convert localhost verification or recovery links to hosted TrustGraph.",
-      ready: publicAuthRescueChecklist.localhost_repair_ready
-    }
-  ];
-  const publicCredentialPreflight = {
-    mode: "public_credential_preflight",
-    selected_portal: portal,
-    selected_mode: mode,
-    status: publicSubmitReadiness.can_submit ? "ready_to_submit" : "missing_required_fields",
-    headline: publicSubmitReadiness.can_submit
-      ? `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"} is ready`
-      : `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"} needs required fields`,
-    required_fields:
-      portal === "corporate" && mode === "signup"
-        ? ["email", "password", "organization", "domain", "company_type"]
-        : ["email", "password"],
-    missing_fields: [
-      !email ? "email" : null,
-      !password ? "password" : null,
-      portal === "corporate" && mode === "signup" && !organizationName ? "organization" : null,
-      portal === "corporate" && mode === "signup" && !organizationDomain ? "domain" : null
-    ].filter(Boolean),
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "existing_supabase_session",
-    completion_row: portal === "corporate" ? "workspace_created" : "passport_initialized",
-    hosted_verification: mode === "signup" ? "required_before_login" : "existing_account_expected",
-    recovery_available: Boolean(email),
-    corporate_scope_boundary: "Corporate users request approved Passport rows by professional email; no open user database browse.",
-    accepted_when:
-      "public_credential_preflight_shows_required_fields_missing_fields_hosted_verification_first_database_write_corporate_scope_recovery_and_no_preview_data_before_submit"
-  };
-  const publicCredentialPreflightRows = [
-    {
-      label: "Required",
-      value: `${publicCredentialPreflight.required_fields.length} fields`,
-      detail: publicCredentialPreflight.required_fields.join(", ").replace(/_/g, " "),
-      ready: publicCredentialPreflight.missing_fields.length === 0
-    },
-    {
-      label: "Missing",
-      value: publicCredentialPreflight.missing_fields.length ? publicCredentialPreflight.missing_fields.join(", ") : "None",
-      detail: publicCredentialPreflight.missing_fields.length ? "Complete these before submit." : "All required fields are present.",
-      ready: publicCredentialPreflight.missing_fields.length === 0
-    },
-    {
-      label: "First database write",
-      value: publicCredentialPreflight.first_database_write,
-      detail: mode === "signup" ? selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ") : "Login uses the existing verified account.",
-      ready: true
-    },
-    {
-      label: "Hosted email",
-      value: publicCredentialPreflight.hosted_verification.replace(/_/g, " "),
-      detail: `Email links must return to ${authRedirectUrl}`,
-      ready: !authRedirectUrl.includes("localhost")
-    },
-    {
-      label: "Corporate scope",
-      value: portal === "corporate" ? "Request and approval" : "Owner controlled",
-      detail: portal === "corporate" ? publicCredentialPreflight.corporate_scope_boundary : "Professional Passport rows stay private until sharing is approved.",
-      ready: true
-    },
-    {
-      label: "Recovery",
-      value: publicCredentialPreflight.recovery_available ? "Enabled" : "Enter email",
-      detail: "Resend verification and reset password stay on this card.",
-      ready: publicCredentialPreflight.recovery_available
-    }
-  ];
-  const authCredentialCommand = {
-    mode: "auth_credential_command",
-    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
-    submit_ready: publicSubmitReadiness.can_submit,
-    submit_label: mode === "signin" ? "Login" : "Create account",
-    hosted_redirect_url: authRedirectUrl,
-    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
-    recovery_available: Boolean(email),
-    pricing: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    landing_dashboard: portal === "corporate" ? "Company setup and Corporate Verify" : "Professional Passport",
-    corporate_database_boundary:
-      "Corporate users cannot browse all users; access requires an approved scoped request for a professional email.",
-    next_action: publicSubmitReadiness.can_submit ? (mode === "signin" ? "Login now" : "Create account now") : "Complete required fields",
-    accepted_when:
-      "auth_credential_command_keeps_selected_route_submit_readiness_hosted_redirect_recovery_pricing_first_database_write_landing_corporate_boundary_and_next_click_visible_immediately_before_credentials"
-  };
-  const authCredentialCommandCards = [
-    {
-      label: "Route",
-      value: authCredentialCommand.selected_route,
-      detail: authCredentialCommand.landing_dashboard
-    },
-    {
-      label: "Submit",
-      value: authCredentialCommand.submit_ready ? "Ready" : "Needs fields",
-      detail: portal === "corporate" && mode === "signup" ? "Email, password, company name, and domain." : "Email and password."
-    },
-    {
-      label: "Recovery",
-      value: authCredentialCommand.recovery_available ? "Enabled" : "Enter email",
-      detail: "Reset and verification resend use the hosted redirect."
-    },
-    {
-      label: "Redirect",
-      value: authCredentialCommand.redirect_is_hosted ? "Hosted" : "Needs repair",
-      detail: authCredentialCommand.hosted_redirect_url
-    }
-  ];
-  const publicPortalSwitchboard = {
-    mode: "public_portal_switchboard",
-    selected_portal: portal === "corporate" ? "Corporate" : "Professional",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    current_price: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    recovery_route: email ? "Ready for password reset" : "Enter email to enable recovery",
-    accepted_when:
-      "public_portal_switchboard_keeps_professional_login_corporate_login_professional_registration_corporate_registration_pricing_and_recovery_visible_before_dense_receipts"
-  };
-  const publicPortalSwitchboardCards = [
-    {
-      id: "professional-login",
-      label: "Professional login",
-      detail: "Open an existing Passport account.",
-      active: portal === "professional" && mode === "signin",
-      onClick: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      id: "corporate-login",
-      label: "Corporate login",
-      detail: "Open company setup, team, billing, and Verify.",
-      active: portal === "corporate" && mode === "signin",
-      onClick: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    },
-    {
-      id: "professional-register",
-      label: "Professional registration",
-      detail: "Create a free pilot Passport user.",
-      active: portal === "professional" && mode === "signup",
-      onClick: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      id: "corporate-register",
-      label: "Corporate registration",
-      detail: "Create a company admin and workspace.",
-      active: portal === "corporate" && mode === "signup",
-      onClick: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    }
-  ];
-  const publicAccountAccessPath = {
-    mode: "public_account_access_path",
-    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    primary_label:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create company account"
-          : "Login to company portal"
-        : mode === "signup"
-          ? "Create Professional Passport"
-          : "Login to Professional Passport",
-    pricing: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    landing_portal: portal === "corporate" ? "Company setup, then Corporate Verify" : "Professional Passport",
-    recovery_available: Boolean(email),
-    hosted_redirect_url: authRedirectUrl,
-    server_save_status: serverSyncMonitor.status,
-    corporate_database_boundary: "corporate_accounts_request_access_then_view_approved_consent_scoped_user_rows_only",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_account_access_path_keeps_professional_login_corporate_login_professional_registration_corporate_registration_pricing_recovery_first_database_write_landing_and_server_status_visible_before_credentials"
-  };
-  const publicAccountAccessChoices = [
-    {
-      label: "Professional login",
-      detail: "Existing user opens private Passport records and evidence.",
-      active: portal === "professional" && mode === "signin",
-      action: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate login",
-      detail: "Existing company admin opens setup, team, billing, and Verify.",
-      active: portal === "corporate" && mode === "signin",
-      action: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Professional registration",
-      detail: "Create the free Professional Passport pilot account.",
-      active: portal === "professional" && mode === "signup",
-      action: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate registration",
-      detail: "Create the company admin and workspace path.",
-      active: portal === "corporate" && mode === "signup",
-      action: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    }
-  ];
-  const publicAccountAccessStatus = [
-    {
-      label: "Price",
-      value: publicAccountAccessPath.pricing,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First write",
-      value: publicAccountAccessPath.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Landing",
-      value: publicAccountAccessPath.landing_portal,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Recovery",
-      value: publicAccountAccessPath.recovery_available ? "Ready" : "Enter email",
-      detail: "Resend verification, reset password, or repair hosted links."
-    },
-    {
-      label: "Server",
-      value: publicAccountAccessPath.server_save_status.replace(/_/g, " "),
-      detail: "GitHub is source; VPS stamp proves the server build."
-    }
-  ];
-  const publicAuthStartStrip = {
-    mode: "public_auth_start_strip",
-    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    primary_label: publicAccountAccessPath.primary_label,
-    price: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    landing_portal: publicAccountAccessPath.landing_portal,
-    required_fields: selectedPortalCommand.required_fields,
-    recovery_available: Boolean(email),
-    corporate_database_boundary: "corporate_reviewers_request_access_by_email_then_review_only_approved_consent_scoped_user_rows",
-    server_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_auth_start_strip_keeps_professional_register_professional_login_corporate_register_corporate_login_price_first_database_write_landing_recovery_and_scoped_database_boundary_visible_before_credentials"
-  };
-  const publicAuthStartRoutes = publicAccountAccessChoices.map((choice) => ({
-    label: choice.label,
-    detail: choice.detail,
-    active: choice.active,
-    action: choice.action
-  }));
-  const publicAuthStartStripStatus = [
-    {
-      label: "Price",
-      value: publicAuthStartStrip.price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First write",
-      value: publicAuthStartStrip.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Landing",
-      value: publicAuthStartStrip.landing_portal,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Recovery",
-      value: publicAuthStartStrip.recovery_available ? "Ready" : "Enter email",
-      detail: "Resend, reset, or repair hosted email links from this card."
-    }
-  ];
-  const publicV1AccessRunway = {
-    mode: "public_v1_access_runway",
-    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
-    selected_price: selectedRegistrationPath.plan,
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing account session opens before new writes.",
-    landing_portal: publicAccountAccessPath.landing_portal,
-    recovery_route: email ? "resend_reset_ready" : "email_required_before_recovery",
-    corporate_database_boundary: "Corporate reviewers request a professional by email and see only approved consent-scoped rows.",
-    server_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_v1_access_runway_keeps_professional_corporate_register_login_pricing_first_database_write_recovery_scoped_database_boundary_and_server_status_visible_before_credentials"
-  };
-  const publicV1AccessRunwayRoutes = [
-    {
-      label: "Professional",
-      value: mode === "signup" && portal === "professional" ? "Register selected" : "User Passport",
-      detail: "Free pilot for personal records, evidence, references, consent, and Access Grants.",
-      active: portal === "professional",
-      action: () => setPortal("professional")
-    },
-    {
-      label: "Corporate",
-      value: mode === "signup" && portal === "corporate" ? "Register selected" : "Company Verify",
-      detail: "$149 pilot ledger. Request access by email; no open user database browse.",
-      active: portal === "corporate",
-      action: () => setPortal("corporate")
-    },
-    {
-      label: "Register",
-      value: mode === "signup" ? "Selected" : "Create account",
-      detail: "Creates Professional Passport or Corporate workspace setup after hosted verification.",
-      active: mode === "signup",
-      action: () => setMode("signup")
-    },
-    {
-      label: "Login",
-      value: mode === "signin" ? "Selected" : "Existing account",
-      detail: "Opens the selected portal with live Supabase rows after verified sign-in.",
-      active: mode === "signin",
-      action: () => setMode("signin")
-    }
-  ];
-  const publicV1AccessRunwayFacts = [
-    {
-      label: "Price",
-      value: publicV1AccessRunway.selected_price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First database step",
-      value: publicV1AccessRunway.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Landing",
-      value: publicV1AccessRunway.landing_portal,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Recovery",
-      value: email ? "Ready" : "Enter email",
-      detail: "Resend verification, reset password, or repair localhost links from the hosted app."
-    }
-  ];
-  const publicV1AccessRunwayPacketName = `trustgraph-public-v1-access-runway-${new Date().toISOString().slice(0, 10)}.json`;
-  const publicEntrySequence = {
-    mode: "public_entry_sequence",
-    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
-    selected_price: selectedRegistrationPath.plan,
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "No new row before login completes",
-    hosted_verification: "email_link_must_return_to_hosted_trustgraph_url_not_localhost",
-    landing_portal: publicAuthStartStrip.landing_portal,
-    corporate_database_boundary:
-      "corporate_portal_requests_access_by_professional_email_and_reviews_only_approved_scoped_rows",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_entry_sequence_requires_choose_route_credentials_hosted_verification_correct_portal_landing_corporate_scoped_database_request_and_no_preview_data_before_submit"
-  };
-  const publicEntrySequenceSteps = [
-    {
-      label: "Choose route",
-      value: publicEntrySequence.selected_route,
-      detail: "Professional and Corporate users start from separate register/login paths."
-    },
-    {
-      label: "Enter credentials",
-      value: selectedPortalCommand.headline,
-      detail: selectedPortalCommand.next
-    },
-    {
-      label: "Verify email",
-      value: "Hosted link",
-      detail: "Verification and recovery links must land on the hosted TrustGraph URL."
-    },
-    {
-      label: "Open portal",
-      value: publicEntrySequence.landing_portal,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Corporate access",
-      value: portal === "corporate" ? "Request scoped rows" : "Approve sharing",
-      detail: "Corporate reviewers do not browse the full user database."
-    }
-  ];
-  const publicSubmitPathChecklist = {
-    mode: "public_submit_path_checklist",
-    selected_route: publicEntrySequence.selected_route,
-    submit_ready: publicSubmitReadiness.can_submit,
-    hosted_redirect_url: authRedirectUrl,
-    first_database_write: publicEntrySequence.first_database_write,
-    landing_portal: publicEntrySequence.landing_portal,
-    corporate_database_boundary: publicEntrySequence.corporate_database_boundary,
-    recovery_available: Boolean(email),
-    preview_data_accepted: false,
-    accepted_when:
-      "public_submit_path_checklist_shows_credentials_hosted_verification_live_database_write_landing_portal_corporate_scope_recovery_and_no_preview_data_before_submit"
-  };
-  const publicSubmitPathChecklistSteps = [
-    {
-      label: "Credentials",
-      value: publicSubmitPathChecklist.submit_ready ? "Ready" : "Needs fields",
-      detail: portal === "corporate" && mode === "signup" ? "Email, password, organization, and domain." : "Email and password."
-    },
-    {
-      label: "Hosted verification",
-      value: authRedirectUrl.includes("localhost") ? "Repair needed" : "Hosted",
-      detail: publicSubmitPathChecklist.hosted_redirect_url
-    },
-    {
-      label: "Live database write",
-      value: publicSubmitPathChecklist.first_database_write,
-      detail: mode === "signin" ? "Login opens existing live rows." : selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Landing portal",
-      value: publicSubmitPathChecklist.landing_portal,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Corporate scope",
-      value: portal === "corporate" ? "Request by email" : "Owner consent",
-      detail: "Corporate sees only approved scoped user rows; no open user database browse."
-    },
-    {
-      label: "Recovery",
-      value: publicSubmitPathChecklist.recovery_available ? "Ready" : "Enter email",
-      detail: "Reset password and resend verification use the hosted redirect."
-    }
-  ];
-  const publicAccountRouteConfirmation = {
-    mode: "public_account_route_confirmation",
-    selected_route: `${publicAccountAccessPath.selected_portal} / ${publicAccountAccessPath.selected_action}`,
-    route_owner: portal === "corporate" ? "Company admin creates the workspace before reviewers see rows." : "Professional owns the Passport before sharing rows.",
-    data_created: mode === "signup" ? selectedRegistrationPath.primaryWrite : "No new row before login completes",
-    landing: publicAccountAccessPath.landing_portal,
-    corporate_access_boundary:
-      portal === "corporate"
-        ? "Corporate users request access and only see professional-approved scoped rows."
-        : "Professional users control consent before any corporate review.",
-    support_action: email ? "Reset, resend, or repair hosted email link if login fails." : "Enter email to enable recovery actions.",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_account_route_confirmation_shows_selected_portal_mode_database_write_landing_corporate_access_boundary_recovery_action_and_no_preview_data_before_submit"
-  };
-  const publicAccountRouteConfirmationCards = [
-    {
-      label: "Route",
-      value: publicAccountRouteConfirmation.selected_route,
-      detail: publicAccountRouteConfirmation.route_owner
-    },
-    {
-      label: "Database",
-      value: publicAccountRouteConfirmation.data_created,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Landing",
-      value: publicAccountRouteConfirmation.landing,
-      detail: selectedRegistrationPath.nextAction
-    },
-    {
-      label: "Boundary",
-      value: portal === "corporate" ? "Scoped review" : "Owner consent",
-      detail: publicAccountRouteConfirmation.corporate_access_boundary
-    }
-  ];
-  const authPathSummary = {
-    mode: "auth_path_summary",
-    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    pricing: selectedRegistrationPath.plan,
-    first_write: selectedRegistrationPath.primaryWrite,
-    landing: portal === "corporate" ? "Company setup and Corporate Verify" : "Professional Passport",
-    accepted_when:
-      "login_register_card_shows_account_type_pricing_first_database_write_landing_and_required_fields_before_user_types"
-  };
-  const authPathSummaryCards = [
-    {
-      label: "Account",
-      value: authPathSummary.selected_portal,
-      detail: selectedPortalCommand.headline
-    },
-    {
-      label: "Pricing",
-      value: selectedRegistrationPath.plan,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First database write",
-      value: selectedRegistrationPath.primaryWrite,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "After success",
-      value: authPathSummary.landing,
-      detail: selectedRegistrationPath.nextAction
-    }
-  ];
-  const publicPortalAcceptanceSteps = publicBuyerLaunchPath.lanes.map((lane) => ({
-    label: lane.label,
-    value: lane.value,
-    detail: lane.detail,
-    ready:
-      lane.label === "Proof and save"
-        ? serverSyncMonitor.status === "synced"
-        : lane.label === "Hosted verification"
-          ? authReady
-          : true
-  }));
-  const publicPortalAcceptanceReady = publicPortalAcceptanceSteps.every((step) => step.ready);
-  const publicPortalAcceptanceCheckpoint = {
-    mode: "public_portal_acceptance_checkpoint",
-    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    selected_price: selectedRegistrationPath.plan,
-    first_live_database_write: selectedRegistrationPath.primaryWrite,
-    landing_portal: portal === "corporate" ? "Company setup and Corporate Verify" : "Professional Passport",
-    hosted_redirect_url: authRedirectUrl,
-    server_save_status: serverSyncMonitor.status,
-    server_release_commit: serverSyncMonitor.commit ?? "not_proven",
-    preview_data_accepted: false,
-    ready_steps: publicPortalAcceptanceSteps.filter((step) => step.ready).length,
-    total_steps: publicPortalAcceptanceSteps.length,
-    accepted_when:
-      "public_portal_acceptance_requires_account_choice_hosted_auth_pricing_first_database_write_landing_portal_scoped_access_and_saved_server_build_before_live_pilot_acceptance"
-  };
-  const portalStartDesk = {
-    mode: "portal_start_desk",
-    selected_portal: portal === "corporate" ? "Corporate company" : "Professional user",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    primary_action:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create the company admin account"
-          : "Open Corporate Verify"
-        : mode === "signup"
-          ? "Create the Professional Passport account"
-          : "Open Professional Passport",
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    pricing_boundary: selectedRegistrationPath.paymentStatus,
-    next_dashboard: portal === "corporate" ? "Company setup, billing, team, and Verify" : "Passport records, evidence, consent, and sharing",
-    accepted_when:
-      "portal_start_desk_shows_account_type_mode_pricing_first_database_write_next_dashboard_and_no_preview_rows_before_submit"
-  };
-  const portalStartDeskSteps = [
-    {
-      label: "Account",
-      value: portalStartDesk.selected_portal,
-      detail: portal === "corporate" ? "Company workspace and RBAC" : "Private Passport owner"
-    },
-    {
-      label: "Action",
-      value: portalStartDesk.selected_action,
-      detail: portalStartDesk.primary_action
-    },
-    {
-      label: "First write",
-      value: portalStartDesk.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Boundary",
-      value: portal === "corporate" ? selectedRegistrationPath.plan : "$0 pilot",
-      detail: portalStartDesk.pricing_boundary
-    }
-  ];
-  const publicAccessDesk = {
-    mode: "public_access_desk",
-    selected_portal: portal === "corporate" ? "Corporate Verify" : "Professional Passport",
-    selected_action: mode === "signup" ? "Register" : "Login",
-    primary_cta:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Register company admin"
-          : "Login company admin"
-        : mode === "signup"
-          ? "Register Professional Passport"
-          : "Login Professional Passport",
-    pricing: selectedRegistrationPath.plan,
-    required_fields: selectedPortalCommand.required_fields,
-    first_live_database_write: selectedRegistrationPath.primaryWrite,
-    landing_portal: portal === "corporate" ? "Company setup, billing, team, then Corporate Verify" : "Professional Passport records, evidence, consent, and sharing",
-    recovery_path: "Password reset and localhost verification-link repair stay on this hosted card.",
-    accepted_when:
-      "public_access_desk_shows_professional_or_corporate_login_register_price_required_fields_first_database_write_landing_and_recovery_before_email_fields"
-  };
-  const publicAccessDeskCards = [
-    {
-      label: "Portal",
-      value: publicAccessDesk.selected_portal,
-      detail: portal === "corporate" ? "Company workspace, RBAC, pricing ledger, scoped user review." : "Personal Passport, private records, evidence, consent, and grants."
-    },
-    {
-      label: "Action",
-      value: publicAccessDesk.selected_action,
-      detail: publicAccessDesk.primary_cta
-    },
-    {
-      label: "Pricing",
-      value: publicAccessDesk.pricing,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First database write",
-      value: publicAccessDesk.first_live_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Required fields",
-      value: `${publicAccessDesk.required_fields.length} fields`,
-      detail: publicAccessDesk.required_fields.join(", ").replace(/_/g, " ")
-    },
-    {
-      label: "After success",
-      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
-      detail: publicAccessDesk.landing_portal
-    }
-  ];
-  const publicSignupDecisionDesk = {
-    mode: "public_signup_decision_desk",
-    selected_portal: publicAccessDesk.selected_portal,
-    selected_action: publicAccessDesk.selected_action,
-    primary_cta: publicAccessDesk.primary_cta,
-    pricing: publicAccessDesk.pricing,
-    first_live_database_write: publicAccessDesk.first_live_database_write,
-    required_fields: publicAccessDesk.required_fields,
-    recovery_actions: ["resend_verification", "reset_password"],
-    preview_data_accepted: false,
-    accepted_when:
-      "public_signup_decision_desk_keeps_portal_mode_price_first_database_write_required_fields_recovery_and_submit_action_visible_directly_above_form_fields"
-  };
-  const publicPortalRouteShell = {
-    mode: "public_portal_route_shell",
-    selected_portal: publicAccessDesk.selected_portal,
-    selected_action: publicAccessDesk.selected_action,
-    primary_cta: publicAccessDesk.primary_cta,
-    pricing: publicAccessDesk.pricing,
-    first_live_database_write: publicAccessDesk.first_live_database_write,
-    landing_portal: publicAccessDesk.landing_portal,
-    recovery_actions: ["resend_verification", "reset_password", "hosted_link_repair"],
-    corporate_database_boundary: "corporate_accounts_request_access_then_view_approved_consent_scoped_user_rows_only",
-    server_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_portal_route_shell_requires_one_bounded_login_register_surface_for_professional_corporate_pricing_first_database_write_recovery_server_save_and_no_preview_data"
-  };
-  const publicPortalRouteShellTabs = [
-    {
-      label: "Professional",
-      active: portal === "professional",
-      detail: "Private Passport, evidence, consent, and sharing.",
-      action: () => setPortal("professional")
-    },
-    {
-      label: "Corporate",
-      active: portal === "corporate",
-      detail: "Company workspace, pricing ledger, RBAC, and scoped user review.",
-      action: () => setPortal("corporate")
-    },
-    {
-      label: "Register",
-      active: mode === "signup",
-      detail: selectedRegistrationPath.primaryWrite,
-      action: () => setMode("signup")
-    },
-    {
-      label: "Login",
-      active: mode === "signin",
-      detail: selectedRegistrationPath.nextAction,
-      action: () => setMode("signin")
-    }
-  ];
-  const publicPortalRouteShellStatus = [
-    {
-      label: "Price",
-      value: publicPortalRouteShell.pricing,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First write",
-      value: publicPortalRouteShell.first_live_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Landing",
-      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
-      detail: publicPortalRouteShell.landing_portal
-    },
-    {
-      label: "Server save",
-      value: serverSyncMonitor.status.replaceAll("_", " "),
-      detail: "GitHub Pages is deployable; VPS requires the save secrets before it is accepted as fresh."
-    }
-  ];
-  const publicAuthExperienceStudio = {
-    mode: "public_auth_experience_studio",
-    selected_portal: publicAccessDesk.selected_portal,
-    selected_action: publicAccessDesk.selected_action,
-    primary_cta: publicAccessDesk.primary_cta,
-    price: publicAccessDesk.pricing,
-    first_database_write: publicAccessDesk.first_live_database_write,
-    landing_portal: publicAccessDesk.landing_portal,
-    required_fields: publicAccessDesk.required_fields,
-    recovery_path: publicAccessDesk.recovery_path,
-    server_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_auth_experience_studio_keeps_professional_corporate_register_login_pricing_first_database_write_recovery_submit_and_server_status_visible_before_any_dense_receipts"
-  };
-  const publicAuthExperienceStudioCards = [
-    {
-      label: "Plan",
-      value: publicAuthExperienceStudio.price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First write",
-      value: publicAuthExperienceStudio.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Landing",
-      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
-      detail: publicAuthExperienceStudio.landing_portal
-    },
-    {
-      label: "Server",
-      value: publicAuthExperienceStudio.server_status.replace(/_/g, " "),
-      detail: "GitHub is source of truth; VPS freshness is checked before pilot acceptance."
-    }
-  ];
-  const publicPortalEntryDesk = {
-    mode: "public_portal_entry_desk",
-    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "registration" : "login"}`,
-    primary_cta:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create corporate workspace"
-          : "Login to corporate portal"
-        : mode === "signup"
-          ? "Create Professional Passport"
-          : "Login to Professional Passport",
-    pricing: selectedRegistrationPath.plan,
-    payment_status: selectedRegistrationPath.paymentStatus,
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing account session first",
-    landing_portal: portal === "corporate" ? "Corporate setup, team, billing, then Verify" : "Professional Passport records and sharing",
-    recovery_route: email ? "Reset and resend enabled" : "Enter email to enable recovery",
-    server_status: serverSyncMonitor.status,
-    corporate_boundary: "Corporate users request a professional by email and review only approved consent-scoped rows.",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_portal_entry_desk_keeps_four_routes_pricing_first_database_write_landing_recovery_server_status_corporate_scope_boundary_and_submit_visible_before_credentials"
-  };
-  const publicPortalEntryDeskRoutes = [
-    {
-      label: "Professional login",
-      detail: "Existing users open Passport records, evidence, references, consent, and grants.",
-      active: portal === "professional" && mode === "signin",
-      action: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Professional registration",
-      detail: "Create the free pilot Passport account and first live user profile.",
-      active: portal === "professional" && mode === "signup",
-      action: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate login",
-      detail: "Existing teams open company setup, RBAC, billing, and Corporate Verify.",
-      active: portal === "corporate" && mode === "signin",
-      action: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate registration",
-      detail: "Create the company admin workspace before reviewer access is granted.",
-      active: portal === "corporate" && mode === "signup",
-      action: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    }
-  ];
-  const publicPortalEntryDeskStatus = [
-    {
-      label: "Selected route",
-      value: publicPortalEntryDesk.selected_route,
-      detail: publicPortalEntryDesk.primary_cta
-    },
-    {
-      label: "Pricing",
-      value: publicPortalEntryDesk.pricing,
-      detail: publicPortalEntryDesk.payment_status
-    },
-    {
-      label: "Database",
-      value: publicPortalEntryDesk.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Landing",
-      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
-      detail: publicPortalEntryDesk.landing_portal
-    },
-    {
-      label: "Recovery",
-      value: publicPortalEntryDesk.recovery_route,
-      detail: "Hosted reset, resend, and localhost-link repair stay in this flow."
-    },
-    {
-      label: "Server",
-      value: publicPortalEntryDesk.server_status.replace(/_/g, " "),
-      detail: "GitHub is source; VPS needs release-stamp proof before final live testing."
-    }
-  ];
-  const publicRouteAnswerBar = {
-    mode: "public_route_answer_bar",
-    selected_route: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signup" ? "register" : "login"}`,
-    headline:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Register the company workspace first"
-          : "Login to the company workspace"
-        : mode === "signup"
-          ? "Register your Professional Passport"
-          : "Login to your Professional Passport",
-    pricing: selectedRegistrationPath.plan,
-    first_database_write: mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing hosted account session",
-    landing_portal: portal === "corporate" ? "Company setup, billing, team, then Corporate Verify" : "Professional Passport records, evidence, consent, and sharing",
-    recovery_state: email ? "Recovery and verification tools are ready for this email" : "Enter email to unlock recovery tools",
-    corporate_database_boundary:
-      "Corporate cannot browse a user database. Corporate requests one professional by email and reviews only approved, consent-scoped rows.",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_route_answer_bar_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_recovery_first_database_write_landing_submit_and_no_open_user_database_visible_as_the_first_auth_answer"
-  };
-  const publicRouteAnswerBarRoutes = [
-    {
-      label: "Professional register",
-      active: portal === "professional" && mode === "signup",
-      detail: "Free pilot Passport owner account.",
-      action: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Professional login",
-      active: portal === "professional" && mode === "signin",
-      detail: "Open existing Passport records.",
-      action: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate register",
-      active: portal === "corporate" && mode === "signup",
-      detail: "$149 pilot company workspace.",
-      action: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate login",
-      active: portal === "corporate" && mode === "signin",
-      detail: "Open Company Admin and Verify.",
-      action: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    }
-  ];
-  const publicRouteAnswerBarFacts = [
-    {
-      label: "Selected",
-      value: publicRouteAnswerBar.selected_route,
-      detail: publicRouteAnswerBar.headline
-    },
-    {
-      label: "Pricing",
-      value: publicRouteAnswerBar.pricing,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First database write",
-      value: publicRouteAnswerBar.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 4).join(", ")
-    },
-    {
-      label: "Landing",
-      value: portal === "corporate" ? "Corporate portal" : "Passport portal",
-      detail: publicRouteAnswerBar.landing_portal
-    },
-    {
-      label: "Recovery",
-      value: email ? "Ready" : "Email needed",
-      detail: publicRouteAnswerBar.recovery_state
-    }
-  ];
-  const publicSignupDecisionCards = [
-    {
-      label: "Selected path",
-      value: `${publicSignupDecisionDesk.selected_action} - ${publicSignupDecisionDesk.selected_portal}`,
-      detail: publicSignupDecisionDesk.primary_cta
-    },
-    {
-      label: "Price",
-      value: publicSignupDecisionDesk.pricing,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First write",
-      value: publicSignupDecisionDesk.first_live_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Needed now",
-      value: `${publicSignupDecisionDesk.required_fields.length} fields`,
-      detail: publicSignupDecisionDesk.required_fields.join(", ").replace(/_/g, " ")
-    }
-  ];
-  const publicRegistrationPricingGate = {
-    mode: "public_registration_pricing_gate",
-    selected_portal: publicSignupDecisionDesk.selected_portal,
-    selected_action: publicSignupDecisionDesk.selected_action,
-    selected_pricing: publicSignupDecisionDesk.pricing,
-    pricing_plan_id: portal === "corporate" ? "corporate-verify-pilot-149" : "professional-free-pilot",
-    first_database_write: publicSignupDecisionDesk.first_live_database_write,
-    live_intent_table: "registration_intents",
-    stripe_checkout_status: portal === "corporate" ? "human_approved_quote_required_before_checkout" : "not_required_for_professional_pilot",
-    server_save_status: serverSyncMonitor.status,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_registration_pricing_gate_requires_selected_portal_register_or_login_price_plan_first_database_write_registration_intent_stripe_boundary_server_save_and_no_preview_data_before_credentials"
-  };
-  const publicRegistrationPricingGateRows = [
-    {
-      label: "Portal",
-      value: publicRegistrationPricingGate.selected_portal,
-      detail: mode === "signup" ? "Creates the matching live registration intent first." : "Logs into the selected hosted account type."
-    },
-    {
-      label: "Price",
-      value: publicRegistrationPricingGate.selected_pricing,
-      detail: publicRegistrationPricingGate.pricing_plan_id
-    },
-    {
-      label: "First row",
-      value: publicRegistrationPricingGate.first_database_write,
-      detail: publicRegistrationPricingGate.live_intent_table
-    },
-    {
-      label: "Stripe",
-      value: portal === "corporate" ? "Quote gate" : "No checkout",
-      detail: publicRegistrationPricingGate.stripe_checkout_status
-    },
-    {
-      label: "Server",
-      value: serverSyncMonitor.status === "synced" ? "Saved on VPS" : "GitHub saved",
-      detail: serverSyncMonitor.status === "synced" ? "Release stamp matches." : "Run the VPS sync command after GitHub goes green."
-    }
-  ];
-  const publicSignupAnswerBar = {
-    mode: "public_signup_answer_bar",
-    selected_path: `${publicSignupDecisionDesk.selected_action} - ${publicSignupDecisionDesk.selected_portal}`,
-    price: publicSignupDecisionDesk.pricing,
-    first_database_write: publicSignupDecisionDesk.first_live_database_write,
-    landing_portal: publicAccessDesk.landing_portal,
-    submit_ready:
-      email && password && (portal !== "corporate" || mode !== "signup" || (organizationName && organizationDomain))
-        ? "ready"
-        : "needs_required_fields",
-    server_status: serverSyncMonitor.status,
-    corporate_database_boundary:
-      portal === "corporate"
-        ? "request_professional_approval_then_view_scoped_rows_only"
-        : "passport_owner_controls_scoped_sharing",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_signup_answer_bar_keeps_selected_path_price_first_database_write_landing_submit_readiness_server_status_and_corporate_no_open_database_visible_at_credentials"
-  };
-  const publicSignupAnswerBarRows = [
-    {
-      label: "Selected",
-      value: publicSignupAnswerBar.selected_path,
-      detail: publicSignupDecisionDesk.primary_cta
-    },
-    {
-      label: "Price",
-      value: publicSignupAnswerBar.price,
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "First row",
-      value: publicSignupAnswerBar.first_database_write,
-      detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ")
-    },
-    {
-      label: "Submit",
-      value: publicSignupAnswerBar.submit_ready === "ready" ? "Ready" : "Needs fields",
-      detail:
-        portal === "corporate" && mode === "signup"
-          ? "Email, password, organization, and domain."
-          : "Email and password."
-    }
-  ];
-  const authRecoveryDecisionPath = [
-    {
-      label: "New account verification",
-      action: "Resend verification",
-      detail: "Use when signup succeeded but the email has not arrived or still points to an old redirect."
-    },
-    {
-      label: "Existing account recovery",
-      action: "Reset password",
-      detail: "Use when the user already exists, forgot the password, or cannot complete login."
-    },
-    {
-      label: "Localhost link repair",
-      action: "Copy hosted link",
-      detail: "Paste Supabase links that point to localhost and convert them to the hosted TrustGraph URL."
-    }
-  ];
-  const loginIssueResolver = [
-    {
-      label: "Email rate limit",
-      action: "Wait 60+ minutes or configure SMTP",
-      detail: "Supabase built-in email can pause after 2 messages per hour across the project."
-    },
-    {
-      label: "Verification opens localhost",
-      action: "Paste link and copy hosted link",
-      detail: "Convert old localhost links to the active hosted TrustGraph redirect before opening them."
-    },
-    {
-      label: "Account exists but login fails",
-      action: "Reset password",
-      detail: "Use hosted recovery so the inbox link returns to TrustGraph instead of a local dev URL."
-    }
-  ];
-  const authEmailTroubleshootingStrip = {
-    mode: "auth_email_troubleshooting_strip",
-    selected_portal: portal,
-    selected_mode: mode,
-    active_redirect_url: authRedirectUrl,
-    email_rate_limit: "Supabase built-in email can pause after 2 messages per hour project-wide; wait 60+ minutes or configure SMTP.",
-    localhost_link_repair: repairedVerificationUrl ? "Hosted replacement link is ready to copy." : "Paste the localhost email link in the repair field before requesting another email.",
-    recovery_route: email ? "Email is entered; resend verification or reset password can use the hosted redirect." : "Enter email before requesting resend or reset.",
-    preview_data_accepted: false,
-    accepted_when:
-      "auth_email_troubleshooting_strip_keeps_rate_limit_wait_smtp_localhost_link_repair_reset_password_hosted_redirect_and_no_preview_data_visible_before_more_email_requests"
-  };
-  const authEmailTroubleshootingCards = [
-    {
-      label: "Rate limit",
-      value: "Wait 60+ min",
-      detail: authEmailTroubleshootingStrip.email_rate_limit,
-      action: "Do not keep resending"
-    },
-    {
-      label: "Localhost link",
-      value: repairedVerificationUrl ? "Repair ready" : "Paste link",
-      detail: authEmailTroubleshootingStrip.localhost_link_repair,
-      action: "Copy hosted link"
-    },
-    {
-      label: "Reset path",
-      value: email ? "Ready" : "Email needed",
-      detail: authEmailTroubleshootingStrip.recovery_route,
-      action: "Reset password"
-    }
-  ];
-  const hostedAuthRedirectVerificationReceipt = {
-    mode: "hosted_auth_redirect_verification_receipt",
-    current_browser_url:
-      typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,
-    expected_return_url: authRedirectUrl,
-    github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
-    trustgraph_vps_redirect: TRUSTGRAPH_VPS_URL,
-    allowed_redirects_required: TRUSTGRAPH_ALLOWED_REDIRECTS,
-    configured_redirect_url: TRUSTGRAPH_CONFIGURED_AUTH_REDIRECT_URL || "not_set",
-    invalid_config_fallback_used: TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED,
-    localhost_redirect_accepted: false,
-    current_browser_is_localhost:
-      typeof window === "undefined" ? false : window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
-    repaired_link_ready: Boolean(repairedVerificationUrl),
-    rate_limit_note: "Supabase built-in email allows 2 emails per hour project-wide; wait 60+ minutes or configure custom SMTP.",
-    accepted_when:
-      "supabase_site_url_and_redirect_urls_include_github_pages_and_trustgraph_vps_and_email_links_return_to_hosted_app_not_localhost",
-    next_action:
-      typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-        ? "Open hosted TrustGraph before requesting another verification email."
-        : repairedVerificationUrl
-          ? "Copy the repaired hosted link, then open it in this browser."
-          : "Confirm Supabase Site URL and allowed redirects before resending email."
-  };
-  const hostedAuthRedirectCards = [
-    {
-      label: "Current browser",
-      value: hostedAuthRedirectVerificationReceipt.current_browser_is_localhost ? "Localhost" : "Hosted",
-      detail: hostedAuthRedirectVerificationReceipt.current_browser_url
-    },
-    {
-      label: "Return URL",
-      value: "TrustGraph hosted",
-      detail: authRedirectUrl
-    },
-    {
-      label: "Allowed redirects",
-      value: `${TRUSTGRAPH_ALLOWED_REDIRECTS.length} required`,
-      detail: TRUSTGRAPH_ALLOWED_REDIRECTS.join(", ")
-    },
-    {
-      label: "Link repair",
-      value: repairedVerificationUrl ? "Ready" : "Waiting",
-      detail: repairedVerificationUrl ? "Hosted replacement link is ready to copy." : "Paste a localhost email link to convert it."
-    }
-  ];
-  const emailVerificationDeliveryReceipt = {
-    mode: "email_verification_delivery_receipt",
-    selected_portal: selectedRegistrationPath.portal,
-    selected_mode: mode,
-    active_redirect_url: authRedirectUrl,
-    invalid_config_fallback_used: TRUSTGRAPH_AUTH_REDIRECT_FALLBACK_USED,
-    localhost_redirect_accepted: false,
-    repaired_link_ready: Boolean(repairedVerificationUrl),
-    email_rate_limit_note: "Supabase built-in email allows 2 messages per hour project-wide unless custom SMTP is configured.",
-    next_user_action:
-      mode === "signup"
-        ? "Open the newest verification email, confirm it returns to hosted TrustGraph, then login here."
-        : "If login fails, request hosted password recovery and return here to set a new password.",
-    support_action:
-      repairedVerificationUrl
-        ? "Copy the repaired hosted link and open it in this browser."
-        : "If an email opens localhost, paste it into the repair field before requesting more email.",
-    accepted_when:
-      "verification_and_recovery_emails_use_hosted_redirect_rate_limit_is_visible_localhost_links_can_be_repaired_and_after_verification_user_returns_to_the_selected_portal"
-  };
-  const emailVerificationDeliveryCards = [
-    {
-      label: "Email path",
-      value: mode === "signup" ? "Verify email" : "Recover login",
-      detail: emailVerificationDeliveryReceipt.next_user_action
-    },
-    {
-      label: "Return URL",
-      value: emailVerificationDeliveryReceipt.active_redirect_url.includes("localhost") ? "Fix needed" : "Hosted",
-      detail: emailVerificationDeliveryReceipt.active_redirect_url
-    },
-    {
-      label: "Rate limit",
-      value: "2/hour",
-      detail: emailVerificationDeliveryReceipt.email_rate_limit_note
-    },
-    {
-      label: "Localhost repair",
-      value: repairedVerificationUrl ? "Ready" : "Available",
-      detail: emailVerificationDeliveryReceipt.support_action
-    }
-  ];
-  const registrationAuthPacket = {
-    generated_at: new Date().toISOString(),
-    selected_portal: portal,
-    selected_mode: mode,
-    configured: authReady,
-    selected_registration_path: selectedRegistrationPath,
-    portal_decision_matrix: {
-      label: "Portal decision matrix",
-      professional: {
-        buyer: "Individual professional",
-        start_here: "Register a Passport",
-        pricing: "Free pilot",
-        live_database_result: "Private Passport workspace, records, evidence metadata, consent, and Access Grants"
-      },
-      corporate: {
-        buyer: "Employer or staffing company",
-        start_here: "Register a company",
-        pricing: "$149/month per company",
-        live_database_result: "Company organization, admin membership, team controls, billing ledger, and Verify requests"
-      }
-    },
-    active_redirect_url: authRedirectUrl,
-    portal_entry_path: portalEntryPath,
-    portal_launch_decision_strip: portalLaunchDecisionStrip,
-    public_auth_flow_command: publicAuthFlowCommand,
-    portal_start_desk: portalStartDesk,
-    public_portal_database_access_contract: portalDatabaseAccessContract,
-    public_portal_launch_checklist: publicPortalLaunchChecklist,
-    registration_outcome_command: registrationOutcomeCommand,
-    registration_database_launch_order: registrationDatabaseLaunchOrder,
-    registration_decision_receipt: registrationDecisionReceipt,
-    live_onboarding_acceptance_contract: liveOnboardingAcceptanceContract,
-    portal_handoff_checklist: portalHandoffChecklist,
-    required_hosted_redirect: TRUSTGRAPH_VPS_URL,
-    github_pages_redirect: TRUSTGRAPH_GITHUB_PAGES_URL,
-    allowed_production_redirects: TRUSTGRAPH_ALLOWED_REDIRECTS,
-    trustgraph_vps_target: TRUSTGRAPH_VPS_URL.replace(/\/$/, ""),
-    protected_vfix_host: "https://5-75-224-110.sslip.io",
-    current_browser_host:
-      typeof window === "undefined" ? "server-render" : `${window.location.origin}${window.location.pathname}`,
-    current_browser_is_localhost:
-      typeof window === "undefined" ? false : window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
-    pending_corporate_workspace: {
-      saved_in_browser: hasPendingCorporateRegistration,
-      organization_name_present: Boolean(organizationName.trim()),
-      organization_domain_present: Boolean(organizationDomain.trim()),
-      organization_type: organizationType
-    },
-    account_type_chooser: accountTypeChooser.map((item) => ({
-      label: item.label,
-      selected: portal === item.portal,
-      headline: item.headline,
-      best_for: item.bestFor,
-      first_database_write: item.firstDatabaseWrite,
-      after_login: item.afterLogin,
-      pricing: item.pricing
-    })),
-    portal_login_switchboard: portalLoginSwitchboard,
-    login_issue_resolver: loginIssueResolver,
-    hosted_auth_redirect_verification_receipt: hostedAuthRedirectVerificationReceipt,
-    email_verification_delivery_receipt: emailVerificationDeliveryReceipt,
-    auth_recovery_decision_path: authRecoveryDecisionPath,
-    repaired_link_ready: Boolean(repairedVerificationUrl),
-    portal_auth_outcome_summary: authOutcomePacket,
-    hosted_auth_callback_proof: hostedCallbackProof,
-    pricing_decision_strip: pricingDecisionStrip,
-    supabase_auth_settings_needed: [
-      "Set Supabase Auth Site URL to the hosted TrustGraph app before inviting pilot users.",
-      "Add GitHub Pages and TrustGraph VPS URLs to Supabase allowed redirect URLs.",
-      "Regenerate verification or recovery emails after changing redirect settings.",
-      "Keep VFIX host isolated from TrustGraph redirect and deployment settings."
-    ],
-    email_rate_limit: "Supabase built-in email allows 2 emails per hour project-wide; wait 60+ minutes after rate-limit errors or configure custom SMTP."
-  };
+  void latestAuthRecoveryReceipt;
 
-  async function saveAuthRecoveryReceipt(actionType: DbAuthRecoveryReceipt["action_type"], localhostLinkDetected = false) {
-    if (!currentSession) {
-      setMessage("Login first to save auth recovery proof in Supabase. You can still use resend, reset, and link repair before login.");
-      return;
+  useEffect(() => {
+    function handleScroll() {
+      setHeaderScrolled(window.scrollY > 8);
     }
-
-    await onRecordAuthRecoveryReceipt({
-      email: email || currentSession.user.email,
-      actionType,
-      selectedPortal: portal,
-      redirectUrl: authRedirectUrl,
-      localhostLinkDetected,
-      metadata: {
-        selected_mode: mode,
-        repaired_link_ready: Boolean(repairedVerificationUrl),
-        hosted_callback_status: hostedCallbackProof.status,
-        current_session_context: currentSessionContext,
-        acceptance_rule: AUTH_RECOVERY_RECEIPT_ACCEPTANCE_RULE,
-        rate_limit_guidance_visible: true
-      }
-    });
-  }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   function pendingCorporateRegistration() {
-    return {
-      organizationName,
-      organizationType,
-      organizationDomain
-    };
+    return { organizationName, organizationType, organizationDomain };
   }
 
   function savePendingCorporateRegistration() {
@@ -27495,10 +24156,8 @@ function PublicSite({
 
   function readPendingCorporateRegistration() {
     if (typeof window === "undefined") return null;
-
     const stored = window.localStorage.getItem(pendingCorporateRegistrationKey);
     if (!stored) return null;
-
     try {
       const parsed = JSON.parse(stored) as {
         organizationName?: string;
@@ -27522,6 +24181,36 @@ function PublicSite({
     setHasPendingCorporateRegistration(false);
   }
 
+  useEffect(() => {
+    const stored = readPendingCorporateRegistration();
+    if (!stored) return;
+    setHasPendingCorporateRegistration(true);
+    setPortal("corporate");
+    setOrganizationName(stored.organizationName);
+    setOrganizationDomain(stored.organizationDomain);
+    setOrganizationType(stored.organizationType);
+    setAuthView("login");
+    setMode("signin");
+    setScreen("auth");
+    setInlineNote("Your company details are saved in this browser. Confirm your email, then log in here to finish setting up the workspace.");
+  }, []);
+
+  async function saveAuthRecoveryReceipt(actionType: DbAuthRecoveryReceipt["action_type"], localhostLinkDetected = false) {
+    if (!currentSession) return;
+    try {
+      await onRecordAuthRecoveryReceipt({
+        email: email || currentSession.user.email,
+        actionType,
+        selectedPortal: portal,
+        redirectUrl: authRedirectUrl,
+        localhostLinkDetected,
+        metadata: { selected_mode: mode }
+      });
+    } catch {
+      // best-effort receipt; never block the user-facing flow on it
+    }
+  }
+
   async function recordLiveRegistrationIntent(session: AuthSession) {
     try {
       const corporateRegistration = portal === "corporate" ? readPendingCorporateRegistration() ?? pendingCorporateRegistration() : null;
@@ -27529,65 +24218,43 @@ function PublicSite({
         accessToken: session.accessToken,
         selectedPortal: portal,
         selectedMode: mode,
-        pricingPlanId: registrationDatabaseLaunchOrder.pricing_plan_id,
+        pricingPlanId: portal === "corporate" ? "corporate-verify-149" : "professional-free",
         organizationName: corporateRegistration?.organizationName,
         organizationType: corporateRegistration?.organizationType,
         organizationDomain: corporateRegistration?.organizationDomain,
-        firstDatabaseWrite: selectedRegistrationPath.primaryWrite,
-        nextDashboard: registrationOutcomeCommand.next_dashboard,
-        metadata: {
-          auth_redirect_url: authRedirectUrl,
-          selected_price: selectedRegistrationPath.plan,
-          database_writes: selectedRegistrationPath.databaseWrites,
-          server_save_status: serverSyncMonitor.status,
-          preview_data_accepted: false
-        }
+        firstDatabaseWrite: portal === "corporate" ? "organization + admin membership" : "profile + personal Passport workspace",
+        nextDashboard: portal === "corporate" ? "Company setup" : "Passport",
+        metadata: { auth_redirect_url: authRedirectUrl }
       });
-      return true;
-    } catch (error) {
-      setMessage(authFailureMessage(error, authRedirectUrl, "Signed in, but registration intent was not recorded yet"));
-      return false;
+    } catch {
+      // registration intent is a soft analytics write; a failure here must never block sign-up
     }
   }
-
-  useEffect(() => {
-    const storedCorporateRegistration = readPendingCorporateRegistration();
-    if (!storedCorporateRegistration) return;
-
-    setHasPendingCorporateRegistration(true);
-    setPortal("corporate");
-    setMode("signin");
-    setOrganizationName(storedCorporateRegistration.organizationName);
-    setOrganizationDomain(storedCorporateRegistration.organizationDomain);
-    setOrganizationType(storedCorporateRegistration.organizationType);
-    setMessage("Corporate workspace details are saved in this browser. Login after email verification to finish provisioning.");
-  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!authReady) {
-      setMessage("Hosted auth is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in GitHub secrets, or set NEXT_PUBLIC_AUTH_PROVIDER=postgres on the VPS.");
+      setMessage({ tone: "danger", text: "Hosted sign-in isn't configured for this deployment yet. Contact an administrator." });
       return;
     }
     if (portal === "corporate" && mode === "signup" && (!organizationName.trim() || !organizationDomain.trim())) {
-      setMessage("Enter organization name and domain before creating a corporate account.");
+      setMessage({ tone: "danger", text: "Enter your company name and domain before creating the workspace." });
       return;
     }
+
     setBusy(true);
-    setMessage(mode === "signin" ? "Signing in..." : "Creating account...");
+    setMessage(null);
 
     try {
       const session =
         mode === "signin"
           ? await signInWithPassword(email, password)
-          : await signUpWithPassword(email, password, authRedirectUrl, {
-              portal,
-              organizationName,
-              organizationType,
-              organizationDomain
-            });
+          : await signUpWithPassword(email, password, authRedirectUrl, { portal, organizationName, organizationType, organizationDomain });
+
       if (session) {
-        const intentRecorded = authProvider === "postgres" ? false : await recordLiveRegistrationIntent(session);
+        if (authProvider !== "postgres") {
+          await recordLiveRegistrationIntent(session);
+        }
         const storedCorporateRegistration = portal === "corporate" ? readPendingCorporateRegistration() : null;
         if (portal === "corporate" && (mode === "signup" || storedCorporateRegistration)) {
           onCorporateSession(session, storedCorporateRegistration ?? pendingCorporateRegistration());
@@ -27595,91 +24262,48 @@ function PublicSite({
         } else {
           onSession(session);
         }
-        setMessage(
-          intentRecorded
-            ? portal === "corporate"
-              ? authProvider === "postgres"
-                ? "Corporate portal ready. VPS Postgres account created."
-                : "Corporate portal ready. Registration intent recorded in Supabase."
-              : authProvider === "postgres"
-                ? "Professional Passport ready. VPS Postgres account created."
-                : "Professional Passport ready. Registration intent recorded in Supabase."
-            : portal === "corporate"
-              ? authProvider === "postgres"
-                ? "Corporate portal ready. Postgres auth is live; data repository migration is next."
-                : "Corporate portal ready. Apply migration 044 to record registration intent rows."
-              : authProvider === "postgres"
-                ? "Professional Passport ready. Postgres auth is live; data repository migration is next."
-                : "Professional Passport ready. Apply migration 044 to record registration intent rows."
-        );
       } else {
         if (portal === "corporate" && mode === "signup") {
           savePendingCorporateRegistration();
-          setMessage(
-            authProvider === "postgres"
-              ? "Corporate Postgres account created. Login is ready on this VPS."
-              : "Check your email to confirm the account, then return here and login. Corporate workspace details are saved in this browser. If email is rate-limited, wait 60+ minutes."
-          );
-        } else {
-          setMessage(
-            authProvider === "postgres"
-              ? "Professional Postgres account created. Login is ready on this VPS."
-              : "Check your email to confirm the account, then login. If email is rate-limited, wait 60+ minutes."
-          );
         }
+        setAuthView("check-email");
       }
     } catch (error) {
-      setMessage(authFailureMessage(error, authRedirectUrl, "Authentication failed"));
+      setMessage({ tone: "danger", text: authFailureMessage(error, authRedirectUrl, "That didn't work. Check your details and try again.") });
     } finally {
       setBusy(false);
     }
   }
 
   async function resendVerification() {
-    if (!authReady) {
-      setMessage("Hosted auth is not configured.");
-      return;
-    }
     if (!email) {
-      setMessage("Enter your email first.");
+      setMessage({ tone: "danger", text: "Enter your email first." });
       return;
     }
-
     setBusy(true);
-    setMessage("Sending verification email...");
     try {
       await resendSignupConfirmation(email, authRedirectUrl);
       await saveAuthRecoveryReceipt("signup_verification", false);
-      setMessage(
-        authProvider === "postgres"
-          ? "Postgres auth is active. No Supabase verification email is required."
-          : "Verification email requested. If the rate limit is active, wait 60+ minutes or configure custom SMTP."
-      );
+      setMessage({ tone: "info", text: "Verification email sent. If it doesn't arrive, wait a few minutes before requesting another." });
     } catch (error) {
-      setMessage(authFailureMessage(error, authRedirectUrl, "Could not resend verification email."));
+      setMessage({ tone: "danger", text: authFailureMessage(error, authRedirectUrl, "Could not resend the verification email.") });
     } finally {
       setBusy(false);
     }
   }
 
   async function recoverPassword() {
-    if (!authReady) {
-      setMessage("Hosted auth is not configured.");
-      return;
-    }
     if (!email) {
-      setMessage("Enter your email first.");
+      setMessage({ tone: "danger", text: "Enter your email first." });
       return;
     }
-
     setBusy(true);
-    setMessage("Sending password recovery email...");
     try {
       await requestPasswordRecovery(email, authRedirectUrl);
       await saveAuthRecoveryReceipt("password_recovery", false);
-      setMessage("Password recovery email requested. Use the inbox link to return to this hosted TrustGraph app; wait 60+ minutes if Supabase email is rate-limited.");
+      setRecoverSent(true);
     } catch (error) {
-      setMessage(authFailureMessage(error, authRedirectUrl, "Could not request password recovery."));
+      setMessage({ tone: "danger", text: authFailureMessage(error, authRedirectUrl, "Could not send a reset link.") });
     } finally {
       setBusy(false);
     }
@@ -27687,4846 +24311,858 @@ function PublicSite({
 
   async function copyRepairedVerificationLink() {
     if (!repairedVerificationUrl) {
-      setVerificationLinkMessage("Paste the full email link first. It should include a token after # or ?.");
+      setVerificationLinkMessage("Paste the whole link from your email, including the part after # or ?.");
       return;
     }
-
     try {
       await navigator.clipboard.writeText(repairedVerificationUrl);
       await saveAuthRecoveryReceipt("localhost_link_repair", true);
-      setVerificationLinkMessage("Hosted verification link copied. Open it in this browser, then login again.");
+      setVerificationLinkMessage("Fixed. Open the repaired link below.");
     } catch {
-      setVerificationLinkMessage("Copy blocked by the browser. Select the hosted link below and open it manually.");
+      setVerificationLinkMessage("Copy blocked by the browser — select the link below and open it manually.");
     }
   }
 
-  async function copyHostedRedirectUrl() {
-    try {
-      await navigator.clipboard.writeText(authRedirectUrl);
-      setMessage("Hosted redirect URL copied. Use this URL in Supabase Auth settings and recovery links.");
-    } catch {
-      setMessage(`Copy this hosted redirect URL: ${authRedirectUrl}`);
-    }
-  }
-
-  const pricing = [
-    {
-      name: "Professional",
-      price: "$0",
-      cadence: "Free",
-      buyer: "Individuals",
-      action: "Start Passport",
-      detail: "Build a private Passport and decide exactly which records can be shared.",
-      points: ["Private records", "Evidence uploads", "Access Grants", "Reference requests"],
-      database: "Writes profile, personal organization, membership, Passport records, and evidence metadata.",
-      portal: "professional" as const
-    },
-    {
-      name: "Corporate Verify",
-      price: "$149",
-      cadence: "Pilot monthly",
-      buyer: "Employers and staffing teams",
-      action: "Start Corporate",
-      detail: "Review approved Passport records with scoped access, team roles, and audit history.",
-      points: ["Corporate RBAC", "Missing-record requests", "Readiness review", "Audit trail"],
-      database: "Writes organization, admin membership, plan ledger, invitations, Access Grants, and gap requests.",
-      portal: "corporate" as const
-    },
-    {
-      name: "TrustGraph Scale",
-      price: "Custom",
-      cadence: "Pilot agreement",
-      buyer: "Issuers and compliance teams",
-      action: "Request Scale",
-      detail: "For issuers, integrations, compliance operations, and multi-team rollout.",
-      points: ["Credential issuer roles", "Connect API clients", "Webhooks", "Compliance support"],
-      database: "Uses gated production decisions before external billing, regulated traffic, or issuer rollout.",
-      portal: "corporate" as const
-    }
-  ];
-  const liveWorkflow = [
-    {
-      label: "1",
-      value: "Build the Passport",
-      detail: "Professionals add work records, credentials, training, references, and evidence."
-    },
-    {
-      label: "2",
-      value: "Grant scoped access",
-      detail: "Employers and staffing teams request only the records needed for a workflow."
-    },
-    {
-      label: "3",
-      value: "Operate with audit",
-      detail: "Admin teams monitor cases, release readiness, security checks, and exports."
-    }
-  ];
-  const pilotSignals = ["Live Supabase Auth", "Private evidence storage", "Scoped RBAC", "Audit-ready workflows"];
-  const registrationOutcomes = [
-    {
-      label: "Professional",
-      detail: "Creates a live profile, personal organization, Professional role, Passport records, evidence, consent, and Access Grants."
-    },
-    {
-      label: "Corporate",
-      detail: "Creates a live employer or staffing organization, admin membership, plans, invitations, member controls, and Verify requests."
-    },
-    {
-      label: "Operator",
-      detail: "Admin workspace tracks audit events, release ledger, security review, Connect controls, and pilot acceptance exports."
-    }
-  ];
-  const portalRoutes = [
-    {
-      label: "Professional user portal",
-      icon: Fingerprint,
-      action: "Register a Passport",
-      detail: "Creates the signed-in professional profile and live Passport context before records or evidence are saved.",
-      database: "profiles, organizations, memberships, trust_records, evidence_documents",
-      portal: "professional" as const
-    },
-    {
-      label: "Corporate company portal",
-      icon: ShieldCheck,
-      action: "Register a company",
-      detail: "Creates the signed-in corporate admin, employer or staffing organization, and Verify workspace access.",
-      database: "organizations, organization_memberships, invitations, subscriptions, access_grants",
-      portal: "corporate" as const
-    }
-  ];
-  const selectedPortalSteps =
-    portal === "corporate"
-      ? [
-          "Create employer or staffing organization",
-          "Activate Corporate Verify pilot plan",
-          "Invite reviewers and request Passport access",
-          "Review shared records with audit context"
-        ]
-      : [
-          "Create private Professional Passport",
-          "Add records and evidence metadata",
-          "Approve or decline each Access Grant",
-          "Control sensitive consent and sharing"
-        ];
-  const selectedPortalGuide =
-    portal === "corporate"
-      ? [
-          {
-            label: "1",
-            title: "Register the admin user",
-            detail: "Create the corporate login with a real email and password, then verify the email if Supabase requires it."
-          },
-          {
-            label: "2",
-            title: "Save company details",
-            detail: "Organization name, domain, and employer or staffing type are stored until the verified admin logs in."
-          },
-          {
-            label: "3",
-            title: "Provision live workspace",
-            detail: "After login, TrustGraph creates the organization, admin membership, RBAC context, and corporate setup path."
-          }
-        ]
-      : [
-          {
-            label: "1",
-            title: "Register the professional",
-            detail: "Create the user account that owns the private Passport and consent decisions."
-          },
-          {
-            label: "2",
-            title: "Verify and login",
-            detail: "Return to this hosted app after email verification or use the link repair tool if an email points to localhost."
-          },
-          {
-            label: "3",
-            title: "Build the Passport",
-            detail: "Add records, evidence metadata, references, Access Grants, and sensitive consent controls."
-          }
-        ];
-  const portalLaunchMap = [
-    {
-      label: "Professional user",
-      action: "Create Passport",
-      plan: "$0 pilot",
-      firstWrite: "Profile and personal organization",
-      dashboard: "Passport records, evidence, consent, and Access Grants",
-      portal: "professional" as const
-    },
-    {
-      label: "Corporate company",
-      action: "Create company",
-      plan: "$149/month per company",
-      firstWrite: "Company organization and admin membership",
-      dashboard: "Corporate Verify, RBAC team, billing, and user access requests",
-      portal: "corporate" as const
-    }
-  ];
-  const buyerDecisionBoard = [
-    {
-      label: "Professional",
-      price: "$0 pilot",
-      chooseWhen: "You own your work history, credentials, references, training, and sharing consent.",
-      firstWrite: "Profile, personal organization, Professional membership, then Passport records.",
-      portalOutcome: "Private Passport workspace with evidence, consent, Access Grants, and exports.",
-      action: "Start Passport",
-      portal: "professional" as const
-    },
-    {
-      label: "Corporate Verify",
-      price: "$149/month per company",
-      chooseWhen: "You review candidates, staff, contractors, or clinicians after they approve scoped access.",
-      firstWrite: "Company organization, admin membership, pricing ledger, team, and Verify workspace.",
-      portalOutcome: "Corporate portal can request one professional by email and see approved shared rows only.",
-      action: "Start Corporate",
-      portal: "corporate" as const
-    },
-    {
-      label: "TrustGraph Scale",
-      price: "Custom",
-      chooseWhen: "You need issuer workflows, Connect clients, compliance operations, or rollout support.",
-      firstWrite: "Human-gated production decision before paid checkout or regulated traffic.",
-      portalOutcome: "Scale conversations start through Corporate setup while Stripe remains disabled.",
-      action: "Review Corporate path",
-      portal: "corporate" as const
-    }
-  ];
-  const buyerDecisionPacket = {
-    generated_at: new Date().toISOString(),
-    mode: "public_buyer_decision_board",
-    selected_portal: portal,
-    selected_mode: mode,
-    preview_data_accepted: false,
-    pricing_boundary: "professional_free_corporate_verify_149_pilot_monthly_scale_custom_stripe_disabled_until_human_gate",
-    database_boundary:
-      "professional_owns_passport_rows_corporate_requests_one_professional_by_email_and_reads_only_approved_shared_rows",
-    accepted_when:
-      "public_buyer_decision_board_shows_professional_corporate_scale_pricing_first_database_write_portal_outcome_and_scoped_user_database_boundary_before_signup",
-    options: buyerDecisionBoard.map(({ label, price, chooseWhen, firstWrite, portalOutcome }) => ({
-      label,
-      price,
-      choose_when: chooseWhen,
-      first_database_write: firstWrite,
-      portal_outcome: portalOutcome
-    }))
-  };
-  const publicAudienceSwitchboard = {
-    generated_at: new Date().toISOString(),
-    mode: "public_audience_switchboard",
-    selected_portal: portal,
-    preview_data_accepted: false,
-    accepted_when:
-      "public_audience_switchboard_explains_professional_corporate_and_operator_paths_pricing_database_effects_scoped_access_and_human_gates_in_first_viewport"
-  };
-  const publicProductAnswer = {
-    generated_at: new Date().toISOString(),
-    mode: "public_product_answer",
-    selected_portal: portal,
-    selected_mode: mode,
-    headline: "TrustGraph is a verified workforce passport and corporate review workspace.",
-    professional:
-      "Professional users create a Passport, add records and evidence, recover account access, and control exactly what can be shared.",
-    corporate:
-      "Corporate teams register a company, invite reviewers, request scoped access by email, and review approved rows only.",
-    pricing: "Professional pilot is free. Corporate Verify pilot is $149 monthly. Stripe checkout stays human-gated.",
-    database:
-      "The first registration writes a live Supabase registration intent. Corporate users never get open user-database browsing.",
-    server:
-      serverSyncMonitor.status === "synced"
-        ? "This hosted server has a current release stamp."
-        : "GitHub Pages is the current verified build until the VPS release stamp JSON is current.",
-    accepted_when:
-      "public_product_answer_keeps_professional_corporate_pricing_registration_scoped_database_server_currentness_and_no_preview_data_visible_before_dense_public_proof"
-  };
-  const publicAudienceCards = [
-    {
-      label: "Professional",
-      title: "Build your private Passport",
-      detail: "Own work history, credentials, references, training, evidence links, consent, and Access Grants.",
-      price: "$0 pilot",
-      database: "Profile, personal organization, Passport records",
-      action: "Start Passport",
-      portal: "professional" as const
-    },
-    {
-      label: "Corporate Verify",
-      title: "Request scoped user records",
-      detail: "Create a company workspace, invite reviewers, request one professional by email, and review approved rows only.",
-      price: "$149 pilot",
-      database: "Company, RBAC seat, subscription ledger, access requests",
-      action: "Start Corporate",
-      portal: "corporate" as const
-    },
-    {
-      label: "Trust operations",
-      title: "Audit the pilot launch path",
-      detail: "Review release proof, security/RLS, exports, pilot contacts, and human gates before production traffic.",
-      price: "Human-gated",
-      database: "Audit, release, security, readiness receipts",
-      action: "Review pricing",
-      portal: "corporate" as const
-    }
-  ];
-  const portalFrontDoor = {
-    generated_at: new Date().toISOString(),
-    mode: "portal_front_door",
-    selected_portal: portal,
-    selected_mode: mode,
-    primary_action: selectedPortalCommand.headline,
-    pricing: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    next_dashboard: portal === "corporate" ? "Corporate Verify and Company Admin" : "Professional Passport",
-    database_boundary: registrationDecisionReceipt.database_boundary,
-    server_saved_status: serverSyncMonitor.status,
-    accepted_when:
-      "public_front_door_shows_professional_login_corporate_login_registration_pricing_database_boundary_recovery_and_server_status_before_dense_content"
-  };
-  const portalFrontDoorActions = [
-    {
-      label: "Professional user",
-      value: portal === "professional" ? selectedPortalCommand.headline : "Create or login to Passport",
-      detail: "Own your Passport, evidence, consent, and sharing approvals.",
-      portal: "professional" as const,
-      mode: "signup" as const
-    },
-    {
-      label: "Corporate team",
-      value: portal === "corporate" ? selectedPortalCommand.headline : "Create or login to company",
-      detail: "Request approved user records. No open browsing of the user database.",
-      portal: "corporate" as const,
-      mode: "signup" as const
-    },
-    {
-      label: "Login",
-      value: "Existing account",
-      detail: "Use hosted TrustGraph login, then land in the right portal.",
-      portal,
-      mode: "signin" as const
-    },
-    {
-      label: "Pricing",
-      value: portal === "corporate" ? "$149 pilot" : "$0 pilot",
-      detail: selectedRegistrationPath.paymentStatus,
-      portal,
-      mode
-    }
-  ];
-  const publicAuthFrontDesk = {
-    generated_at: new Date().toISOString(),
-    mode: "public_auth_front_desk",
-    selected_portal: selectedRegistrationPath.portal,
-    selected_mode: mode,
-    headline: selectedPortalCommand.headline,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    pricing: selectedRegistrationPath.plan,
-    recovery_ready: Boolean(email),
-    hosted_redirect: authRedirectUrl,
-    accepted_when:
-      "public_auth_front_desk_keeps_professional_login_corporate_login_registration_pricing_recovery_and_hosted_redirect_clear_before_form_submit"
-  };
-  const publicAuthFrontDeskCards = [
-    {
-      label: "Portal",
-      value: portal === "corporate" ? "Corporate" : "Professional",
-      detail: portal === "corporate" ? "Company setup and Verify" : "Passport owner workspace"
-    },
-    {
-      label: "Action",
-      value: mode === "signup" ? "Register" : "Login",
-      detail: selectedPortalCommand.next
-    },
-    {
-      label: "Price",
-      value: portal === "corporate" ? "$149 pilot" : "$0 pilot",
-      detail: selectedRegistrationPath.paymentStatus
-    },
-    {
-      label: "Recovery",
-      value: email ? "Ready" : "Email needed",
-      detail: "Reset and verification use the hosted redirect."
-    }
-  ];
-  const publicAuthFrontDeskPacketName = `trustgraph-public-auth-front-desk-${new Date().toISOString().slice(0, 10)}.json`;
-  const publicPortalLaunchAnswer = {
-    generated_at: new Date().toISOString(),
-    mode: "public_portal_launch_answer",
-    selected_portal: portal,
-    selected_mode: mode,
-    answer:
-      portal === "corporate"
-        ? mode === "signup"
-          ? "Create the corporate admin account, then finish company workspace and RBAC setup."
-          : "Login to the corporate admin account, then open scoped Corporate Verify."
-        : mode === "signup"
-          ? "Create the Professional Passport account, then add owned records and evidence."
-          : "Login to the Professional Passport account to manage owned records and sharing.",
-    pricing: selectedRegistrationPath.plan,
-    first_database_write: selectedRegistrationPath.primaryWrite,
-    landing_portal: portal === "corporate" ? "Company setup then Corporate Verify" : "Professional Passport",
-    recovery: email ? "Reset and verification ready for entered email" : "Enter email to enable reset and verification actions",
-    server_status: serverSyncMonitor.status,
-    corporate_database_rule:
-      "Corporate users request access by professional email and see only approved scoped rows. No open user database browse.",
-    preview_data_accepted: false,
-    accepted_when:
-      "public_portal_launch_answer_keeps_professional_register_professional_login_corporate_register_corporate_login_pricing_recovery_server_status_first_database_write_and_no_open_user_database_visible_before_credentials"
-  };
-  const publicPortalLaunchAnswerRoutes = [
-    {
-      label: "Professional register",
-      active: portal === "professional" && mode === "signup",
-      detail: "Create a private Passport owner account.",
-      onClick: () => {
-        setPortal("professional");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Professional login",
-      active: portal === "professional" && mode === "signin",
-      detail: "Open Passport records, evidence, consent, and sharing.",
-      onClick: () => {
-        setPortal("professional");
-        setMode("signin");
-      }
-    },
-    {
-      label: "Corporate register",
-      active: portal === "corporate" && mode === "signup",
-      detail: "Create company admin, pricing ledger, and RBAC setup.",
-      onClick: () => {
-        setPortal("corporate");
-        setMode("signup");
-      }
-    },
-    {
-      label: "Corporate login",
-      active: portal === "corporate" && mode === "signin",
-      detail: "Open company setup and scoped Corporate Verify.",
-      onClick: () => {
-        setPortal("corporate");
-        setMode("signin");
-      }
-    }
-  ];
-  const publicPortalLaunchAnswerFacts = [
-    { label: "Pricing", value: publicPortalLaunchAnswer.pricing, detail: selectedRegistrationPath.paymentStatus },
-    { label: "First database write", value: publicPortalLaunchAnswer.first_database_write, detail: selectedRegistrationPath.databaseWrites.slice(0, 3).join(", ") },
-    { label: "Landing portal", value: publicPortalLaunchAnswer.landing_portal, detail: selectedRegistrationPath.nextAction },
-    { label: "Recovery", value: email ? "Ready" : "Email needed", detail: publicPortalLaunchAnswer.recovery },
-    { label: "Server", value: publicPortalLaunchAnswer.server_status.replaceAll("_", " "), detail: serverSyncMonitor.detail },
-    { label: "Corporate data", value: "Scoped rows only", detail: publicPortalLaunchAnswer.corporate_database_rule }
-  ];
-  const publicAuthStatusStrip = {
-    mode: "public_auth_status_strip",
-    selected_portal: portal,
-    selected_action: mode,
-    email_ready: Boolean(email),
-    password_ready: Boolean(password),
-    corporate_workspace_ready: portal !== "corporate" || mode !== "signup" || Boolean(organizationName && organizationDomain),
-    hosted_redirect_url: authRedirectUrl,
-    redirect_is_hosted: !authRedirectUrl.includes("localhost"),
-    rate_limit_guidance: "Supabase project email can rate-limit; use one resend or reset, then wait 60+ minutes if limited.",
-    controls_visible: ["login_or_create", "reset_password", "resend_verification", "copy_hosted_redirect", "repair_localhost_callback"],
-    accepted_when:
-      "public_auth_status_strip_keeps_selected_portal_login_register_email_password_company_fields_reset_resend_hosted_redirect_rate_limit_and_localhost_repair_visible_before_submit"
-  };
-  const publicAuthStatusRows = [
-    {
-      label: "Route",
-      value: `${portal === "corporate" ? "Corporate" : "Professional"} ${mode === "signin" ? "login" : "register"}`,
-      detail: portal === "corporate" ? "Company workspace after account verification." : "Private Passport after account verification.",
-      ready: true
-    },
-    {
-      label: "Email",
-      value: email ? "Ready" : "Required",
-      detail: email || "Use the same address for login, verification, and reset.",
-      ready: Boolean(email)
-    },
-    {
-      label: "Password",
-      value: password ? "Ready" : "Required",
-      detail: mode === "signin" ? "Existing account password." : "New account password.",
-      ready: Boolean(password)
-    },
-    {
-      label: "Company fields",
-      value: publicAuthStatusStrip.corporate_workspace_ready ? "Ready" : "Required",
-      detail: portal === "corporate" && mode === "signup" ? "Organization and domain are needed." : "Not needed for this route.",
-      ready: publicAuthStatusStrip.corporate_workspace_ready
-    },
-    {
-      label: "Email links",
-      value: publicAuthStatusStrip.redirect_is_hosted ? "Hosted" : "Fix redirect",
-      detail: authRedirectUrl,
-      ready: publicAuthStatusStrip.redirect_is_hosted
-    }
-  ];
-  function openPortal(nextPortal: "professional" | "corporate") {
+  function openAuth(nextPortal: "professional" | "corporate", nextView: "login" | "register") {
     setPortal(nextPortal);
-    setMode("signup");
-    window.requestAnimationFrame(() => document.getElementById("portal-auth")?.scrollIntoView({ behavior: "smooth" }));
+    setAuthView(nextView);
+    setMode(nextView === "login" ? "signin" : "signup");
+    setCorporateStep(1);
+    setMessage(null);
+    setRecoverSent(false);
+    setScreen("auth");
+    if (typeof window !== "undefined") window.scrollTo(0, 0);
+  }
+
+  function goHome() {
+    setScreen("home");
+    setMessage(null);
+  }
+
+  function scrollToSection(id: string) {
+    if (screen !== "home") {
+      setScreen("home");
+      window.requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }));
+      return;
+    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  const header = (
+    <header className={`tg-header ${headerScrolled ? "tg-scrolled" : ""}`}>
+      <div className="tg-container tg-header-inner">
+        <button className="tg-brand" onClick={goHome} type="button">
+          <BrandMark />
+          <span className="tg-brand-word">TrustGraph</span>
+        </button>
+        <nav className="tg-nav" aria-label="Primary">
+          <button className="tg-nav-link" onClick={() => scrollToSection("how-it-works")} type="button">
+            How it works
+          </button>
+          <button className="tg-nav-link" onClick={() => openAuth("professional", "register")} type="button">
+            For professionals
+          </button>
+          <button className="tg-nav-link" onClick={() => openAuth("corporate", "register")} type="button">
+            For companies
+          </button>
+          <button className="tg-nav-link" onClick={() => scrollToSection("pricing")} type="button">
+            Pricing
+          </button>
+          <button className="tg-nav-link" onClick={() => scrollToSection("trust")} type="button">
+            Security
+          </button>
+        </nav>
+        <div className="tg-header-actions">
+          {currentSession ? (
+            <>
+              <button className="tg-btn tg-btn-ghost tg-btn-md" onClick={onSignOut} type="button">
+                Sign out
+              </button>
+              <button className="tg-btn tg-btn-primary tg-btn-md" onClick={onOpenProductPreview} type="button">
+                Open workspace
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="tg-btn tg-btn-ghost tg-btn-md" onClick={() => openAuth(portal, "login")} type="button">
+                Log in
+              </button>
+              <button className="tg-btn tg-btn-primary tg-btn-md" onClick={() => openAuth("professional", "register")} type="button">
+                Get started
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+
+  const footer = (
+    <footer className="tg-footer">
+      <div className="tg-container">
+        <div className="tg-footer-top">
+          <div className="tg-footer-col">
+            <div className="tg-brand" style={{ color: "#fff" }}>
+              <BrandMark />
+              <span className="tg-brand-word" style={{ color: "#fff" }}>
+                TrustGraph
+              </span>
+            </div>
+          </div>
+          <div className="tg-footer-col">
+            <h4>Product</h4>
+            <ul>
+              <li>
+                <button onClick={() => scrollToSection("how-it-works")} type="button">
+                  How it works
+                </button>
+              </li>
+              <li>
+                <button onClick={() => scrollToSection("pricing")} type="button">
+                  Pricing
+                </button>
+              </li>
+              <li>
+                <button onClick={() => scrollToSection("trust")} type="button">
+                  Security
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div className="tg-footer-col">
+            <h4>For you</h4>
+            <ul>
+              <li>
+                <button onClick={() => openAuth("professional", "register")} type="button">
+                  Create your Passport
+                </button>
+              </li>
+              <li>
+                <button onClick={() => openAuth("corporate", "register")} type="button">
+                  Start Corporate Verify
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div className="tg-footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li>
+                <button onClick={() => openAuth("corporate", "register")} type="button">
+                  Talk to us
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div className="tg-footer-col">
+            <h4>Account</h4>
+            <ul>
+              <li>
+                <button onClick={() => openAuth(portal, "login")} type="button">
+                  Log in
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="tg-footer-bottom">
+          <span>© {new Date().getFullYear()} TrustGraph</span>
+          <div className="tg-footer-bottom-links">
+            <span>Privacy</span>
+            <span>Terms</span>
+            <span>Security</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+
+  if (screen === "auth") {
+    return (
+      <main className="tg-marketing tg-auth-page">
+        <div className="tg-auth-topstrip">
+          <button className="tg-brand" onClick={goHome} type="button">
+            <BrandMark />
+            <span className="tg-brand-word">TrustGraph</span>
+          </button>
+        </div>
+        <div className="tg-auth-body">
+          <div style={{ width: "100%", maxWidth: 420 }}>
+            <button className="tg-back-link" onClick={goHome} type="button">
+              <ChevronRight size={14} style={{ transform: "rotate(180deg)" }} />
+              Back to home
+            </button>
+            <div className="tg-auth-card">
+              {hasPendingCorporateRegistration && authView === "login" && portal === "corporate" && inlineNote ? (
+                <div className="tg-strip tg-strip-info">
+                  <CircleCheck size={16} />
+                  <span>{inlineNote}</span>
+                </div>
+              ) : null}
+
+              {message ? (
+                <div className={`tg-strip tg-strip-${message.tone}`}>
+                  <AlertTriangle size={16} />
+                  <span>{message.text}</span>
+                </div>
+              ) : null}
+
+              {authView === "check-email" ? (
+                <div className="tg-check-email">
+                  <div className="tg-check-email-icon">
+                    <MailCheck size={28} />
+                  </div>
+                  <h3>Check your email</h3>
+                  <p>
+                    We sent a confirmation link to <strong>{email}</strong>. Open it to finish setting up your account, then come back
+                    here and log in.
+                  </p>
+                  <button
+                    className="tg-btn tg-btn-secondary tg-btn-full tg-btn-lg"
+                    disabled={busy}
+                    onClick={() => void resendVerification()}
+                    type="button"
+                  >
+                    Resend link
+                  </button>
+                  <div className="tg-auth-secondary-row tg-center">
+                    <button className="tg-link" onClick={() => setAuthView("login")} type="button">
+                      Wrong email? Start over
+                    </button>
+                  </div>
+                  {renderLinkRepairDisclosure()}
+                </div>
+              ) : authView === "recover" ? (
+                recoverSent ? (
+                  <div className="tg-check-email">
+                    <div className="tg-check-email-icon">
+                      <MailCheck size={28} />
+                    </div>
+                    <h3>Check your email</h3>
+                    <p>
+                      We sent a reset link to <strong>{email}</strong>.
+                    </p>
+                    <button
+                      className="tg-btn tg-btn-secondary tg-btn-full tg-btn-lg"
+                      disabled={busy}
+                      onClick={() => void recoverPassword()}
+                      type="button"
+                    >
+                      Resend link
+                    </button>
+                    <div className="tg-auth-secondary-row tg-center">
+                      <button className="tg-link" onClick={() => setAuthView("login")} type="button">
+                        ← Back to log in
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <h3>Reset your password</h3>
+                    <p className="tg-auth-sub">We&apos;ll email you a link to set a new one.</p>
+                    <div className="tg-field">
+                      <label htmlFor="recover-email">Email</label>
+                      <input id="recover-email" onChange={(event) => setEmail(event.target.value)} type="email" value={email} />
+                    </div>
+                    <button
+                      className="tg-btn tg-btn-primary tg-btn-full tg-btn-lg"
+                      disabled={busy || !email}
+                      onClick={() => void recoverPassword()}
+                      type="button"
+                    >
+                      Send reset link
+                    </button>
+                    <div className="tg-auth-secondary-row tg-center">
+                      <button className="tg-link" onClick={() => setAuthView("login")} type="button">
+                        ← Back to log in
+                      </button>
+                    </div>
+                    {renderLinkRepairDisclosure()}
+                  </>
+                )
+              ) : authView === "login" ? (
+                <form onSubmit={submit}>
+                  <h3>Log in to TrustGraph</h3>
+                  <p className="tg-auth-sub">Use the email you registered with.</p>
+                  <div className="tg-field">
+                    <label htmlFor="login-email">Email</label>
+                    <input
+                      autoFocus
+                      id="login-email"
+                      onChange={(event) => setEmail(event.target.value)}
+                      type="email"
+                      value={email}
+                    />
+                  </div>
+                  <div className="tg-field">
+                    <label htmlFor="login-password">Password</label>
+                    <div className="tg-field-password-row">
+                      <input
+                        id="login-password"
+                        onChange={(event) => setPassword(event.target.value)}
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                      />
+                      <button className="tg-show-toggle" onClick={() => setShowPassword((value) => !value)} type="button">
+                        {showPassword ? "Hide" : "Show"}
+                      </button>
+                    </div>
+                  </div>
+                  <button className="tg-btn tg-btn-primary tg-btn-full tg-btn-lg" disabled={busy || !email || !password} type="submit">
+                    {busy ? "Logging in..." : "Log in"}
+                  </button>
+                  <div className="tg-auth-secondary-row">
+                    <button className="tg-link" onClick={() => setAuthView("recover")} type="button">
+                      Forgot password?
+                    </button>
+                    <button className="tg-link" onClick={() => openAuth(portal, "register")} type="button">
+                      Create an account
+                    </button>
+                  </div>
+                  <div className="tg-auth-secondary-row tg-center" style={{ marginTop: 20 }}>
+                    <button className="tg-link" onClick={() => setAuthView("recover")} type="button">
+                      Trouble with an email link? Get help signing in
+                    </button>
+                  </div>
+                </form>
+              ) : portal === "professional" ? (
+                <form onSubmit={submit}>
+                  <h3>Create your Passport</h3>
+                  <p className="tg-auth-sub">Free for professionals during the pilot.</p>
+                  <div className="tg-field">
+                    <label htmlFor="reg-email">Email</label>
+                    <input id="reg-email" onChange={(event) => setEmail(event.target.value)} type="email" value={email} />
+                  </div>
+                  <div className="tg-field">
+                    <label htmlFor="reg-password">Password</label>
+                    <div className="tg-field-password-row">
+                      <input
+                        id="reg-password"
+                        onChange={(event) => setPassword(event.target.value)}
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                      />
+                      <button className="tg-show-toggle" onClick={() => setShowPassword((value) => !value)} type="button">
+                        {showPassword ? "Hide" : "Show"}
+                      </button>
+                    </div>
+                    <span className="tg-field-help">At least 8 characters.</span>
+                  </div>
+                  <button className="tg-btn tg-btn-primary tg-btn-full tg-btn-lg" disabled={busy || !email || !password} type="submit">
+                    {busy ? "Creating account..." : "Create account"}
+                  </button>
+                  <div className="tg-auth-secondary-row tg-center">
+                    <button className="tg-link" onClick={() => openAuth("professional", "login")} type="button">
+                      Already have an account? Log in
+                    </button>
+                  </div>
+                  <p className="tg-auth-legal">By creating an account you agree to our Terms and Privacy Policy.</p>
+                </form>
+              ) : (
+                <form onSubmit={submit}>
+                  <div className="tg-auth-steps">
+                    <span className={corporateStep >= 1 ? "tg-active" : ""} />
+                    <span className={corporateStep >= 2 ? "tg-active" : ""} />
+                  </div>
+                  <span className="tg-auth-step-label">Step {corporateStep} of 2</span>
+
+                  {corporateStep === 1 ? (
+                    <>
+                      <h3>Create your company account</h3>
+                      <p className="tg-auth-sub">$149/month per company during the pilot. No card required to start.</p>
+                      <div className="tg-field">
+                        <label htmlFor="corp-email">Work email</label>
+                        <input id="corp-email" onChange={(event) => setEmail(event.target.value)} type="email" value={email} />
+                        <span className="tg-field-help">Use your company domain.</span>
+                      </div>
+                      <div className="tg-field">
+                        <label htmlFor="corp-password">Password</label>
+                        <div className="tg-field-password-row">
+                          <input
+                            id="corp-password"
+                            onChange={(event) => setPassword(event.target.value)}
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                          />
+                          <button className="tg-show-toggle" onClick={() => setShowPassword((value) => !value)} type="button">
+                            {showPassword ? "Hide" : "Show"}
+                          </button>
+                        </div>
+                      </div>
+                      <button
+                        className="tg-btn tg-btn-primary tg-btn-full tg-btn-lg"
+                        disabled={!email || !password}
+                        onClick={() => setCorporateStep(2)}
+                        type="button"
+                      >
+                        Continue
+                      </button>
+                      <div className="tg-auth-secondary-row tg-center">
+                        <button className="tg-link" onClick={() => openAuth("corporate", "login")} type="button">
+                          Already have an account? Log in
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h3>Tell us about your company</h3>
+                      <p className="tg-auth-sub">This creates your workspace. You can invite reviewers after setup.</p>
+                      <div className="tg-field">
+                        <label htmlFor="corp-name">Company name</label>
+                        <input
+                          id="corp-name"
+                          onChange={(event) => setOrganizationName(event.target.value)}
+                          type="text"
+                          value={organizationName}
+                        />
+                      </div>
+                      <div className="tg-field">
+                        <label htmlFor="corp-domain">Company domain</label>
+                        <input
+                          id="corp-domain"
+                          onChange={(event) => setOrganizationDomain(event.target.value)}
+                          placeholder="acme.com"
+                          type="text"
+                          value={organizationDomain}
+                        />
+                        <span className="tg-field-help">We use this to match reviewer invitations.</span>
+                      </div>
+                      <div className="tg-field">
+                        <label htmlFor="corp-type">Organization type</label>
+                        <select
+                          id="corp-type"
+                          onChange={(event) => setOrganizationType(event.target.value as typeof organizationType)}
+                          value={organizationType}
+                        >
+                          <option value="employer">Employer</option>
+                          <option value="staffing_agency">Staffing agency</option>
+                        </select>
+                      </div>
+                      <button
+                        className="tg-btn tg-btn-primary tg-btn-full tg-btn-lg"
+                        disabled={busy || !organizationName.trim() || !organizationDomain.trim()}
+                        type="submit"
+                      >
+                        {busy ? "Creating workspace..." : "Create workspace"}
+                      </button>
+                      <div className="tg-auth-secondary-row tg-center">
+                        <button className="tg-link" onClick={() => setCorporateStep(1)} type="button">
+                          ← Back
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  function renderLinkRepairDisclosure() {
+    return (
+      <details className="tg-disclosure">
+        <summary>
+          <ChevronRight size={12} />
+          My email link didn&apos;t work
+        </summary>
+        <div className="tg-disclosure-body">
+          <p>If the link opened a page that wouldn&apos;t load, paste it below and we&apos;ll point it at the right place.</p>
+          <textarea
+            onChange={(event) => setVerificationLinkInput(event.target.value)}
+            placeholder="Paste the full link from your email"
+            value={verificationLinkInput}
+          />
+          <button className="tg-btn tg-btn-secondary tg-btn-md" onClick={() => void copyRepairedVerificationLink()} type="button">
+            Fix link
+          </button>
+          {verificationLinkMessage ? <p>{verificationLinkMessage}</p> : null}
+          {repairedVerificationUrl ? (
+            <a className="tg-link" href={repairedVerificationUrl} rel="noreferrer">
+              {repairedVerificationUrl.slice(0, 60)}…
+            </a>
+          ) : null}
+        </div>
+      </details>
+    );
   }
 
   return (
-    <main className="public-site">
-      <header className="public-nav">
-        <div className="brand">
-          <div className="brand-symbol">TG</div>
-          <div>
-            <strong>TrustGraph</strong>
-            <span>Verified workforce record platform</span>
+    <main className="tg-marketing">
+      {header}
+
+      <section className="tg-container tg-hero">
+        <div>
+          <span className="tg-eyebrow">Workforce records</span>
+          <h1>Verified work records, owned by the worker.</h1>
+          <p className="tg-hero-sub">
+            Professionals keep one private record of their identity, work history, credentials, references and evidence. Companies
+            request access to only what they need — with consent, scope, and a full audit trail.
+          </p>
+          <div className="tg-hero-actions">
+            <div className="tg-hero-action">
+              <button className="tg-btn tg-btn-primary tg-btn-lg" onClick={() => openAuth("professional", "register")} type="button">
+                Create your Passport
+              </button>
+              <span className="tg-hero-qualifier">Free for professionals</span>
+            </div>
+            <div className="tg-hero-action">
+              <button className="tg-btn tg-btn-secondary tg-btn-lg" onClick={() => openAuth("corporate", "register")} type="button">
+                Start Corporate Verify
+              </button>
+              <span className="tg-hero-qualifier">$149/month per company</span>
+            </div>
+          </div>
+          <div className="tg-icon-row">
+            <span>
+              <ShieldCheck size={14} />
+              Consent-first
+            </span>
+            <span>
+              <LockKeyhole size={14} />
+              Role-based access
+            </span>
+            <span>
+              <Paperclip size={14} />
+              Private evidence
+            </span>
+            <span>
+              <ScrollText size={14} />
+              Full audit trail
+            </span>
           </div>
         </div>
-        <div className="public-nav-actions">
-          <button className="secondary-action" onClick={onOpenProductPreview}>
-            Product preview
-          </button>
-          {currentSession ? (
-            <button className="secondary-action" onClick={onSignOut} type="button">
-              Sign out
-            </button>
-          ) : null}
-          <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()}>
-            Get started
-          </button>
-        </div>
-      </header>
 
-      <section className="public-hero">
-        <div>
-          <span className="eyebrow">Verified workforce record platform</span>
-          <h1>Verified work records, owned by the worker.</h1>
-          <p>
-            Professionals keep one private record of identity, work history, credentials, references, and evidence.
-            Companies request access to only what they need.
-          </p>
-          <div className="public-hero-actions">
-            <button className="primary-action" onClick={() => openPortal("professional")}>
+        <div className="tg-hero-frame" aria-hidden="true">
+          <div className="tg-hero-frame-top">
+            <strong>Passport overview</strong>
+            <span className="tg-eyebrow" style={{ margin: 0 }}>
+              68% ready
+            </span>
+          </div>
+          <div className="tg-hero-ring-row">
+            <svg className="tg-ring" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#ededeb" strokeWidth="10" />
+              <circle
+                cx="50"
+                cy="50"
+                r="42"
+                fill="none"
+                stroke="#0f615b"
+                strokeWidth="10"
+                strokeDasharray={`${2 * Math.PI * 42 * 0.68} ${2 * Math.PI * 42}`}
+                strokeLinecap="round"
+                transform="rotate(-90 50 50)"
+              />
+              <text x="50" y="56" textAnchor="middle" fontSize="20" fontWeight="600" fill="#16181a">
+                68%
+              </text>
+            </svg>
+            <div className="tg-hero-checklist">
+              <span className="tg-hero-checklist-row">
+                <CircleCheck size={16} />
+                Identity verified
+              </span>
+              <span className="tg-hero-checklist-row">
+                <CircleCheck size={16} />
+                Work history complete
+              </span>
+              <span className="tg-hero-checklist-row" style={{ color: "var(--tg-muted)" }}>
+                <AlertTriangle size={16} color="var(--tg-warning-text)" />
+                1 credential expiring
+              </span>
+            </div>
+          </div>
+          <div className="tg-hero-frame-stats">
+            <div>
+              <span>Records</span>
+              <strong>12</strong>
+            </div>
+            <div>
+              <span>Pending</span>
+              <strong>1</strong>
+            </div>
+            <div>
+              <span>Expiring</span>
+              <strong>2</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="tg-section">
+        <div className="tg-container tg-split">
+          <div className="tg-split-card">
+            <span className="tg-eyebrow">For professionals</span>
+            <h3>Your record, your rules.</h3>
+            <p>
+              Build one Passport of identity, work history, credentials, references and training. Attach private evidence. Approve
+              every request, record by record.
+            </p>
+            <ul className="tg-bullet-list">
+              <li>
+                <CircleCheck size={16} />
+                Private evidence storage
+              </li>
+              <li>
+                <CircleCheck size={16} />
+                Reference requests
+              </li>
+              <li>
+                <CircleCheck size={16} />
+                Access Grants you control
+              </li>
+              <li>
+                <CircleCheck size={16} />
+                Export your record anytime
+              </li>
+            </ul>
+            <button className="tg-btn tg-btn-primary tg-btn-lg" onClick={() => openAuth("professional", "register")} type="button">
               Create your Passport
             </button>
-            <button className="secondary-action" onClick={() => openPortal("corporate")}>
+          </div>
+          <div className="tg-split-card">
+            <span className="tg-eyebrow">For companies</span>
+            <h3>Verify without collecting.</h3>
+            <p>
+              Request the records you need from a named professional. Review only what they approve, inside role-based workspaces,
+              with an audit trail you can export.
+            </p>
+            <ul className="tg-bullet-list">
+              <li>
+                <CircleCheck size={16} />
+                Scoped access by request
+              </li>
+              <li>
+                <CircleCheck size={16} />
+                Reviewer roles and seats
+              </li>
+              <li>
+                <CircleCheck size={16} />
+                Missing-record requests
+              </li>
+              <li>
+                <CircleCheck size={16} />
+                Metadata-only exports
+              </li>
+            </ul>
+            <p className="tg-split-card-footnote">$149/month per company — unlimited reviewers during the pilot.</p>
+            <button className="tg-btn tg-btn-secondary tg-btn-lg" onClick={() => openAuth("corporate", "register")} type="button">
               Start Corporate Verify
             </button>
           </div>
-          <div className="public-product-answer" aria-label="Public product answer">
-            <div className="public-product-answer-copy">
-              <span className="status-chip success">Start here</span>
-              <h2>{publicProductAnswer.headline}</h2>
-              <p>
-                Pick the Professional path to build and share your own Passport. Pick the Corporate path to request
-                approved workforce records without browsing the user database.
-              </p>
+        </div>
+      </section>
+
+      <section className="tg-section tg-section-sunken" id="how-it-works">
+        <div className="tg-container">
+          <div className="tg-section-head tg-center">
+            <h2>From record to review, in three steps.</h2>
+            <p>One record. One request. One audit trail.</p>
+          </div>
+          <div className="tg-steps">
+            <div className="tg-step">
+              <span className="tg-step-number">01</span>
+              <h3>Build the Passport</h3>
+              <p>Add identity, work history, credentials, references and training. Attach evidence — files stay in private storage.</p>
             </div>
-            <div className="public-product-answer-grid">
-              <article>
-                <span>Professional</span>
-                <strong>Create your Passport</strong>
-                <p>{publicProductAnswer.professional}</p>
-                <button className="primary-action" onClick={() => openPortal("professional")} type="button">
-                  Create Professional account
-                </button>
-              </article>
-              <article>
-                <span>Corporate</span>
-                <strong>Open Corporate Verify</strong>
-                <p>{publicProductAnswer.corporate}</p>
-                <button className="secondary-action" onClick={() => openPortal("corporate")} type="button">
-                  Create Corporate account
-                </button>
-              </article>
-              <article>
-                <span>Pricing</span>
-                <strong>$0 Professional, $149/month per company</strong>
-                <p>{publicProductAnswer.pricing}</p>
-                <button className="secondary-action" onClick={() => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" })} type="button">
-                  View pricing
-                </button>
-              </article>
+            <div className="tg-step">
+              <span className="tg-step-number">02</span>
+              <h3>Approve a scoped request</h3>
+              <p>A company asks by email for specific records and a review window. You approve, decline, or revoke — per record.</p>
             </div>
-            <div className="public-product-answer-proof" aria-label="Public product database rules">
-              <span>
-                <strong>Registration</strong>
-                <small>{publicProductAnswer.database}</small>
-              </span>
-              <span>
-                <strong>Corporate access</strong>
-                <small>Request by professional email, then review only consented records, grants, references, and evidence.</small>
-              </span>
-              <span>
-                <strong>Hosted status</strong>
-                <small>{publicProductAnswer.server}</small>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-product-answer-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(publicProductAnswer, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Corporate database rules
-              </button>
+            <div className="tg-step">
+              <span className="tg-step-number">03</span>
+              <h3>Review with an audit trail</h3>
+              <p>Reviewers see only approved records. Every view, export and decision is logged for both sides.</p>
             </div>
           </div>
-          <div className="public-audience-switchboard" aria-label="Public audience switchboard">
-            <div className="public-audience-switchboard-copy">
-              <span className="status-chip success">Who TrustGraph serves</span>
-              <strong>Choose the workflow before live database rows are created</strong>
-              <small>{publicAudienceSwitchboard.accepted_when}</small>
-            </div>
-            <div className="public-audience-switchboard-grid">
-              {publicAudienceCards.map((card) => (
-                <button
-                  className={portal === card.portal ? "active" : ""}
-                  key={card.label}
-                  onClick={() => {
-                    setPortal(card.portal);
-                    if (card.label === "Trust operations") {
-                      document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" });
-                      return;
-                    }
-                    window.requestAnimationFrame(() => document.getElementById("portal-auth")?.scrollIntoView({ behavior: "smooth" }));
-                  }}
-                  type="button"
-                >
-                  <span>{card.label}</span>
-                  <strong>{card.title}</strong>
-                  <small>{card.detail}</small>
-                  <em>{card.price}</em>
-                </button>
-              ))}
-            </div>
-            <div className="public-audience-switchboard-proof">
-              {publicAudienceCards.map((card) => (
-                <span key={card.label}>
-                  <strong>{card.database}</strong>
-                  <small>{card.label} database effect</small>
-                </span>
-              ))}
-            </div>
+          <div className="tg-boundary-line">
+            <ShieldCheck size={16} />
+            <span>Companies never browse the user database. Access is requested by email and granted record by record.</span>
           </div>
-          <div className="portal-front-door" aria-label="Portal front door">
-            <div className="portal-front-door-copy">
-              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Portal front door</span>
-              <strong>{selectedPortalCommand.headline}</strong>
-              <small>{portalFrontDoor.accepted_when}</small>
-            </div>
-            <div className="portal-front-door-grid">
-              {portalFrontDoorActions.map((item) => (
-                <button
-                  className={portal === item.portal && mode === item.mode ? "active" : ""}
-                  key={`${item.label}-${item.mode}`}
-                  onClick={() => {
-                    setPortal(item.portal);
-                    setMode(item.mode);
-                    if (item.label === "Pricing") {
-                      document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" });
-                      return;
-                    }
-                    window.requestAnimationFrame(() => document.getElementById("portal-auth")?.scrollIntoView({ behavior: "smooth" }));
-                  }}
-                  type="button"
-                >
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="portal-front-door-proof">
-              <span>
-                <strong>{portalFrontDoor.pricing}</strong>
-                <small>Selected pricing</small>
-              </span>
-              <span>
-                <strong>{portalFrontDoor.first_database_write}</strong>
-                <small>First live database write</small>
-              </span>
-              <span>
-                <strong>{portalFrontDoor.server_saved_status.replaceAll("_", " ")}</strong>
-                <small>Server saved status</small>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-portal-front-door-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(portalFrontDoor, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export front door
-              </button>
-            </div>
+        </div>
+      </section>
+
+      <section className="tg-section" id="trust">
+        <div className="tg-container">
+          <div className="tg-section-head">
+            <h2>Privacy is the product, not a policy page.</h2>
+            <p>Four guarantees, enforced in the database — not just described here.</p>
           </div>
-          <div className="public-portal-launchpad" aria-label="Public portal launchpad">
-            <div className="public-portal-launchpad-copy">
-              <span className="status-chip success">Choose your path</span>
-              <strong>{portal === "corporate" ? "Corporate Verify starts with company setup" : "Professional Passport starts with your private record"}</strong>
-              <small>{selectedRegistrationPath.nextAction}</small>
-            </div>
-            <div className="public-portal-launchpad-grid">
-              {portalLoginSwitchboard.map((item) => (
-                <button
-                  className={portal === item.portal ? "active" : ""}
-                  key={item.label}
-                  onClick={() => openPortal(item.portal)}
-                  type="button"
-                >
-                  <span>{item.label}</span>
-                  <strong>{item.start}</strong>
-                  <small>{item.dashboard}</small>
-                  <small>{item.next}</small>
-                </button>
-              ))}
-              <button className="pricing" onClick={() => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" })} type="button">
-                <span>Pricing</span>
-                <strong>{portal === "corporate" ? "$149/month per company" : "$0 professional pilot"}</strong>
-                <small>{selectedRegistrationPath.paymentStatus}</small>
-                <small>Review price and database path before signup.</small>
-              </button>
-            </div>
-            <div className="public-portal-launchpad-proof">
-              <span>
-                <strong>{selectedRegistrationPath.primaryWrite}</strong>
-                <small>First database write</small>
-              </span>
-              <span>
-                <strong>{portal === "corporate" ? "Scoped company review" : "Owner-controlled Passport"}</strong>
-                <small>{registrationDecisionReceipt.database_boundary}</small>
-              </span>
-              <button className="secondary-action" onClick={() => document.getElementById("portal-auth")?.scrollIntoView({ behavior: "smooth" })} type="button">
-                Continue to {mode === "signup" ? "registration" : "login"}
-              </button>
-            </div>
-          </div>
-          <div className="public-server-sync-receipt" aria-label="Public server sync receipt">
+          <div className="tg-trust-grid">
             <div>
-              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : serverSyncMonitor.status === "checking" ? "neutral" : "warning"}`}>
-                Saved build
-              </span>
-              <strong>{serverSyncMonitor.headline}</strong>
-              <small>{serverSyncMonitor.detail}</small>
+              <div className="tg-trust-icon">
+                <ShieldCheck size={20} />
+              </div>
+              <h3>Consent is per record</h3>
+              <p>Nothing is shared by default. Each Access Grant lists the exact records it covers and when it expires.</p>
             </div>
-            <div className="public-server-sync-grid">
-              <span>
-                <strong>{serverSyncMonitor.commit ?? "Not proven"}</strong>
-                <small>Release stamp commit</small>
-              </span>
-              <span>
-                <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
-                <small>Current host status</small>
-              </span>
-            </div>
-            {serverSyncMonitor.status !== "synced" ? (
-              <div className="public-server-update-receipt" aria-label="Public server update receipt">
-                <span>SSH updater</span>
-                <small>{publicServerUpdateReceipt.mode}</small>
-                <code>{publicServerUpdateReceipt.command}</code>
-                <small>{publicServerUpdateReceipt.accepted_when}</small>
-              </div>
-            ) : null}
-            <div className="public-saved-build-verification" aria-label="Public saved build verification">
-              <div>
-                <span>Saved update proof</span>
-                <strong>GitHub must match the server bundle</strong>
-                <small>{publicSavedBuildVerification.accepted_when}</small>
-              </div>
-              <div className="public-saved-build-grid">
-                {publicSavedBuildChecks.map((check) => (
-                  <article key={check.label}>
-                    <span>{check.label}</span>
-                    <strong>{check.value}</strong>
-                    <small>{check.detail}</small>
-                  </article>
-                ))}
-              </div>
-            </div>
-            <div className="public-hosted-build-source-contract" aria-label="Public hosted build source contract">
-              <div>
-                <span>Hosted build source</span>
-                <strong>{serverSyncMonitor.status === "synced" ? "Server is current for login testing" : "GitHub is current; VPS must prove the saved release"}</strong>
-                <small>{publicHostedBuildSourceContract.accepted_when}</small>
-              </div>
-              <div className="public-hosted-build-source-grid">
-                {publicHostedBuildSourceCards.map((card) => (
-                  <article key={card.label}>
-                    <span>{card.label}</span>
-                    <strong>{card.value}</strong>
-                    <small>{card.detail}</small>
-                  </article>
-                ))}
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-hosted-build-source-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(publicHostedBuildSourceContract, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export build source
-              </button>
-            </div>
-          </div>
-          {currentSession ? (
-            <div className="public-session-handoff" aria-label="Public session handoff">
-              <div>
-                <span className="status-chip success">Already signed in</span>
-                <strong>{currentSession.user.email}</strong>
-                <small>{currentSessionContext}</small>
-              </div>
-              <div className="public-session-actions">
-                <button className="primary-action" onClick={onOpenProductPreview} type="button">
-                  Open dashboard
-                </button>
-                <button className="secondary-action" onClick={onSignOut} type="button">
-                  Sign out
-                </button>
-              </div>
-            </div>
-          ) : null}
-          <div className="public-portal-rail">
-            <button className={portal === "professional" ? "active" : ""} onClick={() => openPortal("professional")}>
-              <Fingerprint size={18} />
-              <span>
-                <strong>Professionals</strong>
-                <small>Own records, evidence, consent, and Access Grants.</small>
-              </span>
-            </button>
-            <button className={portal === "corporate" ? "active" : ""} onClick={() => openPortal("corporate")}>
-              <ShieldCheck size={18} />
-              <span>
-                <strong>Corporate teams</strong>
-                <small>Request approved records through role-based Verify workspaces.</small>
-              </span>
-            </button>
-          </div>
-          <div className="portal-launch-map" aria-label="Portal launch map">
             <div>
-              <span className="status-chip success">Portal launch map</span>
-              <strong>Start in the right portal before live database rows are created</strong>
+              <div className="tg-trust-icon">
+                <LockKeyhole size={20} />
+              </div>
+              <h3>Evidence stays private</h3>
+              <p>Files live in private storage. Companies see metadata; documents open only through short-lived signed links.</p>
             </div>
-            <div className="portal-launch-map-grid">
-              {portalLaunchMap.map((item) => (
-                <button
-                  className={portal === item.portal ? "active" : ""}
-                  key={item.label}
-                  onClick={() => openPortal(item.portal)}
-                  type="button"
-                >
-                  <span>{item.label}</span>
-                  <strong>{item.action}</strong>
-                  <small>{item.plan}</small>
-                  <small>{item.firstWrite}</small>
-                  <small>{item.dashboard}</small>
-                </button>
-              ))}
+            <div>
+              <div className="tg-trust-icon">
+                <Users size={20} />
+              </div>
+              <h3>Role-based access</h3>
+              <p>Company access is bound to a workspace and a role. Seats and permissions are administered by the company.</p>
+            </div>
+            <div>
+              <div className="tg-trust-icon">
+                <ScrollText size={20} />
+              </div>
+              <h3>Auditable both ways</h3>
+              <p>Requests, approvals, views, exports and revocations are logged for both professionals and companies.</p>
             </div>
           </div>
-          <div className="public-buyer-decision-board" aria-label="Public buyer decision board">
-            <div className="public-buyer-decision-header">
-              <div>
-                <span className="status-chip success">Buyer decision board</span>
-                <strong>Pick the account type by role, price, and database boundary</strong>
-                <small>{buyerDecisionPacket.accepted_when}</small>
+        </div>
+      </section>
+
+      <section className="tg-section tg-section-sunken" id="pricing">
+        <div className="tg-container">
+          <div className="tg-section-head tg-center">
+            <h2>Simple pilot pricing.</h2>
+            <p>Start free as a professional. Companies run a paid pilot before anything scales.</p>
+          </div>
+          <div className="tg-pricing-grid">
+            <div className="tg-pricing-card">
+              <span className="tg-pricing-eyebrow">For individuals</span>
+              <div className="tg-pricing-price">
+                $0<small>free during pilot</small>
               </div>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-buyer-decision-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(buyerDecisionPacket, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export buyer proof
+              <p className="tg-pricing-oneliner">Own and share your record.</p>
+              <ul className="tg-bullet-list">
+                <li>
+                  <CircleCheck size={16} />
+                  Unlimited Passport records
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Private evidence storage
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Reference requests
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Access Grants and consent controls
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Export your full record
+                </li>
+              </ul>
+              <button className="tg-btn tg-btn-secondary tg-btn-lg" onClick={() => openAuth("professional", "register")} type="button">
+                Create your Passport
               </button>
             </div>
-            <div className="public-buyer-decision-grid">
-              {buyerDecisionBoard.map((item) => (
-                <article className={portal === item.portal ? "active" : ""} key={item.label}>
-                  <span>{item.price}</span>
-                  <strong>{item.label}</strong>
-                  <small>{item.chooseWhen}</small>
-                  <div>
-                    <b>First database write</b>
-                    <small>{item.firstWrite}</small>
-                  </div>
-                  <div>
-                    <b>Portal outcome</b>
-                    <small>{item.portalOutcome}</small>
-                  </div>
-                  <button className={item.portal === "professional" ? "primary-action" : "secondary-action"} onClick={() => openPortal(item.portal)} type="button">
-                    {item.action}
-                  </button>
-                </article>
-              ))}
-            </div>
-            <div className="public-buyer-decision-proof">
-              <span>{buyerDecisionPacket.pricing_boundary}</span>
-              <small>{buyerDecisionPacket.database_boundary}</small>
-            </div>
-          </div>
-        </div>
-        <aside className="public-proof public-command-center" aria-label="TrustGraph live database command preview">
-          <div className="command-center-top">
-            <span className="status-chip success">Live pilot</span>
-            <strong>Corporate Verify review</strong>
-            <small>Scoped Passport request ready for employer review</small>
-          </div>
-          <div className="command-center-record">
-            <span>Access Grant</span>
-            <strong>14-day review window</strong>
-            <small>Identity, license, training, and references approved by owner.</small>
-          </div>
-          <div className="command-center-microgrid">
-            <section>
-              <strong>13</strong>
-              <small>v1 foundation tracks</small>
-            </section>
-            <section>
-              <strong>RBAC</strong>
-              <small>role-scoped workspaces</small>
-            </section>
-          </div>
-          <div className="command-center-record">
-            <span>Evidence vault</span>
-            <strong>Signed preview and download</strong>
-            <small>Private Supabase Storage links with audit context.</small>
-          </div>
-          <div className="trust-network-visual" aria-label="Verified TrustGraph record graph">
-            <div className="trust-network-node primary">
-              <span>Professional</span>
-              <strong>Passport</strong>
-            </div>
-            <div className="trust-network-node evidence">
-              <span>Evidence</span>
-              <strong>Signed</strong>
-            </div>
-            <div className="trust-network-node consent">
-              <span>Consent</span>
-              <strong>Scoped</strong>
-            </div>
-            <div className="trust-network-node verify">
-              <span>Corporate</span>
-              <strong>Verify</strong>
-            </div>
-          </div>
-          <div className="command-center-footer">
-            <span>Auth</span>
-            <span>Database</span>
-            <span>Storage</span>
-            <span>Audit</span>
-          </div>
-        </aside>
-      </section>
-
-      <section className="public-section">
-        <div className="public-section-heading">
-          <span className="eyebrow">Operating model</span>
-          <h2>Separate portals, one verified record graph</h2>
-        </div>
-        <div className="portal-grid">
-          <article>
-            <Fingerprint size={24} />
-            <strong>Professional Passport</strong>
-            <p>Create records, attach private evidence, request references, and approve each Access Grant.</p>
-          </article>
-          <article>
-            <ShieldCheck size={24} />
-            <strong>Corporate Verify</strong>
-            <p>Review approved records, request missing items, invite reviewers, and keep scope visible.</p>
-          </article>
-          <article>
-            <Network size={24} />
-            <strong>Connect and Admin</strong>
-            <p>Operate Connect clients, audit events, release ledger, workflow QA, and security review.</p>
-          </article>
-        </div>
-      </section>
-
-      <section className="public-section workflow-section">
-        <div className="public-section-heading">
-          <span className="eyebrow">Workflow</span>
-          <h2>From record ownership to permissioned review</h2>
-        </div>
-        <div className="workflow-grid">
-          {liveWorkflow.map((item) => (
-            <article key={item.label}>
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <p>{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="public-section pricing-section">
-        <div className="public-section-heading">
-          <span className="eyebrow">Pilot access</span>
-          <h2>Start with controlled workflows, then scale</h2>
-        </div>
-        <div className={`pricing-registration-handoff ${portal}`} aria-label="Pricing registration handoff">
-          <div className="pricing-registration-handoff-copy">
-            <span className="status-chip success">Recommended next step</span>
-            <strong>{pricingRegistrationHandoff.recommended_next_step}</strong>
-            <small>{pricingRegistrationHandoff.accepted_when}</small>
-          </div>
-          <div className="pricing-registration-handoff-grid">
-            {pricingRegistrationHandoffSteps.map((step) => (
-              <article key={step.label}>
-                <span>{step.label}</span>
-                <strong>{step.value}</strong>
-                <small>{step.detail}</small>
-              </article>
-            ))}
-          </div>
-          <div className="pricing-registration-handoff-actions">
-            <button className="primary-action" onClick={() => openPortal("professional")} type="button">
-              Start Professional
-            </button>
-            <button className="secondary-action" onClick={() => openPortal("corporate")} type="button">
-              Start Corporate
-            </button>
-            <button
-              className="secondary-action"
-              onClick={() =>
-                downloadTextFile(
-                  `trustgraph-pricing-registration-handoff-${new Date().toISOString().slice(0, 10)}.json`,
-                  JSON.stringify(pricingRegistrationHandoff, null, 2),
-                  "application/json"
-                )
-              }
-              type="button"
-            >
-              Export handoff
-            </button>
-          </div>
-        </div>
-        <div className={`public-pricing-path-answer ${portal}`} aria-label="Public pricing path answer">
-          <div className="public-pricing-path-answer-copy">
-            <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Which plan?</span>
-            <strong>{publicPricingPathAnswer.recommended_path}</strong>
-            <small>{publicPricingPathAnswer.accepted_when}</small>
-          </div>
-          <div className="public-pricing-path-answer-grid">
-            {publicPricingPathAnswerCards.map((item) => (
-              <article className={item.portal === portal ? "active" : ""} key={item.label}>
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
-                <small>{item.detail}</small>
-                <button
-                  className={item.portal === "professional" ? "primary-action" : "secondary-action"}
-                  onClick={() => {
-                    if (item.label === "Scale") {
-                      downloadTextFile(
-                        `trustgraph-public-pricing-path-answer-${new Date().toISOString().slice(0, 10)}.json`,
-                        JSON.stringify(publicPricingPathAnswer, null, 2),
-                        "application/json"
-                      );
-                      return;
-                    }
-                    openPortal(item.portal);
-                  }}
-                  type="button"
-                >
-                  {item.action}
-                </button>
-              </article>
-            ))}
-          </div>
-          <div className="public-pricing-path-answer-proof">
-            <span>
-              <small>First live write</small>
-              <strong>{publicPricingPathAnswer.first_live_write}</strong>
-            </span>
-            <span>
-              <small>Corporate access</small>
-              <strong>{publicPricingPathAnswer.corporate_access_rule}</strong>
-            </span>
-            <span>
-              <small>Payment gate</small>
-              <strong>{publicPricingPathAnswer.payment_boundary}</strong>
-            </span>
-          </div>
-        </div>
-        <div className="pricing-grid">
-          {pricing.map((plan) => (
-            <article className="pricing-card" key={plan.name}>
-              <div className="pricing-card-top">
-                <strong>{plan.name}</strong>
-                <small>{plan.buyer}</small>
+            <div className="tg-pricing-card tg-featured">
+              <span className="tg-pricing-badge">Most popular</span>
+              <span className="tg-pricing-eyebrow">For employers &amp; agencies</span>
+              <div className="tg-pricing-price">
+                $149<small>/month per company, pilot</small>
               </div>
-              <span>{plan.price}</span>
-              <small className="pricing-cadence">{plan.cadence}</small>
-              <p>{plan.detail}</p>
-              <div className="pricing-database-note">
-                <span>Database path</span>
-                <small>{plan.database}</small>
-              </div>
-              {plan.points.map((point) => (
-                <small key={point}>{point}</small>
-              ))}
-              <button
-                className={plan.name === "Professional" ? "primary-action" : "secondary-action"}
-                onClick={() => openPortal(plan.portal)}
-                type="button"
-              >
-                {plan.action}
-              </button>
-            </article>
-          ))}
-        </div>
-        <div className="pricing-decision-strip" aria-label="Pricing decision strip">
-          {pricingDecisionStrip.map((item) => (
-            <article key={item.label}>
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <small>{item.detail}</small>
-            </article>
-          ))}
-        </div>
-        <div className="public-pricing-access-summary" aria-label="Public pricing access summary">
-          <div className="public-pricing-access-copy">
-            <span className="status-chip success">Pricing and access</span>
-            <strong>{publicPricingAccessSummary.selected_plan}</strong>
-            <small>{publicPricingAccessSummary.accepted_when}</small>
-          </div>
-          <div className="public-pricing-access-grid">
-            {publicPricingAccessCards.map((item) => (
-              <article key={item.label}>
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
-                <small>{item.detail}</small>
-              </article>
-            ))}
-          </div>
-          <div className="public-pricing-access-actions">
-            <button className="primary-action" onClick={() => openPortal("professional")} type="button">
-              Start Professional free
-            </button>
-            <button className="secondary-action" onClick={() => openPortal("corporate")} type="button">
-              Start Corporate pilot
-            </button>
-            <button
-              className="secondary-action"
-              onClick={() =>
-                downloadTextFile(
-                  `trustgraph-public-pricing-access-summary-${new Date().toISOString().slice(0, 10)}.json`,
-                  JSON.stringify(publicPricingAccessSummary, null, 2),
-                  "application/json"
-                )
-              }
-              type="button"
-            >
-              Export pricing access
-            </button>
-          </div>
-        </div>
-        <div className="public-pricing-launch-decision" aria-label="Public pricing launch decision">
-          <div className="public-pricing-launch-decision-copy">
-            <span className="status-chip neutral">Before signup</span>
-            <strong>{publicPricingLaunchDecision.selected_price}</strong>
-            <small>{publicPricingLaunchDecision.accepted_when}</small>
-          </div>
-          <div className="public-pricing-launch-decision-grid">
-            {publicPricingLaunchCards.map((item) => (
-              <article key={item.label}>
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
-                <small>{item.detail}</small>
-                <button
-                  className={item.portal === "professional" ? "primary-action" : "secondary-action"}
-                  onClick={() => {
-                    if (item.label === "Billing gate") {
-                      downloadTextFile(
-                        `trustgraph-public-pricing-launch-decision-${new Date().toISOString().slice(0, 10)}.json`,
-                        JSON.stringify(publicPricingLaunchDecision, null, 2),
-                        "application/json"
-                      );
-                      return;
-                    }
-                    openPortal(item.portal);
-                  }}
-                  type="button"
-                >
-                  {item.action}
-                </button>
-              </article>
-            ))}
-          </div>
-        </div>
-          <div className="public-pricing-estimator" aria-label="Public company pilot pricing">
-            <div className="public-pricing-estimator-copy">
-              <span className="status-chip neutral">Corporate Verify Pilot</span>
-              <strong>$149/month per company</strong>
-              <small>One price per company - invite as many reviewers as your pilot needs. Seat tracking is shown for admin visibility only.</small>
-            </div>
-            <div className="public-pricing-estimator-grid">
-              <span>
-                <strong>Admin workspace</strong>
-                <small>Initial company setup and reviewer routing.</small>
-              </span>
-              <span>
-                <strong>Review queue</strong>
-                <small>Corporate Verify requests and scoped approvals.</small>
-              </span>
-              <span>
-                <strong>Audit exports</strong>
-                <small>Pilot team setup, access receipts, and export proof.</small>
-              </span>
-            </div>
-            <div className="public-pricing-estimator-actions">
-              <button className="primary-action" onClick={() => openPortal("corporate")} type="button">
+              <p className="tg-pricing-oneliner">Review approved records with your whole team.</p>
+              <ul className="tg-bullet-list">
+                <li>
+                  <CircleCheck size={16} />
+                  Admin workspace and pilot team setup
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Corporate Verify review queue
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Scoped access requests by professional email
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Audit exports and review attestations
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Missing-record requests
+                </li>
+              </ul>
+              <p className="tg-pricing-footnote">One price per company — invite as many reviewers as your pilot needs.</p>
+              <button className="tg-btn tg-btn-primary tg-btn-lg" onClick={() => openAuth("corporate", "register")} type="button">
                 Start Corporate Verify
               </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-company-pilot-pricing-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(pricingEstimatorPacket, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export pricing summary
+            </div>
+            <div className="tg-pricing-card">
+              <span className="tg-pricing-eyebrow">For issuers &amp; enterprise</span>
+              <div className="tg-pricing-price">
+                Custom<small>annual agreement</small>
+              </div>
+              <p className="tg-pricing-oneliner">Issuers, integrations and compliance operations.</p>
+              <ul className="tg-bullet-list">
+                <li>
+                  <CircleCheck size={16} />
+                  Credential issuer roles
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Connect API clients and webhooks
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Compliance and rollout support
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Custom review workflows
+                </li>
+                <li>
+                  <CircleCheck size={16} />
+                  Named onboarding owner
+                </li>
+              </ul>
+              <button className="tg-btn tg-btn-secondary tg-btn-lg" onClick={() => openAuth("corporate", "register")} type="button">
+                Talk to us
               </button>
             </div>
           </div>
-        <div className="pilot-signal-row">
-          {pilotSignals.map((signal) => (
-            <span key={signal}>{signal}</span>
-          ))}
+          <p className="tg-pricing-below">Card payment isn&apos;t enabled during the pilot — we&apos;ll set billing up with you.</p>
+          <dl className="tg-faq">
+            <div>
+              <dt>What&apos;s included in the pilot?</dt>
+              <dd>Full product access for your team while we validate the workflow together.</dd>
+            </div>
+            <div>
+              <dt>Do you charge per reviewer?</dt>
+              <dd>No — $149/month covers the whole company during the pilot. Seat counts are shown to admins for visibility only.</dd>
+            </div>
+          </dl>
         </div>
       </section>
 
-      <section className="public-section portal-route-section">
-        <div className="public-section-heading">
-          <span className="eyebrow">Portal registration</span>
-          <h2>Choose the account type before data is written</h2>
-        </div>
-        <div className="portal-decision-panel">
-          <div>
-            <span className="status-chip success">Portal decision matrix</span>
-            <strong>One login system, two clean registration paths</strong>
-            <p>
-              Professionals register a private Passport first. Corporate teams register a company workspace first, then
-              activate the Verify plan, invite reviewers, and request scoped Passport access.
-            </p>
-          </div>
-          <div className="portal-decision-grid">
-            <span>
-              <strong>Professional user</strong>
-              <small>Start with the free Passport, then add records, evidence, consent, and Access Grants.</small>
-            </span>
-            <span>
-              <strong>Corporate company</strong>
-              <small>Start with Corporate Verify at $149/month per company, then provision RBAC, reviewer tracking, and review workflows.</small>
-            </span>
-          </div>
-        </div>
-        <div className="public-portal-database-contract" aria-label="Public portal database access contract">
-          <div className="public-portal-database-contract-copy">
-            <span className="status-chip success">Portal database access contract</span>
-            <strong>{portalDatabaseAccessContract.headline}</strong>
-            <small>{portalDatabaseAccessContract.accepted_when}</small>
-          </div>
-          <div className="public-portal-database-contract-grid">
-            {portalDatabaseAccessContract.lanes.map((lane) => (
-              <article key={lane.label}>
-                <span>{lane.label}</span>
-                <strong>{lane.portal}</strong>
-                <small>{lane.live_write}</small>
-                <small>{lane.access_rule}</small>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div className="public-buyer-launch-path" aria-label="Public buyer launch path">
-          <div className="public-buyer-launch-copy">
-            <span className="status-chip success">Public buyer launch path</span>
-            <strong>Follow the whole path before signup creates live rows</strong>
-            <small>{publicBuyerLaunchPath.accepted_when}</small>
-          </div>
-          <div className="public-buyer-launch-grid">
-            {publicBuyerLaunchPath.lanes.map((lane) => (
-              <article key={lane.step}>
-                <span>{lane.step}</span>
-                <strong>{lane.label}</strong>
-                <small>{lane.value}</small>
-                <small>{lane.detail}</small>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div className="registration-database-launch-order" aria-label="Registration database launch order">
-          <div className="registration-database-launch-copy">
-            <span className="status-chip neutral">Registration database launch order</span>
-            <strong>{portal === "corporate" ? "Corporate registration creates the company shell first" : "Professional registration creates the Passport owner first"}</strong>
-            <small>{registrationDatabaseLaunchOrder.accepted_when}</small>
-          </div>
-          <div className="registration-database-launch-grid">
-            {registrationDatabaseLaunchOrder.order.map((item) => (
-              <article key={item.step}>
-                <span>{item.step}</span>
-                <strong>{item.label}</strong>
-                <small>{item.detail}</small>
-                <small>{item.proof}</small>
-              </article>
-            ))}
-          </div>
-          <button
-            className="secondary-action"
-            onClick={() =>
-              downloadTextFile(
-                `trustgraph-registration-database-launch-order-${new Date().toISOString().slice(0, 10)}.json`,
-                JSON.stringify(registrationDatabaseLaunchOrder, null, 2),
-                "application/json"
-              )
-            }
-            type="button"
-          >
-            Export registration order
+      <section className="tg-cta-band">
+        <h2>Start with one record.</h2>
+        <p>Professionals are free during the pilot. Companies can run a Corporate Verify pilot this week.</p>
+        <div className="tg-cta-actions">
+          <button className="tg-btn tg-btn-on-ink tg-btn-lg" onClick={() => openAuth("professional", "register")} type="button">
+            Create your Passport
+          </button>
+          <button className="tg-btn tg-btn-outline-on-ink tg-btn-lg" onClick={() => openAuth("corporate", "register")} type="button">
+            Start Corporate Verify
           </button>
         </div>
-        <div className="public-portal-launch-checklist" aria-label="Public portal launch checklist">
-          <div className="public-portal-launch-header">
-            <div>
-              <span className="status-chip warning">Public portal launch checklist</span>
-              <strong>Website, login, registration, pricing, scoped database access, and server save path are tracked together</strong>
-              <small>{publicPortalLaunchChecklist.accepted_when}</small>
-            </div>
-            <button
-              className="secondary-action"
-              onClick={() =>
-                downloadTextFile(
-                  `trustgraph-public-portal-launch-checklist-${new Date().toISOString().slice(0, 10)}.json`,
-                  JSON.stringify({ ...publicPortalLaunchChecklist, pre_signup_gate_rows: publicPortalPreSignupGateRows }, null, 2),
-                  "application/json"
-                )
-              }
-              type="button"
-            >
-              <Download size={16} />
-              Export launch checklist
-            </button>
-          </div>
-          <div className="public-portal-pre-signup-gate" aria-label="Public portal pre-signup acceptance gate">
-            <div>
-              <span>Before signup</span>
-              <strong>{publicPortalLaunchChecklist.pre_signup_gate.replace(/_/g, " ")}</strong>
-              <small>{publicPortalLaunchChecklist.pre_signup_accepted_when}</small>
-            </div>
-            <div className="public-portal-pre-signup-grid">
-              {publicPortalPreSignupGateRows.map((row) => (
-                <article className={row.ready ? "ready" : "needed"} key={row.label}>
-                  <span>{row.label}</span>
-                  <strong>{row.value}</strong>
-                  <small>{row.detail}</small>
-                </article>
-              ))}
-            </div>
-          </div>
-          <div className="public-portal-launch-grid">
-            {publicPortalLaunchChecklist.items.map((item) => (
-              <article className={item.status === "ready" ? "ready" : item.status === "server_update_required" ? "warning" : ""} key={item.label}>
-                <span>{item.status.replace(/_/g, " ")}</span>
-                <strong>{item.label}</strong>
-                <small>{item.detail}</small>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div className="portal-route-grid">
-          {portalRoutes.map((route) => {
-            const Icon = route.icon;
-
-            return (
-              <article className={portal === route.portal ? "active" : ""} key={route.label}>
-                <div>
-                  <Icon size={22} />
-                  <span className="status-chip neutral">Live Supabase</span>
-                </div>
-                <strong>{route.label}</strong>
-                <p>{route.detail}</p>
-                <small>{route.database}</small>
-                <button className={route.portal === "professional" ? "primary-action" : "secondary-action"} onClick={() => openPortal(route.portal)} type="button">
-                  {route.action}
-                </button>
-              </article>
-            );
-          })}
-        </div>
       </section>
 
-      <section className="public-section registration-section">
-        <div className="public-section-heading">
-          <span className="eyebrow">After registration</span>
-          <h2>Every portal connects to the live database foundation</h2>
-        </div>
-        <div className="registration-grid">
-          {registrationOutcomes.map((item) => (
-            <article key={item.label}>
-              <BadgeCheck size={18} />
-              <div>
-                <strong>{item.label}</strong>
-                <p>{item.detail}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="public-auth-section" id="portal-auth">
-        <div>
-          <span className="eyebrow">Portal access</span>
-          <h2>{portal === "corporate" ? "Corporate portal access" : "Professional Passport access"}</h2>
-          <p>
-            {portal === "corporate"
-              ? "Create a user account, verify email, then provision an employer or staffing workspace."
-              : "Create a user account, verify email if prompted, then start your private Passport."}
-          </p>
-          <div className={`public-route-answer-bar ${portal}`} aria-label="Public route answer bar">
-            <div className="public-route-answer-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
-                <strong>{publicRouteAnswerBar.headline}</strong>
-                <small>{publicRouteAnswerBar.accepted_when}</small>
-              </div>
-              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to credentials
-              </button>
-            </div>
-            <div className="public-route-answer-routes">
-              {publicRouteAnswerBarRoutes.map((route) => (
-                <button aria-pressed={route.active} className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-route-answer-grid">
-              {publicRouteAnswerBarFacts.map((fact) => (
-                <span key={fact.label}>
-                  <small>{fact.label}</small>
-                  <strong>{fact.value}</strong>
-                  <em>{fact.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="public-route-answer-actions">
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-            </div>
-            <div className="public-route-answer-proof">
-              <span>Preview data accepted: {publicRouteAnswerBar.preview_data_accepted ? "yes" : "no"}</span>
-              <small>{publicRouteAnswerBar.corporate_database_boundary}</small>
-            </div>
-          </div>
-          <div className={`public-access-answer ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public access answer">
-            <div className="public-access-answer-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Access answer</span>
-                <strong>{publicAccessAnswer.primary_action}</strong>
-                <small>
-                  Pick one route, enter credentials once, and land in the correct portal. Pricing, recovery, first database write, and the no-open-user-database rule stay visible before submit.
-                </small>
-              </div>
-              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to credentials
-              </button>
-            </div>
-            <div className="public-access-answer-routes" aria-label="Public access answer routes">
-              {publicAccessAnswerRoutes.map((route) => (
-                <button aria-pressed={route.active} className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-access-answer-grid">
-              {publicAccessAnswerCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <em>{item.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="public-access-answer-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-access-answer-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicAccessAnswer, routes: publicAccessAnswerRoutes.map(({ action: _action, ...route }) => route), cards: publicAccessAnswerCards }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export answer
-              </button>
-            </div>
-            <small className="public-access-answer-boundary">
-              {publicAccessAnswer.accepted_when} | Server: {publicAccessAnswer.server_status.replaceAll("_", " ")} | Preview data accepted: {publicAccessAnswer.preview_data_accepted ? "yes" : "no"}
-            </small>
-          </div>
-          <div className="public-login-command-center" aria-label="Public login command center">
-            <div className="public-login-command-copy">
-              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
-              <strong>{publicLoginCommandCenter.headline}</strong>
-              <small>{publicLoginCommandCenter.corporate_database_boundary}</small>
-            </div>
-            <div className="public-login-command-grid">
-              {publicLoginCommandRows.map((item) => (
-                <button key={item.label} onClick={item.onClick} type="button">
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                  <em>{item.action}</em>
-                </button>
-              ))}
-            </div>
-            <div className="public-login-command-footer">
-              <span>
-                <small>Landing portal</small>
-                <strong>{publicLoginCommandCenter.landing_portal}</strong>
-              </span>
-              <span>
-                <small>Server save</small>
-                <strong>{serverSyncMonitor.status.replaceAll("_", " ")}</strong>
-              </span>
-              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to credentials
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-login-command-center-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...publicLoginCommandCenter,
-                        rows: publicLoginCommandRows.map(({ onClick: _onClick, ...row }) => row)
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export command
-              </button>
-            </div>
-          </div>
-          <div className="public-v1-access-runway" aria-label="Public V1 access runway">
-            <div className="public-v1-access-runway-header">
-              <div>
-                <span className="status-chip success">V1 access runway</span>
-                <strong>{publicV1AccessRunway.selected_route}: one clear path to the right portal</strong>
-                <small>
-                  Start here, then use the credential fields below. Professional users manage their own Passport. Corporate
-                  accounts request approved scoped rows only.
-                </small>
-              </div>
-              <div className="public-v1-access-runway-actions">
-                <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                  Continue
-                </button>
-                <button
-                  className="secondary-action"
-                  onClick={() =>
-                    downloadTextFile(publicV1AccessRunwayPacketName, JSON.stringify(publicV1AccessRunway, null, 2), "application/json")
-                  }
-                  type="button"
-                >
-                  <Download size={16} />
-                  Export path
-                </button>
-              </div>
-            </div>
-            <div className="public-v1-access-runway-routes">
-              {publicV1AccessRunwayRoutes.map((item) => (
-                <button className={item.active ? "active" : ""} key={item.label} onClick={item.action} type="button">
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-v1-access-runway-facts">
-              {publicV1AccessRunwayFacts.map((item) => (
-                <article key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </article>
-              ))}
-            </div>
-            <div className="public-v1-access-runway-proof">
-              <span>Server: {publicV1AccessRunway.server_status.replaceAll("_", " ")}</span>
-              <span>Corporate database: scoped approval only</span>
-              <span>{publicV1AccessRunway.accepted_when}</span>
-            </div>
-          </div>
-          <div className="portal-access-cockpit" aria-label="Portal access cockpit">
-            <div className="portal-access-cockpit-copy">
-              <span className="status-chip success">Portal access cockpit</span>
-              <strong>{portalAccessCockpit.headline}</strong>
-              <small>{portalAccessCockpit.boundary}</small>
-            </div>
-            <div className="portal-access-cockpit-actions">
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                <Fingerprint size={16} />
-                Professional
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                <BriefcaseBusiness size={16} />
-                Corporate
-              </button>
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                <UserPlus size={16} />
-                Register
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                <LogIn size={16} />
-                Login
-              </button>
-            </div>
-            <div className="portal-access-cockpit-grid">
-              {portalAccessCockpitCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="public-portal-flow-map" aria-label="Public portal flow map">
-            <div className="public-portal-flow-map-header">
-              <div>
-                <span className="status-chip success">Start here</span>
-                <strong>{publicPortalFlowMap.selected_action} for {publicPortalFlowMap.selected_portal}</strong>
-                <small>{publicPortalFlowMap.accepted_when}</small>
-              </div>
-              <div className="public-portal-flow-map-actions">
-                <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                  Professional
-                </button>
-                <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                  Corporate
-                </button>
-                <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                  Register
-                </button>
-                <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                  Login
-                </button>
-              </div>
-            </div>
-            <div className="public-portal-flow-map-grid">
-              {publicPortalFlowMapSteps.map((step) => (
-                <article key={step.label}>
-                  <span>{step.label}</span>
-                  <strong>{step.value}</strong>
-                  <small>{step.detail}</small>
-                </article>
-              ))}
-            </div>
-            <div className="public-portal-flow-map-proof">
-              <span>
-                <strong>{publicPortalFlowMap.recovery_route}</strong>
-                <small>Recovery route</small>
-              </span>
-              <button className="secondary-action" onClick={() => document.querySelector(".public-auth-card")?.scrollIntoView({ behavior: "smooth", block: "center" })} type="button">
-                Continue
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-portal-flow-map-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(publicPortalFlowMap, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export map
-              </button>
-            </div>
-          </div>
-          <div className="public-portal-route-board" aria-label="Public portal route board">
-            <div className="public-portal-route-board-header">
-              <div>
-                <span className="status-chip success">Choose the right route</span>
-                <strong>{portalRouteBoard.selected_dashboard}</strong>
-                <small>{portalRouteBoard.accepted_when}</small>
-              </div>
-              <span className="status-chip neutral">{mode === "signup" ? "Register" : "Login"}</span>
-            </div>
-            <div className="public-portal-route-board-grid">
-              {portalRouteBoard.lanes.map((lane) => (
-                <button
-                  className={portal === lane.portal ? "active" : ""}
-                  key={lane.portal}
-                  onClick={() => setPortal(lane.portal as "professional" | "corporate")}
-                  type="button"
-                >
-                  <span>{lane.label}</span>
-                  <strong>{lane.price}</strong>
-                  <small>{lane.first_write}</small>
-                  <small>{lane.dashboard}</small>
-                  <small>{lane.boundary}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-portal-route-board-proof">
-              <span>
-                <strong>{portalRouteBoard.selected_price}</strong>
-                <small>Selected pricing</small>
-              </span>
-              <span>
-                <strong>{portalRouteBoard.selected_first_write}</strong>
-                <small>First database write</small>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-portal-route-board-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(portalRouteBoard, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export route board
-              </button>
-            </div>
-          </div>
-          <div className="portal-auth-command" aria-label="Portal auth landing command">
-            <div>
-              <span className="status-chip success">Auth landing command</span>
-              <strong>{selectedPortalCommand.headline}</strong>
-              <small>{selectedPortalCommand.next}</small>
-            </div>
-            <div className="portal-auth-command-actions">
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                Professional Passport
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                Corporate Verify
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                I already verified email
-              </button>
-            </div>
-          </div>
-          <div className="portal-start-desk" aria-label="Portal start desk">
-            <div className="portal-start-desk-copy">
-              <span className="status-chip success">Portal start desk</span>
-              <strong>{portalStartDesk.primary_action}</strong>
-              <small>{portalStartDesk.accepted_when}</small>
-            </div>
-            <div className="portal-start-desk-switches">
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                <Fingerprint size={16} />
-                <span>Professional</span>
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                <BriefcaseBusiness size={16} />
-                <span>Corporate</span>
-              </button>
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                <UserPlus size={16} />
-                <span>Register</span>
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                <LogIn size={16} />
-                <span>Login</span>
-              </button>
-            </div>
-            <div className="portal-start-desk-grid">
-              {portalStartDeskSteps.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="portal-start-desk-next">
-              <span>{portalStartDesk.next_dashboard}</span>
-              <button className="secondary-action" onClick={() => document.querySelector(".public-auth-card")?.scrollIntoView({ behavior: "smooth", block: "center" })} type="button">
-                Continue to form
-              </button>
-            </div>
-          </div>
-          <div className="portal-entry-path" aria-label="Portal entry path">
-            {portalEntryPath.map((step) => (
-              <span key={step.label}>
-                <strong>{step.label}</strong>
-                <small>{step.detail}</small>
-              </span>
-            ))}
-          </div>
-          <div className="portal-launch-decision-strip" aria-label="Portal launch decision strip">
-            {portalLaunchDecisionStrip.map((item) => (
-              <article key={item.label}>
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
-                <small>{item.detail}</small>
-              </article>
-            ))}
-          </div>
-          <div className="public-auth-flow-command" aria-label="Public auth flow command">
-            <div>
-              <span className="status-chip success">{publicAuthFlowCommand.label}</span>
-              <strong>{publicAuthFlowCommand.primary_action}</strong>
-              <small>{publicAuthFlowCommand.next_step}</small>
-            </div>
-            <div className="public-auth-flow-grid">
-              {publicAuthFlowCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.action}</small>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="registration-decision-receipt" aria-label="Registration decision receipt">
-            <div>
-              <span className="status-chip success">Registration decision receipt</span>
-              <strong>{registrationDecisionReceipt.selected_portal}</strong>
-              <small>{registrationDecisionReceipt.database_boundary}</small>
-            </div>
-            <div className="registration-decision-grid">
-              <span>
-                <strong>{registrationDecisionReceipt.pricing}</strong>
-                <small>Pricing path</small>
-              </span>
-              <span>
-                <strong>{registrationDecisionReceipt.first_database_write}</strong>
-                <small>First database write</small>
-              </span>
-              <span>
-                <strong>{registrationDecisionReceipt.required_fields.length} fields</strong>
-                <small>{registrationDecisionReceipt.required_fields.join(", ").replace(/_/g, " ")}</small>
-              </span>
-              <span>
-                <strong>{registrationDecisionReceipt.next_dashboard}</strong>
-                <small>{registrationDecisionReceipt.payment_boundary}</small>
-              </span>
-            </div>
-          </div>
-          <div className="live-onboarding-contract" aria-label="Live onboarding acceptance contract">
-            <div>
-              <span className="status-chip success">Live onboarding acceptance contract</span>
-              <strong>{selectedRegistrationPath.portal} must prove hosted login and real rows</strong>
-              <small>
-                Preview mode, localhost email redirects, and unapproved corporate browsing are not accepted for v1 database proof.
-              </small>
-            </div>
-            <div className="live-onboarding-contract-grid">
-              {liveOnboardingContractCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="live-onboarding-sequence">
-              {liveOnboardingAcceptanceContract.acceptance_sequence.map((step, index) => (
-                <span key={step}>
-                  <small>{index + 1}</small>
-                  <strong>{step.replace(/_/g, " ")}</strong>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="account-type-chooser" aria-label="Account type chooser">
-            <div className="account-type-chooser-header">
-              <div>
-                <span className="status-chip success">Account type chooser</span>
-                <strong>Choose who is signing up before database rows are created</strong>
-                <small>Professional and corporate accounts use the same secure login, but they create different live workspaces.</small>
-              </div>
-              <span className="status-chip neutral">{mode === "signup" ? "registration" : "login"}</span>
-            </div>
-            <div className="account-type-chooser-grid">
-              {accountTypeChooser.map((item) => (
-                <button
-                  className={portal === item.portal ? "active" : ""}
-                  key={item.label}
-                  onClick={() => {
-                    setPortal(item.portal);
-                    setMode("signup");
-                  }}
-                  type="button"
-                >
-                  <span>{item.label}</span>
-                  <strong>{item.headline}</strong>
-                  <small>{item.bestFor}</small>
-                  <small>{item.pricing}</small>
-                  <small>First write: {item.firstDatabaseWrite}</small>
-                  <small>After login: {item.afterLogin}</small>
-                </button>
-              ))}
-            </div>
-            <div className="account-type-chooser-actions">
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                Register new account
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                Login existing account
-              </button>
-            </div>
-          </div>
-          <div className="auth-choice-summary" aria-label="Selected portal login path">
-            <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-              <span>Professional user</span>
-              <strong>Passport</strong>
-              <small>Private records, evidence, consent, and owned Access Grants.</small>
-            </button>
-            <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-              <span>Corporate company</span>
-              <strong>Verify</strong>
-              <small>Company workspace, RBAC team access, pricing ledger, and scoped user review.</small>
-            </button>
-          </div>
-          <div className="portal-auth-summary-panel">
-            <div>
-              <span className="status-chip success">Selected portal route</span>
-              <strong>{selectedRegistrationPath.portal}</strong>
-              <small>{selectedRegistrationPath.plan}</small>
-            </div>
-            <div className="portal-auth-summary-grid">
-              <span>
-                <strong>{selectedRegistrationPath.primaryWrite}</strong>
-                <small>First live database write</small>
-              </span>
-              <span>
-                <strong>{selectedRegistrationPath.databaseWrites.length} tables</strong>
-                <small>{selectedRegistrationPath.databaseWrites.join(", ")}</small>
-              </span>
-              <span>
-                <strong>{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</strong>
-                <small>{selectedRegistrationPath.nextAction}</small>
-              </span>
-            </div>
-          </div>
-          <details className="portal-support-details">
-            <summary>
-              <span>{portal === "corporate" ? "Corporate setup steps" : "Professional setup steps"}</span>
-              <small>{selectedRegistrationPath.nextAction}</small>
-            </summary>
-            <div className="portal-access-guide">
-              <div>
-                <span className="eyebrow">{portal === "corporate" ? "Corporate registration sequence" : "Professional registration sequence"}</span>
-                <strong>{selectedRegistrationPath.portal}</strong>
-                <small>{selectedRegistrationPath.nextAction}</small>
-              </div>
-              <div className="portal-access-steps">
-                {selectedPortalGuide.map((step) => (
-                  <span key={step.title}>
-                    <strong>{step.label}</strong>
-                    <small>{step.title}</small>
-                    <small>{step.detail}</small>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </details>
-          <details className="portal-support-details">
-            <summary>
-              <span>Portal login switchboard</span>
-              <small>Compare personal and corporate routes before creating database rows.</small>
-            </summary>
-            <div className="portal-login-switchboard" aria-label="Portal login switchboard">
-              <div>
-                <span className="status-chip success">Portal login switchboard</span>
-                <strong>Personal and corporate users start from one login, then route by account type</strong>
-                <small>Use this map before registering so the correct live database rows and dashboard are created.</small>
-              </div>
-              <div className="portal-login-switchboard-grid">
-                {portalLoginSwitchboard.map((route) => (
-                  <button
-                    className={portal === route.portal ? "active" : ""}
-                    key={route.label}
-                    onClick={() => {
-                      setPortal(route.portal);
-                      setMode("signup");
-                    }}
-                    type="button"
-                  >
-                    <strong>{route.label}</strong>
-                    <small>{route.start}</small>
-                    <span>{route.dashboard}</span>
-                    <small>{route.writes}</small>
-                    <small>{route.next}</small>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </details>
-          <div className="portal-outcome-list">
-            {selectedPortalSteps.map((step) => (
-              <span key={step}>{step}</span>
-            ))}
-          </div>
-        </div>
-        <form className={`public-auth-card ${portal === "corporate" ? "corporate-mode" : "professional-mode"}`} onSubmit={submit}>
-          <div className={`public-auth-status-strip ${publicAuthStatusStrip.redirect_is_hosted ? "ready" : "needed"}`} aria-label="Public auth status strip">
-            <div className="public-auth-status-strip-header">
-              <div>
-                <span className={`status-chip ${email && password && publicAuthStatusStrip.corporate_workspace_ready ? "success" : "warning"}`}>Auth status</span>
-                <strong>{email && password && publicAuthStatusStrip.corporate_workspace_ready ? "Ready to continue" : "Complete the account fields first"}</strong>
-                <small>{publicAuthStatusStrip.rate_limit_guidance}</small>
-              </div>
-              <button className="secondary-action" onClick={() => void copyHostedRedirectUrl()} type="button">
-                Copy hosted redirect
-              </button>
-            </div>
-            <div className="public-auth-status-strip-grid">
-              {publicAuthStatusRows.map((row) => (
-                <button
-                  className={row.ready ? "ready" : "needed"}
-                  key={row.label}
-                  onClick={() => {
-                    if (row.label === "Email links") {
-                      void copyHostedRedirectUrl();
-                      return;
-                    }
-                    document.getElementById("public-auth-email")?.focus();
-                  }}
-                  type="button"
-                >
-                  <span>{row.label}</span>
-                  <strong>{row.value}</strong>
-                  <small>{row.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-auth-status-strip-actions">
-              <button className="primary-action" disabled={busy || !email || !password || !publicAuthStatusStrip.corporate_workspace_ready} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-            </div>
-            <small className="public-auth-status-strip-proof">{publicAuthStatusStrip.accepted_when}</small>
-          </div>
-          <div className={`public-registration-path-summary ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public registration path summary">
-            <div className="public-registration-path-summary-header">
-              <div>
-                <span className={`status-chip ${email && password ? "success" : "warning"}`}>Registration path</span>
-                <strong>
-                  {portal === "corporate"
-                    ? mode === "signup"
-                      ? "Register a Corporate Verify workspace"
-                      : "Login to Corporate Verify"
-                    : mode === "signup"
-                      ? "Register a Professional Passport"
-                      : "Login to your Professional Passport"}
-                </strong>
-                <small>
-                  Confirm the account path, price, first database write, hosted verification, recovery, and database boundary before entering credentials.
-                </small>
-              </div>
-              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to credentials
-              </button>
-            </div>
-            <div className="public-registration-path-summary-grid">
-              {publicRegistrationPathSummarySteps.map((step) => (
-                <button
-                  className={step.ready ? "ready" : "needed"}
-                  key={step.label}
-                  onClick={() => {
-                    if (step.label === "Pricing") {
-                      document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                      return;
-                    }
-                    document.getElementById("public-auth-email")?.focus();
-                  }}
-                  type="button"
-                >
-                  <span>{step.label}</span>
-                  <strong>{step.value}</strong>
-                  <small>{step.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-registration-path-summary-actions">
-              <button className={portal === "professional" && mode === "signup" ? "primary-action" : "secondary-action"} onClick={() => { setPortal("professional"); setMode("signup"); }} type="button">
-                Professional register
-              </button>
-              <button className={portal === "professional" && mode === "signin" ? "primary-action" : "secondary-action"} onClick={() => { setPortal("professional"); setMode("signin"); }} type="button">
-                Professional login
-              </button>
-              <button className={portal === "corporate" && mode === "signup" ? "primary-action" : "secondary-action"} onClick={() => { setPortal("corporate"); setMode("signup"); }} type="button">
-                Corporate register
-              </button>
-              <button className={portal === "corporate" && mode === "signin" ? "primary-action" : "secondary-action"} onClick={() => { setPortal("corporate"); setMode("signin"); }} type="button">
-                Corporate login
-              </button>
-            </div>
-            <div className="public-registration-path-summary-proof">
-              <span>
-                <small>Landing</small>
-                <strong>{publicRegistrationPathSummary.landing_dashboard}</strong>
-              </span>
-              <span>
-                <small>Preview data</small>
-                <strong>{publicRegistrationPathSummary.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
-              </span>
-              <span>
-                <small>Corporate database</small>
-                <strong>{portal === "corporate" ? "No open browse" : "Owner grants access"}</strong>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-registration-path-summary-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicRegistrationPathSummary, steps: publicRegistrationPathSummarySteps }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                <Download size={16} />
-                Export path
-              </button>
-            </div>
-            <small className="public-registration-path-summary-boundary">{publicRegistrationPathSummary.accepted_when}</small>
-          </div>
-          <div className={`public-auth-help-strip ${publicAuthHelpStrip.redirect_is_hosted ? "ready" : "needed"}`} aria-label="Public auth help strip">
-            <div className="public-auth-help-strip-header">
-              <div>
-                <span className={`status-chip ${publicAuthHelpStrip.email_ready && publicAuthHelpStrip.redirect_is_hosted ? "success" : "warning"}`}>Auth help</span>
-                <strong>
-                  {publicAuthHelpStrip.email_ready
-                    ? "Verification and recovery actions are ready"
-                    : "Enter email before resend, reset, or link repair"}
-                </strong>
-                <small>
-                  Use this when verification points to localhost, Supabase says rate limit exceeded, or the account needs password recovery.
-                </small>
-              </div>
-              <button className="secondary-action" onClick={() => void copyHostedRedirectUrl()} type="button">
-                Copy hosted redirect
-              </button>
-            </div>
-            <div className="public-auth-help-strip-grid">
-              {publicAuthHelpStripRows.map((row) => (
-                <button
-                  className={row.ready ? "ready" : "needed"}
-                  key={row.label}
-                  onClick={() => {
-                    if (row.label === "Email") {
-                      document.getElementById("public-auth-email")?.focus();
-                      return;
-                    }
-                    if (row.label === "Hosted redirect") {
-                      void copyHostedRedirectUrl();
-                      return;
-                    }
-                    document.getElementById("public-auth-email")?.focus();
-                  }}
-                  type="button"
-                >
-                  <span>{row.label}</span>
-                  <strong>{row.value}</strong>
-                  <small>{row.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-auth-help-strip-actions">
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-auth-help-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicAuthHelpStrip, rows: publicAuthHelpStripRows }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                <Download size={16} />
-                Export help
-              </button>
-            </div>
-            <small className="public-auth-help-strip-boundary">{publicAuthHelpStrip.accepted_when}</small>
-          </div>
-          <div className={`public-plan-portal-chooser ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public plan and portal chooser">
-            <div className="public-plan-portal-chooser-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Plan and portal</span>
-                <strong>{publicPlanPortalChooser.selected_portal} {publicPlanPortalChooser.selected_action}</strong>
-                <small>{publicPlanPortalChooser.accepted_when}</small>
-              </div>
-              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to credentials
-              </button>
-            </div>
-            <div className="public-plan-portal-chooser-routes" aria-label="Choose plan and portal route">
-              {publicPlanPortalChooserRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                  <em>{route.price}</em>
-                </button>
-              ))}
-            </div>
-            <div className="public-plan-portal-chooser-grid">
-              {publicPlanPortalChooserFacts.map((fact) => (
-                <span key={fact.label}>
-                  <small>{fact.label}</small>
-                  <strong>{fact.value}</strong>
-                  <em>{fact.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="public-plan-portal-chooser-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-plan-portal-chooser-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicPlanPortalChooser, routes: publicPlanPortalChooserRoutes.map(({ action: _action, ...route }) => route), facts: publicPlanPortalChooserFacts }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export choice
-              </button>
-            </div>
-            <small className="public-plan-portal-chooser-boundary">
-              {portal === "corporate" ? publicPlanPortalChooser.corporate_database_boundary : "Professional users own their Passport, evidence, consent, and sharing decisions."}
-            </small>
-          </div>
-          <div className={`public-login-route-cockpit ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public login route cockpit">
-            <div className="public-login-route-header">
-              <div>
-                <span className={`status-chip ${email && password ? "success" : "warning"}`}>Start here</span>
-                <strong>{portal === "corporate" ? "Corporate portal access" : "Professional Passport access"}</strong>
-                <small>
-                  Choose the portal and action first. Then enter credentials below. Corporate access is request-and-approval scoped; there is no open user database.
-                </small>
-              </div>
-              <button
-                className="primary-action"
-                disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}
-                type="submit"
-              >
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-login-route-grid" aria-label="Choose Professional or Corporate login route">
-              <button className={portal === "professional" && mode === "signin" ? "active" : ""} onClick={() => { setPortal("professional"); setMode("signin"); }} type="button">
-                <strong>Professional login</strong>
-                <small>Open your Passport, evidence, consent, and recovery tools.</small>
-              </button>
-              <button className={portal === "professional" && mode === "signup" ? "active" : ""} onClick={() => { setPortal("professional"); setMode("signup"); }} type="button">
-                <strong>Professional register</strong>
-                <small>Create a Passport owner account and the first live profile rows.</small>
-              </button>
-              <button className={portal === "corporate" && mode === "signin" ? "active" : ""} onClick={() => { setPortal("corporate"); setMode("signin"); }} type="button">
-                <strong>Corporate login</strong>
-                <small>Open Company Admin or Corporate Verify for approved scoped rows.</small>
-              </button>
-              <button className={portal === "corporate" && mode === "signup" ? "active" : ""} onClick={() => { setPortal("corporate"); setMode("signup"); }} type="button">
-                <strong>Corporate register</strong>
-                <small>Create a company workspace, admin membership, and reviewer path.</small>
-              </button>
-            </div>
-            <div className="public-login-route-status">
-              <span>
-                <small>Selected</small>
-                <strong>{portal === "corporate" ? "Corporate" : "Professional"} {mode === "signin" ? "login" : "register"}</strong>
-              </span>
-              <span>
-                <small>Pricing</small>
-                <strong>{selectedRegistrationPath.plan}</strong>
-              </span>
-              <span>
-                <small>First database write</small>
-                <strong>{mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing account"}</strong>
-              </span>
-              <span>
-                <small>Recovery</small>
-                <strong>{email ? "Ready" : "Enter email"}</strong>
-              </span>
-            </div>
-            <div className="public-login-route-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                Pricing
-              </button>
-            </div>
-            <small className="public-login-route-proof">
-              public_login_route_cockpit_keeps_professional_login_professional_register_corporate_login_corporate_register_pricing_recovery_first_database_write_submit_and_no_open_user_database_visible_before_credentials
-            </small>
-          </div>
-          <div className={`public-route-decision-desk ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public route decision desk">
-            <div className="public-route-decision-header">
-              <div>
-                <span className={`status-chip ${publicRouteDecisionDesk.submit_ready ? "success" : "warning"}`}>
-                  {publicRouteDecisionDesk.submit_ready ? "Ready" : "Choose route"}
-                </span>
-                <strong>{publicRouteDecisionDesk.headline}</strong>
-                <small>{publicRouteDecisionDesk.subline}</small>
-              </div>
-              <button className="primary-action" disabled={busy || !publicRouteDecisionDesk.submit_ready} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-route-decision-routes" aria-label="Professional and Corporate login or registration">
-              {publicLoginPrimaryChoiceRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.onClick} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-route-decision-grid">
-              {publicRouteDecisionDeskCards.map((card) => (
-                <span key={card.label}>
-                  <small>{card.label}</small>
-                  <strong>{card.value}</strong>
-                  <em>{card.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="public-route-decision-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-route-decision-desk-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicRouteDecisionDesk, cards: publicRouteDecisionDeskCards }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export route
-              </button>
-            </div>
-            <small className="public-route-decision-boundary">
-              {portal === "corporate"
-                ? publicRouteDecisionDesk.corporate_database_boundary
-                : "Professional users own their Passport and decide what each company can review."}
-            </small>
-          </div>
-          <div className="auth-portal-console" aria-label="Auth portal console">
-            <div className="auth-portal-console-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
-                <strong>{portal === "corporate" ? "Corporate account and reviewer portal" : "Professional Passport account"}</strong>
-                <small>
-                  One clear path for login, registration, pricing, recovery, and the first live database write before any dense proof panels.
-                </small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login now" : "Create account"}
-              </button>
-            </div>
-            <div className="auth-portal-console-tabs" role="tablist" aria-label="Choose account portal and auth action">
-              <button aria-selected={portal === "professional"} className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} role="tab" type="button">
-                <Fingerprint size={17} />
-                <span>Professional</span>
-              </button>
-              <button aria-selected={portal === "corporate"} className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} role="tab" type="button">
-                <BriefcaseBusiness size={17} />
-                <span>Corporate</span>
-              </button>
-              <button aria-selected={mode === "signup"} className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} role="tab" type="button">
-                <UserPlus size={17} />
-                <span>Register</span>
-              </button>
-              <button aria-selected={mode === "signin"} className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} role="tab" type="button">
-                <LogIn size={17} />
-                <span>Login</span>
-              </button>
-            </div>
-            <div className="auth-portal-console-grid">
-              <span>
-                <small>Selected route</small>
-                <strong>{portal === "corporate" ? "Corporate" : "Professional"}</strong>
-                <em>{mode === "signin" ? "Existing account login" : "New account registration"}</em>
-              </span>
-              <span>
-                <small>Pricing</small>
-                <strong>{selectedRegistrationPath.plan}</strong>
-                <em>{selectedRegistrationPath.paymentStatus}</em>
-              </span>
-              <span>
-                <small>First database write</small>
-                <strong>{selectedRegistrationPath.primaryWrite}</strong>
-                <em>{portal === "corporate" ? "Creates company context after auth" : "Creates Passport owner context after auth"}</em>
-              </span>
-              <span>
-                <small>Landing portal</small>
-                <strong>{portal === "corporate" ? "Company Admin then Corporate Verify" : "Professional Passport"}</strong>
-                <em>{selectedRegistrationPath.nextAction}</em>
-              </span>
-            </div>
-            <div className="auth-portal-console-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Email field
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                Pricing
-              </button>
-            </div>
-            <small className="auth-portal-console-boundary">
-              {portal === "corporate"
-                ? "Corporate accounts do not browse an open user database. They request one professional, wait for approval, then review only the scoped rows shared by that user."
-                : "Professional users own the Passport record, evidence, recovery route, and sharing approvals before a company can see scoped rows."}
-            </small>
-          </div>
-          <div className="login-portal-desk" aria-label="Login portal desk">
-            <div className="login-portal-desk-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Choose portal</span>
-                <strong>{loginPortalDesk.headline}</strong>
-                <small>{loginPortalDesk.accepted_when}</small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="login-portal-desk-routes" aria-label="Choose login or registration route">
-              {publicAccessHubRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="login-portal-desk-status">
-              {loginPortalDeskStatus.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <em>{item.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="login-portal-desk-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-login-portal-desk-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...loginPortalDesk,
-                        routes: publicAccessHubRoutes.map(({ action: _action, ...route }) => route),
-                        status: loginPortalDeskStatus,
-                        credentials_follow: "email_password_fields",
-                        duplicate_auth_panels_hidden: true
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export route
-              </button>
-            </div>
-            <small className="login-portal-desk-boundary">
-              {portal === "corporate"
-                ? "Corporate database rule: request one professional by email, wait for approval, then review scoped rows only."
-                : "User database rule: your Passport stays private until you approve a scoped sharing request."}
-            </small>
-          </div>
-          <div className={`auth-credential-command ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Auth credential command">
-            <div className="auth-credential-command-header">
-              <div>
-                <span className={`status-chip ${authCredentialCommand.submit_ready ? "success" : "warning"}`}>Credential step</span>
-                <strong>{authCredentialCommand.next_action}</strong>
-                <small>{authCredentialCommand.accepted_when}</small>
-              </div>
-              <button className="primary-action" disabled={busy || !authCredentialCommand.submit_ready} type="submit">
-                {authCredentialCommand.submit_label}
-              </button>
-            </div>
-            <div className="auth-credential-command-grid">
-              {authCredentialCommandCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <em>{item.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="auth-credential-command-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Email field
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-auth-credential-command-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...authCredentialCommand, cards: authCredentialCommandCards }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export auth route
-              </button>
-            </div>
-            <small className="auth-credential-command-boundary">
-              {portal === "corporate" ? authCredentialCommand.corporate_database_boundary : "Professional Passport rows stay owner-controlled until a scoped Access Grant is approved."}
-            </small>
-          </div>
-          <div className="public-access-hub" aria-label="Public access hub">
-            <div className="public-access-hub-hero">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Access hub</span>
-                <strong>{publicAccessHub.headline}</strong>
-                <small>{publicAccessHub.subline}</small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-access-hub-routes" aria-label="Choose user or corporate access route">
-              {publicAccessHubRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-access-hub-proof">
-              {publicAccessHubProof.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <em>{item.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="public-access-hub-steps" aria-label="Public access hub next steps">
-              {publicAccessHubSteps.map((step, index) => (
-                <span key={step.label}>
-                  <small>{String(index + 1).padStart(2, "0")} / {step.label}</small>
-                  <strong>{step.value}</strong>
-                  <em>{step.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="public-access-hub-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-access-hub-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...publicAccessHub,
-                        routes: publicAccessHubRoutes.map(({ action: _action, ...route }) => route),
-                        proof: publicAccessHubProof,
-                        next_steps: publicAccessHubSteps,
-                        primary_form_after_hub: "email_password_fields",
-                        duplicate_public_auth_panels_hidden: true
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export path
-              </button>
-            </div>
-            <small className="public-access-hub-boundary">
-              {portal === "corporate"
-                ? "Corporate database rule: request access, wait for professional approval, then review scoped rows only."
-                : "User database rule: your Passport is private until you approve scoped sharing."}
-            </small>
-          </div>
-          <div className="public-account-path-chooser" aria-label="Public account path chooser">
-            <div className="public-account-path-copy">
-              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
-              <strong>{portal === "corporate" ? "Corporate Verify workspace" : "Professional Passport account"}</strong>
-              <small>
-                Choose Personal or Corporate, then register or login. Pricing, password recovery, first database write, and the Corporate no-open-user-database boundary stay visible before credentials.
-              </small>
-            </div>
-            <div className="public-account-path-tabs" role="tablist" aria-label="Choose account type and action">
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} role="tab" type="button">
-                <Fingerprint size={17} />
-                <span>Personal</span>
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} role="tab" type="button">
-                <BriefcaseBusiness size={17} />
-                <span>Corporate</span>
-              </button>
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} role="tab" type="button">
-                <UserPlus size={17} />
-                <span>Register</span>
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} role="tab" type="button">
-                <LogIn size={17} />
-                <span>Login</span>
-              </button>
-            </div>
-            <div className="public-account-path-summary">
-              <article>
-                <span>Price</span>
-                <strong>{selectedRegistrationPath.plan}</strong>
-                <small>{selectedRegistrationPath.paymentStatus}</small>
-              </article>
-              <article>
-                <span>Database</span>
-                <strong>{portal === "corporate" ? "Organization + admin" : "User profile"}</strong>
-                <small>{selectedRegistrationPath.primaryWrite}</small>
-              </article>
-              <article>
-                <span>Portal</span>
-                <strong>{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</strong>
-                <small>{selectedRegistrationPath.nextAction}</small>
-              </article>
-            </div>
-            <div className="public-account-path-actions">
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                See pricing
-              </button>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <small className="public-account-path-boundary">
-              {portal === "corporate"
-                ? "Corporate can only request and review professional-approved scoped rows."
-                : "Personal accounts own the Passport and decide what gets shared."}
-            </small>
-          </div>
-          <div className="public-conversion-runway" aria-label="Public conversion runway">
-            <div className="public-conversion-runway-copy">
-              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Account setup</span>
-              <strong>{portal === "corporate" ? "Create a company workspace for scoped reviews" : "Create your private Professional Passport"}</strong>
-              <small>
-                Pick the account type and action, confirm pricing, then use the email and password fields below.
-              </small>
-            </div>
-            <div className="public-conversion-runway-actions" role="tablist" aria-label="Public account setup choices">
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} role="tab" type="button">
-                <Fingerprint size={16} />
-                <span>Professional</span>
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} role="tab" type="button">
-                <BriefcaseBusiness size={16} />
-                <span>Corporate</span>
-              </button>
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} role="tab" type="button">
-                <UserPlus size={16} />
-                <span>Register</span>
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} role="tab" type="button">
-                <LogIn size={16} />
-                <span>Login</span>
-              </button>
-            </div>
-            <div className="public-conversion-runway-grid">
-              <span>
-                <small>Price</small>
-                <strong>{selectedRegistrationPath.plan}</strong>
-                <em>{selectedRegistrationPath.paymentStatus}</em>
-              </span>
-              <span>
-                <small>First database write</small>
-                <strong>{portal === "corporate" ? "Company workspace" : "Passport owner"}</strong>
-                <em>{selectedRegistrationPath.primaryWrite}</em>
-              </span>
-              <span>
-                <small>After login</small>
-                <strong>{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</strong>
-                <em>{selectedRegistrationPath.nextAction}</em>
-              </span>
-            </div>
-            <div className="public-conversion-runway-footer">
-              <span>
-                Corporate reviewers can request approved rows only. There is no open user database browsing.
-              </span>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                Pricing
-              </button>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-          </div>
-          <div className="public-account-entry-launchpad" aria-label="Public account entry launchpad">
-            <div className="public-account-entry-launchpad-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Account entry</span>
-                <strong>{publicAccountEntryLaunchpad.primary_label}</strong>
-                <small>
-                  Pick user or corporate, register or login, then continue to the same hosted form. Pricing, recovery, database boundary, and server status stay visible before credentials.
-                </small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-account-entry-routes">
-              {publicAccountEntryRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-account-entry-status">
-              {publicAccountEntryStatus.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-account-entry-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-account-entry-launchpad-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...publicAccountEntryLaunchpad,
-                        routes: publicAccountEntryRoutes.map(({ action: _action, ...route }) => route),
-                        status: publicAccountEntryStatus
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export entry proof
-              </button>
-            </div>
-            <div className="public-account-entry-proof">
-              <span>
-                <small>Corporate database</small>
-                <strong>No open user browse</strong>
-              </span>
-              <span>
-                <small>Preview data</small>
-                <strong>{publicAccountEntryLaunchpad.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
-              </span>
-            </div>
-          </div>
-          <div className="public-auth-start-strip" aria-label="Public auth start strip">
-            <div className="public-auth-start-strip-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
-                <strong>{publicAuthStartStrip.primary_label}</strong>
-                <small>
-                  Choose the account path first. Pricing, first database write, landing portal, recovery, and corporate access boundary stay visible before credentials.
-                </small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-auth-start-routes">
-              {publicAuthStartRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-auth-start-status">
-              {publicAuthStartStripStatus.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-auth-start-proof">
-              <span>
-                <small>Corporate boundary</small>
-                <strong>No open user browse</strong>
-              </span>
-              <span>
-                <small>Server</small>
-                <strong>{publicAuthStartStrip.server_status.replaceAll("_", " ")}</strong>
-              </span>
-              <span>
-                <small>Preview data</small>
-                <strong>{publicAuthStartStrip.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-auth-start-strip-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...publicAuthStartStrip,
-                        routes: publicAuthStartRoutes.map(({ action: _action, ...route }) => route),
-                        status: publicAuthStartStripStatus
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export start proof
-              </button>
-            </div>
-          </div>
-          <div className={`public-auth-rescue-checklist ${publicAuthRescueChecklist.redirect_is_hosted ? "hosted" : "needs-repair"}`} aria-label="Public auth rescue checklist">
-            <div className="public-auth-rescue-header">
-              <div>
-                <span className={`status-chip ${publicAuthRescueChecklist.redirect_is_hosted ? "success" : "warning"}`}>Auth rescue checklist</span>
-                <strong>{publicAuthRescueChecklist.email_ready ? "Verification and recovery actions are ready" : "Enter email before resend or reset"}</strong>
-                <small>{publicAuthRescueChecklist.rate_limit_guidance}</small>
-              </div>
-              <div className="public-auth-rescue-actions">
-                <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                  Resend verify
-                </button>
-                <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                  Reset password
-                </button>
-                <button className="secondary-action" onClick={() => void copyHostedRedirectUrl()} type="button">
-                  Copy hosted URL
-                </button>
-                <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
-                  Repair link
-                </button>
-              </div>
-            </div>
-            <div className="public-auth-rescue-grid">
-              {publicAuthRescueChecklistSteps.map((step) => (
-                <article className={step.ready ? "ready" : "needed"} key={step.label}>
-                  <span>{step.label}</span>
-                  <strong>{step.value}</strong>
-                  <small>{step.detail}</small>
-                </article>
-              ))}
-            </div>
-            <div className="public-auth-rescue-proof">
-              <span>
-                <small>Landing portal</small>
-                <strong>{publicAuthRescueChecklist.landing_portal}</strong>
-              </span>
-              <span>
-                <small>Corporate data</small>
-                <strong>Scoped rows only</strong>
-              </span>
-              <span>
-                <small>Preview data</small>
-                <strong>{publicAuthRescueChecklist.preview_data_accepted ? "Accepted" : "Rejected"}</strong>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-auth-rescue-checklist-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicAuthRescueChecklist, steps: publicAuthRescueChecklistSteps }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export recovery proof
-              </button>
-            </div>
-            <small>{publicAuthRescueChecklist.accepted_when}</small>
-          </div>
-          <div className="public-account-access-path" aria-label="Public account access path">
-            <div className="public-account-access-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Account access path</span>
-                <strong>{publicAccountAccessPath.primary_label}</strong>
-                <small>
-                  Professional users, corporate admins, pricing, recovery, first database write, and server freshness stay visible before credentials.
-                </small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-account-access-choices">
-              {publicAccountAccessChoices.map((choice) => (
-                <button className={choice.active ? "active" : ""} key={choice.label} onClick={choice.action} type="button">
-                  <strong>{choice.label}</strong>
-                  <small>{choice.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-account-access-status">
-              {publicAccountAccessStatus.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-account-route-confirmation" aria-label="Public account route confirmation">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Route confirmation</span>
-                <strong>{publicAccountRouteConfirmation.selected_route}</strong>
-                <small>{publicAccountRouteConfirmation.accepted_when}</small>
-              </div>
-              <div className="public-account-route-confirmation-grid">
-                {publicAccountRouteConfirmationCards.map((item) => (
-                  <span key={item.label}>
-                    <small>{item.label}</small>
-                    <strong>{item.value}</strong>
-                    <small>{item.detail}</small>
-                  </span>
-                ))}
-              </div>
-              <div className="public-account-route-confirmation-footer">
-                <span>
-                  <strong>{publicAccountRouteConfirmation.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
-                  <small>{publicAccountRouteConfirmation.support_action}</small>
-                </span>
-                <button
-                  className="secondary-action"
-                  onClick={() =>
-                    downloadTextFile(
-                      `trustgraph-public-account-route-confirmation-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                      JSON.stringify({ ...publicAccountRouteConfirmation, cards: publicAccountRouteConfirmationCards }, null, 2),
-                      "application/json"
-                    )
-                  }
-                  type="button"
-                >
-                  Export route proof
-                </button>
-              </div>
-            </div>
-            <div className="public-account-access-actions">
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-account-access-path-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...publicAccountAccessPath,
-                        choices: publicAccountAccessChoices.map(({ action: _action, ...choice }) => choice),
-                        status: publicAccountAccessStatus
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export access path
-              </button>
-            </div>
-          </div>
-          <div className={`public-portal-entry-desk ${portal}`} aria-label="Public portal entry desk">
-            <div className="public-portal-entry-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
-                <strong>{publicPortalEntryDesk.primary_cta}</strong>
-                <small>
-                  Pick the exact route first. Pricing, database write, recovery, hosted server status, and corporate scope are visible before credentials.
-                </small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-portal-entry-routes" aria-label="Professional and corporate portal routes">
-              {publicPortalEntryDeskRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-portal-entry-grid">
-              {publicPortalEntryDeskStatus.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-portal-entry-actions">
-              <span>
-                <strong>{publicPortalEntryDesk.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
-                <small>{publicPortalEntryDesk.corporate_boundary}</small>
-              </span>
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset or resend
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-portal-entry-desk-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...publicPortalEntryDesk,
-                        routes: publicPortalEntryDeskRoutes.map(({ action: _action, ...route }) => route),
-                        status: publicPortalEntryDeskStatus
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export route
-              </button>
-            </div>
-            <div className="public-portal-entry-proof">
-              <span>{publicPortalEntryDesk.accepted_when}</span>
-            </div>
-          </div>
-          <div className="public-auth-experience-studio" aria-label="Public auth experience studio">
-            <div className="public-auth-experience-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Access studio</span>
-                <strong>{publicAuthExperienceStudio.primary_cta}</strong>
-                <small>
-                  Professional and Corporate users choose the portal, action, price, first database write, and recovery path before credentials.
-                </small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-auth-experience-switches" aria-label="Public auth experience switches">
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                <Fingerprint size={16} />
-                <span>Professional</span>
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                <BriefcaseBusiness size={16} />
-                <span>Corporate</span>
-              </button>
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                <UserPlus size={16} />
-                <span>Register</span>
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                <LogIn size={16} />
-                <span>Login</span>
-              </button>
-            </div>
-            <div className="public-auth-experience-grid">
-              {publicAuthExperienceStudioCards.map((card) => (
-                <span key={card.label}>
-                  <small>{card.label}</small>
-                  <strong>{card.value}</strong>
-                  <small>{card.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-auth-experience-actions">
-              <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                View pricing
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-auth-experience-studio-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicAuthExperienceStudio, cards: publicAuthExperienceStudioCards }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export path
-              </button>
-            </div>
-          </div>
-          <div className="public-login-primary-choice" aria-label="Public login primary choice">
-            <div className="public-login-primary-choice-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Choose account</span>
-                <strong>{publicLoginPrimaryChoice.headline}</strong>
-                <small>{publicLoginPrimaryChoice.helper}</small>
-              </div>
-              <button className="primary-action" disabled={busy || !publicLoginPrimaryChoice.submit_ready} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-login-primary-choice-routes" aria-label="User and corporate login routes">
-              {publicLoginPrimaryChoiceRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.onClick} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-login-primary-choice-grid">
-              {publicLoginPrimaryChoiceFacts.map((fact) => (
-                <span key={fact.label}>
-                  <small>{fact.label}</small>
-                  <strong>{fact.value}</strong>
-                  <small>{fact.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-login-primary-choice-footer">
-              <span>
-                <strong>{publicLoginPrimaryChoice.submit_ready ? "Ready for credentials" : "Complete the required fields"}</strong>
-                <small>{publicLoginPrimaryChoice.accepted_when}</small>
-              </span>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset or resend
-              </button>
-            </div>
-          </div>
-          <div className={`public-submit-path-checklist ${portal}`} aria-label="Public submit path checklist">
-            <div className="public-submit-path-header">
-              <div>
-                <span className={`status-chip ${publicSubmitPathChecklist.submit_ready ? "success" : "warning"}`}>Before submit</span>
-                <strong>{publicSubmitPathChecklist.selected_route}</strong>
-                <small>{publicSubmitPathChecklist.accepted_when}</small>
-              </div>
-              <button className="primary-action" disabled={busy || !publicSubmitPathChecklist.submit_ready} type="submit">
-                {mode === "signin" ? "Login now" : "Create account"}
-              </button>
-            </div>
-            <div className="public-submit-path-grid">
-              {publicSubmitPathChecklistSteps.map((step) => (
-                <span key={step.label}>
-                  <small>{step.label}</small>
-                  <strong>{step.value}</strong>
-                  <small>{step.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-submit-path-footer">
-              <span>
-                <strong>{publicSubmitPathChecklist.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
-                <small>{publicSubmitPathChecklist.corporate_database_boundary}</small>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-submit-path-checklist-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicSubmitPathChecklist, steps: publicSubmitPathChecklistSteps }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export checklist
-              </button>
-            </div>
-          </div>
-          <div className="public-portal-route-shell" aria-label="Public portal route shell">
-            <div className="public-portal-route-shell-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Public portal route shell</span>
-                <strong>{publicPortalRouteShell.primary_cta}</strong>
-                <small>
-                  Choose Professional or Corporate, confirm pricing and the first live database write, then use hosted recovery if email verification or login needs repair.
-                </small>
-              </div>
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-            </div>
-            <div className="public-portal-route-tabs" role="tablist" aria-label="Public portal route tabs">
-              {publicPortalRouteShellTabs.map((tab) => (
-                <button aria-selected={tab.active} className={tab.active ? "active" : ""} key={tab.label} onClick={tab.action} role="tab" type="button">
-                  <strong>{tab.label}</strong>
-                  <small>{tab.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-portal-route-status">
-              {publicPortalRouteShellStatus.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <em>{item.detail}</em>
-                </span>
-              ))}
-            </div>
-            <div className="public-portal-route-footer">
-              <span>
-                <strong>{publicPortalRouteShell.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
-                <small>{publicPortalRouteShell.accepted_when}</small>
-              </span>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-portal-route-shell-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...publicPortalRouteShell,
-                        tabs: publicPortalRouteShellTabs.map(({ action: _action, ...tab }) => tab),
-                        status: publicPortalRouteShellStatus
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export route
-              </button>
-            </div>
-          </div>
-          <div className="registration-route-planner" aria-label="Registration route planner">
-            <div className="registration-route-planner-copy">
-              <span className="status-chip success">Registration route</span>
-              <strong>{registrationRoutePlanner.selected_action} as {registrationRoutePlanner.selected_portal}</strong>
-              <small>{registrationRoutePlanner.accepted_when}</small>
-            </div>
-            <div className="registration-route-planner-grid">
-              {registrationRoutePlannerSteps.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="registration-route-planner-actions">
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                Professional
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                Corporate
-              </button>
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                Register
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                Login
-              </button>
-              <button disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset
-              </button>
-            </div>
-          </div>
-          <div className="public-auth-front-desk" aria-label="Public auth front desk">
-            <div className="public-auth-front-desk-copy">
-              <span className="status-chip success">Public auth front desk</span>
-              <strong>{publicAuthFrontDesk.headline}</strong>
-              <small>{selectedRegistrationPath.nextAction}</small>
-            </div>
-            <div className="public-auth-front-desk-grid">
-              {publicAuthFrontDeskCards.map((item) => (
-                <button
-                  className={item.label === "Portal" || item.label === "Action" ? "active" : ""}
-                  key={item.label}
-                  onClick={() => {
-                    if (item.label === "Portal") {
-                      setPortal(portal === "corporate" ? "professional" : "corporate");
-                      return;
-                    }
-                    if (item.label === "Action") {
-                      setMode(mode === "signup" ? "signin" : "signup");
-                      return;
-                    }
-                    if (item.label === "Price") {
-                      document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" });
-                      return;
-                    }
-                    document.getElementById("public-auth-email")?.focus();
-                  }}
-                  type="button"
-                >
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-auth-front-desk-actions">
-              <button className="primary-action" disabled={busy || !email || !password} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() => downloadTextFile(publicAuthFrontDeskPacketName, JSON.stringify(publicAuthFrontDesk, null, 2), "application/json")}
-                type="button"
-              >
-                Export auth path
-              </button>
-            </div>
-          </div>
-          <div className="public-access-desk" aria-label="Public access desk">
-            <div className="public-access-desk-copy">
-              <span className="status-chip success">Access desk</span>
-              <strong>{publicAccessDesk.primary_cta}</strong>
-              <small>{publicAccessDesk.accepted_when}</small>
-            </div>
-            <div className="public-access-desk-controls">
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                Professional
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                Corporate
-              </button>
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                Register
-              </button>
-              <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                Login
-              </button>
-            </div>
-            <div className="public-access-desk-grid">
-              {publicAccessDeskCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-access-desk-actions">
-              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to email
-              </button>
-              <button className="secondary-action" onClick={() => document.querySelector(".pricing-section")?.scrollIntoView({ behavior: "smooth" })} type="button">
-                View pricing
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-access-desk-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(publicAccessDesk, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export access path
-              </button>
-            </div>
-          </div>
-          <div className={`public-portal-launch-answer ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public portal launch answer">
-            <div className="public-portal-launch-answer-copy">
-              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
-              <strong>{publicPortalLaunchAnswer.answer}</strong>
-              <small>{publicPortalLaunchAnswer.accepted_when}</small>
-            </div>
-            <div className="public-portal-launch-answer-routes">
-              {publicPortalLaunchAnswerRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.onClick} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-portal-launch-answer-grid">
-              {publicPortalLaunchAnswerFacts.map((fact) => (
-                <span key={fact.label}>
-                  <small>{fact.label}</small>
-                  <strong>{fact.value}</strong>
-                  <small>{fact.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-portal-launch-answer-actions">
-              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to {mode === "signup" ? "registration" : "login"}
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                Review pricing
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-portal-launch-answer-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicPortalLaunchAnswer, facts: publicPortalLaunchAnswerFacts }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export answer
-              </button>
-            </div>
-          </div>
-          <div className="auth-card-heading">
-            <span className="status-chip neutral">{portal === "corporate" ? "Corporate Verify" : "Professional Passport"}</span>
-            <strong>{mode === "signup" ? "Create account" : "Sign in"}</strong>
-            <small>
-              {portal === "corporate"
-                ? "Company workspace creation starts after email verification and login."
-                : "Passport setup starts after email verification and login."}
-            </small>
-          </div>
-          <div className="auth-selected-route">
-            <span>{portal === "corporate" ? "Corporate company" : "Professional user"}</span>
-            <strong>{mode === "signup" ? "Register" : "Login"}</strong>
-            <small>{selectedRegistrationPath.nextAction}</small>
-          </div>
-          <div className="registration-focus-strip" aria-label="Registration focus strip">
-            {registrationFocusStrip.map((item) => (
-              <span key={item.label}>
-                <small>{item.label}</small>
-                <strong>{item.value}</strong>
-                <small>{item.detail}</small>
-              </span>
-            ))}
-          </div>
-          <div className="portal-handoff-checklist" aria-label="Portal handoff checklist">
-            {portalHandoffChecklist.map((item) => (
-              <span key={item.label}>
-                <small>{item.state}</small>
-                <strong>{item.label}</strong>
-                <small>{item.detail}</small>
-              </span>
-            ))}
-          </div>
-          <div className="auth-path-summary" aria-label="Auth path summary">
-            <div>
-              <span className="status-chip success">Selected path</span>
-              <strong>{authPathSummary.selected_action} for {authPathSummary.selected_portal}</strong>
-              <small>{authPathSummary.accepted_when}</small>
-            </div>
-            <div className="auth-path-summary-grid">
-              {authPathSummaryCards.map((card) => (
-                <span key={card.label}>
-                  <small>{card.label}</small>
-                  <strong>{card.value}</strong>
-                  <small>{card.detail}</small>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="public-portal-acceptance-checkpoint" aria-label="Public portal acceptance checkpoint">
-            <div className="public-portal-acceptance-header">
-              <div>
-                <span className={`status-chip ${publicPortalAcceptanceReady ? "success" : "warning"}`}>Portal acceptance</span>
-                <strong>
-                  {publicPortalAcceptanceReady
-                    ? `${publicPortalAcceptanceCheckpoint.selected_portal} path is ready for live pilot acceptance`
-                    : `${publicPortalAcceptanceCheckpoint.ready_steps}/${publicPortalAcceptanceCheckpoint.total_steps} portal acceptance steps ready`}
-                </strong>
-                <small>{publicPortalAcceptanceCheckpoint.accepted_when}</small>
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-portal-acceptance-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(
-                      {
-                        ...publicPortalAcceptanceCheckpoint,
-                        steps: publicPortalAcceptanceSteps
-                      },
-                      null,
-                      2
-                    ),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export acceptance
-              </button>
-            </div>
-            <div className="public-portal-acceptance-grid">
-              {publicPortalAcceptanceSteps.map((step) => (
-                <article className={step.ready ? "ready" : "next"} key={step.label}>
-                  <span>{step.label}</span>
-                  <strong>{step.value}</strong>
-                  <small>{step.detail}</small>
-                </article>
-              ))}
-            </div>
-          </div>
-          <div className="public-auth-server-checkpoint" aria-label="Public auth server save checkpoint">
-            <div>
-              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Server save checkpoint</span>
-              <strong>{serverSyncMonitor.status === "synced" ? "GitHub and VPS are aligned for login testing" : "GitHub is saved; verify the VPS release stamp before login testing"}</strong>
-              <small>{publicAuthServerCheckpoint.accepted_when}</small>
-            </div>
-            <div className="public-auth-server-checkpoint-grid">
-              {publicAuthServerCheckpointCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <button
-              className="secondary-action"
-              onClick={() =>
-                downloadTextFile(
-                  `trustgraph-public-auth-server-checkpoint-${new Date().toISOString().slice(0, 10)}.json`,
-                  JSON.stringify(publicAuthServerCheckpoint, null, 2),
-                  "application/json"
-                )
-              }
-              type="button"
-            >
-              Export server checkpoint
-            </button>
-          </div>
-          <div className={`current-build-server-gate public ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="Public current build server gate">
-            <div className="current-build-server-gate-header">
-              <div>
-                <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>Current server build</span>
-                <strong>{publicCurrentBuildServerGate.headline}</strong>
-                <small>{publicCurrentBuildServerGate.required_marker}</small>
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-current-build-server-gate-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicCurrentBuildServerGate, rows: publicCurrentBuildServerGateRows }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export server gate
-              </button>
-            </div>
-            <div className="current-build-server-gate-grid">
-              {publicCurrentBuildServerGateRows.map((row) => (
-                <article className={row.ready ? "ready" : "next"} key={row.label}>
-                  <span>{row.label}</span>
-                  <strong>{row.value}</strong>
-                  <small>{row.detail}</small>
-                </article>
-              ))}
-            </div>
-            <div className="current-build-server-gate-command">
-              <span>Manual VPS sync</span>
-              <code>{publicCurrentBuildServerGate.manual_sync_command}</code>
-            </div>
-            <div className={`public-manual-vps-sync-launcher ${serverSyncMonitor.status === "synced" ? "ready" : "needed"}`} aria-label="Public manual VPS sync launcher">
-              <div className="public-manual-vps-sync-header">
-                <div>
-                  <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>
-                    Manual server sync
-                  </span>
-                  <strong>{serverSyncMonitor.status === "synced" ? "Server release stamp is current" : "Copy the VPS command before server login testing"}</strong>
-                  <small>{publicManualVpsSyncLauncher.accepted_when}</small>
-                </div>
-                <div className="public-manual-vps-sync-actions">
-                  <button
-                    className="secondary-action"
-                    onClick={() => {
-                      void navigator.clipboard
-                        .writeText(publicCurrentBuildServerGate.manual_sync_command)
-                        .then(() => setMessage("Manual VPS sync command copied. Run it only from /opt/trustgraph on the TrustGraph server."))
-                        .catch(() => setMessage(`Copy this VPS sync command: ${publicCurrentBuildServerGate.manual_sync_command}`));
-                    }}
-                    type="button"
-                  >
-                    Copy command
-                  </button>
-                  <button
-                    className="secondary-action"
-                    onClick={() =>
-                      downloadTextFile(
-                        `trustgraph-public-manual-vps-sync-launcher-${new Date().toISOString().slice(0, 10)}.json`,
-                        JSON.stringify({ ...publicManualVpsSyncLauncher, rows: publicManualVpsSyncLauncherRows }, null, 2),
-                        "application/json"
-                      )
-                    }
-                    type="button"
-                  >
-                    Export sync plan
-                  </button>
-                </div>
-              </div>
-              <div className="public-manual-vps-sync-grid">
-                {publicManualVpsSyncLauncherRows.map((row) => (
-                  <article className={row.ready ? "ready" : "next"} key={row.label}>
-                    <span>{row.label}</span>
-                    <strong>{row.value}</strong>
-                    <small>{row.detail}</small>
-                  </article>
-                ))}
-              </div>
-              <div className="public-manual-vps-sync-command">
-                <span>Verify after sync</span>
-                <code>{publicManualVpsSyncLauncher.verify_commands.join(" && ")}</code>
-              </div>
-            </div>
-          </div>
-          <div className="public-access-command-center" aria-label="Public access command center">
-            <div className="public-access-command-copy">
-              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Start here</span>
-              <strong>{publicAccountEntryLaunchpad.primary_label}</strong>
-              <small>
-                Choose Professional or Corporate access, see the pilot price, understand the first live database write, then continue to the right login or registration form.
-              </small>
-            </div>
-            <div className="public-access-command-routes">
-              {publicAccountEntryRoutes.map((route) => (
-                <button className={route.active ? "active" : ""} key={route.label} onClick={route.action} type="button">
-                  <strong>{route.label}</strong>
-                  <small>{route.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-access-command-proof">
-              <span>
-                <small>Selected price</small>
-                <strong>{publicAccountEntryLaunchpad.selected_price}</strong>
-              </span>
-              <span>
-                <small>First database write</small>
-                <strong>{publicAccountEntryLaunchpad.first_database_write}</strong>
-              </span>
-              <span>
-                <small>Landing portal</small>
-                <strong>{publicAccountEntryLaunchpad.landing_portal}</strong>
-              </span>
-              <span>
-                <small>Corporate database</small>
-                <strong>No open browse</strong>
-              </span>
-            </div>
-            <div className="public-access-command-actions">
-              <button className="primary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                Continue to credentials
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                Review pricing
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-access-command-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(publicAccountEntryLaunchpad, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export route
-              </button>
-            </div>
-          </div>
-          <div className="public-entry-sequence" aria-label="Public entry sequence">
-            <div className="public-entry-sequence-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Entry sequence</span>
-                <strong>{publicEntrySequence.selected_route}: one clear path before submit</strong>
-                <small>{publicEntrySequence.accepted_when}</small>
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-entry-sequence-${portal}-${mode}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicEntrySequence, steps: publicEntrySequenceSteps }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export sequence
-              </button>
-            </div>
-            <div className="public-entry-sequence-grid">
-              {publicEntrySequenceSteps.map((step, index) => (
-                <article key={step.label}>
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <strong>{step.label}</strong>
-                  <b>{step.value}</b>
-                  <small>{step.detail}</small>
-                </article>
-              ))}
-            </div>
-            <div className="public-entry-sequence-proof">
-              <span>
-                <small>Price</small>
-                <strong>{publicEntrySequence.selected_price}</strong>
-              </span>
-              <span>
-                <small>First database write</small>
-                <strong>{publicEntrySequence.first_database_write}</strong>
-              </span>
-              <span>
-                <small>Verification</small>
-                <strong>Hosted URL only</strong>
-              </span>
-              <span>
-                <small>Corporate database</small>
-                <strong>No open browse</strong>
-              </span>
-            </div>
-          </div>
-          <div className="public-portal-switchboard" aria-label="Public portal switchboard">
-            <div className="public-portal-switchboard-header">
-              <div>
-                <span className="status-chip success">Choose your path</span>
-                <strong>{publicPortalSwitchboard.selected_portal} {publicPortalSwitchboard.selected_action}</strong>
-                <small>{publicPortalSwitchboard.accepted_when}</small>
-              </div>
-              <span>
-                <small>Current plan</small>
-                <strong>{publicPortalSwitchboard.current_price}</strong>
-              </span>
-            </div>
-            <div className="public-portal-switchboard-grid">
-              {publicPortalSwitchboardCards.map((card) => (
-                <button className={card.active ? "active" : ""} key={card.id} onClick={card.onClick} type="button">
-                  <strong>{card.label}</strong>
-                  <small>{card.detail}</small>
-                </button>
-              ))}
-            </div>
-            <div className="public-portal-switchboard-footer">
-              <span>
-                <small>First database write</small>
-                <strong>{publicPortalSwitchboard.first_database_write}</strong>
-              </span>
-              <span>
-                <small>Recovery</small>
-                <strong>{publicPortalSwitchboard.recovery_route}</strong>
-              </span>
-              <div className="public-portal-switchboard-actions">
-                <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                  Review pricing
-                </button>
-                <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                  Reset password
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="corporate-access-route-preview" aria-label="Corporate access route preview">
-            <div className="corporate-access-route-preview-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Corporate access path</span>
-                <strong>{corporateAccessRoutePreview.headline}</strong>
-                <small>{corporateAccessRoutePreview.accepted_when}</small>
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-corporate-access-route-preview-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...corporateAccessRoutePreview, steps: corporateAccessRouteSteps }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export route
-              </button>
-            </div>
-            <div className="corporate-access-route-preview-grid">
-              {corporateAccessRouteSteps.map((item) => (
-                <article key={item.step}>
-                  <span>{item.step}</span>
-                  <strong>{item.label}</strong>
-                  <small>{item.detail}</small>
-                  <em>{item.table}</em>
-                </article>
-              ))}
-            </div>
-            <div className="corporate-access-route-preview-boundary">
-              <span>
-                <strong>{corporateAccessRoutePreview.no_open_database_browse ? "No open user database" : "Open browse"}</strong>
-                <small>Corporate reviewers request by email and see approved, scoped rows only.</small>
-              </span>
-              <span>
-                <strong>{corporateAccessRoutePreview.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
-                <small>Completion needs Supabase rows, not static preview data.</small>
-              </span>
-            </div>
-          </div>
-          <div className="portal-tabs">
-            <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-              Professional
-            </button>
-            <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-              Corporate
-            </button>
-          </div>
-          <div className="portal-tabs">
-            <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-              Register
-            </button>
-            <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-              Login
-            </button>
-          </div>
-          {hasPendingCorporateRegistration ? (
-            <div className="pending-registration-note">
-              <div>
-                <strong>Pending corporate workspace</strong>
-                <small>Login with the verified account in this browser to create the live corporate workspace.</small>
-              </div>
-              <div className="pending-registration-grid">
-                <span>
-                  <strong>{organizationName}</strong>
-                  <small>Organization</small>
-                </span>
-                <span>
-                  <strong>{organizationDomain}</strong>
-                  <small>Domain</small>
-                </span>
-                <span>
-                  <strong>{organizationType.replace("_", " ")}</strong>
-                  <small>Type</small>
-                </span>
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() => {
-                  clearPendingCorporateRegistration();
-                  setOrganizationName("");
-                  setOrganizationDomain("");
-                  setOrganizationType("employer");
-                  setMode("signup");
-                  setMessage("Saved corporate setup cleared. Enter company details again to restart registration.");
-                }}
-                type="button"
-              >
-                Clear saved setup
-              </button>
-            </div>
-          ) : null}
-          <div className="auth-route-summary" aria-label="Auth route summary">
-            <div>
-              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>{authPathSummary.selected_portal}</span>
-              <strong>{authPathSummary.selected_action} into {authPathSummary.landing}</strong>
-              <small>
-                {mode === "signup"
-                  ? "Create the right account type first; live database proof starts only after hosted verification and login."
-                  : "Use the verified account for this portal; recovery stays available from the same card."}
-              </small>
-            </div>
-            <div className="auth-route-summary-grid">
-              {authPathSummaryCards.map((card) => (
-                <span key={card.label}>
-                  <small>{card.label}</small>
-                  <strong>{card.value}</strong>
-                  <small>{card.detail}</small>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="public-submit-readiness" aria-label="Public submit readiness">
-            <div className="public-submit-readiness-copy">
-              <span className={`status-chip ${publicSubmitReadiness.can_submit ? "success" : "warning"}`}>Submit readiness</span>
-              <strong>{publicSubmitReadiness.can_submit ? "Ready to submit this portal path" : "Finish the required fields before submit"}</strong>
-              <small>{publicSubmitReadiness.accepted_when}</small>
-            </div>
-            <div className="public-submit-readiness-grid">
-              {publicSubmitReadinessCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-submit-readiness-actions">
-              <button className="primary-action" disabled={busy || !publicSubmitReadiness.can_submit} type="submit">
-                {mode === "signin" ? "Login" : "Create account"}
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-submit-readiness-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(publicSubmitReadiness, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export readiness
-              </button>
-            </div>
-          </div>
-          <div className="selected-portal-command" aria-label="Selected portal command">
-            <div>
-              <span className="status-chip success">{selectedPortalCommand.label}</span>
-              <strong>{selectedPortalCommand.headline}</strong>
-              <small>{selectedPortalCommand.next}</small>
-            </div>
-            <div className="selected-portal-command-fields">
-              {selectedPortalCommand.required_fields.map((field) => (
-                <span key={field}>{field.replace(/_/g, " ")}</span>
-              ))}
-            </div>
-          </div>
-          <div className="portal-submit-receipt" aria-label="Portal submit receipt">
-            <div>
-              <span className="status-chip success">Portal submit receipt</span>
-              <strong>{portalSubmitReceipt.selected_portal}</strong>
-              <small>{portalSubmitReceipt.acceptance_boundary}</small>
-            </div>
-            <div className="portal-submit-receipt-grid">
-              {portalSubmitReceiptCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="registration-pre-submit-checklist" aria-label="Registration pre-submit checklist">
-            <div>
-              <span className="status-chip success">Pre-submit checklist</span>
-              <strong>{mode === "signup" ? "Confirm the live database path before creating the account" : "Confirm the portal before login"}</strong>
-              <small>{registrationPreSubmitChecklist.accepted_when}</small>
-            </div>
-            <div className="registration-pre-submit-grid">
-              {registrationPreSubmitItems.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <button
-              className="secondary-action"
-              onClick={() =>
-                downloadTextFile(
-                  `trustgraph-registration-pre-submit-checklist-${new Date().toISOString().slice(0, 10)}.json`,
-                  JSON.stringify(registrationPreSubmitChecklist, null, 2),
-                  "application/json"
-                )
-              }
-              type="button"
-            >
-              Export checklist
-            </button>
-          </div>
-          <div className="public-signup-decision-desk" aria-label="Public signup decision desk">
-            <div className="public-signup-decision-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Signup decision</span>
-                <strong>{publicSignupDecisionDesk.primary_cta}</strong>
-                <small>{publicSignupDecisionDesk.accepted_when}</small>
-              </div>
-              <div className="public-signup-decision-actions">
-                <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                  Professional
-                </button>
-                <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                  Corporate
-                </button>
-                <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                  Register
-                </button>
-                <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")} type="button">
-                  Login
-                </button>
-              </div>
-            </div>
-            <div className="public-signup-decision-grid">
-              {publicSignupDecisionCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-signup-decision-footer">
-              <span>
-                <strong>{publicSignupDecisionDesk.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
-                <small>Completion proof requires hosted auth and Supabase rows.</small>
-              </span>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-signup-decision-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(publicSignupDecisionDesk, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export decision
-              </button>
-            </div>
-          </div>
-          <div className="public-registration-pricing-gate" aria-label="Public registration pricing gate">
-            <div className="public-registration-pricing-gate-header">
-              <div>
-                <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Registration pricing gate</span>
-                <strong>{publicRegistrationPricingGate.selected_action} with {publicRegistrationPricingGate.selected_pricing}</strong>
-                <small>{publicRegistrationPricingGate.accepted_when}</small>
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-registration-pricing-gate-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicRegistrationPricingGate, rows: publicRegistrationPricingGateRows }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export gate
-              </button>
-            </div>
-            <div className="public-registration-pricing-gate-grid">
-              {publicRegistrationPricingGateRows.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-registration-pricing-gate-footer">
-              <span>
-                <strong>{publicRegistrationPricingGate.preview_data_accepted ? "Preview accepted" : "Live rows only"}</strong>
-                <small>Credentials are accepted only as the start of hosted Supabase rows and the saved GitHub-to-VPS build path.</small>
-              </span>
-              <button className={portal === "professional" ? "active" : ""} onClick={() => setPortal("professional")} type="button">
-                Professional
-              </button>
-              <button className={portal === "corporate" ? "active" : ""} onClick={() => setPortal("corporate")} type="button">
-                Corporate
-              </button>
-              <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")} type="button">
-                Register
-              </button>
-            </div>
-          </div>
-          <div className="public-signup-answer-bar" aria-label="Public signup answer bar">
-            <div className="public-signup-answer-copy">
-              <span className={`status-chip ${publicSignupAnswerBar.submit_ready === "ready" ? "success" : "warning"}`}>
-                {publicSignupAnswerBar.submit_ready === "ready" ? "Ready to submit" : "Complete fields"}
-              </span>
-              <strong>{publicSignupAnswerBar.selected_path}</strong>
-              <small>{publicSignupAnswerBar.accepted_when}</small>
-            </div>
-            <div className="public-signup-answer-grid">
-              {publicSignupAnswerBarRows.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <small>
-              {portal === "corporate"
-                ? "Corporate access starts with an organization workspace, then waits for professional-approved scoped rows. No open user database."
-                : "Professional access starts with your private Passport. You decide which rows are shared."}
-            </small>
-          </div>
-          <div className={`public-hosted-server-freshness-alert ${publicHostedServerFreshnessAlert.status}`} aria-label="Public hosted server freshness alert">
-            <div className="public-hosted-server-freshness-copy">
-              <span className={`status-chip ${serverSyncMonitor.status === "synced" ? "success" : "warning"}`}>
-                {serverSyncMonitor.status === "synced" ? "Server current" : "Server proof needed"}
-              </span>
-              <strong>{publicHostedServerFreshnessAlert.headline}</strong>
-              <small>{publicHostedServerFreshnessAlert.body}</small>
-            </div>
-            <div className="public-hosted-server-freshness-grid">
-              {publicHostedServerFreshnessRows.map((item) => (
-                <span className={item.ready ? "ready" : "next"} key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="public-hosted-server-freshness-actions">
-              <button
-                className="secondary-action"
-                onClick={() => {
-                  void navigator.clipboard
-                    .writeText(publicHostedServerFreshnessAlert.update_command)
-                    .then(() => setMessage("Manual VPS update command copied. Run it from /opt/trustgraph on the TrustGraph server."))
-                    .catch(() => setMessage(`Copy this VPS update command: ${publicHostedServerFreshnessAlert.update_command}`));
-                }}
-                type="button"
-              >
-                Copy VPS update
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-public-hosted-server-freshness-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...publicHostedServerFreshnessAlert, rows: publicHostedServerFreshnessRows }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export server proof
-              </button>
-            </div>
-          </div>
-          <div className={`public-credential-station ${portal === "corporate" ? "corporate" : "professional"}`} aria-label="Public credential station">
-            <div className="public-credential-station-header">
-              <div>
-                <span className={`status-chip ${email && password ? "success" : "warning"}`}>
-                  {mode === "signin" ? "Login credentials" : "Registration credentials"}
-                </span>
-                <strong>{portal === "corporate" ? "Corporate account access" : "Professional Passport access"}</strong>
-                <small>
-                  {portal === "corporate"
-                    ? "Create or login to a company account, then open Company Admin and Corporate Verify. Corporate access to users stays request-and-approval scoped."
-                    : "Create or login to your private Passport account. You control evidence, records, consent, and company sharing."}
-                </small>
-              </div>
-              <span>
-                <small>Selected path</small>
-                <strong>{mode === "signin" ? "Login" : "Register"} - {portal === "corporate" ? "Corporate" : "Professional"}</strong>
-                <small>{selectedRegistrationPath.plan}</small>
-              </span>
-            </div>
-            <div className="public-auth-action-dock" aria-label="Public auth action dock">
-              <button className={portal === "professional" ? "ready" : "next"} onClick={() => setPortal("professional")} type="button">
-                <span>Personal</span>
-                <strong>Passport user</strong>
-                <small>Private records, evidence, consent, and controlled company sharing.</small>
-              </button>
-              <button className={portal === "corporate" ? "ready" : "next"} onClick={() => setPortal("corporate")} type="button">
-                <span>Corporate</span>
-                <strong>Company access</strong>
-                <small>Company workspace, reviewer role, request approval, and scoped rows only.</small>
-              </button>
-              <button className={mode === "signup" ? "ready" : "next"} onClick={() => setMode(mode === "signup" ? "signin" : "signup")} type="button">
-                <span>{mode === "signup" ? "Switch" : "New account"}</span>
-                <strong>{mode === "signup" ? "Use login" : "Create account"}</strong>
-                <small>{mode === "signup" ? "Already verified? Login instead." : "Need access? Register from this card."}</small>
-              </button>
-              <button className={email ? "ready" : "next"} disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                <span>Recovery</span>
-                <strong>{email ? "Reset ready" : "Enter email"}</strong>
-                <small>Password reset uses the hosted TrustGraph redirect, not localhost.</small>
-              </button>
-            </div>
-            <div className={`public-credential-preflight ${publicCredentialPreflight.status}`} aria-label="Public credential preflight">
-              <div className="public-credential-preflight-header">
-                <div>
-                  <span className={`status-chip ${publicSubmitReadiness.can_submit ? "success" : "warning"}`}>
-                    {publicSubmitReadiness.can_submit ? "Ready" : "Preflight"}
-                  </span>
-                  <strong>{publicCredentialPreflight.headline}</strong>
-                  <small>
-                    Corporate registration needs company fields before Supabase signup. Hosted email verification and recovery use the active TrustGraph redirect.
-                  </small>
-                </div>
-                <button
-                  className="secondary-action"
-                  onClick={() =>
-                    downloadTextFile(
-                      `trustgraph-public-credential-preflight-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                      JSON.stringify({ ...publicCredentialPreflight, rows: publicCredentialPreflightRows }, null, 2),
-                      "application/json"
-                    )
-                  }
-                  type="button"
-                >
-                  Export preflight
-                </button>
-              </div>
-              <div className="public-credential-preflight-grid">
-                {publicCredentialPreflightRows.map((row) => (
-                  <article className={row.ready ? "ready" : "next"} key={row.label}>
-                    <span>{row.label}</span>
-                    <strong>{row.value}</strong>
-                    <small>{row.detail}</small>
-                  </article>
-                ))}
-              </div>
-            </div>
-            <div className={`credential-action-bar ${publicSubmitReadiness.can_submit ? "ready" : "needed"}`} aria-label="Credential action bar">
-              <div>
-                <span className={`status-chip ${publicSubmitReadiness.can_submit ? "success" : "warning"}`}>
-                  {portal === "corporate" ? "Corporate credentials" : "Professional credentials"}
-                </span>
-                <strong>{publicSubmitReadiness.can_submit ? authCredentialCommand.submit_label : "Complete required fields"}</strong>
-                <small>
-                  {publicCredentialPreflight.missing_fields.length
-                    ? `Missing: ${publicCredentialPreflight.missing_fields.join(", ")}.`
-                    : `${authCredentialCommand.selected_route} will land in ${authCredentialCommand.landing_dashboard}.`}
-                </small>
-              </div>
-              <div className="credential-action-bar-grid">
-                <span>
-                  <small>Hosted redirect</small>
-                  <strong>{authCredentialCommand.redirect_is_hosted ? "Ready" : "Needs repair"}</strong>
-                </span>
-                <span>
-                  <small>First write</small>
-                  <strong>{authCredentialCommand.first_database_write}</strong>
-                </span>
-                <span>
-                  <small>Recovery</small>
-                  <strong>{authCredentialCommand.recovery_available ? "Ready" : "Email needed"}</strong>
-                </span>
-              </div>
-              <div className="credential-action-bar-actions">
-                <button className="primary-action" disabled={busy || !publicSubmitReadiness.can_submit} type="submit">
-                  {authCredentialCommand.submit_label}
-                </button>
-                <button className="secondary-action" onClick={() => document.getElementById("public-auth-email")?.focus()} type="button">
-                  Edit fields
-                </button>
-              </div>
-              <small className="credential-action-bar-boundary">
-                credential_action_bar_keeps_selected_public_route_missing_fields_submit_button_hosted_redirect_recovery_first_database_write_landing_and_scoped_corporate_boundary_visible_before_credentials
-              </small>
-            </div>
-            <div className="public-credential-fields">
-              <label>
-                <span>Email</span>
-                <input id="public-auth-email" onChange={(event) => setEmail(event.target.value)} placeholder={portal === "corporate" ? "reviewer@company.com" : "you@example.com"} type="email" value={email} />
-              </label>
-              <label>
-                <span>Password</span>
-                <input onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
-              </label>
-              {portal === "corporate" && mode === "signup" ? (
-                <>
-                  <label>
-                    <span>Organization</span>
-                    <input onChange={(event) => setOrganizationName(event.target.value)} placeholder="Organization name" value={organizationName} />
-                  </label>
-                  <label>
-                    <span>Domain</span>
-                    <input onChange={(event) => setOrganizationDomain(event.target.value)} placeholder="company.com" value={organizationDomain} />
-                  </label>
-                  <label>
-                    <span>Company type</span>
-                    <select onChange={(event) => setOrganizationType(event.target.value as typeof organizationType)} value={organizationType}>
-                      <option value="employer">Employer</option>
-                      <option value="staffing_agency">Staffing agency</option>
-                    </select>
-                  </label>
-                </>
-              ) : null}
-            </div>
-            <div className="public-credential-readiness">
-              <span className={email ? "ready" : "next"}>
-                <small>Email</small>
-                <strong>{email ? "Ready" : "Required"}</strong>
-              </span>
-              <span className={password ? "ready" : "next"}>
-                <small>Password</small>
-                <strong>{password ? "Ready" : "Required"}</strong>
-              </span>
-              <span className={portal !== "corporate" || mode !== "signup" || (organizationName && organizationDomain) ? "ready" : "next"}>
-                <small>Workspace</small>
-                <strong>{portal === "corporate" && mode === "signup" ? (organizationName && organizationDomain ? "Ready" : "Required") : "Not needed"}</strong>
-              </span>
-              <span>
-                <small>First database write</small>
-                <strong>{mode === "signup" ? selectedRegistrationPath.primaryWrite : "Existing session"}</strong>
-              </span>
-            </div>
-            <div className="public-credential-actions">
-              <button
-                className="primary-action"
-                disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))}
-                type="submit"
-              >
-                {mode === "signin" ? "Login to portal" : "Create portal account"}
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-            </div>
-          </div>
-          <div className="public-auth-help-strip" aria-label="Public auth help strip">
-            <div>
-              <span className="status-chip neutral">Account help</span>
-              <strong>{email ? "Use the same email for recovery and verification" : "Enter email to unlock recovery actions"}</strong>
-              <small>
-                Reset password, resend verification, or repair a localhost email callback without leaving the login path.
-              </small>
-            </div>
-            <div className="public-auth-help-actions">
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button
-                className="secondary-action"
-                disabled={!repairedVerificationUrl}
-                onClick={() => void copyRepairedVerificationLink()}
-                type="button"
-              >
-                Copy repaired link
-              </button>
-            </div>
-            <small>
-              {repairedVerificationUrl
-                ? "A pasted localhost callback can be copied as a hosted TrustGraph link."
-                : "Paste a localhost verification link in the recovery panel if Supabase sends the wrong callback."}
-            </small>
-          </div>
-          <div className="registration-outcome-command" aria-label="Registration outcome command">
-            <div>
-              <span className="status-chip success">Registration outcome command</span>
-              <strong>{registrationOutcomeCommand.submit_label} routes to {registrationOutcomeCommand.next_dashboard}</strong>
-              <small>{registrationOutcomeCommand.accepted_when}</small>
-            </div>
-            <div className="registration-outcome-grid">
-              {registrationOutcomeCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <div className="registration-outcome-actions">
-              <button className="primary-action" disabled={busy || !email || !password || (portal === "corporate" && mode === "signup" && (!organizationName || !organizationDomain))} type="submit">
-                {registrationOutcomeCommand.submit_label}
-              </button>
-              <button className="secondary-action" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" })} type="button">
-                Review pricing
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Recovery
-              </button>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-registration-outcome-command-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify({ ...registrationOutcomeCommand, cards: registrationOutcomeCards }, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export outcome
-              </button>
-            </div>
-          </div>
-          <div className="registration-completion-handoff" aria-label="Registration completion handoff">
-            <div>
-              <span className={`status-chip ${portal === "corporate" ? "info" : "success"}`}>Completion handoff</span>
-              <strong>{portal === "corporate" ? "Corporate signup must finish with a company workspace" : "Professional signup must finish with a Passport context"}</strong>
-              <small>{registrationCompletionHandoff.accepted_when}</small>
-            </div>
-            <div className="registration-completion-grid">
-              {registrationCompletionHandoffCards.map((item) => (
-                <span key={item.label}>
-                  <small>{item.label}</small>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </span>
-              ))}
-            </div>
-            <button
-              className="secondary-action"
-              onClick={() =>
-                downloadTextFile(
-                  `trustgraph-registration-completion-handoff-${portal}-${new Date().toISOString().slice(0, 10)}.json`,
-                  JSON.stringify(registrationCompletionHandoff, null, 2),
-                  "application/json"
-                )
-              }
-              type="button"
-            >
-              Export handoff
-            </button>
-          </div>
-          <details className="auth-operator-details">
-            <summary>
-              <span>Live database handoff proof</span>
-              <small>{selectedRegistrationPath.primaryWrite} then {portal === "corporate" ? "company workspace" : "Passport setup"}</small>
-            </summary>
-            <div className="portal-auth-outcome-card">
-              <div>
-                <span className="status-chip success">Live database handoff</span>
-                <strong>{portal === "corporate" ? "Corporate account path" : "Professional Passport path"}</strong>
-                <small>{portal === "corporate" ? "Register, verify, login, then provision the company workspace." : "Register, verify, login, then build the private Passport."}</small>
-              </div>
-              <div className="portal-auth-outcome-grid">
-                {authOutcomeSteps.map((step) => (
-                  <span key={step.label}>
-                    <strong>{step.label}</strong>
-                    <small>{step.detail}</small>
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="registration-path-card">
-              <div>
-                <span className="status-chip success">Selected path</span>
-                <strong>{selectedRegistrationPath.portal}</strong>
-                <small>{selectedRegistrationPath.plan}</small>
-              </div>
-              <div className="registration-path-grid">
-                <span>
-                  <strong>{selectedRegistrationPath.primaryWrite}</strong>
-                  <small>Primary database write</small>
-                </span>
-                <span>
-                  <strong>{selectedRegistrationPath.databaseWrites.length} tables</strong>
-                  <small>{selectedRegistrationPath.databaseWrites.join(", ")}</small>
-                </span>
-              </div>
-              <small>{selectedRegistrationPath.nextAction}</small>
-              <small>{selectedRegistrationPath.paymentStatus}</small>
-            </div>
-          </details>
-          <div className="auth-support-actions" aria-label="Account help actions">
-            <button className="secondary-action" onClick={onOpenProductPreview} type="button">
-              Open product preview
-            </button>
-            <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-              Resend verification
-            </button>
-            <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-              Reset password
-            </button>
-          </div>
-          <div className="login-issue-resolver" aria-label="Login issue resolver">
-            <div>
-              <span className="status-chip neutral">Login issue resolver</span>
-              <strong>Fix verification, recovery, or rate-limit problems without guessing</strong>
-              <small>Use these when signup says email is limited, the inbox link opens localhost, or an existing account cannot login.</small>
-            </div>
-            <div className="login-issue-resolver-grid">
-              {loginIssueResolver.map((item) => (
-                <article key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.action}</strong>
-                  <small>{item.detail}</small>
-                </article>
-              ))}
-            </div>
-          </div>
-          <div className="hosted-auth-redirect-verification" aria-label="Hosted auth redirect verification receipt">
-            <div>
-              <span className="status-chip neutral">Hosted auth redirect verification receipt</span>
-              <strong>Email links must return to the production TrustGraph app</strong>
-              <small>{hostedAuthRedirectVerificationReceipt.accepted_when}</small>
-            </div>
-            <div className="hosted-auth-redirect-grid">
-              {hostedAuthRedirectCards.map((item) => (
-                <article key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </article>
-              ))}
-            </div>
-            <small>{hostedAuthRedirectVerificationReceipt.next_action}</small>
-          </div>
-          <div className="email-verification-delivery-receipt" aria-label="Email verification delivery receipt">
-            <div>
-              <span className="status-chip warning">Email verification delivery receipt</span>
-              <strong>Use one hosted email path before asking Supabase for another link</strong>
-              <small>{emailVerificationDeliveryReceipt.accepted_when}</small>
-            </div>
-            <div className="email-verification-delivery-grid">
-              {emailVerificationDeliveryCards.map((item) => (
-                <article key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                </article>
-              ))}
-            </div>
-          </div>
-          <div className="auth-email-troubleshooting-strip" aria-label="Auth email troubleshooting strip">
-            <div className="auth-email-troubleshooting-header">
-              <div>
-                <span className="status-chip warning">Email troubleshooting</span>
-                <strong>Before requesting another Supabase email, choose the right recovery path</strong>
-                <small>{authEmailTroubleshootingStrip.accepted_when}</small>
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() =>
-                  downloadTextFile(
-                    `trustgraph-auth-email-troubleshooting-${new Date().toISOString().slice(0, 10)}.json`,
-                    JSON.stringify(authEmailTroubleshootingStrip, null, 2),
-                    "application/json"
-                  )
-                }
-                type="button"
-              >
-                Export email help
-              </button>
-            </div>
-            <div className="auth-email-troubleshooting-grid">
-              {authEmailTroubleshootingCards.map((item) => (
-                <article key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.detail}</small>
-                  <em>{item.action}</em>
-                </article>
-              ))}
-            </div>
-            <div className="auth-email-troubleshooting-actions">
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
-                Copy hosted link
-              </button>
-            </div>
-          </div>
-          <div className="public-auth-recovery-command" aria-label="Public auth recovery command center">
-            <div>
-              <span className="status-chip neutral">Auth recovery command center</span>
-              <strong>Verification emails must return to hosted TrustGraph</strong>
-              <small>{authRedirectUrl}</small>
-            </div>
-            <div className="public-auth-recovery-actions">
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void resendVerification()} type="button">
-                Resend verification
-              </button>
-              <button className="secondary-action" disabled={busy || !email} onClick={() => void recoverPassword()} type="button">
-                Reset password
-              </button>
-              <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
-                Copy hosted link
-              </button>
-            </div>
-          </div>
-          <div className="auth-recovery-database-receipt" aria-label="Auth recovery database receipt">
-            <div>
-              <span className={`status-chip ${latestAuthRecoveryReceipt ? "success" : "warning"}`}>Auth recovery database receipt</span>
-              <strong>
-                {latestAuthRecoveryReceipt
-                  ? `${latestAuthRecoveryReceipt.action_type.replace(/_/g, " ")} saved`
-                  : "Save recovery proof after hosted login"}
-              </strong>
-              <small>
-                Persists hosted redirect, selected portal, email rate-limit guidance, localhost link repair status, and owner-scoped recovery proof.
-              </small>
-            </div>
-            <div className="auth-recovery-database-grid">
-              <span>
-                <strong>{authRecoveryReceipts.length}</strong>
-                <small>Receipt rows</small>
-              </span>
-              <span>
-                <strong>{latestAuthRecoveryReceipt?.selected_portal ?? portal}</strong>
-                <small>Portal</small>
-              </span>
-              <span>
-                <strong>{latestAuthRecoveryReceipt?.localhost_link_detected ? "Detected" : repairedVerificationUrl ? "Ready" : "No"}</strong>
-                <small>Localhost repair</small>
-              </span>
-              <span>
-                <strong>{latestAuthRecoveryReceipt?.redirect_url.includes("localhost") ? "Fix needed" : "Hosted"}</strong>
-                <small>Redirect</small>
-              </span>
-            </div>
-            <button
-              className="secondary-action"
-              disabled={!currentSession || busy}
-              onClick={() => void saveAuthRecoveryReceipt(hostedCallbackProof.status === "callback_session_accepted" ? "hosted_callback" : "localhost_link_repair", Boolean(repairedVerificationUrl))}
-              type="button"
-            >
-              Record recovery proof
-            </button>
-          </div>
-          <div className="hosted-callback-proof" aria-label="Hosted callback acceptance proof">
-            <div>
-              <span className={`status-chip ${hostedCallbackProof.status === "callback_session_accepted" ? "success" : "neutral"}`}>
-                Hosted callback acceptance proof
-              </span>
-              <strong>{hostedCallbackProof.status.replace(/_/g, " ")}</strong>
-              <small>
-                {hostedCallbackProof.callback_type} callback via {hostedCallbackProof.token_transport}; TrustGraph records only callback metadata and redacts tokens.
-              </small>
-            </div>
-            <div className="hosted-callback-proof-grid">
-              <span>
-                <strong>{hostedCallbackProof.access_token_present ? "Detected" : "None"}</strong>
-                <small>Access token signal</small>
-              </span>
-              <span>
-                <strong>{hostedCallbackProof.refresh_token_present ? "Detected" : "None"}</strong>
-                <small>Refresh token signal</small>
-              </span>
-              <span>
-                <strong>{hostedCallbackProof.localhost_source_detected ? "Local" : "Hosted"}</strong>
-                <small>Browser origin</small>
-              </span>
-            </div>
-            <small>{hostedCallbackProof.next_action}</small>
-          </div>
-          <details className="auth-operator-details">
-            <summary>
-              <span>Verification, recovery, and link repair</span>
-              <small>Use after rate limits, localhost links, or password recovery issues</small>
-            </summary>
-            <div className="auth-recovery-decision" aria-label="Auth recovery decision path">
-              <div>
-                <span className="status-chip neutral">Auth recovery decision path</span>
-                <strong>Pick the recovery action by what happened</strong>
-                <small>Keep the email field filled before using verification or password recovery actions.</small>
-              </div>
-              <div className="auth-recovery-decision-grid">
-                {authRecoveryDecisionPath.map((item) => (
-                  <article key={item.label}>
-                    <span>{item.label}</span>
-                    <strong>{item.action}</strong>
-                    <small>{item.detail}</small>
-                  </article>
-                ))}
-              </div>
-            </div>
-            <div className="auth-link-repair">
-              <div>
-                <strong>Fix localhost email link</strong>
-                <small>{verificationLinkMessage}</small>
-              </div>
-              <textarea
-                onChange={(event) => setVerificationLinkInput(event.target.value)}
-                placeholder="Paste Supabase email link that starts with http://localhost:3000/..."
-                value={verificationLinkInput}
-              />
-              {repairedVerificationUrl ? <input aria-label="Hosted verification link" readOnly value={repairedVerificationUrl} /> : null}
-              <button className="secondary-action" disabled={!repairedVerificationUrl} onClick={() => void copyRepairedVerificationLink()} type="button">
-                Copy hosted link
-              </button>
-            </div>
-            <div className="auth-readiness-packet">
-              <div>
-                <strong>Registration auth readiness packet</strong>
-                <small>Exports hosted redirect status, selected portal, pending corporate setup, repaired-link readiness, and Supabase Auth action items.</small>
-              </div>
-              <button
-                className="secondary-action"
-                onClick={() => downloadTextFile(registrationPacketName, JSON.stringify(registrationAuthPacket, null, 2), "application/json")}
-                type="button"
-              >
-                Export registration auth packet
-              </button>
-            </div>
-          </details>
-          <small>{message}</small>
-          <small>
-            {authReady
-              ? `Hosted Supabase Auth is configured. Allowed redirect URLs must include GitHub Pages and the VPS TrustGraph URL, not localhost. Active redirect: ${authRedirectUrl}`
-              : "Hosted build is missing public Supabase Auth configuration."}
-          </small>
-          <small>Supabase built-in email is limited to 2 emails per hour project-wide; custom SMTP is needed for heavier testing.</small>
-        </form>
-      </section>
+      {footer}
     </main>
   );
 }
+
 
 function App() {
   const [workspaceId, setWorkspaceId] = useState<WorkspaceId>("passport");

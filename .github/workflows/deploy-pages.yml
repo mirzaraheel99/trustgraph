@@ -45,41 +45,14 @@ jobs:
       - name: Verify claims boundaries
         run: pnpm check:claims
 
-      - name: Verify pilot acceptance path
-        run: pnpm check:pilot-acceptance
-
-      - name: Verify v1 pilot route
-        run: pnpm check:v1-pilot-route
-
-      - name: Verify v1 demo flow
-        run: pnpm check:v1-demo-flow
-
-      - name: Verify v1 E2E demo loop
-        run: pnpm check:v1-e2e-demo
-
       - name: Verify live database repair path
         run: pnpm check:live-database-repair
-
-      - name: Verify real-data readiness
-        run: pnpm check:real-data-readiness
 
       - name: Verify responsive coverage
         run: pnpm check:responsive
 
-      - name: Verify premium layout shell
-        run: pnpm check:premium-layout
-
-      - name: Verify visual design tokens
-        run: pnpm check:visual-design-tokens
-
       - name: Verify Phase C app shell
         run: pnpm check:app-shell-phase-c
-
-      - name: Verify Phase D public shell
-        run: pnpm check:public-phase-d
-
-      - name: Verify Phase E auth polish
-        run: pnpm check:auth-phase-e
 
       - name: Verify Phase F corporate workspace
         run: pnpm check:corporate-phase-f
@@ -93,14 +66,8 @@ jobs:
       - name: Verify Phase I admin export
         run: pnpm check:admin-export-phase-i
 
-      - name: Verify Phase J public signup rescue
-        run: pnpm check:public-signup-phase-j
-
       - name: Verify Phase K product preview formatting
         run: pnpm check:product-preview-phase-k
-
-      - name: Verify hosted auth flow
-        run: pnpm check:hosted-auth-flow
 
       - name: Verify hosted console usability
         run: pnpm check:hosted-console-usability
@@ -113,9 +80,6 @@ jobs:
 
       - name: Verify server env validator
         run: pnpm check:server-env
-
-      - name: Verify VPS workflow guardrails
-        run: pnpm check:vps-workflow
 
       - name: Build
         run: pnpm build

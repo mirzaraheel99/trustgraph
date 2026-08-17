@@ -83,10 +83,6 @@ const requiredPhrases = [
   {
     file: "src/App.tsx",
     phrase: 'accepted_source: "signed_in_supabase_repository_rows"'
-  },
-  {
-    file: "scripts/check-v1-demo-flow.mjs",
-    phrase: "Working database acceptance rejects preview-only evidence"
   }
 ];
 

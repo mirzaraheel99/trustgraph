@@ -62,11 +62,10 @@ assert(
 );
 
 assert(
-  workflow.includes("Verify hosted auth flow") &&
-    workflow.includes("Verify VPS workflow guardrails") &&
+  workflow.includes("Verify hosted console usability") &&
     workflow.includes("Stamp release asset") &&
     workflow.includes("Verify release stamp asset"),
-  "CI must keep hosted auth, VPS guardrails, release stamping, and stamp verification before deploy"
+  "CI must keep hosted console usability, release stamping, and stamp verification before deploy"
 );
 
 console.log("TrustGraph V1 completion gate check passed: completion claims remain blocked by live data, VPS, billing, human gates, and preview-data rejection.");

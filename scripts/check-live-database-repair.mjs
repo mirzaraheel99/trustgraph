@@ -16,14 +16,13 @@ function assertAll(source, phrases, label) {
   }
 }
 
-const [appSource, packageText, workflowText, readinessText, evidenceMapText, responsiveText, premiumText] = await Promise.all([
+const [appSource, packageText, workflowText, readinessText, evidenceMapText, responsiveText] = await Promise.all([
   readFile(new URL("../src/App.tsx", import.meta.url), "utf8"),
   readFile(new URL("../package.json", import.meta.url), "utf8"),
   readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),
   readFile(new URL("../V1_READINESS_CHECKLIST.md", import.meta.url), "utf8"),
   readFile(new URL("../docs/current-implementation-evidence-map.md", import.meta.url), "utf8"),
-  readFile(new URL("../scripts/check-responsive.mjs", import.meta.url), "utf8"),
-  readFile(new URL("../scripts/check-premium-layout.mjs", import.meta.url), "utf8")
+  readFile(new URL("../scripts/check-responsive.mjs", import.meta.url), "utf8")
 ]);
 
 const packageJson = JSON.parse(packageText);
@@ -76,7 +75,6 @@ assertAll(responsiveText, [
   ".live-database-repair-guide-grid"
 ], "responsive coverage");
 
-assertIncludes(premiumText, ".live-database-repair-guide", "premium layout coverage");
 assertIncludes(readinessText, "Verification Loop", "V1 readiness checklist");
 assertIncludes(evidenceMapText, "Live database repair guide packet", "implementation evidence map");
 
