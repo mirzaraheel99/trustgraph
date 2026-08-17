@@ -1,0 +1,511 @@
+/*
+  TrustGraph signed-in app shell — sidebar + topbar.
+  Reuses .tg-btn / .tg-field / .tg-strip primitives from marketing.css.
+*/
+
+.tg-shell {
+  min-height: 100vh;
+  display: flex;
+  background: var(--tg-app-ground);
+  color: var(--tg-text);
+}
+
+.tg-shell * {
+  box-sizing: border-box;
+}
+
+.tg-shell-sidebar {
+  width: var(--tg-sidebar-width);
+  flex: 0 0 var(--tg-sidebar-width);
+  background: var(--tg-ink);
+  color: #b4b8bb;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.tg-shell-logo {
+  height: 56px;
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-bottom: 1px solid #282c2f;
+  border: none;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.tg-shell-logo .tg-brand-word {
+  color: #fff;
+}
+
+.tg-workspace-switcher {
+  margin: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: #b4b8bb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.tg-workspace-switcher:hover {
+  background: #22262a;
+}
+
+.tg-workspace-avatar {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 6px;
+  background: #2a3033;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 550;
+}
+
+.tg-workspace-switcher-labels {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.tg-workspace-switcher-labels strong {
+  font-size: 14px;
+  font-weight: 550;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-workspace-switcher-labels span {
+  font-size: 12px;
+  color: #8a8983;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-nav-group {
+  margin: 4px 0;
+  padding: 0 12px;
+}
+
+.tg-nav-group-label {
+  display: block;
+  padding: 8px 10px 4px;
+  font-size: 11px;
+  font-weight: 550;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6e7376;
+}
+
+.tg-nav-item {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: #b4b8bb;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tg-nav-item:hover {
+  background: #22262a;
+  color: #fff;
+}
+
+.tg-nav-item.tg-active {
+  background: #2a3033;
+  color: #fff;
+  position: relative;
+}
+
+.tg-nav-item.tg-active::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--tg-accent);
+}
+
+.tg-nav-item.tg-active svg {
+  color: var(--tg-accent);
+}
+
+.tg-nav-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tg-nav-item svg {
+  flex: 0 0 auto;
+}
+
+.tg-shell-footer {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid #282c2f;
+  display: grid;
+  gap: 2px;
+}
+
+.tg-shell-plan-line {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #6e7376;
+}
+
+.tg-shell-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tg-shell-topbar {
+  height: 56px;
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 32px;
+  background: var(--tg-app-ground);
+  border-bottom: 1px solid var(--tg-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tg-shell-topbar h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 550;
+}
+
+.tg-shell-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.tg-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--tg-muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.tg-icon-btn:hover {
+  background: var(--tg-card-muted);
+  color: var(--tg-text);
+}
+
+.tg-icon-btn .tg-badge-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--tg-danger-text);
+}
+
+.tg-avatar-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 8px 0 4px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--tg-text);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.tg-avatar-menu-trigger:hover {
+  background: var(--tg-card-muted);
+}
+
+.tg-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--tg-accent-tint);
+  color: var(--tg-accent);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 550;
+  flex: 0 0 auto;
+}
+
+.tg-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  min-width: 240px;
+  background: #fff;
+  border: 1px solid var(--tg-border);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(22, 24, 26, 0.08);
+  padding: 8px;
+}
+
+.tg-popover-header {
+  padding: 8px 10px 10px;
+  border-bottom: 1px solid var(--tg-border);
+  margin-bottom: 6px;
+}
+
+.tg-popover-header strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.tg-popover-header span {
+  display: block;
+  font-size: 12px;
+  color: var(--tg-muted);
+}
+
+.tg-popover-item {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--tg-text);
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tg-popover-item:hover {
+  background: var(--tg-card-muted);
+}
+
+.tg-popover-item.tg-danger {
+  color: var(--tg-danger-text);
+}
+
+.tg-popover-hr {
+  height: 1px;
+  background: var(--tg-border);
+  margin: 6px 0;
+}
+
+.tg-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: transparent;
+}
+
+.tg-notification-popover {
+  width: min(380px, 90vw);
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.tg-notification-popover h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.tg-notification-row {
+  padding: 10px;
+  border: 1px solid var(--tg-border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.tg-notification-row strong {
+  font-size: 13px;
+  display: block;
+}
+
+.tg-notification-row small {
+  font-size: 12px;
+  color: var(--tg-muted);
+  display: block;
+}
+
+.tg-notification-empty {
+  padding: 20px 10px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--tg-muted);
+}
+
+.tg-shell-content {
+  flex: 1;
+  padding: 32px;
+  max-width: var(--tg-content-max);
+  width: 100%;
+  margin-inline: auto;
+}
+
+.tg-panel-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--tg-border);
+}
+
+.tg-panel-tabs button {
+  height: 36px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  color: var(--tg-muted);
+  font-size: 14px;
+  font-weight: 550;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-right: 16px;
+}
+
+.tg-panel-tabs button:hover {
+  color: var(--tg-text);
+}
+
+.tg-panel-tabs button.tg-active {
+  color: var(--tg-text);
+  border-bottom-color: var(--tg-accent);
+}
+
+.tg-next-action-card {
+  display: flex;
+  gap: 16px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid var(--tg-border);
+  border-radius: 10px;
+  box-shadow: var(--tg-shadow);
+  margin-bottom: 24px;
+}
+
+.tg-next-action-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+}
+
+.tg-next-action-icon.tg-tone-warning {
+  background: var(--tg-warning-tint);
+  color: var(--tg-warning-text);
+}
+
+.tg-next-action-icon.tg-tone-success {
+  background: var(--tg-success-tint);
+  color: var(--tg-success-text);
+}
+
+.tg-next-action-icon.tg-tone-info {
+  background: var(--tg-info-tint);
+  color: var(--tg-info-text);
+}
+
+.tg-next-action-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tg-next-action-body span.tg-eyebrow {
+  margin-bottom: 4px;
+}
+
+.tg-next-action-body h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 550;
+}
+
+.tg-next-action-body p {
+  margin: 0 0 16px;
+  color: var(--tg-muted);
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 68ch;
+}
+
+.tg-next-action-actions {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 1024px) {
+  .tg-shell-sidebar {
+    width: 64px;
+    flex-basis: 64px;
+  }
+
+  .tg-shell-sidebar .tg-brand-word,
+  .tg-shell-sidebar .tg-workspace-switcher-labels,
+  .tg-shell-sidebar .tg-nav-group-label,
+  .tg-shell-sidebar .tg-nav-item span,
+  .tg-shell-sidebar .tg-shell-plan-line {
+    display: none;
+  }
+
+  .tg-shell-sidebar .tg-nav-item {
+    justify-content: center;
+  }
+
+  .tg-shell-content {
+    padding: 20px;
+  }
+
+  .tg-shell-topbar {
+    padding: 0 20px;
+  }
+}

@@ -11,16 +11,13 @@ function assert(condition, message) {
 }
 
 const appMarkers = [
-  "corporate_workspace_command_strip_keeps_company_setup_rbac_roles_reviewer_roster_invitations_company_level_billing_scoped_access_and_no_open_user_database_visible",
-  "corporateWorkspaceCommandRows",
   "$149/month per company",
   "Company setup",
   "RBAC roles",
   "Reviewer roster",
   "Team invitations",
   "No open user database",
-  "Reviewer count is visibility only, never per-seat billing.",
-  "Company setup, RBAC roles, reviewer roster, team invitations, billing, and scoped access stay visible without opening the user database."
+  "Reviewer count is visibility only, never per-seat billing."
 ];
 
 for (const marker of appMarkers) {

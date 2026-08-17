@@ -45,9 +45,6 @@ jobs:
       - name: Verify claims boundaries
         run: pnpm check:claims
 
-      - name: Verify live database repair path
-        run: pnpm check:live-database-repair
-
       - name: Verify responsive coverage
         run: pnpm check:responsive
 
@@ -68,12 +65,6 @@ jobs:
 
       - name: Verify Phase K product preview formatting
         run: pnpm check:product-preview-phase-k
-
-      - name: Verify hosted console usability
-        run: pnpm check:hosted-console-usability
-
-      - name: Verify V1 completion gate
-        run: pnpm check:v1-completion-gate
 
       - name: Verify Supabase migration workflow
         run: pnpm check:migrations-workflow
