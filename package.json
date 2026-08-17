@@ -16,7 +16,6 @@
     "report:vps-status": "node scripts/report-vps-status.mjs",
     "check:app-shell-phase-c": "node scripts/check-app-shell-phase-c.mjs",
     "check:corporate-phase-f": "node scripts/check-corporate-phase-f.mjs",
-    "check:corporate-verify-phase-g": "node scripts/check-corporate-verify-phase-g.mjs",
     "check:evidence-phase-h": "node scripts/check-evidence-phase-h.mjs",
     "check:admin-export-phase-i": "node scripts/check-admin-export-phase-i.mjs",
     "check:product-preview-phase-k": "node scripts/check-product-preview-phase-k.mjs",

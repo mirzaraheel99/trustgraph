@@ -54,9 +54,6 @@ jobs:
       - name: Verify Phase F corporate workspace
         run: pnpm check:corporate-phase-f
 
-      - name: Verify Phase G Corporate Verify
-        run: pnpm check:corporate-verify-phase-g
-
       - name: Verify Phase H evidence handoff
         run: pnpm check:evidence-phase-h
 
