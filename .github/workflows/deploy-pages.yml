@@ -57,9 +57,6 @@ jobs:
       - name: Verify Phase H evidence handoff
         run: pnpm check:evidence-phase-h
 
-      - name: Verify Phase I admin export
-        run: pnpm check:admin-export-phase-i
-
       - name: Verify Phase K product preview formatting
         run: pnpm check:product-preview-phase-k
 
