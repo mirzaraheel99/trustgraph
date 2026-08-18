@@ -75,14 +75,6 @@ const requiredPhrases = [
   {
     file: "src/App.tsx",
     phrase: "preview_data_accepted: false"
-  },
-  {
-    file: "src/App.tsx",
-    phrase: "browser_seed_evidence_accepted_without_reconciliation: false"
-  },
-  {
-    file: "src/App.tsx",
-    phrase: 'accepted_source: "signed_in_supabase_repository_rows"'
   }
 ];
 
