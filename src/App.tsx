@@ -6787,7 +6787,6 @@ function AuditTrailPanel({
   const exportJsonName = `trustgraph-audit-evidence-${new Date().toISOString().slice(0, 10)}.json`;
   const coveragePacketName = `trustgraph-audit-coverage-${new Date().toISOString().slice(0, 10)}.json`;
   const exportReadinessName = `trustgraph-admin-export-readiness-${new Date().toISOString().slice(0, 10)}.json`;
-  const adminOperationsAcceptanceName = `trustgraph-admin-operations-acceptance-${new Date().toISOString().slice(0, 10)}.json`;
   const activeFilterLabels = [
     actionFilter !== "all" ? `action:${actionFilter}` : null,
     targetFilter !== "all" ? `target:${targetFilter}` : null,
@@ -6847,43 +6846,6 @@ function AuditTrailPanel({
       target_tables: targetTables.length
     }
   };
-  const adminExportLauncher = {
-    mode: "admin_export_launcher",
-    status: filteredEvents.length ? "ready_to_export_admin_scope" : "needs_audit_rows",
-    primary_export:
-      guardrailCount || highSignalCount
-        ? "Audit coverage packet"
-        : filteredEvents.length
-          ? "Filtered audit CSV"
-          : "Admin readiness packet",
-    active_filters: activeFilterLabels,
-    included: ["filtered audit events", "verification case status", "data-rights status", "release ledger context"],
-    excluded: ["raw private evidence files", "unfiltered hidden rows", "preview-only proof"],
-    accepted_when:
-      "admin_export_launcher_requires_filtered_audit_scope_case_and_data_rights_context_release_ledger_context_raw_file_exclusion_and_no_preview_data"
-  };
-  const adminExportLauncherCards = [
-    {
-      label: "Audit rows",
-      value: `${filteredEvents.length}/${events.length}`,
-      detail: activeFilterLabels.length ? activeFilterLabels.join(" / ") : "All loaded rows in scope"
-    },
-    {
-      label: "Cases",
-      value: `${openOperationsCases.length} open`,
-      detail: `${resolvedOperationsCases.length} resolved or restricted`
-    },
-    {
-      label: "Data rights",
-      value: `${openDataRightsRequests.length} open`,
-      detail: `${completedDataRightsRequests.length} completed or cancelled`
-    },
-    {
-      label: "Release ledger",
-      value: `${schemaMigrationRuns.length}`,
-      detail: "Migration history included as context"
-    }
-  ];
   const adminAuditDecisionBar = {
     mode: "admin_audit_decision_bar",
     recommended_export: adminAuditExportCommand.recommended_export,
@@ -6895,61 +6857,7 @@ function AuditTrailPanel({
     accepted_when:
       "admin_audit_decision_bar_keeps_filter_scope_recommended_export_signal_counts_csv_json_coverage_readiness_raw_file_exclusion_and_no_preview_data_visible_before_audit_rows"
   };
-  const adminAuditDecisionCards = [
-    { label: "Scope", value: activeFilterLabels.length ? `${activeFilterLabels.length} filters` : "All rows", detail: adminAuditDecisionBar.active_scope },
-    { label: "Signal", value: adminAuditDecisionBar.signal, detail: `${guardrailCount} guardrail, ${highSignalCount} high-signal events` },
-    { label: "Rows", value: `${filteredEvents.length}/${events.length}`, detail: "Only matching audit rows are exported." },
-    { label: "Recommended", value: adminAuditDecisionBar.recommended_export, detail: "Use coverage for high-signal or guardrail events." },
-    { label: "Boundary", value: "No raw files", detail: "Evidence files stay private; exports include metadata only." }
-  ];
   const latestAdminAuditExportReceipt = adminAuditExportReceipts[0] ?? null;
-  const adminExportDecisionStrip = {
-    mode: "admin_export_decision_strip",
-    status: filteredEvents.length ? "ready" : activeFilterLabels.length ? "filtered_empty" : "needs_live_audit_rows",
-    headline:
-      filteredEvents.length === 0
-        ? "No exportable audit rows in this view"
-        : guardrailCount || highSignalCount
-          ? "Export coverage packet first"
-          : "Export filtered audit rows",
-    recommended_export: adminAuditDecisionBar.recommended_export,
-    active_scope: adminAuditDecisionBar.active_scope,
-    filter_count: activeFilterLabels.length,
-    filtered_audit_events: filteredEvents.length,
-    loaded_audit_events: events.length,
-    persisted_receipts: adminAuditExportReceipts.length,
-    raw_private_files_exported: false,
-    preview_data_accepted: false,
-    accepted_when:
-      "admin_export_decision_strip_keeps_filter_scope_recommended_export_csv_json_coverage_readiness_receipt_raw_file_exclusion_and_preview_rejection_visible_before_audit_table"
-  };
-  const adminExportDecisionStripCards = [
-    {
-      label: "Next export",
-      value: adminExportDecisionStrip.recommended_export,
-      detail: filteredEvents.length ? adminExportDecisionStrip.headline : "Clear filters or load live Admin audit rows."
-    },
-    {
-      label: "Scope",
-      value: activeFilterLabels.length ? `${activeFilterLabels.length} filters` : "All rows",
-      detail: adminExportDecisionStrip.active_scope
-    },
-    {
-      label: "Rows",
-      value: `${filteredEvents.length}/${events.length}`,
-      detail: `${guardrailCount} guardrail and ${highSignalCount} high-signal rows`
-    },
-    {
-      label: "Receipt",
-      value: adminAuditExportReceipts.length ? `${adminAuditExportReceipts.length} saved` : "Not saved",
-      detail: latestAdminAuditExportReceipt?.created_at ?? "Record a receipt after exporting."
-    },
-    {
-      label: "Boundary",
-      value: "Metadata only",
-      detail: "No raw private files and no preview data leave Admin."
-    }
-  ];
   const adminExportFilterCockpit = {
     mode: "admin_export_filter_cockpit",
     headline:
@@ -6973,28 +6881,6 @@ function AuditTrailPanel({
     accepted_when:
       "admin_export_filter_cockpit_requires_filters_recommended_export_csv_json_coverage_readiness_case_context_data_rights_release_ledger_raw_file_exclusion_and_no_preview_data"
   };
-  const adminExportFilterCockpitCards = [
-    {
-      label: "Filter receipt",
-      value: activeFilterLabels.length ? activeFilterLabels.join(" / ") : "All loaded rows",
-      detail: `${filteredEvents.length} rows visible to export`
-    },
-    {
-      label: "Recommended",
-      value: adminExportFilterCockpit.recommended_export,
-      detail: adminExportFilterCockpit.next_action
-    },
-    {
-      label: "Context packet",
-      value: `${operationsCases.length + dataRightsRequests.length + schemaMigrationRuns.length} rows`,
-      detail: "Cases, data rights, and release ledger travel with coverage exports"
-    },
-    {
-      label: "File boundary",
-      value: "Metadata only",
-      detail: "Raw private evidence files never leave the Admin export"
-    }
-  ];
   const adminOperationsAcceptanceCheckpoint = {
     mode: "admin_operations_acceptance_checkpoint",
     headline:
@@ -7034,28 +6920,6 @@ function AuditTrailPanel({
       raw_private_evidence_files_excluded: true
     }
   };
-  const adminOperationsAcceptanceCards = [
-    {
-      label: "Verification cases",
-      value: `${resolvedOperationsCases.length}/${operationsCases.length}`,
-      detail: openOperationsCases.length ? `${openOperationsCases.length} open cases need a decision` : "Case decisions and reason codes ready"
-    },
-    {
-      label: "Data rights",
-      value: `${completedDataRightsRequests.length}/${dataRightsRequests.length}`,
-      detail: openDataRightsRequests.length ? `${openDataRightsRequests.length} requests still open` : "Export and closure rows ready"
-    },
-    {
-      label: "Audit export",
-      value: `${filteredEvents.length}`,
-      detail: activeFilterLabels.length ? activeFilterLabels.join(" / ") : "All audit events in scope"
-    },
-    {
-      label: "Release and security",
-      value: `${schemaMigrationRuns.length}`,
-      detail: "Release ledger and Security RLS runbook stay in the handoff packet"
-    }
-  ];
   const adminExportReadinessPacket = {
     generated_at: new Date().toISOString(),
     packet_mode: "admin_audit_export_readiness",
@@ -7101,94 +6965,6 @@ function AuditTrailPanel({
     admin_audit_export_command: adminAuditExportCommand,
     admin_audit_export_matrix: auditExportMatrix
   };
-  const adminAuditExportReceiptPacket = {
-    mode: "admin_audit_export_receipt_packet",
-    status: latestAdminAuditExportReceipt ? "persisted_export_receipt_loaded" : "receipt_not_recorded",
-    table: "admin_audit_export_receipts",
-    rpc: "record_admin_audit_export_receipt",
-    loaded_receipts: adminAuditExportReceipts.length,
-    latest_receipt: latestAdminAuditExportReceipt,
-    active_filters: adminExportReadinessPacket.active_filters,
-    recommended_export: adminAuditDecisionBar.recommended_export,
-    filtered_event_count: filteredEvents.length,
-    loaded_event_count: events.length,
-    raw_private_files_included: false,
-    preview_data_accepted: false,
-    accepted_when:
-      "admin_audit_export_receipt_requires_admin_rbac_filtered_audit_scope_case_data_rights_release_context_metadata_only_no_raw_private_files_and_no_preview_data"
-  };
-  const adminExportDesk = {
-    mode: "admin_export_desk",
-    status: filteredEvents.length
-      ? latestAdminAuditExportReceipt
-        ? "filtered_export_receipt_ready"
-        : "filtered_export_ready_receipt_needed"
-      : activeFilterLabels.length
-        ? "filters_return_no_rows"
-        : "audit_rows_needed",
-    headline: filteredEvents.length
-      ? `${adminAuditDecisionBar.recommended_export} is ready`
-      : activeFilterLabels.length
-        ? "No audit rows match the current filters"
-        : "Load live audit rows before export",
-    next_action: filteredEvents.length ? "Export filtered CSV" : "Clear filters or load rows",
-    active_scope: adminAuditDecisionBar.active_scope,
-    receipt_status: latestAdminAuditExportReceipt ? "Persisted receipt loaded" : "Receipt not recorded",
-    raw_private_files_exported: false,
-    preview_data_accepted: false,
-    accepted_when:
-      "admin_export_desk_keeps_filter_scope_recommended_export_csv_json_coverage_readiness_receipt_audit_filters_raw_file_exclusion_and_no_preview_data_visible_first"
-  };
-  const adminExportDeskCards = [
-    {
-      label: "Filter scope",
-      value: activeFilterLabels.length ? `${activeFilterLabels.length} filters` : "All rows",
-      detail: adminExportDesk.active_scope,
-      icon: Filter,
-      ready: true,
-      action: "readiness" as const
-    },
-    {
-      label: "Audit rows",
-      value: `${filteredEvents.length}/${events.length}`,
-      detail: `${guardrailCount} guardrail and ${highSignalCount} high-signal rows`,
-      icon: Activity,
-      ready: filteredEvents.length > 0,
-      action: "csv" as const
-    },
-    {
-      label: "Recommended export",
-      value: adminAuditDecisionBar.recommended_export,
-      detail: guardrailCount || highSignalCount ? "Coverage packet is safest for high-signal rows." : "CSV is enough for standard filtered rows.",
-      icon: Download,
-      ready: filteredEvents.length > 0,
-      action: guardrailCount || highSignalCount ? "coverage" as const : "csv" as const
-    },
-    {
-      label: "Receipt",
-      value: latestAdminAuditExportReceipt ? "Saved" : "Needed",
-      detail: latestAdminAuditExportReceipt?.created_at ?? "Record a receipt after export.",
-      icon: ClipboardCheck,
-      ready: Boolean(latestAdminAuditExportReceipt),
-      action: "receipt" as const
-    },
-    {
-      label: "Context",
-      value: `${operationsCases.length + dataRightsRequests.length + schemaMigrationRuns.length} rows`,
-      detail: "Cases, data rights, and release ledger travel in coverage packets.",
-      icon: ShieldCheck,
-      ready: operationsCases.length + dataRightsRequests.length + schemaMigrationRuns.length > 0,
-      action: "coverage" as const
-    },
-    {
-      label: "Boundary",
-      value: "Metadata only",
-      detail: "No raw private evidence files and no preview data leave Admin.",
-      icon: LockKeyhole,
-      ready: true,
-      action: "readiness" as const
-    }
-  ];
   async function saveAdminAuditExportReceipt(exportFormat: "csv_filtered_audit_events" | "json_filtered_audit_events" | "json_full_coverage_packet" | "json_admin_readiness_packet") {
     setAdminExportReceiptStatus("Recording filtered Admin audit export receipt...");
     try {
@@ -9452,66 +9228,6 @@ function SecurityReviewPanel({
     accepted_when:
       "ci_rls_guard_passes_private_evidence_signed_url_flow_is_reviewed_rbac_membership_rows_are_loaded_audit_exports_are_available_and_external_security_signoff_is_recorded_before_production_traffic"
   };
-  const v1SecurityReviewCards = [
-    {
-      label: "Code gates",
-      value: `${completed}/${checks.length}`,
-      detail: "Local and CI gates verify RLS, claims, responsive layout, pilot flow, and build before deployment."
-    },
-    {
-      label: "RLS tables",
-      value: `${rlsProtectedTables.length}`,
-      detail: "Protected tables are listed for external reviewer traceability."
-    },
-    {
-      label: "Live evidence",
-      value: evidenceDocuments.some((item) => item.storage_path) ? "Signed URLs" : "Metadata first",
-      detail: "Private storage signoff stays open until uploaded evidence is reviewed."
-    },
-    {
-      label: "Human gate",
-      value: "Required",
-      detail: "External security/RLS review must be recorded before production traffic."
-    }
-  ];
-  const securityProductionGateCommand = {
-    mode: "security_production_gate_command",
-    status: openChecks.length ? "pilot_only_external_security_open" : "ready_for_external_security_review",
-    pilot_traffic_allowed: true,
-    production_traffic_allowed: false,
-    code_verified_items: completed,
-    total_items: checks.length,
-    rls_protected_tables: rlsProtectedTables.length,
-    open_items: openChecks.map((check) => check.label),
-    external_human_gates: humanDecisions,
-    accepted_when:
-      "security_production_gate_command_separates_code_verified_rls_private_evidence_rbac_audit_exports_from_external_security_storage_legal_billing_and_pilot_owner_human_gates_before_v1_completion"
-  };
-  const securityProductionGateCards = [
-    { label: "Code verified", value: `${completed}/${checks.length}`, detail: "CI and local checks cover RLS, claims, layout, pilot route, and build.", ready: completed > 0 },
-    { label: "RLS tables", value: `${rlsProtectedTables.length}`, detail: "Protected table list is exportable for reviewer traceability.", ready: true },
-    { label: "Private evidence", value: evidenceDocuments.some((item) => item.storage_path) ? "Signed URL" : "Metadata only", detail: "Raw evidence stays private; signed access needs external storage review.", ready: evidenceDocuments.some((item) => item.storage_path) },
-    { label: "Corporate access", value: teamMembers.length ? "RBAC rows" : "Rows needed", detail: "Corporate access remains scoped by role, grant, consent, and audit.", ready: teamMembers.length > 0 },
-    { label: "Production", value: "Blocked", detail: "External security, legal, billing, pilot owner, and VPS cutover decisions remain human-gated.", ready: false }
-  ];
-  const productionSecurityChecklist = {
-    mode: "production_security_checklist",
-    launch_status: "pilot_ready_production_blocked",
-    headline: "Pilot can continue; unrestricted production is not approved",
-    code_ready_count: completed,
-    code_total_count: checks.length,
-    human_gate_count: humanDecisions.length,
-    next_action:
-      "Record external security/storage review, legal approval, billing/Stripe decision, named pilot owner, and VPS cutover before production traffic.",
-    evidence: [
-      `${rlsProtectedTables.length} RLS protected tables`,
-      `${schemaMigrationRuns.length} release ledger rows`,
-      `${auditEvents.length} audit events`,
-      `${securityRlsReviewReceipts.length} saved security receipts`
-    ],
-    accepted_when:
-      "production_security_checklist_requires_code_verified_rls_private_storage_rbac_audit_exports_saved_receipt_external_security_legal_billing_pilot_owner_vps_cutover_and_no_preview_data_before_v1_completion"
-  };
   const securityLaunchChecklist = {
     mode: "security_launch_checklist",
     launch_status: "corporate_scope_visible_production_blocked",
@@ -9531,57 +9247,6 @@ function SecurityReviewPanel({
     accepted_when:
       "security_launch_checklist_requires_ci_rls_guard_corporate_scoped_rows_private_signed_evidence_metadata_only_exports_saved_receipt_external_signoff_and_no_preview_data_before_v1_launch"
   };
-  const securityLaunchChecklistCards = [
-    {
-      label: "RLS guard",
-      value: `${rlsProtectedTables.length} tables`,
-      detail: "CI verifies protected tables before hosted deployment."
-    },
-    {
-      label: "Corporate rows",
-      value: teamMembers.length ? "Scoped" : "Needs rows",
-      detail: "Reviewers see only approved grant, consent, role, and audit-scoped rows."
-    },
-    {
-      label: "Evidence files",
-      value: evidenceDocuments.some((item) => item.storage_path) ? "Signed" : "Metadata",
-      detail: "Raw private files stay excluded from corporate and admin exports."
-    },
-    {
-      label: "Audit exports",
-      value: auditEvents.length ? "Filtered" : "Awaiting events",
-      detail: "Exports stay tied to filters, cases, release context, and access receipts."
-    },
-    {
-      label: "Receipt",
-      value: latestSecurityRlsReviewReceipt ? "Saved" : "Record",
-      detail: latestSecurityRlsReviewReceipt
-        ? "Supabase receipt can be used for reviewer handoff."
-        : "Record the review receipt after live row checks are loaded."
-    }
-  ];
-  const productionSecurityChecklistCards = [
-    {
-      label: "Code readiness",
-      value: `${completed}/${checks.length}`,
-      detail: "Automated checks can support pilot validation, not unrestricted production."
-    },
-    {
-      label: "Data protection",
-      value: `${rlsProtectedTables.length} tables`,
-      detail: "RLS tables, private evidence boundary, consent, RBAC, and audit export paths remain visible."
-    },
-    {
-      label: "Saved proof",
-      value: `${securityRlsReviewReceipts.length}`,
-      detail: latestSecurityRlsReviewReceipt ? "Security/RLS receipt exists in Supabase." : "Record a security/RLS receipt from Admin."
-    },
-    {
-      label: "Human gates",
-      value: `${humanDecisions.length} open`,
-      detail: "Security/storage, legal, billing/Stripe, pilot owner, and VPS cutover require human approval."
-    }
-  ];
   const runbookName = `trustgraph-security-runbook-${new Date().toISOString().slice(0, 10)}.csv`;
   const signoffPacketName = `trustgraph-security-rls-signoff-${new Date().toISOString().slice(0, 10)}.json`;
   const reviewReceiptName = `trustgraph-v1-security-rls-review-receipt-${new Date().toISOString().slice(0, 10)}.json`;
